@@ -37,6 +37,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
+import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.annotation.ObjectIdGenerator;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.fasterxml.jackson.databind.BeanDescription;
@@ -226,6 +227,8 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             return new ModelImpl();
         }
 
+        name = decorateModelName(context, name);
+
         /**
          * --Preventing parent/child hierarchy creation loops - Comment 1--
          * Creating a parent model will result in the creation of child models. Creating a child model will result in
@@ -386,6 +389,9 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 }
 
                 annotations = annotationList.toArray(new Annotation[annotationList.size()]);
+                if(hiddenByJsonView(annotations, context)) {
+                    continue;
+                }
 
                 ApiModelProperty mp = member.getAnnotation(ApiModelProperty.class);
 
@@ -626,6 +632,47 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         }
 
         return model;
+    }
+
+    /**
+     *  Decorate the name based on the JsonView
+     */
+    private String decorateModelName(ModelConverterContext context, String originalName) {
+        String name = originalName;
+        if (context.getJsonView() != null && context.getJsonView().value().length > 0) {
+            String COMBINER = "-or-";
+            StringBuffer sb = new StringBuffer();
+            for (Class<?> view : context.getJsonView().value()) {
+                sb.append(view.getSimpleName()).append(COMBINER);
+            }
+            String suffix = sb.toString().substring(0, sb.length() - COMBINER.length());
+            name = originalName + "_" + suffix;
+        }
+        return name;
+    }
+
+    private boolean hiddenByJsonView(Annotation[] annotations,
+        ModelConverterContext context) {
+        JsonView jsonView = context.getJsonView();
+        if (jsonView == null)
+            return false;
+
+        Class<?>[] filters = jsonView.value();
+        boolean containsJsonViewAnnotation = false;
+        for (Annotation ant : annotations) {
+            if (ant instanceof JsonView) {
+                containsJsonViewAnnotation = true;
+                Class<?>[] views = ((JsonView) ant).value();
+                for (Class<?> f : filters) {
+                    for (Class<?> v : views) {
+                        if (v == f || v.isAssignableFrom(f)) {
+                            return false;
+                        }
+                    }
+                }
+            }
+        }
+        return containsJsonViewAnnotation;
     }
 
     protected boolean ignore(final Annotated member, final XmlAccessorType xmlAccessorTypeAnnotation, final String propName, final Set<String> propertiesToIgnore) {

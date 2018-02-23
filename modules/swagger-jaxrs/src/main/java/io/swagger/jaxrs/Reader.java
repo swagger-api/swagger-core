@@ -16,6 +16,7 @@
 
 package io.swagger.jaxrs;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.databind.BeanDescription;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -770,7 +771,7 @@ public class Reader {
         }
     }
 
-    private Map<String, Property> parseResponseHeaders(ResponseHeader[] headers) {
+    private Map<String, Property> parseResponseHeaders(ResponseHeader[] headers, JsonView jsonView) {
         Map<String, Property> responseHeaders = null;
         if (headers != null) {
             for (ResponseHeader header : headers) {
@@ -783,7 +784,7 @@ public class Reader {
                     Class<?> cls = header.response();
 
                     if (!isVoid(cls)) {
-                        final Property property = ModelConverters.getInstance().readAsProperty(cls);
+                        final Property property = ModelConverters.getInstance().readAsProperty(cls, jsonView);
                         if (property != null) {
                             Property responseProperty = ContainerWrapper.wrapContainer(header.responseContainer(), property,
                                     ContainerWrapper.ARRAY, ContainerWrapper.LIST, ContainerWrapper.SET);
@@ -834,15 +835,20 @@ public class Reader {
         Type responseType = null;
         Map<String, Property> defaultResponseHeaders = new LinkedHashMap<String, Property>();
 
+        JsonView jsonViewAnnotation = ReflectionUtils.getAnnotation(method, JsonView.class);
+
         if (apiOperation != null) {
             if (apiOperation.hidden()) {
                 return null;
+            }
+            if (apiOperation.ignoreJsonView()) {
+                jsonViewAnnotation = null;
             }
             if (!apiOperation.nickname().isEmpty()) {
                 operationId = apiOperation.nickname();
             }
 
-            defaultResponseHeaders = parseResponseHeaders(apiOperation.responseHeaders());
+            defaultResponseHeaders = parseResponseHeaders(apiOperation.responseHeaders(), jsonViewAnnotation);
 
             operation.summary(apiOperation.value()).description(apiOperation.notes());
 
@@ -892,13 +898,13 @@ public class Reader {
             responseType = method.getGenericReturnType();
         }
         if (isValidResponse(responseType)) {
-            final Property property = ModelConverters.getInstance().readAsProperty(responseType);
+            final Property property = ModelConverters.getInstance().readAsProperty(responseType, jsonViewAnnotation);
             if (property != null) {
                 final Property responseProperty = ContainerWrapper.wrapContainer(responseContainer, property);
                 final int responseCode = (apiOperation == null) ? 200 : apiOperation.code();
                 operation.response(responseCode, new Response().description(SUCCESSFUL_OPERATION).schema(responseProperty)
                         .headers(defaultResponseHeaders));
-                appendModels(responseType);
+                appendModelsWithJsonView(responseType, jsonViewAnnotation);
             }
         }
 
@@ -936,7 +942,7 @@ public class Reader {
         }
 
         for (ApiResponse apiResponse : apiResponses) {
-            addResponse(operation, apiResponse);
+            addResponse(operation, apiResponse, jsonViewAnnotation);
         }
         // merge class level @ApiResponse
         for (ApiResponse apiResponse : classApiResponses) {
@@ -944,7 +950,7 @@ public class Reader {
             if (operation.getResponses() != null && operation.getResponses().containsKey(key)) {
                 continue;
             }
-            addResponse(operation, apiResponse);
+            addResponse(operation, apiResponse, jsonViewAnnotation);
         }
 
         if (ReflectionUtils.getAnnotation(method, Deprecated.class) != null) {
@@ -998,8 +1004,8 @@ public class Reader {
         }
     }
 
-    private void addResponse(Operation operation, ApiResponse apiResponse) {
-        Map<String, Property> responseHeaders = parseResponseHeaders(apiResponse.responseHeaders());
+    private void addResponse(Operation operation, ApiResponse apiResponse, JsonView jsonView) {
+        Map<String, Property> responseHeaders = parseResponseHeaders(apiResponse.responseHeaders(), jsonView);
 
         Response response = new Response()
         .description(apiResponse.message()).headers(responseHeaders);
@@ -1014,7 +1020,7 @@ public class Reader {
             response.schema(new RefProperty(apiResponse.reference()));
         } else if (!isVoid(apiResponse.response())) {
             Type responseType = apiResponse.response();
-            final Property property = ModelConverters.getInstance().readAsProperty(responseType);
+            final Property property = ModelConverters.getInstance().readAsProperty(responseType, jsonView);
             if (property != null) {
                 response.schema(ContainerWrapper.wrapContainer(apiResponse.responseContainer(), property));
                 appendModels(responseType);
@@ -1108,6 +1114,13 @@ public class Reader {
 
     private void appendModels(Type type) {
         final Map<String, Model> models = ModelConverters.getInstance().readAll(type);
+        for (Map.Entry<String, Model> entry : models.entrySet()) {
+            swagger.model(entry.getKey(), entry.getValue());
+        }
+    }
+
+    private void appendModelsWithJsonView(Type type, JsonView annotation) {
+        final Map<String, Model> models = ModelConverters.getInstance().readAll(type, annotation);
         for (Map.Entry<String, Model> entry : models.entrySet()) {
             swagger.model(entry.getKey(), entry.getValue());
         }
