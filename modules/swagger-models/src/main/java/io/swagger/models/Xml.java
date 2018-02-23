@@ -140,4 +140,13 @@ public class Xml {
         }
         return true;
     }
+
+    public Object clone() {
+        return new Xml()
+                .attribute(attribute == null ? null : Boolean.valueOf(attribute))
+                .name(name)
+                .namespace(namespace)
+                .prefix(prefix)
+                .wrapped(wrapped == null ? null : Boolean.valueOf(wrapped));
+    }
 }

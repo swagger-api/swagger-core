@@ -12,6 +12,7 @@ public abstract class AbstractModel implements Model {
     private String reference;
     private String title;
     private Map<String, Object> vendorExtensions = new LinkedHashMap<String, Object>();
+    private Xml xml;
 
     @Override
     public ExternalDocs getExternalDocs() {
@@ -51,6 +52,20 @@ public abstract class AbstractModel implements Model {
     public void cloneTo(Object clone) {
         AbstractModel cloned = (AbstractModel) clone;
         cloned.externalDocs = this.externalDocs;
+        cloned.reference = reference;
+        cloned.title = title;
+        if (vendorExtensions == null) {
+            cloned.vendorExtensions = vendorExtensions;
+        } else {
+            for (String key: vendorExtensions.keySet()) {
+                cloned.setVendorExtension(key, vendorExtensions.get(key));
+            }
+        }
+        if (xml == null) {
+            cloned.xml = xml;
+        } else {
+            cloned.xml = (Xml) xml.clone();
+        }
     }
 
     public Object clone() {
@@ -65,6 +80,12 @@ public abstract class AbstractModel implements Model {
                 + ((externalDocs == null) ? 0 : externalDocs.hashCode());
         result = prime * result
                 + ((vendorExtensions == null) ? 0 : vendorExtensions.hashCode());
+        result = prime * result
+                + ((reference == null) ? 0 : reference.hashCode());
+        result = prime * result
+                + ((title == null) ? 0 : title.hashCode());
+        result = prime * result
+                + ((xml == null) ? 0 : xml.hashCode());
         return result;
     }
 
@@ -94,6 +115,28 @@ public abstract class AbstractModel implements Model {
         } else if (!vendorExtensions.equals(other.vendorExtensions)) {
             return false;
         }
+        if (title == null) {
+            if (other.title != null) {
+                return false;
+            }
+        } else if (!title.equals(other.title)) {
+            return false;
+        }
+        if (reference == null) {
+            if (other.reference != null) {
+                return false;
+            }
+        } else if (!reference.equals(other.reference)) {
+            return false;
+        }
+        if (xml == null) {
+            if (other.xml != null) {
+                return false;
+            }
+        } else if (!xml.equals(other.xml)) {
+            return false;
+        }
+
         return true;
     }
 
@@ -108,5 +151,12 @@ public abstract class AbstractModel implements Model {
         this.reference = reference;
     }
 
+    public Xml getXml() {
+        return xml;
+    }
+
+    public void setXml(Xml xml) {
+        this.xml = xml;
+    }
 
 }

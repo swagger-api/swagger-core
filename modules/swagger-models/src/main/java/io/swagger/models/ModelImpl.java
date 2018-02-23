@@ -29,7 +29,6 @@ public class ModelImpl extends AbstractModel {
     private Object example;
     private Property additionalProperties;
     private String discriminator;
-    private Xml xml;
     @JsonProperty("default")
     private String defaultValue;
     private List<String> _enum;
@@ -280,14 +279,6 @@ public class ModelImpl extends AbstractModel {
         this.example = example;
     }
 
-    public Xml getXml() {
-        return xml;
-    }
-
-    public void setXml(Xml xml) {
-        this.xml = xml;
-    }
-
     public Object getDefaultValue() {
         if(defaultValue == null) {
             return null;
@@ -383,9 +374,6 @@ public class ModelImpl extends AbstractModel {
         if (discriminator != null ? !discriminator.equals(model.discriminator) : model.discriminator != null) {
             return false;
         }
-        if (xml != null ? !xml.equals(model.xml) : model.xml != null) {
-            return false;
-        }
         if (defaultValue != null ? !defaultValue.equals(model.defaultValue) : model.defaultValue != null) {
             return false;
         }
@@ -414,7 +402,6 @@ public class ModelImpl extends AbstractModel {
         result = 31 * result + (example != null ? example.hashCode() : 0);
         result = 31 * result + (additionalProperties != null ? additionalProperties.hashCode() : 0);
         result = 31 * result + (discriminator != null ? discriminator.hashCode() : 0);
-        result = 31 * result + (xml != null ? xml.hashCode() : 0);
         result = 31 * result + (defaultValue != null ? defaultValue.hashCode() : 0);
         result = 31 * result + (_enum != null ? _enum.hashCode() : 0);
         result = 31 * result + (minimum != null ? minimum.hashCode() : 0);
@@ -439,7 +426,6 @@ public class ModelImpl extends AbstractModel {
         cloned.example = this.example;
         cloned.additionalProperties = this.additionalProperties;
         cloned.discriminator = this.discriminator;
-        cloned.xml = this.xml;
         cloned.defaultValue = this.defaultValue;
         cloned.minimum = this.minimum;
         cloned.maximum = this.maximum;
