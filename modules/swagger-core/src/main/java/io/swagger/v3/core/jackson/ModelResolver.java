@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
+import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.annotation.ObjectIdGenerator;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.fasterxml.jackson.databind.AnnotationIntrospector;
@@ -139,6 +140,8 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             }
         }
 
+        name = decorateModelName(annotatedType, name);
+
         // if we have a ref we don't consider anything else
         if (resolvedSchemaAnnotation != null &&
                 StringUtils.isNotEmpty(resolvedSchemaAnnotation.ref())) {
@@ -170,6 +173,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                     .parent(annotatedType.getParent())
                     .name(annotatedType.getName())
                     .resolveAsRef(annotatedType.isResolveAsRef())
+                    .jsonViewAnnotation(annotatedType.getJsonViewAnnotation())
                     .skipOverride(true);
             if (resolvedArrayAnnotation != null) {
                 ArraySchema schema = new ArraySchema();
@@ -287,6 +291,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                     .name(annotatedType.getName())
                     .schemaProperty(annotatedType.isSchemaProperty())
                     .resolveAsRef(annotatedType.isResolveAsRef())
+                    .jsonViewAnnotation(annotatedType.getJsonViewAnnotation())
                     .skipOverride(true);
             return context.resolve(aType);
         }
@@ -309,7 +314,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
             if (keyType != null && valueType != null) {
                 if (ReflectionUtils.isSystemType(type) && !annotatedType.isSchemaProperty() && !annotatedType.isResolveAsRef()) {
-                    context.resolve(new AnnotatedType().type(valueType));
+                    context.resolve(new AnnotatedType().type(valueType).jsonViewAnnotation(annotatedType.getJsonViewAnnotation()));
                     return null;
                 }
                 Schema addPropertiesSchema = context.resolve(
@@ -318,6 +323,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                                 .schemaProperty(annotatedType.isSchemaProperty())
                                 //.ctxAnnotations(annotatedType.getCtxAnnotations())
                                 .resolveAsRef(annotatedType.isResolveAsRef())
+                                .jsonViewAnnotation(annotatedType.getJsonViewAnnotation())
                                 .parent(annotatedType.getParent()));
                 if (StringUtils.isNotBlank(addPropertiesSchema.getName())) {
                     pName = addPropertiesSchema.getName();
@@ -336,7 +342,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 //return model;
             } else if (valueType != null) {
                 if (ReflectionUtils.isSystemType(type) && !annotatedType.isSchemaProperty() && !annotatedType.isResolveAsRef()) {
-                    context.resolve(new AnnotatedType().type(valueType));
+                    context.resolve(new AnnotatedType().type(valueType).jsonViewAnnotation(annotatedType.getJsonViewAnnotation()));
                     return null;
                 }
                 Schema items = context.resolve(new AnnotatedType()
@@ -344,6 +350,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                         .schemaProperty(annotatedType.isSchemaProperty())
                         //.ctxAnnotations(annotatedType.getCtxAnnotations())
                         .resolveAsRef(annotatedType.isResolveAsRef())
+                        .jsonViewAnnotation(annotatedType.getJsonViewAnnotation())
                         .parent(annotatedType.getParent()));
 
                 if (items == null) {
@@ -394,6 +401,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                         .schemaProperty(annotatedType.isSchemaProperty())
                         .name(annotatedType.getName())
                         .resolveAsRef(annotatedType.isResolveAsRef())
+                        .jsonViewAnnotation(annotatedType.getJsonViewAnnotation())
                         .skipOverride(true);
                 model = context.resolve(aType);
                 return model;
@@ -496,6 +504,10 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
                 annotations = annotationList.toArray(new Annotation[annotationList.size()]);
 
+                if(hiddenByJsonView(annotations, annotatedType)) {
+                    continue;
+                }
+
                 JavaType propType = member.getType();
                 Annotation propSchemaOrArray = AnnotationsUtils.mergeSchemaAnnotations(annotations, propType);
                 final io.swagger.v3.oas.annotations.media.Schema propResolvedSchemaAnnotation =
@@ -513,6 +525,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                         //.name(propName)
                         .parent(model)
                         .resolveAsRef(annotatedType.isResolveAsRef())
+                        .jsonViewAnnotation(annotatedType.getJsonViewAnnotation())
                         .schemaProperty(true);
 
                 aType.jsonUnwrappedHandler((t) -> {
@@ -615,7 +628,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             }
             Class<?> not = resolvedSchemaAnnotation.not();
             if (!Void.class.equals(not)) {
-                model.not((new Schema().$ref(context.resolve(new AnnotatedType().type(not)).getName())));
+                model.not((new Schema().$ref(context.resolve(new AnnotatedType().type(not).jsonViewAnnotation(annotatedType.getJsonViewAnnotation())).getName())));
             }
             if (resolvedSchemaAnnotation.requiredProperties() != null &&
                     resolvedSchemaAnnotation.requiredProperties().length > 0 &&
@@ -640,7 +653,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                     .filter(c -> !(c.equals(Void.class)))
                     .collect(Collectors.toList());
             allOfFiltered.forEach(c -> {
-                Schema allOfRef = context.resolve(new AnnotatedType().type(c));
+                Schema allOfRef = context.resolve(new AnnotatedType().type(c).jsonViewAnnotation(annotatedType.getJsonViewAnnotation()));
                 Schema refSchema = new Schema().$ref(allOfRef.getName());
                 // allOf could have already being added during subtype resolving
                 if (composedSchema.getAllOf() == null || !composedSchema.getAllOf().contains(refSchema)) {
@@ -658,7 +671,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                     .filter(c -> !(c.equals(Void.class)))
                     .collect(Collectors.toList());
             anyOfFiltered.forEach(c -> {
-                Schema anyOfRef = context.resolve(new AnnotatedType().type(c));
+                Schema anyOfRef = context.resolve(new AnnotatedType().type(c).jsonViewAnnotation(annotatedType.getJsonViewAnnotation()));
                 composedSchema.addAnyOfItem(new Schema().$ref(anyOfRef.getName()));
                 // remove shared properties defined in the parent
                 if (isSubtype(beanDesc.getClassInfo(), c)) {
@@ -673,7 +686,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                     .filter(c -> !(c.equals(Void.class)))
                     .collect(Collectors.toList());
             oneOfFiltered.forEach(c -> {
-                Schema oneOfRef = context.resolve(new AnnotatedType().type(c));
+                Schema oneOfRef = context.resolve(new AnnotatedType().type(c).jsonViewAnnotation(annotatedType.getJsonViewAnnotation()));
                 composedSchema.addOneOfItem(new Schema().$ref(oneOfRef.getName()));
                 // remove shared properties defined in the parent
                 if (isSubtype(beanDesc.getClassInfo(), c)) {
@@ -838,6 +851,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                             AnnotatedType aType = new AnnotatedType()
                                     .type(propType)
                                     .ctxAnnotations(annotations)
+                                    .jsonViewAnnotation(type.getJsonViewAnnotation())
                                     .schemaProperty(true);
 
                             return context.resolve(aType);
@@ -1633,4 +1647,47 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         return ignored == null ? Collections.emptyList() : Arrays.asList(ignored);
     }
 
+    /**
+     *  Decorate the name based on the JsonView
+     */
+    private String decorateModelName(AnnotatedType type, String originalName) {
+        if (StringUtils.isBlank(originalName)) {
+            return originalName;
+        }
+        String name = originalName;
+        if (type.getJsonViewAnnotation() != null && type.getJsonViewAnnotation().value().length > 0) {
+            String COMBINER = "-or-";
+            StringBuffer sb = new StringBuffer();
+            for (Class<?> view : type.getJsonViewAnnotation().value()) {
+                sb.append(view.getSimpleName()).append(COMBINER);
+            }
+            String suffix = sb.toString().substring(0, sb.length() - COMBINER.length());
+            name = originalName + "_" + suffix;
+        }
+        return name;
+    }
+
+    private boolean hiddenByJsonView(Annotation[] annotations,
+                                     AnnotatedType type) {
+        JsonView jsonView = type.getJsonViewAnnotation();
+        if (jsonView == null)
+            return false;
+
+        Class<?>[] filters = jsonView.value();
+        boolean containsJsonViewAnnotation = false;
+        for (Annotation ant : annotations) {
+            if (ant instanceof JsonView) {
+                containsJsonViewAnnotation = true;
+                Class<?>[] views = ((JsonView) ant).value();
+                for (Class<?> f : filters) {
+                    for (Class<?> v : views) {
+                        if (v == f || v.isAssignableFrom(f)) {
+                            return false;
+                        }
+                    }
+                }
+            }
+        }
+        return containsJsonViewAnnotation;
+    }
 }

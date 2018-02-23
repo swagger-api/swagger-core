@@ -148,7 +148,7 @@ public class ReaderTest {
         Method[] methods = SimpleMethods.class.getMethods();
         for (final Method method : methods) {
             if (isValidRestPath(method)) {
-                Operation operation = reader.parseMethod(method, null);
+                Operation operation = reader.parseMethod(method, null, null);
                 assertNotNull(operation);
             }
         }
@@ -158,7 +158,7 @@ public class ReaderTest {
     public void testGetSummaryAndDescription() {
         Reader reader = new Reader(new OpenAPI());
         Method[] methods = BasicFieldsResource.class.getMethods();
-        Operation operation = reader.parseMethod(methods[0], null);
+        Operation operation = reader.parseMethod(methods[0], null, null);
         assertNotNull(operation);
         assertEquals(OPERATION_SUMMARY, operation.getSummary());
         assertEquals(OPERATION_DESCRIPTION, operation.getDescription());
@@ -220,7 +220,7 @@ public class ReaderTest {
     public void testDeprecatedMethod() {
         Reader reader = new Reader(new OpenAPI());
         Method[] methods = DeprecatedFieldsResource.class.getMethods();
-        Operation deprecatedOperation = reader.parseMethod(methods[0], null);
+        Operation deprecatedOperation = reader.parseMethod(methods[0], null, null);
         assertNotNull(deprecatedOperation);
         assertTrue(deprecatedOperation.getDeprecated());
     }
@@ -265,7 +265,7 @@ public class ReaderTest {
         Method[] methods = ResponsesResource.class.getMethods();
 
         Operation responseOperation = reader.parseMethod(Arrays.stream(methods).filter(
-                (method -> method.getName().equals("getResponses"))).findFirst().get(), null);
+                (method -> method.getName().equals("getResponses"))).findFirst().get(), null, null);
         assertNotNull(responseOperation);
 
         ApiResponses responses = responseOperation.getResponses();
@@ -474,7 +474,7 @@ public class ReaderTest {
         Reader reader = new Reader(new OpenAPI());
         Method[] methods = SecurityResource.class.getDeclaredMethods();
         Operation securityOperation = reader.parseMethod(Arrays.stream(methods).filter(
-                (method -> method.getName().equals("getSecurity"))).findFirst().get(), null);
+                (method -> method.getName().equals("getSecurity"))).findFirst().get(), null, null);
         assertNotNull(securityOperation);
         List<SecurityRequirement> securityRequirements = securityOperation.getSecurity();
         assertNotNull(securityRequirements);
@@ -490,7 +490,7 @@ public class ReaderTest {
     public void testGetCallbacks() {
         Reader reader = new Reader(new OpenAPI());
         Method[] methods = SimpleCallbackResource.class.getMethods();
-        Operation callbackOperation = reader.parseMethod(methods[0], null);
+        Operation callbackOperation = reader.parseMethod(methods[0], null, null);
         assertNotNull(callbackOperation);
         Map<String, Callback> callbacks = callbackOperation.getCallbacks();
         assertNotNull(callbacks);

@@ -1,5 +1,6 @@
 package io.swagger.v3.core.converter;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import io.swagger.v3.oas.models.media.Schema;
 
 import java.lang.annotation.Annotation;
@@ -19,6 +20,7 @@ public class AnnotatedType {
     private boolean schemaProperty;
     private Annotation[] ctxAnnotations;
     private boolean resolveAsRef;
+    private JsonView jsonViewAnnotation;
 
     public AnnotatedType() {
     }
@@ -128,6 +130,19 @@ public class AnnotatedType {
 
     public AnnotatedType type(Type type) {
         setType(type);
+        return this;
+    }
+
+    public JsonView getJsonViewAnnotation() {
+        return jsonViewAnnotation;
+    }
+
+    public void setJsonViewAnnotation(JsonView jsonViewAnnotation) {
+        this.jsonViewAnnotation = jsonViewAnnotation;
+    }
+
+    public AnnotatedType jsonViewAnnotation(JsonView jsonViewAnnotation) {
+        this.jsonViewAnnotation = jsonViewAnnotation;
         return this;
     }
 
