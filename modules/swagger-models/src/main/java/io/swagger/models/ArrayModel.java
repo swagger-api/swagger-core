@@ -151,6 +151,8 @@ public class ArrayModel extends AbstractModel {
         cloned.description = this.description;
         cloned.items = this.items;
         cloned.example = this.example;
+        cloned.maxItems = this.maxItems;
+        cloned.minItems = this.minItems;
 
         return cloned;
 

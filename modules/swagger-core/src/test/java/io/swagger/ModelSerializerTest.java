@@ -11,6 +11,7 @@ import io.swagger.models.Manufacturers;
 import io.swagger.models.Model;
 import io.swagger.models.ModelImpl;
 import io.swagger.models.RefModel;
+import io.swagger.models.Xml;
 import io.swagger.models.properties.DateProperty;
 import io.swagger.models.properties.DateTimeProperty;
 import io.swagger.models.properties.IntegerProperty;
@@ -112,6 +113,14 @@ public class ModelSerializerTest {
         final ArrayModel model = new ArrayModel();
         model.setItems(new RefProperty("Pet"));
         assertEquals(m.writeValueAsString(model), "{\"type\":\"array\",\"items\":{\"$ref\":\"#/definitions/Pet\"}}");
+    }
+
+    @Test(description = "it should serialize an array model with xml")
+    public void serializeArrayModelWithXml() throws IOException {
+        final ArrayModel model = new ArrayModel();
+        model.setItems(new RefProperty("Pet"));
+        model.setXml(new Xml().wrapped(true).name("payments"));
+        assertEquals(m.writeValueAsString(model), "{\"xml\":{\"name\":\"payments\",\"wrapped\":true},\"type\":\"array\",\"items\":{\"$ref\":\"#/definitions/Pet\"}}");
     }
 
     @Test(description = "it should deserialize an array model")
