@@ -1,5 +1,11 @@
 package io.swagger.servlet.extensions;
 
+import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.type.TypeFactory;
+import com.google.common.base.Function;
+import com.google.common.base.Predicate;
+import com.google.common.base.Splitter;
+import com.google.common.collect.Collections2;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -31,13 +37,6 @@ import io.swagger.util.BaseReaderUtils;
 import io.swagger.util.ParameterProcessor;
 import io.swagger.util.PathUtils;
 import io.swagger.util.ReflectionUtils;
-
-import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.type.TypeFactory;
-import com.google.common.base.Function;
-import com.google.common.base.Predicate;
-import com.google.common.base.Splitter;
-import com.google.common.collect.Collections2;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,7 +59,7 @@ public class ServletReaderExtension implements ReaderExtension {
     private static final String SUCCESSFUL_OPERATION = "successful operation";
 
     private static <T> List<T> parseAnnotationValues(String str, Function<String, T> processor) {
-        final List<T> result = new ArrayList<T>();
+        final List<T> result = new ArrayList<>();
         for (String item : Splitter.on(",").trimResults().omitEmptyStrings().split(str)) {
             result.add(processor.apply(item));
         }
@@ -77,7 +76,7 @@ public class ServletReaderExtension implements ReaderExtension {
     }
 
     private static List<Scheme> parseSchemes(String schemes) {
-        final List<Scheme> result = new ArrayList<Scheme>();
+        final List<Scheme> result = new ArrayList<>();
         for (String item : StringUtils.trimToEmpty(schemes).split(",")) {
             final Scheme scheme = Scheme.forValue(StringUtils.trimToNull(item));
             if (scheme != null && !result.contains(scheme)) {
@@ -88,7 +87,7 @@ public class ServletReaderExtension implements ReaderExtension {
     }
 
     private static List<SecurityRequirement> parseAuthorizations(Authorization[] authorizations) {
-        final List<SecurityRequirement> result = new ArrayList<SecurityRequirement>();
+        final List<SecurityRequirement> result = new ArrayList<>();
         for (Authorization auth : authorizations) {
             if (StringUtils.isNotEmpty(auth.value())) {
                 final SecurityRequirement security = new SecurityRequirement();
@@ -110,7 +109,7 @@ public class ServletReaderExtension implements ReaderExtension {
             final String name = header.name();
             if (StringUtils.isNotEmpty(name)) {
                 if (responseHeaders == null) {
-                    responseHeaders = new HashMap<String, Property>();
+                    responseHeaders = new HashMap<>();
                 }
                 final Class<?> cls = header.response();
                 if (!ReflectionUtils.isVoid(cls)) {
@@ -166,7 +165,7 @@ public class ServletReaderExtension implements ReaderExtension {
 
     @Override
     public void applyConsumes(ReaderContext context, Operation operation, Method method) {
-        final List<String> consumes = new ArrayList<String>();
+        final List<String> consumes = new ArrayList<>();
         final ApiOperation apiOperation = ReflectionUtils.getAnnotation(method, ApiOperation.class);
 
         if (apiOperation != null) {
@@ -188,7 +187,7 @@ public class ServletReaderExtension implements ReaderExtension {
 
     @Override
     public void applyProduces(ReaderContext context, Operation operation, Method method) {
-        final List<String> produces = new ArrayList<String>();
+        final List<String> produces = new ArrayList<>();
         final ApiOperation apiOperation = ReflectionUtils.getAnnotation(method, ApiOperation.class);
 
         if (apiOperation != null) {
@@ -253,7 +252,7 @@ public class ServletReaderExtension implements ReaderExtension {
 
     @Override
     public void applySchemes(ReaderContext context, Operation operation, Method method) {
-        final List<Scheme> schemes = new ArrayList<Scheme>();
+        final List<Scheme> schemes = new ArrayList<>();
         final ApiOperation apiOperation = ReflectionUtils.getAnnotation(method, ApiOperation.class);
         final Api apiAnnotation = context.getCls().getAnnotation(Api.class);
 
@@ -298,7 +297,7 @@ public class ServletReaderExtension implements ReaderExtension {
 
     @Override
     public void applyTags(ReaderContext context, Operation operation, Method method) {
-        final List<String> tags = new ArrayList<String>();
+        final List<String> tags = new ArrayList<>();
 
         final Api apiAnnotation = context.getCls().getAnnotation(Api.class);
         if (apiAnnotation != null) {
@@ -328,7 +327,7 @@ public class ServletReaderExtension implements ReaderExtension {
 
     @Override
     public void applyResponses(ReaderContext context, Operation operation, Method method) {
-        final Map<Integer, Response> result = new HashMap<Integer, Response>();
+        final Map<Integer, Response> result = new HashMap<>();
 
         final ApiOperation apiOperation = ReflectionUtils.getAnnotation(method, ApiOperation.class);
         if (apiOperation != null && StringUtils.isNotBlank(apiOperation.responseReference())) {
