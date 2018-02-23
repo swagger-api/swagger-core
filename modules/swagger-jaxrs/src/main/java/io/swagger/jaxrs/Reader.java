@@ -22,21 +22,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.introspect.AnnotatedMethod;
 import com.fasterxml.jackson.databind.introspect.AnnotatedParameter;
 import com.fasterxml.jackson.databind.type.TypeFactory;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiKeyAuthDefinition;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
-import io.swagger.annotations.Authorization;
-import io.swagger.annotations.AuthorizationScope;
-import io.swagger.annotations.BasicAuthDefinition;
-import io.swagger.annotations.Info;
-import io.swagger.annotations.OAuth2Definition;
-import io.swagger.annotations.ResponseHeader;
-import io.swagger.annotations.Scope;
-import io.swagger.annotations.SwaggerDefinition;
+import io.swagger.annotations.*;
 import io.swagger.converter.ModelConverters;
 import io.swagger.jaxrs.config.DefaultReaderConfig;
 import io.swagger.jaxrs.config.ReaderConfig;
@@ -1000,9 +986,10 @@ public class Reader {
 
     private void addResponse(Operation operation, ApiResponse apiResponse) {
         Map<String, Property> responseHeaders = parseResponseHeaders(apiResponse.responseHeaders());
+        Map<String, Object> examples = parseExamples(apiResponse.examples());
 
         Response response = new Response()
-        .description(apiResponse.message()).headers(responseHeaders);
+        .description(apiResponse.message()).headers(responseHeaders).setExamples(examples);
 
         if (apiResponse.code() == 0) {
             operation.defaultResponse(response);
@@ -1020,6 +1007,24 @@ public class Reader {
                 appendModels(responseType);
             }
         }
+    }
+
+    private Map<String, Object> parseExamples(Example examples) {
+        if(examples == null){
+            return null;
+        }
+
+        Map<String, Object> map = null;
+        for(ExampleProperty prop : examples.value()){
+
+            if(prop.mediaType().equals("") && prop.value().equals("")){
+                continue;
+            }
+
+            map = map == null ? new HashMap<String, Object>() : map;
+            map.put(prop.mediaType(), prop.value());
+        }
+        return map;
     }
 
     private List<Parameter> getParameters(Type type, List<Annotation> annotations) {

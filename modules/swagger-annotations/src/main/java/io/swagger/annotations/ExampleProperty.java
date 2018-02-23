@@ -36,7 +36,7 @@ public @interface ExampleProperty {
      *
      * @return the name of the property
      */
-    String mediaType() default "default";
+    String mediaType() default "";
 
     /**
      * The value of the example.
