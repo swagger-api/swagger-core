@@ -29,6 +29,7 @@ import java.lang.annotation.Target;
 
 import static java.lang.annotation.ElementType.ANNOTATION_TYPE;
 import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.ElementType.TYPE;
 
 /**
  * The annotation may be used at method level or as field of {@link io.swagger.v3.oas.annotations.Operation} to define one or more responses of the
@@ -40,7 +41,7 @@ import static java.lang.annotation.ElementType.METHOD;
  * @see <a target="_new" href="https://github.com/OAI/OpenAPI-Specification/blob/3.0.1/versions/3.0.1.md#responseObject">Response (OpenAPI specification)</a>
  * @see io.swagger.v3.oas.annotations.Operation
  **/
-@Target({METHOD, ANNOTATION_TYPE})
+@Target({METHOD, TYPE, ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
 @Repeatable(ApiResponses.class)
