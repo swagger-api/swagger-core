@@ -7,14 +7,13 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 public abstract class AbstractParameter {
-    private Map<String, Object> vendorExtensions = new LinkedHashMap<String, Object>();
+    private Map<String, Object> vendorExtensions = new LinkedHashMap<>();
     protected String in;
     protected String name;
     protected String description;
     protected boolean required = false;
     protected String access;
     protected String pattern;
-    protected Boolean allowEmptyValue;
     protected Boolean readOnly;
 
     @Override
@@ -49,9 +48,6 @@ public abstract class AbstractParameter {
         if (pattern != null ? !pattern.equals(that.pattern) : that.pattern != null) {
             return false;
         }
-        if (allowEmptyValue != null ? !allowEmptyValue.equals(that.allowEmptyValue) : that.allowEmptyValue != null) {
-            return false;
-        }
         return readOnly != null ? readOnly.equals(that.readOnly) : that.readOnly == null;
 
     }
@@ -65,7 +61,6 @@ public abstract class AbstractParameter {
         result = 31 * result + (required ? 1 : 0);
         result = 31 * result + (access != null ? access.hashCode() : 0);
         result = 31 * result + (pattern != null ? pattern.hashCode() : 0);
-        result = 31 * result + (allowEmptyValue != null ? allowEmptyValue.hashCode() : 0);
         result = 31 * result + (readOnly != null ? readOnly.hashCode() : 0);
         return result;
     }
@@ -112,14 +107,6 @@ public abstract class AbstractParameter {
 
     public void setReadOnly(Boolean readOnly) {
         this.readOnly = readOnly;
-    }
-
-    public Boolean getAllowEmptyValue() {
-        return allowEmptyValue;
-    }
-
-    public void setAllowEmptyValue(Boolean allowEmptyValue) {
-        this.allowEmptyValue = allowEmptyValue;
     }
 
     public void setAccess(String access) {

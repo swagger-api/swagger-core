@@ -37,6 +37,7 @@ public abstract class AbstractSerializableParameter<T extends AbstractSerializab
     protected String example;
     private Integer maxItems;
     private Integer minItems;
+    protected Boolean allowEmptyValue;
 
     @JsonIgnore
     protected List<String> _enum;
@@ -385,6 +386,16 @@ public abstract class AbstractSerializableParameter<T extends AbstractSerializab
         this.minItems = minItems;
     }
 
+    @Override
+    public Boolean getAllowEmptyValue() {
+        return allowEmptyValue;
+    }
+
+    @Override
+    public void setAllowEmptyValue(Boolean allowEmptyValue) {
+        this.allowEmptyValue = allowEmptyValue;
+    }
+
     @JsonProperty("x-example")
     public Object getExample() {
         if (example == null) {
@@ -530,8 +541,15 @@ public abstract class AbstractSerializableParameter<T extends AbstractSerializab
             if (other.type != null) return false;
         } else if (!type.equals(other.type)) return false;
         if (uniqueItems == null) {
-            if (other.uniqueItems != null) return false;
-        } else if (!uniqueItems.equals(other.uniqueItems)) return false;
+            if (other.uniqueItems != null) {
+                return false;
+            }
+        } else if (!uniqueItems.equals(other.uniqueItems)) {
+            return false;
+        }
+        if (allowEmptyValue != null ? !allowEmptyValue.equals(other.allowEmptyValue) : other.allowEmptyValue != null) {
+            return false;
+        }
         return true;
     }
 
@@ -557,6 +575,7 @@ public abstract class AbstractSerializableParameter<T extends AbstractSerializab
         result = prime * result + ((pattern == null) ? 0 : pattern.hashCode());
         result = prime * result + ((type == null) ? 0 : type.hashCode());
         result = prime * result + ((uniqueItems == null) ? 0 : uniqueItems.hashCode());
+        result = prime * result + (allowEmptyValue != null ? allowEmptyValue.hashCode() : 0);
         return result;
     }
 }
