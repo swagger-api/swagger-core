@@ -25,13 +25,14 @@ import java.lang.annotation.Target;
 
 import static java.lang.annotation.ElementType.ANNOTATION_TYPE;
 import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.ElementType.TYPE;
 
 /**
  * Container for repeatable {@link ApiResponse} annotation
  *
  * @see ApiResponse
  */
-@Target({METHOD, ANNOTATION_TYPE})
+@Target({METHOD, TYPE, ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
 public @interface ApiResponses {

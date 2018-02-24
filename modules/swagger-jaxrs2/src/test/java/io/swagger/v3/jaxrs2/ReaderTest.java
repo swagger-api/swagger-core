@@ -9,6 +9,7 @@ import io.swagger.v3.jaxrs2.resources.DeprecatedFieldsResource;
 import io.swagger.v3.jaxrs2.resources.DuplicatedOperationIdResource;
 import io.swagger.v3.jaxrs2.resources.DuplicatedOperationMethodNameResource;
 import io.swagger.v3.jaxrs2.resources.DuplicatedSecurityResource;
+import io.swagger.v3.jaxrs2.resources.EnhancedResponsesResource;
 import io.swagger.v3.jaxrs2.resources.ExternalDocsReference;
 import io.swagger.v3.jaxrs2.resources.ResourceWithSubResource;
 import io.swagger.v3.jaxrs2.resources.ResponseContentWithArrayResource;
@@ -276,7 +277,45 @@ public class ReaderTest {
         assertEquals(RESPONSE_DESCRIPTION, apiResponse.getDescription());
     }
 
-    @Test(description = "Responses with composition")
+    @Test(description = "More Responses")
+    public void testMoreResponses() {
+        Reader reader = new Reader(new OpenAPI());
+        OpenAPI openAPI = reader.read(EnhancedResponsesResource.class);
+        String yaml = "openapi: 3.0.1\n" +
+                "paths:\n" +
+                "  /:\n" +
+                "    get:\n" +
+                "      summary: Simple get operation\n" +
+                "      description: Defines a simple get operation with no inputs and a complex output\n" +
+                "        object\n" +
+                "      operationId: getWithPayloadResponse\n" +
+                "      responses:\n" +
+                "        200:\n" +
+                "          description: voila!\n" +
+                "          content:\n" +
+                "            application/json:\n" +
+                "              schema:\n" +
+                "                $ref: '#/components/schemas/SampleResponseSchema'\n" +
+                "        404:\n" +
+                "          description: not found!\n" +
+                "        400:\n" +
+                "          description: boo\n" +
+                "          content:\n" +
+                "            '*/*':\n" +
+                "              schema:\n" +
+                "                $ref: '#/components/schemas/GenericError'\n" +
+                "      deprecated: true\n" +
+                "components:\n" +
+                "  schemas:\n" +
+                "    GenericError:\n" +
+                "      type: object\n" +
+                "    SampleResponseSchema:\n" +
+                "      type: object\n";
+
+        SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
+    }
+
+        @Test(description = "Responses with composition")
     public void testGetResponsesWithComposition() {
         Reader reader = new Reader(new OpenAPI());
 

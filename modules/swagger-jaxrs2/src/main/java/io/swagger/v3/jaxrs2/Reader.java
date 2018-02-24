@@ -251,6 +251,8 @@ public class Reader implements OpenApiReader {
             return openAPI;
         }
 
+        io.swagger.v3.oas.annotations.responses.ApiResponse[] classResponses = ReflectionUtils.getRepeatableAnnotationsArray(cls, io.swagger.v3.oas.annotations.responses.ApiResponse.class);
+
         List<io.swagger.v3.oas.annotations.security.SecurityScheme> apiSecurityScheme = ReflectionUtils.getRepeatableAnnotations(cls, io.swagger.v3.oas.annotations.security.SecurityScheme.class);
         List<io.swagger.v3.oas.annotations.security.SecurityRequirement> apiSecurityRequirements = ReflectionUtils.getRepeatableAnnotations(cls, io.swagger.v3.oas.annotations.security.SecurityRequirement.class);
 
@@ -428,7 +430,8 @@ public class Reader implements OpenApiReader {
                         isSubresource,
                         parentRequestBody,
                         parentResponses,
-                        jsonViewAnnotation
+                        jsonViewAnnotation,
+                        classResponses
                         );
                 if (operation != null) {
 
@@ -699,7 +702,8 @@ public class Reader implements OpenApiReader {
                 false,
                 null,
                 null,
-                jsonViewAnnotation);
+                jsonViewAnnotation,
+                null);
     }
 
     public Operation parseMethod(
@@ -716,7 +720,8 @@ public class Reader implements OpenApiReader {
             boolean isSubresource,
             RequestBody parentRequestBody,
             ApiResponses parentResponses,
-            JsonView jsonViewAnnotation) {
+            JsonView jsonViewAnnotation,
+            io.swagger.v3.oas.annotations.responses.ApiResponse[] classResponses) {
         JavaType classType = TypeFactory.defaultInstance().constructType(method.getDeclaringClass());
         return parseMethod(
                 classType.getClass(),
@@ -733,7 +738,8 @@ public class Reader implements OpenApiReader {
                 isSubresource,
                 parentRequestBody,
                 parentResponses,
-                jsonViewAnnotation);
+                jsonViewAnnotation,
+                classResponses);
     }
 
     private Operation parseMethod(
@@ -751,7 +757,8 @@ public class Reader implements OpenApiReader {
             boolean isSubresource,
             RequestBody parentRequestBody,
             ApiResponses parentResponses,
-            JsonView jsonViewAnnotation) {
+            JsonView jsonViewAnnotation,
+            io.swagger.v3.oas.annotations.responses.ApiResponse[] classResponses) {
         Operation operation = new Operation();
 
         io.swagger.v3.oas.annotations.Operation apiOperation = ReflectionUtils.getAnnotation(method, io.swagger.v3.oas.annotations.Operation.class);
@@ -836,6 +843,23 @@ public class Reader implements OpenApiReader {
         // operation id
         if (StringUtils.isBlank(operation.getOperationId())) {
             operation.setOperationId(getOperationId(method.getName()));
+        }
+
+        // classResponses
+        if (classResponses != null && classResponses.length > 0) {
+            OperationParser.getApiResponses(
+                    classResponses,
+                    classProduces,
+                    methodProduces,
+                    components,
+                    jsonViewAnnotation
+            ).ifPresent(responses -> {
+                if (operation.getResponses() == null) {
+                    operation.setResponses(responses);
+                } else {
+                    responses.forEach(operation.getResponses()::addApiResponse);
+                }
+            });
         }
 
         if (apiOperation != null) {
