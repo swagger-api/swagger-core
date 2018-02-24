@@ -742,6 +742,19 @@ public class Reader implements OpenApiReader {
                 classResponses);
     }
 
+    private void addApiResponses(Operation operation, Map<String, ApiResponse> responses) {
+        if (responses != null && !responses.isEmpty()) {
+            responses.forEach((code, response) -> {
+                if (!ApiResponses.DEFAULT.equals(code)) {
+                    if (operation.getResponses() == null) {
+                        operation.setResponses(new ApiResponses());
+                    }
+                    operation.getResponses().addApiResponse(code, response);
+                }
+            });
+        }
+    }
+
     private Operation parseMethod(
             Class<?> cls,
             Method method,
@@ -867,7 +880,9 @@ public class Reader implements OpenApiReader {
         }
 
         // apiResponses
-        if (apiResponses != null && apiResponses.size() > 0) {
+        addApiResponses(operation, components.getResponses());
+        addApiResponses(operation, parentResponses);
+        if (apiResponses != null && !apiResponses.isEmpty()) {
             OperationParser.getApiResponses(
                     apiResponses.toArray(new io.swagger.v3.oas.annotations.responses.ApiResponse[apiResponses.size()]),
                     classProduces,
