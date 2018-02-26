@@ -1,6 +1,8 @@
 package io.swagger.models.properties;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import io.swagger.models.Xml;
 import io.swagger.models.refs.GenericRef;
 import io.swagger.models.refs.RefFormat;
 import io.swagger.models.refs.RefType;
