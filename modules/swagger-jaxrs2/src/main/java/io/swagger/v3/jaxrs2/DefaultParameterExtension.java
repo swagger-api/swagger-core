@@ -79,12 +79,6 @@ public class DefaultParameterExtension extends AbstractOpenAPIExtension {
                 pp.setIn(COOKIE_PARAM);
                 pp.setName(param.value());
                 parameter = pp;
-            } else if (annotation instanceof FormParam) {
-                FormParam param = (FormParam) annotation;
-                Parameter pp = new Parameter();
-                pp.setIn(FORM_PARAM);
-                pp.setName(param.value());
-                parameter = pp;
             } else if (annotation instanceof io.swagger.v3.oas.annotations.Parameter) {
                 if (((io.swagger.v3.oas.annotations.Parameter) annotation).hidden()) {
                     extractParametersResult.parameters = parameters;
@@ -113,8 +107,11 @@ public class DefaultParameterExtension extends AbstractOpenAPIExtension {
                     classConsumes == null ? new String[0] : classConsumes.value(),
                     methodConsumes == null ? new String[0] : methodConsumes.value(), jsonViewAnnotation);
             if (unknownParameter != null) {
-                if (StringUtils.isNotBlank(unknownParameter.getIn())) {
+                if (StringUtils.isNotBlank(unknownParameter.getIn()) && !"form".equals(unknownParameter.getIn())) {
                     extractParametersResult.parameters.add(unknownParameter);
+                } else if ("form".equals(unknownParameter.getIn())) {
+                    unknownParameter.setIn(null);
+                    extractParametersResult.formParameter = unknownParameter;
                 } else {            // return as request body
                     extractParametersResult.requestBody = unknownParameter;
                 }

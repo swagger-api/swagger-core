@@ -33,6 +33,7 @@ import io.swagger.v3.oas.models.Paths;
 import io.swagger.v3.oas.models.callbacks.Callback;
 import io.swagger.v3.oas.models.media.Content;
 import io.swagger.v3.oas.models.media.MediaType;
+import io.swagger.v3.oas.models.media.ObjectSchema;
 import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.parameters.Parameter;
 import io.swagger.v3.oas.models.parameters.RequestBody;
@@ -436,21 +437,18 @@ public class Reader implements OpenApiReader {
                 if (operation != null) {
 
                     List<Parameter> operationParameters = new ArrayList<>();
+                    List<Parameter> formParameters = new ArrayList<>();
                     Annotation[][] paramAnnotations = ReflectionUtils.getParameterAnnotations(method);
                     if (annotatedMethod == null) { // annotatedMethod not null only when method with 0-2 parameters
                         Type[] genericParameterTypes = method.getGenericParameterTypes();
                         for (int i = 0; i < genericParameterTypes.length; i++) {
                             final Type type = TypeFactory.defaultInstance().constructType(genericParameterTypes[i], cls);
                             io.swagger.v3.oas.annotations.Parameter paramAnnotation = AnnotationsUtils.getAnnotation(io.swagger.v3.oas.annotations.Parameter.class, paramAnnotations[i]);
-                            Type paramType = ParameterProcessor.getParameterType(paramAnnotation);
+                            Type paramType = ParameterProcessor.getParameterType(paramAnnotation, true);
                             if (paramType == null) {
                                 paramType = type;
                             } else {
-                                if (paramType instanceof Class) {
-                                    if (((Class)paramType).isAssignableFrom(String.class)) {
-                                        paramType = type;
-                                    }
-                                } else {
+                                if (!(paramType instanceof Class)) {
                                     paramType = type;
                                 }
                             }
@@ -468,6 +466,9 @@ public class Reader implements OpenApiReader {
                                         paramAnnotations[i],
                                         type,
                                         jsonViewAnnotation);
+                            } else if (resolvedParameter.formParameter != null) {
+                                // collect params to use together as request Body
+                                formParameters.add(resolvedParameter.formParameter);
                             }
                         }
                     } else {
@@ -475,15 +476,11 @@ public class Reader implements OpenApiReader {
                             AnnotatedParameter param = annotatedMethod.getParameter(i);
                             final Type type = TypeFactory.defaultInstance().constructType(param.getParameterType(), cls);
                             io.swagger.v3.oas.annotations.Parameter paramAnnotation = AnnotationsUtils.getAnnotation(io.swagger.v3.oas.annotations.Parameter.class, paramAnnotations[i]);
-                            Type paramType = ParameterProcessor.getParameterType(paramAnnotation);
+                            Type paramType = ParameterProcessor.getParameterType(paramAnnotation, true);
                             if (paramType == null) {
                                 paramType = type;
                             } else {
-                                if (paramType instanceof Class) {
-                                    if (((Class)paramType).isAssignableFrom(String.class)) {
-                                        paramType = type;
-                                    }
-                                } else {
+                                if (!(paramType instanceof Class)) {
                                     paramType = type;
                                 }
                             }
@@ -501,10 +498,30 @@ public class Reader implements OpenApiReader {
                                         paramAnnotations[i],
                                         type,
                                         jsonViewAnnotation);
+                            } else if (resolvedParameter.formParameter != null) {
+                                // collect params to use together as request Body
+                                formParameters.add(resolvedParameter.formParameter);
                             }
                         }
                     }
+                    // if we have form parameters, need to merge them into single schema and use as request body..
+                    if (formParameters.size() > 0) {
+                        Schema mergedSchema = new ObjectSchema();
+                        for (Parameter formParam: formParameters) {
+                            mergedSchema.addProperties(formParam.getName(), formParam.getSchema());
+                        }
+                        Parameter merged = new Parameter().schema(mergedSchema);
+                        processRequestBody(
+                                merged,
+                                operation,
+                                methodConsumes,
+                                classConsumes,
+                                operationParameters,
+                                new Annotation[0],
+                                null,
+                                jsonViewAnnotation);
 
+                    }
                     if (operationParameters.size() > 0) {
                         for (Parameter operationParameter : operationParameters) {
                             operation.addParametersItem(operationParameter);

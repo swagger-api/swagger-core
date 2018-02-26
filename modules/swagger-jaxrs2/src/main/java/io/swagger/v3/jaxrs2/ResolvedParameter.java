@@ -8,4 +8,5 @@ import java.util.List;
 public class ResolvedParameter {
     public List<Parameter> parameters = new ArrayList<>();
     public Parameter requestBody;
+    public Parameter formParameter;
 }
