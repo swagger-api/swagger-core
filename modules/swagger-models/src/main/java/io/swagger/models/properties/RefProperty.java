@@ -102,9 +102,4 @@ public class RefProperty extends AbstractProperty implements Property {
         }
         return true;
     }
-
-    public RefProperty xml(Xml xml) {
-        this.setXml(xml);
-        return this;
-    }
 }
