@@ -21,6 +21,7 @@ public class AnnotatedType {
     private Annotation[] ctxAnnotations;
     private boolean resolveAsRef;
     private JsonView jsonViewAnnotation;
+    private boolean skipSchemaName;
 
     public AnnotatedType() {
     }
@@ -39,6 +40,19 @@ public class AnnotatedType {
 
     public AnnotatedType skipOverride(boolean skipOverride) {
         this.skipOverride = skipOverride;
+        return this;
+    }
+
+    public boolean isSkipSchemaName() {
+        return skipSchemaName;
+    }
+
+    public void setSkipSchemaName(boolean skipSchemaName) {
+        this.skipSchemaName = skipSchemaName;
+    }
+
+    public AnnotatedType skipSchemaName(boolean skipSchemaName) {
+        this.skipSchemaName = skipSchemaName;
         return this;
     }
 

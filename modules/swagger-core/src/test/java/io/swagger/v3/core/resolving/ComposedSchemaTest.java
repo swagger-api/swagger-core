@@ -4,7 +4,7 @@ import io.swagger.v3.core.converter.ModelConverters;
 import io.swagger.v3.core.resolving.resources.TestObject2616;
 import io.swagger.v3.core.resolving.resources.TestObjectTicket2620;
 import io.swagger.v3.core.resolving.resources.TestObjectTicket2620Subtypes;
-import io.swagger.v3.core.util.Yaml;
+import io.swagger.v3.oas.models.media.ArraySchema;
 import io.swagger.v3.oas.models.media.ComposedSchema;
 import io.swagger.v3.oas.models.media.Schema;
 import org.testng.Assert;
@@ -59,7 +59,42 @@ public class ComposedSchemaTest {
     @Test(description = "read composed schem refs #2616")
     public void readArrayComposedSchema_ticket2616() {
         Map<String, Schema> schemas = ModelConverters.getInstance().readAll(TestObject2616.class);
-        Yaml.prettyPrint(schemas);
+        Schema model = schemas.get("testObject");
+        Assert.assertNotNull(model);
+        Map<String, Schema> properties = model.getProperties();
+        Assert.assertNotNull(properties.get("objects"));
+        Assert.assertTrue(properties.get("objects") instanceof ArraySchema);
+        model = schemas.get("AbstractObject");
+        Assert.assertNotNull(model);
+        Assert.assertTrue(model instanceof ComposedSchema);
+        Assert.assertTrue(((ComposedSchema)model).getOneOf().size() == 2);
+        model = schemas.get("AObject");
+        Assert.assertNotNull(model);
+        model = schemas.get("BObject");
+        Assert.assertNotNull(model);
+        model = schemas.get("objects");
+        Assert.assertNull(model);
+
+    }
+
+    @Test(description = "read single composed schem refs #2616")
+    public void readComposedSchema_ticket2616() {
+        Map<String, Schema> schemas = ModelConverters.getInstance().readAll(TestObject2616.TestObject2616_Schema.class);
+        Schema model = schemas.get("TestObject2616_Schema");
+        Assert.assertNotNull(model);
+        Map<String, Schema> properties = model.getProperties();
+        Assert.assertNotNull(properties.get("object"));
+        Assert.assertTrue(properties.get("object").get$ref().equals("#/components/schemas/AbstractObject"));
+        model = schemas.get("AbstractObject");
+        Assert.assertNotNull(model);
+        Assert.assertTrue(model instanceof ComposedSchema);
+        Assert.assertTrue(((ComposedSchema)model).getOneOf().size() == 2);
+        model = schemas.get("AObject");
+        Assert.assertNotNull(model);
+        model = schemas.get("BObject");
+        Assert.assertNotNull(model);
+        model = schemas.get("objects");
+        Assert.assertNull(model);
     }
 
 }

@@ -10,18 +10,36 @@ public class TestObject2616 {
 
     private List<AbstractObject> objects;
 
+    @ArraySchema(schema = @Schema(
+            name = "objects",
+            oneOf = {
+                    AObject.class,
+                    BObject.class
+            }
+    ))
     public List<AbstractObject> getObjects() {return objects;}
 
     public void setObjects(List<AbstractObject> objects) {this.objects = objects;}
+
+    public static class TestObject2616_Schema {
+
+        private AbstractObject object;
+
+        @Schema(
+                name = "object",
+                oneOf = {
+                        AObject.class,
+                        BObject.class
+                }
+        )
+        public AbstractObject getObjects() {return object;}
+
+        public void setObject(AbstractObject object) {this.object = object;}
+    }
+
 }
 
-@ArraySchema(schema = @Schema(
-        name = "objects",
-        oneOf = {
-                AObject.class,
-                BObject.class
-        }
-))
+
 abstract class AbstractObject {}
 
 @Schema(name = "AObject")
