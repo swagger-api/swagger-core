@@ -27,7 +27,7 @@ import java.lang.annotation.Target;
  * Operations with equivalent paths are grouped in a single Operation Object.
  * A combination of a HTTP method and a path creates a unique operation.
  */
-@Target(ElementType.METHOD)
+@Target({ElementType.METHOD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ApiOperation {
     /**
