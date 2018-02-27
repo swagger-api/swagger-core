@@ -132,7 +132,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         String name = annotatedType.getName();
         if (StringUtils.isBlank(name)) {
             // allow override of name from annotation
-            if (resolvedSchemaAnnotation != null && !resolvedSchemaAnnotation.name().isEmpty()) {
+            if (!annotatedType.isSkipSchemaName() && resolvedSchemaAnnotation != null && !resolvedSchemaAnnotation.name().isEmpty()) {
                 name = resolvedSchemaAnnotation.name();
             }
             if (StringUtils.isBlank(name) && !ReflectionUtils.isSystemType(type)) {
@@ -296,14 +296,10 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             return context.resolve(aType);
         }
 
-        List<Class<?>> composedSchemaReferencedClasses = getComposedSchemaReferencedClasses(type.getRawClass());
+        List<Class<?>> composedSchemaReferencedClasses = getComposedSchemaReferencedClasses(type.getRawClass(), annotatedType.getCtxAnnotations());
         boolean isComposedSchema = composedSchemaReferencedClasses != null;
 
-        if (isComposedSchema) {
-            model = new ComposedSchema()
-                    .type("object")
-                    .name(name);
-        } else if (type.isContainerType()) {
+        if (type.isContainerType()) {
             JavaType keyType = type.getKeyType();
             JavaType valueType = type.getContentType();
             String pName = null;
@@ -311,7 +307,10 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 BeanDescription valueTypeBeanDesc = _mapper.getSerializationConfig().introspect(valueType);
                 pName = _typeName(valueType, valueTypeBeanDesc);
             }
-
+            Annotation[] schemaAnnotations = null;
+            if (resolvedSchemaAnnotation != null) {
+                schemaAnnotations = new Annotation[]{resolvedSchemaAnnotation};
+            }
             if (keyType != null && valueType != null) {
                 if (ReflectionUtils.isSystemType(type) && !annotatedType.isSchemaProperty() && !annotatedType.isResolveAsRef()) {
                     context.resolve(new AnnotatedType().type(valueType).jsonViewAnnotation(annotatedType.getJsonViewAnnotation()));
@@ -321,7 +320,8 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                         new AnnotatedType()
                                 .type(valueType)
                                 .schemaProperty(annotatedType.isSchemaProperty())
-                                //.ctxAnnotations(annotatedType.getCtxAnnotations())
+                                .ctxAnnotations(schemaAnnotations)
+                                .skipSchemaName(true)
                                 .resolveAsRef(annotatedType.isResolveAsRef())
                                 .jsonViewAnnotation(annotatedType.getJsonViewAnnotation())
                                 .parent(annotatedType.getParent()));
@@ -348,7 +348,8 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 Schema items = context.resolve(new AnnotatedType()
                         .type(valueType)
                         .schemaProperty(annotatedType.isSchemaProperty())
-                        //.ctxAnnotations(annotatedType.getCtxAnnotations())
+                        .ctxAnnotations(schemaAnnotations)
+                        .skipSchemaName(true)
                         .resolveAsRef(annotatedType.isResolveAsRef())
                         .jsonViewAnnotation(annotatedType.getJsonViewAnnotation())
                         .parent(annotatedType.getParent()));
@@ -392,6 +393,10 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                     return null;
                 }
             }
+        } else if (isComposedSchema) {
+            model = new ComposedSchema()
+                    .type("object")
+                    .name(name);
         } else {
             if (_isOptionalType(type)) {
                 AnnotatedType aType = new AnnotatedType()
@@ -526,6 +531,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                         .parent(model)
                         .resolveAsRef(annotatedType.isResolveAsRef())
                         .jsonViewAnnotation(annotatedType.getJsonViewAnnotation())
+                        .skipSchemaName(true)
                         .schemaProperty(true);
 
                 aType.jsonUnwrappedHandler((t) -> {
@@ -726,8 +732,15 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             return schema;
         }
 
-
-            return model;
+        if (model != null && model instanceof ArraySchema) {
+            Schema items = ((ArraySchema)model).getItems();
+            if (items != null) {
+                if (items.getExample() != null && model.getExample() != null) {
+                    items.setExample(null);
+                }
+            }
+        }
+        return model;
     }
 
     private boolean isSubtype(AnnotatedClass childClass, Class<?> parentClass) {
@@ -1141,9 +1154,13 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         }
     }
 
-    protected List<Class<?>> getComposedSchemaReferencedClasses(Class<?> clazz) {
+    protected List<Class<?>> getComposedSchemaReferencedClasses(Class<?> clazz, Annotation[] ctxAnnotations) {
 
-        final io.swagger.v3.oas.annotations.media.Schema schemaAnnotation = AnnotationsUtils.getSchemaDeclaredAnnotation(clazz);
+        io.swagger.v3.oas.annotations.media.Schema schemaAnnotation = AnnotationsUtils.getSchemaAnnotation(ctxAnnotations);
+        if (schemaAnnotation == null) {
+            schemaAnnotation = AnnotationsUtils.getSchemaDeclaredAnnotation(clazz);
+        }
+
         if (schemaAnnotation != null) {
             Class<?>[] allOf = schemaAnnotation.allOf();
             Class<?>[] anyOf = schemaAnnotation.anyOf();
