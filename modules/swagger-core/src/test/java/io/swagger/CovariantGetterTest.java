@@ -5,6 +5,7 @@ import static org.testng.Assert.assertEquals;
 import io.swagger.converter.ModelConverters;
 import io.swagger.matchers.SerializationMatchers;
 import io.swagger.models.JCovariantGetter;
+import io.swagger.models.JCovariantGetter.Sub;
 import io.swagger.models.Model;
 
 import org.testng.annotations.Test;
@@ -17,7 +18,7 @@ public class CovariantGetterTest {
         final Map<String, Model> models = ModelConverters.getInstance().read(JCovariantGetter.Sub.class);
         assertEquals(models.size(), 1);
         final String json = "{" +
-                "   \"Sub\":{" +
+                "   \""+Sub.class.getName()+"\":{" +
                 "      \"type\":\"object\"," +
                 "      \"properties\":{" +
                 "         \"myProperty\":{" +

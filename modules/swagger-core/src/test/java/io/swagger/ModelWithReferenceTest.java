@@ -17,7 +17,7 @@ public class ModelWithReferenceTest {
     public void convertModelWithReferenceProperty() throws IOException {
         final Map<String, Model> schemas = ModelConverters.getInstance().read(ModelWithReference.class);
         final String json = "{\n" +
-                "   \"ModelWithReference\":{\n" +
+                "   \""+ModelWithReference.class.getName()+"\":{\n" +
                 "      \"type\":\"object\",\n" +
                 "      \"properties\":{\n" +
                 "         \"description\":{\n" +
@@ -33,7 +33,7 @@ public class ModelWithReferenceTest {
     public void convertModelWithReferenceAndReferenceProperty() throws IOException {
         final Map<String, Model> schemas = ModelConverters.getInstance().read(ModelContainingModelWithReference.class);
         final String json = "{\n" +
-                "   \"ModelContainingModelWithReference\":{\n" +
+                "   \""+ModelContainingModelWithReference.class.getName()+"\":{\n" +
                 "      \"type\":\"object\",\n" +
                 "      \"properties\":{\n" +
                 "         \"model\":{\n" +

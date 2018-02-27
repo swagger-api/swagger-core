@@ -25,7 +25,7 @@
                         "description":"Test",
                         "required":true,
                         "schema":{
-                            "$ref":"#/definitions/ModelWithJsonIdentity"
+                            "$ref":"#/definitions/io.swagger.models.ModelWithJsonIdentity"
                         }
                     }
                 ],
@@ -38,7 +38,7 @@
         }
     },
     "definitions":{
-        "SourceDefinition4":{
+        "io.swagger.models.ModelWithJsonIdentity$SourceDefinition4":{
             "type":"object",
             "properties":{
                 "name":{
@@ -50,7 +50,7 @@
                 }
             }
         },
-        "SourceDefinition5":{
+        "io.swagger.models.ModelWithJsonIdentity$SourceDefinition5":{
             "type":"object",
             "properties":{
                 "name":{
@@ -62,14 +62,14 @@
                 }
             }
         },
-        "ModelWithJsonIdentity":{
+        "io.swagger.models.ModelWithJsonIdentity":{
             "type":"object",
             "properties":{
                 "PropertyGeneratorAsId":{
                     "type":"string"
                 },
                 "PropertyGeneratorAsProperty":{
-                    "$ref":"#/definitions/SourceDefinition1"
+                    "$ref":"#/definitions/io.swagger.models.ModelWithJsonIdentity$SourceDefinition1"
                 },
                 "ChangedPropertyName":{
                     "type":"string"
@@ -78,48 +78,48 @@
                     "type":"string"
                 },
                 "SourceWithoutPropertyAsProperty":{
-                    "$ref":"#/definitions/SourceDefinition3"
+                    "$ref":"#/definitions/io.swagger.models.ModelWithJsonIdentity$SourceDefinition3"
                 },
                 "IntSequenceGeneratorAsId":{
                     "type":"integer",
                     "format":"int32"
                 },
                 "IntSequenceGeneratorAsProperty":{
-                    "$ref":"#/definitions/SourceDefinition4"
+                    "$ref":"#/definitions/io.swagger.models.ModelWithJsonIdentity$SourceDefinition4"
                 },
                 "IntSequenceWithoutPropertyAsId":{
                     "type":"integer",
                     "format":"int32"
                 },
                 "IntSequenceWithoutPropertyAsProperty":{
-                    "$ref":"#/definitions/SourceDefinition5"
+                    "$ref":"#/definitions/io.swagger.models.ModelWithJsonIdentity$SourceDefinition5"
                 },
                 "UUIDGeneratorAsId":{
                     "type":"string",
                     "format":"uuid"
                 },
                 "UUIDGeneratorAsProperty":{
-                    "$ref":"#/definitions/SourceDefinition6"
+                    "$ref":"#/definitions/io.swagger.models.ModelWithJsonIdentity$SourceDefinition6"
                 },
                 "UUIDGeneratorWithoutPropertyAsId":{
                     "type":"string",
                     "format":"uuid"
                 },
                 "UUIDGeneratorWithoutPropertyAsProperty":{
-                    "$ref":"#/definitions/SourceDefinition7"
+                    "$ref":"#/definitions/io.swagger.models.ModelWithJsonIdentity$SourceDefinition7"
                 },
                 "GeneratorsNone":{
-                    "$ref":"#/definitions/SourceDefinition8"
+                    "$ref":"#/definitions/io.swagger.models.ModelWithJsonIdentity$SourceDefinition8"
                 },
                 "CustomGenerator":{
                     "type":"string"
                 },
                 "WithoutJsonIdentityReference":{
-                    "$ref":"#/definitions/SourceDefinition10"
+                    "$ref":"#/definitions/io.swagger.models.ModelWithJsonIdentity$SourceDefinition10"
                 }
             }
         },
-        "SourceDefinition3":{
+        "io.swagger.models.ModelWithJsonIdentity$SourceDefinition3":{
             "type":"object",
             "properties":{
                 "name":{
@@ -133,7 +133,7 @@
                 }
             }
         },
-        "SourceDefinition10":{
+        "io.swagger.models.ModelWithJsonIdentity$SourceDefinition10":{
             "type":"object",
             "properties":{
                 "driver":{
@@ -144,7 +144,7 @@
                 }
             }
         },
-        "SourceDefinition1":{
+        "io.swagger.models.ModelWithJsonIdentity$SourceDefinition1":{
             "type":"object",
             "properties":{
                 "driver":{
@@ -155,7 +155,7 @@
                 }
             }
         },
-        "SourceDefinition8":{
+        "io.swagger.models.ModelWithJsonIdentity$SourceDefinition8":{
             "type":"object",
             "properties":{
                 "name":{
@@ -166,7 +166,7 @@
                 }
             }
         },
-        "SourceDefinition6":{
+        "io.swagger.models.ModelWithJsonIdentity$SourceDefinition6":{
             "type":"object",
             "properties":{
                 "name":{
@@ -178,7 +178,7 @@
                 }
             }
         },
-        "SourceDefinition7":{
+        "io.swagger.models.ModelWithJsonIdentity$SourceDefinition7":{
             "type":"object",
             "properties":{
                 "name":{

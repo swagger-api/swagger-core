@@ -1,5 +1,5 @@
 {
-    "Cat": {
+    "io.swagger.models.Cat": {
         "type": "object",
         "required": [
             "isDomestic",

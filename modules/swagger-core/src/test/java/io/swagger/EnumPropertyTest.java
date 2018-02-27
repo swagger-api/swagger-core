@@ -21,7 +21,7 @@ public class EnumPropertyTest {
     public void testEnumProperty() {
         final Map<String, Model> models = ModelConverters.getInstance().read(ModelWithEnumProperty.class);
         final String json = "{" +
-                "   \"ModelWithEnumProperty\":{" +
+                "   \""+ModelWithEnumProperty.class.getName()+"\":{" +
                 "      \"type\":\"object\"," +
                 "      \"properties\":{" +
                 "         \"enumValue\":{" +
@@ -42,7 +42,7 @@ public class EnumPropertyTest {
     @Test(description = "it should extract enum values from fields")
     public void testExtractEnumFields() {
         final Map<String, Model> models = ModelConverters.getInstance().read(ModelWithEnumField.class);
-        final Model model = models.get("ModelWithEnumField");
+        final Model model = models.get(ModelWithEnumField.class.getName());
         final Property enumProperty = model.getProperties().get("enumValue");
         assertTrue(enumProperty instanceof StringProperty);
 
@@ -52,7 +52,7 @@ public class EnumPropertyTest {
     @Test(description = "it should extract enum values from method return types")
     public void testExtractEnumReturnType() {
         final Map<String, Model> models = ModelConverters.getInstance().read(ModelWithEnumProperty.class);
-        final Model model = models.get("ModelWithEnumProperty");
+        final Model model = models.get(ModelWithEnumProperty.class.getName());
         final Property enumProperty = model.getProperties().get("enumValue");
         assertTrue(enumProperty instanceof StringProperty);
 

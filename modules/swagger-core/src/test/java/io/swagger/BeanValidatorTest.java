@@ -20,7 +20,7 @@ public class BeanValidatorTest {
     @Test(description = "read bean validations")
     public void readBeanValidatorTest() {
         final Map<String, Model> schemas = ModelConverters.getInstance().readAll(BeanValidationsModel.class);
-        final Model model = schemas.get("BeanValidationsModel");
+        final Model model = schemas.get(BeanValidationsModel.class.getName());
         final Map<String, Property> properties = model.getProperties();
 
         final IntegerProperty age = (IntegerProperty) properties.get("age");

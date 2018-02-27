@@ -23,7 +23,7 @@ public class XMLGregorianCalendarTest {
         final Map<String, Model> models = ModelConverters.getInstance().readAll(ModelWithCalendar.class);
         assertEquals(models.size(), 1); // don't create a Joda DateTime object
 
-        final Map<String, Property> properties = models.get("ModelWithCalendar").getProperties();
+        final Map<String, Property> properties = models.get(ModelWithCalendar.class.getName()).getProperties();
 
         final Property nameProperty = properties.get("name");
         assertTrue(nameProperty instanceof StringProperty);

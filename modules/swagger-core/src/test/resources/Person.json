@@ -1,5 +1,5 @@
 {
-    "Person": {
+    "io.swagger.models.Person": {
         "type": "object",
         "properties": {
             "id": {
@@ -10,7 +10,7 @@
                 "type": "string"
             },
             "address": {
-                "$ref": "#/definitions/Address"
+                "$ref": "#/definitions/io.swagger.models.Address"
             },
             "properties": {
                 "type": "object",

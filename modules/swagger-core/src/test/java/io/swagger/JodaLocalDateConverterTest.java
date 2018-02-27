@@ -22,7 +22,7 @@ public class JodaLocalDateConverterTest {
         final Map<String, Model> models = ModelConverters.getInstance().read(ModelWithJodaLocalDate.class);
         assertEquals(models.size(), 1);
 
-        final Model model = models.get("ModelWithJodaLocalDate");
+        final Model model = models.get(ModelWithJodaLocalDate.class.getName());
 
         final Property dateTimeProperty = model.getProperties().get("createdAt");
         assertTrue(dateTimeProperty instanceof DateProperty);

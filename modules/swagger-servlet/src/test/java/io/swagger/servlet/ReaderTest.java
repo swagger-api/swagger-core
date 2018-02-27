@@ -6,6 +6,7 @@ import io.swagger.models.Path;
 import io.swagger.models.Scheme;
 import io.swagger.models.Swagger;
 import io.swagger.models.Tag;
+import io.swagger.servlet.models.SampleData;
 import io.swagger.servlet.resources.ResourceWithAnnotations;
 import io.swagger.servlet.resources.ResourceWithoutApiAnnotation;
 
@@ -44,7 +45,7 @@ public class ReaderTest {
         Assert.assertEquals(swagger.getHost(), "host");
         Assert.assertEquals(swagger.getBasePath(), "/api");
         Assert.assertNotNull(swagger.getPath("/resources/users"));
-        Assert.assertNotNull(swagger.getDefinitions().get("SampleData"));
+        Assert.assertNotNull(swagger.getDefinitions().get(SampleData.class.getName()));
         Assert.assertEquals(swagger.getExternalDocs().getDescription(), "docs");
         Assert.assertEquals(swagger.getExternalDocs().getUrl(), "url_to_docs");
 

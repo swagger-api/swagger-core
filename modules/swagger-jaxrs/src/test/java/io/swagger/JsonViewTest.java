@@ -152,7 +152,7 @@ public class JsonViewTest {
         Assert.assertTrue(swaggerJson.contains("tires"));
         Assert.assertTrue(swaggerJson.contains("brand"));
         Assert.assertTrue(swaggerJson.contains("condition"));
-        Assert.assertTrue(swaggerJson.contains("Car_Detail"));
+        Assert.assertTrue(swaggerJson.contains(Car.class.getName()+"_"+ View.Detail.class.getName()));
 
         swagger = getSwagger(CarSaleSummaryApi.class);
         swaggerJson = Json.mapper().writeValueAsString(swagger);

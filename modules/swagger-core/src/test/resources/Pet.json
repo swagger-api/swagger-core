@@ -1,5 +1,5 @@
 {
-    "Pet": {
+    "io.swagger.models.composition.Pet": {
         "type": "object",
         "required": [
             "isDomestic",

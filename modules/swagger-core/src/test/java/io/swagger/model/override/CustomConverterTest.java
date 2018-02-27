@@ -27,7 +27,7 @@ public class CustomConverterTest {
         final ModelConverters converters = new ModelConverters();
         converters.addConverter(new CustomConverter());
 
-        final Model model = converters.read(Foo.class).get("Foo");
+        final Model model = converters.read(Foo.class).get(Foo.class.getName());
         assertNotNull(model);
         assertEquals(model.getProperties().size(), 1);
 

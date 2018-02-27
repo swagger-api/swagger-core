@@ -1,12 +1,12 @@
 {
-    "AbstractBaseModelWithoutFields": {
+    "io.swagger.models.composition.AbstractBaseModelWithoutFields": {
         "type": "object",
         "description": "I am an Abstract Base Model without any declared fields and with Sub-Types"
     },
-    "Thing3": {
+    "io.swagger.models.composition.Thing3": {
         "allOf": [
             {
-                "$ref": "#/definitions/AbstractBaseModelWithoutFields"
+                "$ref": "#/definitions/io.swagger.models.composition.AbstractBaseModelWithoutFields"
             },
             {
                 "type": "object",

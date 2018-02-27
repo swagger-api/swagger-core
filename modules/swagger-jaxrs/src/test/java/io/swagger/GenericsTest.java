@@ -5,11 +5,14 @@ import com.google.common.collect.Collections2;
 import com.google.common.collect.Sets;
 import io.swagger.jaxrs.Reader;
 import io.swagger.models.ArrayModel;
+import io.swagger.models.GenericListWrapper;
+import io.swagger.models.GenericType;
 import io.swagger.models.Model;
 import io.swagger.models.Operation;
 import io.swagger.models.RefModel;
 import io.swagger.models.Swagger;
 import io.swagger.models.TestEnum;
+import io.swagger.models.duplicated.Tag;
 import io.swagger.models.parameters.BodyParameter;
 import io.swagger.models.parameters.QueryParameter;
 import io.swagger.models.properties.ArrayProperty;
@@ -20,6 +23,8 @@ import io.swagger.models.properties.UUIDProperty;
 import io.swagger.resources.ResourceWithGenerics;
 import io.swagger.resources.generics.UserApiRoute;
 
+import java.util.UUID;
+import org.apache.commons.lang3.text.WordUtils;
 import org.testng.annotations.Test;
 
 import java.util.Arrays;
@@ -147,7 +152,7 @@ public class GenericsTest {
         assertEquals(op.getParameters().size(), 1);
         BodyParameter p = getBodyParameter(op, 0);
         ArrayModel objArray = (ArrayModel) p.getSchema();
-        assertEquals(((RefProperty) objArray.getItems()).getSimpleRef(), "Tag");
+        assertEquals(((RefProperty) objArray.getItems()).getSimpleRef(), Tag.class.getName());
     }
 
     @Test(description = "check collection of enumerations as body parameter")
@@ -165,40 +170,43 @@ public class GenericsTest {
         assertEquals(op.getParameters().size(), 1);
         BodyParameter p = getBodyParameter(op, 0);
         ArrayModel ddArray = (ArrayModel) p.getSchema();
-        assertEquals(((RefProperty) ((ArrayProperty) ddArray.getItems()).getItems()).getSimpleRef(), "Tag");
+        assertEquals(((RefProperty) ((ArrayProperty) ddArray.getItems()).getItems()).getSimpleRef(), Tag.class.getName());
     }
 
     @Test(description = "check parameters of generic types")
     public void checkParametersOfGenericTypes() {
-        Set<String> genericTypes = new HashSet(Arrays.asList("GenericTypeString", "GenericTypeUUID", "GenericTypeGenericTypeString",
-                "RenamedGenericTypeString", "RenamedGenericTypeRenamedGenericTypeString"));
+        Set<String> genericTypes = new HashSet(Arrays.asList(GenericType.class.getName()+ WordUtils.capitalize(String.class.getName()),
+            GenericType.class.getName()+WordUtils.capitalize(UUID.class.getName()),
+            GenericType.class.getName()+WordUtils.capitalize(String.class.getName()),
+            "RenamedGenericType"+WordUtils.capitalize(String.class.getName()),
+            "RenamedGenericTypeRenamedGenericType"+WordUtils.capitalize(String.class.getName())));
         assertTrue(swagger.getDefinitions().keySet().containsAll(genericTypes));
 
         Operation opString = getOperation("testGenericType");
-        testGenericType(opString, "GenericTypeString");
-        Property strValue = getProperty("GenericTypeString", "value");
+        testGenericType(opString, GenericType.class.getName()+WordUtils.capitalize(String.class.getName()));
+        Property strValue = getProperty(GenericType.class.getName()+WordUtils.capitalize(String.class.getName()), "value");
         assertNotEquals(strValue, null);
         assertEquals(strValue.getClass().getName(), StringProperty.class.getName());
 
         Operation opUUID = getOperation("testStringBasedGenericType");
-        testGenericType(opUUID, "GenericTypeUUID");
-        Property uuidValue = getProperty("GenericTypeUUID", "value");
+        testGenericType(opUUID, GenericType.class.getName()+WordUtils.capitalize(UUID.class.getName()));
+        Property uuidValue = getProperty(GenericType.class.getName()+WordUtils.capitalize(UUID.class.getName()), "value");
         assertNotEquals(uuidValue, null);
         assertEquals(uuidValue.getClass().getName(), UUIDProperty.class.getName());
 
         Operation opComplex = getOperation("testComplexGenericType");
-        testGenericType(opComplex, "GenericTypeGenericTypeString");
-        Property complexValue = getProperty("GenericTypeGenericTypeString", "value");
+        testGenericType(opComplex, GenericType.class.getName()+WordUtils.capitalize(GenericType.class.getName())+WordUtils.capitalize(String.class.getName()));
+        Property complexValue = getProperty(GenericType.class.getName()+WordUtils.capitalize(GenericType.class.getName())+WordUtils.capitalize(String.class.getName()), "value");
         assertNotEquals(complexValue, null);
         assertEquals(complexValue.getClass().getName(), RefProperty.class.getName());
-        assertEquals(((RefProperty) complexValue).getSimpleRef(), "GenericTypeString");
+        assertEquals(((RefProperty) complexValue).getSimpleRef(), GenericType.class.getName()+WordUtils.capitalize(String.class.getName()));
 
         Operation opRenamed = getOperation("testRenamedGenericType");
-        testGenericType(opRenamed, "RenamedGenericTypeRenamedGenericTypeString");
-        Property renamedComplexValue = getProperty("RenamedGenericTypeRenamedGenericTypeString", "value");
+        testGenericType(opRenamed, "RenamedGenericTypeRenamedGenericType"+ WordUtils.capitalize(String.class.getName()));
+        Property renamedComplexValue = getProperty("RenamedGenericTypeRenamedGenericType"+WordUtils.capitalize(String.class.getName()), "value");
         assertNotEquals(renamedComplexValue, null);
         assertTrue(renamedComplexValue instanceof RefProperty);
-        assertEquals(((RefProperty) renamedComplexValue).getSimpleRef(), "RenamedGenericTypeString");
+        assertEquals(((RefProperty) renamedComplexValue).getSimpleRef(), "RenamedGenericType"+WordUtils.capitalize(String.class.getName()));
     }
 
     @Test(description = "check generic result")
@@ -206,15 +214,15 @@ public class GenericsTest {
         Operation op = swagger.getPath("/generics/testGenericResult").getGet();
         Property schema = op.getResponses().get("200").getSchema();
         assertEquals(schema.getClass().getName(), RefProperty.class.getName());
-        assertEquals(((RefProperty) schema).getSimpleRef(), "GenericListWrapperTag");
+        assertEquals(((RefProperty) schema).getSimpleRef(), GenericListWrapper.class.getName()+WordUtils.capitalize(Tag.class.getName()));
 
-        Property entries = getProperty("GenericListWrapperTag", "entries");
+        Property entries = getProperty(GenericListWrapper.class.getName()+WordUtils.capitalize(Tag.class.getName()), "entries");
         assertNotEquals(entries, null);
         assertEquals(entries.getClass().getName(), ArrayProperty.class.getName());
 
         Property items = ((ArrayProperty) entries).getItems();
         assertEquals(items.getClass().getName(), RefProperty.class.getName());
-        assertEquals(((RefProperty) items).getSimpleRef(), "Tag");
+        assertEquals(((RefProperty) items).getSimpleRef(), Tag.class.getName());
     }
 
     @Test(description = "scan model with Generic Type")

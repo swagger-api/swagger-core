@@ -7,6 +7,7 @@ import io.swagger.jaxrs.DefaultParameterExtension;
 import io.swagger.jaxrs.Reader;
 import io.swagger.jaxrs.ext.SwaggerExtensions;
 import io.swagger.jersey.SwaggerJersey2Jaxrs;
+import io.swagger.models.JacksonBean;
 import io.swagger.models.Model;
 import io.swagger.models.Swagger;
 import io.swagger.models.TestEnum;
@@ -186,7 +187,7 @@ public class SwaggerJersey2JaxrsTest {
     @Test(description = "JsonUnwrapped, JsonIgnore, JsonValue should be honoured")
     public void testJacksonFeatures() {
         final Swagger swagger = new Reader(new Swagger()).read(ResourceWithJacksonBean.class);
-        Model o = swagger.getDefinitions().get("JacksonBean");
+        Model o = swagger.getDefinitions().get(JacksonBean.class.getName());
 
         assertEquals(o.getProperties().keySet(), Sets.newHashSet("identity", "bean", "code", "message",
                 "precodesuf", "premessagesuf"));

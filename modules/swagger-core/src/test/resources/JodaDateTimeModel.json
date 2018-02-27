@@ -1,5 +1,5 @@
 {
-    "JodaDateTimeModel": {
+    "io.swagger.models.JodaDateTimeModel": {
         "type": "object",
         "properties": {
             "createdAt": {

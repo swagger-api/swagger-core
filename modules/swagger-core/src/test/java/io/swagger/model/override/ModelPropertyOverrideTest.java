@@ -15,7 +15,7 @@ public class ModelPropertyOverrideTest {
         ModelConverters.getInstance().addConverter(new SamplePropertyConverter());
         final Map<String, Model> model = ModelConverters.getInstance().read(MyPojo.class);
         final String expected = "{" +
-                "  \"MyPojo\" : {" +
+                "  \""+MyPojo.class.getName()+"\" : {" +
                 "    \"type\" : \"object\"," +
                 "    \"properties\" : {" +
                 "      \"id\" : {" +

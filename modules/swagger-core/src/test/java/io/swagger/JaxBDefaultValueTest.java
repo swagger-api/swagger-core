@@ -18,7 +18,7 @@ public class JaxBDefaultValueTest {
     @Test(description = "convert a model with Guava optionals")
     public void convertModelWithGuavaOptionals() {
         final Map<String, Model> schemas = ModelConverters.getInstance().read(ModelWithJaxBDefaultValues.class);
-        final Map<String, Property> properties = schemas.get("ModelWithJaxBDefaultValues").getProperties();
+        final Map<String, Property> properties = schemas.get(ModelWithJaxBDefaultValues.class.getName()).getProperties();
         assertEquals(properties.size(), 2);
         assertEquals(((StringProperty) properties.get("name")).getDefault(), "Tony");
         assertEquals((int) ((IntegerProperty) properties.get("age")).getDefault(), 100);

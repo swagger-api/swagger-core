@@ -38,7 +38,7 @@
                     "200": {
                         "description": "successful operation",
                         "schema": {
-                            "$ref": "#/definitions/ModelContainingModelWithReference"
+                            "$ref": "#/definitions/io.swagger.models.ModelContainingModelWithReference"
                         }
                     }
                 }
@@ -107,14 +107,14 @@
         }
     },
     "definitions": {
-        "ModelWithReference": {
+        "io.swagger.models.ModelWithReference": {
             "type": "object",
             "properties": {
                 "nested": {
                     "type": "array",
                     "description": "SubModelWithSelfReference",
                     "items": {
-                        "$ref": "#/definitions/SubModelWithSelfReference"
+                        "$ref": "#/definitions/io.swagger.models.SubModelWithSelfReference"
                     }
                 },
                 "description": {
@@ -122,7 +122,7 @@
                 }
             }
         },
-        "ModelContainingModelWithReference": {
+        "io.swagger.models.ModelContainingModelWithReference": {
             "type": "object",
             "properties": {
                 "model": {
@@ -133,14 +133,14 @@
                 }
             }
         },
-        "SubModelWithSelfReference": {
+        "io.swagger.models.SubModelWithSelfReference": {
             "type": "object",
             "properties": {
                 "references": {
                     "type": "array",
                     "description": "References",
                     "items": {
-                        "$ref": "#/definitions/SubModelWithSelfReference"
+                        "$ref": "#/definitions/io.swagger.models.SubModelWithSelfReference"
                     }
                 }
             }

@@ -49,16 +49,16 @@
                     }
                 ],
                 "responses":{
-                    "default":{
-                        "description":"error response",
-                        "schema":{
-                            "$ref":"#/definitions/Error"
-                        }
-                    },
                     "200":{
                         "description":"pets returned",
                         "schema":{
-                            "$ref":"#/definitions/Person"
+                            "$ref":"#/definitions/io.swagger.models.Person"
+                        }
+                    },
+                    "default":{
+                        "description":"error response",
+                        "schema":{
+                            "$ref":"#/definitions/io.swagger.models.Error"
                         }
                     }
                 },
@@ -89,7 +89,7 @@
         }
     },
     "definitions":{
-        "Error":{
+        "io.swagger.models.Error":{
             "type":"object",
             "properties":{
                 "code":{
@@ -101,7 +101,7 @@
                 }
             }
         },
-        "Person":{
+        "io.swagger.models.Person":{
             "type":"object",
             "properties":{
                 "id":{
@@ -112,7 +112,7 @@
                     "type":"string"
                 },
                 "address":{
-                    "$ref":"#/definitions/Address"
+                    "$ref":"#/definitions/io.swagger.models.Address"
                 },
                 "properties":{
                     "type":"object",

@@ -10,6 +10,8 @@ import io.swagger.models.ExternalDocs;
 import io.swagger.models.Manufacturers;
 import io.swagger.models.Model;
 import io.swagger.models.ModelImpl;
+import io.swagger.models.ReadOnlyModel;
+import io.swagger.models.ReadOnlyModelUpdated;
 import io.swagger.models.RefModel;
 import io.swagger.models.Xml;
 import io.swagger.models.properties.DateProperty;
@@ -143,7 +145,7 @@ public class ModelSerializerTest {
     public void makeFieldReadOnly() throws IOException {
         final Map<String, Model> schemas = ModelConverters.getInstance().read(Car.class);
         final String json = "{\n" +
-                "   \"Car\":{\n" +
+                "   \""+Car.class.getName()+"\":{\n" +
                 "      \"type\":\"object\",\n" +
                 "      \"properties\":{\n" +
                 "         \"wheelCount\":{\n" +
@@ -161,7 +163,7 @@ public class ModelSerializerTest {
     public void serializeModelWithSet() throws IOException {
         final Map<String, Model> schemas = ModelConverters.getInstance().read(Manufacturers.class);
         final String json = "{\n" +
-                "   \"Manufacturers\":{\n" +
+                "   \""+Manufacturers.class.getName()+"\":{\n" +
                 "      \"type\":\"object\",\n" +
                 "      \"properties\":{\n" +
                 "         \"countries\":{\n" +
@@ -240,7 +242,7 @@ public class ModelSerializerTest {
     public void readOnlyJsonGeneration() throws IOException {
         Map<String, Model> models = ModelConverters.getInstance().read(io.swagger.models.ReadOnlyModel.class);
 
-        Model model = models.get("ReadOnlyModel");
+        Model model = models.get(ReadOnlyModel.class.getName());
 
         Property id = model.getProperties().get("id");
         assertTrue(id.getReadOnly());
@@ -253,7 +255,7 @@ public class ModelSerializerTest {
     public void readOnlyAccessModeJsonGeneration() throws IOException {
         Map<String, Model> models = ModelConverters.getInstance().read(io.swagger.models.ReadOnlyModelUpdated.class);
 
-        Model model = models.get("ReadOnlyModelUpdated");
+        Model model = models.get(ReadOnlyModelUpdated.class.getName());
 
         Property id = model.getProperties().get("id");
         assertTrue(id.getReadOnly());

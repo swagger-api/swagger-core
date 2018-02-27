@@ -19,7 +19,7 @@ public class ModelWithRangesTest {
 
     @Test(description = "test model with @ApiModelProperty.allowableValues")
     public void modelWithRangesTest() {
-        final Map<String, Property> properties = ModelConverters.getInstance().read(ModelWithRanges.class).get("ModelWithRanges").getProperties();
+        final Map<String, Property> properties = ModelConverters.getInstance().read(ModelWithRanges.class).get(ModelWithRanges.class.getName()).getProperties();
 
         final IntegerProperty inclusiveRange = (IntegerProperty) properties.get("inclusiveRange");
         assertEquals(inclusiveRange.getMinimum(), new BigDecimal(1));

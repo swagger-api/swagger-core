@@ -1,5 +1,5 @@
 {
-    "Animal": {
+    "io.swagger.models.composition.Animal": {
         "type": "object",
         "properties": {
             "name": {
@@ -11,10 +11,10 @@
         },
         "discriminator": "type"
     },
-    "Human": {
+    "io.swagger.models.composition.Human": {
         "allOf": [
             {
-                "$ref": "#/definitions/Animal"
+                "$ref": "#/definitions/io.swagger.models.composition.Animal"
             },
             {
                 "type": "object",
@@ -29,10 +29,10 @@
             }
         ]
     },
-    "Pet": {
+    "io.swagger.models.composition.Pet": {
         "allOf": [
             {
-                "$ref": "#/definitions/Animal"
+                "$ref": "#/definitions/io.swagger.models.composition.Animal"
             },
             {
                 "type": "object",

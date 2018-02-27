@@ -10,6 +10,7 @@ import io.swagger.models.parameters.BodyParameter;
 import io.swagger.models.parameters.HeaderParameter;
 import io.swagger.models.parameters.Parameter;
 import io.swagger.models.parameters.QueryParameter;
+import io.swagger.resources.ClassWithString;
 import io.swagger.resources.ResourceWithBeanParams;
 import io.swagger.resources.ResourceWithComplexBodyInputType;
 import io.swagger.resources.ResourceWithExtensions;
@@ -46,7 +47,7 @@ public class ScannerTest {
         assertNotNull(post);
 
         assertNotNull(swagger.getDefinitions());
-        assertNotNull(swagger.getDefinitions().get("ClassWithString"));
+        assertNotNull(swagger.getDefinitions().get(ClassWithString.class.getName()));
     }
 
     @Test( description = "scan resource with extensions")

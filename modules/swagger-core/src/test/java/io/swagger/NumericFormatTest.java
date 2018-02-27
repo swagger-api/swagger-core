@@ -26,7 +26,7 @@ public class NumericFormatTest {
         String json = Json.pretty(models);
         assertEquals(json,
             "{" + NEWLINE  +
-            "  \"ModelWithIntegerFields\" : {" + NEWLINE  +
+            "  \""+ModelWithIntegerFields.class.getName()+"\" : {" + NEWLINE  +
             "    \"type\" : \"object\"," + NEWLINE +
             "    \"properties\" : {" + NEWLINE  +
             "      \"id\" : {" + NEWLINE  +
@@ -47,7 +47,7 @@ public class NumericFormatTest {
         String json = Json.pretty(models);
         assertEquals(json,
             "{" + NEWLINE  +
-            "  \"ModelWithDecimalFields\" : {" + NEWLINE  +
+            "  \""+ModelWithDecimalFields.class.getName()+"\" : {" + NEWLINE  +
             "    \"type\" : \"object\"," + NEWLINE  +
             "    \"properties\" : {" + NEWLINE  +
             "      \"id\" : {" + NEWLINE  +
@@ -70,7 +70,7 @@ public class NumericFormatTest {
 
         assertEquals(json,
             "{" + NEWLINE  +
-            "  \"ModelWithoutScientificFields\" : {" + NEWLINE  +
+            "  \""+ModelWithoutScientificFields.class.getName()+"\" : {" + NEWLINE  +
             "    \"type\" : \"object\"," + NEWLINE  +
             "    \"properties\" : {" + NEWLINE  +
             "      \"id\" : {" + NEWLINE  +

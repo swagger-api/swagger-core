@@ -21,9 +21,11 @@ import io.swagger.models.ModelWithFormattedStrings;
 import io.swagger.models.ModelWithNumbers;
 import io.swagger.models.ModelWithOffset;
 import io.swagger.models.ModelWithTuple2;
+import io.swagger.models.ModelWithTuple2.ComplexLeft;
 import io.swagger.models.Person;
 import io.swagger.models.composition.AbstractModelWithApiModel;
 import io.swagger.models.composition.ModelWithUrlProperty;
+import io.swagger.models.composition.ModelWithValueProperty;
 import io.swagger.models.composition.Pet;
 import io.swagger.models.properties.ArrayProperty;
 import io.swagger.models.properties.BaseIntegerProperty;
@@ -38,6 +40,7 @@ import io.swagger.models.properties.RefProperty;
 import io.swagger.models.properties.StringProperty;
 import io.swagger.util.Json;
 import io.swagger.util.ResourceUtils;
+import org.apache.commons.lang3.text.WordUtils;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
@@ -106,8 +109,8 @@ public class ModelConverterTest {
         final Map<String, Model> rootSchemas = readAll(AbstractModelWithApiModel.class);
         assertEquals(rootSchemas.size(), 3);
         assertTrue(rootSchemas.containsKey("MyProperty"));
-        assertTrue(rootSchemas.containsKey("ModelWithUrlProperty"));
-        assertTrue(rootSchemas.containsKey("ModelWithValueProperty"));
+        assertTrue(rootSchemas.containsKey(ModelWithUrlProperty.class.getName()));
+        assertTrue(rootSchemas.containsKey(ModelWithValueProperty.class.getName()));
 
         final Map<String, Model> nestedSchemas = readAll(ModelWithUrlProperty.class);
         assertEquals(nestedSchemas.size(), 1);
@@ -120,7 +123,7 @@ public class ModelConverterTest {
         assertEquals(schemas.size(), 1);
 
         final String modelName = schemas.keySet().iterator().next();
-        assertEquals(modelName, "ModelPropertyName");
+        assertEquals(modelName, ModelPropertyName.class.getName());
 
         final Model model = schemas.get(modelName);
 
@@ -166,14 +169,14 @@ public class ModelConverterTest {
     public void ignoreHiddenFields() {
         final Map<String, Model> schemas = readAll(ClientOptInput.class);
 
-        final Model model = schemas.get("ClientOptInput");
+        final Model model = schemas.get(ClientOptInput.class.getName());
         assertEquals(model.getProperties().size(), 2);
     }
 
     @Test(description = "it should set readOnly per #854")
     public void setReadOnly() {
         final Map<String, Model> schemas = readAll(JacksonReadonlyModel.class);
-        final ModelImpl model = (ModelImpl) schemas.get("JacksonReadonlyModel");
+        final ModelImpl model = (ModelImpl) schemas.get(JacksonReadonlyModel.class.getName());
         final Property prop = model.getProperties().get("count");
         assertTrue(prop.getReadOnly());
     }
@@ -185,7 +188,7 @@ public class ModelConverterTest {
         final Map<String, Model> asMap = readAll(ModelWithTuple2.class);
         ModelConverters.getInstance().removeConverter(asMapConverter);
         assertEquals(asMap.size(), 4);
-        for (String item : Arrays.asList("MapOfString", "MapOfComplexLeft")) {
+        for (String item : Arrays.asList("MapOfString", "MapOf"+WordUtils.capitalize(ComplexLeft.class.getName()))) {
             ModelImpl model = (ModelImpl) asMap.get(item);
             assertEquals(model.getType(), "object");
             assertNull(model.getProperties());
@@ -197,7 +200,7 @@ public class ModelConverterTest {
         final Map<String, Model> asProperty = readAll(ModelWithTuple2.class);
         ModelConverters.getInstance().removeConverter(asPropertyConverter);
         assertEquals(asProperty.size(), 2);
-        for (Map.Entry<String, Property> entry : asProperty.get("ModelWithTuple2").getProperties().entrySet()) {
+        for (Map.Entry<String, Property> entry : asProperty.get(ModelWithTuple2.class.getName()).getProperties().entrySet()) {
             String name = entry.getKey();
             Property property = entry.getValue();
             if ("timesheetStates".equals(name)) {
@@ -218,7 +221,7 @@ public class ModelConverterTest {
                 Property additionalProperty = ((MapProperty) items).getAdditionalProperties();
                 assertNotNull(additionalProperty);
                 assertEquals(additionalProperty.getClass(), RefProperty.class);
-                assertEquals(((RefProperty) additionalProperty).getSimpleRef(), "ComplexLeft");
+                assertEquals(((RefProperty) additionalProperty).getSimpleRef(), ComplexLeft.class.getName());
             } else {
                 fail(String.format("Unexpected property: %s", name));
             }
@@ -228,7 +231,7 @@ public class ModelConverterTest {
     @Test(description = "it should scan an empty model per 499")
     public void scanEmptyModel() {
         final Map<String, Model> schemas = readAll(EmptyModel.class);
-        final ModelImpl model = (ModelImpl) schemas.get("EmptyModel");
+        final ModelImpl model = (ModelImpl) schemas.get(EmptyModel.class.getName());
         assertNull(model.getProperties());
         assertEquals(model.getType(), "object");
     }
@@ -261,7 +264,7 @@ public class ModelConverterTest {
 
     @Test(description = "it should convert a model with Formatted strings")
     public void convertModelWithFormattedStrings() throws IOException {
-        final Model model = readAll(ModelWithFormattedStrings.class).get("ModelWithFormattedStrings");
+        final Model model = readAll(ModelWithFormattedStrings.class).get(ModelWithFormattedStrings.class.getName());
         assertEqualsToJson(model, "ModelWithFormattedStrings.json");
     }
 
@@ -279,7 +282,7 @@ public class ModelConverterTest {
     @Test(description = "it should scan a model per #1155")
     public void scanModel() {
         final Map<String, Model> model = read(Model1155.class);
-        assertEquals(model.get("Model1155").getProperties().keySet(), ImmutableSet.of("valid", "value", "is", "get",
+        assertEquals(model.get(Model1155.class.getName()).getProperties().keySet(), ImmutableSet.of("valid", "value", "is", "get",
                 "isA", "getA", "is_persistent", "gettersAndHaters"));
     }
 
@@ -288,7 +291,7 @@ public class ModelConverterTest {
         final Map<String, Model> models = readAll(ModelWithNumbers.class);
         assertEquals(models.size(), 1);
 
-        final Model model = models.get("ModelWithNumbers");
+        final Model model = models.get(ModelWithNumbers.class.getName());
         // Check if we get required properties after building models from classes.
         checkModel(model);
         // Check if we get required properties after deserialization from JSON
@@ -300,7 +303,7 @@ public class ModelConverterTest {
         final Map<String, Model> models = readAll(ModelWithOffset.class);
         assertEquals(models.size(), 1);
 
-        final Model model = models.get("ModelWithOffset");
+        final Model model = models.get(ModelWithOffset.class.getName());
         Property property = model.getProperties().get("offset");
         assertEquals(property.getType(), "string");
         assertEquals(property.getFormat(), "date-time");
@@ -337,7 +340,7 @@ public class ModelConverterTest {
     @Test
     public void formatDate() {
         final Map<String, Model> models = ModelConverters.getInstance().read(DateModel.class);
-        final Model model = models.get("DateModel");
+        final Model model = models.get(DateModel.class.getName());
         assertEquals(model.getProperties().size(), 5);
         final String json = "{" +
                 "   \"type\":\"object\"," +

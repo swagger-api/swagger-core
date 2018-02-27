@@ -223,7 +223,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         // Couple of possibilities for defining
         String name = _typeName(type, beanDesc);
 
-        if ("Object".equals(name)) {
+        if ("java.lang.Object".equals(name)) {
             return new ModelImpl();
         }
 
@@ -643,7 +643,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             String COMBINER = "-or-";
             StringBuffer sb = new StringBuffer();
             for (Class<?> view : context.getJsonView().value()) {
-                sb.append(view.getSimpleName()).append(COMBINER);
+                sb.append(view.getName()).append(COMBINER);
             }
             String suffix = sb.toString().substring(0, sb.length() - COMBINER.length());
             name = originalName + "_" + suffix;
