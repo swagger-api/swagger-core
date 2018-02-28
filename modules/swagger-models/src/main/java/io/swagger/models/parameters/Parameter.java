@@ -37,7 +37,4 @@ public interface Parameter {
 
     void setReadOnly(Boolean readOnly);
 
-    Boolean getAllowEmptyValue();
-
-    void setAllowEmptyValue(Boolean allowEmptyValue);
 }

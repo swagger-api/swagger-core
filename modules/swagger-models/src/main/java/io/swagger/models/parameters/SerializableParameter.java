@@ -74,4 +74,8 @@ public interface SerializableParameter extends Parameter {
 
     void setMinItems(Integer minItems);
 
+    Boolean getAllowEmptyValue();
+
+    void setAllowEmptyValue(Boolean allowEmptyValue);
+
 }
