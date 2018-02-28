@@ -72,12 +72,4 @@ public @interface Header {
      **/
     boolean deprecated() default false;
 
-    /**
-     * When true, allows sending an empty value. If false, the header will be considered \&quot;null\&quot; if no value is present. This may create validation errors when the
-     * header is required.
-     *
-     * @return whether or not the header allows empty values
-     **/
-    boolean allowEmptyValue() default false;
-
 }

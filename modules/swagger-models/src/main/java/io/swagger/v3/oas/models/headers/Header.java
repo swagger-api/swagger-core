@@ -35,7 +35,6 @@ public class Header {
     private String $ref = null;
     private Boolean required = null;
     private Boolean deprecated = null;
-    private Boolean allowEmptyValue = null;
 
     /**
      * Gets or Sets style
@@ -117,25 +116,6 @@ public class Header {
 
     public Header deprecated(Boolean deprecated) {
         this.deprecated = deprecated;
-        return this;
-    }
-
-    /**
-     * returns the allowEmptyValue property from a Header instance.
-     *
-     * @return Boolean allowEmptyValue
-     **/
-
-    public Boolean getAllowEmptyValue() {
-        return allowEmptyValue;
-    }
-
-    public void setAllowEmptyValue(Boolean allowEmptyValue) {
-        this.allowEmptyValue = allowEmptyValue;
-    }
-
-    public Header allowEmptyValue(Boolean allowEmptyValue) {
-        this.allowEmptyValue = allowEmptyValue;
         return this;
     }
 
@@ -273,7 +253,6 @@ public class Header {
         return Objects.equals(this.description, header.description) &&
                 Objects.equals(this.required, header.required) &&
                 Objects.equals(this.deprecated, header.deprecated) &&
-                Objects.equals(this.allowEmptyValue, header.allowEmptyValue) &&
                 Objects.equals(this.style, header.style) &&
                 Objects.equals(this.explode, header.explode) &&
                 Objects.equals(this.schema, header.schema) &&
@@ -286,7 +265,7 @@ public class Header {
 
     @Override
     public int hashCode() {
-        return Objects.hash(description, required, deprecated, allowEmptyValue, style, explode, schema, examples, example, content, extensions, $ref);
+        return Objects.hash(description, required, deprecated, style, explode, schema, examples, example, content, extensions, $ref);
     }
 
     public java.util.Map<String, Object> getExtensions() {
@@ -335,7 +314,6 @@ public class Header {
         sb.append("    description: ").append(toIndentedString(description)).append("\n");
         sb.append("    required: ").append(toIndentedString(required)).append("\n");
         sb.append("    deprecated: ").append(toIndentedString(deprecated)).append("\n");
-        sb.append("    allowEmptyValue: ").append(toIndentedString(allowEmptyValue)).append("\n");
         sb.append("    style: ").append(toIndentedString(style)).append("\n");
         sb.append("    explode: ").append(toIndentedString(explode)).append("\n");
         sb.append("    schema: ").append(toIndentedString(schema)).append("\n");
