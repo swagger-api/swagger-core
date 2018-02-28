@@ -28,7 +28,7 @@ public class CompleteFieldsResource {
             parameters = {
                     @Parameter(in = ParameterIn.PATH, name = "subscriptionId",
                             required = true, description = "parameter description",
-                            allowEmptyValue = true, allowReserved = true,
+                            allowReserved = true,
                             schema = @Schema(
                                     type = "string",
                                     format = "uuid",

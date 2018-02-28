@@ -882,10 +882,6 @@ public abstract class AnnotationsUtils {
             headerObject.setRequired(header.required());
             isEmpty = false;
         }
-        if (header.allowEmptyValue()) {
-            headerObject.setAllowEmptyValue(header.allowEmptyValue());
-            isEmpty = false;
-        }
         headerObject.setStyle(Header.StyleEnum.SIMPLE);
 
         if (header.schema() != null) {
