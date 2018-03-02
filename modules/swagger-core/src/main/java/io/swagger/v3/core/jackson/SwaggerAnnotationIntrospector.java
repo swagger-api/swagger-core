@@ -1,5 +1,6 @@
 package io.swagger.v3.core.jackson;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.databind.AnnotationIntrospector;
 import com.fasterxml.jackson.databind.introspect.Annotated;
@@ -39,14 +40,22 @@ public class SwaggerAnnotationIntrospector extends AnnotationIntrospector {
 
     @Override
     public Boolean hasRequiredMarker(AnnotatedMember m) {
-        Schema ann = m.getAnnotation(Schema.class);
-        if (ann != null) {
-            return ann.required();
-        }
         XmlElement elem = m.getAnnotation(XmlElement.class);
         if (elem != null) {
             if (elem.required()) {
                 return true;
+            }
+        }
+        JsonProperty jsonProperty = m.getAnnotation(JsonProperty.class);
+        if (jsonProperty != null) {
+            if (jsonProperty.required()) {
+                return true;
+            }
+        }
+        Schema ann = m.getAnnotation(Schema.class);
+        if (ann != null) {
+            if (ann.required()) {
+                return ann.required();
             }
         }
         return null;

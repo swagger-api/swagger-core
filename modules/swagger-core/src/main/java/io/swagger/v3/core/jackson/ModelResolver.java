@@ -20,6 +20,7 @@ import com.fasterxml.jackson.databind.introspect.AnnotatedClass;
 import com.fasterxml.jackson.databind.introspect.AnnotatedMember;
 import com.fasterxml.jackson.databind.introspect.AnnotatedMethod;
 import com.fasterxml.jackson.databind.introspect.BeanPropertyDefinition;
+import com.fasterxml.jackson.databind.introspect.POJOPropertyBuilder;
 import com.fasterxml.jackson.databind.jsontype.NamedType;
 import io.swagger.v3.core.converter.AnnotatedType;
 import io.swagger.v3.core.converter.ModelConverter;
@@ -449,12 +450,25 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             String propName = propDef.getName();
             Annotation[] annotations = null;
 
+            AnnotatedMember member = propDef.getPrimaryMember();
+            if (member == null) {
+                final BeanDescription deserBeanDesc = Json.mapper().getDeserializationConfig().introspect(type);
+                List<BeanPropertyDefinition> deserProperties = deserBeanDesc.findProperties();
+                for (BeanPropertyDefinition prop : deserProperties) {
+                    if (StringUtils.isNotBlank(prop.getInternalName()) && prop.getInternalName().equals(propDef.getInternalName())) {
+                        member = prop.getPrimaryMember();
+                        break;
+                    }
+                }
+            }
+
+
             // hack to avoid clobbering properties with get/is names
             // it's ugly but gets around https://github.com/swagger-api/swagger-core/issues/415
-            if (propDef.getPrimaryMember() != null) {
-                java.lang.reflect.Member member = propDef.getPrimaryMember().getMember();
-                if (member != null) {
-                    String altName = member.getName();
+            if (member != null) {
+                java.lang.reflect.Member innerMember = member.getMember();
+                if (innerMember != null) {
+                    String altName = innerMember.getName();
                     if (altName != null) {
                         final int length = altName.length();
                         for (String prefix : Arrays.asList("get", "is")) {
@@ -471,35 +485,6 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
             PropertyMetadata md = propDef.getMetadata();
 
-            boolean hasSetter = false, hasGetter = false;
-            try {
-                if (propDef.getSetter() == null) {
-                    hasSetter = false;
-                } else {
-                    hasSetter = true;
-                }
-            } catch (IllegalArgumentException e) {
-                //com.fasterxml.jackson.databind.introspect.POJOPropertyBuilder would throw IllegalArgumentException
-                // if there are overloaded setters. If we only want to know whether a set method exists, suppress the exception
-                // is reasonable.
-                // More logs might be added here
-                hasSetter = true;
-            }
-            if (propDef.getGetter() != null) {
-                JsonProperty pd = propDef.getGetter().getAnnotation(JsonProperty.class);
-                if (pd != null) {
-                //if (pd != null && pd.access().equals(JsonProperty.Access.READ_ONLY)) { to be extended
-                    hasGetter = true;
-                }
-            }
-            Boolean isReadOnly = null;
-            if (!hasSetter & hasGetter) {
-                isReadOnly = Boolean.TRUE;
-            } else {
-                isReadOnly = Boolean.FALSE;
-            }
-
-            final AnnotatedMember member = propDef.getPrimaryMember();
             if (member != null && !ignore(member, xmlAccessorTypeAnnotation, propName, propertiesToIgnore)) {
 
                 List<Annotation> annotationList = new ArrayList<Annotation>();
@@ -514,6 +499,12 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 }
 
                 JavaType propType = member.getType();
+                if(propType != null && "void".equals(propType.getRawClass().getName())) {
+                    if (member instanceof AnnotatedMethod) {
+                        propType = ((AnnotatedMethod)member).getParameterType(0);
+                    }
+
+                }
                 Annotation propSchemaOrArray = AnnotationsUtils.mergeSchemaAnnotations(annotations, propType);
                 final io.swagger.v3.oas.annotations.media.Schema propResolvedSchemaAnnotation =
                         propSchemaOrArray == null ?
@@ -524,6 +515,10 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 if (propResolvedSchemaAnnotation != null && !propResolvedSchemaAnnotation.name().isEmpty()) {
                     propName = propResolvedSchemaAnnotation.name();
                 }
+
+                io.swagger.v3.oas.annotations.media.Schema.AccessMode accessMode = resolveAccessMode(propDef, type, propResolvedSchemaAnnotation);
+
+
                 AnnotatedType aType = new AnnotatedType()
                         .type(propType)
                         .ctxAnnotations(annotations)
@@ -534,8 +529,9 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                         .skipSchemaName(true)
                         .schemaProperty(true);
 
+                final AnnotatedMember propMember = member;
                 aType.jsonUnwrappedHandler((t) -> {
-                    JsonUnwrapped uw = member.getAnnotation(JsonUnwrapped.class);
+                    JsonUnwrapped uw = propMember.getAnnotation(JsonUnwrapped.class);
                     if (uw != null && uw.enabled()) {
                         t
                             .ctxAnnotations(null)
@@ -556,10 +552,24 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                         Boolean required = md.getRequired();
                         if (required != null && !Boolean.FALSE.equals(required)) {
                             addRequiredItem(model, propName);
+                        } else {
+                            if (propDef.isRequired()) {
+                                addRequiredItem(model, propName);
+                            }
                         }
-                        if (property.getReadOnly() == null) {
-                            if (isReadOnly) {
-                                property.readOnly(isReadOnly);
+                        if (accessMode != null) {
+                            switch (accessMode) {
+                                case AUTO:
+                                    break;
+                                case READ_ONLY:
+                                    property.readOnly(true);
+                                    break;
+                                case READ_WRITE:
+                                    break;
+                                case WRITE_ONLY:
+                                    property.writeOnly(true);
+                                    break;
+                                default:
                             }
                         }
                     }
@@ -1242,6 +1252,62 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         return null;
     }
 
+    protected io.swagger.v3.oas.annotations.media.Schema.AccessMode resolveAccessMode(BeanPropertyDefinition propDef, JavaType type, io.swagger.v3.oas.annotations.media.Schema schema) {
+        if (schema != null && !schema.accessMode().equals(io.swagger.v3.oas.annotations.media.Schema.AccessMode.AUTO)) {
+            return schema.accessMode();
+        } else if (schema != null && schema.readOnly()) {
+            return io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_ONLY;
+        } else if (schema != null && schema.writeOnly()) {
+            return io.swagger.v3.oas.annotations.media.Schema.AccessMode.WRITE_ONLY;
+        }
+
+        JsonProperty.Access access = null;
+        if (propDef instanceof POJOPropertyBuilder) {
+            access = ((POJOPropertyBuilder) propDef).findAccess();
+        }
+        boolean hasGetter = propDef.hasGetter();
+        boolean hasSetter = propDef.hasSetter();
+        boolean hasConstructorParameter = propDef.hasConstructorParameter();
+        boolean hasField = propDef.hasField();
+
+
+        if (access == null) {
+            final BeanDescription beanDesc = Json.mapper().getDeserializationConfig().introspect(type);
+            List<BeanPropertyDefinition> properties = beanDesc.findProperties();
+            for (BeanPropertyDefinition prop : properties) {
+                if (StringUtils.isNotBlank(prop.getInternalName()) && prop.getInternalName().equals(propDef.getInternalName())) {
+                    if (prop instanceof POJOPropertyBuilder) {
+                        access = ((POJOPropertyBuilder) prop).findAccess();
+                    }
+                    hasGetter = hasGetter || prop.hasGetter();
+                    hasSetter = hasSetter || prop.hasSetter();
+                    hasConstructorParameter = hasConstructorParameter || prop.hasConstructorParameter();
+                    hasField = hasField || prop.hasField();
+                    break;
+                }
+            }
+        }
+        if (access == null) {
+            if (!hasGetter && !hasField && (hasConstructorParameter || hasSetter)) {
+                return io.swagger.v3.oas.annotations.media.Schema.AccessMode.WRITE_ONLY;
+            }
+            return null;
+        } else {
+            switch (access) {
+                case AUTO:
+                    return io.swagger.v3.oas.annotations.media.Schema.AccessMode.AUTO;
+                case READ_ONLY:
+                    return io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_ONLY;
+                case READ_WRITE:
+                    return io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE;
+                case WRITE_ONLY:
+                    return io.swagger.v3.oas.annotations.media.Schema.AccessMode.WRITE_ONLY;
+                default:
+                    return io.swagger.v3.oas.annotations.media.Schema.AccessMode.AUTO;
+            }
+        }
+    }
+
     protected Boolean resolveReadOnly(Annotated a, Annotation[] annotations, io.swagger.v3.oas.annotations.media.Schema schema) {
         if (schema != null && schema.accessMode().equals(io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_ONLY)) {
             return true;
@@ -1254,6 +1320,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         }
         return null;
     }
+
 
     protected Boolean resolveNullable(Annotated a, Annotation[] annotations, io.swagger.v3.oas.annotations.media.Schema schema) {
         if (schema != null && schema.nullable()) {

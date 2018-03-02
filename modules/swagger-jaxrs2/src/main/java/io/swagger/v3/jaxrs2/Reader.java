@@ -403,7 +403,9 @@ public class Reader implements OpenApiReader {
                 String httpMethod = ReaderUtils.extractOperationMethod(method, OpenAPIExtensions.chain());
                 httpMethod = (httpMethod == null && isSubresource) ? parentMethod : httpMethod;
 
-                if (StringUtils.isBlank(httpMethod)) {
+                if (StringUtils.isBlank(httpMethod) && subResource == null) {
+                    continue;
+                } else if (StringUtils.isBlank(httpMethod) && subResource != null) {
                     Type returnType = method.getGenericReturnType();
                     if (shouldIgnoreClass(returnType.getTypeName()) && !returnType.equals(subResource)) {
                         continue;
