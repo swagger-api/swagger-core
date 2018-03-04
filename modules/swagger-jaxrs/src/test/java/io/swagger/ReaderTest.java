@@ -16,6 +16,7 @@ import io.swagger.resources.ApiConsumesProducesResource;
 import io.swagger.resources.ApiMultipleConsumesProducesResource;
 import io.swagger.resources.BookResource;
 import io.swagger.resources.BothConsumesProducesResource;
+import io.swagger.resources.ClassPathParentResource;
 import io.swagger.resources.DescendantResource;
 import io.swagger.resources.IndirectImplicitParamsImpl;
 import io.swagger.resources.NoConsumesProducesResource;
@@ -431,6 +432,13 @@ public class ReaderTest {
         assertNotNull(externalDocsForPost);
         assertEquals("Test Description", externalDocsForPost.getDescription());
         assertEquals("https://swagger.io/", externalDocsForPost.getUrl());
+    }
+
+    @Test(description = "Scan subresource per #2632")
+    public void testSubResourceHasTheRightApiPath() {
+        Swagger swagger = getSwagger(ClassPathParentResource.class);
+        assertNotNull(swagger);
+        assertNotNull(swagger.getPath("/v1/parent"));
     }
 
     private Swagger getSwagger(Class<?> cls) {

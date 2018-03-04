@@ -307,7 +307,7 @@ public class Reader {
                 }
                 javax.ws.rs.Path methodPath = ReflectionUtils.getAnnotation(method, javax.ws.rs.Path.class);
 
-                String operationPath = getPath(apiPath, methodPath, parentPath);
+                String operationPath = getPath(apiPath, methodPath, parentPath, isSubresource);
                 Map<String, String> regexMap = new LinkedHashMap<String, String>();
                 operationPath = PathUtils.parsePath(operationPath, regexMap);
                 if (operationPath != null) {
@@ -732,7 +732,8 @@ public class Reader {
         return output;
     }
 
-    String getPath(javax.ws.rs.Path classLevelPath, javax.ws.rs.Path methodLevelPath, String parentPath) {
+    private String getPath(javax.ws.rs.Path classLevelPath, javax.ws.rs.Path methodLevelPath, String parentPath,
+                           boolean isSubResource) {
         if (classLevelPath == null && methodLevelPath == null && StringUtils.isEmpty(parentPath)) {
             return null;
         }
@@ -747,7 +748,7 @@ public class Reader {
 
             b.append(parentPath);
         }
-        if (classLevelPath != null) {
+        if (classLevelPath != null && !isSubResource) {
             b.append(classLevelPath.value());
         }
         if (methodLevelPath != null && !"/".equals(methodLevelPath.value())) {
