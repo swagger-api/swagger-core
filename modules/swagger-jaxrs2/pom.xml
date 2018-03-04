@@ -38,6 +38,7 @@
                         </Export-Package>
                         <Import-Package>
                             javax.ws.rs*;version="2.0",
+                            com.google.common.base;version="[20.0,24)",
                             *
                         </Import-Package>
                     </instructions>
