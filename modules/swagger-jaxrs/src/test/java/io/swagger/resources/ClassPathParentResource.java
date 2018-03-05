@@ -8,7 +8,7 @@ import javax.ws.rs.Path;
 @Path("/v1")
 public class ClassPathParentResource {
     @Path("parent")
-    public Class<ClassPathSubResource> getSubResource() {
-        return ClassPathSubResource.class;
+    public ClassPathSubResource getSubResource() {
+        return new ClassPathSubResource();
     }
 }
