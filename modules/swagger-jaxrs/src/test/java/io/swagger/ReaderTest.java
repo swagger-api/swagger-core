@@ -16,6 +16,8 @@ import io.swagger.resources.ApiConsumesProducesResource;
 import io.swagger.resources.ApiMultipleConsumesProducesResource;
 import io.swagger.resources.BookResource;
 import io.swagger.resources.BothConsumesProducesResource;
+import io.swagger.resources.ClassPathParentResource;
+import io.swagger.resources.ClassPathSubResource;
 import io.swagger.resources.DescendantResource;
 import io.swagger.resources.IndirectImplicitParamsImpl;
 import io.swagger.resources.NoConsumesProducesResource;
@@ -34,6 +36,7 @@ import io.swagger.resources.ResourceWithValidation;
 import io.swagger.resources.RsConsumesProducesResource;
 import io.swagger.resources.RsMultipleConsumesProducesResource;
 import io.swagger.resources.SimpleMethods;
+import io.swagger.util.Yaml;
 import org.testng.annotations.Test;
 
 import javax.ws.rs.DELETE;
@@ -431,6 +434,21 @@ public class ReaderTest {
         assertNotNull(externalDocsForPost);
         assertEquals("Test Description", externalDocsForPost.getDescription());
         assertEquals("https://swagger.io/", externalDocsForPost.getUrl());
+    }
+
+    @Test(description = "Scan subresource per #2632")
+    public void testSubResourceHasTheRightApiPath() {
+        Swagger swagger = getSwagger(ClassPathParentResource.class);
+        assertNotNull(swagger);
+        assertNotNull(swagger.getPath("/v1/parent"));
+        assertNotNull(swagger.getPath("/v1/parent/{id}"));
+        assertEquals(swagger.getPaths().size(), 2);
+        swagger = getSwagger(ClassPathSubResource.class);
+        assertNotNull(swagger);
+        assertNotNull(swagger.getPath("/subresource"));
+        assertNotNull(swagger.getPath("/subresource/{id}"));
+        assertEquals(swagger.getPaths().size(), 2);
+
     }
 
     private Swagger getSwagger(Class<?> cls) {
