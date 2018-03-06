@@ -4,6 +4,8 @@ import io.swagger.v3.core.util.Yaml;
 import io.swagger.v3.jaxrs2.matchers.SerializationMatchers;
 import io.swagger.v3.jaxrs2.resources.BasicFieldsResource;
 import io.swagger.v3.jaxrs2.resources.BookStoreTicket2646;
+import io.swagger.v3.jaxrs2.resources.ClassPathParentResource;
+import io.swagger.v3.jaxrs2.resources.ClassPathSubResource;
 import io.swagger.v3.jaxrs2.resources.CompleteFieldsResource;
 import io.swagger.v3.jaxrs2.resources.DeprecatedFieldsResource;
 import io.swagger.v3.jaxrs2.resources.DuplicatedOperationIdResource;
@@ -21,9 +23,9 @@ import io.swagger.v3.jaxrs2.resources.SimpleMethods;
 import io.swagger.v3.jaxrs2.resources.SubResourceHead;
 import io.swagger.v3.jaxrs2.resources.TagsResource;
 import io.swagger.v3.jaxrs2.resources.Test2607;
-import io.swagger.v3.jaxrs2.resources.UserAnnotationResource;
 import io.swagger.v3.jaxrs2.resources.TestResource;
 import io.swagger.v3.jaxrs2.resources.Ticket2644ConcreteImplementation;
+import io.swagger.v3.jaxrs2.resources.UserAnnotationResource;
 import io.swagger.v3.jaxrs2.resources.extensions.ExtensionsResource;
 import io.swagger.v3.jaxrs2.resources.extensions.OperationExtensionsResource;
 import io.swagger.v3.jaxrs2.resources.extensions.ParameterExtensionsResource;
@@ -315,7 +317,7 @@ public class ReaderTest {
         SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
     }
 
-        @Test(description = "Responses with composition")
+    @Test(description = "Responses with composition")
     public void testGetResponsesWithComposition() {
         Reader reader = new Reader(new OpenAPI());
 
@@ -706,7 +708,6 @@ public class ReaderTest {
         assertNotNull(schema);
         assertEquals(schema.getType(), "string");
 
-
         pathItem = paths.get("/test/more/otherStatus");
         assertNotNull(pathItem);
         operation = pathItem.getGet();
@@ -764,7 +765,6 @@ public class ReaderTest {
         assertNotNull(schema);
         assertEquals(schema.getType(), "string");
 
-
         pathItem = paths.get("/head/tail/{string}");
         assertNotNull(pathItem);
         operation = pathItem.getGet();
@@ -800,7 +800,6 @@ public class ReaderTest {
         assertNotNull(schema);
         assertEquals(schema.getType(), "string");
 
-
         pathItem = paths.get("/swaggertest/subresource/version");
         assertNotNull(pathItem);
         operation = pathItem.getGet();
@@ -823,7 +822,6 @@ public class ReaderTest {
         assertNotNull(operation);
         assertTrue(operation.getResponses().getDefault().getContent().keySet().contains("application/json"));
 
-
         pathItem = paths.get("/bookstore/{id}");
         assertNotNull(pathItem);
         operation = pathItem.getDelete();
@@ -844,5 +842,21 @@ public class ReaderTest {
         assertNotNull(operation);
         assertTrue(operation.getResponses().getDefault().getContent().keySet().contains("*/*"));
 
+    }
+
+    @Test(description = "Scan subresource per #2632")
+    public void testSubResourceHasTheRightApiPath() {
+        Reader reader = new Reader(new OpenAPI());
+        OpenAPI openAPI = reader.read(ClassPathParentResource.class);
+        assertNotNull(openAPI);
+        assertNotNull(openAPI.getPaths().get("/v1/parent"));
+        assertNotNull(openAPI.getPaths().get("/v1/parent/{id}"));
+        assertEquals(openAPI.getPaths().size(), 2);
+
+        OpenAPI subResourceApi = new Reader(new OpenAPI()).read(ClassPathSubResource.class);
+        assertNotNull(subResourceApi);
+        assertNotNull(subResourceApi.getPaths().get("/subresource"));
+        assertNotNull(subResourceApi.getPaths().get("/subresource/{id}"));
+        assertEquals(subResourceApi.getPaths().size(), 2);
     }
 }
