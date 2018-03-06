@@ -35,12 +35,12 @@ public class InheritedBeanTest extends SwaggerTestBase {
         assertNotNull(baseModel);
         assertBasePropertiesValid(baseModel.getProperties());
 
-        final Model subModel = context.getDefinedModels().get("Sub1Bean");
+        final Model subModel = context.getDefinedModels().get(Sub1Bean.class.getName());
         assertNotNull(subModel);
         // make sure child points at parent
         assertTrue(subModel instanceof ComposedModel);
         ComposedModel cm = (ComposedModel) subModel;
-        assertEquals(cm.getParent().getReference(), "#/definitions/BaseBean");
+        assertEquals(cm.getParent().getReference(), "#/definitions/"+BaseBean.class.getName());
 
         // make sure parent properties are filtered out of subclass
         assertSub1PropertiesValid(cm.getChild().getProperties());
@@ -53,12 +53,12 @@ public class InheritedBeanTest extends SwaggerTestBase {
         // make sure child points at parent
         assertTrue(subModel instanceof ComposedModel);
         ComposedModel cm = (ComposedModel) subModel;
-        assertEquals(cm.getParent().getReference(), "#/definitions/BaseBean");
+        assertEquals(cm.getParent().getReference(), "#/definitions/"+BaseBean.class.getName());
 
         // make sure parent properties are filtered out of subclass
         assertSub1PropertiesValid(cm.getChild().getProperties());
 
-        final Model baseModel = context.getDefinedModels().get("BaseBean");
+        final Model baseModel = context.getDefinedModels().get(BaseBean.class.getName());
         assertNotNull(baseModel);
         assertBasePropertiesValid(baseModel.getProperties());
     }
@@ -112,22 +112,22 @@ public class InheritedBeanTest extends SwaggerTestBase {
         assertNotNull(baseModel);
         assertBasePropertiesValid(baseModel.getProperties());
 
-        final Model sub1Model = context.getDefinedModels().get("MultipleSub1Bean");
+        final Model sub1Model = context.getDefinedModels().get(MultipleSub1Bean.class.getName());
         assertNotNull(sub1Model);
         // make sure child points at parent
         assertTrue(sub1Model instanceof ComposedModel);
         ComposedModel cm1 = (ComposedModel) sub1Model;
-        assertEquals(cm1.getParent().getReference(), "#/definitions/MultipleBaseBean");
+        assertEquals(cm1.getParent().getReference(), "#/definitions/"+MultipleBaseBean.class.getName());
 
         // make sure parent properties are filtered out of subclass
         assertSub1PropertiesValid(cm1.getChild().getProperties());
 
-        final Model sub2Model = context.getDefinedModels().get("MultipleSub2Bean");
+        final Model sub2Model = context.getDefinedModels().get(MultipleSub2Bean.class.getName());
         assertNotNull(sub2Model);
         // make sure child points at parent
         assertTrue(sub2Model instanceof ComposedModel);
         ComposedModel cm2 = (ComposedModel) sub2Model;
-        assertEquals(cm2.getParent().getReference(), "#/definitions/MultipleBaseBean");
+        assertEquals(cm2.getParent().getReference(), "#/definitions/"+MultipleBaseBean.class.getName());
 
         // make sure parent properties are filtered out of subclass
         assertSub2PropertiesValid(cm2.getChild().getProperties());
@@ -140,31 +140,31 @@ public class InheritedBeanTest extends SwaggerTestBase {
         // make sure child points at parent
         assertTrue(subModel instanceof ComposedModel);
         ComposedModel cm = (ComposedModel) subModel;
-        assertEquals(cm.getParent().getReference(), "#/definitions/MultipleBaseBean");
+        assertEquals(cm.getParent().getReference(), "#/definitions/"+MultipleBaseBean.class.getName());
 
         // make sure parent properties are filtered out of subclass
         assertSub1PropertiesValid(cm.getChild().getProperties());
 
-        final Model baseModel = context.getDefinedModels().get("MultipleBaseBean");
+        final Model baseModel = context.getDefinedModels().get(MultipleBaseBean.class.getName());
         assertNotNull(baseModel);
         assertBasePropertiesValid(baseModel.getProperties());
 
-        final Model sub1Model = context.getDefinedModels().get("MultipleSub1Bean");
+        final Model sub1Model = context.getDefinedModels().get(MultipleSub1Bean.class.getName());
         assertNotNull(sub1Model);
         // make sure child points at parent
         assertTrue(sub1Model instanceof ComposedModel);
         ComposedModel cm1 = (ComposedModel) sub1Model;
-        assertEquals(cm1.getParent().getReference(), "#/definitions/MultipleBaseBean");
+        assertEquals(cm1.getParent().getReference(), "#/definitions/"+MultipleBaseBean.class.getName());
 
         // make sure parent properties are filtered out of subclass
         assertSub1PropertiesValid(cm1.getChild().getProperties());
 
-        final Model sub2Model = context.getDefinedModels().get("MultipleSub2Bean");
+        final Model sub2Model = context.getDefinedModels().get(MultipleSub2Bean.class.getName());
         assertNotNull(sub2Model);
         // make sure child points at parent
         assertTrue(sub2Model instanceof ComposedModel);
         ComposedModel cm2 = (ComposedModel) sub2Model;
-        assertEquals(cm2.getParent().getReference(), "#/definitions/MultipleBaseBean");
+        assertEquals(cm2.getParent().getReference(), "#/definitions/"+MultipleBaseBean.class.getName());
 
         // make sure parent properties are filtered out of subclass
         assertSub2PropertiesValid(cm2.getChild().getProperties());

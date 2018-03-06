@@ -29,8 +29,8 @@ public class SecurityDefinitionTest {
 
     @Test(description = "it should create a model with security requirements")
     public void createModelWithSecurityRequirements() throws IOException{
-        final Model personModel = ModelConverters.getInstance().read(Person.class).get("Person");
-        final Model errorModel = ModelConverters.getInstance().read(Error.class).get("Error");
+        final Model personModel = ModelConverters.getInstance().read(Person.class).get(Person.class.getName());
+        final Model errorModel = ModelConverters.getInstance().read(Error.class).get(Error.class.getName());
 
         final Info info = new Info()
                 .version("1.0.0")
@@ -48,8 +48,8 @@ public class SecurityDefinitionTest {
                 .scheme(Scheme.HTTP)
                 .consumes("application/json")
                 .produces("application/json")
-                .model("Person", personModel)
-                .model("Error", errorModel);
+                .model(Person.class.getName(), personModel)
+                .model(Error.class.getName(), errorModel);
 
         swagger.securityDefinition("githubAccessCode",
                 new OAuth2Definition()
@@ -77,11 +77,11 @@ public class SecurityDefinitionTest {
 
         final Response response = new Response()
                 .description("pets returned")
-                .schema(new RefProperty().asDefault("Person"));
+                .schema(new RefProperty().asDefault(Person.class.getName()));
 
         final Response errorResponse = new Response()
                 .description("error response")
-                .schema(new RefProperty().asDefault("Error"));
+                .schema(new RefProperty().asDefault(Error.class.getName()));
 
         get.response(200, response)
                 .defaultResponse(errorResponse)

@@ -1,5 +1,5 @@
 {
-    "AbstractBaseModelWithSubTypes": {
+    "io.swagger.models.composition.AbstractBaseModelWithSubTypes": {
         "type": "object",
         "discriminator": "_type",
         "properties": {
@@ -18,20 +18,20 @@
         },
         "description": "I am an Abstract Base Model with Sub-Types"
     },
-    "ModelWithFieldWithSubTypes": {
+    "io.swagger.models.composition.ModelWithFieldWithSubTypes": {
         "type": "object",
         "properties": {
             "z": {
                 "description": "Contained field with sub-types",
-                "$ref": "#/definitions/AbstractBaseModelWithSubTypes"
+                "$ref": "#/definitions/io.swagger.models.composition.AbstractBaseModelWithSubTypes"
             }
         },
         "description": "Class that has a field that is the AbstractBaseModelWithSubTypes"
     },
-    "Thing1": {
+    "io.swagger.models.composition.Thing1": {
         "allOf": [
             {
-                "$ref": "#/definitions/AbstractBaseModelWithSubTypes"
+                "$ref": "#/definitions/io.swagger.models.composition.AbstractBaseModelWithSubTypes"
             },
             {
                 "type": "object",
@@ -50,10 +50,10 @@
             }
         ]
     },
-    "Thing2": {
+    "io.swagger.models.composition.Thing2": {
         "allOf": [
             {
-                "$ref": "#/definitions/AbstractBaseModelWithSubTypes"
+                "$ref": "#/definitions/io.swagger.models.composition.AbstractBaseModelWithSubTypes"
             },
             {
                 "type": "object",

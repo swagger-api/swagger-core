@@ -3,6 +3,7 @@ package io.swagger;
 import io.swagger.converter.ModelConverters;
 import io.swagger.jaxrs.Reader;
 import io.swagger.matchers.SerializationMatchers;
+import io.swagger.models.Category;
 import io.swagger.models.Pet;
 import io.swagger.models.Swagger;
 import io.swagger.models.properties.Property;
@@ -20,10 +21,10 @@ public class ReferenceTest {
 
     @Test(description = "Scan a model with common reference and reference with ApiModel")
     public void scanModel() {
-        final Map<String, Property> props = ModelConverters.getInstance().readAll(Pet.class).get("Pet").getProperties();
+        final Map<String, Property> props = ModelConverters.getInstance().readAll(Pet.class).get(Pet.class.getName()).getProperties();
         final RefProperty category = (RefProperty) props.get("category");
         assertEquals(category.getType(), "ref");
-        assertEquals(category.get$ref(), "#/definitions/Category");
+        assertEquals(category.get$ref(), "#/definitions/"+Category.class.getName());
 
         final RefProperty categoryWithApiModel = (RefProperty) props.get("categoryWithApiModel");
         assertEquals(categoryWithApiModel.getType(), "ref");

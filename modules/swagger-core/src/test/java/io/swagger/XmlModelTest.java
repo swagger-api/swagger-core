@@ -31,7 +31,7 @@ public class XmlModelTest {
     @Test(description = "it should process an XML model attribute")
     public void processXMLModelAttribute() {
         final Map<String, Model> schemas = ModelConverters.getInstance().readAll(Monster.class);
-        final Model model = schemas.get("Monster");
+        final Model model = schemas.get(Monster.class.getName());
 
         assertNotNull(model);
         assertTrue(model instanceof ModelImpl);
@@ -49,7 +49,7 @@ public class XmlModelTest {
     @Test(description = "it should not create an xml object")
     public void itShouldNotCreateXmlObject() {
         final Map<String, Model> schemas = ModelConverters.getInstance().readAll(Address.class);
-        final Model model = schemas.get("Address");
+        final Model model = schemas.get(Address.class.getName());
 
         assertNotNull(model);
         assertTrue(model instanceof ModelImpl);
@@ -63,7 +63,7 @@ public class XmlModelTest {
     @Test(description = "it should stay hidden per 534")
     public void stayHidden() {
         final Map<String, Model> schemas = ModelConverters.getInstance().readAll(Issue534.class);
-        assertEquals(schemas.get("Issue534").getProperties().size(), 1);
+        assertEquals(schemas.get(Issue534.class.getName()).getProperties().size(), 1);
     }
 
     @Test(description = "it should process a model with JAXB annotations")
@@ -71,7 +71,7 @@ public class XmlModelTest {
         final Map<String, Model> schemas = ModelConverters.getInstance().readAll(ModelWithJAXBAnnotations.class);
         assertEquals(schemas.size(), 1);
 
-        final Model model = schemas.get("ModelWithJAXBAnnotations");
+        final Model model = schemas.get(ModelWithJAXBAnnotations.class.getName());
         assertNotNull(model);
         assertTrue(model instanceof ModelImpl);
 

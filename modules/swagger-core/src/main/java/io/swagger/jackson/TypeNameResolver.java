@@ -41,11 +41,11 @@ public class TypeNameResolver {
 
     protected String nameForClass(Class<?> cls, Set<Options> options) {
         if (options.contains(Options.SKIP_API_MODEL)) {
-            return cls.getSimpleName();
+            return cls.getName();
         }
         final ApiModel model = cls.getAnnotation(ApiModel.class);
         final String modelName = model == null ? null : StringUtils.trimToNull(model.value());
-        return modelName == null ? cls.getSimpleName() : modelName;
+        return modelName == null ? cls.getName() : modelName;
     }
 
     protected String nameForGenericType(JavaType type, Set<Options> options) {

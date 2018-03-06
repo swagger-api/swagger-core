@@ -34,7 +34,7 @@ public class SnakeCaseConverterTest {
 
         final Map<String, Model> models = converters.readAll(SnakeCaseModel.class);
         final String json = "{" +
-                "   \"bar\":{" +
+                "   \"io.swagger.model.override._snake_case_converter_test$_bar\":{" +
                 "      \"type\":\"object\"," +
                 "      \"properties\":{" +
                 "         \"foo\":{" +
@@ -42,11 +42,11 @@ public class SnakeCaseConverterTest {
                 "         }" +
                 "      }" +
                 "   }," +
-                "   \"snake_case_model\":{" +
+                "   \"io.swagger.model.override._snake_case_converter_test$_snake_case_model\":{" +
                 "      \"type\":\"object\"," +
                 "      \"properties\":{" +
                 "         \"bar\":{" +
-                "            \"$ref\":\"#/definitions/bar\"" +
+                "            \"$ref\":\"#/definitions/io.swagger.model.override._snake_case_converter_test$_bar\"" +
                 "         }," +
                 "         \"title\":{" +
                 "            \"type\":\"string\"" +

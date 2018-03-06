@@ -23,9 +23,9 @@ public class OverrideTest {
         final ModelConverters converters = new ModelConverters();
         converters.addConverter(new GericModelConverter());
         final Map<String, Model> read = converters.read(GenericModel.class);
-        assertTrue(read.containsKey(GenericModel.class.getSimpleName()));
+        assertTrue(read.containsKey(GenericModel.class.getName()));
 
-        final Model model = read.get(GenericModel.class.getSimpleName());
+        final Model model = read.get(GenericModel.class.getName());
         assertTrue(model.getProperties().containsKey(NAME));
         assertEquals(model.getProperties().get(NAME).getType(), "string");
         assertTrue(model.getProperties().containsKey(COUNT));

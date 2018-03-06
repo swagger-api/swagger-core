@@ -30,7 +30,7 @@ public class GericModelConverter extends AbstractModelConverter {
             Class<?> cls = (Class<?>) type;
             if (GenericModel.class.isAssignableFrom(cls)) {
                 ModelImpl impl = new ModelImpl();
-                impl.setName(cls.getSimpleName());
+                impl.setName(cls.getName());
                 for (Entry<String, Class<?>> entry : GenericModel.getDeclaredProperties().entrySet()) {
                     impl.addProperty(entry.getKey(), context.resolveProperty(entry.getValue(), null));
                 }

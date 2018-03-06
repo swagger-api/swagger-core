@@ -5,6 +5,7 @@ import io.swagger.models.ArrayModel;
 import io.swagger.models.Model;
 import io.swagger.models.Operation;
 import io.swagger.models.Path;
+import io.swagger.models.Pet;
 import io.swagger.models.Swagger;
 import io.swagger.models.parameters.BodyParameter;
 import io.swagger.models.properties.Property;
@@ -35,7 +36,7 @@ public class PostParamTest {
         assertEquals(petPostBodyParam.getName(), BODY);
 
         assertTrue(petPostBodyParam.getSchema() instanceof Model);
-        assertEquals(swagger.getDefinitions().get(PET).getProperties().get("status").getAccess(), "public");
+        assertEquals(swagger.getDefinitions().get(Pet.class.getName()).getProperties().get("status").getAccess(), "public");
     }
 
     @Test(description = "find a Post operation with list of objects")
@@ -54,7 +55,7 @@ public class PostParamTest {
         Property inputSchema = ap.getItems();
         assertTrue(inputSchema instanceof RefProperty);
         RefProperty rm = (RefProperty) inputSchema;
-        assertEquals(rm.getSimpleRef(), PET);
+        assertEquals(rm.getSimpleRef(), Pet.class.getName());
     }
 
     @Test(description = "find a Post operation with collection of objects")
@@ -73,7 +74,7 @@ public class PostParamTest {
         Property inputSchema = ap.getItems();
         assertTrue(inputSchema instanceof RefProperty);
         RefProperty rm = (RefProperty) inputSchema;
-        assertEquals(rm.getSimpleRef(), PET);
+        assertEquals(rm.getSimpleRef(), Pet.class.getName());
     }
 
     @Test(description = "find a Post operation with an array of objects")
@@ -92,7 +93,7 @@ public class PostParamTest {
         Property inputSchema = ap.getItems();
         assertTrue(inputSchema instanceof RefProperty);
         RefProperty rm = (RefProperty) inputSchema;
-        assertEquals(rm.getSimpleRef(), PET);
+        assertEquals(rm.getSimpleRef(), Pet.class.getName());
     }
 
     @Test(description = "find a Post operation with single string")

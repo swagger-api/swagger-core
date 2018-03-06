@@ -7,8 +7,11 @@ import com.google.common.collect.ImmutableMap;
 import io.swagger.jaxrs.Reader;
 import io.swagger.jaxrs.config.DefaultReaderConfig;
 import io.swagger.models.ArrayModel;
+import io.swagger.models.EmptyModel;
 import io.swagger.models.Model;
 import io.swagger.models.ModelImpl;
+import io.swagger.models.Namespace.Description;
+import io.swagger.models.NotFoundModel;
 import io.swagger.models.Operation;
 import io.swagger.models.Path;
 import io.swagger.models.RefModel;
@@ -178,7 +181,7 @@ public class SimpleReaderTest {
     public void scanResourceWithVoidReturnType() {
         Swagger swagger = getSwagger(ResourceWithVoidReturns.class);
         assertEquals(swagger.getDefinitions().size(), 1);
-        assertNotNull(swagger.getDefinitions().get("NotFoundModel"));
+        assertNotNull(swagger.getDefinitions().get(NotFoundModel.class.getName()));
     }
 
     @Test(description = "scan a resource with map return type")
@@ -333,7 +336,7 @@ public class SimpleReaderTest {
     public void scanResourceWithEmptyModel() {
         Map<String, Model> definitions = getSwagger(ResourceWithEmptyModel.class).getDefinitions();
         assertEquals(definitions.size(), 1);
-        ModelImpl empty = (ModelImpl) definitions.get("EmptyModel");
+        ModelImpl empty = (ModelImpl) definitions.get(EmptyModel.class.getName());
         assertEquals(empty.getType(), "object");
         assertNull(empty.getProperties());
         assertNull(empty.getAdditionalProperties(), null);
@@ -445,8 +448,8 @@ public class SimpleReaderTest {
     public void scanResourceWithInnerClass() {
         Swagger swagger = getSwagger(ResourceWithInnerClass.class);
         assertEquals(((RefProperty) ((ArrayProperty) getGetResponses(swagger, "/description").get("200").getSchema()).
-                getItems()).get$ref(), "#/definitions/Description");
-        assertTrue(swagger.getDefinitions().containsKey("Description"));
+                getItems()).get$ref(), "#/definitions/"+Description.class.getName());
+        assertTrue(swagger.getDefinitions().containsKey(Description.class.getName()));
     }
 
     @Test(description = "scan defaultValue and required per #937")
@@ -472,7 +475,7 @@ public class SimpleReaderTest {
         assertEquals(schema.getType(), "integer");
         assertEquals(schema.getFormat(), "int32");
 
-        assertEquals(swagger.getDefinitions().keySet(), Arrays.asList("Tag"));
+        assertEquals(swagger.getDefinitions().keySet(), Arrays.asList(io.swagger.models.duplicated.Tag.class.getName()));
 
         testString(swagger, "/testApiString", "input", "String parameter");
         testString(swagger, "/testString", "body", null);
@@ -506,7 +509,7 @@ public class SimpleReaderTest {
     }
 
     private void testObject(Swagger swagger, String path, String name, String description) {
-        assertEquals(((RefModel) testParam(swagger, path, name, description)).getSimpleRef(), "Tag");
+        assertEquals(((RefModel) testParam(swagger, path, name, description)).getSimpleRef(), io.swagger.models.duplicated.Tag.class.getName());
     }
 
     @Test(description = "verify top-level path params per #1085")
@@ -534,7 +537,8 @@ public class SimpleReaderTest {
     @Test(description = "check response models processing")
     public void checkResponseModelsProcessing() {
         Swagger swagger = getSwagger(ResourceWithTypedResponses.class);
-        assertEquals(swagger.getDefinitions().keySet(), Arrays.asList("Tag"));
+        assertEquals(swagger.getDefinitions().keySet(), Arrays.asList(
+            io.swagger.models.duplicated.Tag.class.getName()));
         for (Map.Entry<String, Path> entry : swagger.getPaths().entrySet()) {
             String name = entry.getKey().substring(entry.getKey().lastIndexOf("/") + 1);
             if ("testPrimitiveResponses".equals(name)) {
@@ -557,11 +561,11 @@ public class SimpleReaderTest {
                 assertEquals(op.getParameters().size(), 1);
 
                 if ("testObjectResponse".equals(name)) {
-                    assertEquals(((RefProperty) response).getSimpleRef(), "Tag");
-                    assertEquals(((RefModel) model).getSimpleRef(), "Tag");
+                    assertEquals(((RefProperty) response).getSimpleRef(), io.swagger.models.duplicated.Tag.class.getName());
+                    assertEquals(((RefModel) model).getSimpleRef(), io.swagger.models.duplicated.Tag.class.getName());
                 } else if ("testObjectsResponse".equals(name)) {
-                    assertEquals(((RefProperty) ((ArrayProperty) response).getItems()).getSimpleRef(), "Tag");
-                    assertEquals(((RefProperty) ((ArrayModel) model).getItems()).getSimpleRef(), "Tag");
+                    assertEquals(((RefProperty) ((ArrayProperty) response).getItems()).getSimpleRef(), io.swagger.models.duplicated.Tag.class.getName());
+                    assertEquals(((RefProperty) ((ArrayModel) model).getItems()).getSimpleRef(), io.swagger.models.duplicated.Tag.class.getName());
                 } else if ("testStringResponse".equals(name)) {
                     assertEquals(response.getClass(), StringProperty.class);
                     assertEquals(((ModelImpl) model).getType(), "string");
@@ -569,9 +573,9 @@ public class SimpleReaderTest {
                     assertEquals(((ArrayProperty) response).getItems().getClass(), StringProperty.class);
                     assertEquals(((ArrayModel) model).getItems().getClass(), StringProperty.class);
                 } else if ("testMapResponse".equals(name)) {
-                    assertEquals(((RefProperty) ((MapProperty) response).getAdditionalProperties()).getSimpleRef(), "Tag");
+                    assertEquals(((RefProperty) ((MapProperty) response).getAdditionalProperties()).getSimpleRef(), io.swagger.models.duplicated.Tag.class.getName());
                     assertNull(model.getProperties());
-                    assertEquals(((RefProperty) ((ModelImpl) model).getAdditionalProperties()).getSimpleRef(), "Tag");
+                    assertEquals(((RefProperty) ((ModelImpl) model).getAdditionalProperties()).getSimpleRef(), io.swagger.models.duplicated.Tag.class.getName());
                 } else {
                     fail(String.format("Unexpected property: %s", name));
                 }

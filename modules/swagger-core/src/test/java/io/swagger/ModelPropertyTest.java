@@ -2,6 +2,7 @@ package io.swagger;
 
 import io.swagger.converter.ModelConverters;
 import io.swagger.matchers.SerializationMatchers;
+import io.swagger.models.Children;
 import io.swagger.models.Model;
 import io.swagger.models.Model1979;
 import io.swagger.models.ModelImpl;
@@ -32,7 +33,7 @@ public class ModelPropertyTest {
         final Map<String, Model> models = ModelConverters.getInstance().readAll(Family.class);
         assertEquals(models.size(), 3);
 
-        final Model person = models.get("Person");
+        final Model person = models.get(Person.class.getName());
         final Property employer = person.getProperties().get("employer");
 
         assertTrue(employer instanceof ArrayProperty);
@@ -40,7 +41,7 @@ public class ModelPropertyTest {
 
         final Property items = employerProperty.getItems();
         assertTrue(items instanceof RefProperty);
-        assertEquals(((RefProperty) items).getSimpleRef(), "Employer");
+        assertEquals(((RefProperty) items).getSimpleRef(), Employer.class.getName());
 
         final Property awards = person.getProperties().get("awards");
         assertTrue(awards instanceof ArrayProperty);
@@ -52,7 +53,7 @@ public class ModelPropertyTest {
         final Map<String, Model> models = ModelConverters.getInstance().readAll(ModelWithPrimitiveArray.class);
         assertEquals(models.size(), 1);
 
-        final Model model = models.get("ModelWithPrimitiveArray");
+        final Model model = models.get(ModelWithPrimitiveArray.class.getName());
         final ArrayProperty longArray = (ArrayProperty) model.getProperties().get("longArray");
         final Property longArrayItems = longArray.getItems();
         assertTrue(longArrayItems instanceof LongProperty);
@@ -64,7 +65,7 @@ public class ModelPropertyTest {
     @Test
     public void readModelProperty() {
         final Map<String, Model> models = ModelConverters.getInstance().readAll(IsModelTest.class);
-        final Model model = models.get("IsModelTest");
+        final Model model = models.get(IsModelTest.class.getName());
         assertNotNull(model);
     }
 
@@ -72,7 +73,7 @@ public class ModelPropertyTest {
     public void readDataTypesProperty() {
         final Map<String, Model> models = ModelConverters.getInstance().readAll(ModelWithModelPropertyOverrides.class);
         final String json = "{" +
-                "   \"Children\":{" +
+                "   \""+Children.class.getName()+"\":{" +
                 "      \"type\":\"object\"," +
                 "      \"properties\":{" +
                 "         \"name\":{" +
@@ -80,13 +81,13 @@ public class ModelPropertyTest {
                 "         }" +
                 "      }" +
                 "   }," +
-                "   \"ModelWithModelPropertyOverrides\":{" +
+                "   \""+ModelWithModelPropertyOverrides.class.getName()+"\":{" +
                 "      \"type\":\"object\"," +
                 "      \"properties\":{" +
                 "         \"children\":{" +
                 "            \"type\":\"array\"," +
                 "            \"items\":{" +
-                "               \"$ref\":\"#/definitions/Children\"" +
+                "               \"$ref\":\"#/definitions/"+Children.class.getName()+"\"" +
                 "            }" +
                 "         }" +
                 "      }" +
@@ -98,14 +99,14 @@ public class ModelPropertyTest {
     @Test
     public void testReadOnlyProperty() {
         final Map<String, Model> models = ModelConverters.getInstance().readAll(ReadOnlyFields.class);
-        ModelImpl model = (ModelImpl) models.get("ReadOnlyFields");
+        ModelImpl model = (ModelImpl) models.get(ReadOnlyFields.class.getName());
         assertTrue(model.getProperties().get("id").getReadOnly());
     }
 
     @Test
     public void modelAllowEmptyTest() {
         final Map<String, Model> models = ModelConverters.getInstance().readAll(Model1979.class);
-        ModelImpl model = (ModelImpl) models.get("Model1979");
+        ModelImpl model = (ModelImpl) models.get(Model1979.class.getName());
         assertTrue(model.getProperties().get("id").getAllowEmptyValue());
     }
 
@@ -113,7 +114,7 @@ public class ModelPropertyTest {
     @Test
     public void testIssue1743() {
         final Map<String, Model> models = ModelConverters.getInstance().readAll(ModelWithBooleanProperty.class);
-        final Model model = models.get("ModelWithBooleanProperty");
+        final Model model = models.get(ModelWithBooleanProperty.class.getName());
         assertNotNull(model);
 
         BooleanProperty bp = (BooleanProperty) model.getProperties().get("isGreat");

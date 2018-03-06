@@ -21,7 +21,7 @@ public class HiddenFieldTest {
     public void testHiddenField() {
         final Map<String, Model> models = ModelConverters.getInstance().read(ModelWithHiddenFields.class);
 
-        final Model model = models.get("ModelWithHiddenFields");
+        final Model model = models.get(ModelWithHiddenFields.class.getName());
         assertNotNull(model);
         assertEquals(model.getProperties().size(), 2);
 

@@ -23,7 +23,7 @@ public class ByteConverterTest {
     public void testByte() {
         final Map<String, Model> models = ModelConverters.getInstance().read(ByteConverterModel.class);
         final String json = "{" +
-                "   \"ByteConverterModel\":{" +
+                "   \""+ByteConverterModel.class.getName()+"\":{" +
                 "      \"type\":\"object\"," +
                 "      \"properties\":{" +
                 "         \"myBytes\":{" +

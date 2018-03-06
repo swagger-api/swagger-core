@@ -1,5 +1,5 @@
 {
-    "Human": {
+    "io.swagger.models.composition.Human": {
         "type": "object",
         "properties": {
             "name": {

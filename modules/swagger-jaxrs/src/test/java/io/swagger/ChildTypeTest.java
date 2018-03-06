@@ -4,6 +4,7 @@ import io.swagger.jaxrs.Reader;
 import io.swagger.models.Model;
 import io.swagger.models.Operation;
 import io.swagger.models.RefModel;
+import io.swagger.models.Sub1Bean;
 import io.swagger.models.Swagger;
 import io.swagger.models.parameters.BodyParameter;
 import io.swagger.models.properties.Property;
@@ -28,7 +29,7 @@ public class ChildTypeTest {
         Operation op = swagger.getPath("/childType/testChildTypeResponse").getGet();
         Property schema = op.getResponses().get("200").getSchema();
         assertEquals(schema.getClass().getName(), RefProperty.class.getName());
-        assertEquals(((RefProperty) schema).getSimpleRef(), "Sub1Bean");
+        assertEquals(((RefProperty) schema).getSimpleRef(), Sub1Bean.class.getName());
     }
 
     @Test(description = "Tests child type response schema ref is correctly set up when specified on the operation")
@@ -36,7 +37,7 @@ public class ChildTypeTest {
         Operation op = swagger.getPath("/childType/testChildTypeResponseOnOperation").getGet();
         Property schema = op.getResponses().get("200").getSchema();
         assertEquals(schema.getClass().getName(), RefProperty.class.getName());
-        assertEquals(((RefProperty) schema).getSimpleRef(), "Sub1Bean");
+        assertEquals(((RefProperty) schema).getSimpleRef(), Sub1Bean.class.getName());
     }
 
     @Test(description = "Tests schema ref is correctly set up for child type parameter")
@@ -45,7 +46,7 @@ public class ChildTypeTest {
         BodyParameter parameter = getBodyParameter(op, 0);
         Model schema = parameter.getSchema();
         assertEquals(schema.getClass().getName(), RefModel.class.getName());
-        assertEquals(((RefModel) schema).getSimpleRef(), "Sub1Bean");
+        assertEquals(((RefModel) schema).getSimpleRef(), Sub1Bean.class.getName());
     }
 
 }

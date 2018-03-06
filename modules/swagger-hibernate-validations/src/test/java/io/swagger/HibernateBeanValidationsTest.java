@@ -20,7 +20,7 @@ public class HibernateBeanValidationsTest {
     @Test(description = "it should read hibernate validations")
     public void readHibernateValidations() {
         final Map<String, Model> schemas = ModelConverters.getInstance().readAll(HibernateBeanValidationsModel.class);
-        final Map<String, Property> properties = schemas.get("HibernateBeanValidationsModel").getProperties();
+        final Map<String, Property> properties = schemas.get(HibernateBeanValidationsModel.class.getName()).getProperties();
 
         final IntegerProperty age = (IntegerProperty) properties.get("age");
         assertEquals(age.getMinimum().doubleValue(), 13.0, 0.01);
@@ -37,7 +37,7 @@ public class HibernateBeanValidationsTest {
     @Test
     public void shouldUnderstandNotEmpty() {
         final Map<String, Model> schemas = ModelConverters.getInstance().readAll(HibernateBeanValidationsModel.class);
-        final Map<String, Property> properties = schemas.get("HibernateBeanValidationsModel").getProperties();
+        final Map<String, Property> properties = schemas.get(HibernateBeanValidationsModel.class.getName()).getProperties();
         final StringProperty notEmptyString = (StringProperty) properties.get("notEmptyString");
         assertEquals((int) notEmptyString.getMinLength(), 1);
 

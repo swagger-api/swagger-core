@@ -63,7 +63,7 @@ public class ContainerTest extends SwaggerTestBase {
         context.resolve(WrapperType.class);
 
         final Map<String, Model> models = context.getDefinedModels();
-        final Model innerType = models.get("InnerType");
+        final Model innerType = models.get(InnerType.class.getName());
         assertNotNull(innerType);
         final Map<String, Property> innerProps = innerType.getProperties();
         assertEquals(innerProps.size(), 2);
@@ -73,7 +73,7 @@ public class ContainerTest extends SwaggerTestBase {
         final Property name = innerProps.get("name");
         assertEquals(name.getType(), "string");
 
-        final Model wrapperType = models.get("WrapperType");
+        final Model wrapperType = models.get(WrapperType.class.getName());
         assertNotNull(wrapperType);
         assertEquals(wrapperType.getProperties().get("innerType").getType(), "object");
     }
