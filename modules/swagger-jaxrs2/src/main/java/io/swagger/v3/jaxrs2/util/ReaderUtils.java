@@ -159,7 +159,7 @@ public class ReaderUtils {
         return false;
     }
 
-    public static String getPath(javax.ws.rs.Path classLevelPath, javax.ws.rs.Path methodLevelPath, String parentPath) {
+    public static String getPath(javax.ws.rs.Path classLevelPath, javax.ws.rs.Path methodLevelPath, String parentPath, boolean isSubresource) {
         if (classLevelPath == null && methodLevelPath == null && StringUtils.isEmpty(parentPath)) {
             return null;
         }
@@ -174,7 +174,7 @@ public class ReaderUtils {
 
             b.append(parentPath);
         }
-        if (classLevelPath != null) {
+        if (classLevelPath != null && !isSubresource) {
             b.append(classLevelPath.value());
         }
         if (methodLevelPath != null && !"/".equals(methodLevelPath.value())) {

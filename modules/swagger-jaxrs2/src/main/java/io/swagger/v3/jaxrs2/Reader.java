@@ -383,7 +383,7 @@ public class Reader implements OpenApiReader {
 
             javax.ws.rs.Path methodPath = ReflectionUtils.getAnnotation(method, javax.ws.rs.Path.class);
 
-            String operationPath = ReaderUtils.getPath(apiPath, methodPath, parentPath);
+            String operationPath = ReaderUtils.getPath(apiPath, methodPath, parentPath, isSubresource);
 
             // skip if path is the same as parent, e.g. for @ApplicationPath annotated application
             // extending resource config.
