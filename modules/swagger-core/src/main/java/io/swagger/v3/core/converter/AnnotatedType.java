@@ -22,6 +22,7 @@ public class AnnotatedType {
     private boolean resolveAsRef;
     private JsonView jsonViewAnnotation;
     private boolean skipSchemaName;
+    private boolean skipJsonIdentity;
 
     public AnnotatedType() {
     }
@@ -40,6 +41,19 @@ public class AnnotatedType {
 
     public AnnotatedType skipOverride(boolean skipOverride) {
         this.skipOverride = skipOverride;
+        return this;
+    }
+
+    public boolean isSkipJsonIdentity() {
+        return skipJsonIdentity;
+    }
+
+    public void setSkipJsonIdentity(boolean skipJsonIdentity) {
+        this.skipJsonIdentity = skipJsonIdentity;
+    }
+
+    public AnnotatedType skipJsonIdentity(boolean skipJsonIdentity) {
+        this.skipJsonIdentity = skipJsonIdentity;
         return this;
     }
 

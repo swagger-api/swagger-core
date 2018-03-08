@@ -302,16 +302,6 @@ public class PropertySerializationTest {
         assertEquals(m.writeValueAsString(p), json);
     }
 
-    // TODO #2312 test File Uploads instead
-    @Test(enabled = false, description = "it should read a file property")
-    public void serializeFileProperty() throws IOException {
-        final String json = "{\"type\":\"file\"}";
-        final Schema p = m.readValue(json, Schema.class);
-        assertEquals(p.getType(), "file");
-        assertEquals(p.getClass(), FileSchema.class);
-        assertEquals(m.writeValueAsString(p), json);
-    }
-
     @Test(description = "it should serialize an object property with required set")
     public void serializeObjectPropertyWithRequiredProperties() throws IOException {
         final Schema p = new ObjectSchema()

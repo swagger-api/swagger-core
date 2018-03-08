@@ -1233,6 +1233,25 @@ public abstract class AnnotationsUtils {
         return null;
     }
 
+    public static Annotation[] removeAnnotations(Annotation[] annotations, Class ... classes) {
+        if (annotations == null) {
+            return null;
+        }
+        List<Annotation> result = new ArrayList<>();
+        for (Annotation annotation : annotations) {
+            boolean found = false;
+            for (Class cls : classes) {
+                if (cls.isAssignableFrom(annotation.getClass())) {
+                    found = true;
+                }
+            }
+            if (!found) {
+                result.add(annotation);
+            }
+        }
+        return result.toArray(new Annotation[result.size()]);
+    }
+
 
     public static void updateAnnotation(Class<?> clazz, io.swagger.v3.oas.annotations.media.Schema newAnnotation) {
         try {
