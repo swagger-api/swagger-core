@@ -241,6 +241,23 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             }
         }
 
+        if (!annotatedType.isSkipJsonIdentity()) {
+            JsonIdentityInfo jsonIdentityInfo = AnnotationsUtils.getAnnotation(JsonIdentityInfo.class, annotatedType.getCtxAnnotations());
+            if (jsonIdentityInfo == null) {
+                jsonIdentityInfo = type.getRawClass().getAnnotation(JsonIdentityInfo.class);
+            }
+            if (model == null && jsonIdentityInfo != null) {
+                JsonIdentityReference jsonIdentityReference = AnnotationsUtils.getAnnotation(JsonIdentityReference.class, annotatedType.getCtxAnnotations());
+                if (jsonIdentityReference == null) {
+                    jsonIdentityReference = type.getRawClass().getAnnotation(JsonIdentityReference.class);
+                }
+                model = GeneratorWrapper.processJsonIdentity(annotatedType, context, _mapper, jsonIdentityInfo, jsonIdentityReference);
+                if (model != null) {
+                    return model;
+                }
+            }
+        }
+
         if (model == null && annotatedType.getJsonUnwrappedHandler() != null) {
             model = annotatedType.getJsonUnwrappedHandler().apply(annotatedType);
             if (model == null) {
@@ -964,11 +981,26 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
         private static Schema process(Schema id, String propertyName, AnnotatedType type,
                                       ModelConverterContext context) {
-            Schema model = context.resolve(type);
+
+            Schema model = context.resolve(removeJsonIdentityAnnotations(type));
             Schema mi = model;
-            mi.getProperties().put(propertyName, id);
+            mi.addProperties(propertyName, id);
             return new Schema().$ref(StringUtils.isNotEmpty(mi.get$ref())
                     ? mi.get$ref() : mi.getName());
+        }
+        private static AnnotatedType removeJsonIdentityAnnotations(AnnotatedType type) {
+            return new AnnotatedType()
+                    .jsonUnwrappedHandler(type.getJsonUnwrappedHandler())
+                    .jsonViewAnnotation(type.getJsonViewAnnotation())
+                    .name(type.getName())
+                    .parent(type.getParent())
+                    .resolveAsRef(false)
+                    .schemaProperty(type.isSchemaProperty())
+                    .skipOverride(type.isSkipOverride())
+                    .skipSchemaName(type.isSkipSchemaName())
+                    .type(type.getType())
+                    .skipJsonIdentity(true)
+                    .ctxAnnotations(AnnotationsUtils.removeAnnotations(type.getCtxAnnotations(), JsonIdentityInfo.class, JsonIdentityReference.class));
         }
     }
 
