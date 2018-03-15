@@ -215,6 +215,7 @@
                         <exclude>**/io/swagger/model/ApiInfo.*</exclude>
                         <exclude>**/io/swagger/util/Yaml.*</exclude>
                         <exclude>**/io/swagger/jackson/*</exclude>
+                        <exclude>**/io/swagger/jackson/mixin/*</exclude>
                         <exclude>**/io/swagger/converter/ModelConverters.*</exclude>
 
                         <!-- JAXRS -->

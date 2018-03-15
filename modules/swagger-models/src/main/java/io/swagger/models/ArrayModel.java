@@ -9,6 +9,7 @@ public class ArrayModel extends AbstractModel {
     private String type;
     private String description;
     private Property items;
+    private Boolean uniqueItems;
     private Object example;
     private Integer minItems;
     private Integer maxItems;
@@ -24,6 +25,11 @@ public class ArrayModel extends AbstractModel {
 
     public ArrayModel items(Property items) {
         this.setItems(items);
+        return this;
+    }
+
+    public ArrayModel uniqueItems(Boolean uniqueItems) {
+        this.setUniqueItems(uniqueItems);
         return this;
     }
 
@@ -57,8 +63,17 @@ public class ArrayModel extends AbstractModel {
         return items;
     }
 
+    public Boolean getUniqueItems() {
+        return uniqueItems;
+    }
+
     public void setItems(Property items) {
         this.items = items;
+    }
+
+    public void setUniqueItems(Boolean uniqueItems) {
+        this.uniqueItems = uniqueItems;
+
     }
 
     public Map<String, Property> getProperties() {
@@ -119,6 +134,9 @@ public class ArrayModel extends AbstractModel {
         if (items != null ? !items.equals(that.items) : that.items != null) {
             return false;
         }
+        if (uniqueItems != null ? !uniqueItems.equals(that.uniqueItems) : that.uniqueItems != null) {
+            return false;
+        }
         if (example != null ? !example.equals(that.example) : that.example != null) {
             return false;
         }
@@ -136,6 +154,7 @@ public class ArrayModel extends AbstractModel {
         result = 31 * result + (type != null ? type.hashCode() : 0);
         result = 31 * result + (description != null ? description.hashCode() : 0);
         result = 31 * result + (items != null ? items.hashCode() : 0);
+        result = 31 * result + (uniqueItems != null ? uniqueItems.hashCode() : 0);
         result = 31 * result + (example != null ? example.hashCode() : 0);
         result = 31 * result + (minItems != null ? minItems.hashCode() : 0);
         result = 31 * result + (maxItems != null ? maxItems.hashCode() : 0);

@@ -1,5 +1,7 @@
 package io.swagger.properties;
 
+import io.swagger.models.ArrayModel;
+import io.swagger.models.Model;
 import io.swagger.models.Operation;
 import io.swagger.models.Response;
 import io.swagger.models.properties.ArrayProperty;
@@ -34,13 +36,13 @@ public class ArrayPropertyDeserializerTest {
       Response response = operation.getResponses().get("200");
       assertNotNull(response);
       
-      Property responseSchema = response.getSchema();
+      Model responseSchema = response.getResponseSchema();
       assertNotNull(responseSchema);
-      assertTrue(responseSchema instanceof ArrayProperty);
-      
-      ArrayProperty mp = (ArrayProperty) responseSchema;
-      assertNotNull( mp.getExample() );
-      assertEquals(mp.getMinItems(), new Integer(3));
-      assertEquals(mp.getMaxItems(), new Integer(100));
+      assertTrue(responseSchema instanceof ArrayModel);
+
+      ArrayModel arrayModel = (ArrayModel) responseSchema;
+      assertNotNull( arrayModel.getExample() );
+      assertEquals(arrayModel.getMinItems(), new Integer(3));
+      assertEquals(arrayModel.getMaxItems(), new Integer(100));
   }
 }
