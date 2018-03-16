@@ -455,7 +455,7 @@ public class ApiListingResourceIT {
 
         System.out.println(EXPECTED_JSON);
         System.out.println(formatJson(actualBody));
-        assertEquals(formatJson(actualBody), EXPECTED_JSON);
+        assertEquals(normalizeLineEnds(formatJson(actualBody)), EXPECTED_JSON);
     }
 
     @Test
@@ -473,7 +473,7 @@ public class ApiListingResourceIT {
                 .contentType(ContentType.JSON)
                 .extract().response().body().asString();
 
-        assertEquals(formatJson(actualBody), EXPECTED_JSON);
+        assertEquals(normalizeLineEnds(formatJson(actualBody)), EXPECTED_JSON);
     }
 
     @Test
@@ -521,5 +521,9 @@ public class ApiListingResourceIT {
         return Json.mapper().configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, true)
                 .writerWithDefaultPrettyPrinter()
                 .writeValueAsString(Json.mapper().readValue(source, Object.class));
+    }
+
+    private static String normalizeLineEnds(String s) {
+        return s.replace("\r\n", "\n").replace('\r', '\n');
     }
 }
