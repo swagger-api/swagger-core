@@ -11,6 +11,7 @@ import javax.validation.constraints.Min;
 import java.math.BigDecimal;
 import java.util.Map;
 
+import static io.swagger.v3.core.util.TestUtils.normalizeLineEnds;
 import static org.testng.Assert.assertEquals;
 
 public class NumericFormatTest {
@@ -20,7 +21,7 @@ public class NumericFormatTest {
         assertEquals(models.size(), 1);
 
         String json = Json.pretty(models);
-        assertEquals(json,
+        assertEquals(normalizeLineEnds(json),
                 "{\n" +
                         "  \"ModelWithIntegerFields\" : {\n" +
                         "    \"type\" : \"object\",\n" +
@@ -41,7 +42,7 @@ public class NumericFormatTest {
         assertEquals(models.size(), 1);
 
         String json = Json.pretty(models);
-        assertEquals(json,
+        assertEquals(normalizeLineEnds(json),
                 "{\n" +
                         "  \"ModelWithDecimalFields\" : {\n" +
                         "    \"type\" : \"object\",\n" +
@@ -64,7 +65,7 @@ public class NumericFormatTest {
 
         String json = Json.pretty(models);
 
-        assertEquals(json,
+        assertEquals(normalizeLineEnds(json),
                 "{\n" +
                         "  \"ModelWithoutScientificFields\" : {\n" +
                         "    \"type\" : \"object\",\n" +
