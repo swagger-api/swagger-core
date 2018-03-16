@@ -41,4 +41,8 @@ public class TestUtils {
     public static <T> T deserializeYamlFileFromClasspath(String path, Class<T> type) {
         return deserializeFileFromClasspath(path, type, Yaml.mapper());
     }
+
+    public static String normalizeLineEnds(String s) {
+        return s.replace("\r\n", "\n").replace('\r', '\n');
+    }
 }

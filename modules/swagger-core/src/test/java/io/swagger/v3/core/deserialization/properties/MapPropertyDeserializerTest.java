@@ -10,6 +10,7 @@ import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.responses.ApiResponse;
 import org.testng.annotations.Test;
 
+import static io.swagger.v3.core.util.TestUtils.normalizeLineEnds;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
@@ -121,13 +122,13 @@ public class MapPropertyDeserializerTest {
         Schema responseSchema = response.getContent().get("*/*").getSchema();
 
         Schema schema = new ObjectSchema().additionalProperties(true);
-        assertEquals(Json.pretty(schema), "{\n" +
+        assertEquals(normalizeLineEnds(Json.pretty(schema)), "{\n" +
                 "  \"type\" : \"object\",\n" +
                 "  \"additionalProperties\" : true\n" +
                 "}");
 
         schema = new ObjectSchema().additionalProperties(responseSchema);
-        assertEquals(Json.pretty(schema), "{\n" +
+        assertEquals(normalizeLineEnds(Json.pretty(schema)), "{\n" +
                 "  \"type\" : \"object\",\n" +
                 "  \"additionalProperties\" : {\n" +
                 "    \"type\" : \"object\",\n" +
