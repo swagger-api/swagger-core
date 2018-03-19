@@ -942,18 +942,16 @@ public class Reader {
             }
         }
 
+        //class level @ApiResponse
+        for (ApiResponse apiResponse : classApiResponses) {
+            addResponse(operation, apiResponse, jsonViewAnnotation);
+        }
+        
+        //method level @ApiResponse
         for (ApiResponse apiResponse : apiResponses) {
             addResponse(operation, apiResponse, jsonViewAnnotation);
         }
-        // merge class level @ApiResponse
-        for (ApiResponse apiResponse : classApiResponses) {
-            String key = (apiResponse.code() == 0) ? "default" : String.valueOf(apiResponse.code());
-            if (operation.getResponses() != null && operation.getResponses().containsKey(key)) {
-                continue;
-            }
-            addResponse(operation, apiResponse, jsonViewAnnotation);
-        }
-
+        
         if (ReflectionUtils.getAnnotation(method, Deprecated.class) != null) {
             operation.setDeprecated(true);
         }
