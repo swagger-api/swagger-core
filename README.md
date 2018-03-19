@@ -8,6 +8,9 @@ Swagger-core is the Java implementation of Swagger. Current version supports *JA
 
 Check out the [OpenAPI Specification](https://github.com/OAI/OpenAPI-Specification) for additional information about the Swagger project.
 
+## Get started with Swagger!
+See the guide on [getting started with swagger](https://github.com/frantuma/swagger-core/wiki/Swagger-2.X---Getting-started) to get started with adding swagger to your API.
+
 ## See the Wiki!
 The [github wiki](https://github.com/swagger-api/swagger-core/wiki) contains documentation, samples, contributions, etc. Start there.
 
@@ -18,8 +21,6 @@ The following methods are available to obtain support for Swagger:
 - The [Issues tab](https://github.com/swagger-api/swagger-core/issues?state=open) - Please open feature requests and bugs here. If you're not sure you encountered a bug, or if it's a general usage question, please use the Google Group mentioned above.
 - IRC! you can find us on [freenode](http://webchat.freenode.net/?channels=swagger) in the channel #Swagger. You can talk with us directly there.
 
-## Get started with Swagger!
-See the guide on [getting started with swagger](https://github.com/swagger-api/swagger-core/wiki/Swagger-Core-JAX-RS-Project-Setup-2.0.X) to get started with adding swagger to your API.
 
 ## Compatibility
 The OpenAPI Specification has undergone several revisions since initial creation in 2010.  The swagger-core project has the following compatibilities with the OpenAPI Specification:
