@@ -27,6 +27,7 @@ The OpenAPI Specification has undergone several revisions since initial creation
 
 Swagger core Version      | Release Date | OpenAPI Spec compatibility | Notes | Status
 ------------------------- | ------------ | -------------------------- | ----- | ----
+2.0.0                     | 2018-03-20   | 3.0           | [tag v2.0.0](https://github.com/swagger-api/swagger-core/tree/v2.0.0) | Supported
 2.0.0-rc4                 | 2018-01-22   | 3.0           | [tag v2.0.0-rc4](https://github.com/swagger-api/swagger-core/tree/v2.0.0-rc4) | Supported
 2.0.0-rc3                 | 2017-11-21   | 3.0           | [tag v2.0.0-rc3](https://github.com/swagger-api/swagger-core/tree/v2.0.0-rc3) | Supported
 2.0.0-rc2                 | 2017-09-29   | 3.0           | [tag v2.0.0-rc2](https://github.com/swagger-api/swagger-core/tree/v2.0.0-rc2) | Supported
@@ -52,7 +53,7 @@ You need the following installed and available in your $PATH:
 * Jackson 2.4.5 or greater
 
 
-### To build from source (currently 2.0.0-SNAPSHOT)
+### To build from source (currently 2.0.0)
 ```
 # first time building locally
 mvn -N
@@ -88,6 +89,33 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ```
+
+## v2.0.0
+
+### Notable Features:
+
+* First official release with OpenAPI 3.0 support
+* Brand new [2.0 wiki](https://github.com/swagger-api/swagger-core/wiki)
+* Jackson 2.9.4 (#2655)
+* JsonView support (#2079)
+* internal refactor (#2593)
+* Updated annotations target (#2653)
+* deprecates Schema.readOnly and introduces accessMode field (#2379)
+* Class level response annotations (#2685)
+* rework JsonProperty, readonly/writeonly support (#2169)
+* JsonIdentity support (#2704)
+
+### Bug fixes:
+
+* Annotation inheritance from interfaces (#2644)
+* @Produces full support (#2646)
+* Reader Correctly skips non JAX-RS methods (#2656)
+* fix models osgi export packages (#2663)
+* avoid duplicate operationId (#2433)
+* file upload and multipart fixes (#2689)
+* support ArraySchema context annotations in container type properties (#2616)
+* Path in Class level removed for subresources (#2632)
+* Configuration loading from servlet path (#2706)
 
 ## v2.0.0-rc4 
 
