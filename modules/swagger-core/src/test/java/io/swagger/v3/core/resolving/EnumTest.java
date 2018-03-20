@@ -26,7 +26,14 @@ public class EnumTest extends SwaggerTestBase {
         final ModelConverterContextImpl context = new ModelConverterContextImpl(modelResolver);
 
         final Schema model = context.resolve((new AnnotatedType().type(Currency.class)));
-        assertNull(model);
+        assertNotNull(model);
+        assertTrue(model instanceof StringSchema);
+        final StringSchema strModel = (StringSchema) model;
+        assertNotNull(strModel.getEnum());
+        final Collection<String> modelValues =
+                new ArrayList<String>(Collections2.transform(Arrays.asList(Currency.values()), Functions.toStringFunction()));
+        assertEquals(strModel.getEnum(), modelValues);
+
 
         final Schema property = context.resolve(new AnnotatedType().type(Currency.class).schemaProperty(true));
         assertNotNull(property);

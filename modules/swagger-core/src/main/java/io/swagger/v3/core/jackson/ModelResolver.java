@@ -107,12 +107,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         } else {
             type = _mapper.constructType(annotatedType.getType());
         }
-
-        if (type.isEnumType() && !annotatedType.isSchemaProperty()) {
-            // We don't build models for enum types
-            return null;
-        }
-
+        
         final Annotation resolvedSchemaOrArrayAnnotation = AnnotationsUtils.mergeSchemaAnnotations(annotatedType.getCtxAnnotations(), type);
         final io.swagger.v3.oas.annotations.media.Schema resolvedSchemaAnnotation =
                 resolvedSchemaOrArrayAnnotation == null ?
