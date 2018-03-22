@@ -1016,9 +1016,7 @@ public abstract class AnnotationsUtils {
             if (StringUtils.isNotBlank(annotationContent.mediaType())) {
                 content.addMediaType(annotationContent.mediaType(), mediaType);
             } else {
-                if (mediaType.getSchema() != null) {
-                    applyTypes(classTypes, methodTypes, content, mediaType);
-                }
+                applyTypes(classTypes, methodTypes, content, mediaType);
             }
         }
 

@@ -525,6 +525,11 @@ public class ExtensionsResource {
                     "            '*/*':\n" +
                     "              schema:\n" +
                     "                $ref: '#/components/schemas/ExtensionUser'\n" +
+                    "              x-content:\n" +
+                    "                name: Josh\n" +
+                    "              x-content-extensions:\n" +
+                    "                lastName: Hart\n" +
+                    "                address: House\n" +
                     "          links:\n" +
                     "            aa:\n" +
                     "              operationId: getUser\n" +

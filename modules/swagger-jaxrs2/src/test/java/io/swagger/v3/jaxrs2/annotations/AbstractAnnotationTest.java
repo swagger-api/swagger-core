@@ -12,6 +12,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
+import static org.testng.Assert.fail;
+
 public abstract class AbstractAnnotationTest {
     public String readIntoYaml(final Class<?> cls) {
         Reader reader = new Reader(new OpenAPI());
@@ -25,6 +27,17 @@ public abstract class AbstractAnnotationTest {
             return Yaml.mapper().writeValueAsString(jsonNodeTree);
         } catch (Exception e) {
             return "Empty YAML";
+        }
+    }
+
+    public void compareToYamlFile(final Class<?> cls, String source){
+
+        final String file = source + cls.getSimpleName() + ".yaml";
+            try {
+            compareAsYaml(cls, getOpenAPIAsString(file));
+        } catch (IOException e) {
+            e.printStackTrace();
+            fail();
         }
     }
 

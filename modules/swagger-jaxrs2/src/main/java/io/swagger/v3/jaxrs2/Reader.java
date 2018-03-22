@@ -642,7 +642,11 @@ public class Reader implements OpenApiReader {
                     if (requestBodyParameter.getSchema() != null) {
                         for (MediaType mediaType : requestBody.getContent().values()) {
                             if (mediaType.getSchema() == null) {
-                                mediaType.setSchema(new Schema());
+                                if (requestBodyParameter.getSchema() == null) {
+                                    mediaType.setSchema(new Schema());
+                                } else {
+                                    mediaType.setSchema(requestBodyParameter.getSchema());
+                                }
                             }
                             if (StringUtils.isBlank(mediaType.getSchema().getType())) {
                                 mediaType.getSchema().setType(requestBodyParameter.getSchema().getType());
@@ -650,7 +654,6 @@ public class Reader implements OpenApiReader {
                         }
                     }
                 }
-                //requestBody.setExtensions(extensions);
                 operation.setRequestBody(requestBody);
             }
         } else {
@@ -953,9 +956,16 @@ public class Reader implements OpenApiReader {
                     );
                 }
                 if (operation.getResponses().getDefault() != null &&
-                        StringUtils.isBlank(operation.getResponses().getDefault().get$ref()) &&
-                        operation.getResponses().getDefault().getContent() == null) {
-                    operation.getResponses().getDefault().content(content);
+                        StringUtils.isBlank(operation.getResponses().getDefault().get$ref())) {
+                    if (operation.getResponses().getDefault().getContent() == null) {
+                        operation.getResponses().getDefault().content(content);
+                    } else {
+                        for (String key : operation.getResponses().getDefault().getContent().keySet()) {
+                            if (operation.getResponses().getDefault().getContent().get(key).getSchema() == null) {
+                                operation.getResponses().getDefault().getContent().get(key).setSchema(returnTypeSchema);
+                            }
+                        }
+                    }
                 }
                 Map<String, Schema> schemaMap = resolvedSchema.referencedSchemas;
                 if (schemaMap != null) {
