@@ -1,0 +1,41 @@
+openapi: 3.0.1
+paths:
+  /test:
+    post:
+      operationId: testRequestBody
+      requestBody:
+        description: Created user object
+        content:
+          '*/*':
+            schema:
+              type: string
+              description: the Sub
+              readOnly: true
+              example: Schema example
+            examples:
+              Default Request:
+                summary: Subscription  Example
+                description: Default Request
+                value: 3
+        required: true
+      responses:
+        default:
+          description: default response
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Subscription'
+components:
+  schemas:
+    SubscriptionItem:
+      type: object
+      properties:
+        subscriptionItemId:
+          type: string
+    Subscription:
+      type: object
+      properties:
+        subscriptionId:
+          type: string
+        subscriptionItem:
+          $ref: '#/components/schemas/SubscriptionItem'
