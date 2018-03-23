@@ -2,6 +2,7 @@ package io.swagger.v3.core.util;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.introspect.Annotated;
 import io.swagger.v3.core.converter.AnnotatedType;
 import io.swagger.v3.core.converter.ModelConverters;
@@ -1176,9 +1177,20 @@ public abstract class AnnotationsUtils {
             for (ExtensionProperty property : extension.properties()) {
                 final String propertyName = property.name();
                 final String propertyValue = property.value();
+                JsonNode processedValue = null;
+                final boolean propertyAsJson = property.parseValue();
                 if (StringUtils.isNotBlank(propertyName) && StringUtils.isNotBlank(propertyValue)) {
                     if (key.isEmpty()) {
-                        map.put(StringUtils.prependIfMissing(propertyName, "x-"), propertyValue);
+                        if (propertyAsJson) {
+                            try {
+                                processedValue = Json.mapper().readTree(propertyValue);
+                                map.put(StringUtils.prependIfMissing(propertyName, "x-"), processedValue);
+                            } catch (Exception e) {
+                                map.put(StringUtils.prependIfMissing(propertyName, "x-"), propertyValue);
+                            }
+                        } else {
+                            map.put(StringUtils.prependIfMissing(propertyName, "x-"), propertyValue);
+                        }
                     } else {
                         Object value = map.get(key);
                         if (value == null || !(value instanceof Map)) {
@@ -1186,7 +1198,16 @@ public abstract class AnnotationsUtils {
                             map.put(key, value);
                         }
                         @SuppressWarnings("unchecked") final Map<String, Object> mapValue = (Map<String, Object>) value;
-                        mapValue.put(propertyName, propertyValue);
+                        if (propertyAsJson) {
+                            try {
+                                processedValue = Json.mapper().readTree(propertyValue);
+                                mapValue.put(propertyName, processedValue);
+                            } catch (Exception e) {
+                                mapValue.put(propertyName, propertyValue);
+                            }
+                        } else {
+                            mapValue.put(propertyName, propertyValue);
+                        }
                     }
                 }
             }

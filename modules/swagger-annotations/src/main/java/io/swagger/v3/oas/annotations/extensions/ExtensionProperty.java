@@ -27,4 +27,11 @@ public @interface ExtensionProperty {
      * @return the value of the property
      */
     String value();
+
+    /**
+     * If set to true, field `value` will be parsed and serialized as JSON/YAML
+     *
+     * @return the value of `parseValue` annotation field
+     */
+    boolean parseValue() default false;
 }

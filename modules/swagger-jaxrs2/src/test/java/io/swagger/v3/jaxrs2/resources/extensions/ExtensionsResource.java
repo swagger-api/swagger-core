@@ -165,7 +165,10 @@ public class ExtensionsResource {
                             @ExtensionProperty(name = "name", value = "Josh")}),
                     @Extension(name = "x-operation-extensions", properties = {
                             @ExtensionProperty(name = "lastName", value = "Hart"),
-                            @ExtensionProperty(name = "address", value = "House")})
+                            @ExtensionProperty(name = "address", value = "House")}),
+                    @Extension(properties = {
+                            @ExtensionProperty(name = "codes", value = "[\"11\", \"12\"]", parseValue = true),
+                            @ExtensionProperty(name = "name", value = "Josh")})
             })
     public Response getSummaryAndDescription(
             @Parameter(
@@ -434,11 +437,15 @@ public class ExtensionsResource {
                     "        - read:pets\n" +
                     "      - myOauth2Security:\n" +
                     "        - write:pets\n" +
+                    "      x-name: Josh\n" +
                     "      x-operation:\n" +
                     "        name: Josh\n" +
                     "      x-operation-extensions:\n" +
                     "        lastName: Hart\n" +
                     "        address: House\n" +
+                    "      x-codes:\n" +
+                    "      - \"11\"\n" +
+                    "      - \"12\"\n" +
                     "  /user:\n" +
                     "    get:\n" +
                     "      operationId: getUser\n" +
