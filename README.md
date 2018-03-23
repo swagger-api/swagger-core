@@ -53,7 +53,7 @@ You need the following installed and available in your $PATH:
 * Jackson 2.4.5 or greater
 
 
-### To build from source (currently 2.0.0)
+### To build from source (currently 2.0.0-SNAPSHOT)
 ```
 # first time building locally
 mvn -N
@@ -104,6 +104,7 @@ limitations under the License.
 * Class level response annotations (#2685)
 * rework JsonProperty, readonly/writeonly support (#2169)
 * JsonIdentity support (#2704)
+* Complex types support in @ExtensionProperty (#2723)
 
 ### Bug fixes:
 
