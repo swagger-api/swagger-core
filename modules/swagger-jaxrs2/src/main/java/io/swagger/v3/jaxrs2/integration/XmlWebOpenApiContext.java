@@ -48,7 +48,11 @@ public class XmlWebOpenApiContext<T extends XmlWebOpenApiContext<T>> extends Jax
                 new ImmutablePair<>("servletpath", "openapi-configuration.yaml"),
                 new ImmutablePair<>("servletpath", "openapi-configuration.json"),
                 new ImmutablePair<>("servletpath", "WEB-INF/openapi-configuration.yaml"),
-                new ImmutablePair<>("servletpath", "WEB-INF/openapi-configuration.json")
+                new ImmutablePair<>("servletpath", "WEB-INF/openapi-configuration.json"),
+                new ImmutablePair<>("servletpath", "openapi.yaml"),
+                new ImmutablePair<>("servletpath", "openapi.json"),
+                new ImmutablePair<>("servletpath", "WEB-INF/openapi.yaml"),
+                new ImmutablePair<>("servletpath", "WEB-INF/openapi.json")
         ));
         locations.addAll(super.getKnownLocations());
         locations.add(new ImmutablePair<>("servlet", ""));  // get config from init params

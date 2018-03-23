@@ -209,6 +209,10 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
                 new ImmutablePair<>("classpath", "openapi-configuration.json"),
                 new ImmutablePair<>("file", "openapi-configuration.yaml"),
                 new ImmutablePair<>("file", "openapi-configuration.json"),
+                new ImmutablePair<>("classpath", "openapi.yaml"),
+                new ImmutablePair<>("classpath", "openapi.json"),
+                new ImmutablePair<>("file", "openapi.yaml"),
+                new ImmutablePair<>("file", "openapi.json"),
                 new ImmutablePair<>("service", "")
         );
     }
