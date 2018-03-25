@@ -1,7 +1,12 @@
 package io.swagger;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.converter.ModelConverter;
+import io.swagger.converter.ModelConverterContextImpl;
+import io.swagger.jackson.ModelResolver;
 import io.swagger.jaxrs.Reader;
 import io.swagger.models.ExternalDocs;
+import io.swagger.models.Model;
 import io.swagger.models.Operation;
 import io.swagger.models.Swagger;
 import io.swagger.models.Tag;
@@ -11,6 +16,7 @@ import io.swagger.models.parameters.HeaderParameter;
 import io.swagger.models.parameters.Parameter;
 import io.swagger.models.parameters.PathParameter;
 import io.swagger.models.parameters.QueryParameter;
+import io.swagger.models.properties.Property;
 import io.swagger.resources.AnnotatedInterfaceImpl;
 import io.swagger.resources.ApiConsumesProducesResource;
 import io.swagger.resources.ApiMultipleConsumesProducesResource;
@@ -20,6 +26,7 @@ import io.swagger.resources.ClassPathParentResource;
 import io.swagger.resources.ClassPathSubResource;
 import io.swagger.resources.DescendantResource;
 import io.swagger.resources.IndirectImplicitParamsImpl;
+import io.swagger.resources.MyClass;
 import io.swagger.resources.NoConsumesProducesResource;
 import io.swagger.resources.Resource1970;
 import io.swagger.resources.ResourceWithAnnotationsOnlyInInterfaceImpl;
@@ -36,7 +43,6 @@ import io.swagger.resources.ResourceWithValidation;
 import io.swagger.resources.RsConsumesProducesResource;
 import io.swagger.resources.RsMultipleConsumesProducesResource;
 import io.swagger.resources.SimpleMethods;
-import io.swagger.util.Yaml;
 import org.testng.annotations.Test;
 
 import javax.ws.rs.DELETE;
@@ -51,6 +57,7 @@ import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
@@ -390,7 +397,6 @@ public class ReaderTest {
         assertTrue(operation.getResponses().containsKey("403"));
         assertTrue(operation.getResponses().containsKey("409"));
 
-
     }
 
     @Test(description = "scan resource (impl) which has the Api annotations only declared in its interface")
@@ -449,6 +455,27 @@ public class ReaderTest {
         assertNotNull(swagger.getPath("/subresource/{id}"));
         assertEquals(swagger.getPaths().size(), 2);
 
+    }
+
+    @Test(description = "Resolve Model with XML Properties starting with is prefix per #2635")
+    public void testModelResolverXMLPropertiesName() {
+        final ModelConverter mr = modelResolver();
+        final Model model = mr.resolve(MyClass.class, new ModelConverterContextImpl(mr), null);
+        final Map properties = model.getProperties();
+
+        final Property isotonicDrink = (Property) properties.get("isotonicDrink");
+        assertNotNull(isotonicDrink);
+        assertEquals("isotonicDrink", isotonicDrink.getName());
+        assertEquals("beerDrink", isotonicDrink.getXml().getName());
+
+        final Property softDrink = (Property) properties.get("softDrink");
+        assertNotNull(softDrink);
+        assertEquals("softDrink", softDrink.getName());
+        assertEquals("sugarDrink", softDrink.getXml().getName());
+    }
+
+    private ModelResolver modelResolver() {
+        return new ModelResolver(new ObjectMapper());
     }
 
     private Swagger getSwagger(Class<?> cls) {
