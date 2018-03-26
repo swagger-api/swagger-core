@@ -53,7 +53,7 @@ You need the following installed and available in your $PATH:
 * Jackson 2.4.5 or greater
 
 
-### To build from source (currently 2.0.0)
+### To build from source (currently 2.0.1-SNAPSHOT)
 ```
 # first time building locally
 mvn -N
