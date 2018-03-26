@@ -1,9 +1,7 @@
 package io.swagger;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import io.swagger.converter.ModelConverter;
-import io.swagger.converter.ModelConverterContextImpl;
-import io.swagger.jackson.ModelResolver;
+import com.fasterxml.jackson.module.jaxb.JaxbAnnotationModule;
+import io.swagger.converter.ModelConverters;
 import io.swagger.jaxrs.Reader;
 import io.swagger.models.ExternalDocs;
 import io.swagger.models.Model;
@@ -16,7 +14,6 @@ import io.swagger.models.parameters.HeaderParameter;
 import io.swagger.models.parameters.Parameter;
 import io.swagger.models.parameters.PathParameter;
 import io.swagger.models.parameters.QueryParameter;
-import io.swagger.models.properties.Property;
 import io.swagger.resources.AnnotatedInterfaceImpl;
 import io.swagger.resources.ApiConsumesProducesResource;
 import io.swagger.resources.ApiMultipleConsumesProducesResource;
@@ -27,6 +24,7 @@ import io.swagger.resources.ClassPathSubResource;
 import io.swagger.resources.DescendantResource;
 import io.swagger.resources.IndirectImplicitParamsImpl;
 import io.swagger.resources.MyClass;
+import io.swagger.resources.MyOtherClass;
 import io.swagger.resources.NoConsumesProducesResource;
 import io.swagger.resources.Resource1970;
 import io.swagger.resources.ResourceWithAnnotationsOnlyInInterfaceImpl;
@@ -43,6 +41,7 @@ import io.swagger.resources.ResourceWithValidation;
 import io.swagger.resources.RsConsumesProducesResource;
 import io.swagger.resources.RsMultipleConsumesProducesResource;
 import io.swagger.resources.SimpleMethods;
+import io.swagger.util.Json;
 import org.testng.annotations.Test;
 
 import javax.ws.rs.DELETE;
@@ -122,8 +121,8 @@ public class ReaderTest {
         assertEquals(getPut(swagger, "/{id}").getProduces().get(0), TEXT_PLAIN);
         assertEquals(getPut(swagger, "/{id}/value").getConsumes().get(0), APPLICATION_XML);
         assertEquals(getPut(swagger, "/{id}/value").getProduces().get(0), TEXT_PLAIN);
-        assertEquals(getPut(swagger, "/split").getProduces(), Arrays.asList("image/jpeg",  "image/gif", "image/png"));
-        assertEquals(getPut(swagger, "/split").getConsumes(), Arrays.asList("image/jpeg",  "image/gif", "image/png"));
+        assertEquals(getPut(swagger, "/split").getProduces(), Arrays.asList("image/jpeg", "image/gif", "image/png"));
+        assertEquals(getPut(swagger, "/split").getConsumes(), Arrays.asList("image/jpeg", "image/gif", "image/png"));
     }
 
     @Test(description = "scan multiple consumes and produces values with rs class level annotations")
@@ -304,11 +303,11 @@ public class ReaderTest {
     }
 
     @Test(description = "it should scan parameters from base resource class")
-    public void scanParametersFromBaseResource(){
+    public void scanParametersFromBaseResource() {
         Swagger swagger = getSwagger(BookResource.class);
         assertNotNull(swagger);
 
-        List<Parameter> parameters =  getGet(swagger, "/{id}/v1/books/{name}").getParameters();
+        List<Parameter> parameters = getGet(swagger, "/{id}/v1/books/{name}").getParameters();
         assertEquals(parameters.size(), 4);
 
         Parameter description = parameters.get(0);
@@ -333,7 +332,7 @@ public class ReaderTest {
     }
 
     @Test(description = "it should scan parameters with Swagger and JSR-303 bean validation annotations")
-    public void scanBeanValidation(){
+    public void scanBeanValidation() {
 
         Swagger swagger = getSwagger(ResourceWithValidation.class);
         assertNotNull(swagger);
@@ -425,7 +424,7 @@ public class ReaderTest {
         Swagger swagger = getSwagger(Resource1970.class);
         assertNotNull(swagger);
 
-        PathParameter parameter = (PathParameter)swagger.getPath("/v1/{param1}").getGet().getParameters().get(0);
+        PathParameter parameter = (PathParameter) swagger.getPath("/v1/{param1}").getGet().getParameters().get(0);
         assertEquals(parameter.getType(), "number");
     }
 
@@ -459,23 +458,32 @@ public class ReaderTest {
 
     @Test(description = "Resolve Model with XML Properties starting with is prefix per #2635")
     public void testModelResolverXMLPropertiesName() {
-        final ModelConverter mr = modelResolver();
-        final Model model = mr.resolve(MyClass.class, new ModelConverterContextImpl(mr), null);
-        final Map properties = model.getProperties();
+        final MyClass myClass = new MyClass();
+        myClass.populate("isotonicDrink value", "softDrink value",
+                "isoDrink value", "isotonicDrinkOnlyXmlElement value");
 
-        final Property isotonicDrink = (Property) properties.get("isotonicDrink");
-        assertNotNull(isotonicDrink);
-        assertEquals("isotonicDrink", isotonicDrink.getName());
-        assertEquals("beerDrink", isotonicDrink.getXml().getName());
+        Json.mapper().registerModule(new JaxbAnnotationModule());
 
-        final Property softDrink = (Property) properties.get("softDrink");
-        assertNotNull(softDrink);
-        assertEquals("softDrink", softDrink.getName());
-        assertEquals("sugarDrink", softDrink.getXml().getName());
+        final Map<String, Model> schemas = ModelConverters.getInstance().read(MyClass.class);
+        assertNull(schemas.get("MyClass").getProperties().get("isotonicDrink"));
+        assertNotNull(schemas.get("MyClass").getProperties().get("beerDrink"));
+        assertNotNull(schemas.get("MyClass").getProperties().get("saltDrink"));
+
+        // No JsonProperty or ApiModelProperty, keep original name
+        assertNull(schemas.get("MyClass").getProperties().get("beerDrinkXmlElement"));
+        assertNotNull(schemas.get("MyClass").getProperties().get("isotonicDrinkOnlyXmlElement"));
     }
 
-    private ModelResolver modelResolver() {
-        return new ModelResolver(new ObjectMapper());
+    @Test(description = "Maintain Property names per #2635")
+    public void testMaintainPropertyNames() {
+        final MyOtherClass myOtherClass = new MyOtherClass();
+        myOtherClass.populate("myPropertyName value");
+
+        Json.mapper().registerModule(new JaxbAnnotationModule());
+
+        final Map<String, Model> schemas = ModelConverters.getInstance().read(MyOtherClass.class);
+        assertNotNull(schemas.get("MyOtherClass").getProperties().get("MyPrOperTyName"));
+
     }
 
     private Swagger getSwagger(Class<?> cls) {
