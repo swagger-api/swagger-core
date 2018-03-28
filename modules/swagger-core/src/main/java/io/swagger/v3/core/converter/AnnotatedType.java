@@ -193,16 +193,14 @@ public class AnnotatedType {
 
     @Override
     public int hashCode() {
-        // TODO custom implementation of hashcode as Objects.hash fails (hash code different for what seem to be equal
-        // fileds ) for some reason for "sun" annotations.
         if (ctxAnnotations == null || ctxAnnotations.length == 0) {
-            return Objects.hash(type, ctxAnnotations);
+            return Objects.hash(type);
         }
         List<Annotation> meaningfulAnnotations = new ArrayList<>();
 
         boolean hasDifference = false;
         for (Annotation a: ctxAnnotations) {
-            if(!a.annotationType().getName().startsWith("sun")) {
+            if(!a.annotationType().getName().startsWith("sun") && !a.annotationType().getName().startsWith("jdk")) {
                 meaningfulAnnotations.add(a);
             } else {
                 hasDifference = true;

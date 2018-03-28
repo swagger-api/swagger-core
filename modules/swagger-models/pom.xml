@@ -44,6 +44,14 @@
                     </instructions>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.21.0</version>
+                <configuration>
+                    <argLine>-Djdk.attach.allowAttachSelf</argLine>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
     <dependencies>
@@ -79,9 +87,7 @@
         <validation-api-version>1.1.0.Final</validation-api-version>
         <coverage.complexity.minimum>0.07</coverage.complexity.minimum>
         <coverage.line.minimum>0.0</coverage.line.minimum>
-        <jmockit-version>1.25</jmockit-version>
-
-        <powermock.version>1.6.4</powermock.version>
-        <mockito-version>1.10.19</mockito-version>
+        <jmockit-version>1.39</jmockit-version>
+        <mockito-version>2.16.0</mockito-version>
     </properties>
 </project>

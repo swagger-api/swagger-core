@@ -358,7 +358,7 @@ public class ReflectionUtils {
     }
 
     public static boolean isSystemType(JavaType type) {
-        // used while resolving containter types to skip resolving system types; possibly extend by checking classloader
+        // used while resolving container types to skip resolving system types; possibly extend by checking classloader
         // and/or other packages
         if (type.getRawClass().getName().startsWith("java")) {
             return true;

@@ -296,6 +296,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         }
 
         // using deprecated method to maintain compatibility with jackson version < 2.9
+        //alternatively use AnnotatedMember jsonValueMember = beanDesc.findJsonValueAccessor();
         final AnnotatedMethod jsonValueMethod  = beanDesc.findJsonValueMethod();
         if(jsonValueMethod != null) {
             AnnotatedType aType = new AnnotatedType()
@@ -561,6 +562,15 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
                 if (property != null) {
                     if (property.get$ref() == null) {
+                        if (!"object".equals(property.getType())) {
+                            try {
+                                String cloneName = property.getName();
+                                property = Json.mapper().readValue(Json.pretty(property), Schema.class);
+                                property.setName(cloneName);
+                            } catch (IOException e) {
+                                LOGGER.error("Could not clone property, e");
+                            }
+                        }
                         Boolean required = md.getRequired();
                         if (required != null && !Boolean.FALSE.equals(required)) {
                             addRequiredItem(model, propName);

@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.core.converter.AnnotatedType;
 import io.swagger.v3.core.converter.ModelConverterContextImpl;
 import io.swagger.v3.core.jackson.ModelResolver;
+import io.swagger.v3.core.util.Yaml;
 import io.swagger.v3.oas.models.media.Schema;
 import org.testng.annotations.Test;
 
