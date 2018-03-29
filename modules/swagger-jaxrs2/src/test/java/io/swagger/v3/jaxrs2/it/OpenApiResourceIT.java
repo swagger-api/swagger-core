@@ -1,8 +1,8 @@
 package io.swagger.v3.jaxrs2.it;
 
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.jayway.restassured.http.ContentType;
 
+import io.restassured.http.ContentType;
 import io.swagger.v3.core.util.Json;
 import io.swagger.v3.core.util.Yaml;
 import io.swagger.v3.jaxrs2.annotations.AbstractAnnotationTest;
@@ -12,7 +12,7 @@ import org.testng.annotations.Test;
 
 import java.io.IOException;
 
-import static com.jayway.restassured.RestAssured.given;
+import static io.restassured.RestAssured.given;
 
 /**
  * <p>
