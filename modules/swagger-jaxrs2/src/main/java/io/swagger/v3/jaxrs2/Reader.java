@@ -394,7 +394,7 @@ public class Reader implements OpenApiReader {
             Map<String, String> regexMap = new LinkedHashMap<>();
             operationPath = PathUtils.parsePath(operationPath, regexMap);
             if (operationPath != null) {
-                if (ReaderUtils.isIgnored(operationPath, config)) {
+                if (config != null && ReaderUtils.isIgnored(operationPath, config)) {
                     continue;
                 }
 
@@ -1261,7 +1261,7 @@ public class Reader implements OpenApiReader {
         if (hidden != null) {
             return true;
         }
-        if (!Boolean.TRUE.equals(config.isReadAllResources()) && apiOperation == null) {
+        if (config != null && !Boolean.TRUE.equals(config.isReadAllResources()) && apiOperation == null) {
             return true;
         }
         return false;
