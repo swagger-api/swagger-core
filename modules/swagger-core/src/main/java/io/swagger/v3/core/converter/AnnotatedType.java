@@ -194,7 +194,7 @@ public class AnnotatedType {
     @Override
     public int hashCode() {
         if (ctxAnnotations == null || ctxAnnotations.length == 0) {
-            return Objects.hash(type);
+            return Objects.hash(type, "fixed");
         }
         List<Annotation> meaningfulAnnotations = new ArrayList<>();
 
@@ -206,9 +206,13 @@ public class AnnotatedType {
                 hasDifference = true;
             }
         }
+        int result = 1;
+        result = 31 * result + (type == null ? 0 : Objects.hash(type, "fixed"));
         if (hasDifference) {
-            return Objects.hash(type, meaningfulAnnotations);
+            result = 31 * result + (meaningfulAnnotations == null ? 0 : Arrays.hashCode(meaningfulAnnotations.toArray(new Annotation[meaningfulAnnotations.size()])));
+        } else {
+            result = 31 * result + (ctxAnnotations == null ? 0 : Arrays.hashCode(ctxAnnotations));
         }
-        return Objects.hash(type, ctxAnnotations);
+        return result;
     }
 }
