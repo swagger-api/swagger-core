@@ -141,7 +141,13 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         // if we have a ref we don't consider anything else
         if (resolvedSchemaAnnotation != null &&
                 StringUtils.isNotEmpty(resolvedSchemaAnnotation.ref())) {
-            return new Schema().$ref(resolvedSchemaAnnotation.ref()).name(name);
+            if (resolvedArrayAnnotation == null) {
+                return new Schema().$ref(resolvedSchemaAnnotation.ref()).name(name);
+            } else {
+                ArraySchema schema = new ArraySchema();
+                resolveArraySchema(annotatedType, schema, resolvedArrayAnnotation);
+                return schema.items(new Schema().$ref(resolvedSchemaAnnotation.ref()).name(name));
+            }
         }
 
         if (!annotatedType.isSkipOverride() && resolvedSchemaAnnotation != null && !Void.class.equals(resolvedSchemaAnnotation.implementation())) {
@@ -173,6 +179,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                     .skipOverride(true);
             if (resolvedArrayAnnotation != null) {
                 ArraySchema schema = new ArraySchema();
+                resolveArraySchema(annotatedType, schema, resolvedArrayAnnotation);
                 Schema innerSchema = null;
 
                 Schema primitive = PrimitiveType.createProperty(cls);
@@ -273,6 +280,13 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 model.xml(xml);
             }
             resolveSchemaMembers(model, annotatedType);
+
+            if (resolvedArrayAnnotation != null) {
+                ArraySchema schema = new ArraySchema();
+                resolveArraySchema(annotatedType, schema, resolvedArrayAnnotation);
+                schema.setItems(model);
+                return schema;
+            }
             return model;
         }
 
@@ -745,22 +759,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         if (model != null && !"array".equals(model.getType()) && resolvedArrayAnnotation != null) {
             ArraySchema schema = new ArraySchema();
             schema.setItems(model);
-            Integer minItems = resolveMinItems(annotatedType, resolvedArrayAnnotation);
-            if (minItems != null) {
-                schema.minItems(minItems);
-            }
-            Integer maxItems = resolveMaxItems(annotatedType, resolvedArrayAnnotation);
-            if (maxItems != null) {
-                schema.maxItems(maxItems);
-            }
-            Boolean uniqueItems = resolveUniqueItems(annotatedType, resolvedArrayAnnotation);
-            if (uniqueItems != null) {
-                schema.uniqueItems(uniqueItems);
-            }
-            Map<String, Object> extensions = resolveExtensions(annotatedType, resolvedArrayAnnotation);
-            if (extensions != null) {
-                schema.extensions(extensions);
-            }
+            resolveArraySchema(annotatedType, schema, resolvedArrayAnnotation);
             return schema;
         }
 
@@ -1810,5 +1809,24 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             }
         }
         return containsJsonViewAnnotation;
+    }
+
+    private void resolveArraySchema(AnnotatedType annotatedType, ArraySchema schema, io.swagger.v3.oas.annotations.media.ArraySchema resolvedArrayAnnotation) {
+        Integer minItems = resolveMinItems(annotatedType, resolvedArrayAnnotation);
+        if (minItems != null) {
+            schema.minItems(minItems);
+        }
+        Integer maxItems = resolveMaxItems(annotatedType, resolvedArrayAnnotation);
+        if (maxItems != null) {
+            schema.maxItems(maxItems);
+        }
+        Boolean uniqueItems = resolveUniqueItems(annotatedType, resolvedArrayAnnotation);
+        if (uniqueItems != null) {
+            schema.uniqueItems(uniqueItems);
+        }
+        Map<String, Object> extensions = resolveExtensions(annotatedType, resolvedArrayAnnotation);
+        if (extensions != null) {
+            schema.extensions(extensions);
+        }
     }
 }
