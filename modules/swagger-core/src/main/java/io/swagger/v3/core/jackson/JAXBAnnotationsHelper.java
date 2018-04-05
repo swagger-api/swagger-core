@@ -8,6 +8,8 @@ import io.swagger.v3.oas.models.media.ObjectSchema;
 import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.media.XML;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
@@ -20,6 +22,8 @@ import java.lang.annotation.Annotation;
  */
 class JAXBAnnotationsHelper {
     private static final String JAXB_DEFAULT = "##default";
+
+    protected static Logger LOGGER = LoggerFactory.getLogger(JAXBAnnotationsHelper.class);
 
     private JAXBAnnotationsHelper() {
     }
@@ -62,10 +66,12 @@ class JAXBAnnotationsHelper {
      */
     private static void applyElement(XmlElementWrapper wrapper, Schema property) {
         if (wrapper != null) {
+            LOGGER.info("applyElement Wrapped: {}", property.getName());
             final XML xml = getXml(property);
             xml.setWrapped(true);
             // No need to set the xml name if the name provided by xmlelementwrapper annotation is ##default or equal to the property name | https://github.com/swagger-api/swagger-core/pull/2050
             if (!"##default".equals(wrapper.name()) && !wrapper.name().isEmpty() && !wrapper.name().equals(property.getName())) {
+                LOGGER.info("applyElement Wrapped xml.setName: {}", wrapper.name());
                 xml.setName(wrapper.name());
             }
         }
@@ -79,6 +85,7 @@ class JAXBAnnotationsHelper {
      */
     private static void applyElement(XmlElement element, Schema property) {
         if (element != null) {
+            LOGGER.info("applyElement XmlElement: {}", property.getName());
             setName(element.namespace(), element.name(), property);
         }
     }
@@ -91,6 +98,7 @@ class JAXBAnnotationsHelper {
      */
     private static void applyAttribute(XmlAttribute attribute, Schema property) {
         if (attribute != null) {
+            LOGGER.info("applyElement XmlAttribute: {}", property.getName());
             final XML xml = getXml(property);
             xml.setAttribute(true);
             setName(attribute.namespace(), attribute.name(), property);
@@ -117,6 +125,7 @@ class JAXBAnnotationsHelper {
      */
     private static boolean setName(String ns, String name, Schema property) {
         boolean apply = false;
+        LOGGER.info("setName name: {}", name);
         final String cleanName = StringUtils.trimToNull(name);
         final String useName;
         if (!isEmpty(cleanName) && !cleanName.equals(property.getName())) {
@@ -135,6 +144,7 @@ class JAXBAnnotationsHelper {
         }
         // Set everything or nothing
         if (apply) {
+            LOGGER.info("setName apply useName: {}", useName);
             getXml(property).name(useName).namespace(useNS);
         }
         return apply;
