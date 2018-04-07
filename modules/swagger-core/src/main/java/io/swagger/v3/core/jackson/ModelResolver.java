@@ -107,7 +107,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         } else {
             type = _mapper.constructType(annotatedType.getType());
         }
-        
+
         final Annotation resolvedSchemaOrArrayAnnotation = AnnotationsUtils.mergeSchemaAnnotations(annotatedType.getCtxAnnotations(), type);
         final io.swagger.v3.oas.annotations.media.Schema resolvedSchemaAnnotation =
                 resolvedSchemaOrArrayAnnotation == null ?
@@ -491,21 +491,25 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 }
             }
 
-
             // hack to avoid clobbering properties with get/is names
             // it's ugly but gets around https://github.com/swagger-api/swagger-core/issues/415
-            if (member != null) {
-                java.lang.reflect.Member innerMember = member.getMember();
-                if (innerMember != null) {
-                    String altName = innerMember.getName();
-                    if (altName != null) {
-                        final int length = altName.length();
-                        for (String prefix : Arrays.asList("get", "is")) {
-                            final int offset = prefix.length();
-                            if (altName.startsWith(prefix) && length > offset
-                                    && !Character.isUpperCase(altName.charAt(offset))) {
-                                propName = altName;
-                                break;
+            if(propDef.getPrimaryMember() != null) {
+                final JsonProperty jsonPropertyAnn = propDef.getPrimaryMember().getAnnotation(JsonProperty.class);
+                if (jsonPropertyAnn == null || !jsonPropertyAnn.value().equals(propName)) {
+                    if (member != null) {
+                        java.lang.reflect.Member innerMember = member.getMember();
+                        if (innerMember != null) {
+                            String altName = innerMember.getName();
+                            if (altName != null) {
+                                final int length = altName.length();
+                                for (String prefix : Arrays.asList("get", "is")) {
+                                    final int offset = prefix.length();
+                                    if (altName.startsWith(prefix) && length > offset
+                                            && !Character.isUpperCase(altName.charAt(offset))) {
+                                        propName = altName;
+                                        break;
+                                    }
+                                }
                             }
                         }
                     }
