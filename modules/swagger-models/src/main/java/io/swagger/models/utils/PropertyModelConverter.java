@@ -40,7 +40,7 @@ public class PropertyModelConverter {
                 List<String> required = m.getRequired();
                 if (required != null) {
                     for (String name : required) {
-                        if (m.getName().equals(name)) {
+                        if (name.equals(m.getName())) {
                             mapProperty.setRequired(true);
                         }
                     }
