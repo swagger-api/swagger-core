@@ -184,7 +184,11 @@ public class AnnotatedType {
         }
         AnnotatedType that = (AnnotatedType) o;
 
-        if (type != that.type) {
+        if ((type == null && that.type != null) || (type != null && that.type == null)) {
+            return false;
+        }
+
+        if (type != null && that.type != null && !type.equals(that.type)) {
             return false;
         }
         return Arrays.equals(this.ctxAnnotations, that.ctxAnnotations);
