@@ -549,6 +549,12 @@ public class Reader implements OpenApiReader {
                         continue;
                     }
 
+                    final Iterator<OpenAPIExtension> chain = OpenAPIExtensions.chain();
+                    if (chain.hasNext()) {
+                        final OpenAPIExtension extension = chain.next();
+                        extension.decorateOperation(operation, method, chain);
+                    }
+
                     PathItem pathItemObject;
                     if (openAPI.getPaths() != null && openAPI.getPaths().get(operationPath) != null) {
                         pathItemObject = openAPI.getPaths().get(operationPath);
