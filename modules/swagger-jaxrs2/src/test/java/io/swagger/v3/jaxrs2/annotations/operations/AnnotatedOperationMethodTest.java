@@ -574,7 +574,7 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
                 "        name:\n" +
                 "          type: string\n" +
                 "      xml:\n" +
-                "        name: tag\n" +
+                "        name: Tag\n" +
                 "    Pet:\n" +
                 "      type: object\n" +
                 "      properties:\n" +

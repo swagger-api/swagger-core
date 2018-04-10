@@ -46,7 +46,7 @@ components:
         name:
           type: string
       xml:
-        name: tag
+        name: Tag
     Pet:
       type: object
       properties:

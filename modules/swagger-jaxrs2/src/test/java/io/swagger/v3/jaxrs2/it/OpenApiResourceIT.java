@@ -592,7 +592,6 @@ public class OpenApiResourceIT extends AbstractAnnotationTest {
                 .extract()
                 .response().body().asString();
 
-        System.out.println(formatJson(actualBody));
         compareAsJson(formatJson(actualBody), EXPECTED_JSON);
     }
 
@@ -628,7 +627,6 @@ public class OpenApiResourceIT extends AbstractAnnotationTest {
                 .contentType("application/yaml")
                 .extract().response().body().asString();
 
-        System.out.println(formatYaml(actualBody));
         compareAsYaml(formatYaml(actualBody), EXPECTED_YAML);
     }
 
