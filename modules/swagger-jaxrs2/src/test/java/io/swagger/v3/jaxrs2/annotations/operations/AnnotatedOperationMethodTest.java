@@ -5,6 +5,7 @@ import io.swagger.v3.jaxrs2.resources.GenericResponsesResource;
 import io.swagger.v3.jaxrs2.resources.HiddenAnnotatedUserResource;
 import io.swagger.v3.jaxrs2.resources.HiddenUserResource;
 import io.swagger.v3.jaxrs2.resources.PetResource;
+import io.swagger.v3.jaxrs2.resources.PetResourceSlashesinPath;
 import io.swagger.v3.jaxrs2.resources.SimpleUserResource;
 import io.swagger.v3.jaxrs2.resources.UserResource;
 import io.swagger.v3.oas.annotations.Operation;
@@ -608,6 +609,7 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
                 "        name: Pet";
 
         compareAsYaml(PetResource.class, expectedYAML);
+        compareAsYaml(PetResourceSlashesinPath.class, expectedYAML);
 
     }
 

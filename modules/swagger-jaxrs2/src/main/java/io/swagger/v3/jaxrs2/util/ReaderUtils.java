@@ -164,37 +164,37 @@ public class ReaderUtils {
             return null;
         }
         StringBuilder b = new StringBuilder();
-        if (parentPath != null && !"".equals(parentPath) && !"/".equals(parentPath)) {
-            if (!parentPath.startsWith("/")) {
-                parentPath = "/" + parentPath;
-            }
-            if (parentPath.endsWith("/")) {
-                parentPath = parentPath.substring(0, parentPath.length() - 1);
-            }
-
-            b.append(parentPath);
-        }
+        appendPathComponent(parentPath, b);
         if (classLevelPath != null && !isSubresource) {
-            b.append(classLevelPath.value());
+            appendPathComponent(classLevelPath.value(), b);
         }
-        if (methodLevelPath != null && !"/".equals(methodLevelPath.value())) {
-            String methodPath = methodLevelPath.value();
-            if (!methodPath.startsWith("/") && !b.toString().endsWith("/")) {
-                b.append("/");
-            }
-            if (methodPath.endsWith("/")) {
-                methodPath = methodPath.substring(0, methodPath.length() - 1);
-            }
-            b.append(methodPath);
+        if (methodLevelPath != null) {
+            appendPathComponent(methodLevelPath.value(), b);
         }
-        String output = b.toString();
-        if (!output.startsWith("/")) {
-            output = "/" + output;
+        return b.length() == 0 ? "/" : b.toString();
+    }
+
+    /**
+     * appends a path component string to a StringBuilder
+     * guarantees:
+     * <ul>
+     *     <li>nulls, empty strings and "/" are nops</li>
+     *     <li>output will always start with "/" and never end with "/"</li>
+     * </ul>
+     * @param component component to be added
+     * @param to output
+     */
+    private static void appendPathComponent(String component, StringBuilder to) {
+        if (component == null || component.isEmpty() || "/".equals(component)) {
+            return;
         }
-        if (output.endsWith("/") && output.length() > 1) {
-            return output.substring(0, output.length() - 1);
+        if (!component.startsWith("/") && (to.length() == 0 || '/' != to.charAt(to.length() - 1))) {
+            to.append("/");
+        }
+        if (component.endsWith("/")) {
+            to.append(component, 0, component.length() - 1);
         } else {
-            return output;
+            to.append(component);
         }
     }
 
