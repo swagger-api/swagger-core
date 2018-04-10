@@ -12,15 +12,14 @@ public interface OpenApiConfigurationLoader {
     boolean exists(String path);
 
     default String readInputStreamToString(InputStream stream) throws IOException {
-        StringBuffer sb = new StringBuffer();
-        BufferedReader in = new BufferedReader(
-                new InputStreamReader(stream));
-
-        String inputLine;
-        while ((inputLine = in.readLine()) != null) {
-            sb.append(inputLine).append("\n");
+        StringBuilder sb = new StringBuilder();
+        try (BufferedReader in = new BufferedReader(
+                new InputStreamReader(stream))) {
+            String inputLine;
+            while ((inputLine = in.readLine()) != null) {
+                sb.append(inputLine).append("\n");
+            }
         }
-        in.close();
         return sb.toString();
     }
 

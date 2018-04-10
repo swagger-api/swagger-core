@@ -1779,11 +1779,11 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         String name = originalName;
         if (type.getJsonViewAnnotation() != null && type.getJsonViewAnnotation().value().length > 0) {
             String COMBINER = "-or-";
-            StringBuffer sb = new StringBuffer();
+            StringBuilder sb = new StringBuilder();
             for (Class<?> view : type.getJsonViewAnnotation().value()) {
                 sb.append(view.getSimpleName()).append(COMBINER);
             }
-            String suffix = sb.toString().substring(0, sb.length() - COMBINER.length());
+            String suffix = sb.substring(0, sb.length() - COMBINER.length());
             name = originalName + "_" + suffix;
         }
         return name;
