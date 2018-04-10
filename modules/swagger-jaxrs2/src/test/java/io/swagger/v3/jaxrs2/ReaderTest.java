@@ -1,6 +1,5 @@
 package io.swagger.v3.jaxrs2;
 
-import io.swagger.v3.core.util.Yaml;
 import io.swagger.v3.jaxrs2.matchers.SerializationMatchers;
 import io.swagger.v3.jaxrs2.resources.BasicFieldsResource;
 import io.swagger.v3.jaxrs2.resources.BookStoreTicket2646;
@@ -734,7 +733,6 @@ public class ReaderTest {
     public void testUserAnnotation() {
         Reader reader = new Reader(new OpenAPI());
         OpenAPI openAPI = reader.read(UserAnnotationResource.class);
-        Yaml.prettyPrint(openAPI);
         Paths paths = openAPI.getPaths();
         assertEquals(paths.size(), 1);
         PathItem pathItem = paths.get("/test/status");

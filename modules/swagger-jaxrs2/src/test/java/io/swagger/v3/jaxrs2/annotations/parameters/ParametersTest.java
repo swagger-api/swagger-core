@@ -32,7 +32,6 @@ public class ParametersTest extends AbstractAnnotationTest {
     public void scanClassAndFieldLevelAnnotations() {
         Reader reader = new Reader(new OpenAPI());
         OpenAPI openAPI = reader.read(ResourceWithKnownInjections.class);
-        Yaml.prettyPrint(openAPI);
         List<io.swagger.v3.oas.models.parameters.Parameter> resourceParameters = openAPI.getPaths().get("/resource/{id}").getGet().getParameters();
         assertNotNull(resourceParameters);
         assertEquals(resourceParameters.size(), 3);
@@ -269,7 +268,6 @@ public class ParametersTest extends AbstractAnnotationTest {
     public void testJacksonFeatures() {
         Reader reader = new Reader(new OpenAPI());
         OpenAPI openAPI = reader.read(ResourceWithJacksonBean.class);
-        Yaml.prettyPrint(openAPI);
         io.swagger.v3.oas.models.media.Schema o = openAPI.getComponents().getSchemas().get("JacksonBean");
 
         assertEquals(o.getProperties().keySet(), Sets.newHashSet("identity", "bean", "code", "message",

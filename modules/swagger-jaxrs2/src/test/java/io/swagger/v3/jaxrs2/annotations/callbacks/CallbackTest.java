@@ -85,7 +85,6 @@ public class CallbackTest extends AbstractAnnotationTest {
                 "      properties:\n" +
                 "        subscriptionId:\n" +
                 "          type: string";
-        System.out.println(expectedYAML);
         assertEquals(extractedYAML, expectedYAML);
     }
 

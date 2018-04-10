@@ -386,13 +386,15 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                     return null;
                 }
                 if (annotatedType.isSchemaProperty() && annotatedType.getCtxAnnotations() != null && annotatedType.getCtxAnnotations().length > 0) {
-                    for (Annotation annotation : annotatedType.getCtxAnnotations()) {
-                        if (annotation instanceof XmlElement) {
-                            XmlElement xmlElement = (XmlElement) annotation;
-                            if (xmlElement != null && xmlElement.name() != null && !"".equals(xmlElement.name()) && !"##default".equals(xmlElement.name())) {
-                                XML xml = items.getXml() != null ? items.getXml() : new XML();
-                                xml.setName(xmlElement.name());
-                                items.setXml(xml);
+                    if (!"object".equals(items.getType())) {
+                        for (Annotation annotation : annotatedType.getCtxAnnotations()) {
+                            if (annotation instanceof XmlElement) {
+                                XmlElement xmlElement = (XmlElement) annotation;
+                                if (xmlElement != null && xmlElement.name() != null && !"".equals(xmlElement.name()) && !"##default".equals(xmlElement.name())) {
+                                    XML xml = items.getXml() != null ? items.getXml() : new XML();
+                                    xml.setName(xmlElement.name());
+                                    items.setXml(xml);
+                                }
                             }
                         }
                     }
