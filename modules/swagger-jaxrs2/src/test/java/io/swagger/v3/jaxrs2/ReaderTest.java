@@ -1,5 +1,10 @@
 package io.swagger.v3.jaxrs2;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.v3.core.converter.AnnotatedType;
+import io.swagger.v3.core.converter.ModelConverter;
+import io.swagger.v3.core.converter.ModelConverterContextImpl;
+import io.swagger.v3.core.jackson.ModelResolver;
 import io.swagger.v3.jaxrs2.matchers.SerializationMatchers;
 import io.swagger.v3.jaxrs2.resources.BasicFieldsResource;
 import io.swagger.v3.jaxrs2.resources.BookStoreTicket2646;
@@ -12,6 +17,8 @@ import io.swagger.v3.jaxrs2.resources.DuplicatedOperationMethodNameResource;
 import io.swagger.v3.jaxrs2.resources.DuplicatedSecurityResource;
 import io.swagger.v3.jaxrs2.resources.EnhancedResponsesResource;
 import io.swagger.v3.jaxrs2.resources.ExternalDocsReference;
+import io.swagger.v3.jaxrs2.resources.MyClass;
+import io.swagger.v3.jaxrs2.resources.MyOtherClass;
 import io.swagger.v3.jaxrs2.resources.ResourceWithSubResource;
 import io.swagger.v3.jaxrs2.resources.ResponseContentWithArrayResource;
 import io.swagger.v3.jaxrs2.resources.ResponsesResource;
@@ -56,11 +63,14 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
@@ -857,4 +867,54 @@ public class ReaderTest {
         assertNotNull(subResourceApi.getPaths().get("/subresource/{id}"));
         assertEquals(subResourceApi.getPaths().size(), 2);
     }
+
+    @Test(description = "Resolve Model with XML Properties starting with is prefix per #2635")
+    public void testModelResolverXMLPropertiesName() {
+        final MyClass myClass = new MyClass();
+        myClass.populate("isotonicDrink value", "softDrink value",
+                "isoDrink value", "isotonicDrinkOnlyXmlElement value");
+
+        Map<String, Schema> schemas = resolveJaxb(MyClass.class);
+        assertNull(schemas.get("MyClass").getProperties().get("isotonicDrink"));
+        assertNotNull(schemas.get("MyClass").getProperties().get("beerDrink"));
+        assertNotNull(schemas.get("MyClass").getProperties().get("saltDrink"));
+
+        // No JsonProperty or ApiModelProperty, keep original name
+        assertNull(schemas.get("MyClass").getProperties().get("beerDrinkXmlElement"));
+        assertNotNull(schemas.get("MyClass").getProperties().get("isotonicDrinkOnlyXmlElement"));
+
+    }
+
+    @Test(description = "Maintain Property names per #2635")
+    public void testMaintainPropertyNames() {
+        final MyOtherClass myOtherClass = new MyOtherClass();
+        myOtherClass.populate("myPropertyName value");
+
+        Map<String, Schema> schemas = resolveJaxb(MyOtherClass.class);
+        assertNotNull(schemas.get("MyOtherClass").getProperties().get("MyPrOperTyName"));
+
+    }
+
+    private Map<String, Schema> resolveJaxb(Type type) {
+
+        List<ModelConverter> converters = new CopyOnWriteArrayList<ModelConverter> ();
+
+        ObjectMapper mapper = JaxbObjectMapperFactory.getMapper();
+        converters.add(new ModelResolver(mapper));
+
+        ModelConverterContextImpl context = new ModelConverterContextImpl(
+                converters);
+
+        Schema resolve = context.resolve(new AnnotatedType().type(type));
+        Map<String, Schema> schemas = new HashMap<String, Schema>();
+        for (Map.Entry<String, Schema> entry : context.getDefinedModels()
+                .entrySet()) {
+            if (entry.getValue().equals(resolve)) {
+                schemas.put(entry.getKey(), entry.getValue());
+            }
+        }
+        return schemas;
+    }
 }
+
+
