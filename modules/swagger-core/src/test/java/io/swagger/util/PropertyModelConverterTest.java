@@ -12,26 +12,12 @@ import io.swagger.models.Path;
 import io.swagger.models.RefModel;
 import io.swagger.models.Response;
 import io.swagger.models.Swagger;
-import io.swagger.models.properties.ArrayProperty;
-import io.swagger.models.properties.BinaryProperty;
-import io.swagger.models.properties.BooleanProperty;
-import io.swagger.models.properties.ByteArrayProperty;
-import io.swagger.models.properties.DateProperty;
-import io.swagger.models.properties.DateTimeProperty;
-import io.swagger.models.properties.DoubleProperty;
-import io.swagger.models.properties.EmailProperty;
-import io.swagger.models.properties.IntegerProperty;
-import io.swagger.models.properties.LongProperty;
-import io.swagger.models.properties.MapProperty;
-import io.swagger.models.properties.ObjectProperty;
-import io.swagger.models.properties.Property;
-import io.swagger.models.properties.RefProperty;
-import io.swagger.models.properties.StringProperty;
-import io.swagger.models.properties.UUIDProperty;
+import io.swagger.models.properties.*;
 import io.swagger.models.utils.PropertyModelConverter;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -61,7 +47,6 @@ public class PropertyModelConverterTest {
         Assert.assertTrue(property instanceof UUIDProperty);
         Assert.assertEquals(property.getType(),"string");
         Assert.assertEquals(property.getFormat(),"uuid");
-
     }
 
     @Test
@@ -85,7 +70,6 @@ public class PropertyModelConverterTest {
         Assert.assertTrue(property instanceof EmailProperty);
         Assert.assertEquals(property.getType(),"string");
         Assert.assertEquals(property.getFormat(),"email");
-
     }
 
     @Test
@@ -107,7 +91,6 @@ public class PropertyModelConverterTest {
 
         Assert.assertTrue(property instanceof BooleanProperty);
         Assert.assertEquals(property.getType(),"boolean");
-
     }
 
     @Test
@@ -180,6 +163,31 @@ public class PropertyModelConverterTest {
     }
 
     @Test
+    public void convertToStringNewProperty()throws Exception{
+        String yaml = "      produces:\n" +
+                "        - application/json\n" +
+                "      parameters:\n" +
+                "        []\n" +
+                "      responses:\n" +
+                "        200:\n" +
+                "          description: OK\n" +
+                "          schema:\n" +
+                "            type: string\n"+
+                "            format: password\n"+
+                "            pattern: Pattern\n";
+
+        Operation operation = Yaml.mapper().readValue(yaml, Operation.class);
+        Response response = operation.getResponses().get("200");
+        Assert.assertNotNull(response);
+        Property property = response.getSchema();
+
+        Assert.assertTrue(property instanceof StringProperty);
+        Assert.assertEquals(property.getType(),"string");
+        Assert.assertEquals(property.getFormat(),"password");
+        Assert.assertEquals(((StringProperty)property).getPattern(),"Pattern");
+    }
+
+    @Test
     public void convertToBinaryProperty()throws Exception{
         String yaml = "      produces:\n" +
                 "        - application/json\n" +
@@ -223,7 +231,33 @@ public class PropertyModelConverterTest {
         Assert.assertTrue(property instanceof DoubleProperty);
         Assert.assertEquals(property.getType(),"number");
         Assert.assertEquals(property.getFormat(),"double");
+    }
 
+    @Test
+    public void convertToNumericNewProperties()throws Exception{
+        String yaml = "      produces:\n" +
+                "        - application/json\n" +
+                "      parameters:\n" +
+                "        []\n" +
+                "      responses:\n" +
+                "        200:\n" +
+                "          description: OK\n" +
+                "          schema:\n" +
+                "            type: number\n"+
+                "            minimum: 1\n"+
+                "            maximum: 100\n"+
+                "            format: double\n";
+
+        Operation operation = Yaml.mapper().readValue(yaml, Operation.class);
+        Response response = operation.getResponses().get("200");
+        Assert.assertNotNull(response);
+        Property property = response.getSchema();
+
+        Assert.assertTrue(property instanceof DoubleProperty);
+        Assert.assertEquals(property.getType(),"number");
+        Assert.assertEquals(property.getFormat(),"double");
+        Assert.assertEquals(((DoubleProperty)property).getMinimum(), new BigDecimal(1));
+        Assert.assertEquals(((DoubleProperty)property).getMaximum(), new BigDecimal(100));
     }
 
     @Test
@@ -270,7 +304,6 @@ public class PropertyModelConverterTest {
         Assert.assertTrue(property instanceof LongProperty);
         Assert.assertEquals(property.getType(),"integer");
         Assert.assertEquals(property.getFormat(),"int64");
-
     }
 
     @Test
@@ -294,7 +327,6 @@ public class PropertyModelConverterTest {
         Assert.assertTrue(property instanceof IntegerProperty);
         Assert.assertEquals(property.getType(),"integer");
         Assert.assertEquals(property.getFormat(),"int32");
-
     }
 
     @Test
@@ -324,22 +356,18 @@ public class PropertyModelConverterTest {
         Assert.assertEquals(arrayProperty.getItems().getType(),"string");
         Assert.assertEquals(arrayProperty.getItems().getFormat(),"date-time");
         Assert.assertEquals(arrayProperty.getItems().getExample(),"1985-04-12T23:20:50.52Z");
-
     }
-
 
     @Test
     public void convertArrayModel()throws Exception{
         final ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
         final JsonNode rootNode = mapper.readTree(Files.readAllBytes(java.nio.file.Paths.get(getClass().getResource("/specFiles/models.yaml").toURI())));
 
-
         String specAsYaml = rootNode.toString();
 
         Swagger swagger = Yaml.mapper().readValue(specAsYaml, Swagger.class);
 
         Model arrayModel  = swagger.getDefinitions().get("InstructionSequence");
-
 
         PropertyModelConverter converter = new PropertyModelConverter();
         Property convertedProperty = converter.modelToProperty(arrayModel);
@@ -352,6 +380,34 @@ public class PropertyModelConverterTest {
         Assert.assertEquals(property.getType(),"array");
         Assert.assertTrue(property.getItems() instanceof StringProperty);
         Assert.assertEquals(property.getItems().getType(),"string");
+    }
+
+    @Test
+    public void convertArrayWithNewPropertiesModel()throws Exception{
+        final ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
+        final JsonNode rootNode = mapper.readTree(Files.readAllBytes(java.nio.file.Paths.get(getClass().getResource("/specFiles/models.yaml").toURI())));
+
+        String specAsYaml = rootNode.toString();
+
+        Swagger swagger = Yaml.mapper().readValue(specAsYaml, Swagger.class);
+
+        Model arrayModel  = swagger.getDefinitions().get("NewSequence");
+
+        PropertyModelConverter converter = new PropertyModelConverter();
+        Property convertedProperty = converter.modelToProperty(arrayModel);
+
+        Assert.assertTrue(convertedProperty instanceof ArrayProperty);
+        ArrayProperty property = (ArrayProperty) convertedProperty;
+
+        Assert.assertEquals(property.getTitle(),"NewSequence");
+        Assert.assertEquals(property.getDescription(),"A new sequence of steps that make up the Instructions");
+        Assert.assertEquals(property.getType(),"array");
+        Assert.assertTrue(property.getItems() instanceof StringProperty);
+        final StringProperty stringProperty = (StringProperty) property.getItems();
+        Assert.assertEquals(property.getItems().getType(),"string");
+        /*Assert.assertEquals(stringProperty.getPattern(),"Pattern");
+        Assert.assertEquals(property.getExclusiveMaximum(), Boolean.TRUE);
+        Assert.assertEquals(property.getExclusiveMinimum(), Boolean.TRUE);*/
 
     }
 
@@ -360,13 +416,11 @@ public class PropertyModelConverterTest {
         final ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
         final JsonNode rootNode = mapper.readTree(Files.readAllBytes(java.nio.file.Paths.get(getClass().getResource("/specFiles/models.yaml").toURI())));
 
-
         String specAsYaml = rootNode.toString();
 
         Swagger swagger = Yaml.mapper().readValue(specAsYaml, Swagger.class);
 
         Model arrayModel  = swagger.getDefinitions().get("Address");
-
 
         PropertyModelConverter converter = new PropertyModelConverter();
         Property convertedProperty = converter.modelToProperty(arrayModel);
@@ -377,15 +431,12 @@ public class PropertyModelConverterTest {
         Assert.assertEquals(property.getType(),"object");
         Assert.assertEquals(property.getRequiredProperties().get(0),"street");
         Assert.assertEquals(property.getProperties().get("city").getType(),"string");
-
     }
 
     @Test
     public void composedExtendedModelToPropertyTest()throws Exception{
-
         final ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
         final JsonNode rootNode = mapper.readTree(Files.readAllBytes(java.nio.file.Paths.get(getClass().getResource("/specFiles/models.yaml").toURI())));
-
 
         String specAsYaml = rootNode.toString();
 
@@ -405,12 +456,56 @@ public class PropertyModelConverterTest {
         Assert.assertEquals(objectProperty.getRequiredProperties().get(0),"gps");
     }
 
+    @Test
+    public void stringNewPropertiesModelToPropertyTest()throws Exception{
+        final ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
+        final JsonNode rootNode = mapper.readTree(Files.readAllBytes(java.nio.file.Paths.get(getClass().getResource("/specFiles/models.yaml").toURI())));
 
+        String specAsYaml = rootNode.toString();
+
+        Swagger swagger = Yaml.mapper().readValue(specAsYaml, Swagger.class);
+
+        Model composedModel  = swagger.getDefinitions().get("NewExtendedStringAddress");
+
+        PropertyModelConverter converter = new PropertyModelConverter();
+        Property convertedProperty = converter.modelToProperty(composedModel);
+
+        Assert.assertTrue(convertedProperty instanceof StringProperty);
+        StringProperty objectProperty = (StringProperty) convertedProperty;
+        Assert.assertEquals(objectProperty.getType(),"string");
+
+        Assert.assertEquals(objectProperty.getPattern(),"Pattern");
+        Assert.assertEquals(objectProperty.getMinLength(), new Integer(10));
+        Assert.assertEquals(objectProperty.getMaxLength(), new Integer(50));
+    }
+
+    @Test
+    public void numericNewPropertiesModelToPropertyTest()throws Exception{
+        final ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
+        final JsonNode rootNode = mapper.readTree(Files.readAllBytes(java.nio.file.Paths.get(getClass().getResource("/specFiles/models.yaml").toURI())));
+
+        String specAsYaml = rootNode.toString();
+
+        Swagger swagger = Yaml.mapper().readValue(specAsYaml, Swagger.class);
+
+        Model composedModel  = swagger.getDefinitions().get("NewExtendedNumericAddress");
+
+        PropertyModelConverter converter = new PropertyModelConverter();
+        Property convertedProperty = converter.modelToProperty(composedModel);
+
+        Assert.assertTrue(convertedProperty instanceof AbstractNumericProperty);
+        AbstractNumericProperty objectProperty = (AbstractNumericProperty) convertedProperty;
+        Assert.assertEquals(objectProperty.getType(),"number");
+        Assert.assertEquals(objectProperty.getExclusiveMaximum(), Boolean.TRUE);
+        Assert.assertEquals(objectProperty.getExclusiveMinimum(), Boolean.TRUE);
+        Assert.assertEquals(objectProperty.getMultipleOf(),new BigDecimal(5));
+        Assert.assertEquals(objectProperty.getMinimum(),new BigDecimal(1));
+        Assert.assertEquals(objectProperty.getMaximum(),new BigDecimal(100));
+    }
 
 
     @Test
     public void composedModelToPropertyTest(){
-
         List<Model> list = new ArrayList();
         List<String> requiredList = new ArrayList();
         requiredList.add("url");
@@ -448,12 +543,10 @@ public class PropertyModelConverterTest {
         Assert.assertEquals(objectProperty.getProperties().get("url").getType(),"string");
         Assert.assertEquals(objectProperty.getProperties().get("ReferencedObject1").getType(),"ref");
         Assert.assertEquals(objectProperty.getRequiredProperties().get(0),"url");
-
     }
 
     @Test
     public void convertPropertyToModel(){
-
         IntegerProperty integerProperty = new IntegerProperty();
         MapProperty mapProperty = new MapProperty();
         mapProperty.setAdditionalProperties(integerProperty);
@@ -465,14 +558,12 @@ public class PropertyModelConverterTest {
         ModelImpl model = (ModelImpl) convertedModel;
         Assert.assertEquals(model.getType(),"object");
         Assert.assertEquals(model.getAdditionalProperties().getType(),"integer");
-
     }
 
     @Test
     public void convertStringProperty()throws Exception{
         final ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
         final JsonNode rootNode = mapper.readTree(Files.readAllBytes(java.nio.file.Paths.get(getClass().getResource("/specFiles/responses.yaml").toURI())));
-
 
         String specAsYaml = rootNode.toString();
 
@@ -497,7 +588,6 @@ public class PropertyModelConverterTest {
         final ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
         final JsonNode rootNode = mapper.readTree(Files.readAllBytes(java.nio.file.Paths.get(getClass().getResource("/specFiles/responses.yaml").toURI())));
 
-
         String specAsYaml = rootNode.toString();
 
         Swagger swagger = Yaml.mapper().readValue(specAsYaml, Swagger.class);
@@ -519,7 +609,6 @@ public class PropertyModelConverterTest {
     public void convertBooleanProperty()throws Exception{
         final ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
         final JsonNode rootNode = mapper.readTree(Files.readAllBytes(java.nio.file.Paths.get(getClass().getResource("/specFiles/responses.yaml").toURI())));
-
 
         String specAsYaml = rootNode.toString();
 
@@ -544,7 +633,6 @@ public class PropertyModelConverterTest {
         final ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
         final JsonNode rootNode = mapper.readTree(Files.readAllBytes(java.nio.file.Paths.get(getClass().getResource("/specFiles/responses.yaml").toURI())));
 
-
         String specAsYaml = rootNode.toString();
 
         Swagger swagger = Yaml.mapper().readValue(specAsYaml, Swagger.class);
@@ -568,7 +656,6 @@ public class PropertyModelConverterTest {
         final ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
         final JsonNode rootNode = mapper.readTree(Files.readAllBytes(java.nio.file.Paths.get(getClass().getResource("/specFiles/responses.yaml").toURI())));
 
-
         String specAsYaml = rootNode.toString();
 
         Swagger swagger = Yaml.mapper().readValue(specAsYaml, Swagger.class);
@@ -591,7 +678,6 @@ public class PropertyModelConverterTest {
     public void convertArrayOfRefProperty()throws Exception{
         final ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
         final JsonNode rootNode = mapper.readTree(Files.readAllBytes(java.nio.file.Paths.get(getClass().getResource("/specFiles/responses.yaml").toURI())));
-
 
         String specAsYaml = rootNode.toString();
 
@@ -618,7 +704,6 @@ public class PropertyModelConverterTest {
         final ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
         final JsonNode rootNode = mapper.readTree(Files.readAllBytes(java.nio.file.Paths.get(getClass().getResource("/specFiles/responses.yaml").toURI())));
 
-
         String specAsYaml = rootNode.toString();
 
         Swagger swagger = Yaml.mapper().readValue(specAsYaml, Swagger.class);
@@ -634,15 +719,12 @@ public class PropertyModelConverterTest {
         Assert.assertTrue(convertedModel instanceof RefModel);
         RefModel model = (RefModel) convertedModel;
         Assert.assertEquals(model.get$ref(),"#/definitions/ArrayOfint");
-
-
     }
 
     @Test
     public void convertObjectProperty()throws Exception{
         final ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
         final JsonNode rootNode = mapper.readTree(Files.readAllBytes(java.nio.file.Paths.get(getClass().getResource("/specFiles/responses.yaml").toURI())));
-
 
         String specAsYaml = rootNode.toString();
 
@@ -664,7 +746,5 @@ public class PropertyModelConverterTest {
         Assert.assertEquals(model.getProperties().get("name").getType(), "string");
         Assert.assertEquals(model.getRequired().get(0), "id");
         Assert.assertEquals(model.getRequired().get(1), "name");
-
-
     }
 }
