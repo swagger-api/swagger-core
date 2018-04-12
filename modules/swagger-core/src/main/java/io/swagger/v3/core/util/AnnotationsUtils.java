@@ -364,7 +364,7 @@ public abstract class AnnotationsUtils {
         if (arraySchema.schema() != null) {
             if (arraySchema.schema().implementation().equals(Void.class)) {
                 getSchemaFromAnnotation(arraySchema.schema(), components, jsonViewAnnotation).ifPresent(schema -> {
-                    if (StringUtils.isNotBlank(schema.getType())) {
+                    if (StringUtils.isNotBlank(schema.getType()) || StringUtils.isNotBlank(schema.get$ref())) {
                         arraySchemaObject.setItems(schema);
                     }
                 });
@@ -1089,7 +1089,7 @@ public abstract class AnnotationsUtils {
             } else {
                 Optional<ArraySchema> arraySchemaFromAnnotation = AnnotationsUtils.getArraySchema(arrayAnnotation, components, jsonViewAnnotation);
                 if (arraySchemaFromAnnotation.isPresent()) {
-                    if (StringUtils.isBlank(arraySchemaFromAnnotation.get().getItems().get$ref()) && StringUtils.isBlank(arraySchemaFromAnnotation.get().getItems().getType())) {
+                    if (arraySchemaFromAnnotation.get().getItems() != null && StringUtils.isBlank(arraySchemaFromAnnotation.get().getItems().get$ref()) && StringUtils.isBlank(arraySchemaFromAnnotation.get().getItems().getType())) {
                         // default to string
                         arraySchemaFromAnnotation.get().getItems().setType("string");
                     }

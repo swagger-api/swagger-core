@@ -31,6 +31,7 @@ import io.swagger.v3.jaxrs2.resources.TagsResource;
 import io.swagger.v3.jaxrs2.resources.Test2607;
 import io.swagger.v3.jaxrs2.resources.TestResource;
 import io.swagger.v3.jaxrs2.resources.Ticket2644ConcreteImplementation;
+import io.swagger.v3.jaxrs2.resources.Ticket2763Resource;
 import io.swagger.v3.jaxrs2.resources.UserAnnotationResource;
 import io.swagger.v3.jaxrs2.resources.extensions.ExtensionsResource;
 import io.swagger.v3.jaxrs2.resources.extensions.OperationExtensionsResource;
@@ -914,6 +915,36 @@ public class ReaderTest {
             }
         }
         return schemas;
+    }
+
+    @Test(description = "Responses with array schema")
+    public void testTicket2763() {
+        Reader reader = new Reader(new OpenAPI());
+
+        OpenAPI openAPI = reader.read(Ticket2763Resource.class);
+        String yaml = "openapi: 3.0.1\n" +
+                "paths:\n" +
+                "  /array:\n" +
+                "    get:\n" +
+                "      operationId: getArrayResponses\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          content:\n" +
+                "            application/json:\n" +
+                "              schema:\n" +
+                "                type: array\n" +
+                "                items:\n" +
+                "                  $ref: https://openebench.bsc.es/monitor/tool/tool.json\n" +
+                "  /schema:\n" +
+                "    get:\n" +
+                "      operationId: getSchemaResponses\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          content:\n" +
+                "            application/json:\n" +
+                "              schema:\n" +
+                "                $ref: https://openebench.bsc.es/monitor/tool/tool.json";
+        SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
     }
 }
 
