@@ -301,11 +301,11 @@ public class Reader implements OpenApiReader {
         // class security schemes
         if (apiSecurityScheme != null) {
             for (io.swagger.v3.oas.annotations.security.SecurityScheme securitySchemeAnnotation : apiSecurityScheme) {
-                Optional<SecurityScheme> securityScheme = SecurityParser.getSecurityScheme(securitySchemeAnnotation);
+                Optional<SecurityParser.SecuritySchemePair> securityScheme = SecurityParser.getSecurityScheme(securitySchemeAnnotation);
                 if (securityScheme.isPresent()) {
                     Map<String, SecurityScheme> securitySchemeMap = new HashMap<>();
-                    if (StringUtils.isNotBlank(securityScheme.get().getName())) {
-                        securitySchemeMap.put(securityScheme.get().getName(), securityScheme.get());
+                    if (StringUtils.isNotBlank(securityScheme.get().key)) {
+                        securitySchemeMap.put(securityScheme.get().key, securityScheme.get().securityScheme);
                         if (components.getSecuritySchemes() != null && components.getSecuritySchemes().size() != 0) {
                             components.getSecuritySchemes().putAll(securitySchemeMap);
                         } else {
