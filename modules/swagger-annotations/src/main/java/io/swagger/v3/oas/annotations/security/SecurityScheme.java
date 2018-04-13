@@ -49,6 +49,13 @@ public @interface SecurityScheme {
     SecuritySchemeType type();
 
     /**
+     * The name identifying this security scheme
+     *
+     * @return String name
+     **/
+    String name() default "";
+
+    /**
      * A short description for security scheme. CommonMark syntax can be used for rich text representation.
      *
      * @return String description
@@ -57,10 +64,11 @@ public @interface SecurityScheme {
 
     /**
      * The name of the header or query parameter to be used. Applies to apiKey type.
+     * Maps to "name" property of <a target="_new" href="https://github.com/OAI/OpenAPI-Specification/blob/3.0.1/versions/3.0.1.md#securitySchemeObject">Security Scheme (OpenAPI specification)</a>
      *
-     * @return String name
+     * @return String paramName
      **/
-    String name() default "";
+    String paramName() default "";
 
     /**
      * The location of the API key. Valid values are "query" or "header".  Applies to apiKey type.

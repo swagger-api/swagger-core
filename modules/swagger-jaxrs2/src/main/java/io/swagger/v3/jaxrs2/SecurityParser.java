@@ -17,6 +17,11 @@ import java.util.Optional;
 
 public class SecurityParser {
 
+    static class SecuritySchemePair {
+        public String key;
+        public SecurityScheme securityScheme;
+    }
+
     public static Optional<List<SecurityRequirement>> getSecurityRequirements(io.swagger.v3.oas.annotations.security.SecurityRequirement[] securityRequirementsApi) {
         if (securityRequirementsApi == null || securityRequirementsApi.length == 0) {
             return Optional.empty();
@@ -40,10 +45,11 @@ public class SecurityParser {
         return Optional.of(securityRequirements);
     }
 
-    public static Optional<SecurityScheme> getSecurityScheme(io.swagger.v3.oas.annotations.security.SecurityScheme securityScheme) {
+    public static Optional<SecuritySchemePair> getSecurityScheme(io.swagger.v3.oas.annotations.security.SecurityScheme securityScheme) {
         if (securityScheme == null) {
             return Optional.empty();
         }
+        String key = null;
         SecurityScheme securitySchemeObject = new SecurityScheme();
 
         if (StringUtils.isNotBlank(securityScheme.in().toString())) {
@@ -66,9 +72,14 @@ public class SecurityParser {
         if (StringUtils.isNotBlank(securityScheme.description())) {
             securitySchemeObject.setDescription(securityScheme.description());
         }
-        if (StringUtils.isNotBlank(securityScheme.name())) {
-            securitySchemeObject.setName(securityScheme.name());
+        if (StringUtils.isNotBlank(securityScheme.paramName())) {
+            securitySchemeObject.setName(securityScheme.paramName());
         }
+
+        if (StringUtils.isNotBlank(securityScheme.name())) {
+            key = securityScheme.name();
+        }
+
         if (securityScheme.extensions().length > 0) {
             Map<String, Object> extensions = AnnotationsUtils.getExtensions(securityScheme.extensions());
             if (extensions != null) {
@@ -79,7 +90,11 @@ public class SecurityParser {
         }
 
         getOAuthFlows(securityScheme.flows()).ifPresent(securitySchemeObject::setFlows);
-        return Optional.of(securitySchemeObject);
+
+        SecuritySchemePair result = new SecuritySchemePair();
+        result.key = key;
+        result.securityScheme = securitySchemeObject;
+        return Optional.of(result);
     }
 
     public static Optional<OAuthFlows> getOAuthFlows(io.swagger.v3.oas.annotations.security.OAuthFlows oAuthFlows) {
