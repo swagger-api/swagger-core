@@ -1,6 +1,6 @@
 # Swagger Core library
 
-[![Build Status](https://travis-ci.org/swagger-api/swagger-core.svg?branch=master)](https://travis-ci.org/swagger-api/swagger-core)
+[![Build Status](https://travis-ci.org/swagger-api/swagger-core.svg?branch=1.5)](https://travis-ci.org/swagger-api/swagger-core)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.swagger/swagger-project/badge.svg?style=plastic)](https://maven-badges.herokuapp.com/maven-central/io.swagger/swagger-project)
 
 Javadocs for annotations with the current release are [available online](http://docs.swagger.io/swagger-core/current/apidocs/index.html).
@@ -11,7 +11,7 @@ Swagger-core is the Java implementation of Swagger. Current version supports *JA
 
 Check out [Swagger-Spec](https://github.com/OAI/OpenAPI-Specification) for additional information about the Swagger project, including additional libraries with support for SpringMVC, other languages and more. 
 
-![Swagger Screenshot](https://raw.github.com/swagger-api/swagger-core/master/swagger-shot.jpg)
+![Swagger Screenshot](https://raw.github.com/swagger-api/swagger-core/1.5/swagger-shot.jpg)
 
 ## See the Wiki!
 The [github wiki](https://github.com/swagger-api/swagger-core/wiki) contains documentation, samples, contributions, etc. Start there.
