@@ -258,7 +258,7 @@ public class Operation {
     }
 
     public void setDeprecated(Boolean value) {
-        if (value == null || value.equals(Boolean.FALSE)) {
+        if (value == null) {
             this.deprecated = null;
         } else {
             this.deprecated = value;

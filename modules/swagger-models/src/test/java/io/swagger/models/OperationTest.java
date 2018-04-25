@@ -141,7 +141,7 @@ public class OperationTest {
         operation.deprecated(false);
 
         // then
-        assertNull(operation.isDeprecated(), "Must not been deprecated after set to false");
+        assertFalse(operation.isDeprecated(), "Must not been deprecated after set to false");
     }
 
     @Test
