@@ -11,9 +11,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNull;
-import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.*;
 
 public class OperationTest {
 
@@ -130,6 +128,11 @@ public class OperationTest {
         // then
         assertEquals(operation.getResponses().get("default"), response,
                 "The default response should be the one that have just been set");
+    }
+
+    @Test
+    public void testDefaultDeprecatedValue() {
+        assertFalse(operation.isDeprecated(), "The default value of deprecated must be false");
     }
 
     @Test

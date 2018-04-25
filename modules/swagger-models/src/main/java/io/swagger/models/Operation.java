@@ -22,7 +22,7 @@ public class Operation {
     private Map<String, Response> responses;
     private List<Map<String, List<String>>> security;
     private ExternalDocs externalDocs;
-    private Boolean deprecated;
+    private Boolean deprecated = false;
 
     public Operation summary(String summary) {
         this.setSummary(summary);
