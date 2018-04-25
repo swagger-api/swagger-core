@@ -259,10 +259,10 @@ public class Operation {
 
     public void setDeprecated(Boolean value) {
         if (value == null) {
-            this.deprecated = null;
-        } else {
-            this.deprecated = value;
+            return;
         }
+
+        this.deprecated = value;
     }
 
     @JsonAnyGetter

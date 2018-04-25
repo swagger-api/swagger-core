@@ -136,6 +136,15 @@ public class OperationTest {
     }
 
     @Test
+    public void testDeprecatedMustBeFalseIfNullIsPassed() {
+        // when
+        operation.deprecated(null);
+
+        // then
+        assertFalse(operation.isDeprecated());
+    }
+
+    @Test
     public void testDeprecated() {
         // when
         operation.deprecated(false);
