@@ -1,17 +1,17 @@
+**NOTE:** If you're looking for swagger 1.5.X and OpenApi 2.0, please refer to [1.5 branch](https://github.com/swagger-api/swagger-core/tree/1.5)
+
 # Swagger Core library
 
 [![Build Status](https://travis-ci.org/swagger-api/swagger-core.svg?branch=master)](https://travis-ci.org/swagger-api/swagger-core)
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.swagger/swagger-project/badge.svg?style=plastic)](https://maven-badges.herokuapp.com/maven-central/io.swagger/swagger-project)
-
-Javadocs for annotations with the current release are [available online](http://docs.swagger.io/swagger-core/current/apidocs/index.html).
 
 The goal of Swagger™ is to define a standard, language-agnostic interface to REST APIs which allows both humans and computers to discover and understand the capabilities of the service without access to source code, documentation, or through network traffic inspection. When properly defined via Swagger, a consumer can understand and interact with the remote service with a minimal amount of implementation logic. Similar to what interfaces have done for lower-level programming, Swagger removes the guesswork in calling the service.
 
-Swagger-core is the Java implementation of Swagger. Current version supports *JAX-RS* and plain servlets.  Integration with the Play! framework has been moved to [Swagger-Play](https://github.com/swagger-api/swagger-play).
+Swagger-core is the Java implementation of Swagger. Current version supports *JAX-RS2*.
 
-Check out [Swagger-Spec](https://github.com/OAI/OpenAPI-Specification) for additional information about the Swagger project, including additional libraries with support for SpringMVC, other languages and more. 
+Check out the [OpenAPI Specification](https://github.com/OAI/OpenAPI-Specification) for additional information about the Swagger project.
 
-![Swagger Screenshot](https://raw.github.com/swagger-api/swagger-core/master/swagger-shot.jpg)
+## Get started with Swagger!
+See the guide on [getting started with swagger](https://github.com/frantuma/swagger-core/wiki/Swagger-2.X---Getting-started) to get started with adding swagger to your API.
 
 ## See the Wiki!
 The [github wiki](https://github.com/swagger-api/swagger-core/wiki) contains documentation, samples, contributions, etc. Start there.
@@ -24,17 +24,13 @@ The following methods are available to obtain support for Swagger:
 - IRC! you can find us on [freenode](http://webchat.freenode.net/?channels=swagger) in the channel #Swagger. You can talk with us directly there.
 
 
-## Get started with Swagger!
-See the guide on [getting started with swagger](https://github.com/swagger-api/swagger-core/wiki/Swagger-Core-JAX-RS-Project-Setup-1.5.X) to get started with adding swagger to your API.
-For 2.X see [getting started with swagger 2.X](https://github.com/frantuma/swagger-core/wiki/Swagger-2.X---Getting-started).
-
 ## Compatibility
-The OpenAPI Specification has undergone 3 revisions since initial creation in 2010.  The swagger-core project has the following compatibilities with the OpenAPI Specification:
+The OpenAPI Specification has undergone several revisions since initial creation in 2010.  The swagger-core project has the following compatibilities with the OpenAPI Specification:
 
 Swagger core Version      | Release Date | OpenAPI Spec compatibility | Notes | Status
 ------------------------- | ------------ | -------------------------- | ----- | ----
+2.0.1  (**current stable**)| 2018-04-16   | 3.0           | [tag v2.0.1](https://github.com/swagger-api/swagger-core/tree/v2.0.1) | Supported
 1.5.19 (**current stable**)| 2018-04-16  | 2.0           | [tag v1.5.19](https://github.com/swagger-api/swagger-core/tree/v1.5.19) | Supported
-2.0.1 (**current stable**)| 2018-04-16   | 3.0           | [tag v2.0.1](https://github.com/swagger-api/swagger-core/tree/v2.0.1) | Supported
 2.0.0                     | 2018-03-20   | 3.0           | [tag v2.0.0](https://github.com/swagger-api/swagger-core/tree/v2.0.0) | Supported
 2.0.0-rc4                 | 2018-01-22   | 3.0           | [tag v2.0.0-rc4](https://github.com/swagger-api/swagger-core/tree/v2.0.0-rc4) | Supported
 2.0.0-rc3                 | 2017-11-21   | 3.0           | [tag v2.0.0-rc3](https://github.com/swagger-api/swagger-core/tree/v2.0.0-rc3) | Supported
@@ -43,12 +39,10 @@ Swagger core Version      | Release Date | OpenAPI Spec compatibility | Notes | 
 1.5.18                    | 2018-01-22  | 2.0           | [tag v1.5.18](https://github.com/swagger-api/swagger-core/tree/v1.5.18) | Supported
 1.5.17                    | 2017-11-21  | 2.0           | [tag v1.5.17](https://github.com/swagger-api/swagger-core/tree/v1.5.17) | Supported
 1.5.16                    | 2017-07-15   | 2.0           | [tag v1.5.16](https://github.com/swagger-api/swagger-core/tree/v1.5.16) | Supported
-1.3.12                    | 2014-12-23   | 1.2           | [tag v1.3.12](https://github.com/swagger-api/swagger-core/tree/v1.3.12) | Supported
+1.3.12                    | 2014-12-23   | 1.2           | [tag v1.3.12](https://github.com/swagger-api/swagger-core/tree/v1.3.12) | Deprecated
 1.2.4                     | 2013-06-19   | 1.1           | [tag swagger-project_2.10.0-1.2.4](https://github.com/swagger-api/swagger-core/tree/swagger-project_2.10.0-1.2.4) | Deprecated
 1.0.0                     | 2011-10-16   | 1.0           | [tag v1.0](https://github.com/swagger-api/swagger-core/tree/v1.0) | Deprecated
 
-## Where is Scala support?
-To allow independent development, scala support has been moved into a separate project.  See the [swagger-scala-module](https://github.com/swagger-api/swagger-scala-module) for details.  Play! framework support has moved to [swagger-play](https://github.com/swagger-api/swagger-play).
 
 ## Overview
 This is a project to build the swagger-core library, which is required for the Swagger implementation of the OpenAPI Spec. 
@@ -59,17 +53,12 @@ If you're interested in the change history of swagger and the swagger-core frame
 ### Prerequisites
 You need the following installed and available in your $PATH:
 
-* Java 7 (http://java.oracle.com)
-* Apache maven 3.0.4 or greater (http://maven.apache.org/)
-
-### Prerequisites 2.X
-You need the following installed and available in your $PATH:
-
 * Java 8 (http://java.oracle.com)
 * Apache maven 3.0.4 or greater (http://maven.apache.org/)
+* Jackson 2.4.5 or greater
 
 
-### To build from source (currently 1.5.20-SNAPSHOT)
+### To build from source (currently 2.0.2-SNAPSHOT)
 ```
 # first time building locally
 mvn -N
@@ -86,14 +75,14 @@ Of course if you don't want to build locally you can grab artifacts from maven c
 
 `http://repo1.maven.org/maven2/io/swagger/`
 
-## Sample Apps - *UPDATED*
-The samples have moved to [a new repository](https://github.com/swagger-api/swagger-samples) and contain various integrations and configurations.
+## Sample Apps
+The samples have moved to [a new repository](https://github.com/swagger-api/swagger-samples/tree/2.0) and contain various integrations and configurations.
 
 
 ## License
 
 ```
-Copyright 2016 SmartBear Software
+Copyright 2018 SmartBear Software
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

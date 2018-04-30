@@ -1,7 +1,6 @@
 package io.swagger.servlet.extensions;
 
 import io.swagger.servlet.ReaderContext;
-
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -13,7 +12,7 @@ public class PathGetterTest extends BaseServletReaderExtensionTest {
         return new Object[][]{
                 {"testMethod1", "/tests/resources/testMethod1"},
                 {"testMethod2", "/tests/resources/testMethod2"},
-                {"testMethod3", "/tests/resources/users"},
+                {"testMethod3", "/tests/resources/testMethod3"},
                 {"testMethod4", "/tests/resources/testMethod4"},
         };
     }
@@ -23,7 +22,7 @@ public class PathGetterTest extends BaseServletReaderExtensionTest {
         return new Object[][]{
                 {"testMethod1", "/tests/testMethod1"},
                 {"testMethod2", "/tests/testMethod2"},
-                {"testMethod3", "/tests/users"},
+                {"testMethod3", "/tests/testMethod3"},
                 {"testMethod4", "/tests/testMethod4"},
         };
     }

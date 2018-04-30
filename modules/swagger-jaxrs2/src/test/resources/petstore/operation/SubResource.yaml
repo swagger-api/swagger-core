@@ -1,0 +1,20 @@
+openapi: 3.0.1
+paths:
+  /interfaceoperation/{petId}:
+    get:
+      summary: Find pet by ID Operation in SubResource
+      description: Returns a pet in SubResource
+      operationId: getPetById
+      parameters:
+      - name: petId
+        in: path
+        description: ID of pet that needs to be fetched
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        default:
+          description: default response
+          content:
+            '*/*': {}

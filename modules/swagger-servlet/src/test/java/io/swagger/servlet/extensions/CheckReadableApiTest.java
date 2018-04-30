@@ -4,7 +4,6 @@ import io.swagger.servlet.ReaderContext;
 import io.swagger.servlet.resources.HiddenResource;
 import io.swagger.servlet.resources.ResourceWithAnnotations;
 import io.swagger.servlet.resources.ResourceWithoutApiAnnotation;
-
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;

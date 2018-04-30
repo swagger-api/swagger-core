@@ -1,0 +1,34 @@
+openapi: 3.0.1
+paths:
+  /noimplementationresponseresource:
+    get:
+      operationId: getUser
+      parameters:
+      - name: userId
+        in: query
+        schema:
+          type: string
+      responses:
+        400:
+          description: test description
+          links:
+            user:
+              operationId: getUser
+              parameters:
+                userId: $request.query.userId
+        200:
+          description: 200 description
+          links:
+            pet:
+              operationId: getUser
+              parameters:
+                userId: $request.query.userId
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+        username:
+          type: string

@@ -1,0 +1,10 @@
+openapi: 3.0.1
+paths:
+  /responseinmethod:
+    get:
+      summary: Find pets
+      description: Returns the Pets
+      operationId: getPets
+      responses:
+        200:
+          description: Status OK

@@ -1,0 +1,39 @@
+openapi: 3.0.1
+paths:
+  /test:
+    post:
+      operationId: testAnnotatedModel
+      requestBody:
+        description: Created user object
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/AnnotatedSubscription'
+        required: true
+      responses:
+        default:
+          description: default response
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AnnotatedSubscription'
+components:
+  schemas:
+    AnnotatedSubscriptionItem:
+      type: object
+      properties:
+        subscriptionItemId:
+          type: string
+      example:
+        subscriptionItemId: "1"
+    AnnotatedSubscription:
+      type: object
+      properties:
+        subscriptionId:
+          type: string
+        subscriptionItem:
+          $ref: '#/components/schemas/AnnotatedSubscriptionItem'
+      example:
+        subscriptionId: "1"
+        subscriptionItem:
+          subscriptionItemId: "2"

@@ -6,7 +6,6 @@ import io.swagger.core.filter.SwaggerSpecFilter;
 import io.swagger.models.Info;
 import io.swagger.models.Scheme;
 import io.swagger.models.Swagger;
-
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,7 +23,7 @@ public class WebXMLReader implements SwaggerConfig {
     private Scheme scheme = Scheme.HTTP;
 
     public WebXMLReader(ServletConfig servletConfig) {
-        apiVersion = getInitParameter(servletConfig, "api.version", "Swagger Server");
+        apiVersion = getInitParameter(servletConfig, "api.version", "Swagger OASServer");
         basePath = getInitParameter(servletConfig, "swagger.api.basepath", null);
         title = getInitParameter(servletConfig, "swagger.api.title", "");
         filterClass = getInitParameter(servletConfig, "swagger.filter", null);

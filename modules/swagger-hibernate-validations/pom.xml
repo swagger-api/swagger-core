@@ -2,16 +2,16 @@
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <parent>
-        <groupId>io.swagger</groupId>
+        <groupId>io.swagger.core.v3</groupId>
         <artifactId>swagger-project</artifactId>
-        <version>1.5.20-SNAPSHOT</version>
+        <version>1.5.13-SNAPSHOT</version>
         <relativePath>../..</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-    <groupId>io.swagger</groupId>
+    <groupId>io.swagger.core.v3</groupId>
     <artifactId>swagger-hibernate-validations</artifactId>
     <packaging>jar</packaging>
-    <version>1.5.20-SNAPSHOT</version>
+    <version>1.5.13-SNAPSHOT</version>
     <name>swagger-hibernate-validations</name>
     <build>
         <sourceDirectory>src/main/java</sourceDirectory>
@@ -52,7 +52,7 @@
     </build>
     <dependencies>
         <dependency>
-            <groupId>io.swagger</groupId>
+            <groupId>io.swagger.core.v3</groupId>
             <artifactId>swagger-jaxrs</artifactId>
             <version>${project.parent.version}</version>
             <exclusions>

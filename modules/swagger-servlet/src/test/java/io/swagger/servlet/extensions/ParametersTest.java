@@ -1,7 +1,6 @@
 package io.swagger.servlet.extensions;
 
 import io.swagger.models.Operation;
-
 import org.testng.Assert;
 import org.testng.annotations.Test;
 

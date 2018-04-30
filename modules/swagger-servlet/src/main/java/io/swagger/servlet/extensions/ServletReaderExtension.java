@@ -1,5 +1,11 @@
 package io.swagger.servlet.extensions;
 
+import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.type.TypeFactory;
+import com.google.common.base.Function;
+import com.google.common.base.Predicate;
+import com.google.common.base.Splitter;
+import com.google.common.collect.Collections2;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -31,13 +37,6 @@ import io.swagger.util.BaseReaderUtils;
 import io.swagger.util.ParameterProcessor;
 import io.swagger.util.PathUtils;
 import io.swagger.util.ReflectionUtils;
-
-import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.type.TypeFactory;
-import com.google.common.base.Function;
-import com.google.common.base.Predicate;
-import com.google.common.base.Splitter;
-import com.google.common.collect.Collections2;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -222,7 +221,7 @@ public class ServletReaderExtension implements ReaderExtension {
         final String operationPath = apiOperation == null ? null : apiOperation.nickname();
         return PathUtils.collectPath(context.getParentPath(),
                 apiAnnotation == null ? null : apiAnnotation.value(),
-                StringUtils.isBlank(operationPath) ? method.getName() : operationPath);
+                method.getName());
     }
 
     @Override
@@ -392,7 +391,7 @@ public class ServletReaderExtension implements ReaderExtension {
 
     @Override
     public void applyImplicitParameters(ReaderContext context, Operation operation, Method method) {
-        final ApiImplicitParams implicitParams = ReflectionUtils.getAnnotation(method, ApiImplicitParams.class);
+        final ApiImplicitParams implicitParams = method.getAnnotation(ApiImplicitParams.class);
         if (implicitParams != null && implicitParams.value().length > 0) {
             for (ApiImplicitParam param : implicitParams.value()) {
                 final Parameter p = readImplicitParam(context.getSwagger(), param);
@@ -405,7 +404,7 @@ public class ServletReaderExtension implements ReaderExtension {
 
     @Override
     public void applyExtensions(ReaderContext context, Operation operation, Method method) {
-        final ApiOperation apiOperation = ReflectionUtils.getAnnotation(method, ApiOperation.class );
+        final ApiOperation apiOperation = method.getAnnotation( ApiOperation.class );
         if( apiOperation != null ) {
             operation.getVendorExtensions().putAll(BaseReaderUtils.parseExtensions(apiOperation.extensions()));
         }
