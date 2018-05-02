@@ -95,6 +95,7 @@ public abstract class AbstractProperty implements Property, Cloneable {
         if (access != null ? !access.equals(that.access) : that.access != null) {
             return false;
         }
+
         return vendorExtensions != null ? vendorExtensions.equals(that.vendorExtensions) : that.vendorExtensions == null;
 
     }

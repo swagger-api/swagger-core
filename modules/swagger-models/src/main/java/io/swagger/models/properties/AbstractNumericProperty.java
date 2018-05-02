@@ -3,8 +3,12 @@ package io.swagger.models.properties;
 import java.math.BigDecimal;
 
 public abstract class AbstractNumericProperty extends AbstractProperty implements Property {
-    protected BigDecimal minimum, maximum, multipleOf;
-    protected Boolean exclusiveMinimum, exclusiveMaximum;
+
+    protected BigDecimal minimum;
+    protected BigDecimal maximum;
+    protected BigDecimal multipleOf;
+    protected Boolean exclusiveMinimum;
+    protected Boolean exclusiveMaximum;
 
     public AbstractNumericProperty minimum(BigDecimal minimum) {
         this.setMinimum(minimum);

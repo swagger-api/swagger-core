@@ -95,9 +95,55 @@ definitions:
         properties:
           gps:
             type: string
+  NewExtendedAddress:
+    type: object
+    pattern: Pattern
+    exclusiveMinimum: true
+    exclusiveMaximum: true
+    minimum: 1
+    maximum: 100
+    minLength: 10
+    maxLength: 50
+    multipleOf: 5
+    allOf:
+      - $ref: '#/definitions/Address'
+      - type: object
+        required:
+        - gps
+        properties:
+          gps:
+            type: string
+            pattern: Pattern
+  NewExtendedStringAddress:
+      type: string
+      pattern: Pattern
+      minLength: 10
+      maxLength: 50
+  NewExtendedNumericAddress:
+      type: number
+      exclusiveMinimum: true
+      exclusiveMaximum: true
+      minimum: 1
+      maximum: 100
+      multipleOf: 5
   InstructionSequence:
       title: InstructionSequence
       description: The sequence of steps that make up the Instructions
       type: array
       items:
           type: string
+  NewSequence:
+      title: NewSequence
+      description: A new sequence of steps that make up the Instructions
+      type: array
+      pattern: Pattern
+      exclusiveMinimum: true
+      exclusiveMaximum: true
+      minimum: 1
+      maximum: 100
+      minLength: 10
+      maxLength: 50
+      multipleOf: 5
+      items:
+          type: string
+          pattern: Pattern

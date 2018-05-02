@@ -13,7 +13,7 @@ public class StringProperty extends AbstractProperty implements Property {
     public static final String TYPE = "string";
     protected List<String> _enum;
     protected Integer minLength = null, maxLength = null;
-    protected String pattern = null;
+    protected String pattern;
     protected String _default;
 
     public enum Format {
@@ -57,6 +57,11 @@ public class StringProperty extends AbstractProperty implements Property {
         return TYPE.equals(type);
     }
 
+    public StringProperty pattern(String pattern) {
+        this.setPattern(pattern);
+        return this;
+    }
+
     public StringProperty xml(Xml xml) {
         this.setXml(xml);
         return this;
@@ -74,11 +79,6 @@ public class StringProperty extends AbstractProperty implements Property {
 
     public StringProperty maxLength(Integer maxLength) {
         this.setMaxLength(maxLength);
-        return this;
-    }
-
-    public StringProperty pattern(String pattern) {
-        this.setPattern(pattern);
         return this;
     }
 
@@ -206,11 +206,7 @@ public class StringProperty extends AbstractProperty implements Property {
         } else if (!minLength.equals(other.minLength)) {
             return false;
         }
-        if (pattern == null) {
-            if (other.pattern != null) {
-                return false;
-            }
-        } else if (!pattern.equals(other.pattern)) {
+        if (pattern != null ? !pattern.equals(other.pattern) : other.pattern != null) {
             return false;
         }
         return true;

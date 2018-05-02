@@ -6,6 +6,7 @@ import io.swagger.converter.ModelConverters;
 import io.swagger.matchers.SerializationMatchers;
 import io.swagger.models.ArrayModel;
 import io.swagger.models.Car;
+import io.swagger.models.ComposedModel;
 import io.swagger.models.ExternalDocs;
 import io.swagger.models.Manufacturers;
 import io.swagger.models.Model;
@@ -384,5 +385,147 @@ public class ModelSerializerTest {
         IntegerProperty ip = (IntegerProperty) model.getProperties().get("id");
         assertEquals(ip.getMultipleOf(), new BigDecimal("3.0"));
 
+    }
+
+    @Test(description = "It should serialize a ModelImpl with new values added in 673")
+    public void issue673SerializeModelImpl() throws IOException {
+        final ModelImpl modelImpl = new ModelImpl();
+        modelImpl.setMultipleOf(new BigDecimal(10));
+        modelImpl.setMinimum(new BigDecimal(1));
+        modelImpl.setMaximum(new BigDecimal(100));
+        modelImpl.setExclusiveMinimum(true);
+        modelImpl.setExclusiveMaximum(true);
+        modelImpl.setUniqueItems(true);
+        modelImpl.setMinLength(1);
+        modelImpl.setMaxLength(10);
+        modelImpl.setPattern("Pattern");
+        assertEquals(m.writeValueAsString(modelImpl), "{\"minimum\":1,\"maximum\":100,\"multipleOf\":10,\"exclusiveMinimum\":true,\"exclusiveMaximum\":true,\"minLength\":1,\"maxLength\":10,\"pattern\":\"Pattern\",\"uniqueItems\":true}");
+    }
+
+    @Test(description = "It should serialize an ArrayModel with new values added in 673")
+    public void issue673SerializeArrayModel() throws IOException {
+        final ArrayModel arrayModel = new ArrayModel();
+        arrayModel.setMultipleOf(new BigDecimal(10));
+        arrayModel.setMinimum(new BigDecimal(1));
+        arrayModel.setMaximum(new BigDecimal(100));
+        arrayModel.setExclusiveMinimum(true);
+        arrayModel.setExclusiveMaximum(true);
+        arrayModel.setUniqueItems(true);
+        arrayModel.setMinLength(1);
+        arrayModel.setMaxLength(10);
+        arrayModel.setPattern("Pattern");
+        assertEquals(m.writeValueAsString(arrayModel), "{\"minimum\":1,\"maximum\":100,\"multipleOf\":10,\"exclusiveMinimum\":true,\"exclusiveMaximum\":true,\"minLength\":1,\"maxLength\":10,\"pattern\":\"Pattern\",\"type\":\"array\",\"uniqueItems\":true}");
+    }
+
+    @Test(description = "It should serialize a ComposedModel with new values added in 673")
+    public void issue673SerializeComposedModel() throws IOException {
+        final ComposedModel composedModel = new ComposedModel();
+        composedModel.setMultipleOf(new BigDecimal(10));
+        composedModel.setMinimum(new BigDecimal(1));
+        composedModel.setMaximum(new BigDecimal(100));
+        composedModel.setExclusiveMinimum(true);
+        composedModel.setExclusiveMaximum(true);
+        composedModel.setMinLength(1);
+        composedModel.setMaxLength(10);
+        composedModel.setPattern("Pattern");
+        assertEquals(m.writeValueAsString(composedModel), "{\"minimum\":1,\"maximum\":100,\"multipleOf\":10,\"exclusiveMinimum\":true,\"exclusiveMaximum\":true,\"minLength\":1,\"maxLength\":10,\"pattern\":\"Pattern\",\"allOf\":[]}");
+    }
+
+    @Test(description = "Deserialize New Boolean Values: SwaggerConverter drops some validation properties of body parameters")
+    public void testIssue673DeserializeBooleanValues() throws Exception {
+        String json = "{\n" +
+                "  \"type\": \"boolean\",\n" +
+                "  \"exclusiveMaximum\": true,\n" +
+                "  \"exclusiveMinimum\": true" +
+                "}";
+
+        final ModelImpl modelImpl = Json.mapper().readValue(json, ModelImpl.class);
+        final ArrayModel arrayModel = Json.mapper().readValue(json, ArrayModel.class);
+        final ComposedModel composedModel = Json.mapper().readValue(json, ComposedModel.class);
+
+        assertEquals(modelImpl.getExclusiveMaximum().booleanValue(), true);
+        assertEquals(modelImpl.getExclusiveMinimum().booleanValue(), true);
+
+        assertEquals(arrayModel.getExclusiveMaximum().booleanValue(), true);
+        assertEquals(arrayModel.getExclusiveMinimum().booleanValue(), true);
+
+        assertEquals(composedModel.getExclusiveMaximum().booleanValue(), true);
+        assertEquals(composedModel.getExclusiveMinimum().booleanValue(), true);
+    }
+
+    @Test(description = "Deserialize New Integer Values: SwaggerConverter drops some validation properties of body parameters")
+    public void testIssue673DeserializeIntegerValues() throws Exception {
+        String json = "{\n" +
+                "  \"type\": \"integer\",\n" +
+                "  \"minLength\": 1,\n" +
+                "  \"maxLength\": 10" +
+                "}";
+
+        final ModelImpl modelImpl = Json.mapper().readValue(json, ModelImpl.class);
+        final ArrayModel arrayModel = Json.mapper().readValue(json, ArrayModel.class);
+        final ComposedModel composedModel = Json.mapper().readValue(json, ComposedModel.class);
+
+        assertEquals(modelImpl.getMinLength().intValue(), 1);
+        assertEquals(modelImpl.getMaxLength().intValue(), 10);
+
+        assertEquals(arrayModel.getMinLength().intValue(), 1);
+        assertEquals(arrayModel.getMaxLength().intValue(), 10);
+
+        assertEquals(composedModel.getMinLength().intValue(), 1);
+        assertEquals(composedModel.getMaxLength().intValue(), 10);
+    }
+
+    @Test(description = "Deserialize New Number Values: SwaggerConverter drops some validation properties of body parameters")
+    public void testIssue673DeserializeNumberValues() throws Exception {
+        String json = "{\n" +
+                "  \"type\": \"number\",\n" +
+                "  \"multipleOf\": 5" +
+                "}";
+
+        final ModelImpl modelImpl = Json.mapper().readValue(json, ModelImpl.class);
+        final ArrayModel arrayModel = Json.mapper().readValue(json, ArrayModel.class);
+        final ComposedModel composedModel = Json.mapper().readValue(json, ComposedModel.class);
+
+        assertEquals(modelImpl.getMultipleOf().intValue(), 5);
+        assertEquals(arrayModel.getMultipleOf().intValue(), 5);
+        assertEquals(composedModel.getMultipleOf().intValue(), 5);
+    }
+
+    @Test(description = "Deserialize New BigDecimal Values: SwaggerConverter drops some validation properties of body parameters")
+    public void testIssue673DeserializeBigDecimalValues() throws Exception {
+        String json = "{\n" +
+                "  \"type\": \"bigDecimal\",\n" +
+                "  \"minimum\": 1,\n" +
+                "  \"maximum\": 100" +
+                "}";
+
+        final ModelImpl modelImpl = Json.mapper().readValue(json, ModelImpl.class);
+        final ArrayModel arrayModel = Json.mapper().readValue(json, ArrayModel.class);
+        final ComposedModel composedModel = Json.mapper().readValue(json, ComposedModel.class);
+
+        assertEquals(modelImpl.getMinimum().intValue(), 1);
+        assertEquals(modelImpl.getMaximum().intValue(), 100);
+
+        assertEquals(arrayModel.getMinimum().intValue(), 1);
+        assertEquals(arrayModel.getMaximum().intValue(), 100);
+
+        assertEquals(composedModel.getMinimum().intValue(), 1);
+        assertEquals(composedModel.getMaximum().intValue(), 100);
+    }
+
+    @Test(description = "Deserialize New String Values: SwaggerConverter drops some validation properties of body parameters")
+    public void testIssue673DeserializeStringValues() throws Exception {
+        String json = "{\n" +
+                "  \"type\": \"string\",\n" +
+                "  \"pattern\": \"Pattern\"" +
+                "}";
+
+        final ModelImpl modelImpl = Json.mapper().readValue(json, ModelImpl.class);
+        final ArrayModel arrayModel = Json.mapper().readValue(json, ArrayModel.class);
+        final ComposedModel composedModel = Json.mapper().readValue(json, ComposedModel.class);
+
+        assertEquals(modelImpl.getPattern(), "Pattern");
+        assertEquals(arrayModel.getPattern(), "Pattern");
+        assertEquals(composedModel.getPattern(), "Pattern");
     }
 }
