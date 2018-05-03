@@ -20,6 +20,17 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/DayOfWeekAsString'
+  /stringenum:
+    get:
+      responses:
+        200:
+          description: OK
+          schema:
+            type: string
+            enum:
+              - Hello
+              - Goodbye
+            example: Hello
   /integer:
     get:
       responses:
