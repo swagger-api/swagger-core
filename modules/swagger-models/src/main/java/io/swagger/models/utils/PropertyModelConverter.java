@@ -238,6 +238,7 @@ public class PropertyModelConverter {
             model.setPattern(stringProperty.getPattern());
             model.setMinLength(stringProperty.getMinLength());
             model.setMaxLength(stringProperty.getMaxLength());
+            model.setEnum(stringProperty.getEnum());
         }
 
         if(property instanceof AbstractNumericProperty) {

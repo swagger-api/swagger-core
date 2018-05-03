@@ -163,6 +163,31 @@ public class PropertyModelConverterTest {
     }
 
     @Test
+    public void convertToStringWithEnumProperty()throws Exception{
+        String yaml = "      produces:\n" +
+                "        - application/json\n" +
+                "      parameters:\n" +
+                "        []\n" +
+                "      responses:\n" +
+                "        200:\n" +
+                "          description: OK\n" +
+                "          schema:\n" +
+                "            type: string\n"+
+                "            enum:\n" +
+                "              - a\n" +
+                "              - b\n";
+
+        Operation operation = Yaml.mapper().readValue(yaml, Operation.class);
+        Response response = operation.getResponses().get("200");
+        Assert.assertNotNull(response);
+        Property property = response.getSchema();
+
+        Assert.assertTrue(property instanceof StringProperty);
+        Assert.assertEquals(property.getType(),"string");
+        Assert.assertEquals(((StringProperty)property).getEnum().size(),2);
+    }
+
+    @Test
     public void convertToStringNewProperty()throws Exception{
         String yaml = "      produces:\n" +
                 "        - application/json\n" +
@@ -581,6 +606,32 @@ public class PropertyModelConverterTest {
         ModelImpl model = (ModelImpl) convertedModel;
         Assert.assertEquals(model.getType(),"string");
         Assert.assertEquals(model.getExample(),"Hello");
+    }
+
+    @Test
+    public void convertStringPropertyWithEnum()throws Exception{
+        final ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
+        final JsonNode rootNode = mapper.readTree(Files.readAllBytes(java.nio.file.Paths.get(getClass().getResource("/specFiles/responses.yaml").toURI())));
+
+        String specAsYaml = rootNode.toString();
+
+        Swagger swagger = Yaml.mapper().readValue(specAsYaml, Swagger.class);
+
+        Path string  = swagger.getPaths().get("/stringenum");
+        Operation operation = string.getOperations().get(0);
+        Response response = operation.getResponses().get("200");
+        Property property = response.getSchema();
+
+        Assert.assertEquals(((StringProperty)property).getEnum().size(),2);
+
+        PropertyModelConverter converter = new PropertyModelConverter();
+        Model convertedModel = converter.propertyToModel(property);
+
+        Assert.assertTrue(convertedModel instanceof ModelImpl);
+        ModelImpl model = (ModelImpl) convertedModel;
+        Assert.assertEquals(model.getType(),"string");
+        Assert.assertEquals(model.getExample(),"Hello");
+        Assert.assertEquals(model.getEnum().size(),2);
     }
 
     @Test
