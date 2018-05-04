@@ -272,7 +272,9 @@ public class ServletReaderExtension implements ReaderExtension {
 
     @Override
     public void setDeprecated(Operation operation, Method method) {
-        operation.deprecated(ReflectionUtils.getAnnotation(method, Deprecated.class) != null);
+        if (ReflectionUtils.getAnnotation(method, Deprecated.class) != null) {
+            operation.deprecated(true);
+        }
     }
 
     @Override
