@@ -7,6 +7,7 @@ import io.swagger.converter.ModelConverters;
 import io.swagger.matchers.SerializationMatchers;
 import io.swagger.models.Model;
 import io.swagger.models.ModelWithEnumField;
+import io.swagger.models.ModelWithEnumField2707;
 import io.swagger.models.ModelWithEnumProperty;
 import io.swagger.models.properties.Property;
 import io.swagger.models.properties.StringProperty;
@@ -49,6 +50,18 @@ public class EnumPropertyTest {
         final StringProperty stringProperty = (StringProperty)enumProperty;
         assertEquals(stringProperty.getEnum(), Arrays.asList("PRIVATE", "PUBLIC", "SYSTEM", "INVITE_ONLY"));
     }
+
+    @Test(description = "it should extract enum values annotated with JsonProperty from fields")
+    public void testExtractEnumFields2707() {
+        final Map<String, Model> models = ModelConverters.getInstance().read(ModelWithEnumField2707.class);
+        final Model model = models.get("ModelWithEnumField2707");
+        final Property enumProperty = model.getProperties().get("enumValue");
+        assertTrue(enumProperty instanceof StringProperty);
+
+        final StringProperty stringProperty = (StringProperty)enumProperty;
+        assertEquals(stringProperty.getEnum(), Arrays.asList("private", "public"));
+    }
+
     @Test(description = "it should extract enum values from method return types")
     public void testExtractEnumReturnType() {
         final Map<String, Model> models = ModelConverters.getInstance().read(ModelWithEnumProperty.class);
