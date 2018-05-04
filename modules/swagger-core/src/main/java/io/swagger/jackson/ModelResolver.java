@@ -159,7 +159,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         if (property == null) {
             if (propType.isEnumType()) {
                 property = new StringProperty();
-                _addEnumProps(propType.getRawClass(), property);
+                _addEnumProps(propType.getRawClass(), (StringProperty) property);
             } else if (_isOptionalType(propType)) {
                 property = context.resolveProperty(propType.containedType(0), null);
             } else {
@@ -191,7 +191,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         return resolve(_mapper.constructType(type), context, next);
     }
 
-    protected void _addEnumProps(Class<?> propClass, Property property) {
+    protected void _addEnumProps(Class<?> propClass, StringProperty property) {
         final boolean useIndex = _mapper.isEnabled(SerializationFeature.WRITE_ENUMS_USING_INDEX);
         final boolean useToString = _mapper.isEnabled(SerializationFeature.WRITE_ENUMS_USING_TO_STRING);
 
@@ -204,12 +204,13 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             } else if (useToString) {
                 n = en.toString();
             } else {
-                n = _intr.findEnumValue(en);
+                n = en.name();
             }
-            if (property instanceof StringProperty) {
-                StringProperty sp = (StringProperty) property;
-                sp._enum(n);
-            }
+            property._enum(n);
+        }
+        
+        if (!useIndex && !useToString) {
+            property._enum(Arrays.asList(_intr.findEnumValues(propClass, enumClass.getEnumConstants(), property.getEnum().toArray(new String[0]))));
         }
     }
 
