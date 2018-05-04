@@ -83,6 +83,9 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
     public ModelResolver(ObjectMapper mapper) {
         super(mapper);
     }
+    public ModelResolver(ObjectMapper mapper, TypeNameResolver typeNameResolver) {
+        super(mapper, typeNameResolver);
+    }
 
     public ObjectMapper objectMapper() {
         return _mapper;
@@ -641,7 +644,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
     /**
      *  Decorate the name based on the JsonView
      */
-    private String decorateModelName(ModelConverterContext context, String originalName) {
+    protected String decorateModelName(ModelConverterContext context, String originalName) {
         String name = originalName;
         if (context.getJsonView() != null && context.getJsonView().value().length > 0) {
             String COMBINER = "-or-";
