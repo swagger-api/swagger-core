@@ -22,7 +22,7 @@ public class Operation {
     private Map<String, Response> responses;
     private List<Map<String, List<String>>> security;
     private ExternalDocs externalDocs;
-    private Boolean deprecated;
+    private Boolean deprecated = false;
 
     public Operation summary(String summary) {
         this.setSummary(summary);
@@ -258,11 +258,11 @@ public class Operation {
     }
 
     public void setDeprecated(Boolean value) {
-        if (value == null || value.equals(Boolean.FALSE)) {
-            this.deprecated = null;
-        } else {
-            this.deprecated = value;
+        if (value == null) {
+            return;
         }
+
+        this.deprecated = value;
     }
 
     @JsonAnyGetter

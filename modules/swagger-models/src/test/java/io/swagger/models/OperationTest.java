@@ -11,9 +11,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNull;
-import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.*;
 
 public class OperationTest {
 
@@ -133,12 +131,26 @@ public class OperationTest {
     }
 
     @Test
+    public void testDefaultDeprecatedValue() {
+        assertFalse(operation.isDeprecated(), "The default value of deprecated must be false");
+    }
+
+    @Test
+    public void testDeprecatedMustBeFalseIfNullIsPassed() {
+        // when
+        operation.deprecated(null);
+
+        // then
+        assertFalse(operation.isDeprecated());
+    }
+
+    @Test
     public void testDeprecated() {
         // when
         operation.deprecated(false);
 
         // then
-        assertNull(operation.isDeprecated(), "Must not been deprecated after set to false");
+        assertFalse(operation.isDeprecated(), "Must not been deprecated after set to false");
     }
 
     @Test
