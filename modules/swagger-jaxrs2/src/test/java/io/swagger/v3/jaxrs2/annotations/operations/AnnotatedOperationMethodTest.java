@@ -412,6 +412,36 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
                 "                $ref: '#/components/schemas/Pet'\n" +
                 "        400:\n" +
                 "          description: Invalid tag value\n" +
+                "  /pet/findByCategory/{category}:\n" +
+                "    get:\n" +
+                "      summary: Finds Pets by category\n" +
+                "      operationId: findPetsByCategory\n" +
+                "      parameters:\n" +
+                "      - name: category\n" +
+                "        in: path\n" +
+                "        description: Category value that need to be considered for filter\n" +
+                "        required: true\n" +
+                "        style: matrix\n" +
+                "        schema:\n" +
+                "          $ref: '#/components/schemas/Category'\n" +
+                "      - name: skip\n" +
+                "        in: query\n" +
+                "        schema:\n" +
+                "          type: integer\n" +
+                "          format: int32\n" +
+                "      - name: limit\n" +
+                "        in: query\n" +
+                "        schema:\n" +
+                "          type: integer\n" +
+                "          format: int32\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          content:\n" +
+                "            application/json:\n" +
+                "              schema:\n" +
+                "                $ref: '#/components/schemas/Pet'\n" +
+                "        400:\n" +
+                "          description: Invalid category value\n" +
                 "  /pet/{petId}:\n" +
                 "    get:\n" +
                 "      summary: Find pet by ID\n" +

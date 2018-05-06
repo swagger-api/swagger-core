@@ -22,6 +22,7 @@ import io.swagger.v3.jaxrs2.resources.model.Tag;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class PetData {
     static List<Pet> pets = new ArrayList<Pet>();
@@ -78,6 +79,10 @@ public class PetData {
             }
         }
         return result;
+    }
+
+    public List<Pet> findPetByCategory(Category category) {
+        return pets.stream().filter(pet -> category.equals(pet.getCategory())).collect(Collectors.toList());
     }
 
     public List<Pet> findPetByTags(String tags) {
