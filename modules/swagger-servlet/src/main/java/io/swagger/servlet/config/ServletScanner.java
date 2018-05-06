@@ -2,12 +2,10 @@ package io.swagger.servlet.config;
 
 import io.swagger.annotations.Api;
 import io.swagger.config.Scanner;
-
 import org.reflections.Reflections;
 
-import java.util.Set;
-
 import javax.servlet.ServletConfig;
+import java.util.Set;
 
 public class ServletScanner implements Scanner {
 

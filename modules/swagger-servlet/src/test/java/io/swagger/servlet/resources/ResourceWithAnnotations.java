@@ -116,8 +116,7 @@ public class ResourceWithAnnotations {
                             response = SampleData.class),
                     @ResponseHeader(
                             name = "operation_response_header2",
-                            description = "operation_response_header_description2",
-                            response = Void.class),
+                            description = "operation_response_header_description2"),
                     @ResponseHeader(
                             name = "operation_response_header3",
                             description = "operation_response_header_description3",

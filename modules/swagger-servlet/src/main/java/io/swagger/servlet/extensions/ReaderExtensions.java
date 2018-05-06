@@ -25,7 +25,7 @@ public class ReaderExtensions {
                 return Integer.compare(left.getPriority(), right.getPriority());
             }
         };
-        final List<ReaderExtension> loadedExtensions = new ArrayList<ReaderExtension>();
+        final List<ReaderExtension> loadedExtensions = new ArrayList<>();
         for (ReaderExtension readerExtension : ordering.sortedCopy(ServiceLoader.load(ReaderExtension.class))) {
             LOGGER.debug("adding extension " + readerExtension);
             loadedExtensions.add(readerExtension);
