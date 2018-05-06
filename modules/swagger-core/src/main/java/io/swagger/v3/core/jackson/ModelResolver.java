@@ -83,6 +83,9 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
     public ModelResolver(ObjectMapper mapper) {
         super(mapper);
     }
+    public ModelResolver(ObjectMapper mapper, TypeNameResolver typeNameResolver) {
+        super(mapper, typeNameResolver);
+    }
 
     public ObjectMapper objectMapper() {
         return _mapper;
@@ -1776,7 +1779,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
     /**
      *  Decorate the name based on the JsonView
      */
-    private String decorateModelName(AnnotatedType type, String originalName) {
+    protected String decorateModelName(AnnotatedType type, String originalName) {
         if (StringUtils.isBlank(originalName)) {
             return originalName;
         }
