@@ -22,7 +22,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public abstract class AbstractModelConverter implements ModelConverter {
     protected final ObjectMapper _mapper;
     protected final AnnotationIntrospector _intr;
-    protected final TypeNameResolver _typeNameResolver = TypeNameResolver.std;
+    protected final TypeNameResolver _typeNameResolver;
     /**
      * Minor optimization: no need to keep on resolving same types over and over
      * again.
@@ -30,6 +30,10 @@ public abstract class AbstractModelConverter implements ModelConverter {
     protected Map<JavaType, String> _resolvedTypeNames = new ConcurrentHashMap<JavaType, String>();
 
     protected AbstractModelConverter(ObjectMapper mapper) {
+        this (mapper, TypeNameResolver.std);
+    }
+
+    protected AbstractModelConverter(ObjectMapper mapper, TypeNameResolver typeNameResolver) {
         mapper.registerModule(
                 new SimpleModule("swagger", Version.unknownVersion()) {
                     @Override
@@ -38,8 +42,8 @@ public abstract class AbstractModelConverter implements ModelConverter {
                     }
                 });
         _mapper = mapper;
+        _typeNameResolver = typeNameResolver;
         _intr = mapper.getSerializationConfig().getAnnotationIntrospector();
-
     }
 
     @Override
