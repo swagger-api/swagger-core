@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
 
@@ -138,7 +139,7 @@ public class OperationTest {
         operation.deprecated(false);
 
         // then
-        assertNull(operation.isDeprecated(), "Must not been deprecated after set to false");
+        assertFalse(operation.isDeprecated(), "Must have deprecated false after set to false");
     }
 
     @Test

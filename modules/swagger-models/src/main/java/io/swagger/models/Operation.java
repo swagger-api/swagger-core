@@ -258,11 +258,7 @@ public class Operation {
     }
 
     public void setDeprecated(Boolean value) {
-        if (value == null || value.equals(Boolean.FALSE)) {
-            this.deprecated = null;
-        } else {
-            this.deprecated = value;
-        }
+        this.deprecated = value;
     }
 
     @JsonAnyGetter
