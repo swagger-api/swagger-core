@@ -86,5 +86,12 @@ public @interface ApiResponse {
      */
     String responseContainer() default "";
 
+    /**
+     * Examples for the response.
+     *
+     * @since 1.5.20
+     *
+     * @return
+     */
     Example examples() default @Example(value = @ExampleProperty(value = "", mediaType = ""));
 }
