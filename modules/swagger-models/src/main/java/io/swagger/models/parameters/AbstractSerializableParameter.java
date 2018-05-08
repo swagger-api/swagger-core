@@ -249,7 +249,13 @@ public abstract class AbstractSerializableParameter<T extends AbstractSerializab
     @Override
     public void setType(String type) {
         this.type = type;
-        setCollectionFormat(ArrayProperty.isType(type) ? getDefaultCollectionFormat() : null);
+        if(ArrayProperty.isType(type)) {
+            if(getCollectionFormat() == null){
+                setCollectionFormat(getDefaultCollectionFormat());
+            }
+        } else {
+            setCollectionFormat(null);
+        }
     }
 
     @Override
