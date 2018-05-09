@@ -50,6 +50,7 @@ import io.swagger.resources.ResourceWithInnerClass;
 import io.swagger.resources.ResourceWithMapReturnValue;
 import io.swagger.resources.ResourceWithRanges;
 import io.swagger.resources.ResourceWithResponse;
+import io.swagger.resources.ResourceWithResponseExamples;
 import io.swagger.resources.ResourceWithResponseHeaders;
 import io.swagger.resources.ResourceWithTypedResponses;
 import io.swagger.resources.ResourceWithVoidReturns;
@@ -584,6 +585,30 @@ public class SimpleReaderTest {
             }
         }
     }
+
+    @Test(description = "test response examples")
+    public void testResponseExamples() {
+        Swagger swagger = getSwagger(ResourceWithResponseExamples.class);
+        for (Map.Entry<String, Path> entry : swagger.getPaths().entrySet()) {
+            String name = entry.getKey().substring(entry.getKey().lastIndexOf("/") + 1);
+            if ("testPrimitiveResponses".equals(name)) {
+                Map<String, String[]> expected = ImmutableMap.of("404", new String[]{"string", null});
+                assertEquals(entry.getValue().getGet().getResponses().size(), expected.size());
+                for (Map.Entry<String, Response> responseEntry : entry.getValue().getGet().getResponses().entrySet()) {
+                    String[] expectedProp = expected.get(responseEntry.getKey());
+                    Model model = responseEntry.getValue().getResponseSchema();
+                    ModelImpl modelImpl = (ModelImpl) model;
+                    assertEquals(modelImpl.getType(), expectedProp[0]);
+                    assertEquals(modelImpl.getFormat(), expectedProp[1]);
+                    Response response = responseEntry.getValue();
+                    assertEquals(response.getExamples().size(), 2);
+                    assertEquals(response.getExamples().get("*/*").toString(), "message example 1");
+                    assertEquals(response.getExamples().get("application/json").toString(), "message example 2");
+                }
+            }
+        }
+    }
+
 
     @Test(description = "scan a resource with custom operation nickname")
     public void scanResourceWithApiOperationNickname() {

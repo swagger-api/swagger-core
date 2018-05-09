@@ -33,6 +33,8 @@ import io.swagger.annotations.ApiResponses;
 import io.swagger.annotations.Authorization;
 import io.swagger.annotations.AuthorizationScope;
 import io.swagger.annotations.BasicAuthDefinition;
+import io.swagger.annotations.Example;
+import io.swagger.annotations.ExampleProperty;
 import io.swagger.annotations.Info;
 import io.swagger.annotations.OAuth2Definition;
 import io.swagger.annotations.ResponseHeader;
@@ -1007,9 +1009,12 @@ public class Reader {
 
     private void addResponse(Operation operation, ApiResponse apiResponse, JsonView jsonView) {
         Map<String, Property> responseHeaders = parseResponseHeaders(apiResponse.responseHeaders(), jsonView);
+        Map<String, Object> examples = parseExamples(apiResponse.examples());
 
         Response response = new Response()
-        .description(apiResponse.message()).headers(responseHeaders);
+                .description(apiResponse.message())
+                .headers(responseHeaders);
+        response.setExamples(examples);
 
         if (apiResponse.code() == 0) {
             operation.defaultResponse(response);
@@ -1027,6 +1032,24 @@ public class Reader {
                 appendModels(responseType);
             }
         }
+    }
+
+    private Map<String, Object> parseExamples(Example examples) {
+        if(examples == null){
+            return null;
+        }
+
+        Map<String, Object> map = null;
+        for(ExampleProperty prop : examples.value()){
+
+            if(prop.mediaType().equals("") && prop.value().equals("")){
+                continue;
+            }
+
+            map = map == null ? new LinkedHashMap<String, Object>() : map;
+            map.put(prop.mediaType(), prop.value());
+        }
+        return map;
     }
 
     private List<Parameter> getParameters(Type type, List<Annotation> annotations) {
