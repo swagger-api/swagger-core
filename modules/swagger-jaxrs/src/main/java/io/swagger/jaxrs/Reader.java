@@ -987,10 +987,11 @@ public class Reader {
 
     private void addResponse(Operation operation, ApiResponse apiResponse) {
         Map<String, Property> responseHeaders = parseResponseHeaders(apiResponse.responseHeaders());
+        //map of response examples annotated with @Example
         Map<String, Object> examples = parseExamples(apiResponse.examples());
 
-        Response response = new Response()
-        .description(apiResponse.message()).headers(responseHeaders).setExamples(examples);
+        Response response = new Response().description(apiResponse.message()).headers(responseHeaders);
+        response.setExamples(examples);
 
         if (apiResponse.code() == 0) {
             operation.defaultResponse(response);
@@ -1010,6 +1011,11 @@ public class Reader {
         }
     }
 
+    /**
+     * Parses the example snippets which is provided in the annotation @{@link Example}
+     * @param examples
+     * @return - a map of example strings
+     */
     private Map<String, Object> parseExamples(Example examples) {
         if(examples == null){
             return null;

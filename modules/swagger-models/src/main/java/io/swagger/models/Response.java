@@ -67,9 +67,8 @@ public class Response {
         return this.examples;
     }
 
-    public Response setExamples(Map<String, Object> examples) {
+    public void setExamples(Map<String, Object> examples) {
         this.examples = examples;
-        return this;
     }
 
     public Map<String, Property> getHeaders() {
