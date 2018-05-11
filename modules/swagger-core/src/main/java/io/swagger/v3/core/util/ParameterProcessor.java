@@ -154,6 +154,8 @@ public class ParameterProcessor {
                 } catch (Exception e) {
                     LOGGER.error("failed on " + annotation.annotationType().getName(), e);
                 }
+            } else if (annotation.annotationType().getName().equals("javax.validation.constraints.NotNull")) {
+                parameter.setRequired(true);
             } else if (annotation.annotationType().getName().equals("javax.ws.rs.FormParam")) {
                 try {
                     String name = (String) annotation.annotationType().getMethod("value").invoke(annotation);
