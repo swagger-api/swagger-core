@@ -32,6 +32,7 @@ import io.swagger.v3.jaxrs2.resources.Test2607;
 import io.swagger.v3.jaxrs2.resources.TestResource;
 import io.swagger.v3.jaxrs2.resources.Ticket2644ConcreteImplementation;
 import io.swagger.v3.jaxrs2.resources.Ticket2763Resource;
+import io.swagger.v3.jaxrs2.resources.Ticket2794Resource;
 import io.swagger.v3.jaxrs2.resources.UserAnnotationResource;
 import io.swagger.v3.jaxrs2.resources.extensions.ExtensionsResource;
 import io.swagger.v3.jaxrs2.resources.extensions.OperationExtensionsResource;
@@ -944,6 +945,66 @@ public class ReaderTest {
                 "            application/json:\n" +
                 "              schema:\n" +
                 "                $ref: https://openebench.bsc.es/monitor/tool/tool.json";
+        SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
+    }
+
+    @Test(description = "NotNull parameters")
+    public void testTicket2794() {
+        Reader reader = new Reader(new OpenAPI());
+
+        OpenAPI openAPI = reader.read(Ticket2794Resource.class);
+        String yaml = "openapi: 3.0.1\n" +
+                "paths:\n" +
+                "  /notnullparameter:\n" +
+                "    get:\n" +
+                "      operationId: getBooks\n" +
+                "      parameters:\n" +
+                "      - name: page\n" +
+                "        in: query\n" +
+                "        required: true\n" +
+                "        schema:\n" +
+                "          type: integer\n" +
+                "          format: int32\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            application/json: {}\n" +
+                "  /notnullparameter/newnotnull:\n" +
+                "    post:\n" +
+                "      operationId: insertnotnull\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          '*/*':\n" +
+                "            schema:\n" +
+                "              $ref: '#/components/schemas/Book'\n" +
+                "        required: true\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*': {}\n" +
+                "  /notnullparameter/new_reqBody_required:\n" +
+                "    post:\n" +
+                "      operationId: insert\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          '*/*':\n" +
+                "            schema:\n" +
+                "              $ref: '#/components/schemas/Book'\n" +
+                "        required: true\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*': {}\n" +
+                "components:\n" +
+                "  schemas:\n" +
+                "    Book:\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        foo:\n" +
+                "          type: string\n";
         SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
     }
 }
