@@ -356,16 +356,18 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                                 .resolveAsRef(annotatedType.isResolveAsRef())
                                 .jsonViewAnnotation(annotatedType.getJsonViewAnnotation())
                                 .parent(annotatedType.getParent()));
-                if (StringUtils.isNotBlank(addPropertiesSchema.getName())) {
-                    pName = addPropertiesSchema.getName();
-                }
-                if ("object".equals(addPropertiesSchema.getType()) && pName != null) {
-                    // create a reference for the items
-                    if (context.getDefinedModels().containsKey(pName)) {
-                        addPropertiesSchema = new Schema().$ref(constructRef(pName));
+                if (addPropertiesSchema != null) {
+                    if (StringUtils.isNotBlank(addPropertiesSchema.getName())) {
+                        pName = addPropertiesSchema.getName();
                     }
-                } else if (addPropertiesSchema.get$ref() != null) {
-                    addPropertiesSchema = new Schema().$ref(StringUtils.isNotEmpty(addPropertiesSchema.get$ref()) ? addPropertiesSchema.get$ref() : addPropertiesSchema.getName());
+                    if ("object".equals(addPropertiesSchema.getType()) && pName != null) {
+                        // create a reference for the items
+                        if (context.getDefinedModels().containsKey(pName)) {
+                            addPropertiesSchema = new Schema().$ref(constructRef(pName));
+                        }
+                    } else if (addPropertiesSchema.get$ref() != null) {
+                        addPropertiesSchema = new Schema().$ref(StringUtils.isNotEmpty(addPropertiesSchema.get$ref()) ? addPropertiesSchema.get$ref() : addPropertiesSchema.getName());
+                    }
                 }
                 Schema mapModel = new MapSchema().additionalProperties(addPropertiesSchema);
                 mapModel.name(name);

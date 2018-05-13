@@ -32,6 +32,7 @@ import io.swagger.v3.jaxrs2.resources.Test2607;
 import io.swagger.v3.jaxrs2.resources.TestResource;
 import io.swagger.v3.jaxrs2.resources.Ticket2644ConcreteImplementation;
 import io.swagger.v3.jaxrs2.resources.Ticket2763Resource;
+import io.swagger.v3.jaxrs2.resources.Ticket2793Resource;
 import io.swagger.v3.jaxrs2.resources.Ticket2794Resource;
 import io.swagger.v3.jaxrs2.resources.UserAnnotationResource;
 import io.swagger.v3.jaxrs2.resources.extensions.ExtensionsResource;
@@ -1005,6 +1006,36 @@ public class ReaderTest {
                 "      properties:\n" +
                 "        foo:\n" +
                 "          type: string\n";
+        SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
+    }
+
+    /*
+    TODO: in a scenario like the one in ticket 2793, currently no NPE is thrown
+    but map is still not supported. When solved, update expected yaml in test case accordingly
+     */
+    @Test(description = "no NPE resolving map")
+    public void testTicket2793() {
+        Reader reader = new Reader(new OpenAPI());
+
+        OpenAPI openAPI = reader.read(Ticket2793Resource.class);
+        String yaml = "openapi: 3.0.1\n" +
+                "paths:\n" +
+                "  /distances:\n" +
+                "    get:\n" +
+                "      operationId: getDistances\n" +
+                "      responses:\n" +
+                "        200:\n" +
+                "          content:\n" +
+                "            application/json:\n" +
+                "              schema:\n" +
+                "                $ref: '#/components/schemas/DistancesResponse'\n" +
+                "components:\n" +
+                "  schemas:\n" +
+                "    DistancesResponse:\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        empty:\n" +
+                "          type: boolean\n";
         SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
     }
 }
