@@ -211,6 +211,16 @@ public class SpecFilter {
 
         for (String key : definitions.keySet()) {
             Model definition = definitions.get(key);
+
+            // isDefinitionAllowed is not defined in SwaggerSpecFilter to avoid breaking compatibility with
+            // existing client filters directly implementing SwaggerSpecFilter.
+            if (filter instanceof AbstractSpecFilter) {
+                boolean shouldIncludeDefinition = ((AbstractSpecFilter)filter).isDefinitionAllowed(definition, params, cookies, headers);
+                if (!shouldIncludeDefinition) {
+                    continue;
+                }
+            }
+
             Map<String, Property> clonedProperties = new LinkedHashMap<String, Property>();
             if (definition.getProperties() != null) {
                 for (String propName : definition.getProperties().keySet()) {
