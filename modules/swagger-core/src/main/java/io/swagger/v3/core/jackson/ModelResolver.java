@@ -462,7 +462,9 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             model.xml(xml);
         }
 
-        resolveSchemaMembers(model, annotatedType);
+        if (!(model instanceof ArraySchema) || (model instanceof ArraySchema && resolvedArrayAnnotation == null)) {
+            resolveSchemaMembers(model, annotatedType);
+        }
 
         final XmlAccessorType xmlAccessorTypeAnnotation = beanDesc.getClassAnnotations().get(XmlAccessorType.class);
 
@@ -767,18 +769,15 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             model = new Schema().$ref(StringUtils.isNotEmpty(model.get$ref()) ? model.get$ref() : model.getName());
         }
 
-        if (model != null && !"array".equals(model.getType()) && resolvedArrayAnnotation != null) {
-            ArraySchema schema = new ArraySchema();
-            schema.setItems(model);
-            resolveArraySchema(annotatedType, schema, resolvedArrayAnnotation);
-            return schema;
-        }
-
-        if (model != null && model instanceof ArraySchema) {
-            Schema items = ((ArraySchema)model).getItems();
-            if (items != null) {
-                if (items.getExample() != null && model.getExample() != null) {
-                    items.setExample(null);
+        if (model != null && resolvedArrayAnnotation != null) {
+            if (!"array".equals(model.getType())) {
+                ArraySchema schema = new ArraySchema();
+                schema.setItems(model);
+                resolveArraySchema(annotatedType, schema, resolvedArrayAnnotation);
+                return schema;
+            } else {
+                if (model instanceof ArraySchema) {
+                    resolveArraySchema(annotatedType, (ArraySchema) model, resolvedArrayAnnotation);
                 }
             }
         }
@@ -1265,6 +1264,9 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 return schema.defaultValue();
             }
         }
+        if (a == null) {
+            return null;
+        }
         XmlElement elem = a.getAnnotation(XmlElement.class);
         if (elem == null) {
             if (annotations != null) {
@@ -1308,6 +1310,9 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             return io.swagger.v3.oas.annotations.media.Schema.AccessMode.WRITE_ONLY;
         }
 
+        if (propDef == null) {
+            return null;
+        }
         JsonProperty.Access access = null;
         if (propDef instanceof POJOPropertyBuilder) {
             access = ((POJOPropertyBuilder) propDef).findAccess();
@@ -1474,9 +1479,12 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
     protected ExternalDocumentation resolveExternalDocumentation(Annotated a, Annotation[] annotations, io.swagger.v3.oas.annotations.media.Schema schema) {
 
-        io.swagger.v3.oas.annotations.ExternalDocumentation externalDocumentation = a.getAnnotation(io.swagger.v3.oas.annotations.ExternalDocumentation.class);
+        ExternalDocumentation external = null;
+        if (a != null) {
+            io.swagger.v3.oas.annotations.ExternalDocumentation externalDocumentation = a.getAnnotation(io.swagger.v3.oas.annotations.ExternalDocumentation.class);
+            external = resolveExternalDocumentation(externalDocumentation);
+        }
 
-        ExternalDocumentation external = resolveExternalDocumentation(externalDocumentation);
         if (external == null) {
             if (schema != null) {
                 external = resolveExternalDocumentation(schema.externalDocs());
@@ -1565,7 +1573,10 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
     protected XML resolveXml(Annotated a, Annotation[] annotations, io.swagger.v3.oas.annotations.media.Schema schema) {
         // if XmlRootElement annotation, construct an Xml object and attach it to the model
-        XmlRootElement rootAnnotation = a.getAnnotation(XmlRootElement.class);
+        XmlRootElement rootAnnotation = null;
+        if (a != null) {
+            rootAnnotation = a.getAnnotation(XmlRootElement.class);
+        }
         if (rootAnnotation == null) {
             if (annotations != null) {
                 for (Annotation ann: annotations) {
@@ -1622,6 +1633,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         return null;
     }
 
+
     protected void resolveSchemaMembers(Schema schema, AnnotatedType annotatedType) {
         final JavaType type;
         if (annotatedType.getType() instanceof JavaType) {
@@ -1641,6 +1653,11 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         final BeanDescription beanDesc = _mapper.getSerializationConfig().introspect(type);
         Annotated a = beanDesc.getClassInfo();
         Annotation[] annotations = annotatedType.getCtxAnnotations();
+        resolveSchemaMembers(schema, a, annotations, schemaAnnotation);
+    }
+
+    protected void resolveSchemaMembers(Schema schema, Annotated a, Annotation[] annotations, io.swagger.v3.oas.annotations.media.Schema schemaAnnotation) {
+
         String description = resolveDescription(a, annotations, schemaAnnotation);
         if (StringUtils.isNotBlank(description)) {
             schema.description(description);
@@ -1838,6 +1855,11 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         Map<String, Object> extensions = resolveExtensions(annotatedType, resolvedArrayAnnotation);
         if (extensions != null) {
             schema.extensions(extensions);
+        }
+        if (resolvedArrayAnnotation != null) {
+            if (AnnotationsUtils.hasSchemaAnnotation(resolvedArrayAnnotation.arraySchema())) {
+                resolveSchemaMembers(schema, null, null, resolvedArrayAnnotation.arraySchema());
+            }
         }
     }
 }
