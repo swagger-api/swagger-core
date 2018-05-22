@@ -292,6 +292,7 @@ public abstract class AnnotationsUtils {
                 && array.maxItems() == Integer.MIN_VALUE
                 && array.minItems() == Integer.MAX_VALUE
                 && !hasSchemaAnnotation(array.schema())
+                && !hasSchemaAnnotation(array.arraySchema())
                 ) {
             return false;
         }
@@ -1718,6 +1719,20 @@ public abstract class AnnotationsUtils {
             }
 
             @Override
+            public io.swagger.v3.oas.annotations.media.Schema arraySchema() {
+                io.swagger.v3.oas.annotations.media.Schema patchSchema = patch.arraySchema();
+                if (!hasSchemaAnnotation(patchSchema)) {
+                    patchSchema = null;
+                }
+
+                if (patchSchema == null) {
+                    return master.arraySchema();
+                } else {
+                    return mergeSchemaAnnotations(master.arraySchema(), patch.arraySchema());
+                }
+            }
+
+            @Override
             public int maxItems() {
                 if (master.maxItems() != 0 || patch.maxItems() == 0) {
                     return master.maxItems();
@@ -1772,6 +1787,11 @@ public abstract class AnnotationsUtils {
             @Override
             public io.swagger.v3.oas.annotations.media.Schema schema() {
                 return schema;
+            }
+
+            @Override
+            public io.swagger.v3.oas.annotations.media.Schema arraySchema() {
+                return arraySchema.arraySchema();
             }
 
             @Override

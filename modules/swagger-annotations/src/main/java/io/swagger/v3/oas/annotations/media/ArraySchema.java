@@ -40,6 +40,16 @@ public @interface ArraySchema {
     Schema schema() default @Schema;
 
     /**
+     * Allows to define the properties to be resolved into properties of the schema of type `array` (not the ones of the
+     * `items` of such schema which are defined in {@link #schema() schema}.
+     *
+     * @return arraySchema
+     *
+     * @since 2.0.2
+     */
+    Schema arraySchema() default @Schema;
+
+    /**
      * sets the maximum number of items in an array.  Ignored if value is Integer.MIN_VALUE.
      *
      * @return integer representing maximum number of items in array

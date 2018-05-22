@@ -543,7 +543,7 @@ public class PojoTest {
     }
 
     static class modelExampleArray {
-        @ArraySchema(schema = @Schema(example = "[\"abc-123\", \"zz-aa-bb\"]"))
+        @ArraySchema(arraySchema = @Schema(example = "[\"abc-123\", \"zz-aa-bb\"]"))
         private String[] ids;
 
         public String[] getIds() {

@@ -34,6 +34,7 @@ import io.swagger.v3.jaxrs2.resources.Ticket2644ConcreteImplementation;
 import io.swagger.v3.jaxrs2.resources.Ticket2763Resource;
 import io.swagger.v3.jaxrs2.resources.Ticket2793Resource;
 import io.swagger.v3.jaxrs2.resources.Ticket2794Resource;
+import io.swagger.v3.jaxrs2.resources.Ticket2806Resource;
 import io.swagger.v3.jaxrs2.resources.UserAnnotationResource;
 import io.swagger.v3.jaxrs2.resources.extensions.ExtensionsResource;
 import io.swagger.v3.jaxrs2.resources.extensions.OperationExtensionsResource;
@@ -946,6 +947,44 @@ public class ReaderTest {
                 "            application/json:\n" +
                 "              schema:\n" +
                 "                $ref: https://openebench.bsc.es/monitor/tool/tool.json";
+        SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
+    }
+
+    @Test(description = "array schema example")
+    public void testTicket2806() {
+        Reader reader = new Reader(new OpenAPI());
+
+        OpenAPI openAPI = reader.read(Ticket2806Resource.class);
+        String yaml = "openapi: 3.0.1\n" +
+                "paths:\n" +
+                "  /test:\n" +
+                "    get:\n" +
+                "      operationId: getTest\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*':\n" +
+                "              schema:\n" +
+                "                $ref: '#/components/schemas/Test'\n" +
+                "components:\n" +
+                "  schemas:\n" +
+                "    Test:\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        stringArray:\n" +
+                "          maxItems: 4\n" +
+                "          minItems: 2\n" +
+                "          uniqueItems: true\n" +
+                "          type: array\n" +
+                "          description: Array desc\n" +
+                "          example:\n" +
+                "          - aaa\n" +
+                "          - bbb\n" +
+                "          items:\n" +
+                "            type: string\n" +
+                "            description: Hello, World!\n" +
+                "            example: Lorem ipsum dolor set\n";
         SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
     }
 
