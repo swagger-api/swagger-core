@@ -35,6 +35,7 @@ import io.swagger.v3.jaxrs2.resources.Ticket2763Resource;
 import io.swagger.v3.jaxrs2.resources.Ticket2793Resource;
 import io.swagger.v3.jaxrs2.resources.Ticket2794Resource;
 import io.swagger.v3.jaxrs2.resources.Ticket2806Resource;
+import io.swagger.v3.jaxrs2.resources.Ticket2818Resource;
 import io.swagger.v3.jaxrs2.resources.UserAnnotationResource;
 import io.swagger.v3.jaxrs2.resources.extensions.ExtensionsResource;
 import io.swagger.v3.jaxrs2.resources.extensions.OperationExtensionsResource;
@@ -1076,6 +1077,21 @@ public class ReaderTest {
                 "        empty:\n" +
                 "          type: boolean\n";
         SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
+    }
+
+    @Test(description = "test ticket #2818 @Parameter annotation")
+    public void test2818() {
+        Reader reader = new Reader(new OpenAPI());
+        OpenAPI openAPI = reader.read(Ticket2818Resource.class);
+        Paths paths = openAPI.getPaths();
+        assertEquals(paths.size(), 1);
+        PathItem pathItem = paths.get("/bookstore/{id}");
+        assertNotNull(pathItem);
+        Operation operation = pathItem.getGet();
+        assertNotNull(operation);
+        assertEquals(operation.getParameters().get(0).getSchema().getType(), "integer");
+        assertEquals(operation.getParameters().get(0).getSchema().getFormat(), "int32");
+
     }
 }
 

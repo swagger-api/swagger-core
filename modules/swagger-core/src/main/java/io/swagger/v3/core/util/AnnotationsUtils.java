@@ -955,6 +955,7 @@ public abstract class AnnotationsUtils {
             return String.class;
         }
         String schemaType = schema.type();
+        String schemaFormat = schema.format();
         Class schemaImplementation = schema.implementation();
 
         if (!schemaImplementation.equals(Void.class)) {
@@ -967,9 +968,19 @@ public abstract class AnnotationsUtils {
         }
         switch (schemaType) {
             case "number":
-                return BigDecimal.class;
+                if ("float".equals(schemaFormat)) {
+                    return Float.class;
+                } else if ("double".equals(schemaFormat)) {
+                    return Double.class;
+                } else {
+                    return BigDecimal.class;
+                }
             case "integer":
-                return Long.class;
+                if ("int32".equals(schemaFormat)) {
+                    return Integer.class;
+                } else {
+                    return Long.class;
+                }
             case "boolean":
                 return Boolean.class;
             case "string":
