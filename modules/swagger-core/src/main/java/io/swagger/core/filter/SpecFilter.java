@@ -16,6 +16,8 @@ import io.swagger.models.properties.ArrayProperty;
 import io.swagger.models.properties.MapProperty;
 import io.swagger.models.properties.Property;
 import io.swagger.models.properties.RefProperty;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,6 +32,9 @@ import java.util.Set;
 import java.util.TreeSet;
 
 public class SpecFilter {
+
+    Logger LOGGER = LoggerFactory.getLogger(SpecFilter.class);
+
     public Swagger filter(Swagger swagger, SwaggerSpecFilter filter, Map<String, List<String>> params, Map<String, String> cookies, Map<String, List<String>> headers) {
         Swagger clone = new Swagger();
         clone.info(swagger.getInfo())
@@ -211,6 +216,21 @@ public class SpecFilter {
 
         for (String key : definitions.keySet()) {
             Model definition = definitions.get(key);
+
+            // isDefinitionAllowed is not defined in SwaggerSpecFilter to avoid breaking compatibility with
+            // existing client filters directly implementing SwaggerSpecFilter.
+            if (filter instanceof AbstractSpecFilter) {
+                boolean shouldIncludeDefinition = true;
+                try {
+                    shouldIncludeDefinition = ((AbstractSpecFilter)filter).isDefinitionAllowed(definition, params, cookies, headers);
+                } catch (Exception e) {
+                    LOGGER.error("Exception in filter implementation of `isDefinitionAllowed`; ignoring filter", e);
+                }
+                if (!shouldIncludeDefinition) {
+                    continue;
+                }
+            }
+
             Map<String, Property> clonedProperties = new LinkedHashMap<String, Property>();
             if (definition.getProperties() != null) {
                 for (String propName : definition.getProperties().keySet()) {

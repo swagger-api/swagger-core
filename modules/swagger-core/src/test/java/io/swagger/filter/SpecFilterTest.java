@@ -196,6 +196,24 @@ public class SpecFilterTest {
 
     }
 
+    @Test(description = "it should filter away specific definitions")
+    public void filterAwayDefinition() throws IOException {
+        final Swagger swagger = getSwagger("specFiles/filteredDefinition.json");
+
+        assertNotNull(swagger.getDefinitions().get("User"));
+
+        final NoOpOperationsFilter noOpfilter = new NoOpOperationsFilter();
+        Swagger filtered = new SpecFilter().filter(swagger, noOpfilter, null, null, null);
+
+        assertNotNull(filtered.getDefinitions().get("User"));
+
+        final DefinitionAllowedFilter refFilter = new DefinitionAllowedFilter();
+        filtered = new SpecFilter().filter(swagger, refFilter, null, null, null);
+
+        assertNull(filtered.getDefinitions().get("User"));
+
+    }
+
     @Test(description = "it should retain non-broken reference model properties")
     public void retainNonBrokenReferenceModelProperties() throws IOException {
         final Swagger swagger = getSwagger("specFiles/paramAndResponseRefArray.json");
