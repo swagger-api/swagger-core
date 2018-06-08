@@ -16,10 +16,10 @@
 
 package io.swagger.v3.oas.models.callbacks;
 
-import io.swagger.v3.oas.models.PathItem;
-
 import java.util.LinkedHashMap;
 import java.util.Objects;
+
+import io.swagger.v3.oas.models.PathItem;
 
 /**
  * Callback
@@ -28,6 +28,8 @@ import java.util.Objects;
  */
 
 public class Callback extends LinkedHashMap<String, PathItem> {
+    private String $ref = null;
+
     public Callback() {
     }
 
@@ -35,6 +37,28 @@ public class Callback extends LinkedHashMap<String, PathItem> {
 
     public Callback addPathItem(String name, PathItem item) {
         this.put(name, item);
+        return this;
+    }
+
+    /**
+     * returns the $ref property from an Callback instance.
+     *
+     * @return String $ref
+     **/
+    public String get$ref() {
+        return $ref;
+    }
+
+    public void set$ref(String $ref) {
+        if ($ref != null && ($ref.indexOf(".") == -1 && $ref.indexOf("/") == -1)) {
+            $ref = "#/components/responses/" + $ref;
+        }
+        this.$ref = $ref;
+    }
+
+    public Callback $ref(String $ref) {
+        set$ref($ref);
+        this.$ref = $ref;
         return this;
     }
 
