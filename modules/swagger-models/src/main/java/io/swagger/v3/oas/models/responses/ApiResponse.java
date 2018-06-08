@@ -32,7 +32,6 @@ import io.swagger.v3.oas.models.media.Content;
 
 public class ApiResponse {
     private String description = null;
-    private String summary = null;
     private Map<String, Header> headers = null;
     private Content content = null;
     private java.util.Map<String, Link> links = null;
@@ -55,26 +54,6 @@ public class ApiResponse {
 
     public ApiResponse description(String description) {
         this.description = description;
-        return this;
-    }
-
-
-    /**
-     * returns the summary property from a ApiResponse instance.
-     *
-     * @return String summary
-     **/
-
-    public String getSummary() {
-        return summary;
-    }
-
-    public void setSummary(String summary) {
-        this.summary = summary;
-    }
-
-    public ApiResponse summary(String summary) {
-        this.summary = summary;
         return this;
     }
 
