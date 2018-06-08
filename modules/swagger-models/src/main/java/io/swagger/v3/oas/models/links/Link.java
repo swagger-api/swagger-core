@@ -16,12 +16,11 @@
 
 package io.swagger.v3.oas.models.links;
 
-import io.swagger.v3.oas.models.headers.Header;
-import io.swagger.v3.oas.models.parameters.RequestBody;
-import io.swagger.v3.oas.models.servers.Server;
-
 import java.util.HashMap;
 import java.util.Map;
+
+import io.swagger.v3.oas.models.headers.Header;
+import io.swagger.v3.oas.models.servers.Server;
 
 /**
  * Link
@@ -33,7 +32,7 @@ public class Link {
     private String operationRef = null;
     private String operationId = null;
     private Map<String, String> parameters = null;
-    private RequestBody requestBody = null;
+    private String requestBody = null;
     private Map<String, Header> headers = null;
     private String description = null;
     private String $ref = null;
@@ -84,15 +83,15 @@ public class Link {
      * @return String operationId
      **/
 
-    public RequestBody getRequestBody() {
+    public String getRequestBody() {
         return requestBody;
     }
 
-    public void setRequestBody(RequestBody requestBody) {
+    public void setRequestBody(String requestBody) {
         this.requestBody = requestBody;
     }
 
-    public Link requestBody(RequestBody requestBody) {
+    public Link requestBody(String requestBody) {
         this.requestBody = requestBody;
         return this;
     }
