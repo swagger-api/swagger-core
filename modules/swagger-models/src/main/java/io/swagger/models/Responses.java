@@ -6,8 +6,6 @@ import java.util.Objects;
 
 public class Responses extends LinkedHashMap<String, Response> {
 
-    public static final String DEFAULT = "default";
-
     private java.util.Map<String, Object> vendorExtensions = null;
 
     public Responses addResponse(String name, Response item) {
@@ -15,24 +13,6 @@ public class Responses extends LinkedHashMap<String, Response> {
         return this;
     }
 
-    /**
-     * returns the default property from a ApiResponses instance.
-     *
-     * @return ApiResponse _default
-     **/
-
-    public Response getDefault() {
-        return this.get(DEFAULT);
-    }
-
-    public void setDefault(Response _default) {
-        addResponse(DEFAULT, _default);
-    }
-
-    public Responses _default(Response _default) {
-        setDefault(_default);
-        return this;
-    }
 
     public java.util.Map<String, Object> getVendorExtensions() {
         return vendorExtensions;
@@ -69,8 +49,9 @@ public class Responses extends LinkedHashMap<String, Response> {
         if (!super.equals(o)) {
             return false;
         }
-        Responses apiResponses = (Responses) o;
-        return Objects.equals(this.vendorExtensions, apiResponses.vendorExtensions);
+        Responses responses = (Responses) o;
+        return Objects.equals(this.vendorExtensions, responses.vendorExtensions) &&
+                super.equals(o);
     }
 
     @Override
@@ -81,7 +62,7 @@ public class Responses extends LinkedHashMap<String, Response> {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("class ApiResponses {\n");
+        sb.append("class Responses {\n");
         sb.append("    ").append(toIndentedString(super.toString())).append("\n");
         sb.append("    vendorExtensions: ").append(toIndentedString(vendorExtensions)).append("\n");
         sb.append("}");

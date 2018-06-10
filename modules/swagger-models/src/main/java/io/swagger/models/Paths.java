@@ -30,7 +30,7 @@ public class Paths extends LinkedHashMap<String, Path> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(vendorExtensions, super.hashCode());
+        return Objects.hash(super.hashCode(), vendorExtensions);
     }
 
     public java.util.Map<String, Object> getVendorExtensions() {
@@ -61,6 +61,7 @@ public class Paths extends LinkedHashMap<String, Path> {
         StringBuilder sb = new StringBuilder();
         sb.append("class Paths {\n");
         sb.append("    ").append(toIndentedString(super.toString())).append("\n");
+        sb.append("    vendorExtensions: ").append(toIndentedString(vendorExtensions)).append("\n");
         sb.append("}");
         return sb.toString();
     }

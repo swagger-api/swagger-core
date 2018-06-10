@@ -102,10 +102,11 @@ public class PojosTest extends PowerMockTestCase {
         classesExclusions.put(RefModel.class, new HashSet<String>(Arrays.asList("title")));
         classesExclusions.put(RefResponse.class,
                 new HashSet<String>(Arrays.asList("headers", "schema")));
+        
 
         Set<Class<?>> classesUsingInheritedFields = new HashSet<Class<?>>(Arrays.asList(ApiKeyAuthDefinition.class,
                 BodyParameter.class, ArrayProperty.class, BaseIntegerProperty.class, CookieParameter.class));
-        Set<Class<?>> excludedClasses = new HashSet<Class<?>>(Arrays.asList(PropertyBuilder.class));
+        Set<Class<?>> excludedClasses = new HashSet<Class<?>>(Arrays.asList(PropertyBuilder.class,Responses.class,Paths.class));
         for (PojoClass clazz : pojoClasses) {
             if (excludedClasses.contains(clazz.getClazz()))
                 continue;
