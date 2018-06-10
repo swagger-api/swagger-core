@@ -6,6 +6,7 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import io.swagger.models.Operation;
 import io.swagger.models.Path;
+import io.swagger.models.Paths;
 import io.swagger.models.Swagger;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -22,7 +23,7 @@ public class ReaderTest {
     @Mock
     private Swagger swagger;
     @Mock
-    private Map<String, Path> paths;
+    private Paths paths;
     @Mock
     private Path path;
     @Mock

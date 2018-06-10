@@ -21,11 +21,11 @@ public class Swagger {
     protected List<String> consumes;
     protected List<String> produces;
     protected List<SecurityRequirement> security;
-    protected Map<String, Path> paths;
+    protected Paths paths;
     protected Map<String, SecuritySchemeDefinition> securityDefinitions;
     protected Map<String, Model> definitions;
     protected Map<String, Parameter> parameters;
-    protected Map<String, Response> responses;
+    protected Responses responses;
     protected ExternalDocs externalDocs;
     protected Map<String, Object> vendorExtensions;
 
@@ -90,27 +90,27 @@ public class Swagger {
         return this;
     }
 
-    public Swagger paths(Map<String, Path> paths) {
+    public Swagger paths(Paths paths) {
         this.setPaths(paths);
         return this;
     }
 
     public Swagger path(String key, Path path) {
         if (this.paths == null) {
-            this.paths = new LinkedHashMap<String, Path>();
+            this.paths = new Paths();
         }
         this.paths.put(key, path);
         return this;
     }
 
-    public Swagger responses(Map<String, Response> responses) {
+    public Swagger responses(Responses responses) {
         this.responses = responses;
         return this;
     }
 
     public Swagger response(String key, Response response) {
         if (this.responses == null) {
-            this.responses = new LinkedHashMap<String, Response>();
+            this.responses = new Responses();
         }
         this.responses.put(key, response);
         return this;
@@ -262,11 +262,11 @@ public class Swagger {
         }
     }
 
-    public Map<String, Path> getPaths() {
+    public Paths getPaths() {
         return paths;
     }
 
-    public void setPaths(Map<String, Path> paths) {
+    public void setPaths(Paths paths) {
         this.paths = paths;
     }
 
@@ -371,11 +371,11 @@ public class Swagger {
         this.parameters.put(key, parameter);
     }
 
-    public Map<String, Response> getResponses() {
+    public Responses getResponses() {
         return responses;
     }
 
-    public void setResponses(Map<String, Response> responses) {
+    public void setResponses(Responses responses) {
         this.responses = responses;
     }
 
