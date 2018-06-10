@@ -19,7 +19,7 @@ public class Operation {
     private List<String> consumes;
     private List<String> produces;
     private List<Parameter> parameters = new ArrayList<Parameter>();
-    private Map<String, Response> responses;
+    private Responses responses;
     private List<Map<String, List<String>>> security;
     private ExternalDocs externalDocs;
     private Boolean deprecated;
@@ -210,17 +210,17 @@ public class Operation {
         this.parameters.add(parameter);
     }
 
-    public Map<String, Response> getResponses() {
+    public Responses getResponses() {
         return responses;
     }
 
-    public void setResponses(Map<String, Response> responses) {
+    public void setResponses(Responses responses) {
         this.responses = responses;
     }
 
     public void addResponse(String key, Response response) {
         if (this.responses == null) {
-            this.responses = new LinkedHashMap<String, Response>();
+            this.responses = new Responses();
         }
         this.responses.put(key, response);
     }
