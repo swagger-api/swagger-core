@@ -23,6 +23,8 @@ public class GenericRefTest {
         assertRefFormat(new GenericRef(RefType.PARAMETER, "#/parameters/foo"), RefFormat.INTERNAL);
         assertRefFormat(new GenericRef(RefType.PARAMETER, "Foo"), RefFormat.INTERNAL);
         assertRefFormat(new GenericRef(RefType.DEFINITION, "Foo"), RefFormat.INTERNAL);
+        assertRefFormat(new GenericRef(RefType.DEFINITION, "io.swagger.model.override.CustomResolverTest$Bar"), RefFormat.INTERNAL);
+        assertRefFormat(new GenericRef(RefType.DEFINITION, "io.swagger.model.override.Foo"), RefFormat.INTERNAL);
     }
 
     @Test
@@ -37,6 +39,11 @@ public class GenericRefTest {
         assertRefFormat(new GenericRef(RefType.PARAMETER, "../path/to/model.json#/thing"), RefFormat.RELATIVE);
         assertRefFormat(new GenericRef(RefType.PARAMETER, "/path/to/model.json"), RefFormat.RELATIVE);
         assertRefFormat(new GenericRef(RefType.PARAMETER, "/path/to/model.json#/thing"), RefFormat.RELATIVE);
+        assertRefFormat(new GenericRef(RefType.PARAMETER, "path/to/model.json#/thing"), RefFormat.RELATIVE);
+        assertRefFormat(new GenericRef(RefType.PARAMETER, "path/to/model.json"), RefFormat.RELATIVE);
+        assertRefFormat(new GenericRef(RefType.PARAMETER, "path/to/model.json#/thing"), RefFormat.RELATIVE);
+        assertRefFormat(new GenericRef(RefType.DEFINITION, "path/to/model.json"), RefFormat.RELATIVE);
+        assertRefFormat(new GenericRef(RefType.DEFINITION, "path/to/model.json#/thing"), RefFormat.RELATIVE);
     }
 
     @Test

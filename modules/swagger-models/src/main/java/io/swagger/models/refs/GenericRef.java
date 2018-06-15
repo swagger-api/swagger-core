@@ -1,5 +1,7 @@
 package io.swagger.models.refs;
 
+import org.apache.commons.lang3.StringUtils;
+
 /**
  * A class the encapsulates logic that is common to RefModel, RefParameter, and RefProperty.
  */
@@ -91,11 +93,17 @@ public class GenericRef {
 
     private static RefFormat computeRefFormat(String ref) {
         RefFormat result = RefFormat.INTERNAL;
+
         if (ref.startsWith("http:") || ref.startsWith("https:")) {
             result = RefFormat.URL;
         } else if (ref.startsWith("#/")) {
             result = RefFormat.INTERNAL;
         } else if (ref.startsWith(".") || ref.startsWith("/")) {
+            result = RefFormat.RELATIVE;
+        }else if (!ref.contains(":") &&   // No scheme
+                !ref.startsWith("#") && // Path is not empty
+                !ref.startsWith("/")&& // Path is not absolute
+                StringUtils.countMatches(ref, ".") == 1) { // Path does not start with dot but contains "." (file extension)
             result = RefFormat.RELATIVE;
         }
 
