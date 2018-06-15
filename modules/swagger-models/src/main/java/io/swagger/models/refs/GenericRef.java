@@ -93,29 +93,25 @@ public class GenericRef {
 
     private static RefFormat computeRefFormat(String ref) {
         RefFormat result = RefFormat.INTERNAL;
-        ref = mungedRef(ref);
+
         if (ref.startsWith("http:") || ref.startsWith("https:")) {
             result = RefFormat.URL;
         } else if (ref.startsWith("#/")) {
             result = RefFormat.INTERNAL;
         } else if (ref.startsWith(".") || ref.startsWith("/")) {
             result = RefFormat.RELATIVE;
+        }else if (!ref.contains(":") &&   // No scheme
+                !ref.startsWith("#") && // Path is not empty
+                !ref.startsWith("/")&& // Path is not absolute
+                //!ref.contains("$") &&
+                ref.lastIndexOf(".") > 0) { // Path does not start with dot but contains "." (file extension)
+            result = RefFormat.RELATIVE;
         }
-
 
         return result;
     }
 
-    public static String mungedRef(String refString) {
         // Ref: IETF RFC 3966, Section 5.2.2
-        if (!refString.contains(":") &&   // No scheme
-                !refString.startsWith("#") && // Path is not empty
-                !refString.startsWith("/") && // Path is not absolute
-                !refString.contains("$") &&
-                refString.indexOf(".") > 0) { // Path does not start with dot but contains "." (file extension)
-            return "./" + refString;
-        }
-        return refString;
-    }
+
 
 }
