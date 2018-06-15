@@ -21,10 +21,12 @@ public class GenericRef {
             1) new RefModel("Animal")..and expects get$ref to return #/definitions/Animal
             2) new RefModel("http://blah.com/something/file.json")..and expects get$ref to turn the URL
              */
+
             this.ref = type.getInternalPrefix() + ref;
         } else {
             this.ref = ref;
         }
+
 
         this.simpleRef = computeSimpleRef(this.ref, format, type);
     }
@@ -91,15 +93,25 @@ public class GenericRef {
 
     private static RefFormat computeRefFormat(String ref) {
         RefFormat result = RefFormat.INTERNAL;
+
         if (ref.startsWith("http:") || ref.startsWith("https:")) {
             result = RefFormat.URL;
         } else if (ref.startsWith("#/")) {
             result = RefFormat.INTERNAL;
         } else if (ref.startsWith(".") || ref.startsWith("/")) {
             result = RefFormat.RELATIVE;
+        }else if (!ref.contains(":") &&   // No scheme
+                !ref.startsWith("#") && // Path is not empty
+                !ref.startsWith("/")&& // Path is not absolute
+                //!ref.contains("$") &&
+                ref.lastIndexOf(".") > 0) { // Path does not start with dot but contains "." (file extension)
+            result = RefFormat.RELATIVE;
         }
 
         return result;
     }
+
+        // Ref: IETF RFC 3966, Section 5.2.2
+
 
 }

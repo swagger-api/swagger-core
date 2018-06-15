@@ -37,6 +37,12 @@ public class GenericRefTest {
         assertRefFormat(new GenericRef(RefType.PARAMETER, "../path/to/model.json#/thing"), RefFormat.RELATIVE);
         assertRefFormat(new GenericRef(RefType.PARAMETER, "/path/to/model.json"), RefFormat.RELATIVE);
         assertRefFormat(new GenericRef(RefType.PARAMETER, "/path/to/model.json#/thing"), RefFormat.RELATIVE);
+        assertRefFormat(new GenericRef(RefType.PARAMETER, "path/to/model.json#/thing"), RefFormat.RELATIVE);
+        assertRefFormat(new GenericRef(RefType.PARAMETER, "path/to/model.json"), RefFormat.RELATIVE);
+        assertRefFormat(new GenericRef(RefType.PARAMETER, "path/to/model.json#/thing"), RefFormat.RELATIVE);
+        assertRefFormat(new GenericRef(RefType.DEFINITION, "path/to/model.json"), RefFormat.RELATIVE);
+        assertRefFormat(new GenericRef(RefType.DEFINITION, "path/to/model.json#/thing"), RefFormat.RELATIVE);
+
     }
 
     @Test
