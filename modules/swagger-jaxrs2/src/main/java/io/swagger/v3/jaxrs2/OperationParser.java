@@ -61,6 +61,15 @@ public class OperationParser {
         ApiResponses apiResponsesObject = new ApiResponses();
         for (io.swagger.v3.oas.annotations.responses.ApiResponse response : responses) {
             ApiResponse apiResponseObject = new ApiResponse();
+            if (StringUtils.isNotBlank(response.ref())) {
+                apiResponseObject.set$ref(response.ref());
+                if (StringUtils.isNotBlank(response.responseCode())) {
+                    apiResponsesObject.addApiResponse(response.responseCode(), apiResponseObject);
+                } else {
+                    apiResponsesObject._default(apiResponseObject);
+                }
+                continue;
+            }
             if (StringUtils.isNotBlank(response.description())) {
                 apiResponseObject.setDescription(response.description());
             }
