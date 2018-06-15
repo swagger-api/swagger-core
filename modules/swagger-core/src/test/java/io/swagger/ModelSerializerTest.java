@@ -528,39 +528,5 @@ public class ModelSerializerTest {
         assertEquals(arrayModel.getPattern(), "Pattern");
         assertEquals(composedModel.getPattern(), "Pattern");
     }
-
-    @Test(description = "Deserialize New Boolean Values: SwaggerConverter drops some validation properties of body parameters")
-    public void testGrace() throws Exception {
-        String json = "{\n" +
-                "  \"allOf\": [\n" +
-                "    {\n" +
-                "      \"$ref\": \"pet.json\"\n" +
-                "    },\n" +
-                "    {\n" +
-                "      \"type\": \"object\",\n" +
-                "      \"properties\": {\n" +
-                "        \"breed\": {\n" +
-                "          \"type\": \"string\",\n" +
-                "          \"sample\": \"Labrador\"\n" +
-                "        },\n" +
-                "        \"mother\": {\n" +
-                "          \"$ref\": \"pet.json\"\n" +
-                "        },\n" +
-                "        \"siblings\": {\n" +
-                "          \"type\": \"array\",\n" +
-                "          \"items\": {\n" +
-                "            \"$ref\": \"pet.json\"\n" +
-                "          }\n" +
-                "        }\n" +
-                "      }\n" +
-                "    }\n" +
-                "  ]\n" +
-                "}";
-
-
-        final ComposedModel composedModel = Json.mapper().readValue(json, ComposedModel.class);
-
-        /*assertEquals(composedModel.getChild(), true);
-        assertEquals(composedModel.getExclusiveMinimum().booleanValue(), true);*/
-    }
+    
 }
