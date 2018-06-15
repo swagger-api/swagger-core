@@ -23,6 +23,7 @@ public class RefModel implements Model {
         set$ref(ref);
     }
 
+
     public RefModel asDefault(String ref) {
         this.set$ref(RefType.DEFINITION.getInternalPrefix() + ref);
         return this;

@@ -528,4 +528,5 @@ public class ModelSerializerTest {
         assertEquals(arrayModel.getPattern(), "Pattern");
         assertEquals(composedModel.getPattern(), "Pattern");
     }
+    
 }
