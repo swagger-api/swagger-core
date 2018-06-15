@@ -117,6 +117,17 @@ public class SpecFilter {
         if (filteredOpenAPI.getComponents() != null) {
             clone.components(new Components());
             clone.getComponents().setSchemas(filterComponentsSchema(filter, filteredOpenAPI.getComponents().getSchemas(), params, cookies, headers));
+            clone.getComponents().setSecuritySchemes(filteredOpenAPI.getComponents().getSecuritySchemes());
+            clone.getComponents().setCallbacks(filteredOpenAPI.getComponents().getCallbacks());
+            clone.getComponents().setExamples(filteredOpenAPI.getComponents().getExamples());
+            clone.getComponents().setExtensions(filteredOpenAPI.getComponents().getExtensions());
+            clone.getComponents().setHeaders(filteredOpenAPI.getComponents().getHeaders());
+            clone.getComponents().setLinks(filteredOpenAPI.getComponents().getLinks());
+            clone.getComponents().setParameters(filteredOpenAPI.getComponents().getParameters());
+            clone.getComponents().setRequestBodies(filteredOpenAPI.getComponents().getRequestBodies());
+            clone.getComponents().setResponses(filteredOpenAPI.getComponents().getResponses());
+
+
         }
 
         if (filter.isRemovingUnreferencedDefinitions()) {
@@ -255,7 +266,9 @@ public class SpecFilter {
                     if (clonedModel.getProperties() != null) {
                         clonedModel.getProperties().clear();
                     }
-                    clonedModel.setProperties(clonedProperties);
+                    if (!clonedProperties.isEmpty()) {
+                        clonedModel.setProperties(clonedProperties);
+                    }
                     clonedComponentsSchema.put(key, clonedModel);
 
                 } catch (IOException e) {

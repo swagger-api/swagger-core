@@ -143,7 +143,6 @@ public class ApiResponse {
 
     public ApiResponse $ref(String $ref) {
         set$ref($ref);
-        this.$ref = $ref;
         return this;
     }
 

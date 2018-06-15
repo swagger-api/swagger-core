@@ -4,7 +4,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.core.converter.AnnotatedType;
 import io.swagger.v3.core.converter.ModelConverter;
 import io.swagger.v3.core.converter.ModelConverterContextImpl;
+import io.swagger.v3.core.filter.AbstractSpecFilter;
+import io.swagger.v3.core.filter.OpenAPISpecFilter;
+import io.swagger.v3.core.filter.SpecFilter;
 import io.swagger.v3.core.jackson.ModelResolver;
+import io.swagger.v3.core.model.ApiDescription;
 import io.swagger.v3.jaxrs2.matchers.SerializationMatchers;
 import io.swagger.v3.jaxrs2.resources.BasicFieldsResource;
 import io.swagger.v3.jaxrs2.resources.BookStoreTicket2646;
@@ -19,6 +23,7 @@ import io.swagger.v3.jaxrs2.resources.EnhancedResponsesResource;
 import io.swagger.v3.jaxrs2.resources.ExternalDocsReference;
 import io.swagger.v3.jaxrs2.resources.MyClass;
 import io.swagger.v3.jaxrs2.resources.MyOtherClass;
+import io.swagger.v3.jaxrs2.resources.RefResponsesResource;
 import io.swagger.v3.jaxrs2.resources.ResourceWithSubResource;
 import io.swagger.v3.jaxrs2.resources.ResponseContentWithArrayResource;
 import io.swagger.v3.jaxrs2.resources.ResponsesResource;
@@ -26,6 +31,7 @@ import io.swagger.v3.jaxrs2.resources.SecurityResource;
 import io.swagger.v3.jaxrs2.resources.ServersResource;
 import io.swagger.v3.jaxrs2.resources.SimpleCallbackResource;
 import io.swagger.v3.jaxrs2.resources.SimpleMethods;
+import io.swagger.v3.jaxrs2.resources.SimpleResponsesResource;
 import io.swagger.v3.jaxrs2.resources.SubResourceHead;
 import io.swagger.v3.jaxrs2.resources.TagsResource;
 import io.swagger.v3.jaxrs2.resources.Test2607;
@@ -48,6 +54,7 @@ import io.swagger.v3.oas.models.Operation;
 import io.swagger.v3.oas.models.PathItem;
 import io.swagger.v3.oas.models.Paths;
 import io.swagger.v3.oas.models.callbacks.Callback;
+import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.media.ArraySchema;
 import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.parameters.Parameter;
@@ -74,6 +81,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -1092,6 +1100,125 @@ public class ReaderTest {
         assertEquals(operation.getParameters().get(0).getSchema().getType(), "integer");
         assertEquals(operation.getParameters().get(0).getSchema().getFormat(), "int32");
 
+    }
+
+    @Test(description = "Responses with ref")
+    public void testResponseWithRef() {
+        Components components = new Components();
+        components.addResponses("invalidJWT", new ApiResponse().description("when JWT token invalid/expired"));
+        OpenAPI oas = new OpenAPI()
+                .info(new Info().description("info"))
+                .components(components);
+
+        Reader reader = new Reader(oas);
+
+        OpenAPI openAPI = reader.read(RefResponsesResource.class);
+
+        String yaml = "openapi: 3.0.1\n" +
+                "info:\n" +
+                "  description: info\n" +
+                "paths:\n" +
+                "  /:\n" +
+                "    get:\n" +
+                "      summary: Simple get operation\n" +
+                "      description: Defines a simple get operation with no inputs and a complex output\n" +
+                "        object\n" +
+                "      operationId: getWithPayloadResponse\n" +
+                "      responses:\n" +
+                "        200:\n" +
+                "          description: voila!\n" +
+                "          content:\n" +
+                "            application/json:\n" +
+                "              schema:\n" +
+                "                $ref: '#/components/schemas/SampleResponseSchema'\n" +
+                "        default:\n" +
+                "          description: boo\n" +
+                "          content:\n" +
+                "            '*/*':\n" +
+                "              schema:\n" +
+                "                $ref: '#/components/schemas/GenericError'\n" +
+                "        401:\n" +
+                "          $ref: '#/components/responses/invalidJWT'\n" +
+                "      deprecated: true\n" +
+                "components:\n" +
+                "  schemas:\n" +
+                "    GenericError:\n" +
+                "      type: object\n" +
+                "    SampleResponseSchema:\n" +
+                "      type: object\n" +
+                "  responses:\n" +
+                "    invalidJWT:\n" +
+                "      description: when JWT token invalid/expired";
+        SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
+    }
+
+    @Test(description = "Responses with filter")
+    public void testResponseWithFilter() {
+        Components components = new Components();
+        components.addResponses("invalidJWT", new ApiResponse().description("when JWT token invalid/expired"));
+        OpenAPI oas = new OpenAPI()
+                .info(new Info().description("info"))
+                .components(components);
+        Reader reader = new Reader(oas);
+
+        OpenAPI openAPI = reader.read(SimpleResponsesResource.class);
+
+
+        OpenAPISpecFilter filterImpl = new RefResponseFilter();
+        SpecFilter f = new SpecFilter();
+        openAPI = f.filter(openAPI, filterImpl, null, null, null);
+
+        String yaml = "openapi: 3.0.1\n" +
+                "info:\n" +
+                "  description: info\n" +
+                "paths:\n" +
+                "  /:\n" +
+                "    get:\n" +
+                "      summary: Simple get operation\n" +
+                "      description: Defines a simple get operation with no inputs and a complex output\n" +
+                "        object\n" +
+                "      operationId: getWithPayloadResponse\n" +
+                "      parameters: []\n" +
+                "      responses:\n" +
+                "        200:\n" +
+                "          description: voila!\n" +
+                "          content:\n" +
+                "            application/json:\n" +
+                "              schema:\n" +
+                "                $ref: '#/components/schemas/SampleResponseSchema'\n" +
+                "        default:\n" +
+                "          description: boo\n" +
+                "          content:\n" +
+                "            '*/*':\n" +
+                "              schema:\n" +
+                "                $ref: '#/components/schemas/GenericError'\n" +
+                "        401:\n" +
+                "          $ref: '#/components/responses/invalidJWT'\n" +
+                "      deprecated: true\n" +
+                "components:\n" +
+                "  schemas:\n" +
+                "    GenericError:\n" +
+                "      type: object\n" +
+                "    SampleResponseSchema:\n" +
+                "      type: object\n" +
+                "  responses:\n" +
+                "    invalidJWT:\n" +
+                "      description: when JWT token invalid/expired";
+        SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
+    }
+
+    class RefResponseFilter extends AbstractSpecFilter {
+
+        @Override
+        public Optional<Operation> filterOperation(Operation operation, ApiDescription api, Map<String, List<String>> params, Map<String, String> cookies, Map<String, List<String>> headers) {
+            if ("getWithPayloadResponse".equals(operation.getOperationId())) {
+                final ApiResponses apiResponses = (operation.getResponses() == null) ? new ApiResponses() : operation.getResponses();
+                apiResponses.addApiResponse("401", new ApiResponse().$ref("#/components/responses/invalidJWT"));
+                operation.setResponses(apiResponses);
+                return Optional.of(operation);
+            }
+            return super.filterOperation(operation, api, params, cookies, headers);
+        }
     }
 }
 

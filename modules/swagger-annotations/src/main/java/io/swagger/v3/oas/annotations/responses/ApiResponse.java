@@ -88,4 +88,12 @@ public @interface ApiResponse {
      */
     Extension[] extensions() default {};
 
+    /**
+     * A reference to a response defined in components responses.
+     *
+     * @since 2.0.3
+     * @return the reference
+     **/
+    String ref() default "";
+
 }
