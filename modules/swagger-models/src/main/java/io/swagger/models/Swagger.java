@@ -21,11 +21,11 @@ public class Swagger {
     protected List<String> consumes;
     protected List<String> produces;
     protected List<SecurityRequirement> security;
-    protected Paths paths;
+    protected Map<String, Path> paths;
     protected Map<String, SecuritySchemeDefinition> securityDefinitions;
     protected Map<String, Model> definitions;
     protected Map<String, Parameter> parameters;
-    protected Responses responses;
+    protected Map<String, Response> responses;
     protected ExternalDocs externalDocs;
     protected Map<String, Object> vendorExtensions;
 
@@ -97,20 +97,20 @@ public class Swagger {
 
     public Swagger path(String key, Path path) {
         if (this.paths == null) {
-            this.paths = new Paths();
+            this.paths = new LinkedHashMap<String, Path>();
         }
         this.paths.put(key, path);
         return this;
     }
 
-    public Swagger responses(Responses responses) {
+    public Swagger responses(LinkedHashMap<String, Response> responses) {
         this.responses = responses;
         return this;
     }
 
     public Swagger response(String key, Response response) {
         if (this.responses == null) {
-            this.responses = new Responses();
+            this.responses = new LinkedHashMap<String, Response>();
         }
         this.responses.put(key, response);
         return this;
@@ -262,11 +262,11 @@ public class Swagger {
         }
     }
 
-    public Paths getPaths() {
+    public Map<String, Path> getPaths() {
         return paths;
     }
 
-    public void setPaths(Paths paths) {
+    public void setPaths(Map<String, Path> paths) {
         this.paths = paths;
     }
 
@@ -371,11 +371,11 @@ public class Swagger {
         this.parameters.put(key, parameter);
     }
 
-    public Responses getResponses() {
+    public Map<String, Response> getResponses() {
         return responses;
     }
 
-    public void setResponses(Responses responses) {
+    public void setResponses(LinkedHashMap<String, Response> responses) {
         this.responses = responses;
     }
 

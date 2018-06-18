@@ -19,10 +19,12 @@ public class Operation {
     private List<String> consumes;
     private List<String> produces;
     private List<Parameter> parameters = new ArrayList<Parameter>();
-    private Responses responses;
+    private Map<String, Response> responses;
+    private Responses responsesObject;
     private List<Map<String, List<String>>> security;
     private ExternalDocs externalDocs;
     private Boolean deprecated;
+
 
     public Operation summary(String summary) {
         this.setSummary(summary);
@@ -78,14 +80,16 @@ public class Operation {
         this.addParameter(parameter);
         return this;
     }
-
     public Operation response(int key, Response response) {
         this.addResponse(String.valueOf(key), response);
+        //this.addResponseObject(String.valueOf(key),response);
         return this;
     }
 
+
     public Operation defaultResponse(Response response) {
         this.addResponse("default", response);
+        //this.addResponseObject("default",response);
         return this;
     }
 
@@ -209,20 +213,35 @@ public class Operation {
         }
         this.parameters.add(parameter);
     }
-
-    public Responses getResponses() {
+    @Deprecated
+    public Map<String, Response> getResponses() {
         return responses;
     }
 
-    public void setResponses(Responses responses) {
+    public Responses getResponsesObject() { return responsesObject; }
+
+    @Deprecated
+    public void setResponses(Map<String, Response> responses) {
         this.responses = responses;
     }
 
+    public void setResponsesObject(Responses responsesObject) {
+        this.responsesObject = responsesObject;
+    }
+
+    @Deprecated
     public void addResponse(String key, Response response) {
         if (this.responses == null) {
-            this.responses = new Responses();
+            this.responses = new LinkedHashMap<String, Response>();
         }
         this.responses.put(key, response);
+    }
+
+    public void addResponseObject(String key, Response response) {
+        if (this.responsesObject == null) {
+            this.responsesObject = new Responses();
+        }
+        this.responsesObject.put(key, response);
     }
 
     public List<Map<String, List<String>>> getSecurity() {
@@ -294,6 +313,7 @@ public class Operation {
                 + ((parameters == null) ? 0 : parameters.hashCode());
         result = prime * result + ((produces == null) ? 0 : produces.hashCode());
         result = prime * result + ((responses == null) ? 0 : responses.hashCode());
+        result = prime * result + ((responsesObject == null) ? 0 : responsesObject.hashCode());
         result = prime * result + ((schemes == null) ? 0 : schemes.hashCode());
         result = prime * result + ((security == null) ? 0 : security.hashCode());
         result = prime * result + ((summary == null) ? 0 : summary.hashCode());
@@ -369,6 +389,13 @@ public class Operation {
                 return false;
             }
         } else if (!responses.equals(other.responses)) {
+            return false;
+        }
+        if (responsesObject == null) {
+            if (other.responsesObject != null) {
+                return false;
+            }
+        } else if (!responsesObject.equals(other.responsesObject)) {
             return false;
         }
         if (schemes == null) {
