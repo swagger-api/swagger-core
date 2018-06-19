@@ -1,5 +1,6 @@
 package io.swagger;
 
+import static io.swagger.models.refs.RefFormat.INTERNAL;
 import static org.testng.Assert.assertEquals;
 
 import io.swagger.models.refs.GenericRef;
@@ -36,20 +37,20 @@ public class GenericRefTest {
 
     @Test(description = "it should correctly identify internal refs")
     public void identifyInternalRefs() {
-        assertRefFormat(new GenericRef(RefType.DEFINITION, "#/definitions/foo"), RefFormat.INTERNAL);
-        assertRefFormat(new GenericRef(RefType.PARAMETER, "#/parameters/foo"), RefFormat.INTERNAL);
-        assertRefFormat(new GenericRef(RefType.RESPONSE, "#/responses/foo"), RefFormat.INTERNAL);
-        assertRefFormat(new GenericRef(RefType.PATH, "#/paths/foo"), RefFormat.INTERNAL);
+        assertRefFormat(new GenericRef(RefType.DEFINITION, "#/definitions/foo"), INTERNAL);
+        assertRefFormat(new GenericRef(RefType.PARAMETER, "#/parameters/foo"), INTERNAL);
+        assertRefFormat(new GenericRef(RefType.RESPONSE, "#/responses/foo"), INTERNAL);
+        assertRefFormat(new GenericRef(RefType.PATH, "#/paths/foo"), INTERNAL);
 
-        assertRefFormat(new GenericRef(RefType.PARAMETER, "Foo"), RefFormat.INTERNAL);
-        assertRefFormat(new GenericRef(RefType.DEFINITION, "Foo"), RefFormat.INTERNAL);
-        assertRefFormat(new GenericRef(RefType.RESPONSE, "Foo"), RefFormat.INTERNAL);
-        assertRefFormat(new GenericRef(RefType.PATH, "Foo"), RefFormat.INTERNAL);
+        assertRefFormat(new GenericRef(RefType.PARAMETER, "Foo"), INTERNAL);
+        assertRefFormat(new GenericRef(RefType.DEFINITION, "Foo"), INTERNAL);
+        assertRefFormat(new GenericRef(RefType.RESPONSE, "Foo"), INTERNAL);
+        assertRefFormat(new GenericRef(RefType.PATH, "Foo"), INTERNAL);
 
-        assertRefFormat(new GenericRef(RefType.PARAMETER, "httpNotUrl"), RefFormat.INTERNAL);
-        assertRefFormat(new GenericRef(RefType.DEFINITION, "httpNotUrl"), RefFormat.INTERNAL);
-        assertRefFormat(new GenericRef(RefType.RESPONSE, "httpNotUrl"), RefFormat.INTERNAL);
-        assertRefFormat(new GenericRef(RefType.PATH, "httpNotUrl"), RefFormat.INTERNAL);
+        assertRefFormat(new GenericRef(RefType.PARAMETER, "httpNotUrl"), INTERNAL);
+        assertRefFormat(new GenericRef(RefType.DEFINITION, "httpNotUrl"), INTERNAL);
+        assertRefFormat(new GenericRef(RefType.RESPONSE, "httpNotUrl"), INTERNAL);
+        assertRefFormat(new GenericRef(RefType.PATH, "httpNotUrl"), INTERNAL);
     }
 
     @Test(description = "it should correctly identify relative refs")
@@ -160,5 +161,14 @@ public class GenericRefTest {
         assertSimpleRef(RefType.PARAMETER, "httpNotUrl", "httpNotUrl");
         assertSimpleRef(RefType.RESPONSE, "httpNotUrl", "httpNotUrl");
         assertSimpleRef(RefType.PATH, "httpNotUrl", "httpNotUrl");
+    }
+
+    @Test
+    public void testOriginalRef() {
+        final GenericRef refObj = new GenericRef(RefType.DEFINITION, "foo.json");
+        assertEquals(refObj.getFormat(), INTERNAL);
+        assertEquals(refObj.getRef(), "#/definitions/foo.json");
+        assertEquals(refObj.getOriginalRef(), "foo.json");
+        assertEquals(refObj.getOriginalRefFormat(),RefFormat.RELATIVE);
     }
 }

@@ -57,4 +57,12 @@ public class RefResponse extends Response {
         return this.genericRef.getFormat();
     }
 
+    @JsonIgnore
+    public RefFormat getOriginalRefFormat() { return this.genericRef.getOriginalRefFormat(); }
+
+    @JsonIgnore
+    public String getOriginalRef() {
+        return this.genericRef.getOriginalRef();
+    }
+
 }
