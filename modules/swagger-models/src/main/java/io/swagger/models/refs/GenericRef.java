@@ -8,11 +8,14 @@ public class GenericRef {
     private RefType type;
     private String ref;
     private String simpleRef;
+    private String originalRef;
+    private RefFormat originalRefFormat;
 
     public GenericRef(){}
 
     public GenericRef(RefType type, String ref) {
         this.format = computeRefFormat(ref);
+        this.originalRefFormat = computeOriginalRefFormat(ref);
         this.type = type;
 
         if (format == RefFormat.INTERNAL && !ref.startsWith("#/")) {
@@ -25,8 +28,33 @@ public class GenericRef {
         } else {
             this.ref = ref;
         }
-
         this.simpleRef = computeSimpleRef(this.ref, format, type);
+
+        if (originalRefFormat == RefFormat.INTERNAL && !ref.startsWith("#/")) {
+            this.originalRef = type.getInternalPrefix() + ref;
+        } else {
+            this.originalRef = ref;
+        }
+
+    }
+
+    private RefFormat computeOriginalRefFormat(String originalRef) {
+        RefFormat result = RefFormat.INTERNAL;
+
+        if (originalRef.startsWith("http:") || originalRef.startsWith("https:")) {
+            result = RefFormat.URL;
+        } else if (originalRef.startsWith("#/")) {
+            result = RefFormat.INTERNAL;
+        } else if (originalRef.startsWith(".") || originalRef.startsWith("/")) {
+            result = RefFormat.RELATIVE;
+        }else if (!originalRef.contains(":") &&   // No scheme
+                !originalRef.startsWith("#") && // Path is not empty
+                !originalRef.startsWith("/")&& // Path is not absolute
+                originalRef.indexOf(".") > -1) { // Path does not start with dot but contains "." (file extension)
+            result = RefFormat.RELATIVE;
+        }
+
+        return result;
     }
 
     public RefFormat getFormat() {
@@ -59,14 +87,19 @@ public class GenericRef {
         if (format != that.format) {
             return false;
         }
+        if (originalRefFormat != that.originalRefFormat) {
+            return false;
+        }
         if (type != that.type) {
             return false;
         }
         if (ref != null ? !ref.equals(that.ref) : that.ref != null) {
             return false;
         }
+        if (originalRef != null ? !originalRef.equals(that.originalRef) : that.originalRef != null) {
+            return false;
+        }
         return simpleRef != null ? simpleRef.equals(that.simpleRef) : that.simpleRef == null;
-
     }
 
     @Override
@@ -74,6 +107,8 @@ public class GenericRef {
         int result = format != null ? format.hashCode() : 0;
         result = 31 * result + (type != null ? type.hashCode() : 0);
         result = 31 * result + (ref != null ? ref.hashCode() : 0);
+        result = 31 * result + (originalRef != null ? originalRef.hashCode() : 0);
+        result = 31 * result + (originalRefFormat != null ? originalRefFormat.hashCode() : 0);
         result = 31 * result + (simpleRef != null ? simpleRef.hashCode() : 0);
         return result;
     }
@@ -102,4 +137,12 @@ public class GenericRef {
         return result;
     }
 
+    public String getOriginalRef() {
+        return originalRef;
+    }
+
+
+    public RefFormat getOriginalRefFormat() {
+        return originalRefFormat;
+    }
 }

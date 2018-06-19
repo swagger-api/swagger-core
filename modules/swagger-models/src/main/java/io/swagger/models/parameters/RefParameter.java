@@ -43,6 +43,16 @@ public class RefParameter extends AbstractParameter implements Parameter {
         return this.genericRef.getFormat();
     }
 
+    @JsonIgnore
+    public RefFormat getOriginalRefFormat() {
+        return this.genericRef.getOriginalRefFormat();
+    }
+
+    @JsonIgnore
+    public String getOriginalRef() {
+        return genericRef.getOriginalRef();
+    }
+
     @Override
     @JsonIgnore
     public boolean getRequired() {

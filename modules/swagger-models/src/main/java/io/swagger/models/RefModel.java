@@ -64,12 +64,22 @@ public class RefModel implements Model {
         return genericRef.getSimpleRef();
     }
 
+    @JsonIgnore
+    public String getOriginalRef() {
+        return genericRef.getOriginalRef();
+    }
+
     public String get$ref() {
         return genericRef.getRef();
     }
 
     public void set$ref(String ref) {
         this.genericRef = new GenericRef(RefType.DEFINITION, ref);
+    }
+
+    @JsonIgnore
+    public RefFormat getOriginalRefFormat() {
+        return this.genericRef.getOriginalRefFormat();
     }
 
     @JsonIgnore
