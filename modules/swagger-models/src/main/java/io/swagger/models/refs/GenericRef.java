@@ -7,15 +7,41 @@ public class GenericRef {
     private RefFormat format;
     private RefType type;
     private String ref;
+    private String originalRef;
     private String simpleRef;
+
+    private static boolean relativeRefWithAnyDot = true;
+
+    public static void relativeRefWithAnyDot() {
+        relativeRefWithAnyDot = true;
+    }
+
+    public static void internalRefWithAnyDot() {
+        relativeRefWithAnyDot = false;
+    }
+
+    public static boolean isRelativeRefWithAnyDot() {
+        return relativeRefWithAnyDot;
+    }
+
 
     public GenericRef(){}
 
     public GenericRef(RefType type, String ref) {
-        this.format = computeRefFormat(ref);
+        this(type, ref, null);
+    }
+
+    public GenericRef(RefType type, String ref, RefFormat format) {
+        this.originalRef = ref;
+        if (format == null) {
+            this.format = computeRefFormat(ref);
+        } else {
+            this.format = format;
+        }
+
         this.type = type;
 
-        if (format == RefFormat.INTERNAL && !ref.startsWith("#/")) {
+        if (this.format == RefFormat.INTERNAL && !ref.startsWith("#/")) {
             /* this is an internal path that did not start with a #/, we must be in some of ModelResolver code
             while currently relies on the ability to create RefModel/RefProperty objects via a constructor call like
             1) new RefModel("Animal")..and expects get$ref to return #/definitions/Animal
@@ -26,7 +52,7 @@ public class GenericRef {
             this.ref = ref;
         }
 
-        this.simpleRef = computeSimpleRef(this.ref, format, type);
+        this.simpleRef = computeSimpleRef(this.ref, this.format, type);
     }
 
     public RefFormat getFormat() {
@@ -43,6 +69,10 @@ public class GenericRef {
 
     public String getSimpleRef() {
         return simpleRef;
+    }
+
+    public String getOriginalRef() {
+        return originalRef;
     }
 
     @Override
@@ -65,6 +95,9 @@ public class GenericRef {
         if (ref != null ? !ref.equals(that.ref) : that.ref != null) {
             return false;
         }
+        if (originalRef != null ? !originalRef.equals(that.originalRef) : that.originalRef != null) {
+            return false;
+        }
         return simpleRef != null ? simpleRef.equals(that.simpleRef) : that.simpleRef == null;
 
     }
@@ -74,6 +107,7 @@ public class GenericRef {
         int result = format != null ? format.hashCode() : 0;
         result = 31 * result + (type != null ? type.hashCode() : 0);
         result = 31 * result + (ref != null ? ref.hashCode() : 0);
+        result = 31 * result + (originalRef != null ? originalRef.hashCode() : 0);
         result = 31 * result + (simpleRef != null ? simpleRef.hashCode() : 0);
         return result;
     }
@@ -97,8 +131,14 @@ public class GenericRef {
             result = RefFormat.INTERNAL;
         } else if (ref.startsWith(".") || ref.startsWith("/")) {
             result = RefFormat.RELATIVE;
+        } else if (
+                relativeRefWithAnyDot &&
+                !ref.contains(":") &&   // No scheme
+                !ref.startsWith("#") && // Path is not empty
+                !ref.startsWith("/")&& // Path is not absolute
+                ref.indexOf(".") > -1) {
+            result = RefFormat.RELATIVE;
         }
-
         return result;
     }
 

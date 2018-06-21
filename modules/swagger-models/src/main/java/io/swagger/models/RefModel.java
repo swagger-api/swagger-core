@@ -23,6 +23,10 @@ public class RefModel implements Model {
         set$ref(ref);
     }
 
+    public RefModel(String ref, RefFormat refFormat) {
+        this.genericRef = new GenericRef(RefType.DEFINITION, ref, refFormat);
+    }
+
     public RefModel asDefault(String ref) {
         this.set$ref(RefType.DEFINITION.getInternalPrefix() + ref);
         return this;
@@ -62,6 +66,18 @@ public class RefModel implements Model {
     @JsonIgnore
     public String getSimpleRef() {
         return genericRef.getSimpleRef();
+    }
+
+    /**
+     * @since 1.5.21
+     * @return originalRef
+     */
+    public String getOriginalRef() {
+        if (genericRef != null) {
+            return genericRef.getOriginalRef();
+        } else {
+            return null;
+        }
     }
 
     public String get$ref() {

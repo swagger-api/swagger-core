@@ -464,7 +464,7 @@ public class PropertyBuilder {
             public Model toModel(Property property) {
                 if (property instanceof RefProperty) {
                     final RefProperty resolved = (RefProperty) property;
-                    final RefModel model = new RefModel(resolved.get$ref());
+                    final RefModel model = new RefModel(resolved.getOriginalRef(), resolved.getRefFormat());
                     model.setDescription(resolved.getDescription());
                     return model;
                 }

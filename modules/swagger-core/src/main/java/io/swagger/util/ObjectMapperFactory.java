@@ -10,9 +10,6 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import io.swagger.jackson.mixin.ResponseSchemaMixin;
 import io.swagger.models.Response;
 
-
-
-
 public class ObjectMapperFactory {
 
     protected static ObjectMapper createJson() {
@@ -42,6 +39,8 @@ public class ObjectMapperFactory {
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
         mapper.addMixIn(Response.class, ResponseSchemaMixin.class);
+
+        ReferenceSerializationConfigurer.serializeAsComputedRef(mapper);
 
         return mapper;
     }

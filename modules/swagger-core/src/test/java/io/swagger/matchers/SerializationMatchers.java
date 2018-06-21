@@ -26,6 +26,10 @@ public class SerializationMatchers {
         apply(objectToSerialize, jsonStr, Json.mapper());
     }
 
+    public static void assertEqualsToString(Object objectToSerialize, String jsonStr, ObjectMapper mapper) {
+        apply(objectToSerialize, jsonStr, mapper);
+    }
+
     private static void apply(Object objectToSerialize, String str, ObjectMapper mapper) {
         final ObjectNode lhs = mapper.convertValue(objectToSerialize, ObjectNode.class);
         ObjectNode rhs = null;
