@@ -116,7 +116,7 @@ public class OperationTest {
         operation.response(44, response);
 
         // then
-        assertEquals(operation.getResponses().get("44"), response,
+        assertEquals(operation.getResponsesObject().get("44"), response,
                 "The newly added response must be contained in the responses map");
     }
 
@@ -129,7 +129,7 @@ public class OperationTest {
         operation.defaultResponse(response);
 
         // then
-        assertEquals(operation.getResponses().get("default"), response,
+        assertEquals(operation.getResponsesObject().get("default"), response,
                 "The default response should be the one that have just been set");
     }
 

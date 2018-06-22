@@ -81,15 +81,13 @@ public class Operation {
         return this;
     }
     public Operation response(int key, Response response) {
-        this.addResponse(String.valueOf(key), response);
-        //this.addResponseObject(String.valueOf(key),response);
+        this.addResponseObject(String.valueOf(key),response);
         return this;
     }
 
 
     public Operation defaultResponse(Response response) {
-        this.addResponse("default", response);
-        //this.addResponseObject("default",response);
+        this.addResponseObject("default",response);
         return this;
     }
 

@@ -82,11 +82,11 @@ public class SimpleReaderTest {
     }
 
     private Map<String, Response> getGetResponses(Swagger swagger, String path) {
-        return getGet(swagger, path).getResponses();
+        return getGet(swagger, path).getResponsesObject();
     }
 
     private Map<String, Response> getPutResponses(Swagger swagger, String path) {
-        return getPut(swagger, path).getResponses();
+        return getPut(swagger, path).getResponsesObject();
     }
 
     private List<Parameter> getGetParameters(Swagger swagger, String path) {
@@ -188,9 +188,9 @@ public class SimpleReaderTest {
 
         Operation get = getGet(swagger, "/{id}");
         assertNotNull(get);
-        assertNotNull(get.getResponses());
+        assertNotNull(get.getResponsesObject());
 
-        Response response = get.getResponses().get("200");
+        Response response = get.getResponsesObject().get("200");
         assertNotNull(response);
 
         Model schema = response.getResponseSchema();
@@ -205,7 +205,7 @@ public class SimpleReaderTest {
         Operation get = getGet(swagger, "/external/info");
         assertNotNull(get);
 
-        Map<String, Response> responses = get.getResponses();
+        Map<String, Response> responses = get.getResponsesObject();
         assertNotNull(responses);
 
         Response response = responses.get("default");
@@ -412,34 +412,34 @@ public class SimpleReaderTest {
     public void scanResourceWithApiResponseResponseContainerValue() {
         Swagger swagger = getSwagger(ResourceWithApiResponseResponseContainer.class);
         Path paths = swagger.getPaths().get("/{id}");
-        Map<String, Response> responses1 = paths.getGet().getResponses();
+        Map<String, Response> responses1 = paths.getGet().getResponsesObject();
 
         assertEquals(responses1.get("200").getResponseSchema().getClass(), ModelImpl.class);
         assertTrue(((ModelImpl)responses1.get("200").getResponseSchema()).getAdditionalProperties() != null);
 
         assertEquals(responses1.get("400").getResponseSchema().getClass(), ArrayModel.class);
 
-        Map<String, Response> responses2 = paths.getPut().getResponses();
+        Map<String, Response> responses2 = paths.getPut().getResponsesObject();
         assertEquals(responses2.get("201").getResponseSchema().getClass(), RefModel.class);
         assertEquals(responses2.get("401").getResponseSchema().getClass(), ArrayModel.class);
 
-        Map<String, Response> responses3 = paths.getPost().getResponses();
+        Map<String, Response> responses3 = paths.getPost().getResponsesObject();
         assertEquals(responses3.get("202").getResponseSchema().getClass(), RefModel.class);
         assertEquals(responses3.get("402").getResponseSchema().getClass(), RefModel.class);
 
-        Map<String, Response> responses4 = paths.getDelete().getResponses();
+        Map<String, Response> responses4 = paths.getDelete().getResponsesObject();
         assertEquals(responses4.get("203").getResponseSchema().getClass(), RefModel.class);
         assertEquals(responses4.get("403").getResponseSchema().getClass(), RefModel.class);
 
         Path paths2 = swagger.getPaths().get("/{id}/name");
-        Map<String, Response> responses5 = paths2.getGet().getResponses();
+        Map<String, Response> responses5 = paths2.getGet().getResponsesObject();
         assertEquals(responses5.get("203").getResponseSchema().getClass(), ArrayModel.class);
         assertNull(((ArrayModel) responses5.get("203").getResponseSchema()).getUniqueItems());
         assertNotEquals(responses5.get("203").getHeaders().get("foo").getClass(), MapProperty.class);
         assertEquals(responses5.get("403").getResponseSchema().getClass(), ArrayModel.class);
         assertEquals(((ArrayModel) responses5.get("403").getResponseSchema()).getUniqueItems(), Boolean.TRUE);
 
-        Map<String, Response> responses6 = paths2.getPut().getResponses();
+        Map<String, Response> responses6 = paths2.getPut().getResponsesObject();
         assertEquals(responses6.get("203").getResponseSchema().getClass(), ArrayModel.class);
         assertEquals(((ArrayModel) responses6.get("203").getResponseSchema()).getUniqueItems(), Boolean.TRUE);
         assertEquals(responses6.get("203").getHeaders().get("foo").getClass(), ArrayProperty.class);
@@ -549,8 +549,8 @@ public class SimpleReaderTest {
                         "402", new String[]{"string", "uuid"},
                         "403", new String[]{"integer", "int64"},
                         "404", new String[]{"string", null});
-                assertEquals(entry.getValue().getGet().getResponses().size(), expected.size());
-                for (Map.Entry<String, Response> responseEntry : entry.getValue().getGet().getResponses().entrySet()) {
+                assertEquals(entry.getValue().getGet().getResponsesObject().size(), expected.size());
+                for (Map.Entry<String, Response> responseEntry : entry.getValue().getGet().getResponsesObject().entrySet()) {
                     String[] expectedProp = expected.get(responseEntry.getKey());
                     Model model = responseEntry.getValue().getResponseSchema();
                     ModelImpl modelImpl = (ModelImpl) model;
@@ -559,7 +559,7 @@ public class SimpleReaderTest {
                 }
             } else {
                 Operation op = entry.getValue().getGet();
-                Model response = op.getResponses().get("200").getResponseSchema();
+                Model response = op.getResponsesObject().get("200").getResponseSchema();
                 Model model = ((BodyParameter) op.getParameters().get(0)).getSchema();
                 assertEquals(op.getParameters().size(), 1);
 
@@ -593,8 +593,8 @@ public class SimpleReaderTest {
             String name = entry.getKey().substring(entry.getKey().lastIndexOf("/") + 1);
             if ("testPrimitiveResponses".equals(name)) {
                 Map<String, String[]> expected = ImmutableMap.of("404", new String[]{"string", null});
-                assertEquals(entry.getValue().getGet().getResponses().size(), expected.size());
-                for (Map.Entry<String, Response> responseEntry : entry.getValue().getGet().getResponses().entrySet()) {
+                assertEquals(entry.getValue().getGet().getResponsesObject().size(), expected.size());
+                for (Map.Entry<String, Response> responseEntry : entry.getValue().getGet().getResponsesObject().entrySet()) {
                     String[] expectedProp = expected.get(responseEntry.getKey());
                     Model model = responseEntry.getValue().getResponseSchema();
                     ModelImpl modelImpl = (ModelImpl) model;

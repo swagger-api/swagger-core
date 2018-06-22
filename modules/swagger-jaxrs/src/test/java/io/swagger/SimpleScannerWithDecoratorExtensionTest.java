@@ -43,7 +43,7 @@ public class SimpleScannerWithDecoratorExtensionTest {
                  */
                 final Response value = new Response();
                 value.setDescription(RESPONSE_DESCRIPTION);
-                operation.getResponses().put(RESPONSE_STATUS_401, value);
+                operation.getResponsesObject().put(RESPONSE_STATUS_401, value);
             }
         }
     };
@@ -79,7 +79,7 @@ public class SimpleScannerWithDecoratorExtensionTest {
         assertNotNull(get);
         assertEquals(get.getParameters().size(), 2);
 
-        final Response response = get.getResponses().get(RESPONSE_STATUS_401);
+        final Response response = get.getResponsesObject().get(RESPONSE_STATUS_401);
         assertNotNull(response);
         assertEquals(response.getDescription(), RESPONSE_DESCRIPTION);
     }
@@ -97,7 +97,7 @@ public class SimpleScannerWithDecoratorExtensionTest {
         assertNotNull(get);
         assertEquals(get.getParameters().size(), 0);
 
-        final Response response = get.getResponses().get(RESPONSE_STATUS_401);
+        final Response response = get.getResponsesObject().get(RESPONSE_STATUS_401);
         assertNull(response);
     }
 

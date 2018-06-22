@@ -48,7 +48,7 @@ public class MapPropertyDeserializerTest {
   public void testMapDeserialization () throws Exception {
 
       Operation operation = Json.mapper().readValue(json, Operation.class);
-      Response response = operation.getResponses().get("200");
+      Response response = operation.getResponsesObject().get("200");
       assertNotNull(response);
       
       Model responseSchema = response.getResponseSchema();
@@ -62,7 +62,7 @@ public class MapPropertyDeserializerTest {
   @Test(description = "vendor extensions should be included with object type")
   public void testMapDeserializationVendorExtensions () throws Exception {
     Operation operation = Json.mapper().readValue(json, Operation.class);
-    Response response = operation.getResponses().get("200");
+    Response response = operation.getResponsesObject().get("200");
     assertNotNull(response);
 
     Model responseSchema = response.getResponseSchema();
@@ -97,7 +97,7 @@ public class MapPropertyDeserializerTest {
                "              name: Arthur Dent\n";
 
         Operation operation = Yaml.mapper().readValue(yaml, Operation.class);
-        Response response = operation.getResponses().get("200");
+        Response response = operation.getResponsesObject().get("200");
         assertNotNull(response);
         Model schema = response.getResponseSchema();
         Object example = schema.getExample();

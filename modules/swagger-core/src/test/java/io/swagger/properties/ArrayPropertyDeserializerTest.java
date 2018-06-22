@@ -33,7 +33,7 @@ public class ArrayPropertyDeserializerTest {
   public void testArrayDeserialization () throws Exception {
 
       Operation operation = Yaml.mapper().readValue(yaml, Operation.class);
-      Response response = operation.getResponses().get("200");
+      Response response = operation.getResponsesObject().get("200");
       assertNotNull(response);
       
       Model responseSchema = response.getResponseSchema();

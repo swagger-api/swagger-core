@@ -42,7 +42,7 @@ public class JsonDeserializationTest {
     public void testDeserializeAResponseRef() throws Exception {
         final Swagger swagger = TestUtils.deserializeJsonFileFromClasspath("specFiles/responseRef.json", Swagger.class);
 
-        final Map<String, Response> responseMap = swagger.getPath("/pet").getPut().getResponses();
+        final Map<String, Response> responseMap = swagger.getPath("/pet").getPut().getResponsesObject();
 
         assertIsRefResponse(responseMap.get("405"), "http://my.company.com/responses/errors.json#/method-not-allowed");
         assertIsRefResponse(responseMap.get("404"), "http://my.company.com/responses/errors.json#/not-found");

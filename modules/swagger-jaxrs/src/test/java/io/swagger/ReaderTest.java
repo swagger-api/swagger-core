@@ -365,10 +365,10 @@ public class ReaderTest {
         assertNotNull(swagger);
 
         Operation operation = getGet(swagger, "/{id}");
-        assertEquals(operation.getResponses().size(), 3);
-        assertTrue(operation.getResponses().containsKey("200"));
-        assertTrue(operation.getResponses().containsKey("400"));
-        assertTrue(operation.getResponses().containsKey("404"));
+        assertEquals(operation.getResponsesObject().size(), 3);
+        assertTrue(operation.getResponsesObject().containsKey("200"));
+        assertTrue(operation.getResponsesObject().containsKey("400"));
+        assertTrue(operation.getResponsesObject().containsKey("404"));
     }
 
     @Test(description = "scan resource with annotated exception")
@@ -377,11 +377,11 @@ public class ReaderTest {
         assertNotNull(swagger);
 
         Operation operation = getPut(swagger, "/{id}");
-        assertEquals(operation.getResponses().size(), 4);
-        assertTrue(operation.getResponses().containsKey("200"));
-        assertTrue(operation.getResponses().containsKey("400"));
-        assertTrue(operation.getResponses().containsKey("404"));
-        assertTrue(operation.getResponses().containsKey("409"));
+        assertEquals(operation.getResponsesObject().size(), 4);
+        assertTrue(operation.getResponsesObject().containsKey("200"));
+        assertTrue(operation.getResponsesObject().containsKey("400"));
+        assertTrue(operation.getResponsesObject().containsKey("404"));
+        assertTrue(operation.getResponsesObject().containsKey("409"));
     }
 
     @Test(description = "scan resource with annotated exception")
@@ -390,20 +390,20 @@ public class ReaderTest {
         assertNotNull(swagger);
 
         Operation operation = getPut(swagger, "/{id}");
-        assertEquals(operation.getResponses().size(), 5);
-        assertTrue(operation.getResponses().containsKey("200"));
-        assertTrue(operation.getResponses().containsKey("400"));
-        assertTrue(operation.getResponses().containsKey("404"));
-        assertTrue(operation.getResponses().containsKey("403"));
-        assertTrue(operation.getResponses().containsKey("409"));
-        assertEquals(operation.getResponses().get("409").getDescription(), "Conflict");
+        assertEquals(operation.getResponsesObject().size(), 5);
+        assertTrue(operation.getResponsesObject().containsKey("200"));
+        assertTrue(operation.getResponsesObject().containsKey("400"));
+        assertTrue(operation.getResponsesObject().containsKey("404"));
+        assertTrue(operation.getResponsesObject().containsKey("403"));
+        assertTrue(operation.getResponsesObject().containsKey("409"));
+        assertEquals(operation.getResponsesObject().get("409").getDescription(), "Conflict");
 
         swagger = getSwagger(ResourceWithClassLevelApiResourceNoMethodLevelApiResources.class);
         assertNotNull(swagger);
         operation = getPut(swagger, "/{id}");
-        assertEquals(operation.getResponses().size(), 2);
-        assertTrue(operation.getResponses().containsKey("403"));
-        assertTrue(operation.getResponses().containsKey("409"));
+        assertEquals(operation.getResponsesObject().size(), 2);
+        assertTrue(operation.getResponsesObject().containsKey("403"));
+        assertTrue(operation.getResponsesObject().containsKey("409"));
 
     }
 
