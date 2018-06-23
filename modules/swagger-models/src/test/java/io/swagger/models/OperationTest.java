@@ -118,6 +118,10 @@ public class OperationTest {
         // then
         assertEquals(operation.getResponsesObject().get("44"), response,
                 "The newly added response must be contained in the responses map");
+
+        // then
+        assertEquals(operation.getResponses().get("44"), response,
+                "The newly added response must be contained in the responses map");
     }
 
     @Test

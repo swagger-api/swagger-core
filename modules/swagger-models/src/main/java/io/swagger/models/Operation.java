@@ -81,12 +81,14 @@ public class Operation {
         return this;
     }
     public Operation response(int key, Response response) {
+        this.addResponse(String.valueOf(key),response);
         this.addResponseObject(String.valueOf(key),response);
         return this;
     }
 
 
     public Operation defaultResponse(Response response) {
+        this.addResponse("default",response);
         this.addResponseObject("default",response);
         return this;
     }
@@ -221,18 +223,36 @@ public class Operation {
     @Deprecated
     public void setResponses(Map<String, Response> responses) {
         this.responses = responses;
+        if (this.responsesObject == null && responses != null) {
+            this.responsesObject = new Responses();
+
+            for (String key : responses.keySet()) {
+                this.responsesObject.put(key, responses.get(key));
+            }
+        }
     }
 
     public void setResponsesObject(Responses responsesObject) {
         this.responsesObject = responsesObject;
+        if (responses == null && responsesObject != null) {
+            responses = new LinkedHashMap<String, Response>();
+
+            for (String key : this.responsesObject.keySet()) {
+                responses.put(key, responsesObject.get(key));
+            }
+        }
     }
 
     @Deprecated
     public void addResponse(String key, Response response) {
-        if (this.responses == null) {
-            this.responses = new LinkedHashMap<String, Response>();
+        if (responses == null) {
+            responses = new LinkedHashMap<String, Response>();
         }
-        this.responses.put(key, response);
+        responses.put(key, response);
+        if (responsesObject == null) {
+            responsesObject = new Responses();
+        }
+        responsesObject.put(key, response);
     }
 
     public void addResponseObject(String key, Response response) {
@@ -240,6 +260,10 @@ public class Operation {
             this.responsesObject = new Responses();
         }
         this.responsesObject.put(key, response);
+        if (this.responses == null) {
+            this.responses = new LinkedHashMap<String, Response>();
+        }
+        this.responses.put(key, response);
     }
 
     public List<Map<String, List<String>>> getSecurity() {

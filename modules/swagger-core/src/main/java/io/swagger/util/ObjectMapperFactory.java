@@ -7,7 +7,9 @@ import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import io.swagger.jackson.mixin.OperationResponseMixin;
 import io.swagger.jackson.mixin.ResponseSchemaMixin;
+import io.swagger.models.Operation;
 import io.swagger.models.Response;
 
 
@@ -42,6 +44,7 @@ public class ObjectMapperFactory {
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
         mapper.addMixIn(Response.class, ResponseSchemaMixin.class);
+        mapper.addMixIn(Operation.class, OperationResponseMixin.class);
 
         return mapper;
     }
