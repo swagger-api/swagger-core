@@ -16,13 +16,13 @@
 
 package io.swagger.v3.oas.models.responses;
 
-import io.swagger.v3.oas.models.headers.Header;
-import io.swagger.v3.oas.models.links.Link;
-import io.swagger.v3.oas.models.media.Content;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+
+import io.swagger.v3.oas.models.headers.Header;
+import io.swagger.v3.oas.models.links.Link;
+import io.swagger.v3.oas.models.media.Content;
 
 /**
  * ApiResponse
