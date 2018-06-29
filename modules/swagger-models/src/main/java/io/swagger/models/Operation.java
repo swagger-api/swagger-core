@@ -81,14 +81,12 @@ public class Operation {
         return this;
     }
     public Operation response(int key, Response response) {
-        this.addResponse(String.valueOf(key),response);
         this.addResponseObject(String.valueOf(key),response);
         return this;
     }
 
 
     public Operation defaultResponse(Response response) {
-        this.addResponse("default",response);
         this.addResponseObject("default",response);
         return this;
     }
@@ -213,16 +211,8 @@ public class Operation {
         }
         this.parameters.add(parameter);
     }
-    @Deprecated
+
     public Map<String, Response> getResponses() {
-        return responses;
-    }
-
-    public Responses getResponsesObject() { return responsesObject; }
-
-    @Deprecated
-    public void setResponses(Map<String, Response> responses) {
-        this.responses = responses;
         if (this.responsesObject == null && responses != null) {
             this.responsesObject = new Responses();
 
@@ -230,10 +220,10 @@ public class Operation {
                 this.responsesObject.put(key, responses.get(key));
             }
         }
+        return responses;
     }
 
-    public void setResponsesObject(Responses responsesObject) {
-        this.responsesObject = responsesObject;
+    public Responses getResponsesObject() {
         if (responses == null && responsesObject != null) {
             responses = new LinkedHashMap<String, Response>();
 
@@ -241,9 +231,18 @@ public class Operation {
                 responses.put(key, responsesObject.get(key));
             }
         }
+        return responsesObject;
     }
 
-    @Deprecated
+    public void setResponses(Map<String, Response> responses) {
+        this.responses = responses;
+    }
+
+    public void setResponsesObject(Responses responsesObject) {
+        this.responsesObject = responsesObject;
+
+    }
+    
     public void addResponse(String key, Response response) {
         if (responses == null) {
             responses = new LinkedHashMap<String, Response>();

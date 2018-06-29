@@ -90,7 +90,7 @@ public class Swagger {
         return this;
     }
 
-    public Swagger paths(Paths paths) {
+    public Swagger paths(Map<String, Path> paths) {
         this.setPaths(paths);
         return this;
     }
@@ -103,7 +103,7 @@ public class Swagger {
         return this;
     }
 
-    public Swagger responses(LinkedHashMap<String, Response> responses) {
+    public Swagger responses(Map<String, Response> responses) {
         this.responses = responses;
         return this;
     }
@@ -375,7 +375,7 @@ public class Swagger {
         return responses;
     }
 
-    public void setResponses(LinkedHashMap<String, Response> responses) {
+    public void setResponses(Map<String, Response> responses) {
         this.responses = responses;
     }
 

@@ -11,7 +11,6 @@ import io.swagger.models.ComposedModel;
 import io.swagger.models.ModelImpl;
 import io.swagger.models.Operation;
 
-import io.swagger.models.Paths;
 import io.swagger.models.RefModel;
 import io.swagger.models.RefResponse;
 
@@ -106,7 +105,7 @@ public class PojosTest extends PowerMockTestCase {
 
         Set<Class<?>> classesUsingInheritedFields = new HashSet<Class<?>>(Arrays.asList(ApiKeyAuthDefinition.class,
                 BodyParameter.class, ArrayProperty.class, BaseIntegerProperty.class, CookieParameter.class));
-        Set<Class<?>> excludedClasses = new HashSet<Class<?>>(Arrays.asList(PropertyBuilder.class,Responses.class,Paths.class));
+        Set<Class<?>> excludedClasses = new HashSet<Class<?>>(Arrays.asList(PropertyBuilder.class,Responses.class));
         for (PojoClass clazz : pojoClasses) {
             if (excludedClasses.contains(clazz.getClazz()))
                 continue;
@@ -121,7 +120,6 @@ public class PojosTest extends PowerMockTestCase {
 
         ArrayList<Class<?>> excludeMock = new ArrayList<>();
         excludeMock.add(Responses.class);
-        excludeMock.add(Paths.class);
         classesExclusions.put(Operation.class, new HashSet<String>(Arrays.asList("deprecated", "vendorExtensions")));
         classesExclusions.put(Swagger.class, new HashSet<String>(Arrays.asList("vendorExtensions")));
 
