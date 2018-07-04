@@ -42,6 +42,7 @@ import io.swagger.v3.jaxrs2.resources.Ticket2793Resource;
 import io.swagger.v3.jaxrs2.resources.Ticket2794Resource;
 import io.swagger.v3.jaxrs2.resources.Ticket2806Resource;
 import io.swagger.v3.jaxrs2.resources.Ticket2818Resource;
+import io.swagger.v3.jaxrs2.resources.Ticket2848Resource;
 import io.swagger.v3.jaxrs2.resources.UserAnnotationResource;
 import io.swagger.v3.jaxrs2.resources.extensions.ExtensionsResource;
 import io.swagger.v3.jaxrs2.resources.extensions.OperationExtensionsResource;
@@ -1219,6 +1220,39 @@ public class ReaderTest {
             }
             return super.filterOperation(operation, api, params, cookies, headers);
         }
+    }
+
+    @Test(description = "array schema required property")
+    public void testTicket2848() {
+        Reader reader = new Reader(new OpenAPI());
+
+        OpenAPI openAPI = reader.read(Ticket2848Resource.class);
+        String yaml = "openapi: 3.0.1\n" +
+                "paths:\n" +
+                "  /:\n" +
+                "    get:\n" +
+                "      operationId: getter\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*':\n" +
+                "              schema:\n" +
+                "                $ref: '#/components/schemas/Town'\n" +
+                "components:\n" +
+                "  schemas:\n" +
+                "    Town:\n" +
+                "      required:\n" +
+                "      - streets\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        streets:\n" +
+                "          minItems: 1\n" +
+                "          uniqueItems: true\n" +
+                "          type: array\n" +
+                "          items:\n" +
+                "            type: string\n";
+        SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
     }
 }
 
