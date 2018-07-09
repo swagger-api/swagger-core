@@ -32,6 +32,7 @@ import io.swagger.v3.core.util.PrimitiveType;
 import io.swagger.v3.core.util.ReflectionUtils;
 import io.swagger.v3.oas.annotations.media.DiscriminatorMapping;
 import io.swagger.v3.oas.models.ExternalDocumentation;
+import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.media.ArraySchema;
 import io.swagger.v3.oas.models.media.ComposedSchema;
 import io.swagger.v3.oas.models.media.Discriminator;
@@ -234,7 +235,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         }
 
         if (model == null && type.isEnumType()) {
-            model = new StringSchema();
+            model = OpenAPI.RECYCLE_ENUM ? new StringSchema().name(name).$ref(name) : new StringSchema();
             _addEnumProps(type.getRawClass(), model);
             isPrimitive = true;
         }
@@ -816,7 +817,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             if (useIndex) {
                 n = String.valueOf(en.ordinal());
             } else if (useToString) {
-                n = en.toString();
+                n = OpenAPI.USE_ENUMNAME ? en.name() : en.toString();
             } else {
                 n = _intr.findEnumValue(en);
             }
@@ -1807,7 +1808,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             String COMBINER = "-or-";
             StringBuilder sb = new StringBuilder();
             for (Class<?> view : type.getJsonViewAnnotation().value()) {
-                sb.append(view.getSimpleName()).append(COMBINER);
+                sb.append(OpenAPI.USE_FULLNAME ? view.getName() : view.getSimpleName()).append(COMBINER);
             }
             String suffix = sb.substring(0, sb.length() - COMBINER.length());
             name = originalName + "_" + suffix;

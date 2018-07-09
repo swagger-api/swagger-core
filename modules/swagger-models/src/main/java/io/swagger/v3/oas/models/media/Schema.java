@@ -18,6 +18,7 @@ package io.swagger.v3.oas.models.media;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.v3.oas.models.ExternalDocumentation;
+import io.swagger.v3.oas.models.OpenAPI;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -77,7 +78,10 @@ public class Schema<T> {
      **/
     @JsonIgnore
     public String getName() {
-        return this.name;
+        if (OpenAPI.USE_FULLNAME && this.name != null) {
+        	return this.name.replaceAll("\\$", "...");
+		}
+    	return this.name;
     }
 
     public void setName(String name) {
@@ -601,7 +605,11 @@ public class Schema<T> {
     }
 
     public void set$ref(String $ref) {
-        if ($ref != null && ($ref.indexOf(".") == -1 && $ref.indexOf("/") == -1)) {
+        // THUAN
+		if (OpenAPI.USE_FULLNAME && $ref != null) {
+			$ref = $ref.replaceAll("\\$", "...");
+		}
+        if ($ref != null && (($ref.indexOf(".") == -1 || OpenAPI.USE_FULLNAME) && $ref.indexOf("/") == -1)) {
             $ref = "#/components/schemas/" + $ref;
         }
         this.$ref = $ref;

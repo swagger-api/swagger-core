@@ -5,6 +5,7 @@ package io.swagger.v3.core.jackson;
 import com.fasterxml.jackson.databind.JavaType;
 import io.swagger.v3.core.util.AnnotationsUtils;
 import io.swagger.v3.core.util.PrimitiveType;
+import io.swagger.v3.oas.models.OpenAPI;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.WordUtils;
 
@@ -42,24 +43,26 @@ public class TypeNameResolver {
 
     protected String nameForClass(Class<?> cls, Set<Options> options) {
         if (options.contains(Options.SKIP_API_MODEL)) {
-            return cls.getSimpleName();
+            return OpenAPI.USE_FULLNAME ? cls.getName() : cls.getSimpleName();
         }
 
         io.swagger.v3.oas.annotations.media.Schema mp = AnnotationsUtils.getSchemaDeclaredAnnotation(cls);
 
         final String modelName = mp == null ? null : StringUtils.trimToNull(mp.name());
-        return modelName == null ? cls.getSimpleName() : modelName;
+        return modelName == null ? (OpenAPI.USE_FULLNAME ? cls.getName() : cls.getSimpleName()) : modelName;
     }
 
     protected String nameForGenericType(JavaType type, Set<Options> options) {
         final StringBuilder generic = new StringBuilder(nameForClass(type, options));
-        final int count = type.containedTypeCount();
-        for (int i = 0; i < count; ++i) {
-            final JavaType arg = type.containedType(i);
-            final String argName = PrimitiveType.fromType(arg) != null ? nameForClass(arg, options) :
-                    nameForType(arg, options);
-            generic.append(WordUtils.capitalize(argName));
-        }
+        if (!OpenAPI.OMIT_GENERIC) {
+			final int count = type.containedTypeCount();
+			for (int i = 0; i < count; ++i) {
+				final JavaType arg = type.containedType(i);
+				final String argName = PrimitiveType.fromType(arg) != null ? nameForClass(arg, options) :
+						nameForType(arg, options);
+				generic.append(WordUtils.capitalize(argName));
+			}
+		}
         return generic.toString();
     }
 

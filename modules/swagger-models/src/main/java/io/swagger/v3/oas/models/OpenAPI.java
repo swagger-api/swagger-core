@@ -34,7 +34,14 @@ import java.util.Objects;
  */
 
 public class OpenAPI {
-    private String openapi = "3.0.1";
+	// THUAN
+	public static boolean USE_FULLNAME = false;
+	public static boolean USE_ENUMNAME = false;
+	public static boolean OMIT_GENERIC = false;
+	public static boolean RECYCLE_ENUM = false;
+
+
+	private String openapi = "3.0.1";
     private Info info = null;
     private ExternalDocumentation externalDocs = null;
     private List<Server> servers = null;
