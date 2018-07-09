@@ -1,6 +1,7 @@
 package io.swagger.v3.core.util;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.databind.BeanDescription;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -69,6 +70,21 @@ public class ObjectMapperFactory {
 
     private static ObjectMapper create(JsonFactory jsonFactory) {
         ObjectMapper mapper = jsonFactory == null ? new ObjectMapper() : new ObjectMapper(jsonFactory);
+
+        // THUAN
+        if (OpenAPI.SHOW_FIELD != null) {
+        	mapper.setVisibility(PropertyAccessor.FIELD, OpenAPI.SHOW_FIELD);
+		}
+		if (OpenAPI.SHOW_GETTER != null) {
+        	mapper.setVisibility(PropertyAccessor.GETTER, OpenAPI.SHOW_GETTER);
+			mapper.setVisibility(PropertyAccessor.IS_GETTER, OpenAPI.SHOW_GETTER);
+		}
+		if (OpenAPI.SHOW_SETTER != null) {
+        	mapper.setVisibility(PropertyAccessor.SETTER, OpenAPI.SHOW_SETTER);
+		}
+		if (OpenAPI.SHOW_CREATOR != null) {
+        	mapper.setVisibility(PropertyAccessor.CREATOR, OpenAPI.SHOW_CREATOR);
+		}
 
         // handle ref schema serialization skipping all other props
         mapper.registerModule(new SimpleModule() {
