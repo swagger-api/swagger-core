@@ -184,6 +184,6 @@
         </dependency>
     </dependencies>
     <properties>
-        <swagger.version>2.0.3-THUAN</swagger.version>
+        <swagger.version>2.0.3-SNAPSHOT</swagger.version>
     </properties>
 </project>

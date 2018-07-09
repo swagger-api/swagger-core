@@ -292,9 +292,9 @@
         </dependency>
     </dependencies>
     <properties>
-        <models.version>2.0.3-THUAN</models.version>
-        <annotations.version>2.0.3-THUAN</annotations.version>
-        <core.version>2.0.3-THUAN</core.version>
-        <integration.version>2.0.3-THUAN</integration.version>
+        <models.version>2.0.3-SNAPSHOT</models.version>
+        <annotations.version>2.0.3-SNAPSHOT</annotations.version>
+        <core.version>2.0.3-SNAPSHOT</core.version>
+        <integration.version>2.0.3-SNAPSHOT</integration.version>
     </properties>
 </project>
