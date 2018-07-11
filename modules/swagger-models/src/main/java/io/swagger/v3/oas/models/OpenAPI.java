@@ -41,12 +41,6 @@ public class OpenAPI {
 	public static boolean OMIT_GENERIC = false; // remove generic part in schemas' name
 	public static boolean RECYCLE_ENUM = false; // make enums reusable
 
-	// THUAN - Configurations - Default Visibility
-	public static JsonAutoDetect.Visibility SHOW_FIELD = null;
-	public static JsonAutoDetect.Visibility SHOW_GETTER = null;
-	public static JsonAutoDetect.Visibility SHOW_SETTER = null;
-	public static JsonAutoDetect.Visibility SHOW_CREATOR = null;
-
 	private String openapi = "3.0.1";
     private Info info = null;
     private ExternalDocumentation externalDocs = null;
