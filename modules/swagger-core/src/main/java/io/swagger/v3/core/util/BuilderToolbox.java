@@ -11,6 +11,7 @@ import java.lang.reflect.Type;
 import java.util.Map;
 
 public class BuilderToolbox {
+	// add additional model and its respective dependencies to OpenAPI
 	public static void addModel(OpenAPI api, Type type) {
 		if (api.getComponents() == null) {
 			api.components(new Components());
