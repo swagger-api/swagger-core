@@ -28,9 +28,4 @@ public class BuilderToolbox {
 			}
 		}
 	}
-
-	public Schema enumarizedSchema(Schema schema) {
-
-		return schema;
-	}
 }
