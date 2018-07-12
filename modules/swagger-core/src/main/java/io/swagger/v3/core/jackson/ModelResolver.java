@@ -476,6 +476,24 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             propertiesToIgnore.addAll(Arrays.asList(ignoreProperties.value()));
         }
 
+        if (OpenAPI.HIDE_PARENTS && beanDesc.getClassAnnotations().get(io.swagger.v3.oas.annotations.media.Schema.class) != null) {
+			for (Class ancestor : beanDesc.getClassAnnotations().get(io.swagger.v3.oas.annotations.media.Schema.class).allOf()) {
+				AnnotatedType annotatedAncestor = new AnnotatedType(ancestor);
+
+				final JavaType ancestorType;
+				if (annotatedAncestor.getType() instanceof JavaType) {
+					ancestorType = (JavaType) annotatedAncestor.getType();
+				} else {
+					ancestorType = _mapper.constructType(annotatedAncestor.getType());
+				}
+				final BeanDescription beanDescription = _mapper.getSerializationConfig().introspect(ancestorType);
+
+				beanDescription.findProperties().forEach(
+						p -> propertiesToIgnore.add(p.getName())
+				);
+			}
+        }
+
         List<Schema> props = new ArrayList<Schema>();
         Map<String, Schema> modelProps = new LinkedHashMap<String, Schema>();
 
