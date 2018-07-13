@@ -71,7 +71,7 @@ public class Components {
         if (this.schemas == null) {
             this.schemas = new HashMap<String, Schema>();
         }
-        this.schemas.put(key, (OpenAPI.RECYCLE_ENUM && schemasItem.getEnum() != null) ? schemasItem.$ref(null) : schemasItem);
+        this.schemas.put(key, (OpenAPIBuilderOptions.RECYCLE_ENUM && schemasItem.getEnum() != null) ? schemasItem.$ref(null) : schemasItem);
         return this;
     }
 

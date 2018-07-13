@@ -3,53 +3,23 @@ package io.swagger.v3.core.converting;
 import com.google.common.collect.ImmutableSet;
 import io.swagger.v3.core.converter.ModelConverters;
 import io.swagger.v3.core.matchers.SerializationMatchers;
-import io.swagger.v3.core.oas.models.Cat;
-import io.swagger.v3.core.oas.models.ClientOptInput;
-import io.swagger.v3.core.oas.models.Employee;
-import io.swagger.v3.core.oas.models.EmptyModel;
-import io.swagger.v3.core.oas.models.JacksonReadonlyModel;
-import io.swagger.v3.core.oas.models.JodaDateTimeModel;
-import io.swagger.v3.core.oas.models.Model1155;
-import io.swagger.v3.core.oas.models.ModelPropertyName;
-import io.swagger.v3.core.oas.models.ModelWithAltPropertyName;
-import io.swagger.v3.core.oas.models.ModelWithApiModel;
-import io.swagger.v3.core.oas.models.ModelWithEnumArray;
-import io.swagger.v3.core.oas.models.ModelWithFormattedStrings;
-import io.swagger.v3.core.oas.models.ModelWithNumbers;
-import io.swagger.v3.core.oas.models.ModelWithOffset;
-import io.swagger.v3.core.oas.models.ModelWithTuple2;
-import io.swagger.v3.core.oas.models.Person;
+import io.swagger.v3.core.oas.models.*;
 import io.swagger.v3.core.oas.models.composition.AbstractModelWithApiModel;
 import io.swagger.v3.core.oas.models.composition.ModelWithUrlProperty;
 import io.swagger.v3.core.oas.models.composition.Pet;
 import io.swagger.v3.core.util.Json;
 import io.swagger.v3.core.util.ResourceUtils;
 import io.swagger.v3.core.util.Yaml;
-import io.swagger.v3.oas.models.media.ArraySchema;
-import io.swagger.v3.oas.models.media.IntegerSchema;
-import io.swagger.v3.oas.models.media.MapSchema;
-import io.swagger.v3.oas.models.media.NumberSchema;
-import io.swagger.v3.oas.models.media.Schema;
-import io.swagger.v3.oas.models.media.StringSchema;
+import io.swagger.v3.oas.models.media.*;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.net.URI;
 import java.net.URL;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.TreeSet;
-import java.util.UUID;
+import java.util.*;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertFalse;
-import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertNull;
-import static org.testng.Assert.assertTrue;
-import static org.testng.Assert.fail;
+import static org.testng.Assert.*;
 
 public class ModelConverterTest {
 

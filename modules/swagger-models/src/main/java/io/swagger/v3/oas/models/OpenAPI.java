@@ -16,7 +16,6 @@
 
 package io.swagger.v3.oas.models;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
@@ -35,13 +34,6 @@ import java.util.Objects;
  */
 
 public class OpenAPI {
-	// THUAN - Configurations - Miscellaneous
-	public static boolean USE_FULLNAME = false; // include package name in schemas
-	public static boolean USE_ENUMNAME = false; // use Enum's name() instead of toString()
-	public static boolean OMIT_GENERIC = false; // remove generic part in schemas' name
-	public static boolean RECYCLE_ENUM = false; // make enums reusable
-    public static boolean HIDE_PARENTS = false;
-
 	private String openapi = "3.0.1";
     private Info info = null;
     private ExternalDocumentation externalDocs = null;

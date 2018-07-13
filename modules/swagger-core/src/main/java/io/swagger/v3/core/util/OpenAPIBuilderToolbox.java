@@ -10,7 +10,7 @@ import io.swagger.v3.oas.models.media.Schema;
 import java.lang.reflect.Type;
 import java.util.Map;
 
-public class BuilderToolbox {
+public class OpenAPIBuilderToolbox {
 	// add additional model and its respective dependencies to OpenAPI
 	public static void addModel(OpenAPI api, Type type) {
 		if (api.getComponents() == null) {

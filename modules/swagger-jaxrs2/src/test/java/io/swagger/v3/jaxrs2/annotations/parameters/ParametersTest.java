@@ -1,7 +1,6 @@
 package io.swagger.v3.jaxrs2.annotations.parameters;
 
 import com.google.common.collect.Sets;
-import io.swagger.v3.core.util.Yaml;
 import io.swagger.v3.jaxrs2.Reader;
 import io.swagger.v3.jaxrs2.annotations.AbstractAnnotationTest;
 import io.swagger.v3.jaxrs2.resources.ResourceWithJacksonBean;

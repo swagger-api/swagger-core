@@ -13,18 +13,7 @@ import org.slf4j.LoggerFactory;
 import javax.servlet.ServletConfig;
 import java.io.IOException;
 
-import static io.swagger.v3.jaxrs2.integration.ServletConfigContextUtils.OPENAPI_CONFIGURATION_BUILDER_KEY;
-import static io.swagger.v3.jaxrs2.integration.ServletConfigContextUtils.OPENAPI_CONFIGURATION_CACHE_TTL_KEY;
-import static io.swagger.v3.jaxrs2.integration.ServletConfigContextUtils.OPENAPI_CONFIGURATION_FILTER_KEY;
-import static io.swagger.v3.jaxrs2.integration.ServletConfigContextUtils.OPENAPI_CONFIGURATION_PRETTYPRINT_KEY;
-import static io.swagger.v3.jaxrs2.integration.ServletConfigContextUtils.OPENAPI_CONFIGURATION_READALLRESOURCES_KEY;
-import static io.swagger.v3.jaxrs2.integration.ServletConfigContextUtils.OPENAPI_CONFIGURATION_READER_KEY;
-import static io.swagger.v3.jaxrs2.integration.ServletConfigContextUtils.OPENAPI_CONFIGURATION_SCANNER_KEY;
-import static io.swagger.v3.jaxrs2.integration.ServletConfigContextUtils.getBooleanInitParam;
-import static io.swagger.v3.jaxrs2.integration.ServletConfigContextUtils.getInitParam;
-import static io.swagger.v3.jaxrs2.integration.ServletConfigContextUtils.getLongInitParam;
-import static io.swagger.v3.jaxrs2.integration.ServletConfigContextUtils.resolveResourceClasses;
-import static io.swagger.v3.jaxrs2.integration.ServletConfigContextUtils.resolveResourcePackages;
+import static io.swagger.v3.jaxrs2.integration.ServletConfigContextUtils.*;
 
 public class ServletOpenApiConfigurationLoader implements OpenApiConfigurationLoader {
 

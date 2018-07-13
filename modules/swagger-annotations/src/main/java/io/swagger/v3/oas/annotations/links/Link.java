@@ -19,11 +19,7 @@ package io.swagger.v3.oas.annotations.links;
 import io.swagger.v3.oas.annotations.extensions.Extension;
 import io.swagger.v3.oas.annotations.servers.Server;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Inherited;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.lang.annotation.*;
 
 /**
  * The annotation may be applied in {@link io.swagger.v3.oas.annotations.responses.ApiResponse#links()} to add OpenAPI links to a response.

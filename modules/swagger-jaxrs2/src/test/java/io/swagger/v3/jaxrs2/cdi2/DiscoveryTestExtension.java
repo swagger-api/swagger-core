@@ -1,8 +1,5 @@
 package io.swagger.v3.jaxrs2.cdi2;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.spi.AnnotatedType;
 import javax.enterprise.inject.spi.Extension;
@@ -10,6 +7,8 @@ import javax.enterprise.inject.spi.ProcessAnnotatedType;
 import javax.enterprise.inject.spi.WithAnnotations;
 import javax.ws.rs.Path;
 import javax.ws.rs.ext.Provider;
+import java.util.HashSet;
+import java.util.Set;
 
 public class DiscoveryTestExtension implements Extension {
 

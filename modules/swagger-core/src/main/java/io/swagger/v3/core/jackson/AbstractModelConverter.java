@@ -1,11 +1,7 @@
 package io.swagger.v3.core.jackson;
 
 import com.fasterxml.jackson.core.Version;
-import com.fasterxml.jackson.databind.AnnotationIntrospector;
-import com.fasterxml.jackson.databind.BeanDescription;
-import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.PropertyName;
+import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.jsontype.NamedType;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import io.swagger.v3.core.converter.AnnotatedType;

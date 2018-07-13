@@ -1,59 +1,23 @@
 package io.swagger.v3.core.jackson;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIdentityReference;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.fasterxml.jackson.annotation.JsonUnwrapped;
-import com.fasterxml.jackson.annotation.JsonView;
-import com.fasterxml.jackson.annotation.ObjectIdGenerator;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-import com.fasterxml.jackson.databind.AnnotationIntrospector;
-import com.fasterxml.jackson.databind.BeanDescription;
-import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.PropertyMetadata;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.introspect.Annotated;
-import com.fasterxml.jackson.databind.introspect.AnnotatedClass;
-import com.fasterxml.jackson.databind.introspect.AnnotatedMember;
-import com.fasterxml.jackson.databind.introspect.AnnotatedMethod;
-import com.fasterxml.jackson.databind.introspect.BeanPropertyDefinition;
-import com.fasterxml.jackson.databind.introspect.POJOPropertyBuilder;
+import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.databind.*;
+import com.fasterxml.jackson.databind.introspect.*;
 import com.fasterxml.jackson.databind.jsontype.NamedType;
 import io.swagger.v3.core.converter.AnnotatedType;
 import io.swagger.v3.core.converter.ModelConverter;
 import io.swagger.v3.core.converter.ModelConverterContext;
-import io.swagger.v3.core.util.AnnotationsUtils;
-import io.swagger.v3.core.util.Constants;
-import io.swagger.v3.core.util.Json;
-import io.swagger.v3.core.util.PrimitiveType;
-import io.swagger.v3.core.util.ReflectionUtils;
+import io.swagger.v3.core.util.*;
 import io.swagger.v3.oas.annotations.media.DiscriminatorMapping;
 import io.swagger.v3.oas.models.ExternalDocumentation;
-import io.swagger.v3.oas.models.OpenAPI;
-import io.swagger.v3.oas.models.media.ArraySchema;
-import io.swagger.v3.oas.models.media.ComposedSchema;
-import io.swagger.v3.oas.models.media.Discriminator;
-import io.swagger.v3.oas.models.media.IntegerSchema;
-import io.swagger.v3.oas.models.media.MapSchema;
-import io.swagger.v3.oas.models.media.NumberSchema;
-import io.swagger.v3.oas.models.media.Schema;
-import io.swagger.v3.oas.models.media.StringSchema;
-import io.swagger.v3.oas.models.media.UUIDSchema;
-import io.swagger.v3.oas.models.media.XML;
+import io.swagger.v3.oas.models.OpenAPIBuilderOptions;
+import io.swagger.v3.oas.models.media.*;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.validation.constraints.DecimalMax;
-import javax.validation.constraints.DecimalMin;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -62,17 +26,7 @@ import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -235,7 +189,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         }
 
         if (model == null && type.isEnumType()) {
-            model = OpenAPI.RECYCLE_ENUM ? new StringSchema().name(name).$ref(name) : new StringSchema();
+            model = OpenAPIBuilderOptions.RECYCLE_ENUM ? new StringSchema().name(name).$ref(name) : new StringSchema();
             _addEnumProps(type.getRawClass(), model);
             isPrimitive = true;
         }
@@ -476,7 +430,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             propertiesToIgnore.addAll(Arrays.asList(ignoreProperties.value()));
         }
 
-        if (OpenAPI.HIDE_PARENTS && beanDesc.getClassAnnotations().get(io.swagger.v3.oas.annotations.media.Schema.class) != null) {
+        if (OpenAPIBuilderOptions.HIDE_PARENTS && beanDesc.getClassAnnotations().get(io.swagger.v3.oas.annotations.media.Schema.class) != null) {
 			for (Class ancestor : beanDesc.getClassAnnotations().get(io.swagger.v3.oas.annotations.media.Schema.class).allOf()) {
 				AnnotatedType annotatedAncestor = new AnnotatedType(ancestor);
 
@@ -835,7 +789,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             if (useIndex) {
                 n = String.valueOf(en.ordinal());
             } else if (useToString) {
-                n = OpenAPI.USE_ENUMNAME ? en.name() : en.toString();
+                n = OpenAPIBuilderOptions.USE_ENUMNAME ? en.name() : en.toString();
             } else {
                 n = _intr.findEnumValue(en);
             }
@@ -1826,7 +1780,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             String COMBINER = "-or-";
             StringBuilder sb = new StringBuilder();
             for (Class<?> view : type.getJsonViewAnnotation().value()) {
-                sb.append(OpenAPI.USE_FULLNAME ? view.getName() : view.getSimpleName()).append(COMBINER);
+                sb.append(OpenAPIBuilderOptions.USE_FULLNAME ? view.getName() : view.getSimpleName()).append(COMBINER);
             }
             String suffix = sb.substring(0, sb.length() - COMBINER.length());
             name = originalName + "_" + suffix;

@@ -2,12 +2,7 @@ package io.swagger.v3.core.converting;
 
 import io.swagger.v3.core.converter.ModelConverters;
 import io.swagger.v3.core.matchers.SerializationMatchers;
-import io.swagger.v3.core.oas.models.composition.AbstractBaseModelWithoutFields;
-import io.swagger.v3.core.oas.models.composition.Animal;
-import io.swagger.v3.core.oas.models.composition.AnimalClass;
-import io.swagger.v3.core.oas.models.composition.AnimalWithSchemaSubtypes;
-import io.swagger.v3.core.oas.models.composition.Human;
-import io.swagger.v3.core.oas.models.composition.ModelWithFieldWithSubTypes;
+import io.swagger.v3.core.oas.models.composition.*;
 import io.swagger.v3.core.util.Json;
 import io.swagger.v3.core.util.ResourceUtils;
 import io.swagger.v3.oas.models.media.Schema;

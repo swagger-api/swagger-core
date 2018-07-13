@@ -3,11 +3,7 @@ package io.swagger;
 import io.swagger.converter.ModelConverters;
 import io.swagger.models.HibernateBeanValidationsModel;
 import io.swagger.models.Model;
-import io.swagger.models.properties.ArrayProperty;
-import io.swagger.models.properties.DoubleProperty;
-import io.swagger.models.properties.IntegerProperty;
-import io.swagger.models.properties.Property;
-import io.swagger.models.properties.StringProperty;
+import io.swagger.models.properties.*;
 import org.testng.annotations.Test;
 
 import java.util.Map;

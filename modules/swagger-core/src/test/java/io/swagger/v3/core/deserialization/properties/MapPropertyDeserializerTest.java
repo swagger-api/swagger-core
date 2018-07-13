@@ -11,9 +11,7 @@ import io.swagger.v3.oas.models.responses.ApiResponse;
 import org.testng.annotations.Test;
 
 import static io.swagger.v3.core.util.TestUtils.normalizeLineEnds;
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.*;
 
 public class MapPropertyDeserializerTest {
     private static final String json = "{\n" +

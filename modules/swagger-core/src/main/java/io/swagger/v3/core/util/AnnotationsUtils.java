@@ -14,19 +14,14 @@ import io.swagger.v3.oas.annotations.media.DiscriminatorMapping;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.ExternalDocumentation;
-import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.OpenAPIBuilderOptions;
 import io.swagger.v3.oas.models.examples.Example;
 import io.swagger.v3.oas.models.headers.Header;
 import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
 import io.swagger.v3.oas.models.links.Link;
-import io.swagger.v3.oas.models.media.ArraySchema;
-import io.swagger.v3.oas.models.media.ComposedSchema;
-import io.swagger.v3.oas.models.media.Content;
-import io.swagger.v3.oas.models.media.Encoding;
-import io.swagger.v3.oas.models.media.MediaType;
-import io.swagger.v3.oas.models.media.Schema;
+import io.swagger.v3.oas.models.media.*;
 import io.swagger.v3.oas.models.servers.Server;
 import io.swagger.v3.oas.models.servers.ServerVariable;
 import io.swagger.v3.oas.models.servers.ServerVariables;
@@ -41,14 +36,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 public abstract class AnnotationsUtils {
 
@@ -523,7 +511,7 @@ public abstract class AnnotationsUtils {
     public static Schema resolveSchemaFromType(Class<?> schemaImplementation, Components components, JsonView jsonViewAnnotation) {
         Schema schemaObject = new Schema();
         if (schemaImplementation.getName().startsWith("java.lang")) {
-            schemaObject.setType((OpenAPI.USE_FULLNAME ? schemaImplementation.getName() : schemaImplementation.getSimpleName()).toLowerCase());
+            schemaObject.setType((OpenAPIBuilderOptions.USE_FULLNAME ? schemaImplementation.getName() : schemaImplementation.getSimpleName()).toLowerCase());
         } else {
             ResolvedSchema resolvedSchema = ModelConverters.getInstance().readAllAsResolvedSchema(new AnnotatedType().type(schemaImplementation).jsonViewAnnotation(jsonViewAnnotation));
             Map<String, Schema> schemaMap;
@@ -1062,7 +1050,7 @@ public abstract class AnnotationsUtils {
         if (schemaImplementation != Void.class) {
             Schema schemaObject = new Schema();
             if (schemaImplementation.getName().startsWith("java.lang")) {
-                schemaObject.setType((OpenAPI.USE_FULLNAME ? schemaImplementation.getName() : schemaImplementation.getSimpleName()).toLowerCase());
+                schemaObject.setType((OpenAPIBuilderOptions.USE_FULLNAME ? schemaImplementation.getName() : schemaImplementation.getSimpleName()).toLowerCase());
             } else {
                 ResolvedSchema resolvedSchema = ModelConverters.getInstance().readAllAsResolvedSchema(new AnnotatedType().type(schemaImplementation).jsonViewAnnotation(jsonViewAnnotation));
                 if (resolvedSchema != null) {

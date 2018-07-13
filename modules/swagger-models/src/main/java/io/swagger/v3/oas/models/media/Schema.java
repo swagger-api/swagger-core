@@ -18,15 +18,10 @@ package io.swagger.v3.oas.models.media;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.v3.oas.models.ExternalDocumentation;
-import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.OpenAPIBuilderOptions;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * Schema
@@ -78,7 +73,7 @@ public class Schema<T> {
      **/
     @JsonIgnore
     public String getName() {
-        if (OpenAPI.USE_FULLNAME && this.name != null) {
+        if (OpenAPIBuilderOptions.USE_FULLNAME && this.name != null) {
         	return this.name.replaceAll("\\$", "...");
 		}
     	return this.name;
@@ -606,10 +601,10 @@ public class Schema<T> {
 
     public void set$ref(String $ref) {
         // THUAN
-		if (OpenAPI.USE_FULLNAME && $ref != null) {
+		if (OpenAPIBuilderOptions.USE_FULLNAME && $ref != null) {
 			$ref = $ref.replaceAll("\\$", "...");
 		}
-        if ($ref != null && (($ref.indexOf(".") == -1 || OpenAPI.USE_FULLNAME) && $ref.indexOf("/") == -1)) {
+        if ($ref != null && (($ref.indexOf(".") == -1 || OpenAPIBuilderOptions.USE_FULLNAME) && $ref.indexOf("/") == -1)) {
             $ref = "#/components/schemas/" + $ref;
         }
         this.$ref = $ref;

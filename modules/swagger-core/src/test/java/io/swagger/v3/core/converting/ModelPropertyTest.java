@@ -2,25 +2,15 @@ package io.swagger.v3.core.converting;
 
 import io.swagger.v3.core.converter.ModelConverters;
 import io.swagger.v3.core.matchers.SerializationMatchers;
-import io.swagger.v3.core.oas.models.Model1979;
-import io.swagger.v3.core.oas.models.ModelWithBooleanProperty;
-import io.swagger.v3.core.oas.models.ModelWithModelPropertyOverrides;
-import io.swagger.v3.core.oas.models.ModelWithPrimitiveArray;
-import io.swagger.v3.core.oas.models.ReadOnlyFields;
-import io.swagger.v3.oas.models.media.ArraySchema;
-import io.swagger.v3.oas.models.media.BooleanSchema;
-import io.swagger.v3.oas.models.media.IntegerSchema;
-import io.swagger.v3.oas.models.media.Schema;
-import io.swagger.v3.oas.models.media.StringSchema;
+import io.swagger.v3.core.oas.models.*;
+import io.swagger.v3.oas.models.media.*;
 import org.testng.annotations.Test;
 
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.*;
 
 public class ModelPropertyTest {
     @Test

@@ -1,8 +1,6 @@
 package io.swagger.v3.jaxrs2.annotations.examples;
 
-import io.swagger.v3.jaxrs2.Reader;
 import io.swagger.v3.jaxrs2.annotations.AbstractAnnotationTest;
-import io.swagger.v3.jaxrs2.matchers.SerializationMatchers;
 import io.swagger.v3.jaxrs2.resources.model.User;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -13,7 +11,6 @@ import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.models.OpenAPI;
 import org.testng.annotations.Test;
 
 import javax.ws.rs.Consumes;

@@ -2,8 +2,6 @@ package io.swagger.v3.jaxrs2;
 
 import io.swagger.v3.jaxrs2.matchers.SerializationMatchers;
 import io.swagger.v3.jaxrs2.resources.EnumParameterResource;
-import io.swagger.v3.jaxrs2.resources.JsonIdentityCyclicResource;
-import io.swagger.v3.jaxrs2.resources.JsonIdentityResource;
 import io.swagger.v3.oas.models.OpenAPI;
 import org.testng.annotations.Test;
 

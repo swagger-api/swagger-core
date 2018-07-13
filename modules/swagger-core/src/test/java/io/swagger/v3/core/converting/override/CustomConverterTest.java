@@ -11,9 +11,7 @@ import org.testng.annotations.Test;
 
 import java.util.Iterator;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertNull;
+import static org.testng.Assert.*;
 
 public class CustomConverterTest {
 

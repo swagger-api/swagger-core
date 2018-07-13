@@ -1,10 +1,6 @@
 package io.swagger.v3.oas.integration;
 
-import io.swagger.v3.oas.integration.api.OpenAPIConfiguration;
-import io.swagger.v3.oas.integration.api.OpenApiConfigurationLoader;
-import io.swagger.v3.oas.integration.api.OpenApiContext;
-import io.swagger.v3.oas.integration.api.OpenApiReader;
-import io.swagger.v3.oas.integration.api.OpenApiScanner;
+import io.swagger.v3.oas.integration.api.*;
 import io.swagger.v3.oas.models.OpenAPI;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -12,11 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class GenericOpenApiContext<T extends GenericOpenApiContext> implements OpenApiContext {
