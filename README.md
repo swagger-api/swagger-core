@@ -19,6 +19,7 @@ By directly manipulating the OpenAPI object and this version, you have lots of c
 Bonus: If you want to build the OpenAPI object directly, you can use Reflections to achieve much better results compared to letting Swagger do everything on its own.
 
 Lam Gia Thuan
+
 A super handsome programmer who feels frustrated with Swagger Core's lack of functionalities :) 
 
 **NOTE:** If you're looking for swagger 1.5.X and OpenApi 2.0, please refer to [1.5 branch](https://github.com/swagger-api/swagger-core/tree/1.5)
