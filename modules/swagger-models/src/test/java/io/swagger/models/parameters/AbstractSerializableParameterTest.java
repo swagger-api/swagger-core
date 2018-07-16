@@ -4,6 +4,7 @@ import io.swagger.models.properties.ArrayProperty;
 import io.swagger.models.properties.BaseIntegerProperty;
 import io.swagger.models.properties.BooleanProperty;
 import io.swagger.models.properties.DecimalProperty;
+import io.swagger.models.properties.LongProperty;
 import io.swagger.models.properties.Property;
 import io.swagger.models.properties.StringProperty;
 import org.testng.annotations.BeforeMethod;
@@ -333,6 +334,26 @@ public class AbstractSerializableParameterTest {
         // then
         assertEquals(instance.getExample(), example,
                 "The example value must not change when when set an array property");
+    }
+
+    @Test
+    public void testGetExampleWithEmptyString() {
+        // given
+        instance.setProperty(new LongProperty());
+        example = null;
+
+        // when
+        instance.setExample(example);
+
+        // then
+        assertEquals(instance.getExample(), null, "The example must be null if the value is null");
+
+        // given
+        instance.setProperty(new LongProperty());
+        example = "";
+        
+        // then
+        assertEquals(instance.getExample(), null, "The example must be empty string if the value is an empty string");
     }
 
     @Test
