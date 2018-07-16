@@ -1,4 +1,4 @@
-This is a better version for Swagger Core with the addition of many features for those who would like to directly build the OpenAPI object instead of letting Swagger handle things automatically. Some options should also be valid for those using the automatic way.
+This is an extended version for Swagger Core with the addition of many features for those who would like to directly build the OpenAPI object instead of letting Swagger handle things automatically. Some options should also be valid for those using the automatic way.
 
 By directly manipulating the OpenAPI object and this version, you have lots of customization that the standard versions can only dream of. For example:
 
