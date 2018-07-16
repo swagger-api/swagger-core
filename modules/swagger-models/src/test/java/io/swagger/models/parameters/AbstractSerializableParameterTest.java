@@ -340,13 +340,20 @@ public class AbstractSerializableParameterTest {
     public void testGetExampleWithEmptyString() {
         // given
         instance.setProperty(new LongProperty());
-        example = "";
+        example = null;
 
         // when
         instance.setExample(example);
 
         // then
-        assertEquals(instance.getExample(), null, "The example must be null if the value is an empty string");
+        assertEquals(instance.getExample(), null, "The example must be null if the value is null");
+
+        // given
+        instance.setProperty(new LongProperty());
+        example = "";
+        
+        // then
+        assertEquals(instance.getExample(), null, "The example must be empty string if the value is an empty string");
     }
 
     @Test

@@ -405,7 +405,7 @@ public abstract class AbstractSerializableParameter<T extends AbstractSerializab
     @JsonProperty("x-example")
     public Object getExample() {
         if (example == null || example.isEmpty()) {
-            return null;
+            return example;
         }
         try {
             if (BaseIntegerProperty.TYPE.equals(type)) {
