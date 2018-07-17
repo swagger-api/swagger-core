@@ -6,10 +6,12 @@ import io.swagger.v3.oas.annotations.links.Link;
 import io.swagger.v3.oas.annotations.links.LinkParameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.testng.annotations.Test;
 
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
 import java.io.IOException;
@@ -78,6 +80,67 @@ public class OperationsWithLinksTest extends AbstractAnnotationTest {
         compareAsYaml(ClassWithOperationAndLinks.class, expectedYAML);
     }
 
+    @Test(description = "Shows creating simple links with request body")
+    public void createOperationWithLinksAndRequestBody() throws IOException {
+
+        String expectedYAML = "openapi: 3.0.1\n" +
+                "paths:\n" +
+                "  /users:\n" +
+                "    get:\n" +
+                "      operationId: getUser\n" +
+                "      parameters:\n" +
+                "      - name: userId\n" +
+                "        in: query\n" +
+                "        schema:\n" +
+                "          type: string\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: test description\n" +
+                "          content:\n" +
+                "            '*/*':\n" +
+                "              schema:\n" +
+                "                $ref: '#/components/schemas/User'\n" +
+                "          links:\n" +
+                "            address:\n" +
+                "              operationId: addAddress\n" +
+                "              requestBody: $request.query.userId\n" +
+                "  /addresses:\n" +
+                "    post:\n" +
+                "      operationId: addAddress\n" +
+                "      requestBody:\n" +
+                "        description: userId\n" +
+                "        content:\n" +
+                "          '*/*':\n" +
+                "            schema:\n" +
+                "              type: string\n" +
+                "        required: true\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: test description\n" +
+                "          content:\n" +
+                "            '*/*':\n" +
+                "              schema:\n" +
+                "                $ref: '#/components/schemas/Address'\n" +
+                "components:\n" +
+                "  schemas:\n" +
+                "    User:\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        id:\n" +
+                "          type: string\n" +
+                "        username:\n" +
+                "          type: string\n" +
+                "    Address:\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        street:\n" +
+                "          type: string\n" +
+                "        zip:\n" +
+                "          type: string";
+
+        compareAsYaml(ClassWithOperationAndLinksWithRequestBody.class, expectedYAML);
+    }
+
     @Test(description = "Shows creating operation response without annotation")
     public void createOperationWithResponseNoAnnotation() throws IOException {
 
@@ -141,6 +204,38 @@ public class OperationsWithLinksTest extends AbstractAnnotationTest {
                 })
         @GET
         public Address getAddress(@QueryParam("userId") String userId) {
+            return null;
+        }
+    }
+
+    static class ClassWithOperationAndLinksWithRequestBody {
+        @Path("/users")
+        @Operation(operationId = "getUser",
+                responses = {
+                        @ApiResponse(description = "test description",
+                                content = @Content(mediaType = "*/*", schema = @Schema(ref = "#/components/schemas/User")),
+                                links = {
+                                        @Link(
+                                                name = "address",
+                                                operationId = "addAddress",
+                                                requestBody = "$request.query.userId")
+                                })}
+        )
+        @GET
+        public User getUser(@QueryParam("userId") String userId) {
+            return null;
+        }
+
+        @Path("/addresses")
+        @Operation(operationId = "addAddress",
+
+                responses = {
+                        @ApiResponse(content = @Content(mediaType = "*/*",
+                                schema = @Schema(ref = "#/components/schemas/Address")),
+                                description = "test description")
+                })
+        @POST
+        public Address addAddress(@RequestBody(description = "userId", required = true) String userId) {
             return null;
         }
     }
