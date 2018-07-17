@@ -33,7 +33,7 @@ public class Link {
     private String operationRef = null;
     private String operationId = null;
     private Map<String, String> parameters = null;
-    private RequestBody requestBody = null;
+    private Object requestBody = null;
     private Map<String, Header> headers = null;
     private String description = null;
     private String $ref = null;
@@ -81,18 +81,18 @@ public class Link {
     /**
      * returns the requestBody property from a Link instance.
      *
-     * @return String operationId
+     * @return Object requestBody
      **/
 
-    public RequestBody getRequestBody() {
+    public Object getRequestBody() {
         return requestBody;
     }
 
-    public void setRequestBody(RequestBody requestBody) {
+    public void setRequestBody(Object requestBody) {
         this.requestBody = requestBody;
     }
 
-    public Link requestBody(RequestBody requestBody) {
+    public Link requestBody(Object requestBody) {
         this.requestBody = requestBody;
         return this;
     }

@@ -831,6 +831,20 @@ public abstract class AnnotationsUtils {
         if (linkParameters.size() > 0) {
             linkObject.setParameters(linkParameters);
         }
+
+        if (StringUtils.isNotBlank(link.requestBody())) {
+            JsonNode processedValue = null;
+            try {
+                processedValue = Json.mapper().readTree(link.requestBody());
+            } catch (Exception e) {
+                // not a json string
+            }
+            if (processedValue == null) {
+                linkObject.requestBody(link.requestBody());
+            } else {
+                linkObject.requestBody(processedValue);
+            }
+        }
         return Optional.of(linkObject);
     }
 
