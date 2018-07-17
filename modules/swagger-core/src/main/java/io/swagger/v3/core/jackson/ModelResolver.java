@@ -1025,7 +1025,12 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 annos.put(anno.annotationType().getName(), anno);
             }
         }
-        if (parent != null && annos.containsKey("javax.validation.constraints.NotNull")) {
+        if (parent != null &&
+                (
+                        annos.containsKey("javax.validation.constraints.NotNull") ||
+                        annos.containsKey("javax.validation.constraints.NotBlank") ||
+                        annos.containsKey("javax.validation.constraints.NotEmpty")
+                )) {
             addRequiredItem(parent, property.getName());
         }
         if (annos.containsKey("javax.validation.constraints.Min")) {
