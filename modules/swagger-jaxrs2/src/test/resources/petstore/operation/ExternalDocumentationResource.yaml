@@ -1,0 +1,24 @@
+openapi: 3.0.1
+paths:
+  /{petId}:
+    get:
+      summary: Find pet by ID
+      description: Returns a pet when 0 < ID <= 10.  ID > 10 or non integers will
+        simulate API error conditions
+      externalDocs:
+        description: External Annotation Documentation
+        url: http://url.me
+      operationId: petId
+      parameters:
+      - name: petId
+        in: path
+        description: ID of pet that needs to be fetched
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        default:
+          description: default response
+          content:
+            '*/*': {}

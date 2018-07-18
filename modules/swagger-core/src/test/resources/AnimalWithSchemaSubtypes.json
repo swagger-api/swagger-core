@@ -1,0 +1,58 @@
+{
+    "AnimalWithSchemaSubtypes": {
+        "type": "object",
+        "properties": {
+            "name": {
+                "type": "string"
+            },
+            "type": {
+                "type": "string"
+            }
+        },
+        "discriminator" : {
+            "propertyName" : "type"
+        }
+    },
+    "HumanWithSchemaSubtypes": {
+        "type": "object",
+        "allOf": [
+            {
+                "$ref": "#/components/schemas/AnimalWithSchemaSubtypes"
+            }
+        ],
+        "properties": {
+            "firstName": {
+                "type": "string"
+            },
+            "lastName": {
+                "type": "string"
+            }
+        }
+    },
+    "PetWithSchemaSubtypes": {
+        "type": "object",
+        "allOf": [
+            {
+                "$ref": "#/components/schemas/AnimalWithSchemaSubtypes"
+            }
+        ],
+        "required": [
+            "isDomestic",
+            "name",
+            "type"
+        ],
+        "properties": {
+            "type": {
+                "type": "string",
+                "description": "The pet type"
+            },
+            "name": {
+                "type": "string",
+                "description": "The name of the pet"
+            },
+            "isDomestic": {
+                "type": "boolean"
+            }
+        }
+    }
+}

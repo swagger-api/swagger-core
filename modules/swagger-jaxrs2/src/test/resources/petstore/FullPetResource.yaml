@@ -1,0 +1,1431 @@
+openapi: 3.0.1
+info:
+  title: Pet Resource Example
+  description: API Definition
+  termsOfService: Terms of service
+  contact:
+    name: Fred
+    url: http://gigantic-server.com
+    email: Fred@gigagantic-server.com
+  license:
+    name: Apache 2.0
+    url: http://foo.bar
+  version: "2.0"
+externalDocs:
+  description: definition docs desc
+servers:
+- url: http://foo
+  description: server 1
+  variables: {}
+security:
+- req 1:
+  - a
+  - b
+- req 2:
+  - b
+  - c
+tags:
+- name: Tag 1
+  description: desc 1
+  externalDocs:
+    description: docs desc
+- name: Tag 2
+  description: desc 2
+  externalDocs:
+    description: docs desc 2
+- name: Tag 3
+- name: Definition First Tag
+- name: Definition Second Tag full
+  description: desc definition
+- name: Fourth Tag Full
+  description: desc
+  externalDocs:
+    description: docs desc
+- name: Fifth Tag Full
+  description: desc class
+  externalDocs:
+    description: docs desc class
+paths:
+  /pet/{petId}:
+    get:
+      summary: Find pet by ID
+      description: Returns a pet when 0 < ID <= 10.  ID > 10 or nonintegers will simulate
+        API error conditions
+      operationId: getPetById
+      parameters:
+      - name: petId
+        in: path
+        description: ID of pet that needs to be fetched
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        default:
+          description: The pet
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pet'
+            application/xml:
+              schema:
+                $ref: '#/components/schemas/Pet'
+        400:
+          description: Invalid ID supplied
+        404:
+          description: Pet not found
+  /pet:
+    put:
+      summary: Update an existing pet
+      operationId: updatePet
+      requestBody:
+        description: Pet object that needs to be added to the store
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Pet'
+        required: true
+      responses:
+        400:
+          description: Invalid ID supplied
+        404:
+          description: Pet not found
+        405:
+          description: Validation exception
+    post:
+      summary: Add a new pet to the store
+      operationId: addPet
+      requestBody:
+        description: Pet object that needs to be added to the store
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Pet'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Pet'
+        required: true
+      responses:
+        405:
+          description: Invalid input
+  /pet/bodynoannotation:
+    post:
+      summary: Add a new pet to the store no annotation
+      operationId: addPetNoAnnotation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Pet'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Pet'
+      responses:
+        405:
+          description: Invalid input
+  /pet/bodyid:
+    post:
+      summary: Add a new pet to the store passing an integer with generic parameter
+        annotation
+      operationId: addPetByInteger
+      requestBody:
+        description: Pet object that needs to be added to the store
+        content:
+          application/json:
+            schema:
+              type: integer
+              format: int32
+          application/xml:
+            schema:
+              type: integer
+              format: int32
+        required: true
+      responses:
+        405:
+          description: Invalid input
+  /pet/bodyidnoannotation:
+    post:
+      summary: Add a new pet to the store passing an integer without parameter annotation
+      operationId: addPetByIntegerNoAnnotation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: integer
+              format: int32
+          application/xml:
+            schema:
+              type: integer
+              format: int32
+      responses:
+        405:
+          description: Invalid input
+  /pet/findByStatus:
+    get:
+      summary: Finds Pets by status
+      description: Multiple status values can be provided with comma seperated strings
+      operationId: findPetsByStatus
+      parameters:
+      - name: status
+        in: query
+        description: Status values that need to be considered for filter
+        required: true
+        schema:
+          type: string
+      - name: skip
+        in: query
+        schema:
+          type: integer
+          format: int32
+      - name: limit
+        in: query
+        schema:
+          type: integer
+          format: int32
+      responses:
+        default:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pet'
+        400:
+          description: Invalid status value
+  /pet/findByTags:
+    get:
+      summary: Finds Pets by tags
+      description: Muliple tags can be provided with comma seperated strings. Use
+        tag1, tag2, tag3 for testing.
+      operationId: findPetsByTags
+      parameters:
+      - name: tags
+        in: query
+        description: Tags to filter by
+        required: true
+        schema:
+          type: string
+      responses:
+        default:
+          description: Pets matching criteria
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Pet'
+        400:
+          description: Invalid tag value
+  /complexcallback:
+    get:
+      summary: Simple get operation
+      operationId: getWithNoParameters
+      parameters:
+      - name: id
+        in: query
+        description: idParam
+        schema:
+          $ref: '#/components/schemas/User'
+      responses:
+        200:
+          description: voila!
+      callbacks:
+        testCallback1:
+          http://www.url.com:
+            get:
+              summary: get all the reviews
+              operationId: getAllReviews
+              responses:
+                200:
+                  description: successful operation
+                  content:
+                    application/json:
+                      schema:
+                        type: integer
+                        format: int32
+        testCallback2:
+          http://www.url2.com:
+            get:
+              summary: get a review
+              operationId: getAnSpecificReviews
+              responses:
+                200:
+                  description: successful operation
+                  content:
+                    application/json:
+                      schema:
+                        $ref: '#/components/schemas/User'
+  /multiplecallback:
+    get:
+      summary: Simple get operation
+      operationId: getWithNoParameters_1
+      responses:
+        200:
+          description: voila!
+      callbacks:
+        testCallback1:
+          http://www.url.com:
+            get:
+              summary: get all the reviews
+              operationId: getAllReviews
+              responses:
+                200:
+                  description: successful operation
+                  content:
+                    application/json:
+                      schema:
+                        type: integer
+                        format: int32
+        testCallback2:
+          http://$request.query.url: {}
+  /repeatablecallback:
+    get:
+      summary: Simple get operation
+      operationId: getWithNoParameters_2
+      responses:
+        200:
+          description: voila!
+      callbacks:
+        testCallback:
+          http://$requests.query.url: {}
+        testCallback1:
+          http://www.url.com:
+            get:
+              summary: get all the reviews
+              operationId: getAllReviews
+              responses:
+                200:
+                  description: successful operation
+                  content:
+                    application/json:
+                      schema:
+                        type: integer
+                        format: int32
+        testCallback2:
+          http://$request.query.url: {}
+  /simplecallback:
+    get:
+      summary: Simple get operation
+      operationId: getWithNoParameters_3
+      responses:
+        200:
+          description: voila!
+      callbacks:
+        testCallback1:
+          http://www.url.com:
+            get:
+              summary: get all the reviews
+              operationId: getAllReviews
+              responses:
+                200:
+                  description: successful operation
+                  content:
+                    application/json:
+                      schema:
+                        type: integer
+                        format: int32
+  /example:
+    post:
+      description: subscribes a client to updates relevant to the requestor's account
+      operationId: subscribe
+      parameters:
+      - name: subscriptionId
+        in: path
+        required: true
+        style: simple
+        schema:
+          type: string
+          description: Schema
+          example: Subscription example
+        examples:
+          subscriptionId_2:
+            summary: Subscription number 54321
+            description: subscriptionId_2
+            value: 54321
+            externalValue: Subscription external value 2
+          subscriptionId_1:
+            summary: Subscription number 12345
+            description: subscriptionId_1
+            value: 12345
+            externalValue: Subscription external value 1
+        example: example
+      requestBody:
+        description: Created user object
+        content:
+          '*/*':
+            schema:
+              type: string
+              description: the generated UUID
+              format: uuid
+              readOnly: true
+              example: Schema example
+            examples:
+              Default Request:
+                summary: Subscription Request Example
+                description: Default Request
+                value: SubscriptionRequest
+                externalValue: Subscription Request Value
+        required: true
+      responses:
+        default:
+          description: test description
+          content:
+            '*/*':
+              schema:
+                type: string
+                description: the generated UUID
+                format: uuid
+                readOnly: true
+                example: Schema example
+              examples:
+                Default Response:
+                  summary: Subscription Response Example
+                  description: Default Response
+                  value: SubscriptionResponse
+                  externalValue: Subscription Response value 1
+  /links:
+    get:
+      operationId: getUserWithAddress
+      parameters:
+      - name: userId
+        in: query
+        schema:
+          type: string
+      responses:
+        default:
+          description: test description
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/User'
+          links:
+            address:
+              operationId: getAddress
+              parameters:
+                userId: $request.query.userId
+            user:
+              operationId: getUser
+              parameters:
+                userId: $request.query.userId
+  /sameOperationName:
+    get:
+      description: Same Operation Name
+      operationId: getUser
+      responses:
+        default:
+          description: default response
+          content:
+            '*/*':
+              schema:
+                type: string
+    delete:
+      description: Same Operation Name Duplicated
+      operationId: getUser_1
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              type: string
+      responses:
+        default:
+          description: default response
+          content:
+            '*/*':
+              schema:
+                type: string
+  /{petId}:
+    get:
+      summary: Find pet by ID
+      description: Returns a pet when 0 < ID <= 10.  ID > 10 or non integers will
+        simulate API error conditions
+      externalDocs:
+        description: External Annotation Documentation
+        url: http://url.me
+      operationId: petId
+      parameters:
+      - name: petId
+        in: path
+        description: ID of pet that needs to be fetched
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        default:
+          description: default response
+          content:
+            '*/*': {}
+  /fullyannotatedoperation/{petId}:
+    get:
+      summary: Find pet by ID
+      description: Returns a pet when 0 < ID <= 10.  ID > 10 or non integers will
+        simulate API error conditions
+      operationId: petId_1
+      parameters:
+      - name: petId
+        in: path
+        description: ID of pet that needs to be fetched
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        default:
+          description: The pet
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Pet'
+        400:
+          description: Invalid ID supplied
+        404:
+          description: Pet not found
+  /interfaceoperation/{petId}:
+    get:
+      summary: Find pet by ID Operation in SubResource
+      description: Returns a pet in SubResource
+      operationId: getPetById_1
+      parameters:
+      - name: petId
+        in: path
+        description: ID of pet that needs to be fetched
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        default:
+          description: default response
+          content:
+            '*/*': {}
+  /notannotatedoperation:
+    get:
+      operationId: getUser_1
+      responses:
+        default:
+          description: default response
+          content:
+            '*/*':
+              schema:
+                type: string
+  /notannotatedoperationduplicated:
+    get:
+      operationId: getUser_2
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              type: string
+      responses:
+        default:
+          description: default response
+          content:
+            '*/*':
+              schema:
+                type: string
+  /operationsresource2:
+    get:
+      operationId: getUser_3
+      responses:
+        default:
+          description: default response
+          content:
+            '*/*':
+              schema:
+                type: string
+  /operationsresource:
+    get:
+      summary: Find pet by ID
+      description: combinatedfullyannotatedoperation/{petId}
+      operationId: petId_2
+      parameters:
+      - name: petId
+        in: query
+        description: ID of pet that needs to be fetched
+        required: true
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              type: string
+      responses:
+        default:
+          description: The pet
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Pet'
+        400:
+          description: Invalid ID supplied
+        404:
+          description: Pet not found
+    put:
+      description: combinatedsameOperationName
+      operationId: combinated sameOperationName
+      responses:
+        default:
+          description: default response
+          content:
+            '*/*':
+              schema:
+                type: string
+    post:
+      operationId: getUser_4
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              type: string
+      responses:
+        default:
+          description: default response
+          content:
+            '*/*':
+              schema:
+                type: string
+    head:
+      description: combinatedsameOperationNameDuplicated
+      operationId: combinatedsameOperationNameDuplicated
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              type: string
+      responses:
+        default:
+          description: default response
+          content:
+            '*/*':
+              schema:
+                type: string
+  /operationwithouannotation:
+    get:
+      operationId: getUser_4
+      responses:
+        default:
+          description: default response
+          content:
+            '*/*':
+              schema:
+                type: string
+  /serversoperation:
+    get:
+      description: Pets Example
+      operationId: Pets
+      responses:
+        default:
+          description: default response
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Pet'
+      servers:
+      - url: http://foo2
+        description: server 2
+        variables: {}
+  /arrayschema:
+    post:
+      description: subscribes a client to updates relevant to the requestor's account,
+        as identified by the input token.  The supplied url will be used as the delivery
+        address for response payloads
+      operationId: subscribe_1
+      parameters:
+      - name: arrayParameter
+        in: query
+        required: true
+        schema:
+          maxItems: 10
+          minItems: 1
+          uniqueItems: true
+          type: array
+          items:
+            $ref: '#/components/schemas/SubscriptionResponse'
+      responses:
+        default:
+          description: test description
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/SubscriptionResponse'
+  /complexparameter:
+    get:
+      operationId: create User_1
+      parameters:
+      - name: phone
+        in: path
+        description: Phone
+        required: true
+        schema:
+          type: string
+      - name: id
+        in: query
+        description: idParam
+        schema:
+          type: string
+      - name: lastName
+        in: query
+        schema:
+          type: string
+      - name: address
+        in: query
+        description: address
+        schema:
+          $ref: '#/components/schemas/User'
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              type: string
+      responses:
+        default:
+          description: default response
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/User'
+  /multiplenoannotatedparameter:
+    post:
+      operationId: create User
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              type: string
+      responses:
+        default:
+          description: default response
+          content:
+            '*/*': {}
+  /openapijaxrsannotatedparameter:
+    get:
+      operationId: create User_2
+      parameters:
+      - name: id
+        in: query
+        description: idParam
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/User'
+  /openapiwithcontentjaxrsannotatedparameter:
+    get:
+      operationId: create User_3
+      parameters:
+      - name: id
+        in: query
+        description: idParam
+        content:
+          '*/*':
+            schema:
+              type: string
+              description: Id Schema Definition
+      responses:
+        default:
+          description: default response
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/User'
+  /openapiwithimplementationjaxrsannotatedparameter:
+    get:
+      operationId: create User_4
+      parameters:
+      - name: id
+        in: query
+        description: idParam
+        schema:
+          $ref: '#/components/schemas/User'
+      responses:
+        default:
+          description: default response
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/User'
+  /parameters:
+    post:
+      description: subscribes a client to updates relevant to the requestor's account,
+        as identified by the input token.  The supplied url will be used as the delivery
+        address for response payloads
+      operationId: subscribe_2
+      parameters:
+      - name: subscriptionId
+        in: path
+        required: true
+        style: simple
+        schema:
+          $ref: '#/components/schemas/SubscriptionResponse'
+      - name: formId
+        in: query
+        required: true
+        schema:
+          type: string
+        example: Example
+      - name: explodeFalse
+        in: query
+        required: true
+        explode: false
+        schema:
+          $ref: '#/components/schemas/SubscriptionResponse'
+      - name: explodeTrue
+        in: query
+        required: true
+        explode: true
+        schema:
+          $ref: '#/components/schemas/SubscriptionResponse'
+      - name: explodeAvoiding
+        in: query
+        required: true
+        schema:
+          type: string
+          description: the generated id
+          format: id
+          readOnly: true
+      - name: arrayParameter
+        in: query
+        required: true
+        content:
+          application/json:
+            schema:
+              type: number
+              description: the generated id
+              readOnly: true
+          application/xml:
+            schema:
+              type: number
+              description: the generated id
+              readOnly: true
+      - name: arrayParameterImplementation
+        in: query
+        required: true
+        schema:
+          maxItems: 10
+          minItems: 1
+          uniqueItems: true
+          type: array
+          items:
+            $ref: '#/components/schemas/SubscriptionResponse'
+      - name: arrayParameterImplementation2
+        in: query
+        required: true
+        explode: true
+        schema:
+          $ref: '#/components/schemas/SubscriptionResponse'
+      - name: id
+        in: query
+        description: idParam
+        schema:
+          type: string
+      responses:
+        default:
+          description: test description
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/SubscriptionResponse'
+  /repeatableparameter:
+    post:
+      description: subscribes a client to updates relevant to the requestor's account,
+        as identified by the input token.  The supplied url will be used as the delivery
+        address for response payloads
+      operationId: subscribe_3
+      parameters:
+      - name: subscriptionId
+        in: path
+        required: true
+        style: simple
+        schema:
+          $ref: '#/components/schemas/SubscriptionResponse'
+      - name: formId
+        in: query
+        required: true
+        schema:
+          type: string
+        example: Example
+      - name: explodeFalse
+        in: query
+        required: true
+        explode: false
+        schema:
+          $ref: '#/components/schemas/SubscriptionResponse'
+      - name: explodeTrue
+        in: query
+        required: true
+        explode: true
+        schema:
+          $ref: '#/components/schemas/SubscriptionResponse'
+      - name: explodeAvoiding
+        in: query
+        required: true
+        schema:
+          type: string
+          description: the generated id
+          format: id
+          readOnly: true
+      - name: arrayParameter
+        in: query
+        required: true
+        content:
+          application/json:
+            schema:
+              type: number
+              description: the generated id
+              readOnly: true
+          application/xml:
+            schema:
+              type: number
+              description: the generated id
+              readOnly: true
+      - name: arrayParameterImplementation
+        in: query
+        required: true
+        schema:
+          maxItems: 10
+          minItems: 1
+          uniqueItems: true
+          type: array
+          items:
+            $ref: '#/components/schemas/SubscriptionResponse'
+      - name: arrayParameterImplementation2
+        in: query
+        required: true
+        explode: true
+        schema:
+          $ref: '#/components/schemas/SubscriptionResponse'
+      responses:
+        default:
+          description: test description
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/SubscriptionResponse'
+  /singlejaxrsannotatedparameter:
+    get:
+      operationId: create User_5
+      parameters:
+      - name: id
+        in: query
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/User'
+  /singlenoannotatedparameter:
+    get:
+      operationId: create User_6
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              type: string
+      responses:
+        default:
+          description: default response
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/User'
+  /requestbodymethodpriority:
+    post:
+      summary: Create user
+      description: This can only be done by the logged in user.
+      operationId: methodWithRequestBodyAndTwoParameters
+      requestBody:
+        description: Created user object on Method
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/User'
+        required: true
+      responses:
+        default:
+          description: default response
+          content:
+            '*/*': {}
+  /requestbodyparameterpriority:
+    post:
+      summary: Create user
+      description: This can only be done by the logged in user.
+      operationId: methodWithRequestBodyAndTwoParameters_1
+      requestBody:
+        description: Created user object inside Parameter
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/User'
+        required: true
+      responses:
+        default:
+          description: default response
+          content:
+            '*/*': {}
+  /methodWithRequestBodyAndTwoParameters:
+    post:
+      summary: Create user
+      description: This can only be done by the logged in user.
+      operationId: methodWithRequestBodyAndTwoParameters_2
+      parameters:
+      - name: name
+        in: query
+        schema:
+          type: string
+      - name: code
+        in: query
+        schema:
+          type: string
+      requestBody:
+        description: Created user object
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/User'
+        required: true
+      responses:
+        default:
+          description: default response
+          content:
+            '*/*': {}
+  /methodWithRequestBodyWithoutContent:
+    get:
+      summary: Create user
+      description: This can only be done by the logged in user.
+      operationId: methodWithRequestBodyWithoutContent
+      requestBody:
+        description: Created user object
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/User'
+        required: true
+      responses:
+        default:
+          description: default response
+          content:
+            '*/*': {}
+  /methodWithRequestBodyWithoutContentWithoutImplementation:
+    get:
+      summary: Create user
+      description: This can only be done by the logged in user.
+      operationId: methodWithRequestBodyWithoutContentWithoutImplementation
+      requestBody:
+        description: Created user object
+        content:
+          '*/*':
+            schema:
+              type: string
+              description: User description
+              example: User Description
+        required: true
+      responses:
+        default:
+          description: default response
+          content:
+            '*/*': {}
+  /methodWithRequestBodyWithoutAnnotation:
+    put:
+      summary: Modify user
+      description: Modifying user.
+      operationId: methodWithRequestBodyWithoutAnnotation
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        default:
+          description: default response
+          content:
+            '*/*': {}
+  /methodWithoutRequestBodyAndTwoParameters:
+    delete:
+      summary: Delete user
+      description: This can only be done by the logged in user.
+      operationId: methodWithoutRequestBodyAndTwoParameters
+      parameters:
+      - name: name
+        in: query
+        schema:
+          type: string
+      - name: code
+        in: query
+        schema:
+          type: string
+      responses:
+        default:
+          description: default response
+          content:
+            '*/*': {}
+  /methodWithRequestBodyWithoutAnnotationAndTwoConsumes:
+    put:
+      summary: Modify pet
+      description: Modifying pet.
+      operationId: methodWithRequestBodyWithoutAnnotationAndTwoConsumes
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        default:
+          description: default response
+          content:
+            '*/*': {}
+  /methodWithTwoRequestBodyWithoutAnnotationAndTwoConsumes:
+    post:
+      summary: Create pet
+      description: Creating pet.
+      operationId: methodWithTwoRequestBodyWithoutAnnotationAndTwoConsumes
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Pet'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/Pet'
+      responses:
+        default:
+          description: default response
+          content:
+            '*/*': {}
+  /methodWithTwoRequestBodyWithAnnotationAndTwoConsumes:
+    post:
+      summary: Create pet
+      description: Creating pet.
+      operationId: methodWithTwoRequestBodyWithAnnotationAndTwoConsumes
+      requestBody:
+        description: Request Body User
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        default:
+          description: default response
+          content:
+            '*/*': {}
+  /methodWithOneSimpleRequestBody:
+    delete:
+      summary: Delete pet
+      description: Deleting pet.
+      operationId: methodWithOneSimpleRequestBody
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: integer
+              format: int32
+          application/xml:
+            schema:
+              type: integer
+              format: int32
+      responses:
+        default:
+          description: default response
+          content:
+            '*/*': {}
+  /complexresponse:
+    get:
+      summary: Find pets
+      description: Returns the Pets
+      operationId: getPets
+      responses:
+        200:
+          description: Response inside Operation
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Pet'
+        default:
+          description: Default Pet
+          content:
+            '*/*':
+              schema:
+                type: string
+                description: Default Pet
+                example: New Pet
+        404:
+          description: Couldn't find pet
+  /implementationresponse:
+    get:
+      summary: Simple get operation
+      description: Defines a simple get operation with no inputs and a complex output
+        object
+      operationId: getWithPayloadResponse
+      responses:
+        200:
+          description: voila!
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SecondSampleResponseSchema'
+        400:
+          description: boo
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/GenericError'
+      deprecated: true
+  /responseinmethod:
+    get:
+      summary: Find pets
+      description: Returns the Pets
+      operationId: getPets_1
+      responses:
+        200:
+          description: Status OK
+  /noimplementationresponseresource:
+    get:
+      operationId: getUser_5
+      parameters:
+      - name: userId
+        in: query
+        schema:
+          type: string
+      responses:
+        400:
+          description: test description
+          links:
+            user:
+              operationId: getUser
+              parameters:
+                userId: $request.query.userId
+        200:
+          description: 200 description
+          links:
+            pet:
+              operationId: getUser
+              parameters:
+                userId: $request.query.userId
+  /noresponse:
+    get:
+      summary: Find pets
+      description: Returns the Pets
+      operationId: getPets_2
+      responses:
+        default:
+          description: default response
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/User'
+  /responseinoperation:
+    get:
+      summary: Find Users
+      description: Returns the Users
+      operationId: getUsers
+      responses:
+        200:
+          description: Status OK
+  /priorityresponses:
+    get:
+      summary: Find pets
+      description: Returns the Pets
+      operationId: getPets_3
+      responses:
+        200:
+          description: Inside Method Operation
+  /security:
+    get:
+      description: description
+      operationId: Operation Id
+      responses:
+        default:
+          description: default response
+          content:
+            '*/*': {}
+      security:
+      - security_key:
+        - write:pets
+        - read:pets
+      - myOauth2Security:
+        - write:pets
+    put:
+      description: description 3
+      operationId: Operation Id 3
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              type: string
+      responses:
+        default:
+          description: default response
+          content:
+            '*/*': {}
+      security:
+      - security_key:
+        - write:pets
+        - read:pets
+      - myOauth2Security:
+        - write:pets
+      - security_key3:
+        - write:pets
+        - read:pets
+    patch:
+      description: description 2
+      operationId: Operation Id 2
+      responses:
+        default:
+          description: default response
+          content:
+            '*/*': {}
+      security:
+      - security_key:
+        - write:pets
+        - read:pets
+      - myOauth2Security:
+        - write:pets
+      - security_key2:
+        - write:pets
+        - read:pets
+  /completetags:
+    get:
+      tags:
+      - Third Tag
+      - Second Tag
+      - Fourth Tag Full
+      - Example Tag
+      - Fifth Tag Full
+      - Sixth Tag
+      operationId: getTags
+      responses:
+        default:
+          description: default response
+          content:
+            '*/*': {}
+  /tagsinmethod:
+    get:
+      tags:
+      - Third Tag
+      - Second Tag
+      - Fourth Tag Full
+      operationId: getTags_1
+      responses:
+        default:
+          description: default response
+          content:
+            '*/*': {}
+  /tagoperation:
+    get:
+      tags:
+      - Example Tag
+      - Second Tag
+      operationId: getTags_2
+      responses:
+        default:
+          description: default response
+          content:
+            '*/*': {}
+components:
+  schemas:
+    SecondSampleResponseSchema:
+      type: object
+    GenericError:
+      type: object
+    Category:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+      xml:
+        name: Category
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        username:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+        phone:
+          type: string
+        userStatus:
+          type: integer
+          description: User Status
+          format: int32
+      xml:
+        name: User
+    SampleResponseSchema:
+      type: object
+    SubscriptionResponse:
+      type: object
+      properties:
+        subscriptionId:
+          type: string
+    Tag:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+      xml:
+        name: Tag
+    Pet:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        category:
+          $ref: '#/components/schemas/Category'
+        name:
+          type: string
+        photoUrls:
+          type: array
+          xml:
+            wrapped: true
+          items:
+            type: string
+            xml:
+              name: photoUrl
+        tags:
+          type: array
+          xml:
+            wrapped: true
+          items:
+            $ref: '#/components/schemas/Tag'
+        status:
+          type: string
+          description: pet status in the store
+          enum:
+          - available,pending,sold
+      xml:
+        name: Pet
+  securitySchemes:
+    myOauth2Security:
+      type: oauth2
+      description: myOauthSecurity Description
+      in: header
+      flows:
+        implicit:
+          authorizationUrl: http://x.com
+          scopes:
+            write:pets: modify pets in your account

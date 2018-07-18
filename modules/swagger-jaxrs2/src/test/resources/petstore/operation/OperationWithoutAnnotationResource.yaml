@@ -1,0 +1,12 @@
+openapi: 3.0.1
+paths:
+  /operationwithouannotation:
+    get:
+      operationId: getUser
+      responses:
+        default:
+          description: default response
+          content:
+            '*/*':
+              schema:
+                type: string

@@ -6,23 +6,21 @@
     "Thing3": {
         "allOf": [
             {
-                "$ref": "#/definitions/AbstractBaseModelWithoutFields"
-            },
-            {
-                "type": "object",
-                "properties": {
-                    "a": {
-                        "type": "string",
-                        "description": "Additional field a"
-                    },
-                    "x": {
-                        "type": "integer",
-                        "format": "int32",
-                        "description": "Additional field a"
-                    }
-                },
-                "description": "Thing3"
+                "$ref": "#/components/schemas/AbstractBaseModelWithoutFields"
             }
-        ]
+        ],
+        "type": "object",
+        "properties": {
+            "a": {
+                "type": "string",
+                "description": "Additional field a"
+            },
+            "x": {
+                "type": "integer",
+                "format": "int32",
+                "description": "Additional field x"
+            }
+        },
+        "description": "Thing3"
     }
 }

@@ -1,0 +1,29 @@
+openapi: 3.0.1
+tags:
+- name: Definition First Tag
+- name: Definition Second Tag full
+  description: desc definition
+- name: Fourth Tag Full
+  description: desc
+  externalDocs:
+    description: docs desc
+- name: Fifth Tag Full
+  description: desc class
+  externalDocs:
+    description: docs desc class
+paths:
+  /completetags:
+    get:
+      tags:
+      - Third Tag
+      - Second Tag
+      - Fourth Tag Full
+      - Example Tag
+      - Fifth Tag Full
+      - Sixth Tag
+      operationId: getTags
+      responses:
+        default:
+          description: default response
+          content:
+            '*/*': {}

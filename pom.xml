@@ -6,11 +6,11 @@
         <version>5</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-    <groupId>io.swagger</groupId>
+    <groupId>io.swagger.core.v3</groupId>
     <artifactId>swagger-project</artifactId>
     <packaging>pom</packaging>
     <name>swagger-project</name>
-    <version>1.5.15</version>
+    <version>2.0.3-SNAPSHOT</version>
     <url>https://github.com/swagger-api/swagger-core</url>
     <scm>
         <connection>scm:git:git@github.com:swagger-api/swagger-core.git</connection>
@@ -25,6 +25,11 @@
             <id>fehguy</id>
             <name>Tony Tam</name>
             <email>fehguy@gmail.com</email>
+        </developer>
+        <developer>
+            <id>webron</id>
+            <name>Ron Ratovsky</name>
+            <email>webron@gmail.com</email>
         </developer>
     </developers>
     <issueManagement>
@@ -60,17 +65,17 @@
             <extension>
                 <groupId>org.jvnet.wagon-svn</groupId>
                 <artifactId>wagon-svn</artifactId>
-                <version>1.8</version>
+                <version>1.12</version>
             </extension>
             <extension>
                 <groupId>org.apache.maven.wagon</groupId>
                 <artifactId>wagon-ssh-external</artifactId>
-                <version>1.0-alpha-6</version>
+                <version>3.0.0</version>
             </extension>
             <extension>
                 <groupId>org.apache.maven.wagon</groupId>
                 <artifactId>wagon-webdav</artifactId>
-                <version>1.0-beta-1</version>
+                <version>1.0-beta-2</version>
             </extension>
         </extensions>
         <defaultGoal>install</defaultGoal>
@@ -78,23 +83,31 @@
         <finalName>${project.artifactId}-${project.version}</finalName>
         <plugins>
             <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.7.0</version>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
+            </plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-enforcer-plugin</artifactId>
                 <version>${enforcer-plugin-version}</version>
                 <executions>
-                  <execution>
-                    <id>enforce-versions</id>
-                    <goals>
-                      <goal>enforce</goal>
-                    </goals>
-                    <configuration>
-                        <rules>
-                            <DependencyConvergence/>
-                        </rules>
-                    </configuration>
-                  </execution>
+                    <execution>
+                        <id>enforce-versions</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <DependencyConvergence/>
+                            </rules>
+                        </configuration>
+                    </execution>
                 </executions>
-            </plugin>              
+            </plugin>
             <plugin>
                 <artifactId>maven-dependency-plugin</artifactId>
                 <executions>
@@ -112,7 +125,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
-                <version>2.1.2</version>
+                <version>3.0.1</version>
                 <executions>
                     <execution>
                         <id>attach-sources</id>
@@ -126,14 +139,14 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>2.7</version>
+                <version>3.0.0</version>
                 <configuration>
                     <aggregate>true</aggregate>
-                    <source>1.7</source>
+                    <source>1.8</source>
                     <encoding>UTF-8</encoding>
                     <maxmemory>1g</maxmemory>
                     <links>
-                        <link>https://docs.oracle.com/javase/7/docs/api/</link>
+                        <link>http://docs.oracle.com/javase/8/docs/api</link>
                     </links>
                     <excludePackageNames>${javadoc.package.exclude}</excludePackageNames>
                 </configuration>
@@ -148,17 +161,9 @@
                 </executions>
             </plugin>
             <plugin>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.0</version>
-                <configuration>
-                    <source>1.7</source>
-                    <target>1.7</target>
-                </configuration>
-            </plugin>
-            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>2.4</version>
+                <version>3.0.2</version>
                 <configuration>
                     <excludes>
                         <exclude>**/logback.xml</exclude>
@@ -176,90 +181,14 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-site-plugin</artifactId>
-                <version>2.1</version>
+                <version>3.7</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-release-plugin</artifactId>
-                <version>2.1</version>
+                <version>2.5.3</version>
             </plugin>
-
-            <plugin>
-                <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>default-prepare-agent</id>
-                        <goals>
-                            <goal>prepare-agent</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>default-report</id>
-                        <phase>prepare-package</phase>
-                        <goals>
-                            <goal>report</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>default-check</id>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <excludes>
-                        <!-- TODO remove these excludes and add tests -->
-                        <exclude>**/io/swagger/config/FilterFactory.*</exclude>
-                        <exclude>**/io/swagger/model/ApiInfo.*</exclude>
-                        <exclude>**/io/swagger/util/Yaml.*</exclude>
-                        <exclude>**/io/swagger/jackson/*</exclude>
-                        <exclude>**/io/swagger/converter/ModelConverters.*</exclude>
-
-                        <!-- JAXRS -->
-                        <exclude>**/io/swagger/jaxrs/json/JacksonJsonProvider.*</exclude>
-                        <exclude>**/io/swagger/jaxrs/listing/ApiListingResource.*</exclude>
-                        <exclude>**/io/swagger/jaxrs/listing/SwaggerSerializers.*</exclude>
-                        <exclude>**/io/swagger/jaxrs/config/WebXMLReader.*</exclude>
-                        <exclude>**/io/swagger/jaxrs/config/DefaultJaxrsScanner.*</exclude>
-                        <exclude>**/io/swagger/jaxrs/config/DefaultJaxrsConfig.*</exclude>
-
-                        <!-- Servlet -->
-                        <exclude>**/io/swagger/servlet/config/WebXMLReader.*</exclude>
-                        <exclude>**/io/swagger/servlet/config/ServletScanner.*</exclude>
-                        <exclude>**/io/swagger/servlet/config/DefaultServletConfig.*</exclude>
-                        <exclude>**/io/swagger/servlet/listing/ApiDeclarationServlet.*</exclude>
-                    </excludes>
-                    <rules>
-                        <rule>
-                            <element>BUNDLE</element>
-                            <limits>
-                                <limit>
-                                    <counter>COMPLEXITY</counter>
-                                    <value>COVEREDRATIO</value>
-                                    <minimum>${coverage.complexity.minimum}</minimum>
-                                </limit>
-                                <limit>
-                                    <counter>CLASS</counter>
-                                    <value>MISSEDCOUNT</value>
-                                    <maximum>${coverage.missed.classes}</maximum>
-                                </limit>
-                            </limits>
-                        </rule>
-                        <rule>
-                            <element>CLASS</element>
-                            <limits>
-                                <limit>
-                                    <counter>LINE</counter>
-                                    <value>COVEREDRATIO</value>
-                                    <minimum>${coverage.line.minimum}</minimum>
-                                </limit>
-                            </limits>
-                        </rule>
-                    </rules>
-                </configuration>
-            </plugin>
+            <!-- TODO tests coverage -->
         </plugins>
         <pluginManagement>
             <plugins>
@@ -277,20 +206,60 @@
                     <version>${jetty-version}</version>
                     <dependencies>
                         <dependency>
-                            <groupId>com.sun.jersey</groupId>
-                            <artifactId>jersey-servlet</artifactId>
-                            <version>${jersey-version}</version>
+                            <groupId>org.glassfish.jersey.core</groupId>
+                            <artifactId>jersey-server</artifactId>
+                            <version>${jersey2-version}</version>
+                            <exclusions>
+                                <exclusion>
+                                    <groupId>org.javassist</groupId>
+                                    <artifactId>javassist</artifactId>
+                                </exclusion>
+                            </exclusions>
+                        </dependency>
+                        <dependency>
+                            <groupId>org.glassfish.jersey.containers</groupId>
+                            <artifactId>jersey-container-servlet</artifactId>
+                            <version>${jersey2-version}</version>
+                            <exclusions>
+                                <exclusion>
+                                    <groupId>org.javassist</groupId>
+                                    <artifactId>javassist</artifactId>
+                                </exclusion>
+                            </exclusions>
+                        </dependency>
+                        <dependency>
+                            <groupId>org.glassfish.jersey.media</groupId>
+                            <artifactId>jersey-media-multipart</artifactId>
+                            <version>${jersey2-version}</version>
+                            <exclusions>
+                                <exclusion>
+                                    <groupId>org.javassist</groupId>
+                                    <artifactId>javassist</artifactId>
+                                </exclusion>
+                            </exclusions>
+                        </dependency>
+                        <dependency>
+                            <groupId>org.glassfish.jersey.inject</groupId>
+                            <artifactId>jersey-hk2</artifactId>
+                            <version>${jersey2-version}</version>
+                            <exclusions>
+                                <exclusion>
+                                    <groupId>org.javassist</groupId>
+                                    <artifactId>javassist</artifactId>
+                                </exclusion>
+                            </exclusions>
                         </dependency>
                     </dependencies>
                 </plugin>
                 <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-enforcer-plugin</artifactId>
                     <version>${enforcer-plugin-version}</version>
                 </plugin>
                 <plugin>
                     <groupId>org.jacoco</groupId>
                     <artifactId>jacoco-maven-plugin</artifactId>
-                    <version>0.7.2.201409121644</version>
+                    <version>0.8.1</version>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -336,15 +305,11 @@
     <modules>
         <module>modules/swagger-annotations</module>
         <module>modules/swagger-models</module>
-        <module>modules/swagger-mule</module>
         <module>modules/swagger-core</module>
-        <module>modules/swagger-jaxrs</module>
-        <module>modules/swagger-jersey2-jaxrs</module>
-        <module>modules/swagger-jersey-jaxrs</module>
-        <module>modules/swagger-hibernate-validations</module>
-        <module>modules/swagger-servlet</module>
-        <!--module>modules/swagger-utils</module-->
-        <!--module>modules/swagger-oauth2-auth-server</module-->
+        <module>modules/swagger-integration</module>
+        <module>modules/swagger-jaxrs2</module>
+        <module>modules/swagger-jaxrs2-servlet-initializer</module>
+
     </modules>
     <reporting>
         <outputDirectory>target/site</outputDirectory>
@@ -352,13 +317,15 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>2.9</version>
+                <version>3.0.0</version>
                 <configuration>
                     <aggregate>true</aggregate>
+                    <source>1.8</source>
+                    <encoding>UTF-8</encoding>
+                    <maxmemory>1g</maxmemory>
                     <debug>true</debug>
                     <links>
-                        <link>http://java.sun.com/javaee/5/docs/api</link>
-                        <link>http://java.sun.com/j2se/1.5.0/docs/api</link>
+                        <link>https://docs.oracle.com/javase/8/docs/api</link>
                     </links>
                     <excludePackageNames/>
                 </configuration>
@@ -366,7 +333,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jxr-plugin</artifactId>
-                <version>2.3</version>
+                <version>2.5</version>
                 <configuration>
                     <aggregate>true</aggregate>
                 </configuration>
@@ -374,7 +341,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-project-info-reports-plugin</artifactId>
-                <version>2.6</version>
+                <version>2.9</version>
                 <reportSets>
                     <reportSet>
                         <reports>
@@ -390,7 +357,7 @@
             <dependency>
                 <groupId>org.apache.maven</groupId>
                 <artifactId>maven-plugin-tools-api</artifactId>
-                <version>2.0</version>
+                <version>3.5.1</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.felix</groupId>
@@ -422,20 +389,26 @@
                 <scope>test</scope>
             </dependency>
             <dependency>
-                <groupId>com.jayway.restassured</groupId>
+                <groupId>io.rest-assured</groupId>
                 <artifactId>rest-assured</artifactId>
                 <version>${rest-assured-version}</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpmime</artifactId>
+                <version>${httpcomponents-version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
                 <groupId>org.mockito</groupId>
-                <artifactId>mockito-all</artifactId>
+                <artifactId>mockito-core</artifactId>
                 <version>${mockito-version}</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>javax.servlet</groupId>
-                <artifactId>servlet-api</artifactId>
+                <artifactId>javax.servlet-api</artifactId>
                 <version>${servlet-api-version}</version>
                 <scope>provided</scope>
             </dependency>
@@ -444,26 +417,6 @@
                 <artifactId>slf4j-log4j12</artifactId>
                 <version>${slf4j-version}</version>
                 <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>com.sun.jersey</groupId>
-                <artifactId>jersey-client</artifactId>
-                <version>${jersey-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.sun.jersey</groupId>
-                <artifactId>jersey-core</artifactId>
-                <version>${jersey-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.sun.jersey</groupId>
-                <artifactId>jersey-json</artifactId>
-                <version>${jersey-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.sun.jersey</groupId>
-                <artifactId>jersey-servlet</artifactId>
-                <version>${jersey-version}</version>
             </dependency>
             <dependency>
                 <groupId>commons-io</groupId>
@@ -477,46 +430,87 @@
                 <version>${reflections-version}</version>
             </dependency>
             <dependency>
-                <groupId>com.google.guava</groupId>
-                <artifactId>guava</artifactId>
-                <version>${guava-version}</version>
+                <groupId>com.fasterxml.jackson.dataformat</groupId>
+                <artifactId>jackson-dataformat-yaml</artifactId>
+                <version>${jackson-version}</version>
             </dependency>
             <dependency>
-                <!-- resolve reflections 0.9.11 vs jersey-common 2.25.1 conflict -->
-                <groupId>org.javassist</groupId>
-                <artifactId>javassist</artifactId>
-                <version>${javassist-version}</version>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-annotations</artifactId>
+                <version>${jackson-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>${jackson-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-core</artifactId>
+                <version>${jackson-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-classic</artifactId>
+                <version>${logback-version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-core</artifactId>
+                <version>${logback-version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>joda-time</groupId>
+                <artifactId>joda-time</artifactId>
+                <version>${joda-time-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.joda</groupId>
+                <artifactId>joda-convert</artifactId>
+                <version>${joda-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.yaml</groupId>
+                <artifactId>snakeyaml</artifactId>
+                <version>${snakeyaml-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.ws.rs</groupId>
+                <artifactId>javax.ws.rs-api</artifactId>
+                <version>${javax.ws-version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
     <properties>
-        <joda-version>1.8.1</joda-version>
-        <joda-time-version>2.9.1</joda-time-version>
-
-        <felix-version>2.3.7</felix-version>
-        <servlet-api-version>2.5</servlet-api-version>
-        <jersey-version>1.13</jersey-version>
-        <jersey2-version>2.25.1</jersey2-version>
-        <jackson-version>2.8.9</jackson-version>
+        <joda-version>1.9.2</joda-version>
+        <joda-time-version>2.9.9</joda-time-version>
+        <snakeyaml-version>1.18</snakeyaml-version>
+        <javax.ws-version>2.1</javax.ws-version>
+        <felix-version>3.5.0</felix-version>
+        <servlet-api-version>3.1.0</servlet-api-version>
+        <jersey2-version>2.26</jersey2-version>
+        <jackson-version>2.9.5</jackson-version>
         <logback-version>1.2.3</logback-version>
         <reflections-version>0.9.11</reflections-version>
-        <guava-version>20.0</guava-version>
-        <javassist-version>3.21.0-GA</javassist-version>
+        <guava-version>23.0</guava-version>
+        <commons-lang-version>3.7</commons-lang-version>
+        <commons-io-version>2.6</commons-io-version>
+        <slf4j-version>1.7.25</slf4j-version>
+        <jetty-version>9.4.9.v20180320</jetty-version>
+        <testng-version>6.14.2</testng-version>
+        <mockito-version>2.16.0</mockito-version>
+        <rest-assured-version>3.0.7</rest-assured-version>
+        <httpcomponents-version>4.5.3</httpcomponents-version>
 
-        <testng-version>6.10</testng-version>
-        <mockito-version>1.9.5</mockito-version>
-        <rest-assured-version>2.8.0</rest-assured-version>
-        <surefire-version>2.18.1</surefire-version>
-        <maven-plugin-version>1.0.0</maven-plugin-version>
-        <commons-lang-version>3.2.1</commons-lang-version>
-        <slf4j-version>1.7.22</slf4j-version>
-        <jetty-version>9.2.14.v20151106</jetty-version>
-        <servlet-api-version>2.5</servlet-api-version>
+        <surefire-version>2.21.0</surefire-version>
+        <enforcer-plugin-version>3.0.0-M1</enforcer-plugin-version>
+        <failsafe-plugin-version>2.21.0</failsafe-plugin-version>
+
         <coverage.complexity.minimum>0.90</coverage.complexity.minimum>
         <coverage.line.minimum>0.90</coverage.line.minimum>
         <coverage.missed.classes>0</coverage.missed.classes>
-        <commons-io-version>2.5</commons-io-version>
-        <enforcer-plugin-version>1.4</enforcer-plugin-version>
-        <failsafe-plugin-version>2.19.1</failsafe-plugin-version>
+
     </properties>
 </project>
