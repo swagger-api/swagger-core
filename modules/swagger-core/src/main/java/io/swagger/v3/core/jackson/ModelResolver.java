@@ -1108,7 +1108,8 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
             final Schema subtypeModel = context.resolve(new AnnotatedType().type(subtypeType));
 
-            if (subtypeModel.getName().equals(model.getName())) {
+            if (    StringUtils.isBlank(subtypeModel.getName()) ||
+                    subtypeModel.getName().equals(model.getName())) {
                 subtypeModel.setName(_typeNameResolver.nameForType(_mapper.constructType(subtypeType),
                         TypeNameResolver.Options.SKIP_API_MODEL));
             }
@@ -1153,6 +1154,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                         .xml(subtypeModel.getXml())
                         .extensions(subtypeModel.getExtensions());
 
+                composedSchema.setEnum(subtypeModel.getEnum());
             } else {
                 composedSchema = (ComposedSchema) subtypeModel;
             }
