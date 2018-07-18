@@ -35,6 +35,8 @@ import io.swagger.v3.jaxrs2.resources.SimpleResponsesResource;
 import io.swagger.v3.jaxrs2.resources.SubResourceHead;
 import io.swagger.v3.jaxrs2.resources.TagsResource;
 import io.swagger.v3.jaxrs2.resources.Test2607;
+import io.swagger.v3.jaxrs2.resources.Test2868BarResource;
+import io.swagger.v3.jaxrs2.resources.Test2868BazResource;
 import io.swagger.v3.jaxrs2.resources.TestResource;
 import io.swagger.v3.jaxrs2.resources.Ticket2644ConcreteImplementation;
 import io.swagger.v3.jaxrs2.resources.Ticket2763Resource;
@@ -85,6 +87,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
@@ -1252,6 +1256,36 @@ public class ReaderTest {
                 "          type: array\n" +
                 "          items:\n" +
                 "            type: string\n";
+        SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
+    }
+
+    @Test(description = "different operation ids")
+    public void testTicket2868() {
+        Reader reader = new Reader(new OpenAPI());
+        Set<Class<?>> set = Stream.of(Test2868BarResource.class, Test2868BazResource.class).collect(Collectors.toSet());
+        OpenAPI openAPI = reader.read(set);
+        String yaml = "openapi: 3.0.1\n" +
+                "paths:\n" +
+                "  /bar/{id}/foo:\n" +
+                "    get:\n" +
+                "      operationId: getFoo\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*':\n" +
+                "              schema:\n" +
+                "                type: string\n" +
+                "  /baz/{id}/foo:\n" +
+                "    get:\n" +
+                "      operationId: getFoo_1\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*':\n" +
+                "              schema:\n" +
+                "                type: string\n\n";
         SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
     }
 }
