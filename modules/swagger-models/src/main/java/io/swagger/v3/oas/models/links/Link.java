@@ -244,7 +244,7 @@ public class Link {
     }
 
     public Link $ref(String $ref) {
-        this.$ref = $ref;
+        set$ref($ref);
         return this;
     }
 

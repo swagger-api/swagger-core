@@ -270,7 +270,7 @@ public class SecurityScheme {
     }
 
     public SecurityScheme $ref(String $ref) {
-        this.$ref = $ref;
+        set$ref($ref);
         return this;
     }
 

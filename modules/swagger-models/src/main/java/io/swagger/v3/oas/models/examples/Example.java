@@ -116,7 +116,7 @@ public class Example {
     }
 
     public Example $ref(String $ref) {
-        this.$ref = $ref;
+        set$ref($ref);
         return this;
     }
 

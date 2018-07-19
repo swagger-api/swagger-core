@@ -432,7 +432,7 @@ public class PathItem {
     }
 
     public PathItem $ref(String $ref) {
-        this.$ref = $ref;
+        set$ref($ref);
         return this;
     }
 

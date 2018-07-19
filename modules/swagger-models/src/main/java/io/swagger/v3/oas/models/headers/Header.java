@@ -303,7 +303,7 @@ public class Header {
     }
 
     public Header $ref(String $ref) {
-        this.$ref = $ref;
+        set$ref($ref);
         return this;
     }
 
