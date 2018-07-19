@@ -3,6 +3,7 @@ package io.swagger.v3.jaxrs2.integration;
 import io.swagger.v3.jaxrs2.integration.api.JaxrsOpenApiScanner;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.integration.IgnoredPackages;
+import io.swagger.v3.oas.integration.ResourceFilter;
 import io.swagger.v3.oas.integration.SwaggerConfiguration;
 import io.swagger.v3.oas.integration.api.OpenAPIConfiguration;
 import org.apache.commons.lang3.StringUtils;
@@ -90,8 +91,7 @@ public class JaxrsAnnotationScanner<T extends JaxrsAnnotationScanner<T>> impleme
         } else {
             allowAllPackages = true;
         }
-        config.filterInputsBy(new FilterBuilder().exclude(".*json").exclude(".*yaml"));
-        //config.filterInputsBy(new FilterBuilder().exclude(".*yaml"));
+        config.filterInputsBy(filterBuilder(openApiConfiguration));
         config.setScanners(new ResourcesScanner(), new TypeAnnotationsScanner(), new SubTypesScanner());
         final Reflections reflections;
         reflections = new Reflections(config);
@@ -123,5 +123,25 @@ public class JaxrsAnnotationScanner<T extends JaxrsAnnotationScanner<T>> impleme
     @Override
     public Map<String, Object> resources() {
         return new HashMap<String, Object>();
+    }
+
+    private FilterBuilder filterBuilder(OpenAPIConfiguration openApiConfiguration) {
+        FilterBuilder filterBuilder = new FilterBuilder();
+        ResourceFilter resourceFilter = openApiConfiguration.getResourceFilter();
+        if (resourceFilter != null) {
+            if (!resourceFilter.getIncludePackages().isEmpty()) {
+                filterBuilder = filterBuilder
+                    .includePackage(resourceFilter.getIncludePackages().toArray(new String[resourceFilter.getIncludePackages().size()]));
+            }
+            // Always exclude last.
+            if (!resourceFilter.getExcludePackages().isEmpty()) {
+                for (String excludePackage : resourceFilter.getExcludePackages()) {
+                    filterBuilder = filterBuilder.excludePackage(excludePackage);
+                }
+            }
+
+        }
+        // Finally apply the default exclusions.
+        return filterBuilder.exclude(".*json").exclude(".*yaml");
     }
 }

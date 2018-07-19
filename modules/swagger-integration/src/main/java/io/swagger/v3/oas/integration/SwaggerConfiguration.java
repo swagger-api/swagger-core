@@ -15,6 +15,7 @@ public class SwaggerConfiguration implements OpenAPIConfiguration {
     private String id;
     private Set<String> resourcePackages;
     private Set<String> resourceClasses;
+    private ResourceFilter resourceFilter;
     private String filterClass;
     private String readerClass;
     private String scannerClass;
@@ -156,6 +157,20 @@ public class SwaggerConfiguration implements OpenAPIConfiguration {
 
     public SwaggerConfiguration resourceClasses(Set<String> resourceClasses) {
         this.resourceClasses = resourceClasses;
+        return this;
+    }
+
+    @Override
+    public ResourceFilter getResourceFilter() {
+        return resourceFilter;
+    }
+
+    public void setResourceFilter(ResourceFilter resourceFilter) {
+        this.resourceFilter = resourceFilter;
+    }
+
+    public SwaggerConfiguration resourceFilter(ResourceFilter resourceFilter) {
+        this.resourceFilter = resourceFilter;
         return this;
     }
 

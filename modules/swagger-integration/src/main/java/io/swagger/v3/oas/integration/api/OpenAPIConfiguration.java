@@ -1,5 +1,6 @@
 package io.swagger.v3.oas.integration.api;
 
+import io.swagger.v3.oas.integration.ResourceFilter;
 import io.swagger.v3.oas.models.OpenAPI;
 
 import java.util.Collection;
@@ -10,6 +11,8 @@ public interface OpenAPIConfiguration {
     Set<String> getResourcePackages();
 
     Set<String> getResourceClasses();
+
+    ResourceFilter getResourceFilter();
 
     String getReaderClass();
 
