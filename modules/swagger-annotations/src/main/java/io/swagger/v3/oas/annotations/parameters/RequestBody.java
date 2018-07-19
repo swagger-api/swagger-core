@@ -67,5 +67,13 @@ public @interface RequestBody {
      * @return an optional array of extensions
      */
     Extension[] extensions() default {};
+    
+    /**
+     * A reference to a RequestBody defined in components RequestBodies.
+     *
+     * @since 2.0.3
+     * @return the reference
+     **/
+    String ref() default "";
 
 }
