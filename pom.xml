@@ -498,7 +498,7 @@
         <commons-lang-version>3.7</commons-lang-version>
         <commons-io-version>2.6</commons-io-version>
         <slf4j-version>1.7.25</slf4j-version>
-        <jetty-version>9.4.9.v20180320</jetty-version>
+        <jetty-version>9.4.11.v20180605</jetty-version>
         <testng-version>6.14.2</testng-version>
         <mockito-version>2.16.0</mockito-version>
         <rest-assured-version>3.0.7</rest-assured-version>
