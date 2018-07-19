@@ -1,21 +1,21 @@
 package io.swagger.util;
 
-import io.swagger.models.properties.PropertyBuilder;
-
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
+import io.swagger.models.properties.PropertyBuilder;
+
 public class AllowableEnumValues implements AllowableValues {
 
     private final List<String> items;
 
-    private AllowableEnumValues(List<String> items) {
+    private AllowableEnumValues(final List<String> items) {
         this.items = items;
     }
 
-    public static AllowableEnumValues create(String allowableValues) {
+    public static AllowableEnumValues create(final String allowableValues) {
         final List<String> items = new ArrayList<String>();
         for (String value : allowableValues.split(",")) {
             final String trimmed = value.trim();
@@ -23,7 +23,16 @@ public class AllowableEnumValues implements AllowableValues {
                 items.add(trimmed);
             }
         }
-        return items.isEmpty() ? null : new AllowableEnumValues(items);
+        return create(items);
+    }
+
+    /**
+     * Create AllowableEnumValues from a list of string items
+     * @param items List of strings to convert
+     * @return an Object AllowableEnumValues containing the list of string items
+     */
+    public static AllowableEnumValues create(final List<String> items) {
+        return items == null || items.isEmpty() ? null : new AllowableEnumValues(items);
     }
 
     public List<String> getItems() {

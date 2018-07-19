@@ -1,5 +1,25 @@
 package io.swagger.util;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
+import java.lang.reflect.Type;
+import java.math.BigDecimal;
+import java.util.EnumMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.validation.constraints.DecimalMax;
+import javax.validation.constraints.DecimalMin;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
+
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.Example;
@@ -17,29 +37,11 @@ import io.swagger.models.properties.LongProperty;
 import io.swagger.models.properties.Property;
 import io.swagger.models.properties.PropertyBuilder;
 import io.swagger.models.properties.StringProperty;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.validation.constraints.DecimalMax;
-import javax.validation.constraints.DecimalMin;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
-import java.lang.reflect.Type;
-import java.math.BigDecimal;
-import java.util.EnumMap;
-import java.util.List;
-import java.util.Map;
 
 public class ParameterProcessor {
     static Logger LOGGER = LoggerFactory.getLogger(ParameterProcessor.class);
 
-    public static Parameter applyAnnotations(Swagger swagger, Parameter parameter, Type type, List<Annotation> annotations) {
+    public static Parameter applyAnnotations(final Swagger swagger, Parameter parameter, final Type type, final List<Annotation> annotations) {
         final AnnotationsHelper helper = new AnnotationsHelper(annotations, type);
         if (helper.isContext()) {
             return null;
@@ -55,10 +57,10 @@ public class ParameterProcessor {
             if (param.isRequired()) {
                 p.setRequired(true);
             }
-            if(param.getReadOnly()) {
+            if (param.getReadOnly()) {
                 p.readOnly(param.getReadOnly());
             }
-            if(param.getAllowEmptyValue()) {
+            if (param.getAllowEmptyValue()) {
                 p.allowEmptyValue(param.getAllowEmptyValue());
             }
             if (StringUtils.isNotEmpty(param.getName())) {
@@ -73,13 +75,13 @@ public class ParameterProcessor {
             if (StringUtils.isNotEmpty(param.getAccess())) {
                 p.setAccess(param.getAccess());
             }
-            if(StringUtils.isNoneEmpty(param.getCollectionFormat())) {
+            if (StringUtils.isNoneEmpty(param.getCollectionFormat())) {
                 p.setCollectionFormat(param.getCollectionFormat());
             }
             if (StringUtils.isNotEmpty(param.getDataType())) {
                 if ("java.io.File".equalsIgnoreCase(param.getDataType())) {
                     p.setProperty(new FileProperty());
-                } else if("long".equalsIgnoreCase(param.getDataType())) {
+                } else if ("long".equalsIgnoreCase(param.getDataType())) {
                     p.setProperty(new LongProperty());
                 } else {
                     p.setType(param.getDataType());
@@ -120,14 +122,21 @@ public class ParameterProcessor {
             if (helper.isRequired() != null) {
                 p.setRequired(true);
             }
-            if(helper.getType() != null) {
+            if (helper.getType() != null) {
                 p.setType(helper.getType());
             }
-            if(helper.getFormat() != null) {
+            if (helper.getFormat() != null) {
                 p.setFormat(helper.getFormat());
             }
 
             AllowableValues allowableValues = AllowableValuesUtils.create(param.getAllowableValues());
+
+            // if no allowable values provided yet, get allowable values from attribute "allowableValuesEnumClass"
+            if (allowableValues == null || allowableValues.asPropertyArguments().size() == 0) {
+                if (StringUtils.isNotBlank(param.getAllowableValuesEnumClass())) {
+                    allowableValues = AllowableValuesUtils.createFromEnumClass(param.getAllowableValuesEnumClass());
+                }
+            }
 
             if (p.getItems() != null || param.isAllowMultiple()) {
                 if (p.getItems() == null) {
@@ -276,7 +285,7 @@ public class ParameterProcessor {
         return parameter;
     }
 
-    private static void processAllowedValues(AllowableValues allowableValues, AbstractSerializableParameter<?> p) {
+    private static void processAllowedValues(final AllowableValues allowableValues, final AbstractSerializableParameter<?> p) {
         if (allowableValues == null) {
             return;
         }
@@ -299,7 +308,7 @@ public class ParameterProcessor {
         }
     }
 
-    private static void processJsr303Annotations(AnnotationsHelper helper, AbstractSerializableParameter<?> p) {
+    private static void processJsr303Annotations(final AnnotationsHelper helper, final AbstractSerializableParameter<?> p) {
         if (helper == null) {
             return;
         }
@@ -323,6 +332,8 @@ public class ParameterProcessor {
         String getDefaultValue();
 
         String getAllowableValues();
+
+        String getAllowableValuesEnumClass();
 
         boolean isRequired();
 
@@ -357,30 +368,47 @@ public class ParameterProcessor {
      */
     private static class AnnotationsHelper {
         private static final ApiParam DEFAULT_API_PARAM = getDefaultApiParam(null);
+
         private boolean context;
+
         private ParamWrapper<?> apiParam = new ApiParamWrapper(DEFAULT_API_PARAM);
-        private String type;
-        private String format;
-        private String defaultValue;
+
+        private final String type;
+
+        private final String format;
+
+        private final String defaultValue;
+
         private Integer minItems;
+
         private Integer maxItems;
+
         private Boolean required;
+
         private BigDecimal min;
+
         private boolean minExclusive = false;
+
         private BigDecimal max;
+
         private boolean maxExclusive = false;
+
         private Integer minLength;
+
         private Integer maxLength;
+
         private String pattern;
-        private Boolean allowEmptyValue;
-        private String collectionFormat;
+
+        private final Boolean allowEmptyValue;
+
+        private final String collectionFormat;
 
         /**
          * Constructs an instance.
          *
          * @param annotations array or parameter annotations
          */
-        public AnnotationsHelper(List<Annotation> annotations, Type _type) {
+        public AnnotationsHelper(final List<Annotation> annotations, final Type _type) {
             String rsDefault = null;
             Size size = null;
             for (Annotation item : annotations) {
@@ -442,7 +470,7 @@ public class ParameterProcessor {
             collectionFormat = StringUtils.isNoneEmpty(apiParam.getCollectionFormat()) ? apiParam.getCollectionFormat() : null;
         }
 
-        private boolean isAssignableToNumber(Class<?> clazz) {
+        private boolean isAssignableToNumber(final Class<?> clazz) {
             return Number.class.isAssignableFrom(clazz)
                     || int.class.isAssignableFrom(clazz)
                     || short.class.isAssignableFrom(clazz)
@@ -458,7 +486,7 @@ public class ParameterProcessor {
          *                         annotation
          * @return @{@link ApiParam} annotation
          */
-        private static ApiParam getDefaultApiParam(@ApiParam String annotationHolder) {
+        private static ApiParam getDefaultApiParam(@ApiParam final String annotationHolder) {
             for (Method method : AnnotationsHelper.class.getDeclaredMethods()) {
                 if ("getDefaultApiParam".equals(method.getName())) {
                     return (ApiParam) method.getParameterAnnotations()[0][0];
@@ -560,7 +588,7 @@ public class ParameterProcessor {
 
         private final ApiParam apiParam;
 
-        private ApiParamWrapper(ApiParam apiParam) {
+        private ApiParamWrapper(final ApiParam apiParam) {
             this.apiParam = apiParam;
         }
 
@@ -582,6 +610,11 @@ public class ParameterProcessor {
         @Override
         public String getAllowableValues() {
             return apiParam.allowableValues();
+        }
+
+        @Override
+        public String getAllowableValuesEnumClass() {
+            return apiParam.allowableValuesEnumClass();
         }
 
         @Override
@@ -628,22 +661,27 @@ public class ParameterProcessor {
             return apiParam.examples();
         }
 
+        @Override
         public String getType() {
             return apiParam.type();
         }
 
+        @Override
         public String getFormat() {
             return apiParam.format();
         }
 
+        @Override
         public boolean getReadOnly() {
             return apiParam.readOnly();
         }
 
+        @Override
         public boolean getAllowEmptyValue() {
             return apiParam.allowEmptyValue();
         }
 
+        @Override
         public String getCollectionFormat() {
             return apiParam.collectionFormat();
         }
@@ -656,7 +694,7 @@ public class ParameterProcessor {
 
         private final ApiImplicitParam apiParam;
 
-        private ApiImplicitParamWrapper(ApiImplicitParam apiParam) {
+        private ApiImplicitParamWrapper(final ApiImplicitParam apiParam) {
             this.apiParam = apiParam;
         }
 
@@ -678,6 +716,11 @@ public class ParameterProcessor {
         @Override
         public String getAllowableValues() {
             return apiParam.allowableValues();
+        }
+
+        @Override
+        public String getAllowableValuesEnumClass() {
+            return apiParam.allowableValuesEnumClass();
         }
 
         @Override
@@ -724,22 +767,27 @@ public class ParameterProcessor {
             return apiParam.examples();
         }
 
+        @Override
         public String getType() {
             return apiParam.type();
         }
 
+        @Override
         public String getFormat() {
             return apiParam.format();
         }
 
+        @Override
         public boolean getReadOnly() {
             return apiParam.readOnly();
         }
 
+        @Override
         public boolean getAllowEmptyValue() {
             return apiParam.allowEmptyValue();
         }
 
+        @Override
         public String getCollectionFormat() {
             return apiParam.collectionFormat();
         }

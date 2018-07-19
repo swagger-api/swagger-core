@@ -78,6 +78,15 @@ public @interface ApiImplicitParam {
     String allowableValues() default "";
 
     /**
+     * String representation of Enum class used to get values for allowable values.
+     * <p>
+     * if "allowableValues" given, then "allowableValuesEnumClass" is skipped
+     * Example : {@code "fr.mycompany.enums.MyEnum"}
+     * </p>
+     */
+    String allowableValuesEnumClass() default "";
+
+    /**
      * Specifies if the parameter is required or not.
      * <p>
      * Path parameters should always be set as required.

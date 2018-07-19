@@ -6,6 +6,9 @@
         </layout>
     </appender>
     <logger name="io.swagger" level="error"/>
+    
+    <logger name="io.swagger.util.supplier" level="debug"/>
+    
     <root level="error">
         <appender-ref ref="STDOUT"/>
     </root>

@@ -2,13 +2,9 @@ build/
 lib/*.jar
 target
 samples/scala-play2/logs
-.idea
-.idea_modules
-.settings
-.project
-.classpath
-.cache
+.*
 atlassian-ide-plugin.xml
 *.iml
-.java-version
 sonar-project.properties
+test-output
+bin
