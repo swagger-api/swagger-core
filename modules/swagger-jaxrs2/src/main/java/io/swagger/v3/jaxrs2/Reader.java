@@ -1027,6 +1027,9 @@ public class Reader implements OpenApiReader {
                     classConsumes,
                     jsonViewAnnotation);
             setPathItemOperation(pathItemObject, callbackOperation.method(), callbackNewOperation);
+            if (StringUtils.isNotBlank(apiCallback.ref())) {
+                pathItemObject.set$ref(apiCallback.ref());
+            }
         }
 
         callbackObject.addPathItem(apiCallback.callbackUrlExpression(), pathItemObject);

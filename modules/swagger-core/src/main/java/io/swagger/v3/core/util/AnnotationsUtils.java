@@ -321,6 +321,9 @@ public abstract class AnnotationsUtils {
                     exampleObject.setValue(example.value());
                 }
             }
+            if (StringUtils.isNotBlank(example.ref())) {
+                exampleObject.set$ref(example.ref());
+            }
             if (example.extensions().length > 0) {
                 Map<String, Object> extensions = AnnotationsUtils.getExtensions(example.extensions());
                 if (extensions != null) {
@@ -815,6 +818,10 @@ public abstract class AnnotationsUtils {
                 isEmpty = false;
             }
         }
+        if (StringUtils.isNotBlank(link.ref())) {
+            linkObject.set$ref(link.ref());
+            isEmpty = false;
+        }
         if (link.extensions() != null && link.extensions().length > 0) {
             Map<String, Object> extensions = AnnotationsUtils.getExtensions(link.extensions());
             if (extensions != null) {
@@ -889,6 +896,10 @@ public abstract class AnnotationsUtils {
         boolean isEmpty = true;
         if (StringUtils.isNotBlank(header.description())) {
             headerObject.setDescription(header.description());
+            isEmpty = false;
+        }
+        if (StringUtils.isNotBlank(header.ref())) {
+            headerObject.set$ref(header.ref());
             isEmpty = false;
         }
         if (header.deprecated()) {

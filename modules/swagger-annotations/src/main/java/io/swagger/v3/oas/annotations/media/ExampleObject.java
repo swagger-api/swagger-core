@@ -69,4 +69,12 @@ public @interface ExampleObject {
      */
     Extension[] extensions() default {};
 
+    /**
+     * A reference to a example defined in components examples.
+     *
+     * @since 2.0.3
+     * @return the reference
+     **/
+    String ref() default "";
+
 }

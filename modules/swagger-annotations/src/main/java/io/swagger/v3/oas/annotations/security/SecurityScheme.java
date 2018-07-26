@@ -113,4 +113,12 @@ public @interface SecurityScheme {
      */
     Extension[] extensions() default {};
 
+    /**
+     * A reference to a SecurityScheme defined in components securitySchemes.
+     *
+     * @since 2.0.3
+     * @return the reference
+     **/
+    String ref() default "";
+
 }
