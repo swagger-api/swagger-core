@@ -17,6 +17,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import io.swagger.models.Xml;
 import io.swagger.models.properties.ArrayProperty;
+import io.swagger.models.properties.ComposedProperty;
 import io.swagger.models.properties.MapProperty;
 import io.swagger.models.properties.ObjectProperty;
 import io.swagger.models.properties.Property;
@@ -219,7 +220,7 @@ public class PropertyDeserializer extends JsonDeserializer<Property> {
             return refProperty;
         }
 
-        if (ObjectProperty.isType(type) || node.get("properties") != null) {
+        if (ObjectProperty.isType(type) || node.get("properties") != null || node.get("allOf") != null) {
             JsonNode example = getDetailNode(node, PropertyBuilder.PropertyId.EXAMPLE);
             detailNode = node.get("additionalProperties");
             if (detailNode != null && detailNode.getNodeType().equals(JsonNodeType.OBJECT)) {
@@ -237,6 +238,7 @@ public class PropertyDeserializer extends JsonDeserializer<Property> {
                     return mapProperty;
                 }
             } else {
+                JsonNode allOfNode = node.get("allOf");
                 detailNode = node.get("properties");
                 String detailNodeType = null;
                 Map<String, Property> properties = new LinkedHashMap<String, Property>();
@@ -256,6 +258,20 @@ public class PropertyDeserializer extends JsonDeserializer<Property> {
                             }
                         }
                     }
+                } else if (allOfNode != null) {
+                    ComposedProperty cp = new ComposedProperty().description(description).title(title);
+                    cp.setExample(example);
+                    cp.setDescription(description);
+                    cp.setVendorExtensions(getVendorExtensions(node));
+
+                    List<Property> allOf = new ArrayList<Property>();
+                    for (JsonNode innerNode : allOfNode) {
+                        allOf.add(propertyFromNode(innerNode));
+                    }
+
+                    cp.setAllOf(allOf);
+
+                    return cp;
                 }
 
                 if("array".equals(detailNodeType)) {
