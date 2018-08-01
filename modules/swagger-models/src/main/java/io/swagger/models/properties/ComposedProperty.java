@@ -65,6 +65,11 @@ public class ComposedProperty extends AbstractProperty implements Property {
         this.allOf = allOf;
     }
 
+    public ComposedProperty allOf(List<Property> allOf) {
+        this.allOf = allOf;
+        return this;
+    }
+
     @Override
     public ComposedProperty readOnly() {
         this.setReadOnly(Boolean.TRUE);
@@ -84,6 +89,9 @@ public class ComposedProperty extends AbstractProperty implements Property {
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof ComposedProperty)) {
+            return false;
+        }
+        if (!super.equals(o)) {
             return false;
         }
 
