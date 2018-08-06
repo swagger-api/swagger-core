@@ -36,6 +36,18 @@ public class RefResponse extends Response {
         return genericRef.getSimpleRef();
     }
 
+    /**
+     * @since 1.5.21
+     * @return originalRef
+     */
+    public String getOriginalRef() {
+        if (genericRef != null) {
+            return genericRef.getOriginalRef();
+        } else {
+            return null;
+        }
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

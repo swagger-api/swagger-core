@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchema;
 
+import io.swagger.models.refs.RefFormat;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -173,7 +174,11 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 }
                 if (innerModel instanceof ModelImpl) {
                     ModelImpl mi = (ModelImpl) innerModel;
-                    property = new RefProperty(StringUtils.isNotEmpty(mi.getReference()) ? mi.getReference() : mi.getName());
+                    if (StringUtils.isNotEmpty(mi.getReference())) {
+                        property = new RefProperty(mi.getReference());
+                    } else {
+                        property = new RefProperty(mi.getName(), RefFormat.INTERNAL);
+                    }
                 }
             }
         }
@@ -970,7 +975,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 }
 
                 impl.setDiscriminator(null);
-                ComposedModel child = new ComposedModel().parent(new RefModel(model.getName())).child(impl);
+                ComposedModel child = new ComposedModel().parent(new RefModel(model.getName(), RefFormat.INTERNAL)).child(impl);
                 context.defineModel(impl.getName(), child, subtypeType, null);
                 ++count;
             }

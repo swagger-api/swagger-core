@@ -1,0 +1,222 @@
+{
+    "swagger": "2.0",
+    "tags": [
+        {
+            "name": "basic"
+        }
+    ],
+    "paths": {
+        "/test": {
+            "get": {
+                "tags": [
+                    "basic"
+                ],
+                "operationId": "getTest",
+                "parameters": [],
+                "responses": {
+                    "500": {
+                        "description": "Error",
+                        "schema": {
+                            "$ref": "http://swagger.io/schemas.json#/Models/ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/some": {
+            "get": {
+                "tags": [
+                    "basic"
+                ],
+                "summary": "Get Some",
+                "description": "",
+                "operationId": "getSome",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "$ref": "http://swagger.io/schemas.json#/Models/SomeResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/testSome": {
+            "get": {
+                "tags": [
+                    "basic"
+                ],
+                "summary": "Get Some",
+                "description": "",
+                "operationId": "getTestSome",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "$ref": "http://swagger.io/schemas.json#/Models/SomeResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Error",
+                        "schema": {
+                            "$ref": "http://swagger.io/schemas.json#/Models/ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/testSomeOther": {
+            "get": {
+                "tags": [
+                    "basic"
+                ],
+                "summary": "Get Some Other",
+                "description": "",
+                "operationId": "getTestSomeOther",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "$ref": "foo"
+                        }
+                    },
+                    "500": {
+                        "description": "Error",
+                        "schema": {
+                            "$ref": "foo.json"
+                        }
+                    },
+                    "502": {
+                        "description": "Error",
+                        "schema": {
+                            "$ref": "foo.json.MyClass"
+                        }
+                    }
+                }
+            }
+        },
+        "/model": {
+            "get": {
+                "tags": [
+                    "basic"
+                ],
+                "summary": "Get Model",
+                "description": "",
+                "operationId": "getModel",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "$ref": "ModelContainingModelWithReference"
+                        }
+                    }
+                }
+            }
+        },
+        "/anotherModel": {
+            "get": {
+                "tags": [
+                    "basic"
+                ],
+                "summary": "Get Another Model",
+                "description": "",
+                "operationId": "getAnotherModel",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "$ref": "http://swagger.io/schemas.json#/Models"
+                        }
+                    }
+                }
+            }
+        },
+        "/aThirdModel": {
+            "get": {
+                "tags": [
+                    "basic"
+                ],
+                "summary": "Get A Third Model",
+                "description": "",
+                "operationId": "getAThirdModel",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "$ref": "ModelWithReferences"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "ModelContainingModelWithReference": {
+            "type": "object",
+            "properties": {
+                "model": {
+                    "$ref": "http://swagger.io/schemas.json#/Models"
+                },
+                "anotherModel": {
+                    "$ref": "http://swagger.io/schemas.json#/Models/AnotherModel"
+                }
+            }
+        },
+        "ModelWithReference": {
+            "type": "object",
+            "properties": {
+                "nested": {
+                    "type": "array",
+                    "description": "SubModelWithSelfReference",
+                    "items": {
+                        "$ref": "SubModelWithSelfReference"
+                    }
+                },
+                "description": {
+                    "$ref": "http://swagger.io/schemas.json#/Models/Description"
+                }
+            }
+        },
+        "SubModelWithSelfReference": {
+            "type": "object",
+            "properties": {
+                "references": {
+                    "type": "array",
+                    "description": "References",
+                    "items": {
+                        "$ref": "SubModelWithSelfReference"
+                    }
+                }
+            }
+        },
+        "ModelWithReferences": {
+            "type": "object",
+            "properties": {
+                "six": {
+                    "$ref": "./Six"
+                },
+                "four": {
+                    "$ref": "Four.json"
+                },
+                "another": {
+                    "$ref": "http://swagger.io/schemas.json#/Models/AnotherModel"
+                },
+                "three": {
+                    "$ref": "Three"
+                },
+                "five": {
+                    "$ref": "Five.json.MyClass"
+                },
+                "one": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}

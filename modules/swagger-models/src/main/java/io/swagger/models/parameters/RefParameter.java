@@ -12,6 +12,10 @@ public class RefParameter extends AbstractParameter implements Parameter {
         set$ref(ref);
     }
 
+    public RefParameter(String ref, RefFormat refFormat) {
+        this.genericRef = new GenericRef(RefType.PARAMETER, ref, refFormat);
+    }
+
     public static boolean isType(String type, String format) {
         if ("$ref".equals(type)) {
             return true;
@@ -52,6 +56,18 @@ public class RefParameter extends AbstractParameter implements Parameter {
     @JsonIgnore
     public String getSimpleRef() {
         return genericRef.getSimpleRef();
+    }
+
+    /**
+     * @since 1.5.21
+     * @return originalRef
+     */
+    public String getOriginalRef() {
+        if (genericRef != null) {
+            return genericRef.getOriginalRef();
+        } else {
+            return null;
+        }
     }
 
     @Override

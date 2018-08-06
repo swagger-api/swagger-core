@@ -16,8 +16,12 @@ public class RefProperty extends AbstractProperty implements Property {
     }
 
     public RefProperty(String ref) {
+        this(ref, null);
+    }
+
+    public RefProperty(String ref, RefFormat refFormat) {
         this();
-        set$ref(ref);
+        this.genericRef = new GenericRef(RefType.DEFINITION, ref, refFormat);
     }
 
     public static boolean isType(String type, String format) {
@@ -71,6 +75,18 @@ public class RefProperty extends AbstractProperty implements Property {
     public String getSimpleRef() {
         if (genericRef != null) {
             return this.genericRef.getSimpleRef();
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * @since 1.5.21
+     * @return originalRef
+     */
+    public String getOriginalRef() {
+        if (genericRef != null) {
+            return genericRef.getOriginalRef();
         } else {
             return null;
         }
