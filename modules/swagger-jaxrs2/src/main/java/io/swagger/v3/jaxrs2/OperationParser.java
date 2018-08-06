@@ -24,6 +24,12 @@ public class OperationParser {
         }
         RequestBody requestBodyObject = new RequestBody();
         boolean isEmpty = true;
+
+        if (StringUtils.isNotBlank(requestBody.ref())) {
+            requestBodyObject.set$ref(requestBody.ref());
+            return Optional.of(requestBodyObject);
+        }
+
         if (StringUtils.isNotBlank(requestBody.description())) {
             requestBodyObject.setDescription(requestBody.description());
             isEmpty = false;

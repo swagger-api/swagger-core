@@ -69,4 +69,11 @@ public @interface Callback {
      */
     Extension[] extensions() default {};
 
+    /**
+     * A reference to a Callback defined in components Callbacks.
+     *
+     * @since 2.0.3
+     * @return the reference
+     **/
+    String ref() default "";
 }

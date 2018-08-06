@@ -1014,7 +1014,13 @@ public class Reader implements OpenApiReader {
         if (apiCallback == null) {
             return callbackMap;
         }
+
         Callback callbackObject = new Callback();
+        if (StringUtils.isNotBlank(apiCallback.ref())) {
+            callbackObject.set$ref(apiCallback.ref());
+            callbackMap.put(apiCallback.name(), callbackObject);
+            return callbackMap;
+        }
         PathItem pathItemObject = new PathItem();
         for (io.swagger.v3.oas.annotations.Operation callbackOperation : apiCallback.operation()) {
             Operation callbackNewOperation = new Operation();

@@ -342,7 +342,7 @@ public class Parameter {
     }
 
     public Parameter $ref(String $ref) {
-        this.$ref = $ref;
+        set$ref($ref);
         return this;
     }
 

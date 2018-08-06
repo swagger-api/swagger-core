@@ -72,6 +72,11 @@ public class ParameterProcessor {
                 if (p.hidden()) {
                     return null;
                 }
+                if (StringUtils.isNotBlank(p.ref())) {
+                    parameter = new Parameter().$ref(p.ref());
+                    return parameter;
+                }
+
                 if (StringUtils.isNotBlank(p.description())) {
                     parameter.setDescription(p.description());
                 }

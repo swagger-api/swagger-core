@@ -71,15 +71,16 @@ public class ReaderUtils {
                     final List<Parameter> tmpParameters = collectParameters(genericParameterType, tmpAnnotations, components, classConsumes, jsonViewAnnotation);
                     if (tmpParameters.size() >= 1) {
                         for (Parameter tmpParameter : tmpParameters) {
-                            if (ParameterProcessor.applyAnnotations(
+                            Parameter processedParameter = ParameterProcessor.applyAnnotations(
                                     tmpParameter,
                                     genericParameterType,
                                     tmpAnnotations,
                                     components,
                                     classConsumes == null ? new String[0] : classConsumes.value(),
                                     null,
-                                    jsonViewAnnotation) != null) {
-                                parameters.add(tmpParameter);
+                                    jsonViewAnnotation);
+                            if (processedParameter != null) {
+                                parameters.add(processedParameter);
                             }
                         }
                         paramsCount++;

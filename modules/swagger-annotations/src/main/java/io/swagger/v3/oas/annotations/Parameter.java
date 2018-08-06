@@ -167,4 +167,12 @@ public @interface Parameter {
      * @return an optional array of extensions
      */
     Extension[] extensions() default {};
+
+    /**
+     * A reference to a parameter defined in components parameter.
+     *
+     * @since 2.0.3
+     * @return the reference
+     **/
+    String ref() default "";
 }

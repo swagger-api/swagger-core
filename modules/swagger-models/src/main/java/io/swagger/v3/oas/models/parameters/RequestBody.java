@@ -123,7 +123,7 @@ public class RequestBody {
     }
 
     public RequestBody $ref(String $ref) {
-        this.$ref = $ref;
+        set$ref($ref);
         return this;
     }
 
