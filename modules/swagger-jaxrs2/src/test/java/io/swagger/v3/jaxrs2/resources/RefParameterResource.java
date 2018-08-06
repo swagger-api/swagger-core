@@ -17,7 +17,7 @@ public class RefParameterResource {
             operationId = "sendPayload",
             deprecated = true
     )
-    public void sendPayload(@Parameter(ref = "Id") @QueryParam("number") final int id) {
+    public void sendPayload(@Parameter(ref = "id") @QueryParam("id") final int id) {
     }
 
 }

@@ -19,7 +19,7 @@ public class SimpleParameterResource {
     )
     public void sendPayload(@Parameter(description = "Id Description",
             required = true,
-            example = "1") @QueryParam("number") final int id) {
+            example = "1") @QueryParam("id") final int id) {
     }
 
 }

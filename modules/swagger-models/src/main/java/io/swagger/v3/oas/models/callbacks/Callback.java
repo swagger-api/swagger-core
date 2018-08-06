@@ -33,6 +33,33 @@ public class Callback extends LinkedHashMap<String, PathItem> {
 
     private java.util.Map<String, Object> extensions = null;
 
+    private String $ref = null;
+
+    /**
+     * @since 2.0.3
+     */
+    public String get$ref() {
+        return $ref;
+    }
+
+    /**
+     * @since 2.0.3
+     */
+    public void set$ref(String $ref) {
+        if ($ref != null && ($ref.indexOf(".") == -1 && $ref.indexOf("/") == -1)) {
+            $ref = "#/components/callbacks/" + $ref;
+        }
+        this.$ref = $ref;
+    }
+
+    /**
+     * @since 2.0.3
+     */
+    public Callback $ref(String $ref) {
+        set$ref($ref);
+        return this;
+    }
+
     public Callback addPathItem(String name, PathItem item) {
         this.put(name, item);
         return this;
@@ -47,13 +74,16 @@ public class Callback extends LinkedHashMap<String, PathItem> {
             return false;
         }
         Callback callback = (Callback) o;
+        if ($ref != null ? !$ref.equals(callback.$ref) : callback.$ref != null) {
+            return false;
+        }
         return Objects.equals(this.extensions, callback.extensions) &&
                 super.equals(o);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(extensions, super.hashCode());
+        return Objects.hash(extensions, $ref, super.hashCode());
     }
 
     public java.util.Map<String, Object> getExtensions() {

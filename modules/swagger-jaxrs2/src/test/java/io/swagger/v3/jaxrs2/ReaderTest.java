@@ -10,7 +10,50 @@ import io.swagger.v3.core.filter.SpecFilter;
 import io.swagger.v3.core.jackson.ModelResolver;
 import io.swagger.v3.core.model.ApiDescription;
 import io.swagger.v3.jaxrs2.matchers.SerializationMatchers;
-import io.swagger.v3.jaxrs2.resources.*;
+import io.swagger.v3.jaxrs2.resources.BasicFieldsResource;
+import io.swagger.v3.jaxrs2.resources.BookStoreTicket2646;
+import io.swagger.v3.jaxrs2.resources.ClassPathParentResource;
+import io.swagger.v3.jaxrs2.resources.ClassPathSubResource;
+import io.swagger.v3.jaxrs2.resources.CompleteFieldsResource;
+import io.swagger.v3.jaxrs2.resources.DeprecatedFieldsResource;
+import io.swagger.v3.jaxrs2.resources.DuplicatedOperationIdResource;
+import io.swagger.v3.jaxrs2.resources.DuplicatedOperationMethodNameResource;
+import io.swagger.v3.jaxrs2.resources.DuplicatedSecurityResource;
+import io.swagger.v3.jaxrs2.resources.EnhancedResponsesResource;
+import io.swagger.v3.jaxrs2.resources.ExternalDocsReference;
+import io.swagger.v3.jaxrs2.resources.MyClass;
+import io.swagger.v3.jaxrs2.resources.MyOtherClass;
+import io.swagger.v3.jaxrs2.resources.RefCallbackResource;
+import io.swagger.v3.jaxrs2.resources.RefExamplesResource;
+import io.swagger.v3.jaxrs2.resources.RefHeaderResource;
+import io.swagger.v3.jaxrs2.resources.RefLinksResource;
+import io.swagger.v3.jaxrs2.resources.RefParameterResource;
+import io.swagger.v3.jaxrs2.resources.RefRequestBodyResource;
+import io.swagger.v3.jaxrs2.resources.RefResponsesResource;
+import io.swagger.v3.jaxrs2.resources.RefSecurityResource;
+import io.swagger.v3.jaxrs2.resources.ResourceWithSubResource;
+import io.swagger.v3.jaxrs2.resources.ResponseContentWithArrayResource;
+import io.swagger.v3.jaxrs2.resources.ResponsesResource;
+import io.swagger.v3.jaxrs2.resources.SecurityResource;
+import io.swagger.v3.jaxrs2.resources.ServersResource;
+import io.swagger.v3.jaxrs2.resources.SimpleCallbackResource;
+import io.swagger.v3.jaxrs2.resources.SimpleExamplesResource;
+import io.swagger.v3.jaxrs2.resources.SimpleMethods;
+import io.swagger.v3.jaxrs2.resources.SimpleParameterResource;
+import io.swagger.v3.jaxrs2.resources.SimpleRequestBodyResource;
+import io.swagger.v3.jaxrs2.resources.SimpleResponsesResource;
+import io.swagger.v3.jaxrs2.resources.SubResourceHead;
+import io.swagger.v3.jaxrs2.resources.TagsResource;
+import io.swagger.v3.jaxrs2.resources.Test2607;
+import io.swagger.v3.jaxrs2.resources.TestResource;
+import io.swagger.v3.jaxrs2.resources.Ticket2644ConcreteImplementation;
+import io.swagger.v3.jaxrs2.resources.Ticket2763Resource;
+import io.swagger.v3.jaxrs2.resources.Ticket2793Resource;
+import io.swagger.v3.jaxrs2.resources.Ticket2794Resource;
+import io.swagger.v3.jaxrs2.resources.Ticket2806Resource;
+import io.swagger.v3.jaxrs2.resources.Ticket2818Resource;
+import io.swagger.v3.jaxrs2.resources.Ticket2848Resource;
+import io.swagger.v3.jaxrs2.resources.UserAnnotationResource;
 import io.swagger.v3.jaxrs2.resources.extensions.ExtensionsResource;
 import io.swagger.v3.jaxrs2.resources.extensions.OperationExtensionsResource;
 import io.swagger.v3.jaxrs2.resources.extensions.ParameterExtensionsResource;
@@ -50,7 +93,13 @@ import javax.ws.rs.Produces;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import static org.testng.Assert.assertEquals;
@@ -1363,7 +1412,7 @@ public class ReaderTest {
     @Test(description = "Parameter with ref")
     public void testParameterWithRef() {
         Components components = new Components();
-        components.addParameters("number", new Parameter()
+        components.addParameters("id", new Parameter()
                 .description("Id Description")
                 .schema(new IntegerSchema())
                 .in(ParameterIn.QUERY.toString())
@@ -1386,7 +1435,7 @@ public class ReaderTest {
                 "      description: Defines a simple get operation with a payload complex input object\n" +
                 "      operationId: sendPayload\n" +
                 "      parameters:\n" +
-                "      - $ref: '#/components/parameters/Id'\n" +
+                "      - $ref: '#/components/parameters/id'\n" +
                 "      responses:\n" +
                 "        default:\n" +
                 "          description: default response\n" +
@@ -1395,7 +1444,7 @@ public class ReaderTest {
                 "      deprecated: true\n" +
                 "components:\n" +
                 "  parameters: \n" +
-                "    number:\n" +
+                "    id:\n" +
                 "      in: query\n" +
                 "      description: Id Description\n" +
                 "      required: true\n" +
@@ -1409,7 +1458,7 @@ public class ReaderTest {
     @Test(description = "Responses with filter")
     public void testParameterWithFilter() {
         Components components = new Components();
-        components.addParameters("number", new Parameter()
+        components.addParameters("id", new Parameter()
                 .description("Id Description")
                 .schema(new IntegerSchema())
                 .in(ParameterIn.QUERY.toString())
@@ -1437,7 +1486,7 @@ public class ReaderTest {
                 "      description: Defines a simple get operation with a payload complex input object\n" +
                 "      operationId: sendPayload\n" +
                 "      parameters:\n" +
-                "      - $ref: '#/components/parameters/Id'\n" +
+                "      - $ref: '#/components/parameters/id'\n" +
                 "      responses:\n" +
                 "        default:\n" +
                 "          description: default response\n" +
@@ -1446,7 +1495,7 @@ public class ReaderTest {
                 "      deprecated: true\n" +
                 "components:\n" +
                 "  parameters: \n" +
-                "    number:\n" +
+                "    id:\n" +
                 "      in: query\n" +
                 "      description: Id Description\n" +
                 "      required: true\n" +
@@ -1463,7 +1512,7 @@ public class ReaderTest {
                                                    Map<String, String> cookies, Map<String, List<String>> headers) {
             if ("sendPayload".equals(operation.getOperationId())) {
                 final Parameter parameter = new Parameter();
-                parameter.set$ref("#/components/parameters/Id");
+                parameter.set$ref("#/components/parameters/id");
                 operation.getParameters().clear();
                 operation.addParametersItem(parameter);
                 return Optional.of(operation);
@@ -1762,19 +1811,7 @@ public class ReaderTest {
                 "          description: voila!\n" +
                 "      callbacks:\n" +
                 "        testCallback1:\n" +
-                "          http://www.url.com:\n" +
-                "            get:\n" +
-                "              summary: get all the reviews\n" +
-                "              operationId: getAllReviews\n" +
-                "              responses:\n" +
-                "                200:\n" +
-                "                  description: successful operation\n" +
-                "                  content:\n" +
-                "                    application/json:\n" +
-                "                      schema:\n" +
-                "                        type: integer\n" +
-                "                        format: int32\n" +
-                "            $ref: '#/components/callbacks/Callback'\n" +
+                "          $ref: '#/components/callbacks/Callback'\n" +
                 "components:\n" +
                 "  callbacks:\n" +
                 "    Callback:\n" +
