@@ -2,7 +2,11 @@
 
 # Swagger Core library
 
+Travis-CI:
 [![Build Status](https://travis-ci.org/swagger-api/swagger-core.svg?branch=master)](https://travis-ci.org/swagger-api/swagger-core)
+
+Jenkins:
+[![Build Status](https://jenkins.swagger.io/view/OSS%20-%20Java%20Jobs/job/oss-swagger-core-master-java-8/badge/icon)](https://jenkins.swagger.io/view/OSS%20-%20Java%20Jobs/job/oss-swagger-core-master-java-8/)
 
 The goal of Swagger™ is to define a standard, language-agnostic interface to REST APIs which allows both humans and computers to discover and understand the capabilities of the service without access to source code, documentation, or through network traffic inspection. When properly defined via Swagger, a consumer can understand and interact with the remote service with a minimal amount of implementation logic. Similar to what interfaces have done for lower-level programming, Swagger removes the guesswork in calling the service.
 
