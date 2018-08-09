@@ -108,6 +108,12 @@ public enum PrimitiveType {
             return new NumberSchema();
         }
     },
+    NUMBER(Number.class, "number") {
+        @Override
+        public Schema createProperty() {
+            return new NumberSchema();
+        }
+    },
     DATE(DateStub.class, "date") {
         @Override
         public DateSchema createProperty() {
@@ -185,6 +191,7 @@ public enum PrimitiveType {
         addKeys(keyClasses, DOUBLE, Double.class, Double.TYPE);
         addKeys(keyClasses, INTEGER, java.math.BigInteger.class);
         addKeys(keyClasses, DECIMAL, java.math.BigDecimal.class);
+        addKeys(keyClasses, NUMBER, Number.class);
         addKeys(keyClasses, DATE, DateStub.class);
         addKeys(keyClasses, DATE_TIME, java.util.Date.class);
         addKeys(keyClasses, FILE, java.io.File.class);
