@@ -5,7 +5,7 @@
     <parent>
         <artifactId>swagger-project</artifactId>
         <groupId>io.swagger.core.v3</groupId>
-        <version>2.0.3</version>
+        <version>2.0.4-SNAPSHOT</version>
         <relativePath>../../</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -292,9 +292,9 @@
         </dependency>
     </dependencies>
     <properties>
-        <models.version>2.0.3</models.version>
-        <annotations.version>2.0.3</annotations.version>
-        <core.version>2.0.3</core.version>
-        <integration.version>2.0.3</integration.version>
+        <models.version>2.0.4-SNAPSHOT</models.version>
+        <annotations.version>2.0.4-SNAPSHOT</annotations.version>
+        <core.version>2.0.4-SNAPSHOT</core.version>
+        <integration.version>2.0.4-SNAPSHOT</integration.version>
     </properties>
 </project>
