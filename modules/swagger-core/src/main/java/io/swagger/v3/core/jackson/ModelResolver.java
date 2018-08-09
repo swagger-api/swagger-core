@@ -327,10 +327,12 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             return context.resolve(aType);
         }
 
-        List<Class<?>> composedSchemaReferencedClasses = getComposedSchemaReferencedClasses(type.getRawClass(), annotatedType.getCtxAnnotations());
+        List<Class<?>> composedSchemaReferencedClasses = getComposedSchemaReferencedClasses(type.getRawClass(), annotatedType.getCtxAnnotations(), resolvedSchemaAnnotation);
         boolean isComposedSchema = composedSchemaReferencedClasses != null;
 
         if (type.isContainerType()) {
+            // TODO currently a MapSchema or ArraySchema don't also support composed schema props (oneOf,..)
+            isComposedSchema = false;
             JavaType keyType = type.getKeyType();
             JavaType valueType = type.getContentType();
             String pName = null;
@@ -752,10 +754,16 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                     .collect(Collectors.toList());
             oneOfFiltered.forEach(c -> {
                 Schema oneOfRef = context.resolve(new AnnotatedType().type(c).jsonViewAnnotation(annotatedType.getJsonViewAnnotation()));
-                composedSchema.addOneOfItem(new Schema().$ref(oneOfRef.getName()));
-                // remove shared properties defined in the parent
-                if (isSubtype(beanDesc.getClassInfo(), c)) {
-                    removeParentProperties(composedSchema, oneOfRef);
+                if (oneOfRef != null) {
+                    if (StringUtils.isBlank(oneOfRef.getName())) {
+                        composedSchema.addOneOfItem(oneOfRef);
+                    } else {
+                        composedSchema.addOneOfItem(new Schema().$ref(oneOfRef.getName()));
+                    }
+                    // remove shared properties defined in the parent
+                    if (isSubtype(beanDesc.getClassInfo(), c)) {
+                        removeParentProperties(composedSchema, oneOfRef);
+                    }
                 }
 
             });
@@ -844,7 +852,9 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
     private void handleUnwrapped(List<Schema> props, Schema innerModel, String prefix, String suffix) {
         if (StringUtils.isBlank(suffix) && StringUtils.isBlank(prefix)) {
-            props.addAll(innerModel.getProperties().values());
+            if (innerModel.getProperties() != null) {
+                props.addAll(innerModel.getProperties().values());
+            }
         } else {
             if (prefix == null) {
                 prefix = "";
@@ -852,14 +862,16 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             if (suffix == null) {
                 suffix = "";
             }
-            for (Schema prop : (Collection<Schema>) innerModel.getProperties().values()) {
-                try {
-                    Schema clonedProp = Json.mapper().readValue(Json.pretty(prop), Schema.class);
-                    clonedProp.setName(prefix + prop.getName() + suffix);
-                    props.add(clonedProp);
-                } catch (IOException e) {
-                    LOGGER.error("Exception cloning property", e);
-                    return;
+            if (innerModel.getProperties() != null) {
+                for (Schema prop : (Collection<Schema>) innerModel.getProperties().values()) {
+                    try {
+                        Schema clonedProp = Json.mapper().readValue(Json.pretty(prop), Schema.class);
+                        clonedProp.setName(prefix + prop.getName() + suffix);
+                        props.add(clonedProp);
+                    } catch (IOException e) {
+                        LOGGER.error("Exception cloning property", e);
+                        return;
+                    }
                 }
             }
         }
@@ -1217,12 +1229,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         }
     }
 
-    protected List<Class<?>> getComposedSchemaReferencedClasses(Class<?> clazz, Annotation[] ctxAnnotations) {
-
-        io.swagger.v3.oas.annotations.media.Schema schemaAnnotation = AnnotationsUtils.getSchemaAnnotation(ctxAnnotations);
-        if (schemaAnnotation == null) {
-            schemaAnnotation = AnnotationsUtils.getSchemaDeclaredAnnotation(clazz);
-        }
+    protected List<Class<?>> getComposedSchemaReferencedClasses(Class<?> clazz, Annotation[] ctxAnnotations, io.swagger.v3.oas.annotations.media.Schema schemaAnnotation) {
 
         if (schemaAnnotation != null) {
             Class<?>[] allOf = schemaAnnotation.allOf();
