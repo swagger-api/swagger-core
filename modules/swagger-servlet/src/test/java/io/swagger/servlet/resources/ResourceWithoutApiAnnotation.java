@@ -34,7 +34,7 @@ public class ResourceWithoutApiAnnotation {
                     value = "operation_auth",
                     scopes = {@AuthorizationScope(
                             scope = "",
-                            description = "")})}
+                            description = "default response")})}
     )
     public void testMethod3() {
 

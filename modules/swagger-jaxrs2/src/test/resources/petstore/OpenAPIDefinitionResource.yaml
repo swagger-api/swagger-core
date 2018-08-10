@@ -1,0 +1,48 @@
+openapi: 3.0.1
+info:
+  title: Pet Resource Example
+  description: API Definition
+  termsOfService: Terms of service
+  contact:
+    name: Fred
+    url: http://gigantic-server.com
+    email: Fred@gigagantic-server.com
+  license:
+    name: Apache 2.0
+    url: http://foo.bar
+  version: "2.0"
+externalDocs:
+  description: definition docs desc
+servers:
+- url: http://foo
+  description: server 1
+  variables:
+    var1:
+      description: var 1
+      default: "1"
+      enum:
+      - "1"
+      - "2"
+    var2:
+      description: var 2
+      default: "1"
+      enum:
+      - "1"
+      - "2"
+security:
+- req 1:
+  - a
+  - b
+- req 2:
+  - b
+  - c
+tags:
+- name: Tag 1
+  description: desc 1
+  externalDocs:
+    description: docs desc
+- name: Tag 2
+  description: desc 2
+  externalDocs:
+    description: docs desc 2
+- name: Tag 3

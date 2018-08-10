@@ -10,7 +10,7 @@
                 "type": "string"
             },
             "address": {
-                "$ref": "#/definitions/Address"
+                "$ref": "#/components/schemas/Address"
             },
             "properties": {
                 "type": "object",

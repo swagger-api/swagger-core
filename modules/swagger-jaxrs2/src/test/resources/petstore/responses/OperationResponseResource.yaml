@@ -1,0 +1,10 @@
+openapi: 3.0.1
+paths:
+  /responseinoperation:
+    get:
+      summary: Find Users
+      description: Returns the Users
+      operationId: getUsers
+      responses:
+        200:
+          description: Status OK

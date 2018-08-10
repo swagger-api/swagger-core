@@ -2,9 +2,9 @@ sudo: false
 language: java
 script: ./mvnw clean verify
 jdk:
-  - openjdk7
-  - openjdk8
-  - oraclejdk9 
+  - oraclejdk8
+  - oraclejdk9
+  - oraclejdk9
 after_success:
   - if [ $SONATYPE_USERNAME ] && [ -z $TRAVIS_TAG ] && [ $TRAVIS_PULL_REQUEST == false ]; then
       ./mvnw clean deploy --settings .travis/settings.xml;
@@ -12,4 +12,4 @@ after_success:
 branches:
   only:
   - master
-  - 2.0
+  - 1.5

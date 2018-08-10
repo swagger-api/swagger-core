@@ -8,7 +8,6 @@ import io.swagger.models.Swagger;
 import io.swagger.models.Tag;
 import io.swagger.servlet.resources.ResourceWithAnnotations;
 import io.swagger.servlet.resources.ResourceWithoutApiAnnotation;
-
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -43,12 +42,12 @@ public class ReaderTest {
 
         Assert.assertEquals(swagger.getHost(), "host");
         Assert.assertEquals(swagger.getBasePath(), "/api");
-        Assert.assertNotNull(swagger.getPath("/resources/users"));
+        Assert.assertNotNull(swagger.getPath("/resources/testMethod3"));
         Assert.assertNotNull(swagger.getDefinitions().get("SampleData"));
         Assert.assertEquals(swagger.getExternalDocs().getDescription(), "docs");
         Assert.assertEquals(swagger.getExternalDocs().getUrl(), "url_to_docs");
 
-        Path path = swagger.getPath("/resources/users");
+        Path path = swagger.getPath("/resources/testMethod3");
         Assert.assertNotNull(path);
         Operation get = path.getGet();
         Assert.assertNotNull( get );
