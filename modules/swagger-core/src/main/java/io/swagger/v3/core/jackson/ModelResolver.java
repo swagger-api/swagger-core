@@ -179,6 +179,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                     .name(annotatedType.getName())
                     .resolveAsRef(annotatedType.isResolveAsRef())
                     .jsonViewAnnotation(annotatedType.getJsonViewAnnotation())
+                    .propertyName(annotatedType.getPropertyName())
                     .skipOverride(true);
             if (resolvedArrayAnnotation != null) {
                 ArraySchema schema = new ArraySchema();
@@ -323,6 +324,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                     .schemaProperty(annotatedType.isSchemaProperty())
                     .resolveAsRef(annotatedType.isResolveAsRef())
                     .jsonViewAnnotation(annotatedType.getJsonViewAnnotation())
+                    .propertyName(annotatedType.getPropertyName())
                     .skipOverride(true);
             return context.resolve(aType);
         }
@@ -357,6 +359,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                                 .skipSchemaName(true)
                                 .resolveAsRef(annotatedType.isResolveAsRef())
                                 .jsonViewAnnotation(annotatedType.getJsonViewAnnotation())
+                                .propertyName(annotatedType.getPropertyName())
                                 .parent(annotatedType.getParent()));
                 if (addPropertiesSchema != null) {
                     if (StringUtils.isNotBlank(addPropertiesSchema.getName())) {
@@ -386,6 +389,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                         .ctxAnnotations(schemaAnnotations)
                         .skipSchemaName(true)
                         .resolveAsRef(annotatedType.isResolveAsRef())
+                        .propertyName(annotatedType.getPropertyName())
                         .jsonViewAnnotation(annotatedType.getJsonViewAnnotation())
                         .parent(annotatedType.getParent()));
 
@@ -444,6 +448,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                         .name(annotatedType.getName())
                         .resolveAsRef(annotatedType.isResolveAsRef())
                         .jsonViewAnnotation(annotatedType.getJsonViewAnnotation())
+                        .propertyName(annotatedType.getPropertyName())
                         .skipOverride(true);
                 model = context.resolve(aType);
                 return model;
@@ -569,7 +574,8 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                         .resolveAsRef(annotatedType.isResolveAsRef())
                         .jsonViewAnnotation(annotatedType.getJsonViewAnnotation())
                         .skipSchemaName(true)
-                        .schemaProperty(true);
+                        .schemaProperty(true)
+                        .propertyName(propName);
 
                 final AnnotatedMember propMember = member;
                 aType.jsonUnwrappedHandler((t) -> {
@@ -918,7 +924,8 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                                     .type(propType)
                                     .ctxAnnotations(annotations)
                                     .jsonViewAnnotation(type.getJsonViewAnnotation())
-                                    .schemaProperty(true);
+                                    .schemaProperty(true)
+                                    .propertyName(type.getPropertyName());
 
                             return context.resolve(aType);
                         }
@@ -1026,6 +1033,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                     .skipSchemaName(type.isSkipSchemaName())
                     .type(type.getType())
                     .skipJsonIdentity(true)
+                    .propertyName(type.getPropertyName())
                     .ctxAnnotations(AnnotationsUtils.removeAnnotations(type.getCtxAnnotations(), JsonIdentityInfo.class, JsonIdentityReference.class));
         }
     }

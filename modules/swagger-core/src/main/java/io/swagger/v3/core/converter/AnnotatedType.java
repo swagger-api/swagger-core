@@ -23,6 +23,7 @@ public class AnnotatedType {
     private JsonView jsonViewAnnotation;
     private boolean skipSchemaName;
     private boolean skipJsonIdentity;
+    private String propertyName;
 
     public AnnotatedType() {
     }
@@ -171,6 +172,28 @@ public class AnnotatedType {
 
     public AnnotatedType jsonViewAnnotation(JsonView jsonViewAnnotation) {
         this.jsonViewAnnotation = jsonViewAnnotation;
+        return this;
+    }
+
+    /**
+     * @since 2.0.4
+     */
+    public String getPropertyName() {
+        return propertyName;
+    }
+
+    /**
+     * @since 2.0.4
+     */
+    public void setPropertyName(String propertyName) {
+        this.propertyName = propertyName;
+    }
+
+    /**
+     * @since 2.0.4
+     */
+    public AnnotatedType propertyName(String propertyName) {
+        this.propertyName = propertyName;
         return this;
     }
 
