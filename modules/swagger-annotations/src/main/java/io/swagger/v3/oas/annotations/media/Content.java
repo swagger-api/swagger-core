@@ -25,7 +25,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * The annotation may be used to define the content/media type  of a parameter, request or response, by definining it as
+ * The annotation may be used to define the content/media type  of a parameter, request or response, by defining it as
  * field {@link io.swagger.v3.oas.annotations.Parameter#content()}, {@link io.swagger.v3.oas.annotations.parameters.RequestBody#content()} or {@link io.swagger.v3.oas.annotations.responses.ApiResponse#content()}.
  * <p>If {@link Content#schema()} is defined, swagger-jaxrs2 reader engine will consider it along with
  * JAX-RS annotations, element type and context as input to resolve the annotated element into an OpenAPI schema

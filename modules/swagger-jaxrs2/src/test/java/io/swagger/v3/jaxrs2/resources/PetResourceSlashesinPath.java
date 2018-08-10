@@ -131,7 +131,7 @@ public class PetResourceSlashesinPath {
     @Path("/findByStatus")
     @Produces("application/xml")
     @Operation(summary = "Finds Pets by status",
-            description = "Multiple status values can be provided with comma seperated strings",
+            description = "Multiple status values can be provided with comma separated strings",
             responses = {
                     @ApiResponse(
                             content = @Content(mediaType = "application/json",
@@ -151,7 +151,7 @@ public class PetResourceSlashesinPath {
     @Path("/findByTags")
     @Produces("application/json")
     @Operation(summary = "Finds Pets by tags",
-            description = "Muliple tags can be provided with comma seperated strings. Use tag1, tag2, tag3 for testing.",
+            description = "Multiple tags can be provided with comma separated strings. Use tag1, tag2, tag3 for testing.",
             responses = {
                     @ApiResponse(description = "Pets matching criteria",
                             content = @Content(schema = @Schema(implementation = Pet.class))

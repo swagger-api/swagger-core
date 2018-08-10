@@ -250,7 +250,7 @@ public class PetResourceTest extends AbstractAnnotationTest {
     }
 
     /**
-     * Compare a class that were read and parsed to a yaml aginst a yaml file.
+     * Compare a class that were read and parsed to a yaml against a yaml file.
      *
      * @param clazz  to read.
      * @param source where is the yaml.
