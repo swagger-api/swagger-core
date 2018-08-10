@@ -1781,7 +1781,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         }
     }
 
-    private void addRequiredItem(Schema model, String propName) {
+    protected void addRequiredItem(Schema model, String propName) {
         if (model == null || propName == null || StringUtils.isBlank(propName)) {
             return;
         }
