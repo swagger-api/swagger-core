@@ -1,5 +1,7 @@
 # Swagger Core library
 
+DEVOPS!
+
 [![Build Status](https://travis-ci.org/swagger-api/swagger-core.svg?branch=1.5)](https://travis-ci.org/swagger-api/swagger-core)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.swagger/swagger-project/badge.svg?style=plastic)](https://maven-badges.herokuapp.com/maven-central/io.swagger/swagger-project)
 
