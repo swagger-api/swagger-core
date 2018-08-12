@@ -663,32 +663,37 @@ public class Reader implements OpenApiReader {
                 operation.setRequestBody(requestBody);
             }
         } else {
-            if (operation.getRequestBody() == null) {
-                boolean isRequestBodyEmpty = true;
-                RequestBody requestBody = new RequestBody();
+            RequestBody requestBody = operation.getRequestBody();
+            if(null == requestBody) {
+                requestBody = new RequestBody();
+            }
+            
+            //if (operation.getRequestBody() == null) {
+                //boolean isRequestBodyEmpty = true;
+                //RequestBody requestBody = new RequestBody();
                 if (StringUtils.isNotBlank(requestBodyParameter.get$ref())) {
                     requestBody.set$ref(requestBodyParameter.get$ref());
-                    isRequestBodyEmpty = false;
+                    //isRequestBodyEmpty = false;
                 }
                 if (StringUtils.isNotBlank(requestBodyParameter.getDescription())) {
                     requestBody.setDescription(requestBodyParameter.getDescription());
-                    isRequestBodyEmpty = false;
+                    //isRequestBodyEmpty = false;
                 }
                 if (Boolean.TRUE.equals(requestBodyParameter.getRequired())) {
                     requestBody.setRequired(requestBodyParameter.getRequired());
-                    isRequestBodyEmpty = false;
+                    //isRequestBodyEmpty = false;
                 }
 
                 if (requestBodyParameter.getSchema() != null) {
                     Content content = processContent(null, requestBodyParameter.getSchema(), methodConsumes, classConsumes);
                     requestBody.setContent(content);
-                    isRequestBodyEmpty = false;
+                    //isRequestBodyEmpty = false;
                 }
-                if (!isRequestBodyEmpty) {
+                //if (!isRequestBodyEmpty) {
                     //requestBody.setExtensions(extensions);
                     operation.setRequestBody(requestBody);
-                }
-            }
+                //}
+            //}
         }
     }
 
