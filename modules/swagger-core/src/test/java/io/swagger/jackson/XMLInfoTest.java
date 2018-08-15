@@ -1,5 +1,6 @@
 package io.swagger.jackson;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModel;
 import io.swagger.converter.ModelConverter;
@@ -14,6 +15,8 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementRef;
+import javax.xml.bind.annotation.XmlElementRefs;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import static org.testng.Assert.assertEquals;
@@ -83,6 +86,12 @@ public class XMLInfoTest extends SwaggerTestBase {
         assertNull(impl.getProperties().get("b"));
 
         assertNotNull(impl.getProperties().get("c"));
+
+        assertNotNull(impl.getProperties().get("d"));
+
+        assertNotNull(impl.getProperties().get("e"));
+
+        assertNotNull(impl.getProperties().get("f")); 
     }
 
     @XmlRootElement(name = "xmlDecoratedBean")
@@ -97,6 +106,15 @@ public class XMLInfoTest extends SwaggerTestBase {
 
         @XmlAttribute
         public String c;
+
+        @XmlElementRef
+        public XmlDecoratedBean d;
+
+        @XmlElementRefs(value = {@XmlElementRef})
+        public List<XmlDecoratedBean> e;
+
+        @JsonProperty
+        public int f;
     }
 
     @Test
@@ -114,8 +132,12 @@ public class XMLInfoTest extends SwaggerTestBase {
         final Property propertyA = impl.getProperties().get("a");
         assertNotNull(propertyA);
 
-        Property propertyB = impl.getProperties().get("b");
+        final Property propertyB = impl.getProperties().get("b");
         assertNotNull(propertyB);
+
+        final Property propertyC = impl.getProperties().get("c");
+        assertNull(propertyC);
+
     }
 
     @XmlRootElement(name = "xmlDecoratedBean")
@@ -126,6 +148,9 @@ public class XMLInfoTest extends SwaggerTestBase {
         public int a;
 
         public String b;
+
+        @JsonIgnore
+        public String c;
     }
 
 }
