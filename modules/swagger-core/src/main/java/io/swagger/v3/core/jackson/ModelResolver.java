@@ -552,6 +552,26 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                     }
 
                 }
+                String propSchemaName = null;
+                io.swagger.v3.oas.annotations.media.Schema ctxSchema = AnnotationsUtils.getSchemaAnnotation(annotations);
+                if (AnnotationsUtils.hasSchemaAnnotation(ctxSchema)) {
+                    if (!StringUtils.isBlank(ctxSchema.name())) {
+                        propSchemaName = ctxSchema.name();
+                    }
+                }
+                if (propSchemaName == null) {
+                    io.swagger.v3.oas.annotations.media.ArraySchema ctxArraySchema = AnnotationsUtils.getArraySchemaAnnotation(annotations);
+                    if (AnnotationsUtils.hasArrayAnnotation(ctxArraySchema)) {
+                        if (AnnotationsUtils.hasSchemaAnnotation(ctxArraySchema.schema())) {
+                            if (!StringUtils.isBlank(ctxArraySchema.schema().name())) {
+                                propSchemaName = ctxArraySchema.schema().name();
+                            }
+                        }
+                    }
+                }
+                if (StringUtils.isNotBlank(propSchemaName)) {
+                    propName = propSchemaName;
+                }
                 Annotation propSchemaOrArray = AnnotationsUtils.mergeSchemaAnnotations(annotations, propType);
                 final io.swagger.v3.oas.annotations.media.Schema propResolvedSchemaAnnotation =
                         propSchemaOrArray == null ?
@@ -559,9 +579,6 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                                 propSchemaOrArray instanceof io.swagger.v3.oas.annotations.media.ArraySchema ?
                                         ((io.swagger.v3.oas.annotations.media.ArraySchema) propSchemaOrArray).schema() :
                                         (io.swagger.v3.oas.annotations.media.Schema) propSchemaOrArray;
-                if (propResolvedSchemaAnnotation != null && !propResolvedSchemaAnnotation.name().isEmpty()) {
-                    propName = propResolvedSchemaAnnotation.name();
-                }
 
                 io.swagger.v3.oas.annotations.media.Schema.AccessMode accessMode = resolveAccessMode(propDef, type, propResolvedSchemaAnnotation);
 
