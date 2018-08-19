@@ -413,11 +413,29 @@ public class Reader implements OpenApiReader {
                 }
 
                 io.swagger.v3.oas.annotations.Operation apiOperation = ReflectionUtils.getAnnotation(method, io.swagger.v3.oas.annotations.Operation.class);
-                JsonView jsonViewAnnotation = ReflectionUtils.getAnnotation(method, JsonView.class);
+                JsonView jsonViewAnnotation;
+                JsonView jsonViewAnnotationForRequestBody;
                 if (apiOperation != null && apiOperation.ignoreJsonView()) {
                     jsonViewAnnotation = null;
+                    jsonViewAnnotationForRequestBody = null;
+                } else {
+                    jsonViewAnnotation = ReflectionUtils.getAnnotation(method, JsonView.class);
+                    /* If one and only one exists, use the @JsonView annotation from the method parameter annotated
+                       with @RequestBody. Otherwise fall back to the @JsonView annotation for the method itself. */
+                    jsonViewAnnotationForRequestBody = (JsonView) Arrays.stream(ReflectionUtils.getParameterAnnotations(method))
+                        .filter(arr ->
+                            Arrays.stream(arr)
+                                .anyMatch(annotation ->
+                                    annotation.annotationType()
+                                        .equals(io.swagger.v3.oas.annotations.parameters.RequestBody.class)
+                                )
+                        ).flatMap(Arrays::stream)
+                        .filter(annotation ->
+                            annotation.annotationType()
+                                .equals(JsonView.class)
+                        ).reduce((a, b) -> null)
+                        .orElse(jsonViewAnnotation);
                 }
-
 
                 Operation operation = parseMethod(
                         method,
@@ -467,7 +485,7 @@ public class Reader implements OpenApiReader {
                                         operationParameters,
                                         paramAnnotations[i],
                                         type,
-                                        jsonViewAnnotation);
+                                        jsonViewAnnotationForRequestBody);
                             } else if (resolvedParameter.formParameter != null) {
                                 // collect params to use together as request Body
                                 formParameters.add(resolvedParameter.formParameter);
@@ -499,7 +517,7 @@ public class Reader implements OpenApiReader {
                                         operationParameters,
                                         paramAnnotations[i],
                                         type,
-                                        jsonViewAnnotation);
+                                        jsonViewAnnotationForRequestBody);
                             } else if (resolvedParameter.formParameter != null) {
                                 // collect params to use together as request Body
                                 formParameters.add(resolvedParameter.formParameter);
@@ -521,7 +539,7 @@ public class Reader implements OpenApiReader {
                                 operationParameters,
                                 new Annotation[0],
                                 null,
-                                jsonViewAnnotation);
+                                jsonViewAnnotationForRequestBody);
 
                     }
                     if (operationParameters.size() > 0) {
