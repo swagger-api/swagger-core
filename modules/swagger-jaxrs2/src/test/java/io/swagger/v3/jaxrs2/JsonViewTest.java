@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.models.OpenAPI;
 import org.testng.Assert;
@@ -17,6 +18,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import java.util.Arrays;
 import java.util.List;
 import javax.ws.rs.GET;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Response;
 
@@ -83,6 +85,22 @@ public class JsonViewTest {
         @JsonView({View.Summary.class})
         public List<Car> getSummaries() {
             return Arrays.asList(new Car());
+        }
+    }
+
+    @Path("/")
+    private static class CarSummaryUpdateApi {
+
+        @PUT
+        @Path("/cars/summary")
+        @Operation(description = "Updates a car summary.")
+        public Response updateCarSummary(
+            @RequestBody(content = @Content(schema = @Schema(implementation = Car.class)))
+            @JsonView(View.Summary.class)
+            Car car) {
+
+            return Response.noContent()
+                .build();
         }
     }
 
