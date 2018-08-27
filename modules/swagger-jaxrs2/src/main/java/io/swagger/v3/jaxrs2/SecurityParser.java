@@ -17,7 +17,7 @@ import java.util.Optional;
 
 public class SecurityParser {
 
-    static class SecuritySchemePair {
+    public static class SecuritySchemePair {
         public String key;
         public SecurityScheme securityScheme;
     }
