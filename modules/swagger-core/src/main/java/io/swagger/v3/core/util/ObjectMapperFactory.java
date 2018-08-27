@@ -14,7 +14,9 @@ import com.fasterxml.jackson.databind.ser.BeanSerializerModifier;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
 import io.swagger.v3.core.jackson.SchemaSerializer;
+import io.swagger.v3.core.jackson.mixin.ComponentsMixin;
 import io.swagger.v3.core.jackson.mixin.ExtensionsMixin;
+import io.swagger.v3.core.jackson.mixin.OpenAPIMixin;
 import io.swagger.v3.core.jackson.mixin.OperationMixin;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.ExternalDocumentation;
@@ -38,6 +40,7 @@ import io.swagger.v3.oas.models.media.XML;
 import io.swagger.v3.oas.models.parameters.Parameter;
 import io.swagger.v3.oas.models.parameters.RequestBody;
 import io.swagger.v3.oas.models.responses.ApiResponse;
+import io.swagger.v3.oas.models.responses.ApiResponses;
 import io.swagger.v3.oas.models.security.OAuthFlow;
 import io.swagger.v3.oas.models.security.OAuthFlows;
 import io.swagger.v3.oas.models.security.Scopes;
@@ -92,9 +95,10 @@ public class ObjectMapperFactory {
 
         Map<Class<?>, Class<?>> sourceMixins = new LinkedHashMap<>();
 
+        sourceMixins.put(ApiResponses.class, ExtensionsMixin.class);
         sourceMixins.put(ApiResponse.class, ExtensionsMixin.class);
         sourceMixins.put(Callback.class, ExtensionsMixin.class);
-        sourceMixins.put(Components.class, ExtensionsMixin.class);
+        sourceMixins.put(Components.class, ComponentsMixin.class);
         sourceMixins.put(Contact.class, ExtensionsMixin.class);
         sourceMixins.put(Encoding.class, ExtensionsMixin.class);
         sourceMixins.put(EncodingProperty.class, ExtensionsMixin.class);
@@ -108,7 +112,7 @@ public class ObjectMapperFactory {
         sourceMixins.put(MediaType.class, ExtensionsMixin.class);
         sourceMixins.put(OAuthFlow.class, ExtensionsMixin.class);
         sourceMixins.put(OAuthFlows.class, ExtensionsMixin.class);
-        sourceMixins.put(OpenAPI.class, ExtensionsMixin.class);
+        sourceMixins.put(OpenAPI.class, OpenAPIMixin.class);
         sourceMixins.put(Operation.class, OperationMixin.class);
         sourceMixins.put(Parameter.class, ExtensionsMixin.class);
         sourceMixins.put(PathItem.class, ExtensionsMixin.class);

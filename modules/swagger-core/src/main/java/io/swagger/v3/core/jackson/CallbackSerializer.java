@@ -19,13 +19,30 @@ public class CallbackSerializer extends JsonSerializer<Callback> {
             Callback value, JsonGenerator jgen, SerializerProvider provider)
             throws IOException, JsonProcessingException {
 
-        // handle ref schema serialization skipping all other props
-        if (StringUtils.isBlank(value.get$ref())) {
-            provider.defaultSerializeValue(value, jgen);
-        } else {
+        if (value != null && value.getExtensions() != null && !value.getExtensions().isEmpty()) {
             jgen.writeStartObject();
-            jgen.writeStringField("$ref", value.get$ref());
+
+            if (StringUtils.isBlank(value.get$ref())) {
+                if (!value.isEmpty()) {
+                    for (String key: value.keySet()) {
+                        jgen.writeObjectField(key , value.get(key));
+                    }
+                }
+            } else { // handle ref schema serialization skipping all other props
+                jgen.writeStringField("$ref", value.get$ref());
+            }
+            for (String ext: value.getExtensions().keySet()) {
+                jgen.writeObjectField(ext , value.getExtensions().get(ext));
+            }
             jgen.writeEndObject();
+        } else {
+            if (StringUtils.isBlank(value.get$ref())) {
+                provider.defaultSerializeValue(value, jgen);
+            } else { // handle ref schema serialization skipping all other props
+                jgen.writeStartObject();
+                jgen.writeStringField("$ref", value.get$ref());
+                jgen.writeEndObject();
+            }
         }
     }
 }
