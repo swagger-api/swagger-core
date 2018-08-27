@@ -54,10 +54,18 @@ public class Scopes extends LinkedHashMap<String, String> {
         return Objects.hash(extensions, super.hashCode());
     }
 
+    /**
+     * @deprecated As extensions don't make sense at this level
+     */
+    @Deprecated
     public java.util.Map<String, Object> getExtensions() {
         return extensions;
     }
 
+    /**
+     * @deprecated As extensions don't make sense at this level
+     */
+    @Deprecated
     public void addExtension(String name, Object value) {
         if (name == null || name.isEmpty() || !name.startsWith("x-")) {
             return;
@@ -68,10 +76,18 @@ public class Scopes extends LinkedHashMap<String, String> {
         this.extensions.put(name, value);
     }
 
+    /**
+     * @deprecated As extensions don't make sense at this level
+     */
+    @Deprecated
     public void setExtensions(java.util.Map<String, Object> extensions) {
         this.extensions = extensions;
     }
 
+    /**
+     * @deprecated As extensions don't make sense at this level
+     */
+    @Deprecated
     public Scopes extensions(java.util.Map<String, Object> extensions) {
         this.extensions = extensions;
         return this;
