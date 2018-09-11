@@ -1,0 +1,88 @@
+// * * * * * * * * * * * *
+// Plugins
+// * * * * * * * * * * * *
+plugins {
+    id 'groovy'
+    id 'java-gradle-plugin'
+    id 'net.researchgate.release' version '2.6.0'
+    // Publishing publicly
+    id 'com.gradle.plugin-publish' version '0.9.10'
+    // Publishing to maven
+    id 'maven-publish'
+}
+
+// * * * * * * * * * * * *
+// Dependencies
+// * * * * * * * * * * * *
+
+repositories {
+    jcenter()
+    mavenLocal()
+    mavenCentral()
+}
+
+dependencies {
+    compile     gradleApi()
+    compile group: 'org.apache.commons', name: 'commons-lang3', version:'3.7'
+    compile group: 'io.swagger.core.v3', name: 'swagger-jaxrs2', version:'2.0.5-SNAPSHOT'
+    compile group: 'javax.ws.rs', name: 'javax.ws.rs-api', version:'2.1'
+    compile group: 'javax.servlet', name: 'javax.servlet-api', version:'3.1.0'
+    testCompile group: 'com.github.tomakehurst', name: 'wiremock', version:'2.14.0'
+    testCompile gradleTestKit()
+    testCompile 'junit:junit:4+'
+
+
+}
+
+// * * * * * * * * * * * *
+// Project configuration
+// * * * * * * * * * * * *
+
+project.description     = 'Gradle Plugin for Swagger core'
+project.group           = 'io.swagger.core.v3'
+
+project.ext.name        = 'swagger-gradle-plugin'
+project.ext.pluginId    = 'io.swagger.core.v3.swagger-gradle-plugin'
+project.ext.scm         = 'scm:git@github.com:swagger-api/swagger-core.git'
+project.ext.url         = 'https://github.com/swagger-api/swagger-core/modules/swagger-gradle-plugin'
+
+// Configuration for: java-gradle-plugin
+gradlePlugin {
+    plugins {
+        swagger {
+            id = project.pluginId
+            implementationClass = 'io.swagger.v3.plugins.gradle.SwaggerPlugin'
+        }
+    }
+}
+
+// * * * * * * * * * * * *
+// Publishing
+// * * * * * * * * * * * *
+
+
+// Publishing to plugins.gradle.org
+// --------------------------------
+
+// Configuration for: com.gradle.plugin-publish
+pluginBundle {
+    website = project.url
+    vcsUrl = project.scm
+    tags = ['swagger', 'openapi', 'api']
+
+    plugins {
+        swagger {
+            displayName = 'Swagger Gradle Plugin '
+            description = project.description
+            id          = project.pluginId
+        }
+    }
+}
+
+publishing {
+    repositories {
+        maven {
+            url mavenLocal().url
+        }
+    }
+}

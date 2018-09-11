@@ -10,7 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>swagger-maven-plugin</artifactId>
     <packaging>maven-plugin</packaging>
-    <name>swagger-maven.plugin</name>
+    <name>swagger-maven-plugin</name>
     <build>
         <plugins>
             <plugin>

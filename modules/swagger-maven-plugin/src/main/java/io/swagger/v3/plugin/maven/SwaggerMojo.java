@@ -107,7 +107,7 @@ public class SwaggerMojo extends AbstractMojo {
     private String outputPath;
 
     @Parameter( property = "resolve.outputFormat", defaultValue = "JSON")
-    private Format outputFormat;
+    private Format outputFormat = Format.JSON;
 
     @Parameter( property = "resolve.resourcePackages" )
     private Set<String> resourcePackages;
@@ -120,7 +120,7 @@ public class SwaggerMojo extends AbstractMojo {
     @Parameter( property = "resolve.scannerClass" )
     private String scannerClass;
     @Parameter( property = "resolve.prettyPrint" )
-    private Boolean prettyPrint;
+    private Boolean prettyPrint = false;
     @Parameter( property = "resolve.readAllResources" )
     private Boolean readAllResources = Boolean.TRUE;
     @Parameter( property = "resolve.ignoredRoutes" )
