@@ -13,6 +13,7 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
+import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.StringUtils;
 
 import java.io.File;
@@ -43,12 +44,22 @@ public class SwaggerMojo extends AbstractMojo {
         }
         getLog().info( "Resolving OpenAPI specification.." );
 
+        if(project !=null) {
+            String pEnc = project.getProperties().getProperty("project.build.sourceEncoding");
+            if (StringUtils.isNotBlank(pEnc)) {
+                projectEncoding = pEnc;
+            }
+        }
+        if (StringUtils.isBlank(encoding)) {
+            encoding = projectEncoding;
+        }
+
         OpenAPI openAPIInput = null;
         try {
             if (StringUtils.isNotBlank(openapiFilePath)) {
                 Path openapiPath = Paths.get(openapiFilePath);
                 if (openapiPath.toFile().exists() && openapiPath.toFile().isFile()) {
-                    String openapiFileContent = new String(Files.readAllBytes(openapiPath), "UTF-8");
+                    String openapiFileContent = new String(Files.readAllBytes(openapiPath), encoding);
                     if (StringUtils.isNotBlank(openapiFileContent)) {
                         try {
                             openAPIInput = Json.mapper().readValue(openapiFileContent, OpenAPI.class);
@@ -109,11 +120,11 @@ public class SwaggerMojo extends AbstractMojo {
 
             if (openapiJson != null) {
                 path = Paths.get(outputPath, outputFileName + ".json");
-                Files.write(path, openapiJson.getBytes(Charset.forName("UTF-8")));
+                Files.write(path, openapiJson.getBytes(Charset.forName(encoding)));
             }
             if (openapiYaml != null) {
                 path = Paths.get(outputPath, outputFileName + ".yaml");
-                Files.write(path, openapiYaml.getBytes(Charset.forName("UTF-8")));
+                Files.write(path, openapiYaml.getBytes(Charset.forName(encoding)));
             }
 
         } catch (OpenApiConfigurationException e) {
@@ -159,6 +170,14 @@ public class SwaggerMojo extends AbstractMojo {
 
     @Parameter( property = "resolve.openapiFilePath")
     private String openapiFilePath;
+
+    @Parameter(defaultValue = "${project}", readonly = true)
+    private MavenProject project;
+
+    @Parameter( property = "resolve.encoding" )
+    private String encoding;
+
+    private String projectEncoding = "UTF-8";
 
     public String getOutputPath() {
         return outputPath;

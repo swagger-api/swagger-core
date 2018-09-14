@@ -1,7 +1,7 @@
 # swagger-maven-plugin
 
 * Resolves project openAPI specification and saves the result in JSON, YAML or both formats.
-All parameters except `outputFileName`, `outputFormat` `skip` and `outputPath` correspond
+All parameters except `outputFileName`, `outputFormat`, `skip`, `encoding` and `outputPath` correspond
 to `swagger` [configuration property](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties) with same name.
 
 ## Configuration example
@@ -64,6 +64,7 @@ Parameter | Description | Required | Default
 `outputFileName`|file name (no extension)|false|`openapi`
 `outputFormat`|file format (`JSON`, `YAML`, `JSONANDYAML`|false|`JSON`
 `skip`|if `TRUE` skip execution|false|`FALSE`
+`encoding`|encoding of output file(s)|false|
 `resourcePackages`|see [configuration property](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)|false|
 `resourceClasses`|see [configuration property](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)|false|
 `prettyPrint`|see [configuration property](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)|false|`TRUE`

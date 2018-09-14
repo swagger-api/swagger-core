@@ -56,6 +56,8 @@ public class ResolveTask extends DefaultTask {
 
     private Boolean skip = Boolean.FALSE;
 
+    private String encoding = "UTF-8";
+
     @Input
     @Optional
     public String getOutputFileName() {
@@ -217,6 +219,17 @@ public class ResolveTask extends DefaultTask {
         this.skip = skip;
     }
 
+    @Input
+    @Optional
+    public String getEncoding() {
+        return encoding;
+    }
+
+    public void setEncoding(String resourceClasses) {
+        this.encoding = encoding;
+    }
+
+
     @TaskAction
     public void resolve() throws GradleException {
         if (skip) {
@@ -260,7 +273,7 @@ public class ResolveTask extends DefaultTask {
 
             if (openApiFile != null) {
                 if (openApiFile.exists() && openApiFile.isFile()) {
-                    String openapiFileContent = new String(Files.readAllBytes(openApiFile.toPath()), "UTF-8");
+                    String openapiFileContent = new String(Files.readAllBytes(openApiFile.toPath()), encoding);
                     if (StringUtils.isNotBlank(openapiFileContent)) {
                         method=swaggerLoaderClass.getDeclaredMethod("setOpenapiAsString",String.class);
                         method.invoke(swaggerLoader, openapiFileContent);
@@ -312,11 +325,11 @@ public class ResolveTask extends DefaultTask {
             }
             if (specs.get("JSON") != null) {
                 path = Paths.get(outputPath, outputFileName + ".json");
-                Files.write(path, specs.get("JSON").getBytes(Charset.forName("UTF-8")));
+                Files.write(path, specs.get("JSON").getBytes(Charset.forName(encoding)));
             }
             if (specs.get("YAML") != null) {
                 path = Paths.get(outputPath, outputFileName + ".yaml");
-                Files.write(path, specs.get("YAML").getBytes(Charset.forName("UTF-8")));
+                Files.write(path, specs.get("YAML").getBytes(Charset.forName(encoding)));
             }
         } catch (IOException e) {
             throw new GradleException("Failed to write API definition: " + e.getMessage(), e);
