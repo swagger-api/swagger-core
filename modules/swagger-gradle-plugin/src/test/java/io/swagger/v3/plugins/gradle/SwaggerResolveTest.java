@@ -21,19 +21,38 @@ public class SwaggerResolveTest {
     @Rule
     public final TemporaryFolder testProjectDir = new TemporaryFolder();
     private File buildFile;
+    private File openapiInputFile;
     private String outputFile;
     private String outputDir;
 
     @Before
     public void setup() throws IOException {
         buildFile = testProjectDir.newFile("build.gradle");
+        openapiInputFile = testProjectDir.newFile("openapiinput.yaml");
+        writeFile(openapiInputFile, "openapi: 3.0.1\n" +
+                "servers:\n" +
+                "- url: http://foo\n" +
+                "  description: server 1\n" +
+                "  variables:\n" +
+                "    var1:\n" +
+                "      description: var 1\n" +
+                "      enum:\n" +
+                "      - \"1\"\n" +
+                "      - \"2\"\n" +
+                "      default: \"2\"\n" +
+                "    var2:\n" +
+                "      description: var 2\n" +
+                "      enum:\n" +
+                "      - \"1\"\n" +
+                "      - \"2\"\n" +
+                "      default: \"2\"");
     }
 
     @Test
     public void testSwaggerResolveTask() throws IOException {
         outputDir = testProjectDir.getRoot().toString() + "/target";
         outputFile = testProjectDir.getRoot().toString() + "/testAPI.json";
-        //outputDir = "/tmp/a/target";
+        outputDir = "/tmp/a/target";
         String resolveTask = "resolve";
 
         String buildFileContent =
@@ -50,7 +69,7 @@ public class SwaggerResolveTest {
                 "sourceSets {\n" +
                 "    test {\n" +
                 "        java {\n" +
-                "            srcDirs = ['/dati/dev/progetti/swagger/projects/swagger-core/modules/swagger-gradle-plugin/src/test/javatest']\n" +
+                "            srcDirs = ['" + new File("src/test/javatest").getAbsolutePath() + "']\n" +
                 "        }\n" +
                 "    }\n" +
                 "}\n" +
@@ -78,6 +97,7 @@ public class SwaggerResolveTest {
                 "    classpath = sourceSets.test.runtimeClasspath\n" +
                 "    resourcePackages = ['io.swagger.v3.plugins.gradle.petstore']\n" +
                 "    outputPath = \'" + outputDir + "\'\n" +
+                "    openApiFile = file(\'" + openapiInputFile.getAbsolutePath() + "\')\n" +
                 "}";
 
 

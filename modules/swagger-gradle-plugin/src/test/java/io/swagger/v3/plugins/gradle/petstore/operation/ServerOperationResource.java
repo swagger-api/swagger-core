@@ -11,11 +11,6 @@ import javax.ws.rs.Path;
 /**
  * Resource With a Hidden Operation
  */
-@OpenAPIDefinition(
-        servers = {
-                @Server(description = "server 1", url = "http://foo")
-        }
-)
 public class ServerOperationResource {
     @Path("/serversoperation")
     @GET

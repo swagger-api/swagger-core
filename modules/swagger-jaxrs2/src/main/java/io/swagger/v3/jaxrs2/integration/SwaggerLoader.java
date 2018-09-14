@@ -26,6 +26,8 @@ public class SwaggerLoader {
     private Boolean readAllResources = Boolean.TRUE;
     private String ignoredRoutes;
 
+    private String openapiAsString;
+
     public String getOutputFormat() {
         return outputFormat;
     }
@@ -98,6 +100,15 @@ public class SwaggerLoader {
         this.ignoredRoutes = ignoredRoutes;
     }
 
+    public String getOpenapiAsString() {
+        return openapiAsString;
+    }
+
+    public void setOpenapiAsString(String openapiAsString) {
+        this.openapiAsString = openapiAsString;
+    }
+
+
     public Map<String, String> resolve() throws Exception{
 
         Set<String> ignoredRoutesSet = null;
@@ -113,17 +124,30 @@ public class SwaggerLoader {
             resourcePackagesSet = new HashSet<>(Arrays.asList(resourcePackages.split(",")));
         }
 
+        OpenAPI openAPIInput = null;
+        if (StringUtils.isNotBlank(openapiAsString)) {
+            try {
+                openAPIInput = Json.mapper().readValue(openapiAsString, OpenAPI.class);
+            } catch (Exception e) {
+                try {
+                    openAPIInput = Yaml.mapper().readValue(openapiAsString, OpenAPI.class);
+                } catch (Exception e1) {
+                    throw new Exception("Error reading/deserializing openapi input: " + e.getMessage(), e);
+                }
+            }
+        }
+
         SwaggerConfiguration config = new SwaggerConfiguration()
                 .filterClass(filterClass)
                 .ignoredRoutes(ignoredRoutesSet)
                 .prettyPrint(prettyPrint)
                 .readAllResources(readAllResources)
+                .openAPI(openAPIInput)
                 .readerClass(readerClass)
                 .scannerClass(scannerClass)
                 .resourceClasses(resourceClassesSet)
                 .resourcePackages(resourcePackagesSet);
         try {
-
             OpenAPI openAPI = new JaxrsOpenApiContextBuilder()
                 .openApiConfiguration(config)
                 .buildContext(true)

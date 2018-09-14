@@ -6,6 +6,7 @@ import org.gradle.api.GradleException;
 import org.gradle.api.logging.Logging;
 import org.gradle.api.tasks.Classpath;
 import org.gradle.api.tasks.Input;
+import org.gradle.api.tasks.InputFile;
 import org.gradle.api.tasks.InputFiles;
 import org.gradle.api.tasks.Optional;
 import org.gradle.api.tasks.OutputDirectory;
@@ -38,6 +39,7 @@ public class ResolveTask extends DefaultTask {
     private String outputPath;
     private File outputDir;
 
+    private File openApiFile;
 
     private Format outputFormat = Format.JSON;
 
@@ -58,6 +60,16 @@ public class ResolveTask extends DefaultTask {
     @Optional
     public String getOutputFileName() {
         return outputFileName;
+    }
+
+    @InputFile
+    @Optional
+    public File getOpenApiFile() {
+        return openApiFile;
+    }
+
+    public void setOpenApiFile(File openApiFile) {
+        this.openApiFile = openApiFile;
     }
 
     @Classpath
@@ -245,6 +257,16 @@ public class ResolveTask extends DefaultTask {
             Method method =  null;
             method=swaggerLoaderClass.getDeclaredMethod("setOutputFormat",String.class);
             method.invoke(swaggerLoader, outputFormat.name());
+
+            if (openApiFile != null) {
+                if (openApiFile.exists() && openApiFile.isFile()) {
+                    String openapiFileContent = new String(Files.readAllBytes(openApiFile.toPath()), "UTF-8");
+                    if (StringUtils.isNotBlank(openapiFileContent)) {
+                        method=swaggerLoaderClass.getDeclaredMethod("setOpenapiAsString",String.class);
+                        method.invoke(swaggerLoader, openapiFileContent);
+                    }
+                }
+            }
 
             if (resourcePackages != null && !resourcePackages.isEmpty()) {
                 method=swaggerLoaderClass.getDeclaredMethod("setResourcePackages",String.class);
