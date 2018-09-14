@@ -64,6 +64,7 @@ public class SwaggerResolveTest extends BetterAbstractMojoTestCase{
             final OpenAPI openAPI;
             openAPI = Yaml.mapper().readValue(content, OpenAPI.class);
             assertNotNull(openAPI);
+            assertEquals(openAPI.getServers().get(0).getVariables().size(), 2);
         }
         if (format.toLowerCase().equals("json") || format.toLowerCase().equals("jsonandyaml")) {
             Path path = Paths.get(outputPath, outputFile + ".json");
@@ -73,6 +74,7 @@ public class SwaggerResolveTest extends BetterAbstractMojoTestCase{
             final OpenAPI openAPI;
             openAPI = Json.mapper().readValue(content, OpenAPI.class);
             assertNotNull(openAPI);
+            assertEquals(openAPI.getServers().get(0).getVariables().size(), 2);
         }
 
     }

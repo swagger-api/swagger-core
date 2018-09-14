@@ -1,7 +1,6 @@
 package io.swagger.v3.plugin.maven.petstore.petstore.operation;
 
 import io.swagger.v3.plugin.maven.resources.model.Pet;
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.servers.Server;
 
@@ -11,11 +10,6 @@ import javax.ws.rs.Path;
 /**
  * Resource With a Hidden Operation
  */
-@OpenAPIDefinition(
-        servers = {
-                @Server(description = "server 1", url = "http://foo")
-        }
-)
 public class ServerOperationResource {
     @Path("/serversoperation")
     @GET

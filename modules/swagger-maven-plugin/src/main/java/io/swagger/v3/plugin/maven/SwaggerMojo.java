@@ -13,6 +13,7 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
+import org.codehaus.plexus.util.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -41,6 +42,32 @@ public class SwaggerMojo extends AbstractMojo {
             return;
         }
         getLog().info( "Resolving OpenAPI specification.." );
+
+        OpenAPI openAPIInput = null;
+        try {
+            if (StringUtils.isNotBlank(openapiFilePath)) {
+                Path openapiPath = Paths.get(openapiFilePath);
+                if (openapiPath.toFile().exists() && openapiPath.toFile().isFile()) {
+                    String openapiFileContent = new String(Files.readAllBytes(openapiPath), "UTF-8");
+                    if (StringUtils.isNotBlank(openapiFileContent)) {
+                        try {
+                            openAPIInput = Json.mapper().readValue(openapiFileContent, OpenAPI.class);
+                        } catch (Exception e) {
+                            try {
+                                openAPIInput = Yaml.mapper().readValue(openapiFileContent, OpenAPI.class);
+                            } catch (Exception e1) {
+                                getLog().error( "Error reading/deserializing openapi file" , e);
+                                throw new MojoFailureException(e.getMessage(), e);
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            getLog().error( "Error reading/deserializing openapi file" , e);
+            throw new MojoFailureException(e.getMessage(), e);
+        }
+
         SwaggerConfiguration config = new SwaggerConfiguration()
                 .filterClass(filterClass)
                 .ignoredRoutes(ignoredRoutes)
@@ -49,6 +76,7 @@ public class SwaggerMojo extends AbstractMojo {
                 .readerClass(readerClass)
                 .scannerClass(scannerClass)
                 .resourceClasses(resourceClasses)
+                .openAPI(openAPIInput)
                 .resourcePackages(resourcePackages);
         try {
             OpenAPI openAPI = new JaxrsOpenApiContextBuilder()
@@ -129,8 +157,14 @@ public class SwaggerMojo extends AbstractMojo {
     @Parameter( property = "resolve.skip" )
     private Boolean skip = Boolean.FALSE;
 
+    @Parameter( property = "resolve.openapiFilePath")
+    private String openapiFilePath;
+
     public String getOutputPath() {
         return outputPath;
+    }
+    public String getOpenapiFilePath() {
+        return openapiFilePath;
     }
 
 }

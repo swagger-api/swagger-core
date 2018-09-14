@@ -14,6 +14,7 @@
                 <artifactId>swagger-maven-plugin</artifactId>
                 <configuration>
                     <outputPath>${project.basedir}/../../../target/generatedtest</outputPath>
+                    <openapiFilePath>${project.basedir}/../../../src/test/resources/openapiinput.yaml</openapiFilePath>
                     <outputFormat>YAML</outputFormat>
                     <resourcePackages>
                         <package>io.swagger.v3.plugin.maven.petstore.petstore</package>
