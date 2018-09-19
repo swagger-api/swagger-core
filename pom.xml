@@ -103,6 +103,10 @@
                         <configuration>
                             <rules>
                                 <DependencyConvergence/>
+                                <requireReleaseDeps>
+                                    <onlyWhenRelease>true</onlyWhenRelease>
+                                    <message>No Snapshots Allowed!</message>
+                                </requireReleaseDeps>
                             </rules>
                         </configuration>
                     </execution>
