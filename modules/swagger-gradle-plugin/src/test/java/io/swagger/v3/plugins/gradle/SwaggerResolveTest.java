@@ -21,6 +21,7 @@ public class SwaggerResolveTest {
     @Rule
     public final TemporaryFolder testProjectDir = new TemporaryFolder();
     private File buildFile;
+    private File settingsFile;
     private File openapiInputFile;
     private String outputFile;
     private String outputDir;
@@ -28,6 +29,7 @@ public class SwaggerResolveTest {
     @Before
     public void setup() throws IOException {
         buildFile = testProjectDir.newFile("build.gradle");
+        settingsFile = testProjectDir.newFile("settings.gradle");
         openapiInputFile = testProjectDir.newFile("openapiinput.yaml");
         writeFile(openapiInputFile, "openapi: 3.0.1\n" +
                 "servers:\n" +
@@ -101,7 +103,18 @@ public class SwaggerResolveTest {
                 "}";
 
 
+        String settingsFileContent = "pluginManagement {\n" +
+                "    repositories {\n" +
+                "        maven {\n" +
+                "            url mavenLocal().url\n" +
+                "        }\n" +
+                "        gradlePluginPortal()\n" +
+                "    }\n" +
+                "}\n" +
+                "rootProject.name = 'gradle-test'\n" +
+                "\n";
         writeFile(buildFile, buildFileContent);
+        writeFile(settingsFile, settingsFileContent);
 
         BuildResult result = GradleRunner.create()
                 .withPluginClasspath()
