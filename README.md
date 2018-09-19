@@ -11,7 +11,7 @@ Swagger-core is the Java implementation of Swagger. Current version supports *JA
 Check out the [OpenAPI Specification](https://github.com/OAI/OpenAPI-Specification) for additional information about the Swagger project.
 
 ## Get started with Swagger!
-See the guide on [getting started with swagger](https://github.com/frantuma/swagger-core/wiki/Swagger-2.X---Getting-started) to get started with adding swagger to your API.
+See the guide on [getting started with swagger](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Getting-started) to get started with adding swagger to your API.
 
 ## See the Wiki!
 The [github wiki](https://github.com/swagger-api/swagger-core/wiki) contains documentation, samples, contributions, etc. Start there.
