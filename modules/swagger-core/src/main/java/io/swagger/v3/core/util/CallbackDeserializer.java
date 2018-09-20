@@ -28,6 +28,8 @@ public class CallbackDeserializer extends JsonDeserializer<Callback> {
             // if name start with `x-` consider it an extesion
             if (childName.startsWith("x-")) {
                 extensions.put(childName, Json.mapper().convertValue(child, Object.class));
+            } else if (childName.equals("$ref")) {
+                result.$ref(child.asText());
             } else {
                 result.put(childName, Json.mapper().convertValue(child, PathItem.class));
             }
