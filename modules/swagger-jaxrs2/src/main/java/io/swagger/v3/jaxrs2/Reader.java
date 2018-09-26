@@ -961,6 +961,12 @@ public class Reader implements OpenApiReader {
                             )
                     );
                 }
+                if (operation.getResponses().getDefault() == null) {
+                    operation.getResponses()._default(
+                            new ApiResponse().description(DEFAULT_DESCRIPTION)
+                                    .content(content)
+                    );
+                }
                 if (operation.getResponses().getDefault() != null &&
                         StringUtils.isBlank(operation.getResponses().getDefault().get$ref())) {
                     if (operation.getResponses().getDefault().getContent() == null) {
