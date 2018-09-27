@@ -21,6 +21,7 @@ import io.swagger.v3.oas.models.parameters.RequestBody;
 import io.swagger.v3.oas.models.servers.Server;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -126,7 +127,7 @@ public class Link {
 
     public Link parameters(String name, String parameter) {
         if (this.parameters == null) {
-            this.parameters = new HashMap<>();
+            this.parameters = new LinkedHashMap<>();
         }
         this.parameters.put(name, parameter);
 
@@ -154,7 +155,7 @@ public class Link {
 
     public Link addHeaderObject(String name, Header header) {
         if (this.headers == null) {
-            headers = new HashMap<>();
+            headers = new LinkedHashMap<>();
         }
         headers.put(name, header);
         return this;
@@ -257,7 +258,7 @@ public class Link {
             return;
         }
         if (this.extensions == null) {
-            this.extensions = new java.util.HashMap<>();
+            this.extensions = new java.util.LinkedHashMap<>();
         }
         this.extensions.put(name, value);
     }

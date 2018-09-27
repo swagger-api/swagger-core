@@ -1,8 +1,6 @@
 package io.swagger.v3.jaxrs2.annotations.examples;
 
-import io.swagger.v3.jaxrs2.Reader;
 import io.swagger.v3.jaxrs2.annotations.AbstractAnnotationTest;
-import io.swagger.v3.jaxrs2.matchers.SerializationMatchers;
 import io.swagger.v3.jaxrs2.resources.model.User;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -13,7 +11,6 @@ import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.models.OpenAPI;
 import org.testng.annotations.Test;
 
 import javax.ws.rs.Consumes;
@@ -23,7 +20,6 @@ import javax.ws.rs.Path;
 import static org.testng.Assert.assertEquals;
 
 public class ExamplesTest extends AbstractAnnotationTest {
-
 
     @Test
     public void testRequestBodyContentExample() {
@@ -411,6 +407,11 @@ public class ExamplesTest extends AbstractAnnotationTest {
                 "                  externalValue: Subscription Response value 1\n" +
                 "components:\n" +
                 "  schemas:\n" +
+                "    SubscriptionResponse:\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        subscriptionId:\n" +
+                "          type: string\n" +
                 "    User:\n" +
                 "      type: object\n" +
                 "      properties:\n" +
@@ -434,12 +435,7 @@ public class ExamplesTest extends AbstractAnnotationTest {
                 "          description: User Status\n" +
                 "          format: int32\n" +
                 "      xml:\n" +
-                "        name: User\n" +
-                "    SubscriptionResponse:\n" +
-                "      type: object\n" +
-                "      properties:\n" +
-                "        subscriptionId:\n" +
-                "          type: string";
+                "        name: User";
         assertEquals(extractedYAML, expectedYAML);
     }
 
