@@ -9,6 +9,9 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.PathItem;
+import io.swagger.v3.oas.models.media.MediaType;
+
 import org.testng.Assert;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -17,6 +20,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
+
 import javax.ws.rs.GET;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
@@ -163,6 +168,36 @@ public class JsonViewTest {
         Assert.assertFalse(openApiJson.contains("tires"));
         Assert.assertFalse(openApiJson.contains("made"));
         Assert.assertFalse(openApiJson.contains("condition"));
+
+        reader = new Reader(new OpenAPI());
+        openAPI = reader.read(CarSummaryUpdateApi.class);
+        Set carSummarySchemaProperties = openAPI.getComponents()
+            .getSchemas()
+            .get("Car_Summary")
+            .getProperties()
+            .keySet();
+        String carSummaryUpdateApiRequestBodySchemaRef = openAPI.getPaths()
+            .values()
+            .stream()
+            .findAny()
+            .orElse(new PathItem())
+            .getPut()
+            .getRequestBody()
+            .getContent()
+            .values()
+            .stream()
+            .findAny()
+            .orElse(new MediaType())
+            .getSchema()
+            .get$ref();
+        Assert.assertTrue(carSummarySchemaProperties.contains("manufacture"));
+        Assert.assertTrue(carSummarySchemaProperties.contains("model"));
+        Assert.assertTrue(carSummarySchemaProperties.contains("color"));
+        Assert.assertFalse(carSummarySchemaProperties.contains("price"));
+        Assert.assertFalse(carSummarySchemaProperties.contains("tires"));
+        Assert.assertFalse(carSummarySchemaProperties.contains("made"));
+        Assert.assertFalse(carSummarySchemaProperties.contains("condition"));
+        Assert.assertTrue(carSummaryUpdateApiRequestBodySchemaRef.contains("Car_Summary"));
 
         reader = new Reader(new OpenAPI());
         openAPI = reader.read(CarDetailApi.class);
