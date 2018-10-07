@@ -24,6 +24,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -57,6 +58,9 @@ public class ResolveTask extends DefaultTask {
     private Boolean skip = Boolean.FALSE;
 
     private String encoding = "UTF-8";
+
+    private LinkedHashSet<String> modelConverterClasses;
+    private String objectMapperProcessorClass;
 
     @Input
     @Optional
@@ -139,6 +143,22 @@ public class ResolveTask extends DefaultTask {
         this.resourcePackages = resourcePackages;
     }
 
+    /**
+     * @since 2.0.6
+     */
+    @Input
+    @Optional
+    public LinkedHashSet<String> getModelConverterClasses() {
+        return modelConverterClasses;
+    }
+
+    /**
+     * @since 2.0.6
+     */
+    public void setModelConverterClasses(LinkedHashSet<String> modelConverterClasses) {
+        this.modelConverterClasses = modelConverterClasses;
+    }
+
     @Input
     @Optional
     public Set<String> getResourceClasses() {
@@ -167,6 +187,22 @@ public class ResolveTask extends DefaultTask {
 
     public void setReaderClass(String readerClass) {
         this.readerClass = readerClass;
+    }
+
+    /**
+     * @since 2.0.6
+     */
+    @Input
+    @Optional
+    public String getObjectMapperProcessorClass() {
+        return objectMapperProcessorClass;
+    }
+
+    /**
+     * @since 2.0.6
+     */
+    public void setObjectMapperProcessorClass(String objectMapperProcessorClass) {
+        this.objectMapperProcessorClass = objectMapperProcessorClass;
     }
 
     @Input
@@ -289,6 +325,10 @@ public class ResolveTask extends DefaultTask {
                 method=swaggerLoaderClass.getDeclaredMethod("setResourceClasses",String.class);
                 method.invoke(swaggerLoader, resourceClasses.stream().map(Object::toString).collect(Collectors.joining(",")));
             }
+            if (modelConverterClasses != null && !modelConverterClasses.isEmpty()) {
+                method=swaggerLoaderClass.getDeclaredMethod("setModelConverterClasses",String.class);
+                method.invoke(swaggerLoader, modelConverterClasses.stream().map(Object::toString).collect(Collectors.joining(",")));
+            }
             if (ignoredRoutes != null && !ignoredRoutes.isEmpty()) {
                 method=swaggerLoaderClass.getDeclaredMethod("setIgnoredRoutes",String.class);
                 method.invoke(swaggerLoader, ignoredRoutes.stream().map(Object::toString).collect(Collectors.joining(",")));
@@ -307,6 +347,11 @@ public class ResolveTask extends DefaultTask {
             if (StringUtils.isNotBlank(scannerClass)) {
                 method=swaggerLoaderClass.getDeclaredMethod("setScannerClass",String.class);
                 method.invoke(swaggerLoader, scannerClass);
+            }
+
+            if (StringUtils.isNotBlank(objectMapperProcessorClass)) {
+                method=swaggerLoaderClass.getDeclaredMethod("setObjectMapperProcessorClass",String.class);
+                method.invoke(swaggerLoader, objectMapperProcessorClass);
             }
 
             method=swaggerLoaderClass.getDeclaredMethod("setPrettyPrint", Boolean.class);
