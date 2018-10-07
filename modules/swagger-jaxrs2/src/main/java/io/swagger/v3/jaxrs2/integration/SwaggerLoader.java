@@ -10,6 +10,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -27,6 +28,37 @@ public class SwaggerLoader {
     private String ignoredRoutes;
 
     private String openapiAsString;
+
+    private String objectMapperProcessorClass;
+    private String modelConverterClasses;
+
+    /**
+     * @since 2.0.6
+     */
+    public String getObjectMapperProcessorClass() {
+        return objectMapperProcessorClass;
+    }
+
+    /**
+     * @since 2.0.6
+     */
+    public void setObjectMapperProcessorClass(String objectMapperProcessorClass) {
+        this.objectMapperProcessorClass = objectMapperProcessorClass;
+    }
+
+    /**
+     * @since 2.0.6
+     */
+    public String getModelConverterClasses() {
+        return modelConverterClasses;
+    }
+
+    /**
+     * @since 2.0.6
+     */
+    public void setModelConverterClasses(String modelConverterClasses) {
+        this.modelConverterClasses = modelConverterClasses;
+    }
 
     public String getOutputFormat() {
         return outputFormat;
@@ -124,6 +156,11 @@ public class SwaggerLoader {
             resourcePackagesSet = new HashSet<>(Arrays.asList(resourcePackages.split(",")));
         }
 
+        LinkedHashSet<String> modelConverterSet = null;
+        if (StringUtils.isNotBlank(modelConverterClasses)) {
+            modelConverterSet = new LinkedHashSet<>(Arrays.asList(modelConverterClasses.split(",")));
+        }
+
         OpenAPI openAPIInput = null;
         if (StringUtils.isNotBlank(openapiAsString)) {
             try {
@@ -146,7 +183,9 @@ public class SwaggerLoader {
                 .readerClass(readerClass)
                 .scannerClass(scannerClass)
                 .resourceClasses(resourceClassesSet)
-                .resourcePackages(resourcePackagesSet);
+                .resourcePackages(resourcePackagesSet)
+                .objectMapperProcessorClass(objectMapperProcessorClass)
+                .modelConverterClasses(modelConverterSet);
         try {
             OpenAPI openAPI = new JaxrsOpenApiContextBuilder()
                 .openApiConfiguration(config)

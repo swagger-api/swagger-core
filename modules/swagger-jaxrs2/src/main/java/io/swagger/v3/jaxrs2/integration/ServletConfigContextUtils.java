@@ -5,6 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import javax.servlet.ServletConfig;
 import java.util.Arrays;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -24,6 +25,16 @@ public class ServletConfigContextUtils {
     public static final String OPENAPI_CONFIGURATION_RESOURCECLASSES_KEY = "openApi.configuration.resourceClasses";
     public static final String OPENAPI_CONFIGURATION_FILTER_KEY = "openApi.configuration.filterClass";
     public static final String OPENAPI_CONFIGURATION_CACHE_TTL_KEY = "openApi.configuration.cacheTTL";
+
+    /**
+     * @since 2.0.6
+     */
+    public static final String OPENAPI_CONFIGURATION_OBJECT_MAPPER_PROCESSOR_KEY = "openApi.configuration.objectMapperProcessorClass";
+
+    /**
+     * @since 2.0.6
+     */
+    public static final String OPENAPI_CONFIGURATION_MODEL_CONVERTERS_KEY = "openApi.configuration.modelConverterClasses";
 
     public static Set<String> resolveResourcePackages(ServletConfig servletConfig) {
         if (!isServletConfigAvailable(servletConfig)) {
@@ -67,6 +78,24 @@ public class ServletConfigContextUtils {
             return null;
         }
         return Arrays.stream(resourceClasses.split(",")).collect(Collectors.toSet());
+
+    }
+
+    /**
+     * @since 2.0.6
+     */
+    public static Set<String> resolveModelConverterClasses(ServletConfig servletConfig) {
+        if (!isServletConfigAvailable(servletConfig)) {
+            return null;
+        }
+        String modelConverterClasses = getInitParam(servletConfig, OPENAPI_CONFIGURATION_MODEL_CONVERTERS_KEY);
+        if (modelConverterClasses != null) {
+            modelConverterClasses = modelConverterClasses.replace(';', ',');
+        }
+        if (StringUtils.isBlank(modelConverterClasses)) {
+            return null;
+        }
+        return new LinkedHashSet<>(Arrays.stream(modelConverterClasses.split(",")).collect(Collectors.toSet()));
 
     }
 

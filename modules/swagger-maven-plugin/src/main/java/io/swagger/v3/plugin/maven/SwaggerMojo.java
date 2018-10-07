@@ -23,6 +23,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 @Mojo(
@@ -88,7 +89,9 @@ public class SwaggerMojo extends AbstractMojo {
                 .scannerClass(scannerClass)
                 .resourceClasses(resourceClasses)
                 .openAPI(openAPIInput)
-                .resourcePackages(resourcePackages);
+                .resourcePackages(resourcePackages)
+                .objectMapperProcessorClass(objectMapperProcessorClass)
+                .modelConverterClasses(modelConverterClasses);
         try {
             OpenAPI openAPI = new JaxrsOpenApiContextBuilder()
                     .openApiConfiguration(config)
@@ -152,12 +155,16 @@ public class SwaggerMojo extends AbstractMojo {
     private Set<String> resourcePackages;
     @Parameter( property = "resolve.resourceClasses" )
     private Set<String> resourceClasses;
+    @Parameter( property = "resolve.modelConverterClasses" )
+    private LinkedHashSet<String> modelConverterClasses;
     @Parameter( property = "resolve.filterClass" )
     private String filterClass;
     @Parameter( property = "resolve.readerClass" )
     private String readerClass;
     @Parameter( property = "resolve.scannerClass" )
     private String scannerClass;
+    @Parameter( property = "resolve.objectMapperProcessorClass" )
+    private String objectMapperProcessorClass;
     @Parameter( property = "resolve.prettyPrint" )
     private Boolean prettyPrint = false;
     @Parameter( property = "resolve.readAllResources" )

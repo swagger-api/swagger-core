@@ -1,7 +1,10 @@
 package io.swagger.v3.oas.integration.api;
 
+import io.swagger.v3.core.converter.ModelConverter;
 import io.swagger.v3.oas.integration.OpenApiConfigurationException;
 import io.swagger.v3.oas.models.OpenAPI;
+
+import java.util.Set;
 
 public interface OpenApiContext {
 
@@ -24,5 +27,15 @@ public interface OpenApiContext {
     void setOpenApiScanner(OpenApiScanner openApiScanner);
 
     void setOpenApiReader(OpenApiReader openApiReader);
+
+    /**
+     * @since 2.0.6
+     */
+    void setObjectMapperProcessor(ObjectMapperProcessor objectMapperProcessor);
+
+    /**
+     * @since 2.0.6
+     */
+    void setModelConverters(Set<ModelConverter> modelConverters);
 
 }

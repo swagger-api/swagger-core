@@ -1,5 +1,10 @@
 package io.swagger.v3.oas.integration;
 
+import io.swagger.v3.core.converter.ModelConverter;
+import io.swagger.v3.core.converter.ModelConverters;
+import io.swagger.v3.core.util.Json;
+import io.swagger.v3.core.util.Yaml;
+import io.swagger.v3.oas.integration.api.ObjectMapperProcessor;
 import io.swagger.v3.oas.integration.api.OpenAPIConfiguration;
 import io.swagger.v3.oas.integration.api.OpenApiConfigurationLoader;
 import io.swagger.v3.oas.integration.api.OpenApiContext;
@@ -14,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -32,6 +38,9 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
 
     private OpenApiReader openApiReader;
     private OpenApiScanner openApiScanner;
+
+    private ObjectMapperProcessor objectMapperProcessor;
+    private Set<ModelConverter> modelConverters;
 
     private ConcurrentHashMap<String, Cache> cache = new ConcurrentHashMap<>();
 
@@ -152,6 +161,53 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
         return (T) this;
     }
 
+    /**
+     * @since 2.0.6
+     */
+    public ObjectMapperProcessor getObjectMapperProcessor() {
+        return objectMapperProcessor;
+    }
+
+    /**
+     * @since 2.0.6
+     */
+    @Override
+    public void setObjectMapperProcessor(ObjectMapperProcessor objectMapperProcessor) {
+        this.objectMapperProcessor = objectMapperProcessor;
+    }
+
+    /**
+     * @since 2.0.6
+     */
+    public final T objectMapperProcessor(ObjectMapperProcessor objectMapperProcessor) {
+        this.objectMapperProcessor = objectMapperProcessor;
+        return (T) this;
+    }
+
+    /**
+     * @since 2.0.6
+     */
+    public Set<ModelConverter> getModelConverters() {
+        return modelConverters;
+    }
+
+    /**
+     * @since 2.0.6
+     */
+    @Override
+    public void setModelConverters(Set<ModelConverter> modelConverters) {
+        this.modelConverters = modelConverters;
+    }
+
+    /**
+     * @since 2.0.6
+     */
+    public final T modelConverters(Set<ModelConverter> modelConverters) {
+        this.modelConverters = modelConverters;
+        return (T) this;
+    }
+
+
     protected void register() {
         OpenApiContextLocator.getInstance().putOpenApiContext(id, this);
     }
@@ -201,6 +257,28 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
         }
         scanner.setConfiguration(openApiConfiguration);
         return scanner;
+    }
+
+    protected ObjectMapperProcessor buildObjectMapperProcessor(final OpenAPIConfiguration openApiConfiguration) throws Exception {
+        ObjectMapperProcessor objectMapperProcessor = null;
+        if (StringUtils.isNotBlank(openApiConfiguration.getObjectMapperProcessorClass())) {
+            Class cls = getClass().getClassLoader().loadClass(openApiConfiguration.getObjectMapperProcessorClass());
+            objectMapperProcessor = (ObjectMapperProcessor) cls.newInstance();
+        }
+        return objectMapperProcessor;
+    }
+
+    protected Set<ModelConverter> buildModelConverters(final OpenAPIConfiguration openApiConfiguration) throws Exception {
+        if (openApiConfiguration.getModelConverterClasses() != null && !openApiConfiguration.getModelConverterClasses().isEmpty()) {
+            LinkedHashSet<ModelConverter> modelConverters = new LinkedHashSet<>();
+            for (String converterClass: openApiConfiguration.getModelConverterClasses()) {
+                Class cls = getClass().getClassLoader().loadClass(converterClass);
+                ModelConverter converter = (ModelConverter) cls.newInstance();
+                modelConverters.add(converter);
+            }
+            return modelConverters;
+        }
+        return null;
     }
 
     protected List<ImmutablePair<String, String>> getKnownLocations() {
@@ -277,9 +355,36 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
             if (openApiScanner == null) {
                 openApiScanner = buildScanner(ContextUtils.deepCopy(openApiConfiguration));
             }
+            if (objectMapperProcessor == null) {
+                objectMapperProcessor = buildObjectMapperProcessor(ContextUtils.deepCopy(openApiConfiguration));
+            }
+            if (modelConverters == null || modelConverters.isEmpty()) {
+                modelConverters = buildModelConverters(ContextUtils.deepCopy(openApiConfiguration));
+            }
         } catch (Exception e) {
             LOGGER.error("error initializing context: " + e.getMessage(), e);
             throw new OpenApiConfigurationException("error initializing context: " + e.getMessage(), e);
+        }
+
+        try {
+            if (objectMapperProcessor != null) {
+                objectMapperProcessor.processJsonObjectMapper(Json.mapper());
+                objectMapperProcessor.processYamlObjectMapper(Yaml.mapper());
+            }
+        } catch (Exception e) {
+            LOGGER.error("error configuring objectMapper: " + e.getMessage(), e);
+            throw new OpenApiConfigurationException("error configuring objectMapper: " + e.getMessage(), e);
+        }
+
+        try {
+            if (modelConverters != null && !modelConverters.isEmpty()) {
+                for (ModelConverter converter: modelConverters) {
+                    ModelConverters.getInstance().addConverter(converter);
+                }
+            }
+        } catch (Exception e) {
+            LOGGER.error("error configuring model converters: " + e.getMessage(), e);
+            throw new OpenApiConfigurationException("error configuring model converters: " + e.getMessage(), e);
         }
 
         // set cache TTL if present in configuration
@@ -337,6 +442,13 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
         if (merged.isReadAllResources() == null) {
             merged.setReadAllResources(parentConfig.isReadAllResources());
         }
+        if (merged.getObjectMapperProcessorClass() == null) {
+            merged.setObjectMapperProcessorClass(parentConfig.getObjectMapperProcessorClass());
+        }
+        if (merged.getModelConverterClasses() == null) {
+            merged.setModelConverterClassess(parentConfig.getModelConverterClasses());
+        }
+
         return merged;
     }
 
