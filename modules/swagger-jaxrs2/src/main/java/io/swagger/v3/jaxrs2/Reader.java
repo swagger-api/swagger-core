@@ -198,7 +198,13 @@ public class Reader implements OpenApiReader {
 
     protected String resolveApplicationPath() {
         if (application != null) {
-            ApplicationPath applicationPath = application.getClass().getAnnotation(ApplicationPath.class);
+            Class<?> applicationToScan = this.application.getClass();
+            ApplicationPath applicationPath;
+            //search up in the hierarchy until we find one with the annotation, this is needed because for example Weld proxies will not have the annotation and the right class will be the superClass
+            while ((applicationPath = applicationToScan.getAnnotation(ApplicationPath.class)) == null && !applicationToScan.getSuperclass().equals(Application.class)) {
+                applicationToScan = applicationToScan.getSuperclass();
+            }
+
             if (applicationPath != null) {
                 if (StringUtils.isNotBlank(applicationPath.value())) {
                     return applicationPath.value();
