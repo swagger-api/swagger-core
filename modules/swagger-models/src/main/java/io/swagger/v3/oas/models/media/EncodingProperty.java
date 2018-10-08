@@ -19,6 +19,7 @@ package io.swagger.v3.oas.models.media;
 import io.swagger.v3.oas.models.headers.Header;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -101,7 +102,7 @@ public class EncodingProperty {
 
     public EncodingProperty addHeaderObject(String name, Header header) {
         if (this.headers == null) {
-            headers = new HashMap<>();
+            headers = new LinkedHashMap<>();
         }
         headers.put(name, header);
         return this;
@@ -195,7 +196,7 @@ public class EncodingProperty {
             return;
         }
         if (this.extensions == null) {
-            this.extensions = new java.util.HashMap<>();
+            this.extensions = new java.util.LinkedHashMap<>();
         }
         this.extensions.put(name, value);
     }

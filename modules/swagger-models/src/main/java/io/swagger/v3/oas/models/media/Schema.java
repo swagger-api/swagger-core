@@ -525,7 +525,7 @@ public class Schema<T> {
 
     public Schema addProperties(String key, Schema propertiesItem) {
         if (this.properties == null) {
-            this.properties = new LinkedHashMap<String, Schema>();
+            this.properties = new LinkedHashMap<>();
         }
         this.properties.put(key, propertiesItem);
         return this;
@@ -806,7 +806,7 @@ public class Schema<T> {
             return;
         }
         if (this.extensions == null) {
-            this.extensions = new java.util.HashMap<>();
+            this.extensions = new java.util.LinkedHashMap<>();
         }
         this.extensions.put(name, value);
     }
