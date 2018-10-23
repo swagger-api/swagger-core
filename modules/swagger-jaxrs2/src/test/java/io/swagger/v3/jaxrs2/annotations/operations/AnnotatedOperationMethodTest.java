@@ -394,7 +394,7 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
                 "  /pet/findByTags:\n" +
                 "    get:\n" +
                 "      summary: Finds Pets by tags\n" +
-                "      description: Muliple tags can be provided with comma seperated strings. Use tag1, tag2, tag3 for testing.\n" +
+                "      description: Multiple tags can be provided with comma separated strings. Use tag1, tag2, tag3 for testing.\n" +
                 "      operationId: findPetsByTags\n" +
                 "      parameters:\n" +
                 "      - name: tags\n" +
@@ -557,7 +557,7 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
                 "  /pet/findByStatus:\n" +
                 "    get:\n" +
                 "      summary: Finds Pets by status\n" +
-                "      description: Multiple status values can be provided with comma seperated strings\n" +
+                "      description: Multiple status values can be provided with comma separated strings\n" +
                 "      operationId: findPetsByStatus\n" +
                 "      parameters:\n" +
                 "      - name: status\n" +
