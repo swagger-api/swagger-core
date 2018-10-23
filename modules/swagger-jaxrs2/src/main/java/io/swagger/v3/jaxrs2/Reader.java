@@ -461,9 +461,9 @@ public class Reader implements OpenApiReader {
                                 }
                             }
                             ResolvedParameter resolvedParameter = getParameters(paramType, Arrays.asList(paramAnnotations[i]), operation, classConsumes, methodConsumes, jsonViewAnnotation);
-                            for (Parameter p : resolvedParameter.parameters) {
-                                operationParameters.add(p);
-                            }
+                            operationParameters.addAll(resolvedParameter.parameters);
+                            // collect params to use together as request Body
+                            formParameters.addAll(resolvedParameter.formParameters);
                             if (resolvedParameter.requestBody != null) {
                                 processRequestBody(
                                         resolvedParameter.requestBody,
@@ -474,9 +474,6 @@ public class Reader implements OpenApiReader {
                                         paramAnnotations[i],
                                         type,
                                         jsonViewAnnotation);
-                            } else if (resolvedParameter.formParameter != null) {
-                                // collect params to use together as request Body
-                                formParameters.add(resolvedParameter.formParameter);
                             }
                         }
                     } else {
@@ -493,9 +490,9 @@ public class Reader implements OpenApiReader {
                                 }
                             }
                             ResolvedParameter resolvedParameter = getParameters(paramType, Arrays.asList(paramAnnotations[i]), operation, classConsumes, methodConsumes, jsonViewAnnotation);
-                            for (Parameter p : resolvedParameter.parameters) {
-                                operationParameters.add(p);
-                            }
+                            operationParameters.addAll(resolvedParameter.parameters);
+                            // collect params to use together as request Body
+                            formParameters.addAll(resolvedParameter.formParameters);
                             if (resolvedParameter.requestBody != null) {
                                 processRequestBody(
                                         resolvedParameter.requestBody,
@@ -506,9 +503,6 @@ public class Reader implements OpenApiReader {
                                         paramAnnotations[i],
                                         type,
                                         jsonViewAnnotation);
-                            } else if (resolvedParameter.formParameter != null) {
-                                // collect params to use together as request Body
-                                formParameters.add(resolvedParameter.formParameter);
                             }
                         }
                     }
