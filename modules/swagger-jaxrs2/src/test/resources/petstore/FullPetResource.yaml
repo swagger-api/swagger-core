@@ -496,7 +496,7 @@ paths:
             '*/*': {}
   /notannotatedoperation:
     get:
-      operationId: getUser_1
+      operationId: getUser_2
       responses:
         default:
           description: default response
@@ -506,7 +506,7 @@ paths:
                 type: string
   /notannotatedoperationduplicated:
     get:
-      operationId: getUser_2
+      operationId: getUser_3
       requestBody:
         content:
           '*/*':
@@ -521,7 +521,7 @@ paths:
                 type: string
   /operationsresource2:
     get:
-      operationId: getUser_3
+      operationId: getUser_4
       responses:
         default:
           description: default response
@@ -569,7 +569,7 @@ paths:
               schema:
                 type: string
     post:
-      operationId: getUser_4
+      operationId: getUser_5
       requestBody:
         content:
           '*/*':
@@ -599,7 +599,7 @@ paths:
                 type: string
   /operationwithouannotation:
     get:
-      operationId: getUser_4
+      operationId: getUser_6
       responses:
         default:
           description: default response
@@ -1190,7 +1190,7 @@ paths:
           description: Status OK
   /noimplementationresponseresource:
     get:
-      operationId: getUser_5
+      operationId: getUser_7
       parameters:
       - name: userId
         in: query
