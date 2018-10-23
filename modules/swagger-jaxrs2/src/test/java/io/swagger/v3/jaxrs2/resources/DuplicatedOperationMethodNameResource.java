@@ -3,6 +3,7 @@ package io.swagger.v3.jaxrs2.resources;
 import io.swagger.v3.oas.annotations.Operation;
 
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Response;
 
@@ -23,9 +24,24 @@ public class DuplicatedOperationMethodNameResource {
         return Response.ok().entity("ok").build();
     }
 
+    @POST
+    @Path("/2")
+    @Operation(operationId = "postSummaryAndDescription3",
+            summary = "Operation Summary",
+            description = "Operation Description")
+    public Response postSummaryAndDescription2() {
+        return Response.ok().entity("ok").build();
+    }
+
     @GET
     @Path("/3")
     public Response getSummaryAndDescription3() {
+        return Response.ok().entity("ok").build();
+    }
+
+    @POST
+    @Path("/3")
+    public Response postSummaryAndDescription3() {
         return Response.ok().entity("ok").build();
     }
 
