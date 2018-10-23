@@ -38,6 +38,7 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
 
     private OpenApiReader openApiReader;
     private OpenApiScanner openApiScanner;
+    private OpenApiReader providedOpenApiReader;
 
     private ObjectMapperProcessor objectMapperProcessor;
     private Set<ModelConverter> modelConverters;
@@ -68,6 +69,7 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
     @Override
     public void setOpenApiReader(OpenApiReader openApiReader) {
         this.openApiReader = openApiReader;
+        providedOpenApiReader = openApiReader;
     }
 
     public OpenApiScanner getOpenApiScanner() {
@@ -80,7 +82,7 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
     }
 
     public final T openApiReader(OpenApiReader openApiReader) {
-        this.openApiReader = openApiReader;
+        setOpenApiReader(openApiReader);
         return (T) this;
     }
 
@@ -456,16 +458,29 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
     public OpenAPI read() {
 
         if (cacheTTL == 0) {
+            resetReader();
             return getOpenApiReader().read(getOpenApiScanner().classes(), getOpenApiScanner().resources());
         }
         Cache cached = cache.get("openapi");
         if (cached == null || cached.isStale(cacheTTL)) {
             cached = new Cache();
             cached.createdAt = System.currentTimeMillis();
+            resetReader();
             cached.openApi = getOpenApiReader().read(getOpenApiScanner().classes(), getOpenApiScanner().resources());
             cache.put("openapi", cached);
         }
         return cached.openApi;
+    }
+
+    protected void resetReader() {
+        if (providedOpenApiReader == null) {
+            try {
+                openApiReader = buildReader(ContextUtils.deepCopy(openApiConfiguration));
+            } catch (Exception e) {
+                LOGGER.error("error building reader: " + e.getMessage(), e);
+                // keep previous reader
+            }
+        }
     }
 
     static class Cache {
