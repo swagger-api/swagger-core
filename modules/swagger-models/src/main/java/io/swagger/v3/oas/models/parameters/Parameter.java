@@ -21,6 +21,7 @@ import io.swagger.v3.oas.models.media.Content;
 import io.swagger.v3.oas.models.media.Schema;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -286,7 +287,7 @@ public class Parameter {
 
     public Parameter addExample(String key, Example examplesItem) {
         if (this.examples == null) {
-            this.examples = new HashMap<String, Example>();
+            this.examples = new LinkedHashMap<>();
         }
         this.examples.put(key, examplesItem);
         return this;
@@ -342,7 +343,7 @@ public class Parameter {
     }
 
     public Parameter $ref(String $ref) {
-        this.$ref = $ref;
+        set$ref($ref);
         return this;
     }
 
@@ -386,7 +387,7 @@ public class Parameter {
             return;
         }
         if (this.extensions == null) {
-            this.extensions = new java.util.HashMap<>();
+            this.extensions = new java.util.LinkedHashMap<>();
         }
         this.extensions.put(name, value);
     }

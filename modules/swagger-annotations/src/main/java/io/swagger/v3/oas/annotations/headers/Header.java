@@ -72,4 +72,12 @@ public @interface Header {
      **/
     boolean deprecated() default false;
 
+    /**
+     * A reference to a header defined in components headers.
+     *
+     * @since 2.0.3
+     * @return the reference
+     **/
+    String ref() default "";
+
 }

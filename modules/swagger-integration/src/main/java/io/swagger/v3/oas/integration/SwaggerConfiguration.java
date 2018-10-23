@@ -27,6 +27,9 @@ public class SwaggerConfiguration implements OpenAPIConfiguration {
     private Collection<String> ignoredRoutes;
     private Long cacheTTL = -1L;
 
+    private Set<String> modelConverterClasses;
+    private String objectMapperProcessorClass;
+
     public Long getCacheTTL() {
         return cacheTTL;
     }
@@ -185,4 +188,47 @@ public class SwaggerConfiguration implements OpenAPIConfiguration {
         this.id = id;
     }
 
+    /**
+     * @since 2.0.6
+     */
+    public SwaggerConfiguration objectMapperProcessorClass(String objectMapperProcessorClass) {
+        this.objectMapperProcessorClass = objectMapperProcessorClass;
+        return this;
+    }
+
+    /**
+     * @since 2.0.6
+     */
+    public String getObjectMapperProcessorClass() {
+        return objectMapperProcessorClass;
+    }
+
+    /**
+     * @since 2.0.6
+     */
+    public void setObjectMapperProcessorClass(String objectMapperProcessorClass) {
+        this.objectMapperProcessorClass = objectMapperProcessorClass;
+    }
+
+    /**
+     * @since 2.0.6
+     */
+    public Set<String> getModelConverterClasses() {
+        return modelConverterClasses;
+    }
+
+    /**
+     * @since 2.0.6
+     */
+    public void setModelConverterClassess(Set<String> modelConverterClasses) {
+        this.modelConverterClasses = modelConverterClasses;
+    }
+
+    /**
+     * @since 2.0.6
+     */
+    public SwaggerConfiguration modelConverterClasses(Set<String> modelConverterClasses) {
+        this.modelConverterClasses = modelConverterClasses;
+        return this;
+    }
 }

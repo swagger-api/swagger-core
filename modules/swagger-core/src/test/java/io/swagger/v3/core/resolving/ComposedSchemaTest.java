@@ -4,6 +4,8 @@ import io.swagger.v3.core.converter.ModelConverters;
 import io.swagger.v3.core.resolving.resources.TestObject2616;
 import io.swagger.v3.core.resolving.resources.TestObjectTicket2620;
 import io.swagger.v3.core.resolving.resources.TestObjectTicket2620Subtypes;
+import io.swagger.v3.core.resolving.resources.TestObjectTicket2900;
+import io.swagger.v3.core.util.Json;
 import io.swagger.v3.oas.models.media.ArraySchema;
 import io.swagger.v3.oas.models.media.ComposedSchema;
 import io.swagger.v3.oas.models.media.Schema;
@@ -54,6 +56,31 @@ public class ComposedSchemaTest {
         Assert.assertNull(properties.get("childName"));
         Assert.assertTrue(model instanceof ComposedSchema);
         Assert.assertTrue(((ComposedSchema)model).getOneOf().size() == 2);
+    }
+
+    @Test(description = "read composed schem refs #2900")
+    public void readComposedSchema_ticket2900() {
+        Json.mapper().addMixIn(TestObjectTicket2900.GsonJsonPrimitive.class, TestObjectTicket2900.GsonJsonPrimitiveMixIn.class);
+        Map<String, Schema> schemas = ModelConverters.getInstance().readAll(TestObjectTicket2900.class);
+        Schema model = schemas.get("SomeDTO");
+        Assert.assertNotNull(model);
+        Map<String, Schema> properties = model.getProperties();
+        Assert.assertNotNull(properties.get("value"));
+        Assert.assertEquals(properties.get("value").get$ref(), "#/components/schemas/MyJsonPrimitive");
+        Assert.assertEquals(properties.get("valueWithMixIn").get$ref(), "#/components/schemas/GsonJsonPrimitive");
+
+        model = schemas.get("MyJsonPrimitive");
+        Assert.assertNotNull(model);
+        Assert.assertTrue(((ComposedSchema)model).getOneOf().size() == 2);
+        Assert.assertEquals(((ComposedSchema)model).getOneOf().get(0).getType(), "string");
+        Assert.assertEquals(((ComposedSchema)model).getOneOf().get(1).getType(), "number");
+
+        model = schemas.get("GsonJsonPrimitive");
+        Assert.assertNotNull(model);
+        Assert.assertTrue(((ComposedSchema)model).getOneOf().size() == 2);
+        Assert.assertEquals(((ComposedSchema)model).getOneOf().get(0).getType(), "string");
+        Assert.assertEquals(((ComposedSchema)model).getOneOf().get(1).getType(), "number");
+        Assert.assertNull(model.getProperties());
     }
 
     @Test(description = "read composed schem refs #2616")

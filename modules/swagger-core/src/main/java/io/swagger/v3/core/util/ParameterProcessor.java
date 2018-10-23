@@ -68,6 +68,11 @@ public class ParameterProcessor {
                 if (p.hidden()) {
                     return null;
                 }
+                if (StringUtils.isNotBlank(p.ref())) {
+                    parameter = new Parameter().$ref(p.ref());
+                    return parameter;
+                }
+
                 if (StringUtils.isNotBlank(p.description())) {
                     parameter.setDescription(p.description());
                 }
@@ -150,7 +155,11 @@ public class ParameterProcessor {
                 } catch (Exception e) {
                     LOGGER.error("failed on " + annotation.annotationType().getName(), e);
                 }
-            } else if (annotation.annotationType().getName().equals("javax.validation.constraints.NotNull")) {
+            } else if (
+                        annotation.annotationType().getName().equals("javax.validation.constraints.NotNull") ||
+                        annotation.annotationType().getName().equals("javax.validation.constraints.NotBlank") ||
+                        annotation.annotationType().getName().equals("javax.validation.constraints.NotEmpty")
+                    ) {
                 parameter.setRequired(true);
             } else if (annotation.annotationType().getName().equals("javax.ws.rs.FormParam")) {
                 try {

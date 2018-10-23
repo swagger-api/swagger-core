@@ -21,6 +21,7 @@ import io.swagger.v3.oas.models.parameters.RequestBody;
 import io.swagger.v3.oas.models.servers.Server;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -33,7 +34,7 @@ public class Link {
     private String operationRef = null;
     private String operationId = null;
     private Map<String, String> parameters = null;
-    private RequestBody requestBody = null;
+    private Object requestBody = null;
     private Map<String, Header> headers = null;
     private String description = null;
     private String $ref = null;
@@ -81,18 +82,18 @@ public class Link {
     /**
      * returns the requestBody property from a Link instance.
      *
-     * @return String operationId
+     * @return Object requestBody
      **/
 
-    public RequestBody getRequestBody() {
+    public Object getRequestBody() {
         return requestBody;
     }
 
-    public void setRequestBody(RequestBody requestBody) {
+    public void setRequestBody(Object requestBody) {
         this.requestBody = requestBody;
     }
 
-    public Link requestBody(RequestBody requestBody) {
+    public Link requestBody(Object requestBody) {
         this.requestBody = requestBody;
         return this;
     }
@@ -126,7 +127,7 @@ public class Link {
 
     public Link parameters(String name, String parameter) {
         if (this.parameters == null) {
-            this.parameters = new HashMap<>();
+            this.parameters = new LinkedHashMap<>();
         }
         this.parameters.put(name, parameter);
 
@@ -154,7 +155,7 @@ public class Link {
 
     public Link addHeaderObject(String name, Header header) {
         if (this.headers == null) {
-            headers = new HashMap<>();
+            headers = new LinkedHashMap<>();
         }
         headers.put(name, header);
         return this;
@@ -244,7 +245,7 @@ public class Link {
     }
 
     public Link $ref(String $ref) {
-        this.$ref = $ref;
+        set$ref($ref);
         return this;
     }
 
@@ -257,7 +258,7 @@ public class Link {
             return;
         }
         if (this.extensions == null) {
-            this.extensions = new java.util.HashMap<>();
+            this.extensions = new java.util.LinkedHashMap<>();
         }
         this.extensions.put(name, value);
     }

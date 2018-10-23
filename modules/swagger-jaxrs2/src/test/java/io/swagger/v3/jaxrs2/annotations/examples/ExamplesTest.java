@@ -21,7 +21,6 @@ import static org.testng.Assert.assertEquals;
 
 public class ExamplesTest extends AbstractAnnotationTest {
 
-
     @Test
     public void testRequestBodyContentExample() {
         compareToYamlFile(ExamplesTest.RequestBodyContentExample.class, "examples/");
@@ -408,6 +407,11 @@ public class ExamplesTest extends AbstractAnnotationTest {
                 "                  externalValue: Subscription Response value 1\n" +
                 "components:\n" +
                 "  schemas:\n" +
+                "    SubscriptionResponse:\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        subscriptionId:\n" +
+                "          type: string\n" +
                 "    User:\n" +
                 "      type: object\n" +
                 "      properties:\n" +
@@ -431,12 +435,7 @@ public class ExamplesTest extends AbstractAnnotationTest {
                 "          description: User Status\n" +
                 "          format: int32\n" +
                 "      xml:\n" +
-                "        name: User\n" +
-                "    SubscriptionResponse:\n" +
-                "      type: object\n" +
-                "      properties:\n" +
-                "        subscriptionId:\n" +
-                "          type: string";
+                "        name: User";
         assertEquals(extractedYAML, expectedYAML);
     }
 

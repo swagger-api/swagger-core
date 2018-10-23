@@ -120,15 +120,16 @@ public class DefaultParameterExtension extends AbstractOpenAPIExtension {
             }
         }
         for (Parameter p : parameters) {
-            if (ParameterProcessor.applyAnnotations(
+            Parameter processedParameter = ParameterProcessor.applyAnnotations(
                     p,
                     type,
                     annotations,
                     components,
                     classConsumes == null ? new String[0] : classConsumes.value(),
                     methodConsumes == null ? new String[0] : methodConsumes.value(),
-                    jsonViewAnnotation) != null) {
-                extractParametersResult.parameters.add(p);
+                    jsonViewAnnotation);
+            if (processedParameter != null) {
+                extractParametersResult.parameters.add(processedParameter);
             }
         }
         return extractParametersResult;
@@ -218,15 +219,16 @@ public class DefaultParameterExtension extends AbstractOpenAPIExtension {
                                 extensions).parameters;
 
                 for (Parameter p : extracted) {
-                    if (ParameterProcessor.applyAnnotations(
+                    Parameter processedParam = ParameterProcessor.applyAnnotations(
                             p,
                             paramType,
                             paramAnnotations,
                             components,
                             classConsumes == null ? new String[0] : classConsumes.value(),
                             methodConsumes == null ? new String[0] : methodConsumes.value(),
-                            jsonViewAnnotation) != null) {
-                        parameters.add(p);
+                            jsonViewAnnotation);
+                    if (processedParam != null) {
+                        parameters.add(processedParam);
                     }
                 }
 

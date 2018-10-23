@@ -54,24 +54,40 @@ public class ServerVariables extends LinkedHashMap<String, ServerVariable> {
         return Objects.hash(extensions, super.hashCode());
     }
 
+    /**
+     * @deprecated As extensions don't make sense at this level
+     */
+    @Deprecated
     public java.util.Map<String, Object> getExtensions() {
         return extensions;
     }
 
+    /**
+     * @deprecated As extensions don't make sense at this level
+     */
+    @Deprecated
     public void addExtension(String name, Object value) {
         if (name == null || name.isEmpty() || !name.startsWith("x-")) {
             return;
         }
         if (this.extensions == null) {
-            this.extensions = new java.util.HashMap<>();
+            this.extensions = new java.util.LinkedHashMap<>();
         }
         this.extensions.put(name, value);
     }
 
+    /**
+     * @deprecated As extensions don't make sense at this level
+     */
+    @Deprecated
     public void setExtensions(java.util.Map<String, Object> extensions) {
         this.extensions = extensions;
     }
 
+    /**
+     * @deprecated As extensions don't make sense at this level
+     */
+    @Deprecated
     public ServerVariables extensions(java.util.Map<String, Object> extensions) {
         this.extensions = extensions;
         return this;
@@ -98,4 +114,3 @@ public class ServerVariables extends LinkedHashMap<String, ServerVariable> {
     }
 
 }
-

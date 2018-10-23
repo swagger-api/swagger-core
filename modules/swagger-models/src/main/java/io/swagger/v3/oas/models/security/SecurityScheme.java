@@ -239,7 +239,7 @@ public class SecurityScheme {
             return;
         }
         if (this.extensions == null) {
-            this.extensions = new java.util.HashMap<>();
+            this.extensions = new java.util.LinkedHashMap<>();
         }
         this.extensions.put(name, value);
     }
@@ -270,7 +270,7 @@ public class SecurityScheme {
     }
 
     public SecurityScheme $ref(String $ref) {
-        this.$ref = $ref;
+        set$ref($ref);
         return this;
     }
 

@@ -87,4 +87,12 @@ public @interface Link {
      */
     Extension[] extensions() default {};
 
+    /**
+     * A reference to a link defined in components links.
+     *
+     * @since 2.0.3
+     * @return the reference
+     **/
+    String ref() default "";
+
 }

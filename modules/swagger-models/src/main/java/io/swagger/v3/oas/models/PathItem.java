@@ -401,7 +401,7 @@ public class PathItem {
             return;
         }
         if (this.extensions == null) {
-            this.extensions = new java.util.HashMap<>();
+            this.extensions = new java.util.LinkedHashMap<>();
         }
         this.extensions.put(name, value);
     }
@@ -429,7 +429,7 @@ public class PathItem {
     }
 
     public PathItem $ref(String $ref) {
-        this.$ref = $ref;
+        set$ref($ref);
         return this;
     }
 
