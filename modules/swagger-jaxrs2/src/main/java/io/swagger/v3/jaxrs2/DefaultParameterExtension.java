@@ -46,9 +46,8 @@ public class DefaultParameterExtension extends AbstractOpenAPIExtension {
             return new ResolvedParameter();
         }
 
-        List<Parameter> parameters = new ArrayList<>();
+
         Parameter parameter = null;
-        ResolvedParameter extractParametersResult = new ResolvedParameter();
         for (Annotation annotation : annotations) {
             if (annotation instanceof QueryParam) {
                 QueryParam param = (QueryParam) annotation;
@@ -83,20 +82,24 @@ public class DefaultParameterExtension extends AbstractOpenAPIExtension {
                 parameter = pp;
             } else if (annotation instanceof io.swagger.v3.oas.annotations.Parameter) {
                 if (((io.swagger.v3.oas.annotations.Parameter) annotation).hidden()) {
-                    extractParametersResult.parameters = parameters;
-                    return extractParametersResult;
+                    return new ResolvedParameter();
                 }
                 if (parameter == null) {
-                    Parameter pp = new Parameter();
-                    parameter = pp;
+                    parameter = new Parameter();
                 }
             } else {
-                if (handleAdditionalAnnotation(parameters, annotation, type, typesToSkip, classConsumes, methodConsumes, components, includeRequestBody, jsonViewAnnotation)) {
+                List<Parameter> formParameters = new ArrayList<>();
+                List<Parameter> parameters = new ArrayList<>();
+                if (handleAdditionalAnnotation(parameters, formParameters, annotation, type, typesToSkip, classConsumes, methodConsumes, components, includeRequestBody, jsonViewAnnotation)) {
+                    ResolvedParameter extractParametersResult = new ResolvedParameter();
                     extractParametersResult.parameters.addAll(parameters);
+                    extractParametersResult.formParameters.addAll(formParameters);
                     return extractParametersResult;
                 }
             }
         }
+        List<Parameter> parameters = new ArrayList<>();
+        ResolvedParameter extractParametersResult = new ResolvedParameter();
 
         if (parameter != null && StringUtils.isNotBlank(parameter.getIn())) {
             parameters.add(parameter);
@@ -113,7 +116,7 @@ public class DefaultParameterExtension extends AbstractOpenAPIExtension {
                     extractParametersResult.parameters.add(unknownParameter);
                 } else if ("form".equals(unknownParameter.getIn())) {
                     unknownParameter.setIn(null);
-                    extractParametersResult.formParameter = unknownParameter;
+                    extractParametersResult.formParameters.add(unknownParameter);
                 } else {            // return as request body
                     extractParametersResult.requestBody = unknownParameter;
                 }
@@ -144,7 +147,7 @@ public class DefaultParameterExtension extends AbstractOpenAPIExtension {
      * @param typesToSkip
      */
 
-    private boolean handleAdditionalAnnotation(List<Parameter> parameters, Annotation annotation,
+    private boolean handleAdditionalAnnotation(List<Parameter> parameters, List<Parameter> formParameters, Annotation annotation,
                                                final Type type, Set<Type> typesToSkip, javax.ws.rs.Consumes classConsumes,
                                                javax.ws.rs.Consumes methodConsumes, Components components, boolean includeRequestBody, JsonView jsonViewAnnotation) {
         boolean processed = false;
@@ -206,19 +209,21 @@ public class DefaultParameterExtension extends AbstractOpenAPIExtension {
                 }
 
                 // Re-process all Bean fields and let the default swagger-jaxrs/swagger-jersey-jaxrs processors do their thing
-                List<Parameter> extracted =
-                        extensions.next().extractParameters(
-                                paramAnnotations,
-                                paramType,
-                                typesToSkip,
-                                components,
-                                classConsumes,
-                                methodConsumes,
-                                includeRequestBody,
-                                jsonViewAnnotation,
-                                extensions).parameters;
+                ResolvedParameter resolvedParameter = extensions.next().extractParameters(
+                        paramAnnotations,
+                        paramType,
+                        typesToSkip,
+                        components,
+                        classConsumes,
+                        methodConsumes,
+                        includeRequestBody,
+                        jsonViewAnnotation,
+                        extensions);
 
-                for (Parameter p : extracted) {
+                List<Parameter> extractedParameters =
+                        resolvedParameter.parameters;
+
+                for (Parameter p : extractedParameters) {
                     Parameter processedParam = ParameterProcessor.applyAnnotations(
                             p,
                             paramType,
@@ -229,6 +234,23 @@ public class DefaultParameterExtension extends AbstractOpenAPIExtension {
                             jsonViewAnnotation);
                     if (processedParam != null) {
                         parameters.add(processedParam);
+                    }
+                }
+
+                List<Parameter> extractedFormParameters =
+                        resolvedParameter.formParameters;
+
+                for (Parameter p : extractedFormParameters) {
+                    Parameter processedParam = ParameterProcessor.applyAnnotations(
+                            p,
+                            paramType,
+                            paramAnnotations,
+                            components,
+                            classConsumes == null ? new String[0] : classConsumes.value(),
+                            methodConsumes == null ? new String[0] : methodConsumes.value(),
+                            jsonViewAnnotation);
+                    if (processedParam != null) {
+                        formParameters.add(processedParam);
                     }
                 }
 

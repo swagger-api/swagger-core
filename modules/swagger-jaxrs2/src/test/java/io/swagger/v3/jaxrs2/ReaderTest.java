@@ -215,9 +215,13 @@ public class ReaderTest {
         assertNotNull(paths);
         Operation firstOperation = paths.get(PATH_REF).getGet();
         Operation secondOperation = paths.get(PATH_2_REF).getGet();
+        Operation thirdOperation = paths.get(PATH_REF).getPost();
         assertNotNull(firstOperation);
         assertNotNull(secondOperation);
+        assertNotNull(thirdOperation);
         assertNotEquals(firstOperation.getOperationId(), secondOperation.getOperationId());
+        assertNotEquals(firstOperation.getOperationId(), thirdOperation.getOperationId());
+        assertNotEquals(secondOperation.getOperationId(), thirdOperation.getOperationId());
     }
 
     @Test(description = "Get a Duplicated Operation Id with same id as method name")
@@ -229,9 +233,15 @@ public class ReaderTest {
         assertNotNull(paths);
         Operation firstOperation = paths.get("/1").getGet();
         Operation secondOperation = paths.get("/2").getGet();
+        Operation secondPostOperation = paths.get("/2").getPost();
+        Operation thirdPostOperation = paths.get("/3").getPost();
         assertNotNull(firstOperation);
         assertNotNull(secondOperation);
+        assertNotNull(secondPostOperation);
+        assertNotNull(thirdPostOperation);
         assertNotEquals(firstOperation.getOperationId(), secondOperation.getOperationId());
+        assertNotEquals(secondOperation.getOperationId(), secondPostOperation.getOperationId());
+        assertNotEquals(secondPostOperation.getOperationId(), thirdPostOperation.getOperationId());
         Operation thirdOperation = paths.get("/3").getGet();
         Operation fourthOperation = paths.get("/4").getGet();
         assertNotNull(thirdOperation);

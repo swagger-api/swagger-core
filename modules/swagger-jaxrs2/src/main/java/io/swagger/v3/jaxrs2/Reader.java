@@ -440,9 +440,9 @@ public class Reader implements OpenApiReader {
                                 }
                             }
                             ResolvedParameter resolvedParameter = getParameters(paramType, Arrays.asList(paramAnnotations[i]), operation, classConsumes, methodConsumes, jsonViewAnnotation);
-                            for (Parameter p : resolvedParameter.parameters) {
-                                operationParameters.add(p);
-                            }
+                            operationParameters.addAll(resolvedParameter.parameters);
+                            // collect params to use together as request Body
+                            formParameters.addAll(resolvedParameter.formParameters);
                             if (resolvedParameter.requestBody != null) {
                                 processRequestBody(
                                         resolvedParameter.requestBody,
@@ -453,9 +453,6 @@ public class Reader implements OpenApiReader {
                                         paramAnnotations[i],
                                         type,
                                         jsonViewAnnotation);
-                            } else if (resolvedParameter.formParameter != null) {
-                                // collect params to use together as request Body
-                                formParameters.add(resolvedParameter.formParameter);
                             }
                         }
                     } else {
@@ -472,9 +469,9 @@ public class Reader implements OpenApiReader {
                                 }
                             }
                             ResolvedParameter resolvedParameter = getParameters(paramType, Arrays.asList(paramAnnotations[i]), operation, classConsumes, methodConsumes, jsonViewAnnotation);
-                            for (Parameter p : resolvedParameter.parameters) {
-                                operationParameters.add(p);
-                            }
+                            operationParameters.addAll(resolvedParameter.parameters);
+                            // collect params to use together as request Body
+                            formParameters.addAll(resolvedParameter.formParameters);
                             if (resolvedParameter.requestBody != null) {
                                 processRequestBody(
                                         resolvedParameter.requestBody,
@@ -485,9 +482,6 @@ public class Reader implements OpenApiReader {
                                         paramAnnotations[i],
                                         type,
                                         jsonViewAnnotation);
-                            } else if (resolvedParameter.formParameter != null) {
-                                // collect params to use together as request Body
-                                formParameters.add(resolvedParameter.formParameter);
                             }
                         }
                     }
@@ -1152,11 +1146,10 @@ public class Reader implements OpenApiReader {
             return false;
         }
         for (PathItem path : openAPI.getPaths().values()) {
-            String pathOperationId = extractOperationIdFromPathItem(path);
-            if (operationId.equalsIgnoreCase(pathOperationId)) {
+            Set<String> pathOperationIds = extractOperationIdFromPathItem(path);
+            if (pathOperationIds.contains(operationId)) {
                 return true;
             }
-
         }
         return false;
     }
@@ -1192,23 +1185,30 @@ public class Reader implements OpenApiReader {
         return extractParametersResult;
     }
 
-    private String extractOperationIdFromPathItem(PathItem path) {
-        if (path.getGet() != null) {
-            return path.getGet().getOperationId();
-        } else if (path.getPost() != null) {
-            return path.getPost().getOperationId();
-        } else if (path.getPut() != null) {
-            return path.getPut().getOperationId();
-        } else if (path.getDelete() != null) {
-            return path.getDelete().getOperationId();
-        } else if (path.getOptions() != null) {
-            return path.getOptions().getOperationId();
-        } else if (path.getHead() != null) {
-            return path.getHead().getOperationId();
-        } else if (path.getPatch() != null) {
-            return path.getPatch().getOperationId();
+    private Set<String> extractOperationIdFromPathItem(PathItem path) {
+        Set<String> ids = new HashSet<>();
+        if (path.getGet() != null && StringUtils.isNotBlank(path.getGet().getOperationId())) {
+            ids.add(path.getGet().getOperationId());
         }
-        return "";
+        if (path.getPost() != null && StringUtils.isNotBlank(path.getPost().getOperationId())) {
+            ids.add(path.getPost().getOperationId());
+        }
+        if (path.getPut() != null && StringUtils.isNotBlank(path.getPut().getOperationId())) {
+            ids.add(path.getPut().getOperationId());
+        }
+        if (path.getDelete() != null && StringUtils.isNotBlank(path.getDelete().getOperationId())) {
+            ids.add(path.getDelete().getOperationId());
+        }
+        if (path.getOptions() != null && StringUtils.isNotBlank(path.getOptions().getOperationId())) {
+            ids.add(path.getOptions().getOperationId());
+        }
+        if (path.getHead() != null && StringUtils.isNotBlank(path.getHead().getOperationId())) {
+            ids.add(path.getHead().getOperationId());
+        }
+        if (path.getPatch() != null && StringUtils.isNotBlank(path.getPatch().getOperationId())) {
+            ids.add(path.getPatch().getOperationId());
+        }
+        return ids;
     }
 
     private boolean isEmptyComponents(Components components) {
