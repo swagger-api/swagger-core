@@ -618,7 +618,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
                 if (property != null) {
                     if (property.get$ref() == null) {
-                        if (!"object".equals(property.getType())) {
+                        if (!"object".equals(property.getType()) || (property instanceof MapSchema)) {
                             try {
                                 String cloneName = property.getName();
                                 property = Json.mapper().readValue(Json.pretty(property), Schema.class);
