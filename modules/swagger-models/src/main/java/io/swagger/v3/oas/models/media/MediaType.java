@@ -19,6 +19,7 @@ package io.swagger.v3.oas.models.media;
 import io.swagger.v3.oas.models.examples.Example;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -75,7 +76,7 @@ public class MediaType {
 
     public MediaType addExamples(String key, Example examplesItem) {
         if (this.examples == null) {
-            this.examples = new HashMap<String, Example>();
+            this.examples = new LinkedHashMap<>();
         }
         this.examples.put(key, examplesItem);
         return this;
@@ -121,7 +122,7 @@ public class MediaType {
 
     public MediaType addEncoding(String key, Encoding encodingItem) {
         if (this.encoding == null) {
-            this.encoding = new HashMap<String, Encoding>();
+            this.encoding = new LinkedHashMap<>();
         }
         this.encoding.put(key, encodingItem);
         return this;
@@ -157,7 +158,7 @@ public class MediaType {
             return;
         }
         if (this.extensions == null) {
-            this.extensions = new java.util.HashMap<>();
+            this.extensions = new java.util.LinkedHashMap<>();
         }
         this.extensions.put(name, value);
     }

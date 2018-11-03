@@ -368,9 +368,7 @@ public abstract class AnnotationsUtils {
         if (arraySchema.schema() != null) {
             if (arraySchema.schema().implementation().equals(Void.class)) {
                 getSchemaFromAnnotation(arraySchema.schema(), components, jsonViewAnnotation).ifPresent(schema -> {
-                    if (StringUtils.isNotBlank(schema.getType()) || StringUtils.isNotBlank(schema.get$ref())) {
-                        arraySchemaObject.setItems(schema);
-                    }
+                    arraySchemaObject.setItems(schema);
                 });
             } // if present, schema implementation handled upstream
         }
@@ -914,11 +912,9 @@ public abstract class AnnotationsUtils {
         if (header.schema() != null) {
             if (header.schema().implementation().equals(Void.class)) {
                 AnnotationsUtils.getSchemaFromAnnotation(header.schema(), jsonViewAnnotation).ifPresent(schema -> {
-                    if (StringUtils.isNotBlank(schema.getType())) {
-                        headerObject.setSchema(schema);
-                        //schema inline no need to add to components
-                        //components.addSchemas(schema.getType(), schema);
-                    }
+                    headerObject.setSchema(schema);
+                    //schema inline no need to add to components
+                    //components.addSchemas(schema.getType(), schema);
                 });
             }
         }

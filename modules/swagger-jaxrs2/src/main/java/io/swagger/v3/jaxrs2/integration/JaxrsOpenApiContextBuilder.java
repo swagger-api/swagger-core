@@ -28,6 +28,7 @@ public class JaxrsOpenApiContextBuilder<T extends JaxrsOpenApiContextBuilder> ex
                     .servletConfig(servletConfig)
                     .app(application)
                     .openApiConfiguration(openApiConfiguration)
+                    .id(ctxId)
                     .parent(rootCtx);
 
             if (ctx.getConfigLocation() == null && configLocation != null) {
