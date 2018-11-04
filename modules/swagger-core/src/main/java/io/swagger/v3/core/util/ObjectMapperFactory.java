@@ -54,9 +54,11 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class ObjectMapperFactory {
+	// THUAN
+	public static ObjectMapper defaultMapper = create(null);
 
     protected static ObjectMapper createJson() {
-        return create(null);
+        return defaultMapper.copy();
     }
 
     protected static ObjectMapper createYaml() {

@@ -1,8 +1,7 @@
 package io.swagger.v3.jaxrs2.resources.model;
 
-import java.util.List;
-
 import javax.ws.rs.QueryParam;
+import java.util.List;
 
 public class ListOfStringsBeanParam {
     @QueryParam(value = "listOfStrings")

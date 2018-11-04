@@ -8,7 +8,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.core.converter.AnnotatedType;
 import io.swagger.v3.core.converter.ModelConverterContextImpl;
 import io.swagger.v3.core.jackson.ModelResolver;
-import io.swagger.v3.core.util.Yaml;
 import io.swagger.v3.oas.models.media.Schema;
 import org.testng.annotations.Test;
 
@@ -17,9 +16,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.Map;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.fail;
+import static org.testng.Assert.*;
 
 public class SimpleGenerationTest extends SwaggerTestBase {
     private final ModelResolver modelResolver = new ModelResolver(new ObjectMapper());

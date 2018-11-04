@@ -1,10 +1,6 @@
 package io.swagger.servlet.resources;
 
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.Authorization;
-import io.swagger.annotations.AuthorizationScope;
-import io.swagger.annotations.SwaggerDefinition;
-import io.swagger.annotations.Tag;
+import io.swagger.annotations.*;
 
 @SwaggerDefinition(
         consumes = {"application/json", "application/xml"},

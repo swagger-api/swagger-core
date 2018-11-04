@@ -3,11 +3,7 @@ package io.swagger.v3.jaxrs2.resources;
 import io.swagger.v3.jaxrs2.resources.model.Pet;
 import io.swagger.v3.oas.annotations.Operation;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 
 @Path("test")

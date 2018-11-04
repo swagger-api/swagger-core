@@ -18,15 +18,9 @@ package io.swagger.v3.oas.annotations.servers;
 
 import io.swagger.v3.oas.annotations.extensions.Extension;
 
-import java.lang.annotation.Inherited;
-import java.lang.annotation.Repeatable;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.lang.annotation.*;
 
-import static java.lang.annotation.ElementType.ANNOTATION_TYPE;
-import static java.lang.annotation.ElementType.TYPE;
-import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.ElementType.*;
 
 /**
  * The annotation may be applied at class or method level, or in {@link io.swagger.v3.oas.annotations.Operation#servers()} to define servers for the

@@ -1,13 +1,7 @@
 package io.swagger.v3.jaxrs2.annotations.operations;
 
 import io.swagger.v3.jaxrs2.annotations.AbstractAnnotationTest;
-import io.swagger.v3.jaxrs2.resources.GenericResponsesResource;
-import io.swagger.v3.jaxrs2.resources.HiddenAnnotatedUserResource;
-import io.swagger.v3.jaxrs2.resources.HiddenUserResource;
-import io.swagger.v3.jaxrs2.resources.PetResource;
-import io.swagger.v3.jaxrs2.resources.PetResourceSlashesinPath;
-import io.swagger.v3.jaxrs2.resources.SimpleUserResource;
-import io.swagger.v3.jaxrs2.resources.UserResource;
+import io.swagger.v3.jaxrs2.resources.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;

@@ -1,20 +1,7 @@
 package io.swagger.servlet;
 
-import io.swagger.annotations.ApiKeyAuthDefinition;
-import io.swagger.annotations.BasicAuthDefinition;
-import io.swagger.annotations.Info;
-import io.swagger.annotations.OAuth2Definition;
-import io.swagger.annotations.Scope;
-import io.swagger.annotations.SwaggerDefinition;
-import io.swagger.models.Contact;
-import io.swagger.models.ExternalDocs;
-import io.swagger.models.License;
-import io.swagger.models.Operation;
-import io.swagger.models.Path;
-import io.swagger.models.Response;
-import io.swagger.models.Scheme;
-import io.swagger.models.Swagger;
-import io.swagger.models.Tag;
+import io.swagger.annotations.*;
+import io.swagger.models.*;
 import io.swagger.models.auth.In;
 import io.swagger.models.parameters.Parameter;
 import io.swagger.servlet.extensions.ReaderExtension;

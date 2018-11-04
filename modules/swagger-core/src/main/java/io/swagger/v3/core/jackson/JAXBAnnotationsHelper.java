@@ -2,11 +2,7 @@ package io.swagger.v3.core.jackson;
 
 import com.fasterxml.jackson.databind.introspect.Annotated;
 import io.swagger.v3.core.util.AnnotationsUtils;
-import io.swagger.v3.oas.models.media.ArraySchema;
-import io.swagger.v3.oas.models.media.MapSchema;
-import io.swagger.v3.oas.models.media.ObjectSchema;
-import io.swagger.v3.oas.models.media.Schema;
-import io.swagger.v3.oas.models.media.XML;
+import io.swagger.v3.oas.models.media.*;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.xml.bind.annotation.XmlAttribute;

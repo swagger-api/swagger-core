@@ -140,7 +140,7 @@ public class XMLInfoTest extends SwaggerTestBase {
         public int a;
 
         public String b;
-        
+
         @JsonIgnore
         public String c;
 

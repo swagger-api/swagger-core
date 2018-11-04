@@ -1,7 +1,6 @@
 package io.swagger.v3.jaxrs2.it;
 
 import com.fasterxml.jackson.databind.SerializationFeature;
-
 import io.restassured.http.ContentType;
 import io.swagger.v3.core.util.Json;
 import io.swagger.v3.core.util.Yaml;

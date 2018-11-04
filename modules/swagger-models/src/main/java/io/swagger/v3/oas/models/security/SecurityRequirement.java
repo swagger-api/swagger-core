@@ -16,11 +16,7 @@
 
 package io.swagger.v3.oas.models.security;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * SecurityRequirement

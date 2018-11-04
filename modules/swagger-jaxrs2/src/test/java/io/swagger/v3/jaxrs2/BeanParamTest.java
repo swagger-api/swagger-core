@@ -1,19 +1,17 @@
 package io.swagger.v3.jaxrs2;
 
-import java.util.List;
-
-import javax.ws.rs.BeanParam;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-
-import org.testng.Assert;
-import org.testng.annotations.Test;
-
 import io.swagger.v3.jaxrs2.resources.model.ListOfStringsBeanParam;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.media.ArraySchema;
 import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.parameters.Parameter;
+import org.testng.Assert;
+import org.testng.annotations.Test;
+
+import javax.ws.rs.BeanParam;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import java.util.List;
 
 public class BeanParamTest {
 

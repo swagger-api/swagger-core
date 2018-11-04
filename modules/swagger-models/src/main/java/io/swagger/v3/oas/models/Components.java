@@ -72,7 +72,7 @@ public class Components {
         if (this.schemas == null) {
             this.schemas = new LinkedHashMap<>();
         }
-        this.schemas.put(key, schemasItem);
+        this.schemas.put(key, (OpenAPIBuilderOptions.RECYCLE_ENUM && schemasItem.getEnum() != null) ? schemasItem.$ref(null) : schemasItem);
         return this;
     }
 

@@ -1,6 +1,7 @@
 package io.swagger.v3.core.converter;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import io.swagger.v3.oas.models.OpenAPIBuilderOptions;
 import io.swagger.v3.oas.models.media.Schema;
 
 import java.lang.annotation.Annotation;
@@ -124,7 +125,15 @@ public class AnnotatedType {
     }
 
     public String getName() {
-        return name;
+        if (OpenAPIBuilderOptions.USE_FULLNAME && type != null) {
+        	try {
+        		return ((Class) type).getName();
+			} catch (Exception e) {
+				System.out.println(type + " cannot be casted to java.lang.Class. Reverting to the old name = " + name);
+        		return name;
+			}
+		}
+    	return name;
     }
 
     public void setName(String name) {
@@ -132,8 +141,8 @@ public class AnnotatedType {
     }
 
     public AnnotatedType name(String name) {
-        this.name = name;
-        return this;
+		this.name = name;
+		return this;
     }
 
     public Annotation[] getCtxAnnotations() {

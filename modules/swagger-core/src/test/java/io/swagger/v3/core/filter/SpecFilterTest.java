@@ -1,18 +1,7 @@
 package io.swagger.v3.core.filter;
 
 import com.google.common.collect.Sets;
-import io.swagger.v3.core.filter.resources.ChangeGetOperationsFilter;
-import io.swagger.v3.core.filter.resources.InternalModelPropertiesRemoverFilter;
-import io.swagger.v3.core.filter.resources.NoGetOperationsFilter;
-import io.swagger.v3.core.filter.resources.NoOpOperationsFilter;
-import io.swagger.v3.core.filter.resources.NoOpenAPIFilter;
-import io.swagger.v3.core.filter.resources.NoParametersWithoutQueryInFilter;
-import io.swagger.v3.core.filter.resources.NoPathItemFilter;
-import io.swagger.v3.core.filter.resources.NoPetOperationsFilter;
-import io.swagger.v3.core.filter.resources.NoPetRefSchemaFilter;
-import io.swagger.v3.core.filter.resources.RemoveInternalParamsFilter;
-import io.swagger.v3.core.filter.resources.RemoveUnreferencedDefinitionsFilter;
-import io.swagger.v3.core.filter.resources.ReplaceGetOperationsFilter;
+import io.swagger.v3.core.filter.resources.*;
 import io.swagger.v3.core.matchers.SerializationMatchers;
 import io.swagger.v3.core.util.Json;
 import io.swagger.v3.core.util.ResourceUtils;
@@ -32,12 +21,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertFalse;
-import static org.testng.Assert.assertNotEquals;
-import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertNull;
-import static org.testng.Assert.fail;
+import static org.testng.Assert.*;
 
 public class SpecFilterTest {
 
