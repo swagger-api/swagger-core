@@ -492,9 +492,6 @@ public class Reader implements OpenApiReader {
                                         paramAnnotations[i],
                                         type,
                                         jsonViewAnnotationForRequestBody);
-                            } else if (resolvedParameter.formParameter != null) {
-                                // collect params to use together as request Body
-                                formParameters.add(resolvedParameter.formParameter);
                             }
                         }
                     } else {
@@ -524,9 +521,6 @@ public class Reader implements OpenApiReader {
                                         paramAnnotations[i],
                                         type,
                                         jsonViewAnnotationForRequestBody);
-                            } else if (resolvedParameter.formParameter != null) {
-                                // collect params to use together as request Body
-                                formParameters.add(resolvedParameter.formParameter);
                             }
                         }
                     }
