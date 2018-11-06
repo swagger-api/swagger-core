@@ -28,6 +28,7 @@ public class GenericOpenApiContextBuilder<T extends GenericOpenApiContextBuilder
             OpenApiContext rootCtx = OpenApiContextLocator.getInstance().getOpenApiContext(OpenApiContext.OPENAPI_CONTEXT_ID_DEFAULT);
             ctx = new GenericOpenApiContext()
                     .openApiConfiguration(openApiConfiguration)
+                    .id(ctxId)
                     .parent(rootCtx);
 
             if (ctx.getConfigLocation() == null && configLocation != null) {

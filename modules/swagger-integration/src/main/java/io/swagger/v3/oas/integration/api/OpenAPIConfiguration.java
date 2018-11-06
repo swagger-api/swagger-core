@@ -28,4 +28,15 @@ public interface OpenAPIConfiguration {
     Boolean isPrettyPrint();
 
     Long getCacheTTL();
+
+    /**
+     * @since 2.0.6
+     */
+    public String getObjectMapperProcessorClass();
+
+    /**
+     * @since 2.0.6
+     */
+    public Set<String> getModelConverterClasses();
+
 }

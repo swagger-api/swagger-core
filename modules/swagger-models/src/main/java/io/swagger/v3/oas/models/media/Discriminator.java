@@ -1,6 +1,7 @@
 package io.swagger.v3.oas.models.media;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class Discriminator {
@@ -22,7 +23,7 @@ public class Discriminator {
 
     public Discriminator mapping(String name, String value) {
         if (this.mapping == null) {
-            this.mapping = new HashMap<>();
+            this.mapping = new LinkedHashMap<>();
         }
         this.mapping.put(name, value);
         return this;

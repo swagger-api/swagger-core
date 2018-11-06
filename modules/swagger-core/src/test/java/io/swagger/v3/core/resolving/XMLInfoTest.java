@@ -1,5 +1,6 @@
 package io.swagger.v3.core.resolving;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.core.converter.AnnotatedType;
 import io.swagger.v3.core.converter.ModelConverter;
@@ -11,7 +12,10 @@ import org.testng.annotations.Test;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementRef;
+import javax.xml.bind.annotation.XmlElementRefs;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.util.List;
@@ -76,6 +80,14 @@ public class XMLInfoTest extends SwaggerTestBase {
         assertNotNull(property);
 
         assertNull(model.getProperties().get("b"));
+
+        assertNotNull(model.getProperties().get("c"));
+
+        assertNotNull(model.getProperties().get("d"));
+
+        assertNotNull(model.getProperties().get("e"));
+
+        assertNotNull(model.getProperties().get("f"));
     }
 
     @Test
@@ -90,8 +102,11 @@ public class XMLInfoTest extends SwaggerTestBase {
         final Schema propertyA = (Schema) model.getProperties().get("a");
         assertNotNull(propertyA);
 
-        Schema propertyB = (Schema) model.getProperties().get("b");
+        final Schema propertyB = (Schema) model.getProperties().get("b");
         assertNotNull(propertyB);
+
+        final Schema propertyC = (Schema) model.getProperties().get("c");
+        assertNull(propertyC);
     }
 
     @XmlRootElement(name = "xmlDecoratedBean")
@@ -103,6 +118,18 @@ public class XMLInfoTest extends SwaggerTestBase {
         public int a;
 
         public String b;
+
+        @XmlAttribute
+        public String c;
+
+        @XmlElementRef
+        public XmlDecoratedBean d;
+
+        @XmlElementRefs(value = {@XmlElementRef})
+        public List<XmlDecoratedBean> e;
+
+        @JsonProperty
+        public int f;
     }
 
     @XmlRootElement(name = "xmlDecoratedBean")
@@ -113,6 +140,10 @@ public class XMLInfoTest extends SwaggerTestBase {
         public int a;
 
         public String b;
+        
+        @JsonIgnore
+        public String c;
+
     }
 
 }
