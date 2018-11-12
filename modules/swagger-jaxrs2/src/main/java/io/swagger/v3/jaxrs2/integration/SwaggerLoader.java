@@ -2,6 +2,7 @@ package io.swagger.v3.jaxrs2.integration;
 
 import io.swagger.v3.core.util.Json;
 import io.swagger.v3.core.util.Yaml;
+import io.swagger.v3.oas.integration.GenericOpenApiContextBuilder;
 import io.swagger.v3.oas.integration.OpenApiConfigurationException;
 import io.swagger.v3.oas.integration.SwaggerConfiguration;
 import io.swagger.v3.oas.models.OpenAPI;
@@ -22,6 +23,7 @@ public class SwaggerLoader {
     private String resourceClasses;
     private String filterClass;
     private String readerClass;
+    private String contextId;
     private String scannerClass;
     private Boolean prettyPrint = false;
     private Boolean readAllResources = Boolean.TRUE;
@@ -91,6 +93,21 @@ public class SwaggerLoader {
     public void setFilterClass(String filterClass) {
         this.filterClass = filterClass;
     }
+
+    /**
+     * @since 2.0.6
+     */
+    public String getContextId() {
+        return contextId;
+    }
+
+    /**
+     * @since 2.0.6
+     */
+    public void setContextId(String contextId) {
+        this.contextId = contextId;
+    }
+
 
     public String getReaderClass() {
         return readerClass;
@@ -187,8 +204,13 @@ public class SwaggerLoader {
                 .objectMapperProcessorClass(objectMapperProcessorClass)
                 .modelConverterClasses(modelConverterSet);
         try {
-            OpenAPI openAPI = new JaxrsOpenApiContextBuilder()
-                .openApiConfiguration(config)
+            GenericOpenApiContextBuilder builder = new JaxrsOpenApiContextBuilder()
+                    .openApiConfiguration(config);
+            if (StringUtils.isNotBlank(contextId)) {
+                builder.ctxId(contextId);
+            }
+
+            OpenAPI openAPI = builder
                 .buildContext(true)
                 .read();
             String openapiJson = null;

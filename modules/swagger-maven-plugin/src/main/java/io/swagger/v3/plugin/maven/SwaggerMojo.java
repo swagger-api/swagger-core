@@ -3,6 +3,7 @@ package io.swagger.v3.plugin.maven;
 import io.swagger.v3.core.util.Json;
 import io.swagger.v3.core.util.Yaml;
 import io.swagger.v3.jaxrs2.integration.JaxrsOpenApiContextBuilder;
+import io.swagger.v3.oas.integration.GenericOpenApiContextBuilder;
 import io.swagger.v3.oas.integration.OpenApiConfigurationException;
 import io.swagger.v3.oas.integration.SwaggerConfiguration;
 import io.swagger.v3.oas.models.OpenAPI;
@@ -93,8 +94,12 @@ public class SwaggerMojo extends AbstractMojo {
                 .objectMapperProcessorClass(objectMapperProcessorClass)
                 .modelConverterClasses(modelConverterClasses);
         try {
-            OpenAPI openAPI = new JaxrsOpenApiContextBuilder()
-                    .openApiConfiguration(config)
+            GenericOpenApiContextBuilder builder = new JaxrsOpenApiContextBuilder()
+                    .openApiConfiguration(config);
+            if (StringUtils.isNotBlank(contextId)) {
+                builder.ctxId(contextId);
+            }
+            OpenAPI openAPI = builder
                     .buildContext(true)
                     .read();
             String openapiJson = null;
@@ -163,6 +168,9 @@ public class SwaggerMojo extends AbstractMojo {
     private String readerClass;
     @Parameter( property = "resolve.scannerClass" )
     private String scannerClass;
+    /**
+     * @since 2.0.6
+     */
     @Parameter( property = "resolve.objectMapperProcessorClass" )
     private String objectMapperProcessorClass;
     @Parameter( property = "resolve.prettyPrint" )
@@ -171,6 +179,11 @@ public class SwaggerMojo extends AbstractMojo {
     private Boolean readAllResources = Boolean.TRUE;
     @Parameter( property = "resolve.ignoredRoutes" )
     private Collection<String> ignoredRoutes;
+    /**
+     * @since 2.0.6
+     */
+    @Parameter(property = "resolve.contextId", defaultValue = "${project.artifactId}")
+    private String contextId;
 
     @Parameter( property = "resolve.skip" )
     private Boolean skip = Boolean.FALSE;
