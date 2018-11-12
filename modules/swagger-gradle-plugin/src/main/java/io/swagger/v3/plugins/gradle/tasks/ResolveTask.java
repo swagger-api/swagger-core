@@ -62,6 +62,8 @@ public class ResolveTask extends DefaultTask {
     private LinkedHashSet<String> modelConverterClasses;
     private String objectMapperProcessorClass;
 
+    private String contextId;
+
     @Input
     @Optional
     public String getOutputFileName() {
@@ -205,6 +207,23 @@ public class ResolveTask extends DefaultTask {
         this.objectMapperProcessorClass = objectMapperProcessorClass;
     }
 
+    /**
+     * @since 2.0.6
+     */
+    @Input
+    @Optional
+    public String getContextId() {
+        return contextId;
+    }
+
+    /**
+     * @since 2.0.6
+     */
+    public void setContextId(String contextId) {
+        this.contextId = contextId;
+    }
+
+
     @Input
     @Optional
     public String getScannerClass() {
@@ -347,6 +366,11 @@ public class ResolveTask extends DefaultTask {
             if (StringUtils.isNotBlank(scannerClass)) {
                 method=swaggerLoaderClass.getDeclaredMethod("setScannerClass",String.class);
                 method.invoke(swaggerLoader, scannerClass);
+            }
+
+            if (StringUtils.isNotBlank(contextId)) {
+                method=swaggerLoaderClass.getDeclaredMethod("setContextId",String.class);
+                method.invoke(swaggerLoader, contextId);
             }
 
             if (StringUtils.isNotBlank(objectMapperProcessorClass)) {
