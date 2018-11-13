@@ -1094,8 +1094,10 @@ public abstract class AnnotationsUtils {
                     schemaMap.forEach((key, schema) -> {
                         components.addSchemas(key, schema);
                     });
-                    if (resolvedSchema.schema != null) {
+                    if (resolvedSchema.schema != null && StringUtils.isNotBlank(resolvedSchema.schema.getName())) {
                         schemaObject.set$ref(COMPONENTS_REF + resolvedSchema.schema.getName());
+                    } else if (resolvedSchema.schema != null){
+                        schemaObject = resolvedSchema.schema;
                     }
                 }
             }

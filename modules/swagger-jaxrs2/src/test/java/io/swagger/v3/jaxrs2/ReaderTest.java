@@ -9,6 +9,7 @@ import io.swagger.v3.core.filter.OpenAPISpecFilter;
 import io.swagger.v3.core.filter.SpecFilter;
 import io.swagger.v3.core.jackson.ModelResolver;
 import io.swagger.v3.core.model.ApiDescription;
+import io.swagger.v3.core.util.PrimitiveType;
 import io.swagger.v3.jaxrs2.matchers.SerializationMatchers;
 import io.swagger.v3.jaxrs2.resources.BasicFieldsResource;
 import io.swagger.v3.jaxrs2.resources.BookStoreTicket2646;
@@ -53,6 +54,7 @@ import io.swagger.v3.jaxrs2.resources.Ticket2794Resource;
 import io.swagger.v3.jaxrs2.resources.Ticket2806Resource;
 import io.swagger.v3.jaxrs2.resources.Ticket2818Resource;
 import io.swagger.v3.jaxrs2.resources.Ticket2848Resource;
+import io.swagger.v3.jaxrs2.resources.Ticket3015Resource;
 import io.swagger.v3.jaxrs2.resources.UserAnnotationResource;
 import io.swagger.v3.jaxrs2.resources.extensions.ExtensionsResource;
 import io.swagger.v3.jaxrs2.resources.extensions.OperationExtensionsResource;
@@ -93,6 +95,7 @@ import javax.ws.rs.Produces;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
+import java.net.URI;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -1829,4 +1832,86 @@ public class ReaderTest {
                 "        description: Post Path Item\n";
         SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
     }
+
+    @Test
+    public void testTicket3015() {
+        Reader reader = new Reader(new OpenAPI());
+
+        OpenAPI openAPI = reader.read(Ticket3015Resource.class);
+        String yaml = "openapi: 3.0.1\n" +
+                "paths:\n" +
+                "  /test/test:\n" +
+                "    get:\n" +
+                "      operationId: schemaImpl\n" +
+                "      responses:\n" +
+                "        200:\n" +
+                "          description: OK\n" +
+                "          content:\n" +
+                "            '*/*':\n" +
+                "              schema:\n" +
+                "                type: string\n" +
+                "                format: uri\n" +
+                "        400:\n" +
+                "          description: Bad Request\n" +
+                "        500:\n" +
+                "          description: Internal Server Error\n";
+        SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
+        PrimitiveType.customExcludedClasses().add(URI.class.getName());
+        openAPI = reader.read(Ticket3015Resource.class);
+        yaml = "openapi: 3.0.1\n" +
+                "paths:\n" +
+                "  /test/test:\n" +
+                "    get:\n" +
+                "      operationId: schemaImpl_1\n" +
+                "      responses:\n" +
+                "        200:\n" +
+                "          description: OK\n" +
+                "          content:\n" +
+                "            '*/*':\n" +
+                "              schema:\n" +
+                "                type: object\n" +
+                "                properties:\n" +
+                "                  scheme:\n" +
+                "                    type: string\n" +
+                "                  fragment:\n" +
+                "                    type: string\n" +
+                "                  authority:\n" +
+                "                    type: string\n" +
+                "                  userInfo:\n" +
+                "                    type: string\n" +
+                "                  host:\n" +
+                "                    type: string\n" +
+                "                  port:\n" +
+                "                    type: integer\n" +
+                "                    format: int32\n" +
+                "                  path:\n" +
+                "                    type: string\n" +
+                "                  query:\n" +
+                "                    type: string\n" +
+                "                  schemeSpecificPart:\n" +
+                "                    type: string\n" +
+                "                  rawSchemeSpecificPart:\n" +
+                "                    type: string\n" +
+                "                  rawAuthority:\n" +
+                "                    type: string\n" +
+                "                  rawUserInfo:\n" +
+                "                    type: string\n" +
+                "                  rawPath:\n" +
+                "                    type: string\n" +
+                "                  rawQuery:\n" +
+                "                    type: string\n" +
+                "                  rawFragment:\n" +
+                "                    type: string\n" +
+                "                  absolute:\n" +
+                "                    type: boolean\n" +
+                "                  opaque:\n" +
+                "                    type: boolean\n" +
+                "        400:\n" +
+                "          description: Bad Request\n" +
+                "        500:\n" +
+                "          description: Internal Server Error\n";
+        SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
+        PrimitiveType.customExcludedClasses().remove(URI.class.getName());
+    }
+
 }
