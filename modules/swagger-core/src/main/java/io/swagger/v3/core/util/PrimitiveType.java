@@ -156,6 +156,12 @@ public enum PrimitiveType {
     private static final Map<String, PrimitiveType> EXTERNAL_CLASSES;
 
     /**
+     * Allows to exclude specific classes from KEY_CLASSES mappings to primitive
+     * Joda lib.
+     */
+    private static Set<String> customExcludedClasses = new ConcurrentHashMap<String, String>().newKeySet();
+
+    /**
      * Adds support for custom mapping of classes to primitive types
      */
     private static Map<String, PrimitiveType> customClasses = new ConcurrentHashMap<String, PrimitiveType>();
@@ -263,6 +269,17 @@ public enum PrimitiveType {
         this.commonName = commonName;
     }
 
+
+    /**
+     * Adds support for custom mapping of classes to primitive types
+     *
+     * @return Map of custom classes to primitive type
+     * @since 2.0.6
+     */
+    public static Set<String> customExcludedClasses() {
+        return customExcludedClasses;
+    }
+
     /**
      * Adds support for custom mapping of classes to primitive types
      *
@@ -307,7 +324,9 @@ public enum PrimitiveType {
         final Class<?> raw = TypeFactory.defaultInstance().constructType(type).getRawClass();
         final PrimitiveType key = KEY_CLASSES.get(raw);
         if (key != null) {
-            return key;
+            if (!customExcludedClasses.contains(raw.getName())) {
+                return key;
+            }
         }
 
         final PrimitiveType custom = customClasses.get(raw.getName());
