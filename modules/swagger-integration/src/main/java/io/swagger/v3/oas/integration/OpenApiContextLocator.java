@@ -14,7 +14,7 @@ public class OpenApiContextLocator {
     private OpenApiContextLocator() {
     }
 
-    public static OpenApiContextLocator getInstance() {
+    public static synchronized OpenApiContextLocator getInstance() {
         if (instance == null) {
             instance = new OpenApiContextLocator();
         }
