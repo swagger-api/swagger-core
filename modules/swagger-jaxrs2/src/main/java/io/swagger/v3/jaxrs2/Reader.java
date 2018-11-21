@@ -77,6 +77,7 @@ public class Reader implements OpenApiReader {
 
     protected OpenAPIConfiguration config;
 
+    private String contextPath = null;
     private Application application;
     private OpenAPI openAPI;
     private Components components;
@@ -165,8 +166,18 @@ public class Reader implements OpenApiReader {
             }
         }
 
+        String appPath = resolveApplicationPath();
         for (Class<?> cls : sortedClasses) {
-            read(cls, resolveApplicationPath(), null, false, null, null, new LinkedHashSet<String>(), new ArrayList<Parameter>(), new HashSet<Class<?>>());
+            read(cls, appPath, null, false, null, null, new LinkedHashSet<String>(), new ArrayList<Parameter>(), new HashSet<Class<?>>());
+        }
+
+        if (contextPath != null && !contextPath.isEmpty()) {
+            List<io.swagger.v3.oas.models.servers.Server> servers = openAPI.getServers();
+            if (servers == null || servers.isEmpty()) {
+                io.swagger.v3.oas.models.servers.Server server = new io.swagger.v3.oas.models.servers.Server();
+                server.setUrl(contextPath);
+                openAPI.addServersItem(server);
+            }
         }
 
         for (ReaderListener listener : listeners.values()) {
@@ -1301,6 +1312,10 @@ public class Reader implements OpenApiReader {
             return true;
         }
         return false;
+    }
+
+    public void setContextPath(String contextPath) {
+        this.contextPath = contextPath;
     }
 
     public void setApplication(Application application) {
