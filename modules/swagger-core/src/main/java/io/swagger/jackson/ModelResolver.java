@@ -966,7 +966,9 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 // remove shared properties defined in the parent
                 final Map<String, Property> baseProps = model.getProperties();
                 final Map<String, Property> subtypeProps = impl.getProperties();
-                if (baseProps != null && subtypeProps != null) {
+                if (baseProps != null && subtypeProps != null
+		                // if entity is it's own subtypes
+		                && baseProps != subtypeProps) {
                     for (Map.Entry<String, Property> entry : baseProps.entrySet()) {
                         if (entry.getValue().equals(subtypeProps.get(entry.getKey()))) {
                             subtypeProps.remove(entry.getKey());
