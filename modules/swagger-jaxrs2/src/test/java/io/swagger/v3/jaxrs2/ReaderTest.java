@@ -28,6 +28,7 @@ import io.swagger.v3.jaxrs2.resources.RefCallbackResource;
 import io.swagger.v3.jaxrs2.resources.RefExamplesResource;
 import io.swagger.v3.jaxrs2.resources.RefHeaderResource;
 import io.swagger.v3.jaxrs2.resources.RefLinksResource;
+import io.swagger.v3.jaxrs2.resources.RefParameter3029Resource;
 import io.swagger.v3.jaxrs2.resources.RefParameterResource;
 import io.swagger.v3.jaxrs2.resources.RefRequestBodyResource;
 import io.swagger.v3.jaxrs2.resources.RefResponsesResource;
@@ -1914,4 +1915,59 @@ public class ReaderTest {
         PrimitiveType.customExcludedClasses().remove(URI.class.getName());
     }
 
+
+    @Test(description = "Parameter with ref")
+    public void testTicket3029() {
+        Components components = new Components();
+        components.addParameters("id", new Parameter()
+                .description("Id Description")
+                .schema(new IntegerSchema())
+                .in(ParameterIn.QUERY.toString())
+                .example(1)
+                .required(true));
+        OpenAPI oas = new OpenAPI()
+                .info(new Info().description("info"))
+                .components(components);
+
+        Reader reader = new Reader(oas);
+        OpenAPI openAPI = reader.read(RefParameter3029Resource.class);
+
+        String yaml = "openapi: 3.0.1\n" +
+                "info:\n" +
+                "  description: info\n" +
+                "paths:\n" +
+                "  /2:\n" +
+                "    get:\n" +
+                "      summary: Simple get operation\n" +
+                "      operationId: sendPayload2\n" +
+                "      parameters:\n" +
+                "      - $ref: '#/components/parameters/id'\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*': {}\n" +
+                "  /1:\n" +
+                "    get:\n" +
+                "      summary: Simple get operation\n" +
+                "      operationId: sendPayload1\n" +
+                "      parameters:\n" +
+                "      - $ref: '#/components/parameters/id'\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*': {}\n" +
+                "components:\n" +
+                "  parameters:\n" +
+                "    id:\n" +
+                "      in: query\n" +
+                "      description: Id Description\n" +
+                "      required: true\n" +
+                "      schema:\n" +
+                "        type: integer\n" +
+                "        format: int32\n" +
+                "      example: 1\n";
+        SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
+    }
 }

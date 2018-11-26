@@ -93,6 +93,9 @@ public class DefaultParameterExtension extends AbstractOpenAPIExtension {
                 if (parameter == null) {
                     parameter = new Parameter();
                 }
+                if (StringUtils.isNotBlank(((io.swagger.v3.oas.annotations.Parameter) annotation).ref())) {
+                    parameter.$ref(((io.swagger.v3.oas.annotations.Parameter) annotation).ref());
+                }
             } else {
                 List<Parameter> formParameters = new ArrayList<>();
                 List<Parameter> parameters = new ArrayList<>();
@@ -107,7 +110,7 @@ public class DefaultParameterExtension extends AbstractOpenAPIExtension {
         List<Parameter> parameters = new ArrayList<>();
         ResolvedParameter extractParametersResult = new ResolvedParameter();
 
-        if (parameter != null && StringUtils.isNotBlank(parameter.getIn())) {
+        if (parameter != null && (StringUtils.isNotBlank(parameter.getIn()) || StringUtils.isNotBlank(parameter.get$ref()))) {
             parameters.add(parameter);
         } else if (includeRequestBody) {
             Parameter unknownParameter = ParameterProcessor.applyAnnotations(
