@@ -5,7 +5,7 @@
 
 ```
 plugins {
-  id "io.swagger.core.v3.swagger-gradle-plugin" version "2.0.6-SNAPSHOT"
+  id "io.swagger.core.v3.swagger-gradle-plugin" version "2.0.6"
 }
 ```
 ### Gradle 1.x and 2.0
@@ -18,7 +18,7 @@ buildscript {
     }
   }
   dependencies {
-    classpath "gradle.plugin.io.swagger.core.v3.swagger-gradle-plugin:2.0.6-SNAPSHOT"
+    classpath "gradle.plugin.io.swagger.core.v3.swagger-gradle-plugin:2.0.6"
   }
 }
 
