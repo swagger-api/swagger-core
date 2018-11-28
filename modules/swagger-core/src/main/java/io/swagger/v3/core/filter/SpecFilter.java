@@ -254,7 +254,7 @@ public class SpecFilter {
                         if (property != null) {
                             Optional<Schema> filteredProperty = filter.filterSchemaProperty(property, definition, (String) propName, params, cookies, headers);
                             if (filteredProperty.isPresent()) {
-                                clonedProperties.put((String) propName, property);
+                                clonedProperties.put((String) propName, filteredProperty.get());
                             }
                         }
                     }
