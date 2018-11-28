@@ -1,9 +1,9 @@
 package io.swagger.v3.oas.integration;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.core.converter.ModelConverter;
 import io.swagger.v3.core.converter.ModelConverters;
-import io.swagger.v3.core.util.Json;
-import io.swagger.v3.core.util.Yaml;
+import io.swagger.v3.core.jackson.ModelResolver;
 import io.swagger.v3.oas.integration.api.ObjectMapperProcessor;
 import io.swagger.v3.oas.integration.api.OpenAPIConfiguration;
 import io.swagger.v3.oas.integration.api.OpenApiConfigurationLoader;
@@ -370,8 +370,9 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
 
         try {
             if (objectMapperProcessor != null) {
-                objectMapperProcessor.processJsonObjectMapper(Json.mapper());
-                objectMapperProcessor.processYamlObjectMapper(Yaml.mapper());
+                ObjectMapper mapper = IntegrationObjectMapperFactory.createJson();
+                objectMapperProcessor.processJsonObjectMapper(mapper);
+                ModelConverters.getInstance().addConverter(new ModelResolver(mapper));
             }
         } catch (Exception e) {
             LOGGER.error("error configuring objectMapper: " + e.getMessage(), e);

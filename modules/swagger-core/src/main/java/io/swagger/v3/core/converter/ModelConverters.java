@@ -26,7 +26,7 @@ public class ModelConverters {
     private final Set<String> skippedClasses = new HashSet<String>();
 
     public ModelConverters() {
-        converters = new CopyOnWriteArrayList<ModelConverter>();
+        converters = new CopyOnWriteArrayList<>();
         converters.add(new ModelResolver(Json.mapper()));
     }
 
