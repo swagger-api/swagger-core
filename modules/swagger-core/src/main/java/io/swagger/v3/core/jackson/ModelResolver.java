@@ -499,7 +499,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
             AnnotatedMember member = propDef.getPrimaryMember();
             if (member == null) {
-                final BeanDescription deserBeanDesc = Json.mapper().getDeserializationConfig().introspect(type);
+                final BeanDescription deserBeanDesc = _mapper.getDeserializationConfig().introspect(type);
                 List<BeanPropertyDefinition> deserProperties = deserBeanDesc.findProperties();
                 for (BeanPropertyDefinition prop : deserProperties) {
                     if (StringUtils.isNotBlank(prop.getInternalName()) && prop.getInternalName().equals(propDef.getInternalName())) {
@@ -1374,7 +1374,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
 
         if (access == null) {
-            final BeanDescription beanDesc = Json.mapper().getDeserializationConfig().introspect(type);
+            final BeanDescription beanDesc = _mapper.getDeserializationConfig().introspect(type);
             List<BeanPropertyDefinition> properties = beanDesc.findProperties();
             for (BeanPropertyDefinition prop : properties) {
                 if (StringUtils.isNotBlank(prop.getInternalName()) && prop.getInternalName().equals(propDef.getInternalName())) {
