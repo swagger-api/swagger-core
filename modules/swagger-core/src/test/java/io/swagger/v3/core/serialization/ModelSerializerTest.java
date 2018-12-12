@@ -7,6 +7,7 @@ import io.swagger.v3.core.matchers.SerializationMatchers;
 import io.swagger.v3.core.oas.models.Car;
 import io.swagger.v3.core.oas.models.Manufacturers;
 import io.swagger.v3.core.oas.models.ReadOnlyModel;
+import io.swagger.v3.core.oas.models.composition.Ticket3030Child;
 import io.swagger.v3.core.util.Json;
 import io.swagger.v3.oas.models.ExternalDocumentation;
 import io.swagger.v3.oas.models.media.ArraySchema;
@@ -347,5 +348,36 @@ public class ModelSerializerTest {
         IntegerSchema ip = (IntegerSchema) model.getProperties().get("id");
         assertEquals(ip.getMultipleOf(), new BigDecimal("3.0"));
 
+    }
+
+    @Test(description = "no parent properties in child schema and child's type/properties inside allOf")
+    public void testIssue3030() throws IOException {
+        final Map<String, Schema> schemas = ModelConverters.getInstance().readAll(Ticket3030Child.class);
+        final String json = "{\n" +
+                "   \"Ticket3030Parent\":{\n" +
+                "      \"type\":\"object\",\n" +
+                "      \"properties\":{\n" +
+                "         \"baseProperty\":{\n" +
+                "            \"type\":\"string\"\n" +
+                "         }\n" +
+                "      }\n" +
+                "   },\n" +
+                "   \"Ticket3030Child\":{\n" +
+                "      \"allOf\":[\n" +
+                "         {\n" +
+                "            \"type\":\"object\",\n" +
+                "            \"properties\":{\n" +
+                "               \"childProperty\":{\n" +
+                "                  \"type\":\"string\"\n" +
+                "               }\n" +
+                "            }\n" +
+                "         },\n" +
+                "         {\n" +
+                "            \"$ref\":\"#/components/schemas/Ticket3030Parent\"\n" +
+                "         }\n" +
+                "      ]\n" +
+                "   }\n" +
+                "}";
+        SerializationMatchers.assertEqualsToJson(schemas, json);
     }
 }
