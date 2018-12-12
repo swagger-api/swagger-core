@@ -7,7 +7,6 @@ import io.swagger.v3.core.matchers.SerializationMatchers;
 import io.swagger.v3.core.oas.models.Car;
 import io.swagger.v3.core.oas.models.Manufacturers;
 import io.swagger.v3.core.oas.models.ReadOnlyModel;
-import io.swagger.v3.core.oas.models.composition.Ticket3030Child;
 import io.swagger.v3.core.util.Json;
 import io.swagger.v3.oas.models.ExternalDocumentation;
 import io.swagger.v3.oas.models.media.ArraySchema;
@@ -348,6 +347,15 @@ public class ModelSerializerTest {
         IntegerSchema ip = (IntegerSchema) model.getProperties().get("id");
         assertEquals(ip.getMultipleOf(), new BigDecimal("3.0"));
 
+    }
+
+    public class Ticket3030Parent {
+        public String baseProperty;
+    }
+
+    @io.swagger.v3.oas.annotations.media.Schema(allOf = Ticket3030Parent.class)
+    public class Ticket3030Child {
+        public String childProperty;
     }
 
     @Test(description = "no parent properties in child schema and child's type/properties inside allOf")
