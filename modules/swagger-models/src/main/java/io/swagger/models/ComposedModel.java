@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-@JsonPropertyOrder({"description", "required", "allOf", "example"})
+@JsonPropertyOrder({"description", "required", "minimum", "maximum", "multipleOf", "exclusiveMinimum", "exclusiveMaximum", "minLength", "maxLength", "pattern", "allOf", "example"})
 public class ComposedModel extends AbstractModel {
     private List<Model> allOf = new ArrayList<Model>();
     private List<String> required;
