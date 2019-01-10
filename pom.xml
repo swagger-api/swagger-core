@@ -107,6 +107,12 @@
                                     <onlyWhenRelease>true</onlyWhenRelease>
                                     <message>No Snapshots Allowed!</message>
                                 </requireReleaseDeps>
+                                <bannedDependencies>
+                                    <excludes>
+                                        <exclude>javax.ws.rs:javax.ws.rs-api</exclude>
+                                        <exclude>javax.xml.bind:jaxb-api</exclude>
+                                    </excludes>
+                                </bannedDependencies>
                             </rules>
                         </configuration>
                     </execution>
@@ -482,8 +488,8 @@
                 <version>${snakeyaml-version}</version>
             </dependency>
             <dependency>
-                <groupId>javax.ws.rs</groupId>
-                <artifactId>javax.ws.rs-api</artifactId>
+                <groupId>jakarta.ws.rs</groupId>
+                <artifactId>jakarta.ws.rs-api</artifactId>
                 <version>${javax.ws-version}</version>
             </dependency>
         </dependencies>
@@ -492,7 +498,7 @@
         <joda-version>1.9.2</joda-version>
         <joda-time-version>2.9.9</joda-time-version>
         <snakeyaml-version>1.18</snakeyaml-version>
-        <javax.ws-version>2.1</javax.ws-version>
+        <javax.ws-version>2.1.4</javax.ws-version>
         <felix-version>3.5.0</felix-version>
         <servlet-api-version>3.1.0</servlet-api-version>
         <jersey2-version>2.26</jersey2-version>
