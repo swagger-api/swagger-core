@@ -1018,6 +1018,7 @@ public class Reader implements OpenApiReader {
         boolean ignore = false;
         ignore = ignore || className.startsWith("javax.ws.rs.");
         ignore = ignore || className.equalsIgnoreCase("void");
+        ignore = ignore || ModelConverters.getInstance().isRegisteredAsSkippedClass(className);
         return ignore;
     }
 
