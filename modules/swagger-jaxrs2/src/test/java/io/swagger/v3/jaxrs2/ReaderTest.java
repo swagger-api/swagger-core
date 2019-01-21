@@ -1975,37 +1975,14 @@ public class ReaderTest {
 
     @Test(description = "Filter class return type")
     public void testTicket3074() {
-        String yamlWithoutWrapper = "openapi: 3.0.1\n" +
-                "paths:\n" +
-                "  /employee:\n" +
-                "      get:\n" +
-                "        summary: Get an employee\n" +
-                "        operationId: getEmployee\n" +
-                "        responses:\n" +
-                "          200:\n" +
-                "            content:\n" +
-                "              application/json:\n" +
-                "                schema:\n" +
-                "                  type: string\n" +
-                "                  allOf:\n" +
-                "                  - $ref: '#/components/schemas/Employee'\n" +
-                "                  - $ref: '#/components/schemas/Error'\n" +
-                "components:\n" +
-                "  schemas:\n" +
-                "    Employee:\n" +
-                "      type: object\n" +
-                "    Error:\n" +
-                "      type: object";
-        String yamlWithWrapper = yamlWithoutWrapper + "\n    Wrapper:\n     type: object";
-
         Reader reader = new Reader(new OpenAPI());
         OpenAPI oasResult = reader.read(RefParameter3074Resource.class);
-        SerializationMatchers.assertEqualsToYaml(oasResult, yamlWithWrapper);
+        SerializationMatchers.assertEqualsToYaml(oasResult, RefParameter3074Resource.EXPECTED_YAML_WITH_WRAPPER);
 
         ModelConverters.getInstance().addClassToSkip("io.swagger.v3.jaxrs2.resources.RefParameter3074Resource$Wrapper");
 
         reader = new Reader(new OpenAPI());
         oasResult = reader.read(RefParameter3074Resource.class);
-        SerializationMatchers.assertEqualsToYaml(oasResult, yamlWithoutWrapper);
+        SerializationMatchers.assertEqualsToYaml(oasResult, RefParameter3074Resource.EXPECTED_YAML_WITHOUT_WRAPPER);
     }
 }
