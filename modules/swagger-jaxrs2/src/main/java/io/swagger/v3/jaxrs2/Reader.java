@@ -1066,9 +1066,14 @@ public class Reader implements OpenApiReader {
             return true;
         }
         boolean ignore = false;
-        ignore = ignore || className.replace("[simple type, class ", "").startsWith("javax.ws.rs.");
-        ignore = ignore || className.equalsIgnoreCase("void");
-        ignore = ignore || className.equalsIgnoreCase("[simple type, class void]");
+        String rawClassName = className;
+        if (rawClassName.startsWith("[")) { // jackson JavaType
+            rawClassName = className.replace("[simple type, class ", "");
+            rawClassName = rawClassName.substring(0, rawClassName.length() -1);
+        }
+        ignore = ignore || rawClassName.startsWith("javax.ws.rs.");
+        ignore = ignore || rawClassName.equalsIgnoreCase("void");
+        ignore = ignore || ModelConverters.getInstance().isRegisteredAsSkippedClass(rawClassName);
         return ignore;
     }
 
