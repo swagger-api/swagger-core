@@ -33,7 +33,7 @@ public class BeanParamTest {
         Parameter param = getOperationParams.get(0);
         Assert.assertEquals(param.getName(), "listOfStrings");
         Schema<?> schema = param.getSchema();
-        // These are the a checks:
+        // These are the important checks:
         Assert.assertEquals(schema.getClass(), ArraySchema.class);
         Assert.assertEquals(((ArraySchema) schema).getItems().getType(), "string");   
     }
