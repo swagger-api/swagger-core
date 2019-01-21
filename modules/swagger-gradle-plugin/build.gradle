@@ -44,7 +44,7 @@ project.group           = 'io.swagger.core.v3'
 project.ext.name        = 'swagger-gradle-plugin'
 project.ext.pluginId    = 'io.swagger.core.v3.swagger-gradle-plugin'
 project.ext.scm         = 'scm:git@github.com:swagger-api/swagger-core.git'
-project.ext.url         = 'https://github.com/swagger-api/swagger-core/modules/swagger-gradle-plugin'
+project.ext.url         = 'https://github.com/swagger-api/swagger-core/tree/master/modules/swagger-gradle-plugin'
 
 // Configuration for: java-gradle-plugin
 gradlePlugin {
