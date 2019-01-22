@@ -458,8 +458,8 @@ public class Reader implements OpenApiReader {
                         parentRequestBody,
                         parentResponses,
                         jsonViewAnnotation,
-                        classResponses
-                        );
+                        classResponses,
+                        annotatedMethod);
                 if (operation != null) {
 
                     List<Parameter> operationParameters = new ArrayList<>();
@@ -749,6 +749,7 @@ public class Reader implements OpenApiReader {
                 null,
                 null,
                 jsonViewAnnotation,
+                null,
                 null);
     }
 
@@ -767,7 +768,8 @@ public class Reader implements OpenApiReader {
             RequestBody parentRequestBody,
             ApiResponses parentResponses,
             JsonView jsonViewAnnotation,
-            io.swagger.v3.oas.annotations.responses.ApiResponse[] classResponses) {
+            io.swagger.v3.oas.annotations.responses.ApiResponse[] classResponses,
+            AnnotatedMethod annotatedMethod) {
         JavaType classType = TypeFactory.defaultInstance().constructType(method.getDeclaringClass());
         return parseMethod(
                 classType.getClass(),
@@ -785,7 +787,8 @@ public class Reader implements OpenApiReader {
                 parentRequestBody,
                 parentResponses,
                 jsonViewAnnotation,
-                classResponses);
+                classResponses,
+                annotatedMethod);
     }
 
     private Operation parseMethod(
@@ -804,7 +807,8 @@ public class Reader implements OpenApiReader {
             RequestBody parentRequestBody,
             ApiResponses parentResponses,
             JsonView jsonViewAnnotation,
-            io.swagger.v3.oas.annotations.responses.ApiResponse[] classResponses) {
+            io.swagger.v3.oas.annotations.responses.ApiResponse[] classResponses,
+            AnnotatedMethod annotatedMethod) {
         Operation operation = new Operation();
 
         io.swagger.v3.oas.annotations.Operation apiOperation = ReflectionUtils.getAnnotation(method, io.swagger.v3.oas.annotations.Operation.class);
@@ -962,6 +966,9 @@ public class Reader implements OpenApiReader {
 
         // handle return type, add as response in case.
         Type returnType = method.getGenericReturnType();
+        if (annotatedMethod != null) {
+            returnType = annotatedMethod.getType();
+        }
         final Class<?> subResource = getSubResourceWithJaxRsSubresourceLocatorSpecs(method);
         if (!shouldIgnoreClass(returnType.getTypeName()) && !returnType.equals(subResource)) {
             ResolvedSchema resolvedSchema = ModelConverters.getInstance().resolveAsResolvedSchema(new AnnotatedType(returnType).resolveAsRef(true).jsonViewAnnotation(jsonViewAnnotation));
