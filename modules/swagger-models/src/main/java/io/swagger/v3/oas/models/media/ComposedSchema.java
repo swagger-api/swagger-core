@@ -24,7 +24,7 @@ import java.util.Objects;
  * ComposedSchema
  */
 
-public class ComposedSchema extends Schema {
+public class ComposedSchema extends Schema<Object> {
     private List<Schema> allOf = null;
     private List<Schema> anyOf = null;
     private List<Schema> oneOf = null;
@@ -50,7 +50,7 @@ public class ComposedSchema extends Schema {
 
     public ComposedSchema addAllOfItem(Schema allOfItem) {
         if (this.allOf == null) {
-            this.allOf = new ArrayList<Schema>();
+            this.allOf = new ArrayList<>();
         }
         this.allOf.add(allOfItem);
         return this;
@@ -77,7 +77,7 @@ public class ComposedSchema extends Schema {
 
     public ComposedSchema addAnyOfItem(Schema anyOfItem) {
         if (this.anyOf == null) {
-            this.anyOf = new ArrayList<Schema>();
+            this.anyOf = new ArrayList<>();
         }
         this.anyOf.add(anyOfItem);
         return this;
@@ -104,7 +104,7 @@ public class ComposedSchema extends Schema {
 
     public ComposedSchema addOneOfItem(Schema oneOfItem) {
         if (this.oneOf == null) {
-            this.oneOf = new ArrayList<Schema>();
+            this.oneOf = new ArrayList<>();
         }
         this.oneOf.add(oneOfItem);
         return this;
@@ -141,17 +141,4 @@ public class ComposedSchema extends Schema {
         sb.append("}");
         return sb.toString();
     }
-
-    /**
-     * Convert the given object to string with each line indented by 4 spaces
-     * (except the first line).
-     */
-    private String toIndentedString(Object o) {
-        if (o == null) {
-            return "null";
-        }
-        return o.toString().replace("\n", "\n    ");
-    }
-
 }
-

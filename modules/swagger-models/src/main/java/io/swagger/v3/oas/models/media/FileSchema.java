@@ -23,44 +23,18 @@ import java.util.Objects;
  */
 
 public class FileSchema extends Schema<String> {
-    private String type = "string";
-    private String format = "binary";
 
-    /**
-     * returns the type property from a FileSchema instance.
-     *
-     * @return String type
-     **/
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
+    public FileSchema() {
+        super("string", "binary");
     }
 
     public FileSchema type(String type) {
-        this.type = type;
+        super.setType(type);
         return this;
     }
 
-    /**
-     * returns the format property from a FileSchema instance.
-     *
-     * @return String format
-     **/
-
-    public String getFormat() {
-        return format;
-    }
-
-    public void setFormat(String format) {
-        this.format = format;
-    }
-
     public FileSchema format(String format) {
-        this.format = format;
+        super.setFormat(format);
         return this;
     }
 
@@ -72,15 +46,12 @@ public class FileSchema extends Schema<String> {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        FileSchema fileSchema = (FileSchema) o;
-        return Objects.equals(this.type, fileSchema.type) &&
-                Objects.equals(this.format, fileSchema.format) &&
-                super.equals(o);
+        return super.equals(o);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(type, format, super.hashCode());
+        return Objects.hash(super.hashCode());
     }
 
     @Override
@@ -88,22 +59,7 @@ public class FileSchema extends Schema<String> {
         StringBuilder sb = new StringBuilder();
         sb.append("class FileSchema {\n");
         sb.append("    ").append(toIndentedString(super.toString())).append("\n");
-        sb.append("    type: ").append(toIndentedString(type)).append("\n");
-        sb.append("    format: ").append(toIndentedString(format)).append("\n");
         sb.append("}");
         return sb.toString();
     }
-
-    /**
-     * Convert the given object to string with each line indented by 4 spaces
-     * (except the first line).
-     */
-    private String toIndentedString(java.lang.Object o) {
-        if (o == null) {
-            return "null";
-        }
-        return o.toString().replace("\n", "\n    ");
-    }
-
 }
-
