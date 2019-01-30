@@ -61,6 +61,7 @@ import io.swagger.v3.jaxrs2.resources.extensions.ExtensionsResource;
 import io.swagger.v3.jaxrs2.resources.extensions.OperationExtensionsResource;
 import io.swagger.v3.jaxrs2.resources.extensions.ParameterExtensionsResource;
 import io.swagger.v3.jaxrs2.resources.extensions.RequestBodyExtensionsResource;
+import io.swagger.v3.jaxrs2.resources.rs.ProcessTokenRestService;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.ExternalDocumentation;
@@ -1968,6 +1969,38 @@ public class ReaderTest {
                 "        type: integer\n" +
                 "        format: int32\n" +
                 "      example: 1\n";
+        SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
+    }
+
+    @Test(description = "response generic subclass")
+    public void testTicket3082() {
+        Reader reader = new Reader(new OpenAPI());
+        OpenAPI openAPI = reader.read(ProcessTokenRestService.class);
+
+        String yaml = "openapi: 3.0.1\n" +
+                "paths:\n" +
+                "  /token:\n" +
+                "    post:\n" +
+                "      operationId: create\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          application/json:\n" +
+                "            schema:\n" +
+                "              $ref: '#/components/schemas/ProcessTokenDTO'\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            application/json:\n" +
+                "              schema:\n" +
+                "                $ref: '#/components/schemas/ProcessTokenDTO'\n" +
+                "components:\n" +
+                "  schemas:\n" +
+                "    ProcessTokenDTO:\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        guid:\n" +
+                "          type: string\n";
         SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
     }
 }
