@@ -413,6 +413,10 @@ public class Reader implements OpenApiReader {
                     continue;
                 } else if (StringUtils.isBlank(httpMethod) && subResource != null) {
                     Type returnType = method.getGenericReturnType();
+                    if (annotatedMethod != null && annotatedMethod.getType() != null) {
+                        returnType = annotatedMethod.getType();
+                    }
+
                     if (shouldIgnoreClass(returnType.getTypeName()) && !returnType.equals(subResource)) {
                         continue;
                     }
@@ -458,8 +462,8 @@ public class Reader implements OpenApiReader {
                         parentRequestBody,
                         parentResponses,
                         jsonViewAnnotation,
-                        classResponses
-                        );
+                        classResponses,
+                        annotatedMethod);
                 if (operation != null) {
 
                     List<Parameter> operationParameters = new ArrayList<>();
@@ -749,6 +753,7 @@ public class Reader implements OpenApiReader {
                 null,
                 null,
                 jsonViewAnnotation,
+                null,
                 null);
     }
 
@@ -785,7 +790,46 @@ public class Reader implements OpenApiReader {
                 parentRequestBody,
                 parentResponses,
                 jsonViewAnnotation,
-                classResponses);
+                classResponses,
+                null);
+    }
+
+    public Operation parseMethod(
+            Method method,
+            List<Parameter> globalParameters,
+            Produces methodProduces,
+            Produces classProduces,
+            Consumes methodConsumes,
+            Consumes classConsumes,
+            List<SecurityRequirement> classSecurityRequirements,
+            Optional<io.swagger.v3.oas.models.ExternalDocumentation> classExternalDocs,
+            Set<String> classTags,
+            List<io.swagger.v3.oas.models.servers.Server> classServers,
+            boolean isSubresource,
+            RequestBody parentRequestBody,
+            ApiResponses parentResponses,
+            JsonView jsonViewAnnotation,
+            io.swagger.v3.oas.annotations.responses.ApiResponse[] classResponses,
+            AnnotatedMethod annotatedMethod) {
+        JavaType classType = TypeFactory.defaultInstance().constructType(method.getDeclaringClass());
+        return parseMethod(
+                classType.getClass(),
+                method,
+                globalParameters,
+                methodProduces,
+                classProduces,
+                methodConsumes,
+                classConsumes,
+                classSecurityRequirements,
+                classExternalDocs,
+                classTags,
+                classServers,
+                isSubresource,
+                parentRequestBody,
+                parentResponses,
+                jsonViewAnnotation,
+                classResponses,
+                annotatedMethod);
     }
 
     private Operation parseMethod(
@@ -804,7 +848,8 @@ public class Reader implements OpenApiReader {
             RequestBody parentRequestBody,
             ApiResponses parentResponses,
             JsonView jsonViewAnnotation,
-            io.swagger.v3.oas.annotations.responses.ApiResponse[] classResponses) {
+            io.swagger.v3.oas.annotations.responses.ApiResponse[] classResponses,
+            AnnotatedMethod annotatedMethod) {
         Operation operation = new Operation();
 
         io.swagger.v3.oas.annotations.Operation apiOperation = ReflectionUtils.getAnnotation(method, io.swagger.v3.oas.annotations.Operation.class);
@@ -962,6 +1007,11 @@ public class Reader implements OpenApiReader {
 
         // handle return type, add as response in case.
         Type returnType = method.getGenericReturnType();
+
+        if (annotatedMethod != null && annotatedMethod.getType() != null) {
+            returnType = annotatedMethod.getType();
+        }
+
         final Class<?> subResource = getSubResourceWithJaxRsSubresourceLocatorSpecs(method);
         if (!shouldIgnoreClass(returnType.getTypeName()) && !returnType.equals(subResource)) {
             ResolvedSchema resolvedSchema = ModelConverters.getInstance().resolveAsResolvedSchema(new AnnotatedType(returnType).resolveAsRef(true).jsonViewAnnotation(jsonViewAnnotation));
@@ -1016,8 +1066,9 @@ public class Reader implements OpenApiReader {
             return true;
         }
         boolean ignore = false;
-        ignore = ignore || className.startsWith("javax.ws.rs.");
+        ignore = ignore || className.replace("[simple type, class ", "").startsWith("javax.ws.rs.");
         ignore = ignore || className.equalsIgnoreCase("void");
+        ignore = ignore || className.equalsIgnoreCase("[simple type, class void]");
         return ignore;
     }
 
