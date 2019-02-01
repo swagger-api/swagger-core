@@ -142,6 +142,10 @@ public class ObjectProperty extends AbstractProperty implements Property {
 
     @Override
     public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+
         if (!(o instanceof ObjectProperty)) {
             return false;
         }
