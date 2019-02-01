@@ -53,5 +53,12 @@ public class ModelWithRangesTest {
         assertEquals(doubleValues.getMaximum(), new BigDecimal("8.0"));
         assertEquals(doubleValues.getExclusiveMaximum(), Boolean.TRUE);
         assertNull(doubleValues.getExclusiveMinimum());
+
+        final IntegerSchema intAllowableValues = (IntegerSchema) properties.get("intAllowableValues");
+        assertEquals(intAllowableValues.getEnum(), Arrays.asList(1, 2));
+
+        final IntegerSchema intAllowableValuesWithNull = (IntegerSchema) properties.get("intAllowableValuesWithNull");
+        assertEquals(intAllowableValuesWithNull.getEnum(), Arrays.asList(1, 2, null));
+
     }
 }

@@ -32,4 +32,14 @@ public class ModelWithRanges {
     public Double getDoubleValues() {
         return 1.0;
     }
+
+    @Schema(description = "some int values", allowableValues = {"1", "2"})
+    public int getIntAllowableValues() {
+        return 2;
+    }
+
+    @Schema(description = "some int values with null", allowableValues = {"1", "2", "null"})
+    public int getIntAllowableValuesWithNull() {
+        return 2;
+    }
 }
