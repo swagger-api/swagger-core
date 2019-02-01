@@ -154,13 +154,10 @@ public class Schema<T> {
     }
 
     public void addEnumItemObject(T _enumItem) {
-        T casted = cast(_enumItem);
-        if (casted != null) {
-            if (this._enum == null) {
-                this._enum = new ArrayList<>();
-            }
-            this._enum.add(casted);
+        if (this._enum == null) {
+            this._enum = new ArrayList<>();
         }
+        this._enum.add(cast(_enumItem));
     }
 
     /**
