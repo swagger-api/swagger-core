@@ -12,3 +12,4 @@ atlassian-ide-plugin.xml
 *.iml
 .java-version
 sonar-project.properties
+test-output/

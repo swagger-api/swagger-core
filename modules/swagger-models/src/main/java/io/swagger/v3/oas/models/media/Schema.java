@@ -70,6 +70,14 @@ public class Schema<T> {
     protected List<T> _enum = null;
     private Discriminator discriminator = null;
 
+    public Schema() {
+    }
+
+    protected Schema(String type, String format) {
+        this.type = type;
+        this.format = format;
+    }
+
     /**
      * returns the name property from a from a Schema instance. Ignored in serialization.
      *
@@ -141,6 +149,7 @@ public class Schema<T> {
         this._default = cast(_default);
     }
 
+    @SuppressWarnings("unchecked")
     protected T cast(Object value) {
         return (T) value;
     }
@@ -812,7 +821,7 @@ public class Schema<T> {
         this.extensions = extensions;
     }
 
-    public Schema<T> extensions(java.util.Map<String, Object> extensions) {
+    public Schema extensions(java.util.Map<String, Object> extensions) {
         this.extensions = extensions;
         return this;
     }
@@ -821,7 +830,10 @@ public class Schema<T> {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("class Schema {\n");
-
+        sb.append("    type: ").append(toIndentedString(type)).append("\n");
+        sb.append("    format: ").append(toIndentedString(format)).append("\n");
+        sb.append("    $ref: ").append(toIndentedString($ref)).append("\n");
+        sb.append("    description: ").append(toIndentedString(description)).append("\n");
         sb.append("    title: ").append(toIndentedString(title)).append("\n");
         sb.append("    multipleOf: ").append(toIndentedString(multipleOf)).append("\n");
         sb.append("    maximum: ").append(toIndentedString(maximum)).append("\n");
@@ -837,13 +849,9 @@ public class Schema<T> {
         sb.append("    maxProperties: ").append(toIndentedString(maxProperties)).append("\n");
         sb.append("    minProperties: ").append(toIndentedString(minProperties)).append("\n");
         sb.append("    required: ").append(toIndentedString(required)).append("\n");
-        sb.append("    type: ").append(toIndentedString(type)).append("\n");
         sb.append("    not: ").append(toIndentedString(not)).append("\n");
         sb.append("    properties: ").append(toIndentedString(properties)).append("\n");
         sb.append("    additionalProperties: ").append(toIndentedString(additionalProperties)).append("\n");
-        sb.append("    description: ").append(toIndentedString(description)).append("\n");
-        sb.append("    format: ").append(toIndentedString(format)).append("\n");
-        sb.append("    $ref: ").append(toIndentedString($ref)).append("\n");
         sb.append("    nullable: ").append(toIndentedString(nullable)).append("\n");
         sb.append("    readOnly: ").append(toIndentedString(readOnly)).append("\n");
         sb.append("    writeOnly: ").append(toIndentedString(writeOnly)).append("\n");
@@ -860,7 +868,7 @@ public class Schema<T> {
      * Convert the given object to string with each line indented by 4 spaces
      * (except the first line).
      */
-    private String toIndentedString(java.lang.Object o) {
+    protected String toIndentedString(java.lang.Object o) {
         if (o == null) {
             return "null";
         }
