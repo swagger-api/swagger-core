@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.core.converter.AnnotatedType;
 import io.swagger.v3.core.converter.ModelConverter;
 import io.swagger.v3.core.converter.ModelConverterContextImpl;
+import io.swagger.v3.core.converter.ModelConverters;
 import io.swagger.v3.core.filter.AbstractSpecFilter;
 import io.swagger.v3.core.filter.OpenAPISpecFilter;
 import io.swagger.v3.core.filter.SpecFilter;
@@ -29,6 +30,7 @@ import io.swagger.v3.jaxrs2.resources.RefExamplesResource;
 import io.swagger.v3.jaxrs2.resources.RefHeaderResource;
 import io.swagger.v3.jaxrs2.resources.RefLinksResource;
 import io.swagger.v3.jaxrs2.resources.RefParameter3029Resource;
+import io.swagger.v3.jaxrs2.resources.RefParameter3074Resource;
 import io.swagger.v3.jaxrs2.resources.RefParameterResource;
 import io.swagger.v3.jaxrs2.resources.RefRequestBodyResource;
 import io.swagger.v3.jaxrs2.resources.RefResponsesResource;
@@ -2002,5 +2004,18 @@ public class ReaderTest {
                 "        guid:\n" +
                 "          type: string\n";
         SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
+    }
+    
+    @Test(description = "Filter class return type")
+    public void testTicket3074() {
+        Reader reader = new Reader(new OpenAPI());
+        OpenAPI oasResult = reader.read(RefParameter3074Resource.class);
+        SerializationMatchers.assertEqualsToYaml(oasResult, RefParameter3074Resource.EXPECTED_YAML_WITH_WRAPPER);
+
+        ModelConverters.getInstance().addClassToSkip("io.swagger.v3.jaxrs2.resources.RefParameter3074Resource$Wrapper");
+
+        reader = new Reader(new OpenAPI());
+        oasResult = reader.read(RefParameter3074Resource.class);
+        SerializationMatchers.assertEqualsToYaml(oasResult, RefParameter3074Resource.EXPECTED_YAML_WITHOUT_WRAPPER);
     }
 }
