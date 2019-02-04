@@ -1974,7 +1974,6 @@ public class ReaderTest {
         SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
     }
 
-<<<<<<< HEAD
     @Test(description = "response generic subclass")
     public void testTicket3082() {
         Reader reader = new Reader(new OpenAPI());

@@ -417,7 +417,7 @@ public class Reader implements OpenApiReader {
                         returnType = annotatedMethod.getType();
                     }
 
-                    if (shouldIgnoreClass(returnType.getTypeName()) && !returnType.equals(subResource)) {
+                    if (shouldIgnoreClass(returnType.getTypeName()) && !method.getGenericReturnType().equals(subResource)) {
                         continue;
                     }
                 }
@@ -1013,7 +1013,7 @@ public class Reader implements OpenApiReader {
         }
 
         final Class<?> subResource = getSubResourceWithJaxRsSubresourceLocatorSpecs(method);
-        if (!shouldIgnoreClass(returnType.getTypeName()) && !returnType.equals(subResource)) {
+        if (!shouldIgnoreClass(returnType.getTypeName()) && !method.getGenericReturnType().equals(subResource)) {
             ResolvedSchema resolvedSchema = ModelConverters.getInstance().resolveAsResolvedSchema(new AnnotatedType(returnType).resolveAsRef(true).jsonViewAnnotation(jsonViewAnnotation));
             if (resolvedSchema.schema != null) {
                 Schema returnTypeSchema = resolvedSchema.schema;
