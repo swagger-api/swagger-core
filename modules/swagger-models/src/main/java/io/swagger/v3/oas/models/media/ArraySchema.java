@@ -77,7 +77,6 @@ public class ArraySchema extends Schema<Object> {
         sb.append("class ArraySchema {\n");
         sb.append("    ").append(toIndentedString(super.toString())).append("\n");
         sb.append("    items: ").append(toIndentedString(items)).append("\n");
-        sb.append("    _default: ").append(toIndentedString(_default)).append("\n");
         sb.append("}");
         return sb.toString();
     }
