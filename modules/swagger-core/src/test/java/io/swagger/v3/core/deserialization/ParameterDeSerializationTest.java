@@ -1,5 +1,6 @@
 package io.swagger.v3.core.deserialization;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.core.matchers.SerializationMatchers;
 import io.swagger.v3.core.util.Json;
@@ -193,5 +194,25 @@ public class ParameterDeSerializationTest {
 
         OpenAPI swagger = Yaml.mapper().readValue(yaml, OpenAPI.class);
         SerializationMatchers.assertEqualsToYaml(swagger, yaml);
+    }
+
+    @Test(description = "should throw Exception for invalid parameter", expectedExceptions = JsonProcessingException.class)
+    public void describeInvalid() throws Exception {
+        String yaml =
+                "openapi: '3.0.1'\n" +
+                        "paths:\n" +
+                        "  /test:\n" +
+                        "    get:\n" +
+                        "      parameters:\n" +
+                        "      - name: \"days\"\n" +
+                        "        in: \"queery\"\n" +
+                        "        required: true\n" +
+                        "        schema:\n" +
+                        "          type: \"string\"\n" +
+                        "      responses:\n" +
+                        "        default:\n" +
+                        "          description: Shouldn't parse";
+
+        Yaml.mapper().readValue(yaml, OpenAPI.class);
     }
 }

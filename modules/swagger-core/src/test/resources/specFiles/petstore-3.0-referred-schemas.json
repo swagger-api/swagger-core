@@ -130,17 +130,17 @@
                 "summary": "User post",
                 "description": "User post",
                 "operationId": "postUser",
-                "parameters": [
-                    {
-                        "name": "body",
-                        "in": "body",
-                        "description": "Created user object",
-                        "required": false,
-                        "schema": {
-                            "$ref": "#/components/schemas/Order"
+                "requestBody": {
+                    "description": "Created user object",
+                    "required": false,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Order"
+                            }
                         }
                     }
-                ]
+                }
             }
         },
         "/store": {
@@ -151,17 +151,17 @@
                 "summary": "Store post",
                 "description": "Store post",
                 "operationId": "postStore",
-                "parameters": [
-                    {
-                        "name": "body",
-                        "in": "body",
-                        "description": "order placed for purchasing the pet",
-                        "required": false,
-                        "schema": {
-                            "$ref": "#/components/schemas/Order"
+                "requestBody": {
+                    "description": "order placed for purchasing the pet",
+                    "required": false,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Order"
+                            }
                         }
                     }
-                ]
+                }
             }
         }
     },

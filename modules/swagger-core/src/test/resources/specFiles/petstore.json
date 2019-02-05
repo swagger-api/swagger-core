@@ -1,5 +1,5 @@
 {
-  "swagger": "2.0",
+  "swagger": "3.0",
   "title": "Petstore Sample API",
   "info": {
     "description": "A sample API that uses a petstore as an example to demonstrate features in the swagger-2.0 specification",
@@ -46,17 +46,17 @@
         "tags": [
           "pet"
         ],
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "description": "Pet object that needs to be added to the store",
-            "required": false,
-            "schema": {
-              "$ref": "#/definitions/Pet"
+        "requestBody": {
+          "description": "Pet object that needs to be added to the store",
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/definitions/Pet"
+              }
             }
           }
-        ],
+        },
         "responses": {
           "405": {
             "description": "Validation exception"
@@ -77,17 +77,17 @@
         "tags": [
           "pet"
         ],
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "description": "Pet object that needs to be added to the store",
-            "required": false,
-            "schema": {
-              "$ref": "#/definitions/Tag"
+        "requestBody": {
+          "description": "Pet object that needs to be added to the store",
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/definitions/Tag"
+              }
             }
           }
-        ],
+        },
         "responses": {
           "405": {
             "description": "Invalid input"
@@ -100,14 +100,10 @@
         "tags": [
           "user"
         ],
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "description": "List of user object",
-            "required": false
-          }
-        ]
+        "requestBody": {
+          "description": "List of user object",
+          "required": false
+        }
       }
     },
     "/store/order/{orderId}": {
@@ -161,17 +157,17 @@
         "tags": [
           "user"
         ],
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "description": "List of user object",
-            "required": false,
-            "schema": {
-              "$ref": "#/definitions/User"
+        "requestBody": {
+          "description": "List of user object",
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/definitions/User"
+              }
             }
           }
-        ]
+        }
       }
     },
     "/store/order": {
@@ -179,17 +175,17 @@
         "tags": [
           "store"
         ],
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "description": "order placed for purchasing the pet",
-            "required": false,
-            "schema": {
-              "$ref": "#/definitions/Order"
+        "requestBody": {
+          "description": "order placed for purchasing the pet",
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/definitions/Order"
+              }
             }
           }
-        ],
+        },
         "responses": {
           "400": {
             "description": "Invalid Order"
@@ -252,17 +248,19 @@
             "description": "name that need to be deleted",
             "required": true,
             "type": "string"
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "description": "Updated user object",
-            "required": false,
-            "schema": {
-              "$ref": "#/definitions/User"
-            }
           }
         ],
+        "requestBody": {
+          "description": "Updated user object",
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/definitions/User"
+              }
+            }
+          }
+        },
         "responses": {
           "404": {
             "description": "User not found"
@@ -321,17 +319,17 @@
         "tags": [
           "user"
         ],
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "description": "Created user object",
-            "required": false,
-            "schema": {
-              "$ref": "#/definitions/User"
+        "requestBody": {
+          "description": "Created user object",
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/definitions/User"
+              }
             }
           }
-        ]
+        }
       }
     },
     "/pet/{petId}": {

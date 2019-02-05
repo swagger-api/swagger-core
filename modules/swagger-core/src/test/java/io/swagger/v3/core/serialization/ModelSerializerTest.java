@@ -367,4 +367,13 @@ public class ModelSerializerTest {
         SerializationMatchers.assertEqualsToYaml(model, yaml);
 
     }
+
+    @Test(expectedExceptions = JsonProcessingException.class)
+    public void testInvalidSchemaDataType() throws Exception {
+        String yaml =
+                "type: float\n" +
+                "description: Invalid schema data type\n";
+
+        Yaml.mapper().readValue(yaml, Schema.class);
+    }
 }

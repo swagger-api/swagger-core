@@ -1,5 +1,6 @@
 package io.swagger.v3.core.util;
 
+import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
@@ -40,10 +41,11 @@ public class ParameterDeserializer extends JsonDeserializer<Parameter> {
                 reader = Json.mapper().readerFor(PathParameter.class);
             } else if ("cookie".equals(in)) {
                 reader = Json.mapper().readerFor(CookieParameter.class);
+            } else {
+                throw new JsonParseException(jp, String.format("Parameter location %s not allowed", in));
             }
-            if (reader != null) {
-                result = reader.with(DeserializationFeature.READ_ENUMS_USING_TO_STRING).readValue(node);
-            }
+
+            result = reader.with(DeserializationFeature.READ_ENUMS_USING_TO_STRING).readValue(node);
         }
 
         return result;
