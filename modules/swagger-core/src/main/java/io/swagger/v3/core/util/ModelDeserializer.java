@@ -35,49 +35,52 @@ public class ModelDeserializer extends JsonDeserializer<Schema> {
         JsonNode anyOf = node.get("anyOf");
         JsonNode oneOf = node.get("oneOf");
 
-        Schema schema = null;
+        Schema schema;
 
         if (allOf != null || anyOf != null || oneOf != null) {
-
-            ComposedSchema composedSchema = Json.mapper().convertValue(node, ComposedSchema.class);
-            return composedSchema;
-
+            return Json.mapper().convertValue(node, ComposedSchema.class);
         } else {
+            String type = node.get("type") == null ? "" : node.get("type").textValue();
 
-            JsonNode type = node.get("type");
-            String format = node.get("format") == null ? "" : node.get("format").textValue();
+            if (!StringUtils.isBlank(type)) {
+                String format = node.get("format") == null ? "" : node.get("format").textValue();
 
-            if (type != null && "array".equals(((TextNode) type).textValue())) {
-                schema = Json.mapper().convertValue(node, ArraySchema.class);
-            } else if (type != null) {
-                String typeText = type.textValue();
-                if (typeText.equals("integer")) {
-                    schema = Json.mapper().convertValue(node, IntegerSchema.class);
-                    if (StringUtils.isBlank(format)) {
-                        schema.setFormat(null);
-                    }
-                } else if (typeText.equals("number")) {
-                    schema = Json.mapper().convertValue(node, NumberSchema.class);
-                } else if (typeText.equals("boolean")) {
-                    schema = Json.mapper().convertValue(node, BooleanSchema.class);
-                } else if (typeText.equals("string")) {
-                    if ("date".equals(format)) {
-                        schema = Json.mapper().convertValue(node, DateSchema.class);
-                    } else if ("date-time".equals(format)) {
-                        schema = Json.mapper().convertValue(node, DateTimeSchema.class);
-                    } else if ("email".equals(format)) {
-                        schema = Json.mapper().convertValue(node, EmailSchema.class);
-                    } else if ("password".equals(format)) {
-                        schema = Json.mapper().convertValue(node, PasswordSchema.class);
-                    } else if ("uuid".equals(format)) {
-                        schema = Json.mapper().convertValue(node, UUIDSchema.class);
-                    } else {
-                        schema = Json.mapper().convertValue(node, StringSchema.class);
-                    }
-                } else if (typeText.equals("object")) {
-                    schema = deserializeObjectSchema(node);
-                } else {
-                    throw new JsonParseException(jp, String.format("Schema type %s not allowed", typeText));
+                switch (type) {
+                    case "array":
+                        schema = Json.mapper().convertValue(node, ArraySchema.class);
+                        break;
+                    case "integer":
+                        schema = Json.mapper().convertValue(node, IntegerSchema.class);
+                        if (StringUtils.isBlank(format)) {
+                            schema.setFormat(null);
+                        }
+                        break;
+                    case "number":
+                        schema = Json.mapper().convertValue(node, NumberSchema.class);
+                        break;
+                    case "boolean":
+                        schema = Json.mapper().convertValue(node, BooleanSchema.class);
+                        break;
+                    case "string":
+                        if ("date".equals(format)) {
+                            schema = Json.mapper().convertValue(node, DateSchema.class);
+                        } else if ("date-time".equals(format)) {
+                            schema = Json.mapper().convertValue(node, DateTimeSchema.class);
+                        } else if ("email".equals(format)) {
+                            schema = Json.mapper().convertValue(node, EmailSchema.class);
+                        } else if ("password".equals(format)) {
+                            schema = Json.mapper().convertValue(node, PasswordSchema.class);
+                        } else if ("uuid".equals(format)) {
+                            schema = Json.mapper().convertValue(node, UUIDSchema.class);
+                        } else {
+                            schema = Json.mapper().convertValue(node, StringSchema.class);
+                        }
+                        break;
+                    case "object":
+                        schema = deserializeObjectSchema(node);
+                        break;
+                    default:
+                        throw new JsonParseException(jp, String.format("Schema type %s not allowed", type));
                 }
             } else if (node.get("$ref") != null) {
                 schema = new Schema().$ref(node.get("$ref").asText());
@@ -91,7 +94,7 @@ public class ModelDeserializer extends JsonDeserializer<Schema> {
 
     private Schema deserializeObjectSchema(JsonNode node) {
         JsonNode additionalProperties = node.get("additionalProperties");
-        Schema schema = null;
+        Schema schema;
         if (additionalProperties != null) {
             // try first to convert to Schema, if it fails it must be a boolean
             try {
