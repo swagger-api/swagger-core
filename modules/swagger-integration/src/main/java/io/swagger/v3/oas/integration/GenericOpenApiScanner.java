@@ -1,15 +1,11 @@
 package io.swagger.v3.oas.integration;
 
+import io.github.classgraph.ClassGraph;
+import io.github.classgraph.ScanResult;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.integration.api.OpenAPIConfiguration;
 import io.swagger.v3.oas.integration.api.OpenApiScanner;
 import org.apache.commons.lang3.StringUtils;
-import org.reflections.Reflections;
-import org.reflections.scanners.ResourcesScanner;
-import org.reflections.scanners.SubTypesScanner;
-import org.reflections.scanners.TypeAnnotationsScanner;
-import org.reflections.util.ClasspathHelper;
-import org.reflections.util.ConfigurationBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,9 +33,9 @@ public class GenericOpenApiScanner implements OpenApiScanner {
 
     @Override
     public Set<Class<?>> classes() {
-        ConfigurationBuilder config = new ConfigurationBuilder();
+        ClassGraph graph = new ClassGraph().enableAllInfo();
+
         Set<String> acceptablePackages = new HashSet<String>();
-        Set<String> resourceClasses = new HashSet<String>();
 
         Set<Class<?>> output = new HashSet<Class<?>>();
 
@@ -63,18 +59,19 @@ public class GenericOpenApiScanner implements OpenApiScanner {
             for (String pkg : openApiConfiguration.getResourcePackages()) {
                 if (!isIgnored(pkg)) {
                     acceptablePackages.add(pkg);
-                    config.addUrls(ClasspathHelper.forPackage(pkg));
+                    graph.whitelistPackages(pkg);
                 }
             }
         } else {
             allowAllPackages = true;
         }
 
-        config.setScanners(new ResourcesScanner(), new TypeAnnotationsScanner(), new SubTypesScanner());
-
-        final Reflections reflections = new Reflections(config);
         // this is generic, specific Jaxrs scanner will also look for @Path
-        Set<Class<?>> classes = reflections.getTypesAnnotatedWith(OpenAPIDefinition.class);
+        final Set<Class<?>> classes;
+        try (ScanResult scanResult = graph.scan()) {
+            classes = new HashSet<>(scanResult.getClassesWithAnnotation(OpenAPIDefinition.class.getName()).loadClasses());
+        }
+
 
         for (Class<?> cls : classes) {
             if (allowAllPackages) {

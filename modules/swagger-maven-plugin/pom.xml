@@ -91,6 +91,12 @@
             <artifactId>plexus-component-annotations</artifactId>
             <version>1.5.5</version>
         </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>23.0</version>
+            <scope>test</scope>
+        </dependency>
         <!-- Required to avoid
              java.lang.ClassNotFoundException: org.apache.maven.execution.MavenExecutionResult
             when mvn test is run.
