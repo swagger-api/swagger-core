@@ -14,8 +14,8 @@
 	<name>swagger-integration</name>
 	<dependencies>
 		<dependency>
-			<groupId>org.reflections</groupId>
-			<artifactId>reflections</artifactId>
+			<groupId>io.github.classgraph</groupId>
+			<artifactId>classgraph</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>javax.ws.rs</groupId>
