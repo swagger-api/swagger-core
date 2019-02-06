@@ -1,6 +1,8 @@
 package io.swagger.v3.core.util;
 
 import com.google.common.collect.ImmutableMap;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.media.Schema;
 import org.testng.Assert;
@@ -9,12 +11,14 @@ import org.testng.annotations.Test;
 
 import java.io.File;
 import java.io.Serializable;
+import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.URI;
 import java.net.URL;
 import java.util.Date;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 public class AnnotationsUtilsTest {
@@ -51,6 +55,44 @@ public class AnnotationsUtilsTest {
         Assert.assertEquals(schema.getType(), expected.get("type"));
         Assert.assertEquals(schema.getFormat(), expected.get("format"));
         Assert.assertEquals(schema.get$ref(), expected.get("$ref"));
+    }
+
+    @DataProvider
+    private Object[][] expectedSchemaFromTypeAndFormat() {
+        return new Object[][]{
+                {"byteType", ImmutableMap.of("type", "string", "format", "byte")},
+                {"binaryType", ImmutableMap.of("type", "string", "format", "binary")},
+                {"emailType", ImmutableMap.of("type", "string", "format", "email")},
+                {"dummyType", ImmutableMap.of("$ref", "#/components/schemas/DummyClass")}
+        };
+    }
+
+    @Test(dataProvider = "expectedSchemaFromTypeAndFormat")
+    public void getSchema(String methodName, Map<String, Object> expected) throws NoSuchMethodException {
+        final Method method = getClass().getDeclaredMethod(methodName);
+        Content annotationContent = method.getAnnotation(ApiResponse.class).content()[0];
+        Optional<? extends Schema> schema = AnnotationsUtils.getSchema(annotationContent, new Components(), null);
+
+        Assert.assertTrue(schema.isPresent());
+        Assert.assertEquals(schema.get().getType(), expected.get("type"));
+        Assert.assertEquals(schema.get().getFormat(), expected.get("format"));
+        Assert.assertEquals(schema.get().get$ref(), expected.get("$ref"));
+    }
+
+    @ApiResponse(content = @Content(schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = Byte.class)))
+    private void byteType() {
+    }
+
+    @ApiResponse(content = @Content(schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = Byte.class, format = "binary")))
+    private void binaryType() {
+    }
+
+    @ApiResponse(content = @Content(schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = String.class, format = "email")))
+    private void emailType() {
+    }
+
+    @ApiResponse(content = @Content(schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = DummyClass.class)))
+    private void dummyType() {
     }
 
     class DummyClass implements Serializable {}
