@@ -1124,6 +1124,9 @@ public abstract class AnnotationsUtils {
                                                        JsonView jsonViewAnnotation) {
         if (schemaImplementation != Void.class) {
             Schema schemaObject = resolveSchemaFromType(schemaImplementation, components, jsonViewAnnotation);
+            if (StringUtils.isNotBlank(schemaAnnotation.format())) {
+               schemaObject.setFormat(schemaAnnotation.format());
+            }
             if (isArray) {
                 Optional<ArraySchema> arraySchema = AnnotationsUtils.getArraySchema(arrayAnnotation, components, jsonViewAnnotation);
                 if (arraySchema.isPresent()) {
