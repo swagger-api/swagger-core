@@ -1406,7 +1406,7 @@ public class Reader implements OpenApiReader {
             type = rawType;
         }
 
-        if (method.getAnnotation(javax.ws.rs.Path.class) != null) {
+        if (ReflectionUtils.getAnnotation(method, javax.ws.rs.Path.class) != null) {
             if (ReaderUtils.extractOperationMethod(method, null) == null) {
                 return type;
             }

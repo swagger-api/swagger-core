@@ -50,6 +50,7 @@ import io.swagger.v3.jaxrs2.resources.SubResourceHead;
 import io.swagger.v3.jaxrs2.resources.TagsResource;
 import io.swagger.v3.jaxrs2.resources.Test2607;
 import io.swagger.v3.jaxrs2.resources.TestResource;
+import io.swagger.v3.jaxrs2.resources.Ticket2116Resource;
 import io.swagger.v3.jaxrs2.resources.Ticket2644ConcreteImplementation;
 import io.swagger.v3.jaxrs2.resources.Ticket2763Resource;
 import io.swagger.v3.jaxrs2.resources.Ticket2793Resource;
@@ -843,6 +844,32 @@ public class ReaderTest {
     public void test2607() {
         Reader reader = new Reader(new OpenAPI());
         OpenAPI openAPI = reader.read(Test2607.class);
+
+        Paths paths = openAPI.getPaths();
+        assertEquals(paths.size(), 2);
+        PathItem pathItem = paths.get("/swaggertest/name");
+        assertNotNull(pathItem);
+        Operation operation = pathItem.getGet();
+        assertNotNull(operation);
+        assertTrue(operation.getResponses().getDefault().getContent().keySet().contains("text/plain"));
+        Schema schema = operation.getResponses().getDefault().getContent().values().iterator().next().getSchema();
+        assertNotNull(schema);
+        assertEquals(schema.getType(), "string");
+
+        pathItem = paths.get("/swaggertest/subresource/version");
+        assertNotNull(pathItem);
+        operation = pathItem.getGet();
+        assertNotNull(operation);
+        assertTrue(operation.getResponses().getDefault().getContent().keySet().contains("text/plain"));
+        schema = operation.getResponses().getDefault().getContent().values().iterator().next().getSchema();
+        assertNotNull(schema);
+        assertEquals(schema.getType(), "string");
+    }
+
+    @Test(description = "test ticket #2116 resource with interface subresource")
+    public void test2116() {
+        Reader reader = new Reader(new OpenAPI());
+        OpenAPI openAPI = reader.read(Ticket2116Resource.class);
 
         Paths paths = openAPI.getPaths();
         assertEquals(paths.size(), 2);
