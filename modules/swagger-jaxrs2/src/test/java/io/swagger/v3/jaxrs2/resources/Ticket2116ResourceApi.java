@@ -5,6 +5,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.info.Info;
@@ -23,5 +24,10 @@ public interface Ticket2116ResourceApi {
     @Path("subresource")
     @Operation
     Ticket2116SubResourceApi getSubResource();
+
+    @Hidden
+    @Path("hidden-subresource")
+    @Operation
+    Ticket2116SubResourceApi getAnotherSubResource();
 
 }

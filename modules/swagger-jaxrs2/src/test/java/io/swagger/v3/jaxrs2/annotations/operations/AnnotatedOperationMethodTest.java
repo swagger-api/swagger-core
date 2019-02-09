@@ -7,6 +7,8 @@ import io.swagger.v3.jaxrs2.resources.HiddenUserResource;
 import io.swagger.v3.jaxrs2.resources.PetResource;
 import io.swagger.v3.jaxrs2.resources.PetResourceSlashesinPath;
 import io.swagger.v3.jaxrs2.resources.SimpleUserResource;
+import io.swagger.v3.jaxrs2.resources.Ticket2116Resource;
+import io.swagger.v3.jaxrs2.resources.Ticket2116SubResource;
 import io.swagger.v3.jaxrs2.resources.UserResource;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -1052,6 +1054,42 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
                 "        foo:\n" +
                 "          type: string");
 
+    }
+
+    @Test(description = "reads and skips the hidden sub resource")
+    public void testHiddenSubResource() {
+        String openApiYAML = readIntoYaml(Ticket2116SubResource.class);
+        assertEquals(openApiYAML, "openapi: 3.0.1\n");
+    }
+
+    @Test(description = "reads resource but does not skip the hidden sub resource")
+    public void testReadResourceWithHiddenSubResource() throws IOException {
+        compareAsYaml(Ticket2116Resource.class, "openapi: 3.0.1\n" +
+                "info:\n" +
+                "  title: TEST\n" +
+                "  description: Test API\n" +
+                "  version: \"0.0\"\n" +
+                "paths:\n" +
+                "  /swaggertest/name:\n" +
+                "    get:\n" +
+                "      operationId: getName\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            text/plain:\n" +
+                "              schema:\n" +
+                "                type: string\n" +
+                "  /swaggertest/subresource/version:\n" +
+                "    get:\n" +
+                "      operationId: getSubResourceVersion\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            text/plain:\n" +
+                "              schema:\n" +
+                "                type: string");
     }
 
     @Test

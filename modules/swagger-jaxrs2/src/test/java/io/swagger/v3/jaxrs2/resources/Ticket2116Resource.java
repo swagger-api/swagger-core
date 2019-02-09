@@ -12,4 +12,9 @@ public class Ticket2116Resource implements Ticket2116ResourceApi {
         return new Ticket2116SubResource();
     }
 
+    @Override
+    public Ticket2116SubResourceApi getAnotherSubResource() {
+        return new Ticket2116SubResource();
+    }
+
 }
