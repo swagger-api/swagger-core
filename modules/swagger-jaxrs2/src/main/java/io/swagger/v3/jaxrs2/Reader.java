@@ -1372,14 +1372,13 @@ public class Reader implements OpenApiReader {
         } else if (StringUtils.isBlank(path) && StringUtils.isNotBlank(parentPath)) {
             return false;
         }
-        if (parentPath != null && !"".equals(parentPath) && !"/".equals(parentPath)) {
-            if (!parentPath.startsWith("/")) {
-                parentPath = "/" + parentPath;
-            }
-            if (parentPath.endsWith("/")) {
-                parentPath = parentPath.substring(0, parentPath.length() - 1);
-            }
-        }
+        final String parentOperationPath = toOperationPath(parentPath);
+        final String operationPath = toOperationPath(path);
+
+        return parentOperationPath.equals(operationPath);
+    }
+
+    private String toOperationPath(String path) {
         if (path != null && !"".equals(path) && !"/".equals(path)) {
             if (!path.startsWith("/")) {
                 path = "/" + path;
@@ -1388,10 +1387,7 @@ public class Reader implements OpenApiReader {
                 path = path.substring(0, path.length() - 1);
             }
         }
-        if (path.equals(parentPath)) {
-            return true;
-        }
-        return false;
+        return path;
     }
 
     protected Class<?> getSubResourceWithJaxRsSubresourceLocatorSpecs(Method method) {
