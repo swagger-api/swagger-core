@@ -486,6 +486,12 @@
                 <artifactId>javax.ws.rs-api</artifactId>
                 <version>${javax.ws-version}</version>
             </dependency>
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>${guava-version}</version>
+                <scope>test</scope>
+            </dependency>
         </dependencies>
     </dependencyManagement>
     <properties>
@@ -499,7 +505,7 @@
         <jackson-version>2.9.8</jackson-version>
         <logback-version>1.2.3</logback-version>
         <classgraph-version>4.6.32</classgraph-version>
-        <guava-version>23.0</guava-version>
+        <guava-version>27.0.1-jre</guava-version>
         <commons-lang-version>3.7</commons-lang-version>
         <commons-io-version>2.6</commons-io-version>
         <slf4j-version>1.7.25</slf4j-version>
