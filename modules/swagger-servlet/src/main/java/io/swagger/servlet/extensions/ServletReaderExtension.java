@@ -300,24 +300,24 @@ public class ServletReaderExtension implements ReaderExtension {
         final List<String> tags = new ArrayList<>();
 
         final Api apiAnnotation = context.getCls().getAnnotation(Api.class);
+        Predicate predicate = new Predicate<String>() {
+            @Override
+            public boolean apply(String input) {
+                return StringUtils.isNotBlank(input);
+            }
+
+            public boolean test(String input) {
+                return apply(input);
+            }
+        };
         if (apiAnnotation != null) {
-            tags.addAll(Collections2.filter(Arrays.asList(apiAnnotation.tags()), new Predicate<String>() {
-                @Override
-                public boolean apply(String input) {
-                    return StringUtils.isNotBlank(input);
-                }
-            }));
+            tags.addAll(Collections2.filter(Arrays.asList(apiAnnotation.tags()), predicate));
         }
         tags.addAll(context.getParentTags());
 
         final ApiOperation apiOperation = ReflectionUtils.getAnnotation(method, ApiOperation.class);
         if (apiOperation != null) {
-            tags.addAll(Collections2.filter(Arrays.asList(apiOperation.tags()), new Predicate<String>() {
-                @Override
-                public boolean apply(String input) {
-                    return StringUtils.isNotBlank(input);
-                }
-            }));
+            tags.addAll(Collections2.filter(Arrays.asList(apiOperation.tags()), predicate));
         }
 
         for (String tag : tags) {
