@@ -212,7 +212,7 @@ public enum PrimitiveType {
         dms.put("string_date-time", "date-time");
         dms.put("string_partial-time", "partial-time");
         dms.put("string_password", "password");
-        dms.put("boolean", "boolean");
+        dms.put("boolean_", "boolean");
         dms.put("object_", "object");
         datatypeMappings = Collections.unmodifiableMap(dms);
 
