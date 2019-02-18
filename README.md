@@ -33,11 +33,13 @@ The OpenAPI Specification has undergone several revisions since initial creation
 
 Swagger core Version      | Release Date | OpenAPI Spec compatibility | Notes | Status
 ------------------------- | ------------ | -------------------------- | ----- | ----
-2.0.6 (**current stable**)| 2018-11-27   | 3.0           | [tag v2.0.6](https://github.com/swagger-api/swagger-core/tree/v2.0.6) | Supported
+2.0.7 (**current stable**)| 2019-02-18   | 3.0           | [tag v2.0.7](https://github.com/swagger-api/swagger-core/tree/v2.0.7) | Supported
+2.0.6                     | 2018-11-27   | 3.0           | [tag v2.0.6](https://github.com/swagger-api/swagger-core/tree/v2.0.6) | Supported
 2.0.5                     | 2018-09-19   | 3.0           | [tag v2.0.5](https://github.com/swagger-api/swagger-core/tree/v2.0.5) | Supported
 2.0.4                     | 2018-09-05   | 3.0           | [tag v2.0.4](https://github.com/swagger-api/swagger-core/tree/v2.0.4) | Supported
 2.0.3                     | 2018-08-09   | 3.0           | [tag v2.0.3](https://github.com/swagger-api/swagger-core/tree/v2.0.3) | Supported
-1.5.21 (**current stable**)| 2018-08-09  | 2.0           | [tag v1.5.21](https://github.com/swagger-api/swagger-core/tree/v1.5.21) | Supported
+1.5.22 (**current stable**)| 2019-02-18  | 2.0           | [tag v1.5.22](https://github.com/swagger-api/swagger-core/tree/v1.5.22) | Supported
+1.5.21                    | 2018-08-09  | 2.0           | [tag v1.5.21](https://github.com/swagger-api/swagger-core/tree/v1.5.21) | Supported
 1.5.20                    | 2018-05-23  | 2.0           | [tag v1.5.20](https://github.com/swagger-api/swagger-core/tree/v1.5.20) | Supported
 2.0.2                     | 2018-05-23   | 3.0           | [tag v2.0.2](https://github.com/swagger-api/swagger-core/tree/v2.0.2) | Supported
 2.0.1                     | 2018-04-16   | 3.0           | [tag v2.0.1](https://github.com/swagger-api/swagger-core/tree/v2.0.1) | Supported
@@ -76,7 +78,7 @@ You need the following installed and available in your $PATH:
 * Apache maven 3.0.4 or greater (http://maven.apache.org/)
 
 
-### To build from source (currently 1.5.22-SNAPSHOT)
+### To build from source (currently 1.5.23-SNAPSHOT)
 ```
 # first time building locally
 mvn -N
