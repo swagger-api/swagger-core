@@ -6,7 +6,7 @@ plugins {
     id 'java-gradle-plugin'
     id 'net.researchgate.release' version '2.6.0'
     // Publishing publicly
-    id 'com.gradle.plugin-publish' version '0.10.0'
+    id 'com.gradle.plugin-publish' version '0.10.1'
     // Publishing to maven
     id 'maven-publish'
 }
@@ -24,7 +24,7 @@ repositories {
 dependencies {
     compile     gradleApi()
     compile group: 'org.apache.commons', name: 'commons-lang3', version:'3.7'
-    compile group: 'io.swagger.core.v3', name: 'swagger-jaxrs2', version:'2.0.7'
+    compile group: 'io.swagger.core.v3', name: 'swagger-jaxrs2', version:'2.0.8-SNAPSHOT'
     compile group: 'javax.ws.rs', name: 'javax.ws.rs-api', version:'2.1'
     compile group: 'javax.servlet', name: 'javax.servlet-api', version:'3.1.0'
     testCompile group: 'com.github.tomakehurst', name: 'wiremock', version:'2.14.0'
@@ -43,7 +43,7 @@ project.group           = 'io.swagger.core.v3'
 
 project.ext.name        = 'swagger-gradle-plugin'
 project.ext.pluginId    = 'io.swagger.core.v3.swagger-gradle-plugin'
-project.ext.scm         = 'scm:git@github.com:swagger-api/swagger-core.git'
+project.ext.scm         = 'https://github.com/swagger-api/swagger-core.git'
 project.ext.url         = 'https://github.com/swagger-api/swagger-core/tree/master/modules/swagger-gradle-plugin'
 
 // Configuration for: java-gradle-plugin
