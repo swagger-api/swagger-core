@@ -32,6 +32,11 @@
                 <artifactId>maven-bundle-plugin</artifactId>
                 <version>${felix-version}</version>
                 <extensions>true</extensions>
+                <configuration>
+                    <instructions>
+                        <Automatic-Module-Name>io.swagger.v3.core</Automatic-Module-Name>
+                    </instructions>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
