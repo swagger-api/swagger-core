@@ -41,6 +41,7 @@
                             io.swagger.v3.oas.models.servers,
                             io.swagger.v3.oas.models.tags
                         </Export-Package>
+                        <Automatic-Module-Name>io.swagger.v3.oas.models</Automatic-Module-Name>
                     </instructions>
                 </configuration>
             </plugin>

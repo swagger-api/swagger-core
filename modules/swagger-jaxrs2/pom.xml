@@ -40,6 +40,7 @@
                             javax.ws.rs*;version="2.0",
                             *
                         </Import-Package>
+                        <Automatic-Module-Name>io.swagger.v3.jaxrs2</Automatic-Module-Name>
                     </instructions>
                 </configuration>
             </plugin>
