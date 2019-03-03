@@ -374,12 +374,12 @@ public abstract class AnnotationsUtils {
                 });
             } // if present, schema implementation handled upstream
         }
-        ArraySchema resultArratSchemaObject = arraySchemaObject;
+        ArraySchema resultArraySchemaObject = arraySchemaObject;
         for (int i = 2; i <= arraySchema.dimension(); i++) {
-            resultArratSchemaObject = new ArraySchema().items(resultArratSchemaObject);
+            resultArraySchemaObject = new ArraySchema().items(resultArraySchemaObject);
         }
 
-        return Optional.of(resultArratSchemaObject);
+        return Optional.of(resultArraySchemaObject);
     }
 
     public static Optional<Schema> getSchemaFromAnnotation(io.swagger.v3.oas.annotations.media.Schema schema, JsonView jsonViewAnnotation) {
