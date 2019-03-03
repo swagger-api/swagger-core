@@ -374,8 +374,12 @@ public abstract class AnnotationsUtils {
                 });
             } // if present, schema implementation handled upstream
         }
+        ArraySchema resultArratSchemaObject = arraySchemaObject;
+        for (int i = 2; i <= arraySchema.dimension(); i++) {
+            resultArratSchemaObject = new ArraySchema().items(resultArratSchemaObject);
+        }
 
-        return Optional.of(arraySchemaObject);
+        return Optional.of(resultArratSchemaObject);
     }
 
     public static Optional<Schema> getSchemaFromAnnotation(io.swagger.v3.oas.annotations.media.Schema schema, JsonView jsonViewAnnotation) {
@@ -1110,7 +1114,14 @@ public abstract class AnnotationsUtils {
             if (isArray) {
                 Optional<ArraySchema> arraySchema = AnnotationsUtils.getArraySchema(arrayAnnotation, components, jsonViewAnnotation);
                 if (arraySchema.isPresent()) {
-                    arraySchema.get().setItems(schemaObject);
+                    ArraySchema lastLevelDimention = arraySchema.get();
+                    Schema<?> schema;
+                    while ((schema = lastLevelDimention.getItems()) != null) {
+                        if (!(schema instanceof ArraySchema))
+                            break;
+                        lastLevelDimention = (ArraySchema) schema;
+                    }
+                    lastLevelDimention.items(schemaObject);
                     return arraySchema;
                 } else {
                     return Optional.empty();
@@ -1773,6 +1784,15 @@ public abstract class AnnotationsUtils {
             }
 
             @Override
+            public int dimension() {
+                if (master.dimension() != 1 || patch.dimension() == 1) {
+                    return master.dimension();
+                }
+                return patch.dimension();
+
+            }
+
+            @Override
             public int maxItems() {
                 if (master.maxItems() != 0 || patch.maxItems() == 0) {
                     return master.maxItems();
@@ -1832,6 +1852,11 @@ public abstract class AnnotationsUtils {
             @Override
             public io.swagger.v3.oas.annotations.media.Schema arraySchema() {
                 return arraySchema.arraySchema();
+            }
+
+            @Override
+            public int dimension() {
+                return arraySchema.dimension();
             }
 
             @Override
