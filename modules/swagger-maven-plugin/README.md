@@ -56,6 +56,34 @@ to `swagger` [configuration property](https://github.com/swagger-api/swagger-cor
 </project>
 ```
 
+### Configuration example with provided Swagger configuration file
+ 
+ ``` 
+<project>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>io.swagger.core.v3</groupId>
+                <artifactId>swagger-maven-plugin</artifactId>
+                <version>2.0.8-SNAPSHOT</version>
+                <configuration>
+                    <outputFileName>openapi</outputFileName>
+                    <outputPath>${project.build.directory}/generatedtest</outputPath>
+                    <configurationFilePath>${project.basedir}/src/main/resources/configurationFile.yaml</configurationFilePath>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>resolve</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+    ...
+ ``` 
 
 #### Parameters
 Parameter | Description | Required | Default
@@ -69,6 +97,7 @@ Parameter | Description | Required | Default
 `resourceClasses`|see [configuration property](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)|false|
 `prettyPrint`|see [configuration property](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)|false|`TRUE`
 `openapiFilePath`|path to openapi file to be merged with resolved specification, see [config](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)|false|
+`configurationFilePath`|path to swagger config file to be merged with resolved specification, see [config](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration)|false|
 `filterClass`|see [configuration property](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)|false|
 `readerClass`|see [configuration property](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)|false|
 `scannerClass`|see [configuration property](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)|false|
@@ -80,3 +109,15 @@ Parameter | Description | Required | Default
 
 ***
 
+##### Cascading Configuration
+
+When providing both `openapiFilePath` and `configurationFilePath` and other maven configuration, this
+is the other in which the settings are applied (higher number is lower precedence - first 1 is applied, then 2 and so on):
+
+1. Swagger configuration file (_Swagger_ + _OpenAPI_)
+1. OpenAPI configuration file (_OpenAPI_)
+1. Maven configuration parameters (_Swagger_)
+1. Embedded annotations (_OpenAPI_)
+
+Note that some layers merge the OpenAPI model and some just overwrite it completely. This feature is not
+meant to merge different configs.
