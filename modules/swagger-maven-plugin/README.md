@@ -109,15 +109,4 @@ Parameter | Description | Required | Default
 
 ***
 
-##### Cascading Configuration
-
-When providing both `openapiFilePath` and `configurationFilePath` and other maven configuration, this
-is the other in which the settings are applied (higher number is lower precedence - first 1 is applied, then 2 and so on):
-
-1. Swagger configuration file (_Swagger_ + _OpenAPI_)
-1. OpenAPI configuration file (_OpenAPI_)
-1. Maven configuration parameters (_Swagger_)
-1. Embedded annotations (_OpenAPI_)
-
-Note that some layers merge the OpenAPI model and some just overwrite it completely. This feature is not
-meant to merge different configs.
+Since version 2.0.8, configurationFilePath parameter is available, allowing to specify a path to a [swagger configuration file](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration); If single maven configuration parameters (e.g. `prettyPrint`) are also defined, these will overwrite any value set in configuration file; the same applies to `openapiFilePath` which takes precedence over `openAPI` field in configuration file.
