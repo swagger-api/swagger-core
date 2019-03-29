@@ -635,7 +635,9 @@ public abstract class AnnotationsUtils {
                 serverVariableObject.setDefault(serverVariable.defaultValue());
             }
             if (serverVariable.allowableValues() != null && serverVariable.allowableValues().length > 0) {
-                serverVariableObject.setEnum(Arrays.asList(serverVariable.allowableValues()));
+                if (StringUtils.isNotBlank(serverVariable.allowableValues()[0])) {
+                    serverVariableObject.setEnum(Arrays.asList(serverVariable.allowableValues()));
+                }
             }
             if (serverVariable.extensions() != null && serverVariable.extensions().length > 0) {
                 Map<String, Object> extensions = AnnotationsUtils.getExtensions(serverVariable.extensions());

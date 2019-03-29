@@ -15,6 +15,7 @@ import org.testng.annotations.Test;
 import java.io.IOException;
 
 public class OpenApiDefinitionTest extends AbstractAnnotationTest {
+
     @Test
     public void testSimpleInfoGet() throws IOException {
 
@@ -98,6 +99,46 @@ public class OpenApiDefinitionTest extends AbstractAnnotationTest {
             }
     )
     static class ClassWithAnnotation {
+
+        public void foo() {
+        }
+
+    }
+
+    @Test
+    public void testServerVariableWithoutEnum() throws IOException {
+
+        String expectedYAML = "openapi: 3.0.1\n" +
+                "info:\n" +
+                "  title: My Rest API\n" +
+                "  description: My RESTful API implementation\n" +
+                "  version: 1.0.0\n" +
+                "servers:\n" +
+                "- url: /{context-path}/{rest-api}\n" +
+                "  description: My REST API\n" +
+                "  variables:\n" +
+                "    context-path:\n" +
+                "      default: my-war\n" +
+                "    rest-api:\n" +
+                "      enum:\n" +
+                "      - api\n" +
+                "      - rest\n" +
+                "      - batchapi\n" +
+                "      default: api\n";
+
+        compareAsYaml(OpenApiDefinitionTest.ServerVariableWithoutEnum.class, expectedYAML);
+    }
+
+    @OpenAPIDefinition(
+            info = @Info( title = "My Rest API", version = "1.0.0", description = "My RESTful API implementation" ),
+            servers = {
+                    @Server( description = "My REST API",
+                            url = "/{context-path}/{rest-api}",
+                            variables = {
+                            @ServerVariable(name = "context-path", defaultValue = "my-war"),
+                                    @ServerVariable(name = "rest-api", defaultValue = "api",
+                                            allowableValues = {"api", "rest", "batchapi"}) } ) } )
+    static class ServerVariableWithoutEnum {
 
         public void foo() {
         }
