@@ -1842,23 +1842,7 @@ public class ReaderTest {
         Reader reader = new Reader(new OpenAPI());
 
         OpenAPI openAPI = reader.read(Ticket3015Resource.class);
-        String yaml = "openapi: 3.0.1\n" +
-                "paths:\n" +
-                "  /test/test:\n" +
-                "    get:\n" +
-                "      operationId: schemaImpl\n" +
-                "      responses:\n" +
-                "        200:\n" +
-                "          description: OK\n" +
-                "          content:\n" +
-                "            '*/*':\n" +
-                "              schema:\n" +
-                "                type: string\n" +
-                "                format: uri\n" +
-                "        400:\n" +
-                "          description: Bad Request\n" +
-                "        500:\n" +
-                "          description: Internal Server Error\n";
+        String yaml = generateYaml();
         SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
         PrimitiveType.customExcludedClasses().add(URI.class.getName());
         openAPI = reader.read(Ticket3015Resource.class);
@@ -1916,6 +1900,27 @@ public class ReaderTest {
                 "          description: Internal Server Error\n";
         SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
         PrimitiveType.customExcludedClasses().remove(URI.class.getName());
+    }
+
+    private String generateYaml() {
+        String yaml = "openapi: 3.0.1\n" +
+                "paths:\n" +
+                "  /test/test:\n" +
+                "    get:\n" +
+                "      operationId: schemaImpl\n" +
+                "      responses:\n" +
+                "        200:\n" +
+                "          description: OK\n" +
+                "          content:\n" +
+                "            '*/*':\n" +
+                "              schema:\n" +
+                "                type: string\n" +
+                "                format: uri\n" +
+                "        400:\n" +
+                "          description: Bad Request\n" +
+                "        500:\n" +
+                "          description: Internal Server Error\n";
+        return yaml;
     }
 
 
