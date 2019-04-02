@@ -218,36 +218,8 @@ public class DefaultParameterExtension extends AbstractOpenAPIExtension {
                 }
 
                 // Re-process all Bean fields and let the default swagger-jaxrs/swagger-jersey-jaxrs processors do their thing
-                ResolvedParameter resolvedParameter = extensions.next().extractParameters(
-                        paramAnnotations,
-                        paramType,
-                        typesToSkip,
-                        components,
-                        classConsumes,
-                        methodConsumes,
-                        includeRequestBody,
-                        jsonViewAnnotation,
-                        extensions);
-
-                List<Parameter> extractedParameters =
-                        resolvedParameter.parameters;
-
-                for (Parameter p : extractedParameters) {
-                    Parameter processedParam = ParameterProcessor.applyAnnotations(
-                            p,
-                            paramType,
-                            paramAnnotations,
-                            components,
-                            classConsumes == null ? new String[0] : classConsumes.value(),
-                            methodConsumes == null ? new String[0] : methodConsumes.value(),
-                            jsonViewAnnotation);
-                    if (processedParam != null) {
-                        parameters.add(processedParam);
-                    }
-                }
-
-                List<Parameter> extractedFormParameters =
-                        resolvedParameter.formParameters;
+                List<Parameter> extractedFormParameters = generateExtractedFormParameters(extensions, paramAnnotations, paramType,
+                        typesToSkip, components, classConsumes, methodConsumes, includeRequestBody, jsonViewAnnotation, parameters);
 
                 for (Parameter p : extractedFormParameters) {
                     Parameter processedParam = ParameterProcessor.applyAnnotations(
@@ -267,6 +239,43 @@ public class DefaultParameterExtension extends AbstractOpenAPIExtension {
             }
         }
         return processed;
+    }
+
+    private List<Parameter> generateExtractedFormParameters(Iterator<OpenAPIExtension> extensions, List<Annotation> paramAnnotations,
+                                            Type paramType, Set<Type> typesToSkip, Components components,
+                                            javax.ws.rs.Consumes classConsumes, javax.ws.rs.Consumes methodConsumes,
+                                            boolean includeRequestBody, JsonView jsonViewAnnotation, List<Parameter> parameters) {
+        ResolvedParameter resolvedParameter = extensions.next().extractParameters(
+                paramAnnotations,
+                paramType,
+                typesToSkip,
+                components,
+                classConsumes,
+                methodConsumes,
+                includeRequestBody,
+                jsonViewAnnotation,
+                extensions);
+
+        List<Parameter> extractedParameters =
+                resolvedParameter.parameters;
+
+        for (Parameter p : extractedParameters) {
+            Parameter processedParam = ParameterProcessor.applyAnnotations(
+                    p,
+                    paramType,
+                    paramAnnotations,
+                    components,
+                    classConsumes == null ? new String[0] : classConsumes.value(),
+                    methodConsumes == null ? new String[0] : methodConsumes.value(),
+                    jsonViewAnnotation);
+            if (processedParam != null) {
+                parameters.add(processedParam);
+            }
+        }
+
+        List<Parameter> extractedFormParameters =
+                resolvedParameter.formParameters;
+        return extractedFormParameters;
     }
 
     @Override
