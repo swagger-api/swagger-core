@@ -293,27 +293,7 @@ public class ResolveTask extends DefaultTask {
         }
         LOGGER.info( "Resolving OpenAPI specification.." );
 
-        Set<URL> urls = StreamSupport.stream(getClasspath().spliterator(), false).map(f -> {
-            try {
-                return f.toURI().toURL();
-            }
-            catch (MalformedURLException e) {
-                throw new GradleException(
-                        String.format("Could not create classpath for annotations task %s.", getName()), e);
-            }
-        }).collect(Collectors.toSet());
-
-        Set<URL> buildUrls = StreamSupport.stream(getBuildClasspath().spliterator(), false).map(f -> {
-            try {
-                return f.toURI().toURL();
-            }
-            catch (MalformedURLException e) {
-                throw new GradleException(
-                        String.format("Could not create classpath for annotations task %s.", getName()), e);
-            }
-        }).collect(Collectors.toSet());
-
-        urls.addAll(buildUrls);
+        Set<URL> urls = generateUrls();
 
         //ClassLoader classLoader = new URLClassLoader(urls.toArray(new URL[urls.size()]), Thread.currentThread().getContextClassLoader());
         ClassLoader classLoader = new URLClassLoader(urls.toArray(new URL[urls.size()]));
@@ -405,5 +385,28 @@ public class ResolveTask extends DefaultTask {
         } catch (Exception e) {
             throw new GradleException(e.getMessage(), e);
         }
+    }
+    private Set<URL> generateUrls() {
+        Set<URL> urls = StreamSupport.stream(getClasspath().spliterator(), false).map(f -> {
+            try {
+                return f.toURI().toURL();
+            }
+            catch (MalformedURLException e) {
+                throw new GradleException(
+                        String.format("Could not create classpath for annotations task %s.", getName()), e);
+            }
+        }).collect(Collectors.toSet());
+
+        Set<URL> buildUrls = StreamSupport.stream(getBuildClasspath().spliterator(), false).map(f -> {
+            try {
+                return f.toURI().toURL();
+            }
+            catch (MalformedURLException e) {
+                throw new GradleException(
+                        String.format("Could not create classpath for annotations task %s.", getName()), e);
+            }
+        }).collect(Collectors.toSet());
+
+        urls.addAll(buildUrls);
     }
 }
