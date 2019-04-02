@@ -1212,7 +1212,6 @@ public class ReaderTest {
                 "      description: Defines a simple get operation with no inputs and a complex output\n" +
                 "        object\n" +
                 "      operationId: getWithPayloadResponse\n" +
-                "      parameters: []\n" +
                 "      responses:\n" +
                 "        200:\n" +
                 "          description: voila!\n" +
@@ -1372,7 +1371,6 @@ public class ReaderTest {
                 "      summary: Simple get operation\n" +
                 "      description: Defines a simple get operation with a payload complex input object\n" +
                 "      operationId: sendPayload\n" +
-                "      parameters: []\n" +
                 "      requestBody:\n" +
                 "        $ref: '#/components/requestBodies/User'\n" +
                 "      responses:\n" +
