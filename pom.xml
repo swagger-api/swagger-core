@@ -603,7 +603,7 @@
         <jackson-version>2.9.8</jackson-version>
         <logback-version>1.2.3</logback-version>
         <reflections-version>0.9.11</reflections-version>
-        <guava-version>27.0.1-android</guava-version>
+        <guava-version>27.0.1-jre</guava-version>
         <javassist-version>3.21.0-GA</javassist-version>
 
         <testng-version>6.14.3</testng-version>
