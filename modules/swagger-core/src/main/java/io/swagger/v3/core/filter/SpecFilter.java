@@ -55,8 +55,8 @@ public class SpecFilter {
         final Set<String> filteredTags = new HashSet<>();
 
         Paths clonedPaths = new Paths();
-        for (String resourcePath : openAPI.getPaths().keySet()) {
-            PathItem pathItem = openAPI.getPaths().get(resourcePath);
+        for (String resourcePath : filteredOpenAPI.getPaths().keySet()) {
+            PathItem pathItem = filteredOpenAPI.getPaths().get(resourcePath);
 
             PathItem filteredPathItem = filterPathItem(filter, pathItem, resourcePath, params, cookies, headers);
 
