@@ -45,10 +45,10 @@ public class SpecFilter {
         OpenAPI clone = new OpenAPI();
         clone.info(filteredOpenAPI.getInfo());
         clone.openapi(filteredOpenAPI.getOpenapi());
-        clone.setExtensions(openAPI.getExtensions());
-        clone.setExternalDocs(openAPI.getExternalDocs());
-        clone.setSecurity(openAPI.getSecurity());
-        clone.setServers(openAPI.getServers());
+        clone.setExtensions(filteredOpenAPI.getExtensions());
+        clone.setExternalDocs(filteredOpenAPI.getExternalDocs());
+        clone.setSecurity(filteredOpenAPI.getSecurity());
+        clone.setServers(filteredOpenAPI.getServers());
         clone.tags(filteredOpenAPI.getTags() == null ? null : new ArrayList<>(openAPI.getTags()));
 
         final Set<String> allowedTags = new HashSet<>();
