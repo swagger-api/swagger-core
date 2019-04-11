@@ -895,7 +895,7 @@ public abstract class AnnotationsUtils {
         }
 
         Header headerObject = new Header();
-        boolean isEmpty = true;
+        boolean isEmpty = !StringUtils.isNotBlank(header.name());
         if (StringUtils.isNotBlank(header.description())) {
             headerObject.setDescription(header.description());
             isEmpty = false;
