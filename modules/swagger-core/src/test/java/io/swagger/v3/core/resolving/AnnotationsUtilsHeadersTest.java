@@ -26,7 +26,9 @@ public class AnnotationsUtilsHeadersTest {
         return new Object[][]{
                 {"methodOne", Optional.empty()},
                 {"methodTwo", Optional.empty()},
-                {"methodThree", Optional.of(ImmutableMap.of(
+                {"methodThree", Optional.empty()},
+                {"methodFour", Optional.of(ImmutableMap.of(
+                        "", header().description("header"),
                         "header1", header(),
                         "header2", header().description("header 2"),
                         "header3", header().$ref("#/components/schemas/header3")
@@ -63,12 +65,22 @@ public class AnnotationsUtilsHeadersTest {
 
     @Operation(description = "method", responses = {
             @ApiResponse(headers = {
+                    @Header(name = "")
+            })
+    })
+    private void methodThree() {
+
+    }
+
+    @Operation(description = "method", responses = {
+            @ApiResponse(headers = {
+                    @Header(name = "", description = "header"),
                     @Header(name = "header1"),
                     @Header(name = "header2", description = "header 2"),
                     @Header(name = "header3", ref = "#/components/schemas/header3")
             })
     })
-    private void methodThree() {
+    private void methodFour() {
 
     }
 }
