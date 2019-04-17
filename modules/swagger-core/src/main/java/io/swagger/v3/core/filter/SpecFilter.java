@@ -55,50 +55,52 @@ public class SpecFilter {
         final Set<String> filteredTags = new HashSet<>();
 
         Paths clonedPaths = new Paths();
-        for (String resourcePath : filteredOpenAPI.getPaths().keySet()) {
-            PathItem pathItem = filteredOpenAPI.getPaths().get(resourcePath);
+        if (filteredOpenAPI.getPaths() != null) {
+            for (String resourcePath : filteredOpenAPI.getPaths().keySet()) {
+                PathItem pathItem = filteredOpenAPI.getPaths().get(resourcePath);
 
-            PathItem filteredPathItem = filterPathItem(filter, pathItem, resourcePath, params, cookies, headers);
+                PathItem filteredPathItem = filterPathItem(filter, pathItem, resourcePath, params, cookies, headers);
 
-            if (filteredPathItem != null) {
+                if (filteredPathItem != null) {
 
-                PathItem clonedPathItem = new PathItem();
-                clonedPathItem.set$ref(filteredPathItem.get$ref());
-                clonedPathItem.setDescription(filteredPathItem.getDescription());
-                clonedPathItem.setSummary(filteredPathItem.getSummary());
-                clonedPathItem.setExtensions(filteredPathItem.getExtensions());
-                clonedPathItem.setParameters(filteredPathItem.getParameters());
-                clonedPathItem.setServers(filteredPathItem.getServers());
+                    PathItem clonedPathItem = new PathItem();
+                    clonedPathItem.set$ref(filteredPathItem.get$ref());
+                    clonedPathItem.setDescription(filteredPathItem.getDescription());
+                    clonedPathItem.setSummary(filteredPathItem.getSummary());
+                    clonedPathItem.setExtensions(filteredPathItem.getExtensions());
+                    clonedPathItem.setParameters(filteredPathItem.getParameters());
+                    clonedPathItem.setServers(filteredPathItem.getServers());
 
-                Map<PathItem.HttpMethod, Operation> ops = filteredPathItem.readOperationsMap();
+                    Map<PathItem.HttpMethod, Operation> ops = filteredPathItem.readOperationsMap();
 
-                for (PathItem.HttpMethod key : ops.keySet()) {
-                    Operation op = ops.get(key);
-                    List<String> opTagsBeforeFilter = null;
-                    if (op.getTags() != null) {
-                        opTagsBeforeFilter = new ArrayList<>(op.getTags());
-                    } else {
-                        opTagsBeforeFilter = new ArrayList<>();
-                    }
-                    op = filterOperation(filter, op, resourcePath, key.toString(), params, cookies, headers);
-                    clonedPathItem.operation(key, op);
-                    if (op == null) {
-                        filteredTags.addAll(opTagsBeforeFilter);
-                    } else {
+                    for (PathItem.HttpMethod key : ops.keySet()) {
+                        Operation op = ops.get(key);
+                        List<String> opTagsBeforeFilter = null;
                         if (op.getTags() != null) {
-                            opTagsBeforeFilter.removeAll(op.getTags());
-                            allowedTags.addAll(op.getTags());
+                            opTagsBeforeFilter = new ArrayList<>(op.getTags());
+                        } else {
+                            opTagsBeforeFilter = new ArrayList<>();
                         }
-                        filteredTags.addAll(opTagsBeforeFilter);
-                    }
+                        op = filterOperation(filter, op, resourcePath, key.toString(), params, cookies, headers);
+                        clonedPathItem.operation(key, op);
+                        if (op == null) {
+                            filteredTags.addAll(opTagsBeforeFilter);
+                        } else {
+                            if (op.getTags() != null) {
+                                opTagsBeforeFilter.removeAll(op.getTags());
+                                allowedTags.addAll(op.getTags());
+                            }
+                            filteredTags.addAll(opTagsBeforeFilter);
+                        }
 
-                }
-                if (!clonedPathItem.readOperations().isEmpty()) {
-                    clonedPaths.addPathItem(resourcePath, clonedPathItem);
+                    }
+                    if (!clonedPathItem.readOperations().isEmpty()) {
+                        clonedPaths.addPathItem(resourcePath, clonedPathItem);
+                    }
                 }
             }
+            clone.paths(clonedPaths);
         }
-        clone.paths(clonedPaths);
 
         filteredTags.removeAll(allowedTags);
 
