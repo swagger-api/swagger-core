@@ -1,5 +1,7 @@
 package io.swagger.v3.plugin.maven;
 
+import io.swagger.v3.core.filter.OpenAPISpecFilter;
+import io.swagger.v3.core.filter.SpecFilter;
 import io.swagger.v3.core.util.Json;
 import io.swagger.v3.core.util.Yaml;
 import io.swagger.v3.jaxrs2.integration.JaxrsOpenApiContextBuilder;
@@ -79,6 +81,19 @@ public class SwaggerMojo extends AbstractMojo {
             OpenAPI openAPI = builder
                     .buildContext(true)
                     .read();
+
+            if (StringUtils.isNotBlank(filterClass)) {
+                try {
+                    OpenAPISpecFilter filterImpl = (OpenAPISpecFilter) this.getClass().getClassLoader().loadClass(filterClass).newInstance();
+                    SpecFilter f = new SpecFilter();
+                    openAPI = f.filter(openAPI, filterImpl, new HashMap<>(), new HashMap<>(),
+                            new HashMap<>());
+                } catch (Exception e) {
+                    getLog().error( "Error applying filter to API specification" , e);
+                    throw new MojoExecutionException("Error applying filter to API specification: " + e.getMessage(), e);
+                }
+            }
+
             String openapiJson = null;
             String openapiYaml = null;
             if (Format.JSON.equals(outputFormat) || Format.JSONANDYAML.equals(outputFormat)) {
