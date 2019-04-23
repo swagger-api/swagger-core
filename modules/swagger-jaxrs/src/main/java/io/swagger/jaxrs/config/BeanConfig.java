@@ -5,7 +5,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.servlet.ServletConfig;
-import javax.ws.rs.Path;
 
 import org.apache.commons.lang3.StringUtils;
 import org.reflections.Reflections;
@@ -14,6 +13,7 @@ import org.reflections.scanners.SubTypesScanner;
 import org.reflections.scanners.TypeAnnotationsScanner;
 import org.reflections.util.ClasspathHelper;
 import org.reflections.util.ConfigurationBuilder;
+import org.reflections.util.FilterBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -259,11 +259,13 @@ public class BeanConfig extends AbstractScanner implements Scanner, SwaggerConfi
 
         boolean allowAllPackages = false;
 
+        final FilterBuilder filter = new FilterBuilder();
         if (resourcePackage != null && !"".equals(resourcePackage)) {
             String[] parts = resourcePackage.split(",");
             for (String pkg : parts) {
                 if (!"".equals(pkg)) {
                     acceptablePackages.add(pkg);
+                    filter.includePackage(pkg);
                     config.addUrls(ClasspathHelper.forPackage(pkg));
                 }
             }
@@ -271,17 +273,18 @@ public class BeanConfig extends AbstractScanner implements Scanner, SwaggerConfi
             allowAllPackages = true;
         }
 
+        config.filterInputsBy(filter);
         config.setScanners(new ResourcesScanner(), new TypeAnnotationsScanner(), new SubTypesScanner());
 
         final Reflections reflections = new Reflections(config);
         Set<Class<?>> classes = reflections.getTypesAnnotatedWith(javax.ws.rs.Path.class);
         Set<Class<?>> typesAnnotatedWith = reflections.getTypesAnnotatedWith(SwaggerDefinition.class);
 				classes.addAll(typesAnnotatedWith);
-        
+
         /*
          * Find concrete types annotated with @Api, but with a supertype annotated with @Path.
          * This would handle split resources where the interface has jax-rs annotations
-         * and the implementing class has Swagger annotations 
+         * and the implementing class has Swagger annotations
          */
         for (Class<?> cls : reflections.getTypesAnnotatedWith(Api.class)) {
         	for (Class<?> intfc : TypeToken.of(cls).getTypes().interfaces().rawTypes()) {
@@ -292,7 +295,7 @@ public class BeanConfig extends AbstractScanner implements Scanner, SwaggerConfi
         		}
 					}
 				}
-        
+
         Set<Class<?>> output = new HashSet<Class<?>>();
         for (Class<?> cls : classes) {
             if (allowAllPackages) {
@@ -310,7 +313,7 @@ public class BeanConfig extends AbstractScanner implements Scanner, SwaggerConfi
         }
         return output;
     }
-       
+
     private void updateInfoFromConfig() {
         info = getSwagger().getInfo();
         if (info == null) {
