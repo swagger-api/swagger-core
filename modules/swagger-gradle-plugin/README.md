@@ -18,7 +18,7 @@ buildscript {
     }
   }
   dependencies {
-    classpath "gradle.plugin.io.swagger.core.v3.swagger-gradle-plugin:2.0.8-SNAPSHOT"
+    classpath "io.swagger.core.v3:swagger-gradle-plugin:2.0.8-SNAPSHOT"
   }
 }
 
