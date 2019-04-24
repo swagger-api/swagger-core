@@ -30,7 +30,7 @@ dependencies {
     testCompile 'commons-io:commons-io:2.6'
     testCompile 'javax.servlet:javax.servlet-api:3.1.0'
     testCompile 'javax.ws.rs:javax.ws.rs-api:2.1'
-    testCompile 'io.swagger.core.v3:swagger-jaxrs2:2.0.8'
+    testCompile "io.swagger.core.v3:swagger-jaxrs2:${project.version}"
     testCompile 'junit:junit:4+'
 }
 
