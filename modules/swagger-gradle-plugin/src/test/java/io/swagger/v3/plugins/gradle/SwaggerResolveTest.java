@@ -64,20 +64,14 @@ public class SwaggerResolveTest {
         String resolveTask = "resolve";
 
         String buildFileContent =
-                "buildscript {\n" +
-                        "        dependencies {\n" +
-                        "            classpath files(\"" + testProjectDir.getRoot().toString() + "/classes/java/test\")\n" +
-                        "        }\n" +
-                        "    }\n" +
                 "plugins {\n" +
-                "    id 'groovy'\n" +
                 "    id 'java'\n" +
                 "    id 'io.swagger.core.v3.swagger-gradle-plugin'\n" +
                 "}\n" +
                 "sourceSets {\n" +
                 "    test {\n" +
                 "        java {\n" +
-                "            srcDirs('" + new File("src/test/java").getAbsolutePath() + "')\n" +
+                "            srcDirs('" + toNormalizedPath(new File("src/test/java").getAbsolutePath()) + "')\n" +
                 "            exclude('**/*Test.java')\n" +
                 "        }\n" +
                 "    }\n" +
@@ -88,9 +82,7 @@ public class SwaggerResolveTest {
                 "    mavenCentral()\n" +
                 "}\n" +
                 "dependencies {  \n" +
-                //"    compile configurations.runtime\n" +
-                "    compile group: 'org.apache.commons', name: 'commons-lang3', version:'3.7'\n" +
-                "    compile group: 'io.swagger.core.v3', name: 'swagger-jaxrs2', version:'2.0.10-SNAPSHOT'\n" +
+                "    compile group: 'io.swagger.core.v3', name: 'swagger-jaxrs2', version:'2.0.8'\n" +
                 "    compile group: 'javax.ws.rs', name: 'javax.ws.rs-api', version:'2.1'\n" +
                 "    compile group: 'javax.servlet', name: 'javax.servlet-api', version:'3.1.0'\n" +
                 "    testCompile group: 'com.github.tomakehurst', name: 'wiremock', version:'2.14.0'\n" +
@@ -105,9 +97,9 @@ public class SwaggerResolveTest {
                 //"    classpath = compileTestJava.outputs.files\n" +
                 "    classpath = sourceSets.test.runtimeClasspath\n" +
                 "    resourcePackages = ['io.swagger.v3.plugins.gradle.petstore']\n" +
-                "    outputPath = \'" + outputDir + "\'\n" +
+                "    outputPath = \'" + toNormalizedPath(outputDir) + "\'\n" +
                 "    filterClass = \'io.swagger.v3.plugins.gradle.resources.MyFilter\'\n" +
-                "    openApiFile = file(\'" + openapiInputFile.getAbsolutePath() + "\')\n" +
+                "    openApiFile = file(\'" + toNormalizedPath(openapiInputFile.getAbsolutePath()) + "\')\n" +
                 "}";
 
 
@@ -128,8 +120,8 @@ public class SwaggerResolveTest {
                 .withPluginClasspath()
                 .withProjectDir(testProjectDir.getRoot())
                 .withDebug(true)
-                //.withArguments("build", "--stacktrace", "--info")
-                .withArguments(resolveTask, "--stacktrace")
+                .withArguments(resolveTask, "--stacktrace", "--info")
+                .forwardOutput()
                 .build();
 
         assertThat(result.taskPaths(SUCCESS), hasItem(format(":%s", resolveTask)));
@@ -137,15 +129,13 @@ public class SwaggerResolveTest {
         assertThat(new String(Files.readAllBytes(Paths.get(outputDir, "PetStoreAPI.json")), StandardCharsets.UTF_8), containsString("UPDATEDBYFILTER"));
     }
 
-    private void writeFile(File destination, String content) throws IOException {
-        BufferedWriter output = null;
-        try {
-            output = new BufferedWriter(new FileWriter(destination));
+    private static void writeFile(File destination, String content) throws IOException {
+        try (BufferedWriter output = new BufferedWriter(new FileWriter(destination))) {
             output.write(content);
-        } finally {
-            if (output != null) {
-                output.close();
-            }
         }
+    }
+
+    private static String toNormalizedPath(String path) {
+        return path.replace("\\", "/"); // necessary on windows
     }
 }
