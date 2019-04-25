@@ -1,5 +1,17 @@
 package io.swagger.v3.plugins.gradle;
 
+import static java.lang.String.format;
+import static org.gradle.testkit.runner.TaskOutcome.SUCCESS;
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.hasItem;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
+
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+
 import org.apache.commons.io.FileUtils;
 import org.gradle.testkit.runner.BuildResult;
 import org.gradle.testkit.runner.GradleRunner;
@@ -7,15 +19,6 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-
-import static junit.framework.TestCase.assertTrue;
-import static org.gradle.testkit.runner.TaskOutcome.SUCCESS;
-import static org.junit.Assert.assertEquals;
 
 public class SwaggerResolveTest {
 
@@ -126,9 +129,9 @@ public class SwaggerResolveTest {
                 .withArguments(resolveTask, "--stacktrace")
                 .build();
 
-        assertEquals(SUCCESS, result.task(":" + resolveTask).getOutcome());
-        assertTrue(new File(outputDir + "/PetStoreAPI.json").exists());
-        assertTrue(FileUtils.readFileToString(new File(outputDir + "/PetStoreAPI.json")).contains("UPDATEDBYFILTER"));
+        assertThat(result.taskPaths(SUCCESS), hasItem(format(":%s", resolveTask)));
+        assertThat(new File(outputDir + "/PetStoreAPI.json").exists(), is(true));
+        assertThat(FileUtils.readFileToString(new File(outputDir + "/PetStoreAPI.json")), containsString("UPDATEDBYFILTER"));
     }
 
     private void writeFile(File destination, String content) throws IOException {
