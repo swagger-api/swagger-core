@@ -107,8 +107,16 @@ public class ParameterProcessor {
                 }
 
                 Map<String, Example> exampleMap = new HashMap<>();
-                for (ExampleObject exampleObject : p.examples()) {
-                    AnnotationsUtils.getExample(exampleObject).ifPresent(example -> exampleMap.put(exampleObject.name(), example));
+                final Object exampleValue;
+                if (p.examples().length == 1 && StringUtils.isBlank(p.examples()[0].name())) {
+                    Optional<Example> exampleOptional = AnnotationsUtils.getExample(p.examples()[0], true);
+                    if (exampleOptional.isPresent()) {
+                        parameter.setExample(exampleOptional.get());
+                    }
+                } else {
+                    for (ExampleObject exampleObject : p.examples()) {
+                        AnnotationsUtils.getExample(exampleObject).ifPresent(example -> exampleMap.put(exampleObject.name(), example));
+                    }
                 }
                 if (exampleMap.size() > 0) {
                     parameter.setExamples(exampleMap);

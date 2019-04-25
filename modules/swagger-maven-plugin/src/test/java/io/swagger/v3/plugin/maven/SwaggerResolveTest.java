@@ -14,6 +14,11 @@ public class SwaggerResolveTest extends ASwaggerMavenIntegrationTest {
         checkOutput(runTest(pom));
     }
 
+    public void testResolveWithFilter() throws Exception {
+        File pom = getTestFile("src/test/resources/pom.resolveToFileWithFilter.xml");
+        checkOutput(runTest(pom));
+    }
+
     public void testResolveNoName() throws Exception {
         File pom = getTestFile("src/test/resources/pom.resolveToFileNoName.xml");
         checkOutput(runTest(pom));
