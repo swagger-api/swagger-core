@@ -77,7 +77,8 @@ public class SwaggerResolveTest {
                 "sourceSets {\n" +
                 "    test {\n" +
                 "        java {\n" +
-                "            srcDirs = ['" + new File("src/test/javatest").getAbsolutePath() + "']\n" +
+                "            srcDirs('" + new File("src/test/java").getAbsolutePath() + "')\n" +
+                "            exclude('**/*Test.java')\n" +
                 "        }\n" +
                 "    }\n" +
                 "}\n" +
