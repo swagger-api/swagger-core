@@ -11,8 +11,10 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
-import org.apache.commons.io.FileUtils;
 import org.gradle.testkit.runner.BuildResult;
 import org.gradle.testkit.runner.GradleRunner;
 import org.junit.Before;
@@ -131,7 +133,7 @@ public class SwaggerResolveTest {
 
         assertThat(result.taskPaths(SUCCESS), hasItem(format(":%s", resolveTask)));
         assertThat(new File(outputDir + "/PetStoreAPI.json").exists(), is(true));
-        assertThat(FileUtils.readFileToString(new File(outputDir + "/PetStoreAPI.json")), containsString("UPDATEDBYFILTER"));
+        assertThat(new String(Files.readAllBytes(Paths.get(outputDir, "PetStoreAPI.json")), StandardCharsets.UTF_8), containsString("UPDATEDBYFILTER"));
     }
 
     private void writeFile(File destination, String content) throws IOException {
