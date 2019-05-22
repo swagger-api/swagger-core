@@ -10,7 +10,6 @@ import io.swagger.jaxrs.config.JaxrsScanner;
 import io.swagger.jaxrs.config.ReaderConfigUtils;
 import io.swagger.jaxrs.config.SwaggerContextService;
 import io.swagger.models.Swagger;
-import io.swagger.util.Yaml;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -101,8 +100,9 @@ public abstract class BaseApiListingResource {
             .withServletConfig(sc)
             .withBasePath(getBasePath(uriInfo));
         
-        Swagger swagger = ctxService.getSwagger();
+        Swagger swagger;
         synchronized (ApiListingResource.class) {
+            swagger = ctxService.getSwagger();
             if (SwaggerContextService.isScannerIdInitParamDefined(sc)) {
                 if (!initializedScanner.containsKey(sc.getServletName() + "_" + SwaggerContextService.getScannerIdFromInitParam(sc))) {
                     swagger = scan(app, servletContext, sc, uriInfo);
