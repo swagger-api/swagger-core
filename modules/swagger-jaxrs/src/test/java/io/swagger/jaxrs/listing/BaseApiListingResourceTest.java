@@ -16,6 +16,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
+import io.swagger.functional.test.resources.CarResource;
 import io.swagger.models.Swagger;
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -37,7 +38,7 @@ public class BaseApiListingResourceTest {
         final UriInfo uriInfo = mock(UriInfo.class);
         final URI uri = URI.create("testUrl");
 
-        given(app.getClasses()).willReturn(new HashSet<Class<?>>(Arrays.asList(ConcurrentProcessSampleResource.class)));
+        given(app.getClasses()).willReturn(new HashSet<Class<?>>(Arrays.asList(CarResource.class)));
         given(servletConfig.getServletContext()).willReturn(servletContext);
         given(uriInfo.getBaseUri()).willReturn(uri);
 
