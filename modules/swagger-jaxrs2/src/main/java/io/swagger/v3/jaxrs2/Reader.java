@@ -835,7 +835,7 @@ public class Reader implements OpenApiReader {
                 annotatedMethod);
     }
 
-    private Operation parseMethod(
+    protected Operation parseMethod(
             Class<?> cls,
             Method method,
             List<Parameter> globalParameters,
