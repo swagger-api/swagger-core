@@ -1148,7 +1148,7 @@ public abstract class AnnotationsUtils {
         } else {
             Optional<Schema> schemaFromAnnotation = AnnotationsUtils.getSchemaFromAnnotation(schemaAnnotation, components, jsonViewAnnotation);
             if (schemaFromAnnotation.isPresent()) {
-                if (StringUtils.isBlank(schemaFromAnnotation.get().get$ref()) && StringUtils.isBlank(schemaFromAnnotation.get().getType())) {
+                if (StringUtils.isBlank(schemaFromAnnotation.get().get$ref()) && StringUtils.isBlank(schemaFromAnnotation.get().getType()) && !(schemaFromAnnotation.get() instanceof ComposedSchema)) {
                     // default to string
                     schemaFromAnnotation.get().setType("string");
                 }
