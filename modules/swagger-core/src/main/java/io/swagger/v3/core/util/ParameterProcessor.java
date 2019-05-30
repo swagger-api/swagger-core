@@ -19,14 +19,12 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 public class ParameterProcessor {
     static Logger LOGGER = LoggerFactory.getLogger(ParameterProcessor.class);
+
+    private static List<String> NOT_NULL_ANNOTATIONS = Arrays.asList("NotNull", "NonNull", "NotBlank", "NotEmpty");
 
     public static Parameter applyAnnotations(
             Parameter parameter,
@@ -167,11 +165,7 @@ public class ParameterProcessor {
                 } catch (Exception e) {
                     LOGGER.error("failed on " + annotation.annotationType().getName(), e);
                 }
-            } else if (
-                        annotation.annotationType().getName().equals("javax.validation.constraints.NotNull") ||
-                        annotation.annotationType().getName().equals("javax.validation.constraints.NotBlank") ||
-                        annotation.annotationType().getName().equals("javax.validation.constraints.NotEmpty")
-                    ) {
+            } else if (NOT_NULL_ANNOTATIONS.contains(annotation.annotationType().getSimpleName())) {
                 parameter.setRequired(true);
             } else if (annotation.annotationType().getName().equals("javax.ws.rs.FormParam")) {
                 try {
