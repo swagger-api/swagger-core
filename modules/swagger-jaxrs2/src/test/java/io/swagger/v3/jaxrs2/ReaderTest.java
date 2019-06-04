@@ -12,6 +12,7 @@ import io.swagger.v3.core.jackson.ModelResolver;
 import io.swagger.v3.core.model.ApiDescription;
 import io.swagger.v3.core.util.PrimitiveType;
 import io.swagger.v3.jaxrs2.matchers.SerializationMatchers;
+import io.swagger.v3.jaxrs2.resources.SingleExampleResource;
 import io.swagger.v3.jaxrs2.resources.BasicFieldsResource;
 import io.swagger.v3.jaxrs2.resources.BookStoreTicket2646;
 import io.swagger.v3.jaxrs2.resources.ClassPathParentResource;
@@ -419,7 +420,6 @@ public class ReaderTest {
                 "          content:\n" +
                 "            application/json:\n" +
                 "              schema:\n" +
-                "                type: string\n" +
                 "                allOf:\n" +
                 "                - $ref: '#/components/schemas/MultipleSub1Bean'\n" +
                 "                - $ref: '#/components/schemas/MultipleSub2Bean'\n" +
@@ -442,7 +442,6 @@ public class ReaderTest {
                 "          content:\n" +
                 "            application/json:\n" +
                 "              schema:\n" +
-                "                type: string\n" +
                 "                anyOf:\n" +
                 "                - $ref: '#/components/schemas/MultipleSub1Bean'\n" +
                 "                - $ref: '#/components/schemas/MultipleSub2Bean'\n" +
@@ -465,7 +464,6 @@ public class ReaderTest {
                 "          content:\n" +
                 "            application/json:\n" +
                 "              schema:\n" +
-                "                type: string\n" +
                 "                oneOf:\n" +
                 "                - $ref: '#/components/schemas/MultipleSub1Bean'\n" +
                 "                - $ref: '#/components/schemas/MultipleSub2Bean'\n" +
@@ -2018,4 +2016,75 @@ public class ReaderTest {
         oasResult = reader.read(RefParameter3074Resource.class);
         SerializationMatchers.assertEqualsToYaml(oasResult, RefParameter3074Resource.EXPECTED_YAML_WITHOUT_WRAPPER);
     }
+
+
+    @Test(description = "Single Example")
+    public void testSingleExample() {
+
+        Reader reader = new Reader(new OpenAPI());
+        OpenAPI openAPI = reader.read(SingleExampleResource.class);
+
+        String yaml = "openapi: 3.0.1\n" +
+                "paths:\n" +
+                "  /test1:\n" +
+                "    post:\n" +
+                "      operationId: test1\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          application/json:\n" +
+                "            schema:\n" +
+                "              $ref: '#/components/schemas/User'\n" +
+                "            example:\n" +
+                "              foo: foo\n" +
+                "              bar: bar\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*': {}\n" +
+                "  /test2:\n" +
+                "    post:\n" +
+                "      operationId: test2\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          application/json:\n" +
+                "            schema:\n" +
+                "              $ref: '#/components/schemas/User'\n" +
+                "            example:\n" +
+                "              foo: foo\n" +
+                "              bar: bar\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*': {}\n" +
+                "components:\n" +
+                "  schemas:\n" +
+                "    User:\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        id:\n" +
+                "          type: integer\n" +
+                "          format: int64\n" +
+                "        username:\n" +
+                "          type: string\n" +
+                "        firstName:\n" +
+                "          type: string\n" +
+                "        lastName:\n" +
+                "          type: string\n" +
+                "        email:\n" +
+                "          type: string\n" +
+                "        password:\n" +
+                "          type: string\n" +
+                "        phone:\n" +
+                "          type: string\n" +
+                "        userStatus:\n" +
+                "          type: integer\n" +
+                "          description: User Status\n" +
+                "          format: int32\n" +
+                "      xml:\n" +
+                "        name: User\n";
+        SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
+    }
+
 }

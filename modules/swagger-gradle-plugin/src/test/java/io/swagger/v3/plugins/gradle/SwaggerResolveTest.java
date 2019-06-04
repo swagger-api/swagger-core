@@ -1,5 +1,6 @@
 package io.swagger.v3.plugins.gradle;
 
+import org.apache.commons.io.FileUtils;
 import org.gradle.testkit.runner.BuildResult;
 import org.gradle.testkit.runner.GradleRunner;
 import org.junit.Before;
@@ -54,7 +55,7 @@ public class SwaggerResolveTest {
     public void testSwaggerResolveTask() throws IOException {
         outputDir = testProjectDir.getRoot().toString() + "/target";
         outputFile = testProjectDir.getRoot().toString() + "/testAPI.json";
-        outputDir = "/tmp/a/target";
+        //outputDir = "/tmp/a/target";
         String resolveTask = "resolve";
 
         String buildFileContent =
@@ -83,7 +84,7 @@ public class SwaggerResolveTest {
                 "dependencies {  \n" +
                 //"    compile configurations.runtime\n" +
                 "    compile group: 'org.apache.commons', name: 'commons-lang3', version:'3.7'\n" +
-                "    compile group: 'io.swagger.core.v3', name: 'swagger-jaxrs2', version:'2.0.8-SNAPSHOT'\n" +
+                "    compile group: 'io.swagger.core.v3', name: 'swagger-jaxrs2', version:'2.0.9-SNAPSHOT'\n" +
                 "    compile group: 'javax.ws.rs', name: 'javax.ws.rs-api', version:'2.1'\n" +
                 "    compile group: 'javax.servlet', name: 'javax.servlet-api', version:'3.1.0'\n" +
                 "    testCompile group: 'com.github.tomakehurst', name: 'wiremock', version:'2.14.0'\n" +
@@ -99,6 +100,7 @@ public class SwaggerResolveTest {
                 "    classpath = sourceSets.test.runtimeClasspath\n" +
                 "    resourcePackages = ['io.swagger.v3.plugins.gradle.petstore']\n" +
                 "    outputPath = \'" + outputDir + "\'\n" +
+                "    filterClass = \'io.swagger.v3.plugins.gradle.resources.MyFilter\'\n" +
                 "    openApiFile = file(\'" + openapiInputFile.getAbsolutePath() + "\')\n" +
                 "}";
 
@@ -126,6 +128,7 @@ public class SwaggerResolveTest {
 
         assertEquals(SUCCESS, result.task(":" + resolveTask).getOutcome());
         assertTrue(new File(outputDir + "/PetStoreAPI.json").exists());
+        assertTrue(FileUtils.readFileToString(new File(outputDir + "/PetStoreAPI.json")).contains("UPDATEDBYFILTER"));
     }
 
     private void writeFile(File destination, String content) throws IOException {

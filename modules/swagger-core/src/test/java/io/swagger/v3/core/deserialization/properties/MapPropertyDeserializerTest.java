@@ -8,6 +8,7 @@ import io.swagger.v3.oas.models.media.MapSchema;
 import io.swagger.v3.oas.models.media.ObjectSchema;
 import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.responses.ApiResponse;
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import static io.swagger.v3.core.util.TestUtils.normalizeLineEnds;
@@ -83,6 +84,38 @@ public class MapPropertyDeserializerTest {
             "  ]\n" +
             "}";
 
+    private static final String jsonAdditionalPropertiesBooleanTrue = "{\n" +
+            "  \"tags\": [\n" +
+            "    \"store\"\n" +
+            "  ],\n" +
+            "  \"summary\": \"Returns pet inventories by status\",\n" +
+            "  \"description\": \"Returns a map of status codes to quantities\",\n" +
+            "  \"operationId\": \"getInventory\",\n" +
+            "  \"produces\": [\n" +
+            "    \"application/json\"\n" +
+            "  ],\n" +
+            "  \"parameters\": [],\n" +
+            "  \"responses\": {\n" +
+            "    \"200\": {\n" +
+            "      \"description\": \"successful operation\",\n" +
+            "      \"content\": {\n" +
+            "        \"*/*\": {\n" +
+            "          \"schema\": {\n" +
+            "            \"type\": \"object\",\n" +
+            "            \"x-foo\": \"vendor x\",\n" +
+            "            \"additionalProperties\": true\n" +
+            "          }\n" +
+            "        }\n" +
+            "      }\n" +
+            "    }\n" +
+            "  },\n" +
+            "  \"security\": [\n" +
+            "    {\n" +
+            "      \"api_key\": []\n" +
+            "    }\n" +
+            "  ]\n" +
+            "}";
+
     @Test(description = "it should deserialize a response per #1349")
     public void testMapDeserialization() throws Exception {
 
@@ -110,6 +143,18 @@ public class MapPropertyDeserializerTest {
         assertTrue(responseSchema instanceof ObjectSchema);
 
         assertTrue(responseSchema.getAdditionalProperties() instanceof Boolean);
+        Assert.assertFalse((Boolean)responseSchema.getAdditionalProperties());
+
+        operation = Json.mapper().readValue(jsonAdditionalPropertiesBooleanTrue, Operation.class);
+        response = operation.getResponses().get("200");
+        assertNotNull(response);
+
+        responseSchema = response.getContent().get("*/*").getSchema();
+        assertNotNull(responseSchema);
+        assertTrue(responseSchema instanceof MapSchema);
+
+        assertTrue(responseSchema.getAdditionalProperties() instanceof Boolean);
+        Assert.assertTrue((Boolean)responseSchema.getAdditionalProperties());
     }
 
     @Test(description = "it should serialize a boolean additionalProperties")

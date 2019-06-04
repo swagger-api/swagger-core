@@ -97,8 +97,12 @@ public class ModelDeserializer extends JsonDeserializer<Schema> {
                 ms.setAdditionalProperties(innerSchema);
                 schema = ms;
             } catch (Exception e) {
-                schema = Json.mapper().convertValue(node, ObjectSchema.class);
                 Boolean additionalPropsBoolean = Json.mapper().convertValue(additionalProperties, Boolean.class);
+                if (additionalPropsBoolean) {
+                    schema = Json.mapper().convertValue(node, MapSchema.class);
+                } else {
+                    schema = Json.mapper().convertValue(node, ObjectSchema.class);
+                }
                 schema.setAdditionalProperties(additionalPropsBoolean);
             }
 
