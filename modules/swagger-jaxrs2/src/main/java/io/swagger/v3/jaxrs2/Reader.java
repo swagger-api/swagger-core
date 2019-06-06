@@ -533,6 +533,9 @@ public class Reader implements OpenApiReader {
                         Schema mergedSchema = new ObjectSchema();
                         for (Parameter formParam: formParameters) {
                             mergedSchema.addProperties(formParam.getName(), formParam.getSchema());
+                            if (null != formParam.getRequired() && formParam.getRequired()) {
+                                mergedSchema.addRequiredItem(formParam.getName());
+                            }
                         }
                         Parameter merged = new Parameter().schema(mergedSchema);
                         processRequestBody(
@@ -832,7 +835,7 @@ public class Reader implements OpenApiReader {
                 annotatedMethod);
     }
 
-    private Operation parseMethod(
+    protected Operation parseMethod(
             Class<?> cls,
             Method method,
             List<Parameter> globalParameters,
