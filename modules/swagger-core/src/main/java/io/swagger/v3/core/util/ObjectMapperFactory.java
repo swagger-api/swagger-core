@@ -13,6 +13,7 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.ser.BeanSerializerModifier;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
+import com.fasterxml.jackson.module.jaxb.JaxbAnnotationModule;
 import io.swagger.v3.core.jackson.SchemaSerializer;
 import io.swagger.v3.core.jackson.mixin.ComponentsMixin;
 import io.swagger.v3.core.jackson.mixin.ExtensionsMixin;
@@ -89,6 +90,10 @@ public class ObjectMapperFactory {
                 });
             }
         });
+
+        // for @XmlElement(name = "nameOfProperty") customizations
+        Module jaxbAnnotationModule = new JaxbAnnotationModule();
+        mapper.registerModule(jaxbAnnotationModule);
 
         Module deserializerModule = new DeserializationModule();
         mapper.registerModule(deserializerModule);
