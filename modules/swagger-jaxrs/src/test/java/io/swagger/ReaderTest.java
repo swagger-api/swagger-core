@@ -1,11 +1,19 @@
 package io.swagger;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.module.jaxb.JaxbAnnotationModule;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
+import io.swagger.annotations.Example;
+import io.swagger.annotations.ExampleProperty;
 import io.swagger.converter.ModelConverters;
 import io.swagger.jaxrs.Reader;
 import io.swagger.models.ExternalDocs;
 import io.swagger.models.Model;
 import io.swagger.models.Operation;
+import io.swagger.models.Pet;
 import io.swagger.models.Swagger;
 import io.swagger.models.Tag;
 import io.swagger.models.parameters.BodyParameter;
@@ -42,6 +50,7 @@ import io.swagger.resources.RsConsumesProducesResource;
 import io.swagger.resources.RsMultipleConsumesProducesResource;
 import io.swagger.resources.SimpleMethods;
 import io.swagger.util.Json;
+import io.swagger.util.Yaml;
 import org.testng.annotations.Test;
 
 import javax.ws.rs.DELETE;
@@ -50,7 +59,9 @@ import javax.ws.rs.HEAD;
 import javax.ws.rs.OPTIONS;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
@@ -463,6 +474,35 @@ public class ReaderTest {
         assertNotNull(swagger.getPath("/subresource/{id}"));
         assertEquals(swagger.getPaths().size(), 2);
 
+    }
+
+    @Test(description = "Test Response Example")
+    public void testResponseExample() {
+        Swagger swagger = getSwagger(ResponseExampleResource.class);
+        assertNotNull(swagger);
+        assertNotNull(swagger.getPath("/v1/example"));
+        assertEquals(swagger.getPaths().size(), 1);
+        assertTrue(swagger.getPath("/v1/example").getGet().getResponses().get("200").getExamples().get("application/json") instanceof JsonNode);
+
+    }
+
+    @Api
+    @Path("/v1")
+    public class ResponseExampleResource {
+        @Path("example")
+        @ApiOperation(value = "aa")
+        @ApiResponses({
+                @ApiResponse(code = 200, message = "test", response = Pet.class,
+                        examples = @Example(value =
+                                {
+                                        @ExampleProperty(mediaType = "application/json", value = "{\"id\" : 1, \"name\" : \"test\"}")
+                                }
+                        ))
+        })
+        @GET
+        public Response getResource() {
+            return null;
+        }
     }
 
     @Test(description = "Resolve Model with XML Properties starting with is prefix per #2635")

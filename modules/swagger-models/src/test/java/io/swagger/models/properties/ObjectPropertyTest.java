@@ -4,7 +4,9 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotEquals;
 import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.assertFalse;
 
 public class ObjectPropertyTest {
 
@@ -49,5 +51,39 @@ public class ObjectPropertyTest {
 
         // then
         assertTrue(objectProperty.getRequired(), "The get required must be the same as the set one");
+    }
+
+    @Test
+    public void testNotEqualOnDifferentProperties() {
+        //given
+        ObjectProperty objectProperty = new ObjectProperty();
+        objectProperty.property("some", new StringProperty());
+
+        ObjectProperty otherObjectProperty = new ObjectProperty();
+        otherObjectProperty.property("someOther", new StringProperty());
+
+        //when
+        boolean equals = objectProperty.equals(otherObjectProperty);
+
+        //then
+        assertFalse(equals);
+        assertNotEquals(objectProperty.hashCode(), otherObjectProperty.hashCode());
+    }
+
+    @Test
+    public void testEqualOnEqualProperties() {
+        //given
+        ObjectProperty objectProperty = new ObjectProperty();
+        objectProperty.property("some", new StringProperty());
+
+        ObjectProperty otherObjectProperty = new ObjectProperty();
+        otherObjectProperty.property("some", new StringProperty());
+
+        //when
+        boolean equals = objectProperty.equals(otherObjectProperty);
+
+        //then
+        assertTrue(equals);
+        assertEquals(objectProperty.hashCode(), otherObjectProperty.hashCode());
     }
 }

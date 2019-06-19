@@ -92,7 +92,7 @@ public class PropertyModelConverter {
 
         } else if(model instanceof RefModel) {
             RefModel ref = (RefModel) model;
-            RefProperty refProperty = new RefProperty(ref.get$ref());
+            RefProperty refProperty = new RefProperty(ref.get$ref(), ref.getRefFormat());
             return refProperty;
 
         } else if(model instanceof ComposedModel) {
@@ -182,7 +182,7 @@ public class PropertyModelConverter {
 
         if(property instanceof RefProperty){
             RefProperty ref = (RefProperty) property;
-            RefModel refModel = new RefModel(ref.get$ref());
+            RefModel refModel = new RefModel(ref.getOriginalRef(), ref.getRefFormat());
             return refModel;
         }
 

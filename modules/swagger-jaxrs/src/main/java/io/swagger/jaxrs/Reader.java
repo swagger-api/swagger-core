@@ -69,6 +69,7 @@ import io.swagger.models.properties.MapProperty;
 import io.swagger.models.properties.Property;
 import io.swagger.models.properties.RefProperty;
 import io.swagger.util.BaseReaderUtils;
+import io.swagger.util.Json;
 import io.swagger.util.ParameterProcessor;
 import io.swagger.util.PathUtils;
 import io.swagger.util.ReflectionUtils;
@@ -1045,9 +1046,14 @@ public class Reader {
             if(prop.mediaType().equals("") && prop.value().equals("")){
                 continue;
             }
-
+            Object exampleValue = null;
+            try {
+                exampleValue = Json.mapper().readTree(prop.value());
+            } catch (Exception e) {
+                exampleValue = prop.value();
+            }
             map = map == null ? new LinkedHashMap<String, Object>() : map;
-            map.put(prop.mediaType(), prop.value());
+            map.put(prop.mediaType(), exampleValue);
         }
         return map;
     }

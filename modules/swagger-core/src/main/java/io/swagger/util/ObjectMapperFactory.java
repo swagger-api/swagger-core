@@ -12,9 +12,6 @@ import io.swagger.jackson.mixin.ResponseSchemaMixin;
 import io.swagger.models.Operation;
 import io.swagger.models.Response;
 
-
-
-
 public class ObjectMapperFactory {
 
     protected static ObjectMapper createJson() {
@@ -45,6 +42,8 @@ public class ObjectMapperFactory {
 
         mapper.addMixIn(Response.class, ResponseSchemaMixin.class);
         mapper.addMixIn(Operation.class, OperationResponseMixin.class);
+
+        ReferenceSerializationConfigurer.serializeAsComputedRef(mapper);
 
         return mapper;
     }

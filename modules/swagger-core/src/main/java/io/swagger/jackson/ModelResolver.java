@@ -24,15 +24,19 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementRef;
+import javax.xml.bind.annotation.XmlElementRefs;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchema;
 
+import io.swagger.models.refs.RefFormat;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIdentityReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -173,7 +177,11 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 }
                 if (innerModel instanceof ModelImpl) {
                     ModelImpl mi = (ModelImpl) innerModel;
-                    property = new RefProperty(StringUtils.isNotEmpty(mi.getReference()) ? mi.getReference() : mi.getName());
+                    if (StringUtils.isNotEmpty(mi.getReference())) {
+                        property = new RefProperty(mi.getReference());
+                    } else {
+                        property = new RefProperty(mi.getName(), RefFormat.INTERNAL);
+                    }
                 }
             }
         }
@@ -686,11 +694,18 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         if (propertiesToIgnore.contains(propName)) {
             return true;
         }
+        if (member.hasAnnotation(JsonIgnore.class)) {
+            return true;
+        }
         if (xmlAccessorTypeAnnotation == null) {
             return false;
         }
         if (xmlAccessorTypeAnnotation.value().equals(XmlAccessType.NONE)) {
-            if (!member.hasAnnotation(XmlElement.class) && !member.hasAnnotation(XmlAttribute.class)) {
+            if (!member.hasAnnotation(XmlElement.class) &&
+                    !member.hasAnnotation(XmlAttribute.class) &&
+                    !member.hasAnnotation(XmlElementRef.class) &&
+                    !member.hasAnnotation(XmlElementRefs.class) &&
+                    !member.hasAnnotation(JsonProperty.class)) {
                 return true;
             }
         }
@@ -970,7 +985,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 }
 
                 impl.setDiscriminator(null);
-                ComposedModel child = new ComposedModel().parent(new RefModel(model.getName())).child(impl);
+                ComposedModel child = new ComposedModel().parent(new RefModel(model.getName(), RefFormat.INTERNAL)).child(impl);
                 context.defineModel(impl.getName(), child, subtypeType, null);
                 ++count;
             }

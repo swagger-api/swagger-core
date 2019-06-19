@@ -27,12 +27,28 @@ public class RefPath extends Path {
         set$ref(ref);
     }
 
+    public RefPath(String ref, RefFormat refFormat) {
+        this.genericRef = new GenericRef(RefType.PATH, ref, refFormat);
+    }
+
     public void set$ref(String ref) {
         this.genericRef = new GenericRef(RefType.PATH, ref);
     }
 
     public String get$ref() {
         return genericRef.getRef();
+    }
+
+    /**
+     * @since 1.5.21
+     * @return originalRef
+     */
+    public String getOriginalRef() {
+        if (genericRef != null) {
+            return genericRef.getOriginalRef();
+        } else {
+            return null;
+        }
     }
 
     @Override
