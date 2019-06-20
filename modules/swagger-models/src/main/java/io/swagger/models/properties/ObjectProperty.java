@@ -139,4 +139,29 @@ public class ObjectProperty extends AbstractProperty implements Property {
         this.setExample(example);
         return this;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+
+        if (!(o instanceof ObjectProperty)) {
+            return false;
+        }
+
+        ObjectProperty that = (ObjectProperty) o;
+
+        if (properties != null ? !properties.equals(that.properties) : that.properties != null) {
+            return false;
+        }
+        return super.equals(o);
+    }
+
+    @Override
+    public int hashCode() {
+        int result =  super.hashCode();
+        result = 31 * result + (properties != null ? properties.hashCode() : 0);
+        return result;
+    }
 }
