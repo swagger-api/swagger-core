@@ -22,17 +22,16 @@ repositories {
 }
 
 dependencies {
-    compile     gradleApi()
-    compile group: 'org.apache.commons', name: 'commons-lang3', version:'3.7'
-    compile group: 'io.swagger.core.v3', name: 'swagger-jaxrs2', version:'2.0.8'
-    compile group: 'javax.ws.rs', name: 'javax.ws.rs-api', version:'2.1'
-    compile group: 'javax.servlet', name: 'javax.servlet-api', version:'3.1.0'
-    testCompile group: 'com.github.tomakehurst', name: 'wiremock', version:'2.14.0'
+    compile gradleApi()
+    compile 'org.apache.commons:commons-lang3:3.7'
+
     testCompile gradleTestKit()
-    testCompile group: 'commons-io', name: 'commons-io', version:'2.6'
+    testCompile 'com.github.tomakehurst:wiremock:2.14.0'
+    testCompile 'commons-io:commons-io:2.6'
+    testCompile 'javax.servlet:javax.servlet-api:3.1.0'
+    testCompile 'javax.ws.rs:javax.ws.rs-api:2.1'
+    testCompile "io.swagger.core.v3:swagger-jaxrs2:${project.version}"
     testCompile 'junit:junit:4+'
-
-
 }
 
 // * * * * * * * * * * * *

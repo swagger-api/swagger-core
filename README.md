@@ -4,6 +4,10 @@
 
 [![Build Status](https://img.shields.io/jenkins/s/https/jenkins.swagger.io/view/OSS%20-%20Java/job/oss-swagger-core-master-java-8.svg)](https://jenkins.swagger.io/view/OSS%20-%20Java/job/oss-swagger-core-master-java-8)
 
+[![Build Status](https://jenkins.swagger.io/view/OSS%20-%20Java/job/oss-swagger-core-master-java-8/badge/icon?subject=jenkins%20build%20-%20java%208)](https://jenkins.swagger.io/view/OSS%20-%20Java/job/oss-swagger-core-master-java-8/)
+
+[![Build Status](https://jenkins.swagger.io/view/OSS%20-%20Java/job/oss-swagger-core-master-java-9/badge/icon?subject=jenkins%20build%20-%20java%209)](https://jenkins.swagger.io/view/OSS%20-%20Java/job/oss-swagger-core-master-java-9/)
+
 Swagger Core is a Java implementation of the OpenAPI Specification. Current version supports *JAX-RS2*.
 
 ## Get started with Swagger Core!
@@ -73,6 +77,9 @@ Of course if you don't want to build locally you can grab artifacts from maven c
 ## Sample Apps
 The samples have moved to [a new repository](https://github.com/swagger-api/swagger-samples/tree/2.0) and contain various integrations and configurations.
 
+## Security contact
+
+Please disclose any security-related issues or vulnerabilities by emailing [security@swagger.io](mailto:security@swagger.io), instead of using the public issue tracker.
 
 ## License
 
