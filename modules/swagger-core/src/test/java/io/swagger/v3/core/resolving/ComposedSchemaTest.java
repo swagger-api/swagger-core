@@ -123,5 +123,4 @@ public class ComposedSchemaTest {
         model = schemas.get("objects");
         Assert.assertNull(model);
     }
-
 }

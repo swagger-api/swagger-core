@@ -65,17 +65,7 @@ import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -795,8 +785,27 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
             });
 
+            if(composedSchema.getAllOf() != null && composedSchema.getAllOf().size() == 1)
+            {
+                ComposedSchema newSchema = new ComposedSchema();
+                newSchema.setName(composedSchema.getName());
+                composedSchema.setName(null);
+                newSchema.addAllOfItem(composedSchema.getAllOf().get(0));
+                composedSchema.setAllOf(null);
+                newSchema.addAllOfItem(composedSchema);
+                model = newSchema;
+            }
         }
-        if (model != null && annotatedType.isResolveAsRef() && "object".equals(model.getType()) && StringUtils.isNotBlank(model.getName())) {
+
+        if (!type.isContainerType() && StringUtils.isNotBlank(name)) {
+            // define the model here to support self/cyclic referencing of models
+            context.defineModel(name, model, annotatedType, null);
+        }
+
+        if (model != null && annotatedType.isResolveAsRef() &&
+            (isComposedSchema || "object".equals(model.getType())) &&
+            StringUtils.isNotBlank(model.getName()))
+        {
             if (context.getDefinedModels().containsKey(model.getName())) {
                 model = new Schema().$ref(constructRef(model.getName()));
             }
