@@ -4,12 +4,15 @@ import org.apache.commons.lang3.StringUtils;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.GradleException;
 import org.gradle.api.logging.Logging;
+import org.gradle.api.tasks.CacheableTask;
 import org.gradle.api.tasks.Classpath;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.InputFile;
-import org.gradle.api.tasks.InputFiles;
+import org.gradle.api.tasks.Internal;
 import org.gradle.api.tasks.Optional;
 import org.gradle.api.tasks.OutputDirectory;
+import org.gradle.api.tasks.PathSensitive;
+import org.gradle.api.tasks.PathSensitivity;
 import org.gradle.api.tasks.TaskAction;
 import org.slf4j.Logger;
 
@@ -30,7 +33,9 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+@CacheableTask
 public class ResolveTask extends DefaultTask {
+
     private static Logger LOGGER = Logging.getLogger(ResolveTask.class);
 
     public enum Format {JSON, YAML, JSONANDYAML};
@@ -72,6 +77,7 @@ public class ResolveTask extends DefaultTask {
 
     @InputFile
     @Optional
+    @PathSensitive(PathSensitivity.RELATIVE)
     public File getOpenApiFile() {
         return openApiFile;
     }
@@ -81,7 +87,6 @@ public class ResolveTask extends DefaultTask {
     }
 
     @Classpath
-    @InputFiles
     public Iterable<File> getClasspath() {
         return classpath;
     }
@@ -91,7 +96,6 @@ public class ResolveTask extends DefaultTask {
     }
 
     @Classpath
-    @InputFiles
     @Optional
     public Iterable<File> getBuildClasspath() {
         return buildClasspath;
@@ -105,16 +109,24 @@ public class ResolveTask extends DefaultTask {
         this.outputFileName = outputFileName;
     }
 
-    @Input
+    /**
+     * @deprecated Use {@linkplain #getOutputDir()} instead.
+     */
+    @Internal
+    @Deprecated
     public String getOutputPath() {
         return outputPath;
     }
 
+    /**
+     * @deprecated Use {@linkplain #setOutputDir(File)} instead.
+     */
+    @Internal
+    @Deprecated
     public void setOutputPath(String outputPath) {
         this.outputPath = outputPath;
         outputDir = new File(outputPath);
     }
-
 
     @OutputDirectory
     public File getOutputDir() {
@@ -223,7 +235,6 @@ public class ResolveTask extends DefaultTask {
         this.contextId = contextId;
     }
 
-
     @Input
     @Optional
     public String getScannerClass() {
@@ -283,7 +294,6 @@ public class ResolveTask extends DefaultTask {
     public void setEncoding(String resourceClasses) {
         this.encoding = encoding;
     }
-
 
     @TaskAction
     public void resolve() throws GradleException {
@@ -387,17 +397,12 @@ public class ResolveTask extends DefaultTask {
             method=swaggerLoaderClass.getDeclaredMethod("resolve");
             Map<String, String> specs = (Map<String, String>)method.invoke(swaggerLoader);
 
-            Path path = Paths.get(outputPath, "temp");
-            final File parentFile = path.toFile().getParentFile();
-            if (parentFile != null) {
-                parentFile.mkdirs();
-            }
             if (specs.get("JSON") != null) {
-                path = Paths.get(outputPath, outputFileName + ".json");
+                Path path = outputDir.toPath().resolve(String.format("%s.json", outputFileName));
                 Files.write(path, specs.get("JSON").getBytes(Charset.forName(encoding)));
             }
             if (specs.get("YAML") != null) {
-                path = Paths.get(outputPath, outputFileName + ".yaml");
+                Path path = outputDir.toPath().resolve(String.format("%s.yaml", outputFileName));
                 Files.write(path, specs.get("YAML").getBytes(Charset.forName(encoding)));
             }
         } catch (IOException e) {
