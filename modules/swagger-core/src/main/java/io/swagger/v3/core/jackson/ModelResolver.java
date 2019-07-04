@@ -1253,7 +1253,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
     private void removeParentProperties(Schema child, Schema parent) {
         final Map<String, Schema> baseProps = parent.getProperties();
         final Map<String, Schema> subtypeProps = child.getProperties();
-        if (baseProps != null && subtypeProps != null) {
+        if (baseProps != null && subtypeProps != null && baseProps != subtypeProps) {
             for (Map.Entry<String, Schema> entry : baseProps.entrySet()) {
                 if (entry.getValue().equals(subtypeProps.get(entry.getKey()))) {
                     subtypeProps.remove(entry.getKey());
