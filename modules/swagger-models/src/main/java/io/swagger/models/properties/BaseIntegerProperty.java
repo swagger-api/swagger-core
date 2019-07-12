@@ -24,7 +24,9 @@ public class BaseIntegerProperty extends AbstractNumericProperty {
     public void setExample(Object example) {
         if (example instanceof String) {
             try {
-                this.example = Long.parseLong((String)example);
+                if (example != null && !"".equals(example)) {
+                    this.example = Long.parseLong((String) example);
+                }
             } catch (NumberFormatException e) {
                 this.example = example;
             }
