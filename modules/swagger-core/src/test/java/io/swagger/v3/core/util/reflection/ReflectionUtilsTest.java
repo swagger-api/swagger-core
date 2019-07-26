@@ -27,7 +27,12 @@ public class ReflectionUtilsTest {
         Assert.assertNull(ReflectionUtils.typeFromString("FakeType"));
         Assert.assertNull(ReflectionUtils.typeFromString(null));
     }
-
+public static void main(String[] args) throws NoSuchMethodException {
+  for (Method method : Child.class.getMethods()) {
+  System.out.println(method);
+  }
+  new ReflectionUtilsTest().isOverriddenMethodTest();
+}
     @Test
     public void isOverriddenMethodTest() throws NoSuchMethodException {
         for (Method method : Child.class.getMethods()) {
@@ -39,7 +44,27 @@ public class ReflectionUtilsTest {
                 } else if (Integer.class.equals(first)) {
                     Assert.assertFalse(result);
                 }
+            } else if ("parametrizedMethod2".equals(method.getName())) {
+                final boolean result = ReflectionUtils.isOverriddenMethod(method, Child.class);
+                final Class<?> first = method.getParameterTypes()[0];
+                if (Number.class.equals(first)) {
+                    Assert.assertTrue(result);
+                } else if (Long.class.equals(first)) {
+                    Assert.assertFalse(result);
+                }
             } else if ("parametrizedMethod3".equals(method.getName())) {
+                Assert.assertFalse(ReflectionUtils.isOverriddenMethod(method, Child.class));
+            } else if ("parametrizedMethod4".equals(method.getName())) {
+                Assert.assertFalse(ReflectionUtils.isOverriddenMethod(method, Child.class));
+            } else if ("parametrizedMethod5".equals(method.getName())) {
+                final boolean result = ReflectionUtils.isOverriddenMethod(method, Child.class);
+                final Class<?> first = method.getParameterTypes()[0];
+                if (Number.class.equals(first)) {
+                    Assert.assertTrue(result);
+                } else if (Long.class.equals(first)) {
+                    Assert.assertFalse(result);
+                }
+            } else if ("parametrizedMethod6".equals(method.getName())) {
                 Assert.assertFalse(ReflectionUtils.isOverriddenMethod(method, Child.class));
             }
         }
@@ -54,6 +79,8 @@ public class ReflectionUtilsTest {
             if ("parametrizedMethod5".equals(method.getName())) {
                 Assert.assertTrue(ReflectionUtils.isOverriddenMethod(method, IParent.class));
             } else if ("parametrizedMethod2".equals(method.getName())) {
+                Assert.assertFalse(ReflectionUtils.isOverriddenMethod(method, IParent.class));
+            } else if ("parametrizedMethod6".equals(method.getName())) {
                 Assert.assertFalse(ReflectionUtils.isOverriddenMethod(method, IParent.class));
             } else {
                 Assert.fail("Method not expected");

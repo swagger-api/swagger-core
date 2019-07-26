@@ -1,5 +1,7 @@
 package io.swagger.v3.core.util.reflection.resources;
 
+import java.util.List;
+
 import javax.ws.rs.Path;
 
 @Path("parentInterfacePath")
@@ -10,5 +12,7 @@ public interface IParent<T extends Number> extends IGrandparent<T> {
 
     @Override
     String parametrizedMethod5(T arg);
+
+    List<T> parametrizedMethod6(List<T> arg);
 
 }

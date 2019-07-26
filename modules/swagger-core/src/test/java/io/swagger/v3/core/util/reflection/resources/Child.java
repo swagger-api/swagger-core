@@ -1,5 +1,7 @@
 package io.swagger.v3.core.util.reflection.resources;
 
+import java.util.List;
+
 import javax.inject.Inject;
 
 public class Child extends Parent<Integer> implements IParent<Long> {
@@ -49,6 +51,11 @@ public class Child extends Parent<Integer> implements IParent<Long> {
     @IndirectAnnotation
     public void indirectAnnotationMethod() {
 
+    }
+
+    @Override
+    public List<Long> parametrizedMethod6(List<Long> arg) {
+      return null;
     }
 
 }
