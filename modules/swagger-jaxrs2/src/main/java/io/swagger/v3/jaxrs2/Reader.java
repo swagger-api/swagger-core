@@ -374,18 +374,13 @@ public class Reader implements OpenApiReader {
         globalParameters.addAll(ReaderUtils.collectFieldParameters(cls, components, classConsumes, null));
 
         // iterate class methods
-        Method methods[] = cls.getMethods();
-        for (Method method : methods) {
+        for (Method method : ReflectionUtils.getMethods(cls)) {
             if (isOperationHidden(method)) {
                 continue;
             }
             AnnotatedMethod annotatedMethod = bd.findMethod(method.getName(), method.getParameterTypes());
             javax.ws.rs.Produces methodProduces = ReflectionUtils.getAnnotation(method, javax.ws.rs.Produces.class);
             javax.ws.rs.Consumes methodConsumes = ReflectionUtils.getAnnotation(method, javax.ws.rs.Consumes.class);
-
-            if (ReflectionUtils.isOverriddenMethod(method, cls)) {
-                continue;
-            }
 
             javax.ws.rs.Path methodPath = ReflectionUtils.getAnnotation(method, javax.ws.rs.Path.class);
 

@@ -77,7 +77,7 @@ public static void main(String[] args) throws NoSuchMethodException {
 
         for (Method method : IParent.class.getMethods()) {
             if ("parametrizedMethod5".equals(method.getName())) {
-                Assert.assertTrue(ReflectionUtils.isOverriddenMethod(method, IParent.class));
+                Assert.assertFalse(ReflectionUtils.isOverriddenMethod(method, IParent.class));
             } else if ("parametrizedMethod2".equals(method.getName())) {
                 Assert.assertFalse(ReflectionUtils.isOverriddenMethod(method, IParent.class));
             } else if ("parametrizedMethod6".equals(method.getName())) {
