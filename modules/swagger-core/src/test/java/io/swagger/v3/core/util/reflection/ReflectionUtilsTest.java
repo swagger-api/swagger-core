@@ -27,12 +27,6 @@ public class ReflectionUtilsTest {
         Assert.assertNull(ReflectionUtils.typeFromString("FakeType"));
         Assert.assertNull(ReflectionUtils.typeFromString(null));
     }
-public static void main(String[] args) throws NoSuchMethodException {
-  for (Method method : Child.class.getMethods()) {
-  System.out.println(method);
-  }
-  new ReflectionUtilsTest().isOverriddenMethodTest();
-}
     @Test
     public void isOverriddenMethodTest() throws NoSuchMethodException {
         for (Method method : Child.class.getMethods()) {
