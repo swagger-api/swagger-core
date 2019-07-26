@@ -59,6 +59,7 @@ import io.swagger.v3.jaxrs2.resources.Ticket2806Resource;
 import io.swagger.v3.jaxrs2.resources.Ticket2818Resource;
 import io.swagger.v3.jaxrs2.resources.Ticket2848Resource;
 import io.swagger.v3.jaxrs2.resources.Ticket3015Resource;
+import io.swagger.v3.jaxrs2.resources.Ticket3253ConcreteImplementation;
 import io.swagger.v3.jaxrs2.resources.UserAnnotationResource;
 import io.swagger.v3.jaxrs2.resources.extensions.ExtensionsResource;
 import io.swagger.v3.jaxrs2.resources.extensions.OperationExtensionsResource;
@@ -2003,7 +2004,7 @@ public class ReaderTest {
                 "          type: string\n";
         SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
     }
-    
+
     @Test(description = "Filter class return type")
     public void testTicket3074() {
         Reader reader = new Reader(new OpenAPI());
@@ -2085,6 +2086,20 @@ public class ReaderTest {
                 "      xml:\n" +
                 "        name: User\n";
         SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
+    }
+
+    @Test(description = "test ticket #3253 annotated interface with list with generics as parameter.")
+    public void testTicket3253() {
+        Reader reader = new Reader(new OpenAPI());
+        OpenAPI openAPI = reader.read(Ticket3253ConcreteImplementation.class);
+        System.out.println(openAPI);
+        Paths paths = openAPI.getPaths();
+        assertEquals(paths.size(), 2);
+        PathItem pathItem = paths.get("/resources/list");
+        assertNotNull(pathItem);
+        Operation operation = pathItem.getPost();
+        assertNotNull(operation);
+        assertTrue(operation.getResponses().getDefault().getContent().keySet().contains("*/*"));
     }
 
 }
