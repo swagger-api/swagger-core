@@ -1982,7 +1982,7 @@ public class ReaderTest {
                 "paths:\n" +
                 "  /token:\n" +
                 "    post:\n" +
-                "      operationId: create_1\n" +
+                "      operationId: create\n" +
                 "      requestBody:\n" +
                 "        content:\n" +
                 "          application/json:\n" +

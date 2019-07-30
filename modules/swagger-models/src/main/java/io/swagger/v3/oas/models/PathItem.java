@@ -453,18 +453,15 @@ public class PathItem {
   }
 
   public void setGet(Operation get) {
-    preSet(this.get, get);
-    this.get = get;
+    this.get= preSet(this.get, get);
   }
 
   public void setHead(Operation head) {
-    preSet(this.head, head);
-    this.head = head;
+    this.head = preSet(this.head, head);
   }
 
   public void setOptions(Operation options) {
-    preSet(this.options, options);
-    this.options = options;
+    this.options = preSet(this.options, options);
   }
 
   public void setParameters(List<Parameter> parameters) {
@@ -472,8 +469,7 @@ public class PathItem {
   }
 
   public void setPatch(Operation patch) {
-    preSet(this.patch, patch);
-    this.patch = patch;
+    this.patch = preSet(this.patch, patch);
   }
 
   /**
@@ -481,26 +477,35 @@ public class PathItem {
    * @param operation
    * @param newOperation
    */
-  private void preSet(Operation operation, Operation newOperation) {
-//    if (operation != null) {
-//      //check if the operation is already defined in order reuse the same operationId
-//      String newOperationId = newOperation.getOperationId();
-//      //changing operationId just to check if the operation is already the same as a
-//      newOperation.setOperationId(operation.getOperationId());
-//      if (!newOperation.equals(operation)) {
-//        newOperation.setOperationId(newOperationId);
-//      }
-//    }
+  private Operation preSet(Operation operation, Operation newOperation) {
+    String newOperationId = newOperation.getOperationId();
+    System.out.println(newOperationId);
+    if (operation != null) {
+      System.out.println(operation.getOperationId());
+      //check if the operation is already defined in order reuse the same operationId
+      //changing operationId just to check if the operation is already the same as a
+      newOperation.setOperationId(operation.getOperationId());
+      if (!newOperation.equals(operation)) {
+        newOperation.setOperationId(newOperationId);
+        return newOperation;
+      } else {
+        System.out.println("same method!");
+
+        String operationId=(newOperation.getOperationId().compareTo(newOperationId)>0)? newOperationId:newOperation.getOperationId();
+
+        operation.setOperationId(operationId);
+        return operation;
+      }
+    }
+    return newOperation;
   }
 
   public void setPost(Operation post) {
-    preSet(this.post, post);
-    this.post = post;
+    this.post = preSet(this.post, post);
   }
 
   public void setPut(Operation put) {
-    preSet(this.put, put);
-    this.put = put;
+    this.put = preSet(this.put, put);
   }
 
   public void setServers(List<Server> servers) {
@@ -512,8 +517,7 @@ public class PathItem {
   }
 
   public void setTrace(Operation trace) {
-    preSet(this.trace, trace);
-    this.trace = trace;
+    this.trace = preSet(this.trace, trace);
   }
 
   public PathItem summary(String summary) {
