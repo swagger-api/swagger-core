@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
@@ -16,7 +17,7 @@ public interface Ticket3253AnnotatedInterface<T extends Number> {
     @POST
     @Path("list")
     Response postResource(List<T> payload);
-  
+
     @POST
     @Path("single")
     Response postResource(T payload);
@@ -38,4 +39,7 @@ public interface Ticket3253AnnotatedInterface<T extends Number> {
     @Deprecated
     Response deprecatedMethodFromInterface(@PathParam("petId7") T petId);
 
+    @PUT
+    @Path("put2")
+    public String simpleMethod2(String arg) ;
 }

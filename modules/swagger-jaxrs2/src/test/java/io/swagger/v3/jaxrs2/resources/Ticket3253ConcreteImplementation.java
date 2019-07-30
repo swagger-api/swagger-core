@@ -60,4 +60,13 @@ public class Ticket3253ConcreteImplementation extends Ticket3253Abstract<Long>
   public Response deprecatedMethodFromInterface(Long petId) {
       return null;
   }
+
+  @Override
+  public String simpleMethod(String arg) {
+      return null;
+  }
+  @Override
+  public String simpleMethod2(String arg) {
+      return null;
+  }
 }

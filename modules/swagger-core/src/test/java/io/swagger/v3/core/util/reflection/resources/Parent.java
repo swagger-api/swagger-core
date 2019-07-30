@@ -30,4 +30,9 @@ public class Parent<T extends Number> {
     public boolean equals(Object obj) {
         return super.equals(obj);
     }
+
+    public String simpleMethod(String arg) {
+      // TODO Auto-generated method stub
+      return null;
+    }
 }

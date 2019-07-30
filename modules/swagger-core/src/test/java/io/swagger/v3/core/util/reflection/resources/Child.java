@@ -57,5 +57,13 @@ public class Child extends Parent<Integer> implements IParent<Long> {
     public List<Long> parametrizedMethod6(List<Long> arg) {
       return null;
     }
+    @Override
+    public String simpleMethod(String arg) {
+      return null;
+    }
+    @Override
+    public String simpleMethod2(String arg) {
+      return null;
+    }
 
 }

@@ -15,4 +15,6 @@ public interface IParent<T extends Number> extends IGrandparent<T> {
 
     List<T> parametrizedMethod6(List<T> arg);
 
+    public String simpleMethod2(String arg) ;
+
 }

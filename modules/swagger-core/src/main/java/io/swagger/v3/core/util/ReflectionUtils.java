@@ -35,6 +35,42 @@ public class ReflectionUtils {
         return null;
     }
 
+    public static List<Method> getMethods(Class<?> cls) {
+      ArrayList<Method> methods = new ArrayList<>();
+      for (Method method : cls.getMethods()) {
+        System.out.println(isOverriddenMethod(method, cls)+ " "+ method);
+          methods.add(method);
+      }
+      return methods;
+    }
+
+    public static boolean isOverriddenMethod(Method methodToFind, Class<?> cls) {
+      Set<Class<?>> superClasses = new HashSet<>();
+      for (Class c : cls.getInterfaces()) {
+          superClasses.add(c);
+      }
+
+      if (cls.getSuperclass() != null) {
+          superClasses.add(cls.getSuperclass());
+      }
+
+      for (Class<?> superClass : superClasses) {
+          if (superClass != null && !(superClass.equals(Object.class))) {
+              for (Method method : superClass.getMethods()) {
+                  if (method.getName().equals(methodToFind.getName()) && method.getReturnType().isAssignableFrom(methodToFind.getReturnType())
+                          && Arrays.equals(method.getParameterTypes(), methodToFind.getParameterTypes()) && !Arrays.equals(method.getGenericParameterTypes(), methodToFind.getGenericParameterTypes())) {
+                      return true;
+                  }
+              }
+              if (isOverriddenMethod(methodToFind, superClass)) {
+                  return true;
+              }
+          }
+
+      }
+      return false;
+  }
+
     /**
      * Load Class by class name. If class not found in it's Class loader or one of the parent class loaders - delegate to the Thread's ContextClassLoader
      *

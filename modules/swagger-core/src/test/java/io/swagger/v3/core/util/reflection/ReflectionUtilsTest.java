@@ -99,6 +99,20 @@ public class ReflectionUtilsTest {
         Assert.assertNull(method3);
 
         Assert.assertNull(ReflectionUtils.getOverriddenMethod(Object.class.getMethod("equals", Object.class)));
+        {
+            final Method method = ReflectionUtils.getOverriddenMethod(
+                Child.class.getMethod("simpleMethod", String.class));
+            Assert.assertNotNull(method);
+            Assert.assertEquals(Parent.class,method.getDeclaringClass());
+            Assert.assertEquals(method.getParameterTypes()[0], String.class);
+        }
+        {
+          final Method method = ReflectionUtils.getOverriddenMethod(
+              Child.class.getMethod("simpleMethod2", String.class));
+          Assert.assertNotNull(method);
+          Assert.assertEquals(IParent.class,method.getDeclaringClass());
+          Assert.assertEquals(method.getParameterTypes()[0], String.class);
+        }
     }
 
     @Test

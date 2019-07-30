@@ -2094,7 +2094,7 @@ public class ReaderTest {
         OpenAPI openAPI = reader.read(Ticket3253ConcreteImplementation.class);
         System.out.println(openAPI);
         Paths paths = openAPI.getPaths();
-        assertEquals(paths.size(), 11);
+        assertEquals(paths.size(), 13);
         {
             PathItem pathItem = paths.get("/resources/list");
             assertNotNull(pathItem);
@@ -2152,6 +2152,16 @@ public class ReaderTest {
           PathItem pathItem = paths.get("/resources/{petId8}");
           assertNotNull(pathItem);
           assertNotNull(pathItem.getGet());
+        }
+        {
+          PathItem pathItem = paths.get("/resources/put");
+          assertNotNull(pathItem);
+          assertNotNull(pathItem.getPut());
+        }
+        {
+          PathItem pathItem = paths.get("/resources/put2");
+          assertNotNull(pathItem);
+          assertNotNull(pathItem.getPut());
         }
 
     }
