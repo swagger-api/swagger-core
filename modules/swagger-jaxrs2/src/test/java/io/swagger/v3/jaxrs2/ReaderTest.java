@@ -1982,7 +1982,7 @@ public class ReaderTest {
                 "paths:\n" +
                 "  /token:\n" +
                 "    post:\n" +
-                "      operationId: create\n" +
+                "      operationId: create_1\n" +
                 "      requestBody:\n" +
                 "        content:\n" +
                 "          application/json:\n" +
@@ -2094,12 +2094,66 @@ public class ReaderTest {
         OpenAPI openAPI = reader.read(Ticket3253ConcreteImplementation.class);
         System.out.println(openAPI);
         Paths paths = openAPI.getPaths();
-        assertEquals(paths.size(), 2);
-        PathItem pathItem = paths.get("/resources/list");
-        assertNotNull(pathItem);
-        Operation operation = pathItem.getPost();
-        assertNotNull(operation);
-        assertTrue(operation.getResponses().getDefault().getContent().keySet().contains("*/*"));
+        assertEquals(paths.size(), 11);
+        {
+            PathItem pathItem = paths.get("/resources/list");
+            assertNotNull(pathItem);
+            Operation operation = pathItem.getPost();
+            assertNotNull(operation);
+        }
+        {
+          PathItem pathItem = paths.get("/resources/single");
+          assertNotNull(pathItem);
+          Operation operation = pathItem.getPost();
+          assertNotNull(operation);
+        }
+        {
+          PathItem pathItem = paths.get("/resources/{petId1}");
+          assertNotNull(pathItem);
+          assertNotNull(pathItem.getGet());
+          assertNotNull(pathItem.getDelete());
+        }
+        {
+          PathItem pathItem = paths.get("/resources/{petId2}");
+          assertNotNull(pathItem);
+          assertNotNull(pathItem.getGet());
+        }
+        {
+          PathItem pathItem = paths.get("/resources/{petId3}");
+          assertNotNull(pathItem);
+          assertNotNull(pathItem.getGet());
+        }
+        {
+          PathItem pathItem = paths.get("/resources/{petId4}");
+          assertNotNull(pathItem);
+          assertNotNull(pathItem.getGet());
+        }
+        {
+          PathItem pathItem = paths.get("/resources/{petId5.1}");
+          assertNotNull(pathItem);
+          assertNotNull(pathItem.getGet());
+        }
+        {
+          PathItem pathItem = paths.get("/resources/{petId5.2}");
+          assertNotNull(pathItem);
+          assertNotNull(pathItem.getGet());
+        }
+        {
+          PathItem pathItem = paths.get("/resources/{petId6}");
+          assertNotNull(pathItem);
+          assertNotNull(pathItem.getGet());
+        }
+        {
+          PathItem pathItem = paths.get("/resources/deprecated/{petId7}");
+          assertNotNull(pathItem);
+          assertNotNull(pathItem.getGet());
+        }
+        {
+          PathItem pathItem = paths.get("/resources/{petId8}");
+          assertNotNull(pathItem);
+          assertNotNull(pathItem.getGet());
+        }
+
     }
 
 }

@@ -51,55 +51,6 @@ public class ReflectionUtils {
     }
 
     /**
-     * Checks if the method methodToFind is the overridden method from the superclass or superinterface. In most cases getMethods should be called instead.
-     *
-     * @param methodToFind is method to check
-     * @param cls          is method class
-     * @return true if the method is overridden method
-     */
-    public static boolean isOverriddenMethod(Method methodToFind, Class<?> cls) {
-      return !getMethods(cls).contains(methodToFind);
-    }
-
-    /**
-     * Returns the list of methods of the given class and its hierarchy but without overridden methods.
-     * It is similar to Class.getMethods but overridden ones are not listed.
-     *
-     * @param cls          is the class
-     * @return the list of methods but without overridden methods
-     */
-    public static List<Method> getMethods(Class<?> cls) {
-        List<Method> notOverridenMethods = new ArrayList<>();
-        Method[] methods = cls.getMethods();
-        for (int candidateIdx = 0; candidateIdx < methods.length; candidateIdx++) {
-            Method candidate = methods[candidateIdx];
-            boolean isOverriden=false;
-            for (int idx = 0; !isOverriden && idx < methods.length; idx++) {
-                if(candidateIdx==idx)
-                    continue;
-                Method method = methods[idx];
-                if (method.getName().equals(candidate.getName()) && candidate.getReturnType().isAssignableFrom(method.getReturnType())) {
-                    Class<?>[] parameterTypes = method.getParameterTypes();
-                    Class<?>[] parameterTypesCandidate = candidate.getParameterTypes();
-                    if (parameterTypes.length == parameterTypesCandidate.length) {
-                        for (int paramIdx = 0; paramIdx < parameterTypes.length; paramIdx++) {
-                            if (parameterTypesCandidate[paramIdx].isAssignableFrom(parameterTypes[paramIdx])) {
-                                isOverriden=true;
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
-            if (!isOverriden) {
-              notOverridenMethods.add(candidate);
-            }
-      }
-      return notOverridenMethods;
-    }
-
-
-    /**
      * Returns overridden method from superclass if it exists. If method was not found returns null.
      *
      * @param method is method to find

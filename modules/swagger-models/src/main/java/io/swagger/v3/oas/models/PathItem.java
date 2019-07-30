@@ -95,11 +95,14 @@ public class PathItem {
     }
 
     public void setGet(Operation get) {
+//        if(this.get!=null) {
+//            get.setOperationId(this.get.getOperationId());
+//        }
         this.get = get;
     }
 
     public PathItem get(Operation get) {
-        this.get = get;
+        setGet(get);
         return this;
     }
 
@@ -114,11 +117,14 @@ public class PathItem {
     }
 
     public void setPut(Operation put) {
+//        if(this.put!=null) {
+//            put.setOperationId(this.put.getOperationId());
+//        }
         this.put = put;
     }
 
     public PathItem put(Operation put) {
-        this.put = put;
+        setPut(put);
         return this;
     }
 
@@ -133,11 +139,14 @@ public class PathItem {
     }
 
     public void setPost(Operation post) {
+//        if(this.post!=null) {
+//            post.setOperationId(this.post.getOperationId());
+//        }
         this.post = post;
     }
 
     public PathItem post(Operation post) {
-        this.post = post;
+        setPost(post);
         return this;
     }
 
@@ -152,11 +161,14 @@ public class PathItem {
     }
 
     public void setDelete(Operation delete) {
+//        if(this.delete!=null) {
+//            delete.setOperationId(this.delete.getOperationId());
+//        }
         this.delete = delete;
     }
 
     public PathItem delete(Operation delete) {
-        this.delete = delete;
+        setDelete(delete);
         return this;
     }
 
@@ -171,11 +183,14 @@ public class PathItem {
     }
 
     public void setOptions(Operation options) {
+//        if(this.options!=null) {
+//            options.setOperationId(this.options.getOperationId());
+//        }
         this.options = options;
     }
 
     public PathItem options(Operation options) {
-        this.options = options;
+        setOptions(options);
         return this;
     }
 
@@ -190,11 +205,14 @@ public class PathItem {
     }
 
     public void setHead(Operation head) {
+//        if(this.head!=null) {
+//            head.setOperationId(this.head.getOperationId());
+//        }
         this.head = head;
     }
 
     public PathItem head(Operation head) {
-        this.head = head;
+        setHead(head);
         return this;
     }
 
@@ -209,11 +227,14 @@ public class PathItem {
     }
 
     public void setPatch(Operation patch) {
+//        if(this.patch!=null) {
+//            patch.setOperationId(this.patch.getOperationId());
+//        }
         this.patch = patch;
     }
 
     public PathItem patch(Operation patch) {
-        this.patch = patch;
+        setPatch(patch);
         return this;
     }
 
@@ -228,11 +249,14 @@ public class PathItem {
     }
 
     public void setTrace(Operation trace) {
+//        if(this.trace!=null) {
+//            trace.setOperationId(this.trace.getOperationId());
+//        }
         this.trace = trace;
     }
 
     public PathItem trace(Operation trace) {
-        this.trace = trace;
+        setTrace(trace);
         return this;
     }
 

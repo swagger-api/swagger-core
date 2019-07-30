@@ -63,7 +63,7 @@ public class Reader {
         if (swaggerDefinition != null) {
             readSwaggerConfig(swaggerDefinition);
         }
-        for (Method method : ReflectionUtils.getMethods(context.getCls()) {
+        for (Method method : context.getCls().getMethods()) {
             final Operation operation = new Operation();
             String operationPath = null;
             String httpMethod = null;

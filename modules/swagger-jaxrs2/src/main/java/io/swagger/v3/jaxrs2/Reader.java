@@ -374,7 +374,7 @@ public class Reader implements OpenApiReader {
         globalParameters.addAll(ReaderUtils.collectFieldParameters(cls, components, classConsumes, null));
 
         // iterate class methods
-        for (Method method : ReflectionUtils.getMethods(cls)) {
+        for (Method method : cls.getMethods()) {
             if (isOperationHidden(method)) {
                 continue;
             }
