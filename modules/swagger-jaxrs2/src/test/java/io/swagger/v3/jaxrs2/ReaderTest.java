@@ -65,8 +65,8 @@ import io.swagger.v3.jaxrs2.resources.extensions.OperationExtensionsResource;
 import io.swagger.v3.jaxrs2.resources.extensions.ParameterExtensionsResource;
 import io.swagger.v3.jaxrs2.resources.extensions.RequestBodyExtensionsResource;
 import io.swagger.v3.jaxrs2.resources.rs.ProcessTokenRestService;
-import io.swagger.v3.jaxrs2.resources.ticketnew.Ticket3253Implementation;
-import io.swagger.v3.jaxrs2.resources.ticketnew.Ticket3253Interface;
+import io.swagger.v3.jaxrs2.resources.ticket3253.Ticket3253Implementation;
+import io.swagger.v3.jaxrs2.resources.ticket3253.Ticket3253Interface;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.ExternalDocumentation;
@@ -2091,7 +2091,7 @@ public class ReaderTest {
         SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
     }
 
-    @Test(description = "newInterface")
+    @Test(description = "testTicket3253Interface")
     public void testTicket3253Interface() {
         Reader reader = new Reader(new OpenAPI());
         OpenAPI openAPI = reader.read(Ticket3253Interface.class);
