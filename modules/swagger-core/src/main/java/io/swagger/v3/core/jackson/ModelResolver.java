@@ -39,6 +39,7 @@ import io.swagger.v3.oas.models.media.Discriminator;
 import io.swagger.v3.oas.models.media.IntegerSchema;
 import io.swagger.v3.oas.models.media.MapSchema;
 import io.swagger.v3.oas.models.media.NumberSchema;
+import io.swagger.v3.oas.models.media.ObjectSchema;
 import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.media.StringSchema;
 import io.swagger.v3.oas.models.media.UUIDSchema;
@@ -83,6 +84,10 @@ import static io.swagger.v3.core.util.RefUtils.constructRef;
 
 public class ModelResolver extends AbstractModelConverter implements ModelConverter {
     Logger LOGGER = LoggerFactory.getLogger(ModelResolver.class);
+
+    public static final String SET_PROPERTY_OF_COMPOSED_MODEL_AS_SIBLING = "composed-model-properties-as-sibiling";
+
+    public static boolean composedModelPropertiesAsSibling = System.getProperty(SET_PROPERTY_OF_COMPOSED_MODEL_AS_SIBLING) != null ? true : false;
 
     public ModelResolver(ObjectMapper mapper) {
         super(mapper);
@@ -795,15 +800,15 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
             });
 
-            if(composedSchema.getAllOf() != null && composedSchema.getAllOf().size() == 1)
-            {
-                ComposedSchema newSchema = new ComposedSchema();
-                newSchema.setName(composedSchema.getName());
-                composedSchema.setName(null);
-                newSchema.addAllOfItem(composedSchema.getAllOf().get(0));
-                composedSchema.setAllOf(null);
-                newSchema.addAllOfItem(composedSchema);
-                model = newSchema;
+            if (!composedModelPropertiesAsSibling) {
+                if (composedSchema.getAllOf() != null && !composedSchema.getAllOf().isEmpty()) {
+                    if (composedSchema.getProperties() != null && !composedSchema.getProperties().isEmpty()) {
+                        ObjectSchema propSchema = new ObjectSchema();
+                        propSchema.properties(composedSchema.getProperties());
+                        composedSchema.setProperties(null);
+                        composedSchema.addAllOfItem(propSchema);
+                    }
+                }
             }
         }
 
@@ -1231,6 +1236,17 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 composedSchema.addAllOfItem(refSchema);
             }
             removeParentProperties(composedSchema, model);
+            if (!composedModelPropertiesAsSibling) {
+                if (composedSchema.getAllOf() != null && !composedSchema.getAllOf().isEmpty()) {
+                    if (composedSchema.getProperties() != null && !composedSchema.getProperties().isEmpty()) {
+                        ObjectSchema propSchema = new ObjectSchema();
+                        propSchema.properties(composedSchema.getProperties());
+                        composedSchema.setProperties(null);
+                        composedSchema.addAllOfItem(propSchema);
+                    }
+                }
+            }
+
 
             // replace previous schema..
             Class<?> currentType = subtype.getType();
