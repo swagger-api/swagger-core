@@ -473,17 +473,30 @@ public class ReaderTest {
                 "                - $ref: '#/components/schemas/MultipleSub2Bean'\n" +
                 "components:\n" +
                 "  schemas:\n" +
+                "    SampleResponseSchema:\n" +
+                "      type: object\n" +
+                "    GenericError:\n" +
+                "      type: object\n" +
+                "    MultipleSub1Bean:\n" +
+                "      type: object\n" +
+                "      description: MultipleSub1Bean\n" +
+                "      allOf:\n" +
+                "      - $ref: '#/components/schemas/MultipleBaseBean'\n" +
+                "      - type: object\n" +
+                "        properties:\n" +
+                "          c:\n" +
+                "            type: integer\n" +
+                "            format: int32\n" +
                 "    MultipleSub2Bean:\n" +
                 "      type: object\n" +
-                "      properties:\n" +
-                "        d:\n" +
-                "          type: integer\n" +
-                "          format: int32\n" +
                 "      description: MultipleSub2Bean\n" +
                 "      allOf:\n" +
                 "      - $ref: '#/components/schemas/MultipleBaseBean'\n" +
-                "    GenericError:\n" +
-                "      type: object\n" +
+                "      - type: object\n" +
+                "        properties:\n" +
+                "          d:\n" +
+                "            type: integer\n" +
+                "            format: int32\n" +
                 "    MultipleBaseBean:\n" +
                 "      type: object\n" +
                 "      properties:\n" +
@@ -494,18 +507,7 @@ public class ReaderTest {
                 "          format: int32\n" +
                 "        b:\n" +
                 "          type: string\n" +
-                "      description: MultipleBaseBean\n" +
-                "    MultipleSub1Bean:\n" +
-                "      type: object\n" +
-                "      properties:\n" +
-                "        c:\n" +
-                "          type: integer\n" +
-                "          format: int32\n" +
-                "      description: MultipleSub1Bean\n" +
-                "      allOf:\n" +
-                "      - $ref: '#/components/schemas/MultipleBaseBean'\n" +
-                "    SampleResponseSchema:\n" +
-                "      type: object";
+                "      description: MultipleBaseBean";
         SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
     }
 

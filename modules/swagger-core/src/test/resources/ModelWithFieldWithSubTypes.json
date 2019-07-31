@@ -31,41 +31,47 @@
     },
     "Thing1": {
         "type": "object",
+        "description": "Shake hands with Thing1",
         "allOf": [
             {
                 "$ref": "#/components/schemas/AbstractBaseModelWithSubTypes"
-            }
-        ],
-        "properties": {
-            "a": {
-                "type": "string",
-                "description": "Override the abstract a"
             },
-            "x": {
-                "type": "integer",
-                "format": "int32",
-                "description": "Thing1 has an additional field"
+            {
+                "type": "object",
+                "properties": {
+                    "a": {
+                        "type": "string",
+                        "description": "Override the abstract a"
+                    },
+                    "x": {
+                        "type": "integer",
+                        "format": "int32",
+                        "description": "Thing1 has an additional field"
+                    }
+                }
             }
-        },
-        "description": "Shake hands with Thing1"
+        ]
     },
     "Thing2": {
         "type": "object",
+        "description": "and Thing2",
         "allOf": [
             {
                 "$ref": "#/components/schemas/AbstractBaseModelWithSubTypes"
-            }
-        ],
-        "properties": {
-            "a": {
-                "type": "string",
-                "description": "Override the abstract a"
             },
-            "s": {
-                "type": "string",
-                "description": "Thing2 has an additional field"
+            {
+                "type": "object",
+                "properties": {
+                    "a": {
+                        "type": "string",
+                        "description": "Override the abstract a"
+                    },
+                    "s": {
+                        "type": "string",
+                        "description": "Thing2 has an additional field"
+                    }
+                }
             }
-        },
-        "description": "and Thing2"
+        ]
     }
 }
