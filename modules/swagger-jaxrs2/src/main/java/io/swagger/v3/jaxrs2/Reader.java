@@ -383,10 +383,6 @@ public class Reader implements OpenApiReader {
             javax.ws.rs.Produces methodProduces = ReflectionUtils.getAnnotation(method, javax.ws.rs.Produces.class);
             javax.ws.rs.Consumes methodConsumes = ReflectionUtils.getAnnotation(method, javax.ws.rs.Consumes.class);
 
-            if (ReflectionUtils.isOverriddenMethod(method, cls)) {
-                continue;
-            }
-
             javax.ws.rs.Path methodPath = ReflectionUtils.getAnnotation(method, javax.ws.rs.Path.class);
 
             String operationPath = ReaderUtils.getPath(apiPath, methodPath, parentPath, isSubresource);

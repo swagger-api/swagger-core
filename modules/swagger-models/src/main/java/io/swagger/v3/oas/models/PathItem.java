@@ -20,6 +20,7 @@ import io.swagger.v3.oas.models.parameters.Parameter;
 import io.swagger.v3.oas.models.servers.Server;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -95,11 +96,12 @@ public class PathItem {
     }
 
     public void setGet(Operation get) {
+        preOperationSet(this.get, get);
         this.get = get;
     }
 
     public PathItem get(Operation get) {
-        this.get = get;
+        setGet(get);
         return this;
     }
 
@@ -114,11 +116,12 @@ public class PathItem {
     }
 
     public void setPut(Operation put) {
+        preOperationSet(this.put, put);
         this.put = put;
     }
 
     public PathItem put(Operation put) {
-        this.put = put;
+        setPut(put);
         return this;
     }
 
@@ -133,11 +136,12 @@ public class PathItem {
     }
 
     public void setPost(Operation post) {
+        preOperationSet(this.post, post);
         this.post = post;
     }
 
     public PathItem post(Operation post) {
-        this.post = post;
+        setPost(post);
         return this;
     }
 
@@ -152,11 +156,12 @@ public class PathItem {
     }
 
     public void setDelete(Operation delete) {
+        preOperationSet(this.delete, delete);
         this.delete = delete;
     }
 
     public PathItem delete(Operation delete) {
-        this.delete = delete;
+        setDelete(delete);
         return this;
     }
 
@@ -171,11 +176,12 @@ public class PathItem {
     }
 
     public void setOptions(Operation options) {
+        preOperationSet(this.options, options);
         this.options = options;
     }
 
     public PathItem options(Operation options) {
-        this.options = options;
+        setOptions(options);
         return this;
     }
 
@@ -190,11 +196,12 @@ public class PathItem {
     }
 
     public void setHead(Operation head) {
+        preOperationSet(this.head, head);
         this.head = head;
     }
 
     public PathItem head(Operation head) {
-        this.head = head;
+        setHead(head);
         return this;
     }
 
@@ -209,11 +216,12 @@ public class PathItem {
     }
 
     public void setPatch(Operation patch) {
+        preOperationSet(this.patch, patch);
         this.patch = patch;
     }
 
     public PathItem patch(Operation patch) {
-        this.patch = patch;
+        setPatch(patch);
         return this;
     }
 
@@ -228,11 +236,12 @@ public class PathItem {
     }
 
     public void setTrace(Operation trace) {
+        preOperationSet(this.trace, trace);
         this.trace = trace;
     }
 
     public PathItem trace(Operation trace) {
-        this.trace = trace;
+        setTrace(trace);
         return this;
     }
 
@@ -538,5 +547,25 @@ public class PathItem {
         return o.toString().replace("\n", "\n    ");
     }
 
+    /**
+     * This function checks if the operation is just the same as added before but just with different operationId.
+     * In this case, operationId is reused.
+     * @param operation
+     * @param newOperation
+     * @return
+     */
+    private void preOperationSet(Operation operation, Operation newOperation) {
+        String newOperationId = newOperation.getOperationId();
+        if (operation != null) {
+            //check if the operation is already defined in order to use the lowest operationId of both.
+            newOperation.setOperationId(operation.getOperationId());
+            if (newOperation.equals(operation)) {
+              String operationId=(operation.getOperationId().compareTo(newOperationId)>0)? newOperationId:operation.getOperationId();
+              newOperation.setOperationId(operationId);
+            } else {
+              newOperation.setOperationId(newOperationId);
+            }
+        }
+    }
 }
 
