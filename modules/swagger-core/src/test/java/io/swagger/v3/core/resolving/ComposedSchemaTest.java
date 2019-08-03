@@ -39,16 +39,18 @@ public class ComposedSchemaTest {
 
         schemas = ModelConverters.getInstance().readAll(TestObjectTicket2620Subtypes.class);
         model = schemas.get("Child2TestObject");
-        properties = model.getProperties();
+        Assert.assertNull(model.getProperties());
+        properties = ((ComposedSchema)model).getAllOf().get(1).getProperties();
         Assert.assertNull(properties.get("name"));
         Assert.assertNotNull(properties.get("childName"));
         Assert.assertTrue(model instanceof ComposedSchema);
         model = schemas.get("ChildTestObject");
-        properties = model.getProperties();
+        Assert.assertNull(model.getProperties());
+        properties = ((ComposedSchema)model).getAllOf().get(1).getProperties();
         Assert.assertNull(properties.get("name"));
         Assert.assertNotNull(properties.get("childName"));
         Assert.assertTrue(model instanceof ComposedSchema);
-        Assert.assertTrue(((ComposedSchema)model).getAllOf().size() == 1);
+        Assert.assertTrue(((ComposedSchema)model).getAllOf().size() == 2);
 
         model = schemas.get("TestObjectTicket2620Subtypes");
         properties = model.getProperties();
@@ -123,5 +125,4 @@ public class ComposedSchemaTest {
         model = schemas.get("objects");
         Assert.assertNull(model);
     }
-
 }
