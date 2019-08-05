@@ -311,7 +311,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         //If JsonSerialize(as=...) is specified then use that bean to figure out all the json-like bits
         JsonSerialize jasonSerialize = beanDesc.getClassAnnotations().get(JsonSerialize.class);
         if (jasonSerialize != null) {
-            if (jasonSerialize.as() != null) {
+            if (jasonSerialize.as() != Void.class) {
                 JavaType asType = _mapper.constructType(jasonSerialize.as());
                 beanDesc = _mapper.getSerializationConfig().introspect(asType);
             }
