@@ -250,11 +250,11 @@ public class Reader implements OpenApiReader {
                         List<Parameter> parentParameters,
                         Set<Class<?>> scannedResources) {
 
-        Hidden hidden = cls.getAnnotation(Hidden.class);
+        Hidden hidden = ReflectionUtils.getAnnotation(cls, Hidden.class);
         // class path
         final javax.ws.rs.Path apiPath = ReflectionUtils.getAnnotation(cls, javax.ws.rs.Path.class);
 
-        if (hidden != null) { //  || (apiPath == null && !isSubresource)) {
+        if (hidden != null && !isSubresource) { //  || (apiPath == null && !isSubresource)) {
             return openAPI;
         }
 
@@ -1352,7 +1352,7 @@ public class Reader implements OpenApiReader {
         if (apiOperation != null && apiOperation.hidden()) {
             return true;
         }
-        Hidden hidden = method.getAnnotation(Hidden.class);
+        Hidden hidden = ReflectionUtils.getAnnotation(method, Hidden.class);
         if (hidden != null) {
             return true;
         }
@@ -1375,14 +1375,13 @@ public class Reader implements OpenApiReader {
         } else if (StringUtils.isBlank(path) && StringUtils.isNotBlank(parentPath)) {
             return false;
         }
-        if (parentPath != null && !"".equals(parentPath) && !"/".equals(parentPath)) {
-            if (!parentPath.startsWith("/")) {
-                parentPath = "/" + parentPath;
-            }
-            if (parentPath.endsWith("/")) {
-                parentPath = parentPath.substring(0, parentPath.length() - 1);
-            }
-        }
+        final String parentOperationPath = toOperationPath(parentPath);
+        final String operationPath = toOperationPath(path);
+
+        return parentOperationPath.equals(operationPath);
+    }
+
+    private String toOperationPath(String path) {
         if (path != null && !"".equals(path) && !"/".equals(path)) {
             if (!path.startsWith("/")) {
                 path = "/" + path;
@@ -1391,10 +1390,7 @@ public class Reader implements OpenApiReader {
                 path = path.substring(0, path.length() - 1);
             }
         }
-        if (path.equals(parentPath)) {
-            return true;
-        }
-        return false;
+        return path;
     }
 
     protected Class<?> getSubResourceWithJaxRsSubresourceLocatorSpecs(Method method) {
@@ -1409,7 +1405,7 @@ public class Reader implements OpenApiReader {
             type = rawType;
         }
 
-        if (method.getAnnotation(javax.ws.rs.Path.class) != null) {
+        if (ReflectionUtils.getAnnotation(method, javax.ws.rs.Path.class) != null) {
             if (ReaderUtils.extractOperationMethod(method, null) == null) {
                 return type;
             }
