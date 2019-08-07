@@ -375,6 +375,16 @@ public class Reader implements OpenApiReader {
 
         // iterate class methods
         Method methods[] = cls.getMethods();
+        // sort methods to make api generations reproducible
+        Arrays.sort(methods,new Comparator<Method>() {
+            @Override
+            public int compare(Method method1, Method method2) {
+                if (method1.equals(method2)) {
+                    return 0;
+                }
+                return method1.getName().compareTo(method2.getName());
+            }
+        });
         for (Method method : methods) {
             if (isOperationHidden(method)) {
                 continue;
