@@ -15,6 +15,8 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
 import io.swagger.v3.core.jackson.SchemaSerializer;
 import io.swagger.v3.core.jackson.mixin.ComponentsMixin;
+import io.swagger.v3.core.jackson.mixin.DateSchemaMixin;
+import io.swagger.v3.core.jackson.mixin.DateTimeSchemaMixin;
 import io.swagger.v3.core.jackson.mixin.ExtensionsMixin;
 import io.swagger.v3.core.jackson.mixin.OpenAPIMixin;
 import io.swagger.v3.core.jackson.mixin.OperationMixin;
@@ -32,6 +34,8 @@ import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
 import io.swagger.v3.oas.models.links.Link;
 import io.swagger.v3.oas.models.links.LinkParameter;
+import io.swagger.v3.oas.models.media.DateSchema;
+import io.swagger.v3.oas.models.media.DateTimeSchema;
 import io.swagger.v3.oas.models.media.Encoding;
 import io.swagger.v3.oas.models.media.EncodingProperty;
 import io.swagger.v3.oas.models.media.MediaType;
@@ -126,6 +130,8 @@ public class ObjectMapperFactory {
         sourceMixins.put(Tag.class, ExtensionsMixin.class);
         sourceMixins.put(XML.class, ExtensionsMixin.class);
         sourceMixins.put(Schema.class, ExtensionsMixin.class);
+        sourceMixins.put(DateSchema.class, DateSchemaMixin.class);
+        sourceMixins.put(DateTimeSchema.class, DateTimeSchemaMixin.class);
 
         mapper.setMixIns(sourceMixins);
         mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);

@@ -16,6 +16,7 @@
 
 package io.swagger.v3.oas.models.media;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -51,6 +52,8 @@ public class DateTimeSchema extends Schema<Date> {
             try {
                 if (value instanceof Date) {
                     return (Date) value;
+                } else if (value instanceof String) {
+                    return new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX").parse((String) value);
                 }
             } catch (Exception e) {
             }

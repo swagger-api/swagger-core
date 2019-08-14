@@ -691,7 +691,7 @@ public class Schema<T> {
     }
 
     public Schema example(Object example) {
-        this.example = cast(example);
+        setExample(example);
         return this;
     }
 
