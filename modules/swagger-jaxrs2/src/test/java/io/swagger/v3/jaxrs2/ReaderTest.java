@@ -51,6 +51,7 @@ import io.swagger.v3.jaxrs2.resources.SubResourceHead;
 import io.swagger.v3.jaxrs2.resources.TagsResource;
 import io.swagger.v3.jaxrs2.resources.Test2607;
 import io.swagger.v3.jaxrs2.resources.TestResource;
+import io.swagger.v3.jaxrs2.resources.Ticket2340Resource;
 import io.swagger.v3.jaxrs2.resources.Ticket2644ConcreteImplementation;
 import io.swagger.v3.jaxrs2.resources.Ticket2763Resource;
 import io.swagger.v3.jaxrs2.resources.Ticket2793Resource;
@@ -990,6 +991,55 @@ public class ReaderTest {
                 "            application/json:\n" +
                 "              schema:\n" +
                 "                $ref: https://openebench.bsc.es/monitor/tool/tool.json";
+        SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
+    }
+
+    @Test(description = "Responses with array schema")
+    public void testTicket2340() {
+        Reader reader = new Reader(new OpenAPI());
+
+        OpenAPI openAPI = reader.read(Ticket2340Resource.class);
+        String yaml = "openapi: 3.0.1\n" +
+                "paths:\n" +
+                "  /test/test:\n" +
+                "    post:\n" +
+                "      operationId: getBook\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            application/json:\n" +
+                "              schema:\n" +
+                "                type: string\n" +
+                "components:\n" +
+                "  schemas:\n" +
+                "    Animal:\n" +
+                "      required:\n" +
+                "      - type\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        type:\n" +
+                "          type: string\n" +
+                "      discriminator:\n" +
+                "        propertyName: type\n" +
+                "    Cat:\n" +
+                "      type: object\n" +
+                "      allOf:\n" +
+                "      - $ref: '#/components/schemas/Animal'\n" +
+                "      - type: object\n" +
+                "        properties:\n" +
+                "          lives:\n" +
+                "            type: integer\n" +
+                "            format: int32\n" +
+                "    Dog:\n" +
+                "      type: object\n" +
+                "      allOf:\n" +
+                "      - $ref: '#/components/schemas/Animal'\n" +
+                "      - type: object\n" +
+                "        properties:\n" +
+                "          barkVolume:\n" +
+                "            type: number\n" +
+                "            format: double\n";
         SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
     }
 

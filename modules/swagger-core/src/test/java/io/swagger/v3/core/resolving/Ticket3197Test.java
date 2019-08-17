@@ -39,9 +39,13 @@ public class Ticket3197Test extends SwaggerTestBase {
         final Schema model = context.resolve(new AnnotatedType(Car.class));
         assertNotNull(model);
         String yaml = "Car:\n" +
+                "  required:\n" +
+                "  - type\n" +
                 "  type: object\n" +
                 "  properties:\n" +
                 "    carMetaData:\n" +
+                "      type: string\n" +
+                "    type:\n" +
                 "      type: string\n" +
                 "  discriminator:\n" +
                 "    propertyName: type\n" +
@@ -77,7 +81,7 @@ public class Ticket3197Test extends SwaggerTestBase {
                 "        type: integer\n" +
                 "        format: int64\n" +
                 "      model:\n" +
-                "        type: string";
+                "        type: string\n";
 
         SerializationMatchers.assertEqualsToYaml(context.getDefinedModels(), yaml);
     }
@@ -87,14 +91,19 @@ public class Ticket3197Test extends SwaggerTestBase {
 
         ModelResolver.composedModelPropertiesAsSibling = true;
         ModelResolver myModelResolver = new ModelResolver(new ObjectMapper());
+        ModelResolver.composedModelPropertiesAsSibling = true;
         ModelConverterContextImpl myContext = new ModelConverterContextImpl(myModelResolver);
 
         final Schema model = myContext.resolve(new AnnotatedType(Car.class));
         assertNotNull(model);
         String yaml = "Car:\n" +
+                "  required:\n" +
+                "  - type\n" +
                 "  type: object\n" +
                 "  properties:\n" +
                 "    carMetaData:\n" +
+                "      type: string\n" +
+                "    type:\n" +
                 "      type: string\n" +
                 "  discriminator:\n" +
                 "    propertyName: type\n" +
@@ -128,7 +137,7 @@ public class Ticket3197Test extends SwaggerTestBase {
                 "    model:\n" +
                 "      type: string\n" +
                 "  allOf:\n" +
-                "  - $ref: '#/components/schemas/Car'";
+                "  - $ref: '#/components/schemas/Car'\n";
 
         SerializationMatchers.assertEqualsToYaml(myContext.getDefinedModels(), yaml);
         ModelResolver.composedModelPropertiesAsSibling = false;

@@ -840,6 +840,9 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 }
             }
         }
+
+        resolveDiscriminatorProperty(type, context, model);
+
         return model;
     }
 
@@ -1622,6 +1625,27 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             return AnnotationsUtils.getExtensions(schema.extensions());
         }
         return null;
+    }
+
+    protected void resolveDiscriminatorProperty(JavaType type, ModelConverterContext context, Schema model) {
+        // add JsonTypeInfo.property if not member of bean
+        JsonTypeInfo typeInfo = type.getRawClass().getDeclaredAnnotation(JsonTypeInfo.class);
+        if (typeInfo != null) {
+            String typeInfoProp = typeInfo.property();
+            if (StringUtils.isNotBlank(typeInfoProp)) {
+                Schema modelToUpdate = model;
+                if (StringUtils.isNotBlank(model.get$ref())) {
+                    modelToUpdate = context.getDefinedModels().get(model.get$ref().substring(21));
+                }
+                if (modelToUpdate.getProperties() == null || !modelToUpdate.getProperties().keySet().contains(typeInfoProp)) {
+                    Schema discriminatorSchema = new StringSchema().name(typeInfoProp);
+                    modelToUpdate.addProperties(typeInfoProp, discriminatorSchema);
+                    if (modelToUpdate.getRequired() == null || !model.getRequired().contains(typeInfoProp)) {
+                        modelToUpdate.addRequiredItem(typeInfoProp);
+                    }
+                }
+            }
+        }
     }
 
     protected Discriminator resolveDiscriminator(JavaType type, ModelConverterContext context) {

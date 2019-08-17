@@ -9,7 +9,8 @@ import io.swagger.v3.core.jackson.ModelResolver;
 import io.swagger.v3.oas.annotations.media.DiscriminatorMapping;
 import io.swagger.v3.oas.models.media.ComposedSchema;
 import io.swagger.v3.oas.models.media.Schema;
-import org.testng.annotations.BeforeTest;
+import org.testng.annotations.AfterTest;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import java.util.Map;
@@ -23,10 +24,16 @@ public class InheritedBeanTest extends SwaggerTestBase {
     private ModelResolver modelResolver;
     private ModelConverterContextImpl context;
 
-    @BeforeTest
+    @BeforeMethod
     public void setup() {
+        ModelResolver.composedModelPropertiesAsSibling = false;
         modelResolver = new ModelResolver(new ObjectMapper());
         context = new ModelConverterContextImpl(modelResolver);
+    }
+
+    @AfterTest
+    public void afterTest() {
+        ModelResolver.composedModelPropertiesAsSibling = false;
     }
 
     @Test
