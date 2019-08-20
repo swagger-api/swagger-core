@@ -13,10 +13,10 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.ser.BeanSerializerModifier;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.swagger.v3.core.jackson.SchemaSerializer;
 import io.swagger.v3.core.jackson.mixin.ComponentsMixin;
 import io.swagger.v3.core.jackson.mixin.DateSchemaMixin;
-import io.swagger.v3.core.jackson.mixin.DateTimeSchemaMixin;
 import io.swagger.v3.core.jackson.mixin.ExtensionsMixin;
 import io.swagger.v3.core.jackson.mixin.OpenAPIMixin;
 import io.swagger.v3.core.jackson.mixin.OperationMixin;
@@ -96,6 +96,7 @@ public class ObjectMapperFactory {
 
         Module deserializerModule = new DeserializationModule();
         mapper.registerModule(deserializerModule);
+        mapper.registerModule(new JavaTimeModule());
 
         Map<Class<?>, Class<?>> sourceMixins = new LinkedHashMap<>();
 
@@ -131,7 +132,6 @@ public class ObjectMapperFactory {
         sourceMixins.put(XML.class, ExtensionsMixin.class);
         sourceMixins.put(Schema.class, ExtensionsMixin.class);
         sourceMixins.put(DateSchema.class, DateSchemaMixin.class);
-        sourceMixins.put(DateTimeSchema.class, DateTimeSchemaMixin.class);
 
         mapper.setMixIns(sourceMixins);
         mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);

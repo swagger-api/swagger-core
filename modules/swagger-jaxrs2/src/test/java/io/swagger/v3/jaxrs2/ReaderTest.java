@@ -1003,7 +1003,12 @@ public class ReaderTest {
                 "paths:\n" +
                 "  /test/test:\n" +
                 "    post:\n" +
-                "      operationId: getBook\n" +
+                "      operationId: getAnimal\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          application/json:\n" +
+                "            schema:\n" +
+                "              $ref: '#/components/schemas/Animal'\n" +
                 "      responses:\n" +
                 "        default:\n" +
                 "          description: default response\n" +

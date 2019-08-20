@@ -16,7 +16,8 @@
 
 package io.swagger.v3.oas.models.media;
 
-import java.text.SimpleDateFormat;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -25,7 +26,7 @@ import java.util.Objects;
  * DateTimeSchema
  */
 
-public class DateTimeSchema extends Schema<Date> {
+public class DateTimeSchema extends Schema<OffsetDateTime> {
 
     public DateTimeSchema() {
         super("string", "date-time");
@@ -47,13 +48,15 @@ public class DateTimeSchema extends Schema<Date> {
     }
 
     @Override
-    protected Date cast(Object value) {
+    protected OffsetDateTime cast(Object value) {
         if (value != null) {
             try {
                 if (value instanceof Date) {
-                    return (Date) value;
+                    return ((Date)value).toInstant().atOffset(ZoneOffset.UTC);
                 } else if (value instanceof String) {
-                    return new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX").parse((String) value);
+                    return OffsetDateTime.parse((String)value);
+                } else if (value instanceof OffsetDateTime) {
+                    return (OffsetDateTime)value;
                 }
             } catch (Exception e) {
             }
@@ -61,12 +64,12 @@ public class DateTimeSchema extends Schema<Date> {
         return null;
     }
 
-    public DateTimeSchema _enum(List<Date> _enum) {
+    public DateTimeSchema _enum(List<OffsetDateTime> _enum) {
         super.setEnum(_enum);
         return this;
     }
 
-    public DateTimeSchema addEnumItem(Date _enumItem) {
+    public DateTimeSchema addEnumItem(OffsetDateTime _enumItem) {
         super.addEnumItemObject(_enumItem);
         return this;
     }
