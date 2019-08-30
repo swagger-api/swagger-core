@@ -1,12 +1,7 @@
 package io.swagger.v3.jaxrs2.integration;
 
-import io.swagger.v3.jaxrs2.Reader;
-import io.swagger.v3.oas.integration.GenericOpenApiContext;
-import io.swagger.v3.oas.integration.SwaggerConfiguration;
-import io.swagger.v3.oas.integration.api.OpenApiContext;
-import io.swagger.v3.oas.models.OpenAPI;
-import io.swagger.v3.oas.models.info.Info;
-import org.testng.annotations.Test;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -14,8 +9,14 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotNull;
+import org.testng.annotations.Test;
+
+import io.swagger.v3.jaxrs2.Reader;
+import io.swagger.v3.oas.integration.GenericOpenApiContext;
+import io.swagger.v3.oas.integration.SwaggerConfiguration;
+import io.swagger.v3.oas.integration.api.OpenApiContext;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Info;
 
 public class IntegrationTest {
 
@@ -23,7 +24,7 @@ public class IntegrationTest {
 
     @Test(description = "scan a simple resource")
     public void shouldScanWithNewInitialization() throws Exception {
-        SwaggerConfiguration config = new SwaggerConfiguration()
+        final SwaggerConfiguration config = new SwaggerConfiguration()
                 .resourcePackages(Stream.of("com.my.project.resources", "org.my.project.resources").collect(Collectors.toSet()))
                 .openAPI(new OpenAPI().info(new Info().description("TEST INFO DESC")));
         OpenApiContext ctx = new GenericOpenApiContext()
@@ -38,16 +39,16 @@ public class IntegrationTest {
         assertEquals(openApi.getPaths().keySet(), expectedKeys);
 
         try {
-            String configPath = "/integration/openapi-configuration.json";
+            final String configPath = "/integration/openapi-configuration.json";
             //ctx = new XmlWebOpenApiContext().openApiConfiguration(config).init();
             //ctx = new XmlWebOpenApiContext().configLocation(url.getPath()).init();
-            ctx = new XmlWebOpenApiContext().configLocation(configPath).init();
+            ctx = new WebOpenApiContext().configLocation(configPath).init();
             openApi = ctx.read();
 
             assertNotNull(openApi);
             assertEquals(openApi.getPaths().keySet(), expectedKeys);
 
-        } catch (Exception e) {
+        } catch (final Exception e) {
             e.printStackTrace();
         }
     }

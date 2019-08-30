@@ -1,5 +1,11 @@
 package io.swagger.v3.jaxrs2.resources;
 
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
+
 import io.swagger.v3.jaxrs2.resources.model.MultipleBaseBean;
 import io.swagger.v3.jaxrs2.resources.model.MultipleSub1Bean;
 import io.swagger.v3.jaxrs2.resources.model.MultipleSub2Bean;
@@ -8,14 +14,6 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
 
 public class ResponsesResource {
 
@@ -64,7 +62,6 @@ public class ResponsesResource {
             })
     @Produces({ MediaType.APPLICATION_JSON })
     public MultipleBaseBean getOneOf(
-            @Context HttpServletRequest req,
             @Parameter(description = "Test inheritance / polymorphism",
                     required = true,
                     example = "1")
@@ -89,7 +86,6 @@ public class ResponsesResource {
             })
     @Produces({ MediaType.APPLICATION_JSON })
     public MultipleBaseBean getAnyOf(
-            @Context HttpServletRequest req,
             @Parameter(description = "Test inheritance / polymorphism",
                     required = true,
                     example = "1")
@@ -114,7 +110,6 @@ public class ResponsesResource {
             })
     @Produces({ MediaType.APPLICATION_JSON })
     public MultipleBaseBean getAllOf(
-            @Context HttpServletRequest req,
             @Parameter(description = "Test inheritance / polymorphism",
                     required = true,
                     example = "1")

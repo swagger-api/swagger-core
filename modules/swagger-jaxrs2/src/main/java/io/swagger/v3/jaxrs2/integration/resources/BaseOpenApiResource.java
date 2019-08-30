@@ -1,5 +1,22 @@
 package io.swagger.v3.jaxrs2.integration.resources;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.ws.rs.core.Application;
+import javax.ws.rs.core.Cookie;
+import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
+
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import io.swagger.v3.core.filter.OpenAPISpecFilter;
 import io.swagger.v3.core.filter.SpecFilter;
 import io.swagger.v3.core.util.Json;
@@ -8,43 +25,21 @@ import io.swagger.v3.jaxrs2.integration.JaxrsOpenApiContextBuilder;
 import io.swagger.v3.oas.integration.api.OpenAPIConfiguration;
 import io.swagger.v3.oas.integration.api.OpenApiContext;
 import io.swagger.v3.oas.models.OpenAPI;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.servlet.ServletConfig;
-import javax.ws.rs.core.Application;
-import javax.ws.rs.core.Cookie;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import static io.swagger.v3.jaxrs2.integration.ServletConfigContextUtils.getContextIdFromServletConfig;
 
 public abstract class BaseOpenApiResource {
 
     private static Logger LOGGER = LoggerFactory.getLogger(BaseOpenApiResource.class);
 
-    protected Response getOpenApi(HttpHeaders headers,
-                                  ServletConfig config,
-                                  Application app,
-                                  UriInfo uriInfo,
-                                  String type) throws Exception {
+    protected Response getOpenApi(final HttpHeaders headers,
+                                  final Application app,
+                                  final UriInfo uriInfo,
+                                  final String type) throws Exception {
 
-        String ctxId = getContextIdFromServletConfig(config);
-        OpenApiContext ctx = new JaxrsOpenApiContextBuilder()
-                .servletConfig(config)
+        final OpenApiContext ctx = new JaxrsOpenApiContextBuilder()
                 .application(app)
                 .resourcePackages(resourcePackages)
                 .configLocation(configLocation)
                 .openApiConfiguration(openApiConfiguration)
-                .ctxId(ctxId)
                 .buildContext(true);
         OpenAPI oas = ctx.read();
         boolean pretty = false;
@@ -55,11 +50,11 @@ public abstract class BaseOpenApiResource {
         if (oas != null) {
             if (ctx.getOpenApiConfiguration() != null && ctx.getOpenApiConfiguration().getFilterClass() != null) {
                 try {
-                    OpenAPISpecFilter filterImpl = (OpenAPISpecFilter) Class.forName(ctx.getOpenApiConfiguration().getFilterClass()).newInstance();
-                    SpecFilter f = new SpecFilter();
+                    final OpenAPISpecFilter filterImpl = (OpenAPISpecFilter) Class.forName(ctx.getOpenApiConfiguration().getFilterClass()).newInstance();
+                    final SpecFilter f = new SpecFilter();
                     oas = f.filter(oas, filterImpl, getQueryParams(uriInfo.getQueryParameters()), getCookies(headers),
                             getHeaders(headers));
-                } catch (Exception e) {
+                } catch (final Exception e) {
                     LOGGER.error("failed to load filter", e);
                 }
             }
@@ -82,33 +77,33 @@ public abstract class BaseOpenApiResource {
         }
     }
 
-    private static Map<String, List<String>> getQueryParams(MultivaluedMap<String, String> params) {
-        Map<String, List<String>> output = new HashMap<String, List<String>>();
+    private static Map<String, List<String>> getQueryParams(final MultivaluedMap<String, String> params) {
+        final Map<String, List<String>> output = new HashMap<String, List<String>>();
         if (params != null) {
-            for (String key : params.keySet()) {
-                List<String> values = params.get(key);
+            for (final String key : params.keySet()) {
+                final List<String> values = params.get(key);
                 output.put(key, values);
             }
         }
         return output;
     }
 
-    private static Map<String, String> getCookies(HttpHeaders headers) {
-        Map<String, String> output = new HashMap<String, String>();
+    private static Map<String, String> getCookies(final HttpHeaders headers) {
+        final Map<String, String> output = new HashMap<String, String>();
         if (headers != null) {
-            for (String key : headers.getCookies().keySet()) {
-                Cookie cookie = headers.getCookies().get(key);
+            for (final String key : headers.getCookies().keySet()) {
+                final Cookie cookie = headers.getCookies().get(key);
                 output.put(key, cookie.getValue());
             }
         }
         return output;
     }
 
-    private static Map<String, List<String>> getHeaders(HttpHeaders headers) {
-        Map<String, List<String>> output = new HashMap<String, List<String>>();
+    private static Map<String, List<String>> getHeaders(final HttpHeaders headers) {
+        final Map<String, List<String>> output = new HashMap<String, List<String>>();
         if (headers != null) {
-            for (String key : headers.getRequestHeaders().keySet()) {
-                List<String> values = headers.getRequestHeaders().get(key);
+            for (final String key : headers.getRequestHeaders().keySet()) {
+                final List<String> values = headers.getRequestHeaders().get(key);
                 output.put(key, values);
             }
         }
@@ -121,11 +116,11 @@ public abstract class BaseOpenApiResource {
         return configLocation;
     }
 
-    public void setConfigLocation(String configLocation) {
+    public void setConfigLocation(final String configLocation) {
         this.configLocation = configLocation;
     }
 
-    public BaseOpenApiResource configLocation(String configLocation) {
+    public BaseOpenApiResource configLocation(final String configLocation) {
         setConfigLocation(configLocation);
         return this;
     }
@@ -136,11 +131,11 @@ public abstract class BaseOpenApiResource {
         return resourcePackages;
     }
 
-    public void setResourcePackages(Set<String> resourcePackages) {
+    public void setResourcePackages(final Set<String> resourcePackages) {
         this.resourcePackages = resourcePackages;
     }
 
-    public BaseOpenApiResource resourcePackages(Set<String> resourcePackages) {
+    public BaseOpenApiResource resourcePackages(final Set<String> resourcePackages) {
         setResourcePackages(resourcePackages);
         return this;
     }
@@ -151,11 +146,11 @@ public abstract class BaseOpenApiResource {
         return openApiConfiguration;
     }
 
-    public void setOpenApiConfiguration(OpenAPIConfiguration openApiConfiguration) {
+    public void setOpenApiConfiguration(final OpenAPIConfiguration openApiConfiguration) {
         this.openApiConfiguration = openApiConfiguration;
     }
 
-    public BaseOpenApiResource openApiConfiguration(OpenAPIConfiguration openApiConfiguration) {
+    public BaseOpenApiResource openApiConfiguration(final OpenAPIConfiguration openApiConfiguration) {
         setOpenApiConfiguration(openApiConfiguration);
         return this;
     }
