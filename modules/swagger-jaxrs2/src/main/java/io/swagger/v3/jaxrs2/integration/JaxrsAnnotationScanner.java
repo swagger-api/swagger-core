@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.Set;
 
 public class JaxrsAnnotationScanner<T extends JaxrsAnnotationScanner<T>> implements JaxrsOpenApiScanner {
+    private static final String ALL_PACKAGES = "*";
 
     static final Set<String> ignored = new HashSet();
 
@@ -76,15 +77,18 @@ public class JaxrsAnnotationScanner<T extends JaxrsAnnotationScanner<T>> impleme
 
         boolean allowAllPackages = false;
         if (openApiConfiguration.getResourcePackages() != null && !openApiConfiguration.getResourcePackages().isEmpty()) {
-            for (String pkg : openApiConfiguration.getResourcePackages()) {
-                if (!isIgnored(pkg)) {
-                    acceptablePackages.add(pkg);
-                    graph.whitelistPackages(pkg);
+            if (openApiConfiguration.getResourcePackages().contains(ALL_PACKAGES)) {
+                allowAllPackages = true;
+            } else {
+                for (String pkg : openApiConfiguration.getResourcePackages()) {
+                    if (!isIgnored(pkg)) {
+                        acceptablePackages.add(pkg);
+                        graph.whitelistPackages(pkg);
+                    }
                 }
             }
-        } else {
-            allowAllPackages = true;
-        }
+        } 
+
         final Set<Class<?>> classes;
         try (ScanResult scanResult = graph.scan()) {
             classes = new HashSet<>(scanResult.getClassesWithAnnotation(javax.ws.rs.Path.class.getName()).loadClasses());
