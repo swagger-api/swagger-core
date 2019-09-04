@@ -16,6 +16,7 @@ import java.util.stream.Stream;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertNull;
 
 public class IntegrationTest {
 
@@ -50,6 +51,36 @@ public class IntegrationTest {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    @Test
+    public void shouldScanOnlyResourcePackagesClasses() throws Exception {
+        SwaggerConfiguration config = new SwaggerConfiguration()
+                .openAPI(new OpenAPI().info(new Info().description("TEST INFO DESC")));
+        OpenApiContext ctx = new GenericOpenApiContext()
+                .openApiConfiguration(config)
+                .openApiReader(new Reader(config))
+                .openApiScanner(new JaxrsApplicationAndResourcePackagesAnnotationScanner().openApiConfiguration(config))
+                .init();
+
+        OpenAPI openApi = ctx.read();
+
+        assertNotNull(openApi);
+        assertNull(openApi.getPaths());
+
+        config = new SwaggerConfiguration()
+                .resourcePackages(Stream.of("com.my.project.resources", "org.my.project.resources").collect(Collectors.toSet()))
+                .openAPI(new OpenAPI().info(new Info().description("TEST INFO DESC")));
+
+        ctx = new GenericOpenApiContext()
+                .openApiConfiguration(config)
+                .openApiReader(new Reader(config))
+                .openApiScanner(new JaxrsApplicationAndResourcePackagesAnnotationScanner().openApiConfiguration(config))
+                .init();
+
+        openApi = ctx.read();
+        assertNotNull(openApi);
+        assertEquals(openApi.getPaths().keySet(), expectedKeys);
     }
 
 }
