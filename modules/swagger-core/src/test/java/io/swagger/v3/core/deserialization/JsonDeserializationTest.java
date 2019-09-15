@@ -258,6 +258,18 @@ public class JsonDeserializationTest {
         assertEquals(s.getEnum().get(2), 31474836475505055L);
     }
 
+    @Test
+    public void deserializeDateExample() throws IOException {
+
+        final String jsonString = ResourceUtils.loadClassResource(getClass(), "specFiles/swos-126.yaml");
+        final OpenAPI swagger = Yaml.mapper().readValue(jsonString, OpenAPI.class);
+        assertNotNull(swagger);
+        Map<String, Schema> props = swagger.getComponents().getSchemas().get("MyModel").getProperties();
+        assertTrue(Yaml.pretty().writeValueAsString(props.get("date")).contains("example: 2019-08-05"));
+        assertTrue(Yaml.pretty().writeValueAsString(props.get("dateTime")).contains("example: 2019-08-05T12:34:56Z"));
+
+    }
+
     @Test(description = "Deserialize ref callback")
     public void testDeserializeRefCallback() throws Exception {
         String yaml = "openapi: 3.0.1\n" +

@@ -51,6 +51,7 @@ import io.swagger.v3.jaxrs2.resources.SubResourceHead;
 import io.swagger.v3.jaxrs2.resources.TagsResource;
 import io.swagger.v3.jaxrs2.resources.Test2607;
 import io.swagger.v3.jaxrs2.resources.TestResource;
+import io.swagger.v3.jaxrs2.resources.Ticket2340Resource;
 import io.swagger.v3.jaxrs2.resources.Ticket2644ConcreteImplementation;
 import io.swagger.v3.jaxrs2.resources.Ticket2763Resource;
 import io.swagger.v3.jaxrs2.resources.Ticket2793Resource;
@@ -469,17 +470,30 @@ public class ReaderTest {
                 "                - $ref: '#/components/schemas/MultipleSub2Bean'\n" +
                 "components:\n" +
                 "  schemas:\n" +
+                "    SampleResponseSchema:\n" +
+                "      type: object\n" +
+                "    GenericError:\n" +
+                "      type: object\n" +
+                "    MultipleSub1Bean:\n" +
+                "      type: object\n" +
+                "      description: MultipleSub1Bean\n" +
+                "      allOf:\n" +
+                "      - $ref: '#/components/schemas/MultipleBaseBean'\n" +
+                "      - type: object\n" +
+                "        properties:\n" +
+                "          c:\n" +
+                "            type: integer\n" +
+                "            format: int32\n" +
                 "    MultipleSub2Bean:\n" +
                 "      type: object\n" +
-                "      properties:\n" +
-                "        d:\n" +
-                "          type: integer\n" +
-                "          format: int32\n" +
                 "      description: MultipleSub2Bean\n" +
                 "      allOf:\n" +
                 "      - $ref: '#/components/schemas/MultipleBaseBean'\n" +
-                "    GenericError:\n" +
-                "      type: object\n" +
+                "      - type: object\n" +
+                "        properties:\n" +
+                "          d:\n" +
+                "            type: integer\n" +
+                "            format: int32\n" +
                 "    MultipleBaseBean:\n" +
                 "      type: object\n" +
                 "      properties:\n" +
@@ -490,18 +504,7 @@ public class ReaderTest {
                 "          format: int32\n" +
                 "        b:\n" +
                 "          type: string\n" +
-                "      description: MultipleBaseBean\n" +
-                "    MultipleSub1Bean:\n" +
-                "      type: object\n" +
-                "      properties:\n" +
-                "        c:\n" +
-                "          type: integer\n" +
-                "          format: int32\n" +
-                "      description: MultipleSub1Bean\n" +
-                "      allOf:\n" +
-                "      - $ref: '#/components/schemas/MultipleBaseBean'\n" +
-                "    SampleResponseSchema:\n" +
-                "      type: object";
+                "      description: MultipleBaseBean";
         SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
     }
 
@@ -988,6 +991,60 @@ public class ReaderTest {
                 "            application/json:\n" +
                 "              schema:\n" +
                 "                $ref: https://openebench.bsc.es/monitor/tool/tool.json";
+        SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
+    }
+
+    @Test(description = "Responses with array schema")
+    public void testTicket2340() {
+        Reader reader = new Reader(new OpenAPI());
+
+        OpenAPI openAPI = reader.read(Ticket2340Resource.class);
+        String yaml = "openapi: 3.0.1\n" +
+                "paths:\n" +
+                "  /test/test:\n" +
+                "    post:\n" +
+                "      operationId: getAnimal\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          application/json:\n" +
+                "            schema:\n" +
+                "              $ref: '#/components/schemas/Animal'\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            application/json:\n" +
+                "              schema:\n" +
+                "                type: string\n" +
+                "components:\n" +
+                "  schemas:\n" +
+                "    Animal:\n" +
+                "      required:\n" +
+                "      - type\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        type:\n" +
+                "          type: string\n" +
+                "      discriminator:\n" +
+                "        propertyName: type\n" +
+                "    Cat:\n" +
+                "      type: object\n" +
+                "      allOf:\n" +
+                "      - $ref: '#/components/schemas/Animal'\n" +
+                "      - type: object\n" +
+                "        properties:\n" +
+                "          lives:\n" +
+                "            type: integer\n" +
+                "            format: int32\n" +
+                "    Dog:\n" +
+                "      type: object\n" +
+                "      allOf:\n" +
+                "      - $ref: '#/components/schemas/Animal'\n" +
+                "      - type: object\n" +
+                "        properties:\n" +
+                "          barkVolume:\n" +
+                "            type: number\n" +
+                "            format: double\n";
         SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
     }
 

@@ -39,6 +39,7 @@ import io.swagger.v3.oas.models.media.Discriminator;
 import io.swagger.v3.oas.models.media.IntegerSchema;
 import io.swagger.v3.oas.models.media.MapSchema;
 import io.swagger.v3.oas.models.media.NumberSchema;
+import io.swagger.v3.oas.models.media.ObjectSchema;
 import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.media.StringSchema;
 import io.swagger.v3.oas.models.media.UUIDSchema;
@@ -84,6 +85,10 @@ import static io.swagger.v3.core.util.RefUtils.constructRef;
 public class ModelResolver extends AbstractModelConverter implements ModelConverter {
     Logger LOGGER = LoggerFactory.getLogger(ModelResolver.class);
     private static List<String> NOT_NULL_ANNOTATIONS = Arrays.asList("NotNull", "NonNull", "NotBlank", "NotEmpty");
+
+    public static final String SET_PROPERTY_OF_COMPOSED_MODEL_AS_SIBLING = "composed-model-properties-as-sibiling";
+
+    public static boolean composedModelPropertiesAsSibling = System.getProperty(SET_PROPERTY_OF_COMPOSED_MODEL_AS_SIBLING) != null ? true : false;
 
     public ModelResolver(ObjectMapper mapper) {
         super(mapper);
@@ -796,8 +801,27 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
             });
 
+            if (!composedModelPropertiesAsSibling) {
+                if (composedSchema.getAllOf() != null && !composedSchema.getAllOf().isEmpty()) {
+                    if (composedSchema.getProperties() != null && !composedSchema.getProperties().isEmpty()) {
+                        ObjectSchema propSchema = new ObjectSchema();
+                        propSchema.properties(composedSchema.getProperties());
+                        composedSchema.setProperties(null);
+                        composedSchema.addAllOfItem(propSchema);
+                    }
+                }
+            }
         }
-        if (model != null && annotatedType.isResolveAsRef() && "object".equals(model.getType()) && StringUtils.isNotBlank(model.getName())) {
+
+        if (!type.isContainerType() && StringUtils.isNotBlank(name)) {
+            // define the model here to support self/cyclic referencing of models
+            context.defineModel(name, model, annotatedType, null);
+        }
+
+        if (model != null && annotatedType.isResolveAsRef() &&
+            (isComposedSchema || "object".equals(model.getType())) &&
+            StringUtils.isNotBlank(model.getName()))
+        {
             if (context.getDefinedModels().containsKey(model.getName())) {
                 model = new Schema().$ref(constructRef(model.getName()));
             }
@@ -817,6 +841,9 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 }
             }
         }
+
+        resolveDiscriminatorProperty(type, context, model);
+
         return model;
     }
 
@@ -1213,6 +1240,17 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 composedSchema.addAllOfItem(refSchema);
             }
             removeParentProperties(composedSchema, model);
+            if (!composedModelPropertiesAsSibling) {
+                if (composedSchema.getAllOf() != null && !composedSchema.getAllOf().isEmpty()) {
+                    if (composedSchema.getProperties() != null && !composedSchema.getProperties().isEmpty()) {
+                        ObjectSchema propSchema = new ObjectSchema();
+                        propSchema.properties(composedSchema.getProperties());
+                        composedSchema.setProperties(null);
+                        composedSchema.addAllOfItem(propSchema);
+                    }
+                }
+            }
+
 
             // replace previous schema..
             Class<?> currentType = subtype.getType();
@@ -1588,6 +1626,27 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             return AnnotationsUtils.getExtensions(schema.extensions());
         }
         return null;
+    }
+
+    protected void resolveDiscriminatorProperty(JavaType type, ModelConverterContext context, Schema model) {
+        // add JsonTypeInfo.property if not member of bean
+        JsonTypeInfo typeInfo = type.getRawClass().getDeclaredAnnotation(JsonTypeInfo.class);
+        if (typeInfo != null) {
+            String typeInfoProp = typeInfo.property();
+            if (StringUtils.isNotBlank(typeInfoProp)) {
+                Schema modelToUpdate = model;
+                if (StringUtils.isNotBlank(model.get$ref())) {
+                    modelToUpdate = context.getDefinedModels().get(model.get$ref().substring(21));
+                }
+                if (modelToUpdate.getProperties() == null || !modelToUpdate.getProperties().keySet().contains(typeInfoProp)) {
+                    Schema discriminatorSchema = new StringSchema().name(typeInfoProp);
+                    modelToUpdate.addProperties(typeInfoProp, discriminatorSchema);
+                    if (modelToUpdate.getRequired() == null || !model.getRequired().contains(typeInfoProp)) {
+                        modelToUpdate.addRequiredItem(typeInfoProp);
+                    }
+                }
+            }
+        }
     }
 
     protected Discriminator resolveDiscriminator(JavaType type, ModelConverterContext context) {
