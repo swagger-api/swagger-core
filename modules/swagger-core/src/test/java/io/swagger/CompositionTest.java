@@ -3,12 +3,8 @@ package io.swagger;
 import io.swagger.converter.ModelConverters;
 import io.swagger.matchers.SerializationMatchers;
 import io.swagger.models.Model;
-import io.swagger.models.composition.AbstractBaseModelWithoutFields;
-import io.swagger.models.composition.Animal;
-import io.swagger.models.composition.Human;
-import io.swagger.models.composition.ModelWithFieldWithSubTypes;
+import io.swagger.models.composition.*;
 import io.swagger.util.ResourceUtils;
-
 import org.testng.annotations.Test;
 
 import java.io.IOException;
@@ -34,6 +30,11 @@ public class CompositionTest {
     @Test(description = "create a ModelWithFieldWithSubTypes")
     public void createModelWithFieldWithSubTypes() throws IOException {
         compareAsJson(ModelWithFieldWithSubTypes.class, "ModelWithFieldWithSubTypes.json");
+    }
+
+    @Test(description = "create a ModelWithFieldWithSubTypes")
+    public void createModelInheritanceWithOnlyParentSpecified() throws IOException {
+        compareAsJson(ModelWithParentOnly.class, "ModelInheritanceWithOnlyParentSpecified.json");
     }
 
     private void compareAsJson(Class<?> cls, String fileName) throws IOException {

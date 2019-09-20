@@ -32,6 +32,8 @@ public class ModelImpl extends AbstractModel {
     @JsonProperty("default")
     private String defaultValue;
     private List<String> _enum;
+    @JsonIgnore
+    private Class parent;
     private BigDecimal minimum;
     private BigDecimal maximum;
 
@@ -433,4 +435,11 @@ public class ModelImpl extends AbstractModel {
         return cloned;
     }
 
+    public Class getParent() {
+        return parent;
+    }
+
+    public void setParent(Class parent) {
+        this.parent = parent;
+    }
 }
