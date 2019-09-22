@@ -263,7 +263,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         }
 
         if (model == null && type.isEnumType()) {
-            model = new StringSchema();
+            model = new StringSchema().$ref(name).name(name);
             _addEnumProps(type.getRawClass(), model);
             isPrimitive = true;
         }
