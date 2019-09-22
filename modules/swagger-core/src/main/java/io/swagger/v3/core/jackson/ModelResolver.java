@@ -87,8 +87,10 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
     Logger LOGGER = LoggerFactory.getLogger(ModelResolver.class);
 
     public static final String SET_PROPERTY_OF_COMPOSED_MODEL_AS_SIBLING = "composed-model-properties-as-sibiling";
+    public static final String SET_PROPERTY_OF_ENUMS_AS_REF = "enums-as-ref";
 
     public static boolean composedModelPropertiesAsSibling = System.getProperty(SET_PROPERTY_OF_COMPOSED_MODEL_AS_SIBLING) != null ? true : false;
+    public static boolean enumsAsRef = System.getProperty(SET_PROPERTY_OF_ENUMS_AS_REF) != null ? true : false;
 
     public ModelResolver(ObjectMapper mapper) {
         super(mapper);
@@ -318,6 +320,15 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 resolveArraySchema(annotatedType, schema, resolvedArrayAnnotation);
                 schema.setItems(model);
                 return schema;
+            }
+            if (type.isEnumType() &&
+                    (resolvedSchemaAnnotation != null && resolvedSchemaAnnotation.enumAsRef()) ||
+                    ModelResolver.enumsAsRef
+            ) {
+                // Store off the ref and add the enum as a top-level model
+                context.defineModel(name, model, annotatedType, null);
+                // Return the model as a ref only property
+                model = new Schema().$ref(name);
             }
             return model;
         }
