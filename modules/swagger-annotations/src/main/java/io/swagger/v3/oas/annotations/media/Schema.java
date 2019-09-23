@@ -310,6 +310,13 @@ public @interface Schema {
     boolean hidden() default false;
 
     /**
+     * Allows enums to be represented as top level references.
+     *
+     * @return whether or not this schema is a top level enum reference
+     */
+    boolean enumAsRef() default false;
+
+    /**
      * An array of the sub types inheriting from this model.
      */
     Class<?>[] subTypes() default {};

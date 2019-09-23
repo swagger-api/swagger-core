@@ -95,6 +95,7 @@ public abstract class AnnotationsUtils {
                 && schema.discriminatorMapping().length == 0
                 && schema.extensions().length == 0
                 && !schema.hidden()
+                && !schema.enumAsRef()
                 ) {
             return false;
         }
@@ -260,7 +261,9 @@ public abstract class AnnotationsUtils {
         if (thisSchema.hidden() != thatSchema.hidden()) {
             return false;
         }
-
+        if (thisSchema.enumAsRef() != thatSchema.enumAsRef()) {
+            return false;
+        }
         if (!thisSchema.implementation().equals(thatSchema.implementation())) {
             return false;
         }
@@ -1722,6 +1725,14 @@ public abstract class AnnotationsUtils {
                     return master.hidden();
                 }
                 return patch.hidden();
+            }
+
+            @Override
+            public boolean enumAsRef() {
+                if (master.enumAsRef() || !patch.enumAsRef()) {
+                    return master.enumAsRef();
+                }
+                return patch.enumAsRef();
             }
 
             @Override
