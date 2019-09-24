@@ -57,9 +57,9 @@ public class BeanConfig extends AbstractScanner implements Scanner, SwaggerConfi
     String scannerId;
     String configId;
     String contextId;
-    
+
     boolean expandSuperTypes = true;
-    
+
     private boolean usePathBasedConfig = false;
 
     public boolean isUsePathBasedConfig() {
@@ -202,11 +202,11 @@ public class BeanConfig extends AbstractScanner implements Scanner, SwaggerConfi
     public boolean getExpandSuperTypes() {
         return expandSuperTypes;
     }
-        
+
     public void setExpandSuperTypes(boolean expandSuperTypes) {
         this.expandSuperTypes = expandSuperTypes;
     }
-        
+
     public void setBasePath(String basePath) {
         if (!"".equals(basePath) && basePath != null) {
             if (!basePath.startsWith("/")) {
@@ -222,7 +222,7 @@ public class BeanConfig extends AbstractScanner implements Scanner, SwaggerConfi
             this.prettyPrint = Boolean.parseBoolean(prettyPrint);
         }
     }
-    
+
     public boolean getScan() {
         return true;
     }
@@ -262,7 +262,6 @@ public class BeanConfig extends AbstractScanner implements Scanner, SwaggerConfi
         }
     }
 
-    
     @Override
     public Set<Class<?>> classes() {
         ConfigurationBuilder config = new ConfigurationBuilder();
@@ -283,7 +282,7 @@ public class BeanConfig extends AbstractScanner implements Scanner, SwaggerConfi
         }
 
         config.setExpandSuperTypes(getExpandSuperTypes());
-        
+
         config.setScanners(new ResourcesScanner(), new TypeAnnotationsScanner(), new SubTypesScanner());
 
         final Reflections reflections = new Reflections(config);
