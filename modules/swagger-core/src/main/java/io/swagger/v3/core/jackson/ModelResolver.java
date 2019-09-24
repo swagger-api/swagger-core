@@ -1651,7 +1651,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 if (modelToUpdate.getProperties() == null || !modelToUpdate.getProperties().keySet().contains(typeInfoProp)) {
                     Schema discriminatorSchema = new StringSchema().name(typeInfoProp);
                     modelToUpdate.addProperties(typeInfoProp, discriminatorSchema);
-                    if (modelToUpdate.getRequired() == null || !model.getRequired().contains(typeInfoProp)) {
+                    if (modelToUpdate.getRequired() == null || !modelToUpdate.getRequired().contains(typeInfoProp)) {
                         modelToUpdate.addRequiredItem(typeInfoProp);
                     }
                 }
