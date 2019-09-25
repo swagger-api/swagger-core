@@ -1,5 +1,7 @@
 package io.swagger;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import io.swagger.converter.ModelConverters;
 import io.swagger.matchers.SerializationMatchers;
 import io.swagger.models.Model;
@@ -35,6 +37,40 @@ public class CompositionTest {
     public void createModelWithFieldWithSubTypes() throws IOException {
         compareAsJson(ModelWithFieldWithSubTypes.class, "ModelWithFieldWithSubTypes.json");
     }
+
+    @Test
+    public void testTicket2189() throws IOException {
+        final Map<String, Model> schemas = ModelConverters.getInstance().readAll(BaseClass.class);
+        SerializationMatchers.assertEqualsToYaml(schemas, "BaseClass:\n" +
+                "  type: \"object\"\n" +
+                "  properties:\n" +
+                "    property:\n" +
+                "      type: \"string\"\n" +
+                "    type:\n" +
+                "      type: \"string\"\n" +
+                "SubClass:\n" +
+                "  allOf:\n" +
+                "  - $ref: \"#/definitions/BaseClass\"\n" +
+                "  - type: \"object\"\n" +
+                "    properties:\n" +
+                "      subClassProperty:\n" +
+                "        type: \"string\"");
+    }
+
+    static class SubClass extends BaseClass {
+        public String subClassProperty;
+    }
+
+    @JsonTypeInfo(use = JsonTypeInfo.Id.NAME)
+    @JsonSubTypes({
+            @JsonSubTypes.Type(value = SubClass.class, name = "SubClass"),
+            @JsonSubTypes.Type(value = BaseClass.class, name = "BaseClass"),
+    })
+    static class BaseClass {
+        public String property;
+        public String type;
+    }
+
 
     private void compareAsJson(Class<?> cls, String fileName) throws IOException {
         final Map<String, Model> schemas = ModelConverters.getInstance().readAll(cls);
