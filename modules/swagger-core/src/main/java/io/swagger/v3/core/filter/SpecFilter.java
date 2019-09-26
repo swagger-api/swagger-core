@@ -391,25 +391,39 @@ public class SpecFilter {
                 addPathItemSchemaRef(pathItem, referencedDefinitions);
             }
         }
-
-        Set<String> nestedReferencedDefinitions = new TreeSet<>();
-        for (String ref : referencedDefinitions) {
-            locateReferencedDefinitions(ref, nestedReferencedDefinitions, openApi);
-        }
-        referencedDefinitions.addAll(nestedReferencedDefinitions);
-        openApi.getComponents().getSchemas().keySet().retainAll(referencedDefinitions.stream().map(s -> (String) RefUtils.extractSimpleName(s).getLeft()).collect(Collectors.toSet()));
+        
+        referencedDefinitions.addAll(resolveAllNestededRefs(referencedDefinitions, referencedDefinitions, openApi));
+        openApi.getComponents()
+            .getSchemas()
+            .keySet()
+            .retainAll(referencedDefinitions.stream()
+                .map(s -> (String) RefUtils.extractSimpleName(s).getLeft())
+                .collect(Collectors.toSet()));
         return openApi;
+    }
+    
+    protected Set<String> resolveAllNestededRefs(Set<String> refs, OpenAPI openApi) {
+        Set<String> justDiscoveredReferencedDefinitions = new TreeSet<>();
+        for (String ref : refs) {
+            locateReferencedDefinitions(ref, justDiscoveredReferencedDefinitions, openApi);
+        }
+        // Base case - no new references have been discovered. Halt discovery to avoid infinite loops
+        if (refs.containsAll(justDiscoveredReferencedDefinitions)) {
+            return Collections.emptySet();
+        } else {
+            // Remove all refs that have already been discovered.
+            justDiscoveredReferencedDefinitions.removeAll(refs);
+            refs.addAll(justDiscoveredReferencedDefinitions);
+            return resolveAllNestededRefs(justDiscoveredReferencedDefinitions, openApi);
+        }
     }
 
     protected void locateReferencedDefinitions(String ref, Set<String> nestedReferencedDefinitions, OpenAPI openAPI) {
-        // if not already processed so as to avoid infinite loops
-        if (!nestedReferencedDefinitions.contains(ref)) {
-            nestedReferencedDefinitions.add(ref);
-            String simpleName = (String) RefUtils.extractSimpleName(ref).getLeft();
-            Schema model = openAPI.getComponents().getSchemas().get(simpleName);
-            if (model != null) {
-                addSchemaRef(model, nestedReferencedDefinitions);
-            }
+        nestedReferencedDefinitions.add(ref);
+        String simpleName = (String) RefUtils.extractSimpleName(ref).getLeft();
+        Schema model = openAPI.getComponents().getSchemas().get(simpleName);
+        if (model != null) {
+            addSchemaRef(model, nestedReferencedDefinitions);
         }
     }
 }
