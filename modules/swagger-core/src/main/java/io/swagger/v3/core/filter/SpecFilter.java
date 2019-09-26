@@ -23,15 +23,7 @@ import io.swagger.v3.oas.models.tags.Tag;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class SpecFilter {
@@ -391,30 +383,30 @@ public class SpecFilter {
                 addPathItemSchemaRef(pathItem, referencedDefinitions);
             }
         }
-        
+
         referencedDefinitions.addAll(resolveAllNestededRefs(referencedDefinitions, referencedDefinitions, openApi));
         openApi.getComponents()
-            .getSchemas()
-            .keySet()
-            .retainAll(referencedDefinitions.stream()
-                .map(s -> (String) RefUtils.extractSimpleName(s).getLeft())
-                .collect(Collectors.toSet()));
+                .getSchemas()
+                .keySet()
+                .retainAll(referencedDefinitions.stream()
+                        .map(s -> (String) RefUtils.extractSimpleName(s).getLeft())
+                        .collect(Collectors.toSet()));
         return openApi;
     }
-    
-    protected Set<String> resolveAllNestededRefs(Set<String> refs, OpenAPI openApi) {
+
+    private Set<String> resolveAllNestededRefs(Set<String> refs, Set<String> accumulatedRefs, OpenAPI openApi) {
         Set<String> justDiscoveredReferencedDefinitions = new TreeSet<>();
         for (String ref : refs) {
             locateReferencedDefinitions(ref, justDiscoveredReferencedDefinitions, openApi);
         }
         // Base case - no new references have been discovered. Halt discovery to avoid infinite loops
-        if (refs.containsAll(justDiscoveredReferencedDefinitions)) {
+        if (accumulatedRefs.containsAll(justDiscoveredReferencedDefinitions)) {
             return Collections.emptySet();
         } else {
             // Remove all refs that have already been discovered.
-            justDiscoveredReferencedDefinitions.removeAll(refs);
-            refs.addAll(justDiscoveredReferencedDefinitions);
-            return resolveAllNestededRefs(justDiscoveredReferencedDefinitions, openApi);
+            justDiscoveredReferencedDefinitions.removeAll(accumulatedRefs);
+            accumulatedRefs.addAll(justDiscoveredReferencedDefinitions);
+            return resolveAllNestededRefs(justDiscoveredReferencedDefinitions, accumulatedRefs, openApi);
         }
     }
 
