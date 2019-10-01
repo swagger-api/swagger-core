@@ -317,7 +317,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
          */
         Schema resolvedModel = context.resolve(annotatedType);
         if (resolvedModel != null) {
-            if (name.equals(resolvedModel.getName())) {
+            if (name != null && name.equals(resolvedModel.getName())) {
                 return resolvedModel;
             }
         }
