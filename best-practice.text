@@ -1,0 +1,40 @@
+Best Practices in API Documentation
+APIs are only as good as their documentation. A great API can be rendered useless if people don’t know how to use it, which is why documentation can be crucial for success in the API economy. But creating and maintaining good documentation that’s easy to read, enjoyable to interact with, and sets the consumer up for success can be extremely challenging.
+
+Creating great documentation requires effort and patience, but it has direct implications on API adoption and maintainability. Documenting your APIs can be made significantly more manageable by selecting the right API documentation tool.  In a previous post, I detailed the benefits of good API documentation. But what exactly do we mean by good documentation? We’ve detailed a few good practices to help your team create great API documentation that is loved by your end consumers. But before we do so, it’s important to understand one important question...
+
+Who is your API documentation for?
+Your API is meant to solve real world problems faced by companies in a specific industry, and will directly be integrated into applications by software engineers. As such, there are two types of potential audiences of your API, who will influence your API’s consumption and adoption curve.
+
+Decision Makers
+These are the people who evaluate your API’s services, and decide if it makes sense for the development team to spend time exploring the service. They are looking to use your API to solve potential challenges in their product or service strategy. In many cases, they don’t directly work with your API, but are the main points of contacts for influencing an organization's decision to consume it. Examples of decision makers are CTOs or Product Managers.
+
+Users
+These are the people who will be directly working with your API. They need to learn the ins and outs of your API, and how it applies to their use case.  This could mean learning how to call and integrate with many, or all, of the resources you expose. They are critical to the sustainability of your API. They are analytical, work on important and hard engineering problems, and have a shortage of time. Hence, your API must be easy to use, and have great documentation so these users can successfully integrate with your API as quickly as possible. Example of API users are front end and back end developers.  Your API’s documentation needs to cater to both these personas. This can be a hard exercise to follow, but it ensures your API documentation is sustainable and complete, which ensures long term success and ROI.
+
+Best Practices in API Documentation
+Now that we’ve understood who to document APIs for, it’s time to understand what actually goes into good API documentation.
+
+Fundamental API Documentation Sections
+There are sections that have become fundamental to good API documentation. These sections form the baseline for good documentation, and should be detailed based on the kind of industry and consumer your API is expected to have. These sections include:
+
+Authentication
+This is the information about using authentication schemes to start consuming your API. Most APIs have authentication schemes,  and consumers have to authenticate before gaining access to the API. Make sure this section is properly documented, and hand-holds users to successfully authenticate against the API. Bitly is a great example of concise authentication documentation.
+
+Error messages
+Error messages are important because they tell end consumers when they're integrating with your API services in an incorrect way. Explain your error standards, and also provide solutions on how to overcome them when an end consumer gets an error. Mailchimp does a good job in detailing all of their possible error codes that consumers may receive.
+
+Resources
+Pay attention to your API’s resources and their associated request and response cycles. Resources are the core components of your API, which users will be interacting with constantly.  List all of the resources your API exposes, and understand how consumers may integrate with them. This will give you a good idea of how to better document the requests and responses under these resources.
+
+Terms of use
+This is the legal agreement between the consumer and your organization, defining how the consumer should ideally use your services. Include API limits under best practices, with terms and conditions. Constraints also need to be clearly stated so that consumers understand what API usage and practices are permitted. Here’s an example of Spotify’s API terms of use.
+
+Change log
+Detail updates and versions of your APIs and how that might affect API consumers. This will help consumers know the stability of your API and see if any changes need to be made for an effective API call. Here’s an example of GitHub’s API changelog. Mapping the above sections before you start the API documentation is a good way for technical writers to ground themselves on the important priorities.
+
+Avoid Jargon
+Keep in mind that many people working with the API may not have intimate knowledge of the domain or jargon you may be using. Documentation should cater to the “very technical” developer audience, and the less technical decision makers (like Product Managers). A big mistake technical writing teams make is assuming their audience is fully technical and have complete understanding of how to work with APIs. Start your documentation by writing in plain English, and have easy-to-understand domain explanations for every resource. Avoid using too much technical jargon, and write in a way that can be easily understood by people who are new to the API or industry. If you do have technical or domain specific jargon, link that specific item to further documentation explaining these terms. This will ensure clarity and completeness across your API, help consumers know why certain calls exist, and avoid getting too lost in the details of parameters, headers, and responses. A good example for this is Stripe’s API documentation, where there’s a deliberate attempt to not use technical words. Even when there is domain-based jargon, they are supported by additional pieces of content to explain what they mean. YouTube’s API is known for completeness and clarity, and allows developers to easily understand how the API works. They also have a nice navigation left panel for easily accessing documentation of the implementation of various resources, which I personally felt was very beneficial.
+
+Treat Your Requests and Responses
+Give the documentation of your request-response cycles the care they deserve. Having too much information available for the end consumer is never an issue, especially when they’re trying to integrate your services into their applications, so describe your request-response cycles in detail. Document every call your API could offer, with context around the parameters and responses. Responses are the guides for your consumers, indicating whether they’re on the right track, or providing guidance with error messages to help them succeed. Your API users should know exactly what to expect from a successful API call.  Describe the full sample response body in every supported format. Think of not only the format, like XML or JSON, but also of HTTP headers, error codes, and messages. Examples in parameters and responses are also important. Provide examples in every single object which your API is supposed to return, as well as examples of parameters that users can add for a successful API call. Here’s another great documentation example of Stripe, and how they details error responses.  Another great example of good documentation of requests and responses is Instagram.
