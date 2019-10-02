@@ -43,6 +43,7 @@ public class SpecFilterTest {
 
     private static final String RESOURCE_RECURSIVE_MODELS = "specFiles/recursivemodels.json";
     private static final String RESOURCE_PATH = "specFiles/petstore-3.0-v2.json";
+    private static final String RESOURCE_PATH_3303 = "specFiles/petstore-3.0-v2-ticket-3303.json";
     private static final String RESOURCE_REFERRED_SCHEMAS = "specFiles/petstore-3.0-referred-schemas.json";
     private static final String RESOURCE_PATH_WITHOUT_MODELS = "specFiles/petstore-3.0-v2_withoutModels.json";
     private static final String RESOURCE_DEPRECATED_OPERATIONS = "specFiles/deprecatedoperationmodel.json";
@@ -239,6 +240,21 @@ public class SpecFilterTest {
         assertNull(filtered.getComponents().getSchemas().get("PetHeader"));
         assertNotNull(filtered.getComponents().getSchemas().get("Category"));
         assertNotNull(filtered.getComponents().getSchemas().get("Pet"));
+    }
+
+    @Test
+    public void shouldRemoveBrokenNestedRefs() throws IOException {
+        final OpenAPI openAPI = getOpenAPI(RESOURCE_PATH_3303);
+        openAPI.getPaths().get("/pet/{petId}").getGet().getResponses().getDefault().getHeaders().remove("X-Rate-Limit-Limit");
+        assertNotNull(openAPI.getComponents().getSchemas().get("PetHeader"));
+        final RemoveUnreferencedDefinitionsFilter remover = new RemoveUnreferencedDefinitionsFilter();
+        final OpenAPI filtered = new SpecFilter().filter(openAPI, remover, null, null, null);
+
+        assertNull(filtered.getComponents().getSchemas().get("PetHeader"));
+        assertNull(filtered.getComponents().getSchemas().get("Bar"));
+        assertNotNull(filtered.getComponents().getSchemas().get("Category"));
+        assertNotNull(filtered.getComponents().getSchemas().get("Pet"));
+        assertNotNull(filtered.getComponents().getSchemas().get("Foo"));
     }
 
     @Test
