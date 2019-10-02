@@ -23,7 +23,16 @@ import io.swagger.v3.oas.models.tags.Tag;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 public class SpecFilter {
@@ -384,7 +393,7 @@ public class SpecFilter {
             }
         }
 
-        referencedDefinitions.addAll(resolveAllNestededRefs(referencedDefinitions, referencedDefinitions, openApi));
+        referencedDefinitions.addAll(resolveAllNestedRefs(referencedDefinitions, referencedDefinitions, openApi));
         openApi.getComponents()
                 .getSchemas()
                 .keySet()
@@ -394,7 +403,7 @@ public class SpecFilter {
         return openApi;
     }
 
-    private Set<String> resolveAllNestededRefs(Set<String> refs, Set<String> accumulatedRefs, OpenAPI openApi) {
+    protected Set<String> resolveAllNestedRefs(Set<String> refs, Set<String> accumulatedRefs, OpenAPI openApi) {
         Set<String> justDiscoveredReferencedDefinitions = new TreeSet<>();
         for (String ref : refs) {
             locateReferencedDefinitions(ref, justDiscoveredReferencedDefinitions, openApi);
@@ -406,7 +415,7 @@ public class SpecFilter {
             // Remove all refs that have already been discovered.
             justDiscoveredReferencedDefinitions.removeAll(accumulatedRefs);
             accumulatedRefs.addAll(justDiscoveredReferencedDefinitions);
-            return resolveAllNestededRefs(justDiscoveredReferencedDefinitions, accumulatedRefs, openApi);
+            return resolveAllNestedRefs(justDiscoveredReferencedDefinitions, accumulatedRefs, openApi);
         }
     }
 
