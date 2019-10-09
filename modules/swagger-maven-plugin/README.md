@@ -58,7 +58,7 @@ to `swagger` [configuration property](https://github.com/swagger-api/swagger-cor
 
 ### Configuration example with provided Swagger configuration file
  
- ``` 
+ ```xml
 <project>
     <build>
         <plugins>

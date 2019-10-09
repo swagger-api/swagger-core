@@ -317,7 +317,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
          */
         Schema resolvedModel = context.resolve(annotatedType);
         if (resolvedModel != null) {
-            if (name.equals(resolvedModel.getName())) {
+            if (name != null && name.equals(resolvedModel.getName())) {
                 return resolvedModel;
             }
         }
@@ -1166,6 +1166,12 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         }
 
         /**
+         * Remove the current class from the child classes. This happens if @JsonSubTypes references
+         * the annotated class as a subtype.
+         */
+        removeSelfFromSubTypes(types, bean);
+
+        /**
          * As the introspector will find @JsonSubTypes for a child class that are present on its super classes, the
          * code segment below will also run the introspector on the parent class, and then remove any sub-types that are
          * found for the parent from the sub-types found for the child. The same logic all applies to implemented
@@ -1260,6 +1266,11 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
         }
         return count != 0;
+    }
+
+    private void removeSelfFromSubTypes(List<NamedType> types, BeanDescription bean) {
+        Class<?> beanClass= bean.getType().getRawClass();
+        types.removeIf(type -> beanClass.equals(type.getType()));
     }
 
     private void removeSuperClassAndInterfaceSubTypes(List<NamedType> types, BeanDescription bean) {
