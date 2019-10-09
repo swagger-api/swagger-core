@@ -17,7 +17,6 @@
 package io.swagger.v3.oas.models.media;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -26,29 +25,28 @@ import java.util.Objects;
  */
 
 public class NumberSchema extends Schema<BigDecimal> {
-    private String type = "number";
 
-    /**
-     * returns the type property from a NumberSchema instance.
-     *
-     * @return String type
-     **/
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
+    public NumberSchema() {
+        super("number", null);
     }
 
     public NumberSchema type(String type) {
-        this.type = type;
+        super.setType(type);
         return this;
     }
 
     public NumberSchema _default(BigDecimal _default) {
         super.setDefault(_default);
+        return this;
+    }
+
+    public NumberSchema _enum(List<BigDecimal> _enum) {
+        super.setEnum(_enum);
+        return this;
+    }
+
+    public NumberSchema addEnumItem(BigDecimal _enumItem) {
+        super.addEnumItemObject(_enumItem);
         return this;
     }
 
@@ -63,19 +61,6 @@ public class NumberSchema extends Schema<BigDecimal> {
         return null;
     }
 
-    public NumberSchema _enum(List<BigDecimal> _enum) {
-        this._enum = _enum;
-        return this;
-    }
-
-    public NumberSchema addEnumItem(BigDecimal _enumItem) {
-        if (this._enum == null) {
-            this._enum = new ArrayList<BigDecimal>();
-        }
-        this._enum.add(_enumItem);
-        return this;
-    }
-
     @Override
     public boolean equals(java.lang.Object o) {
         if (this == o) {
@@ -84,16 +69,12 @@ public class NumberSchema extends Schema<BigDecimal> {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        NumberSchema numberSchema = (NumberSchema) o;
-        return Objects.equals(this.type, numberSchema.type) &&
-                Objects.equals(this._default, numberSchema._default) &&
-                Objects.equals(this._enum, numberSchema._enum) &&
-                super.equals(o);
+        return super.equals(o);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(type, _default, _enum, super.hashCode());
+        return Objects.hash(super.hashCode());
     }
 
     @Override
@@ -101,23 +82,7 @@ public class NumberSchema extends Schema<BigDecimal> {
         StringBuilder sb = new StringBuilder();
         sb.append("class NumberSchema {\n");
         sb.append("    ").append(toIndentedString(super.toString())).append("\n");
-        sb.append("    type: ").append(toIndentedString(type)).append("\n");
-        sb.append("    _default: ").append(toIndentedString(_default)).append("\n");
-        sb.append("    _enum: ").append(toIndentedString(_enum)).append("\n");
         sb.append("}");
         return sb.toString();
     }
-
-    /**
-     * Convert the given object to string with each line indented by 4 spaces
-     * (except the first line).
-     */
-    private String toIndentedString(java.lang.Object o) {
-        if (o == null) {
-            return "null";
-        }
-        return o.toString().replace("\n", "\n    ");
-    }
-
 }
-

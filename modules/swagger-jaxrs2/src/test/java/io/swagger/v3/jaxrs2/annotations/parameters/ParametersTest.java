@@ -1,7 +1,5 @@
 package io.swagger.v3.jaxrs2.annotations.parameters;
 
-import com.google.common.collect.Sets;
-import io.swagger.v3.core.util.Yaml;
 import io.swagger.v3.jaxrs2.Reader;
 import io.swagger.v3.jaxrs2.annotations.AbstractAnnotationTest;
 import io.swagger.v3.jaxrs2.resources.ResourceWithJacksonBean;
@@ -22,6 +20,8 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
@@ -270,8 +270,8 @@ public class ParametersTest extends AbstractAnnotationTest {
         OpenAPI openAPI = reader.read(ResourceWithJacksonBean.class);
         io.swagger.v3.oas.models.media.Schema o = openAPI.getComponents().getSchemas().get("JacksonBean");
 
-        assertEquals(o.getProperties().keySet(), Sets.newHashSet("identity", "bean", "code", "message",
-                "precodesuf", "premessagesuf"));
+        assertEquals(o.getProperties().keySet(), Stream.of("identity", "bean", "code", "message",
+                "precodesuf", "premessagesuf").collect(Collectors.toSet()));
     }
 
     static class SimpleOperations {

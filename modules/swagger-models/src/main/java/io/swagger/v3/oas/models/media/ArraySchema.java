@@ -22,26 +22,15 @@ import java.util.Objects;
  * ArraySchema
  */
 
-public class ArraySchema extends Schema {
-    private String type = "array";
-    private Schema items = null;
+public class ArraySchema extends Schema<Object> {
+    private Schema<?> items = null;
 
-    /**
-     * returns the type property from a ArraySchema instance.
-     *
-     * @return String type
-     **/
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
+    public ArraySchema() {
+        super("array", null);
     }
 
     public ArraySchema type(String type) {
-        this.type = type;
+        super.setType(type);
         return this;
     }
 
@@ -51,15 +40,15 @@ public class ArraySchema extends Schema {
      * @return Schema items
      **/
 
-    public Schema getItems() {
+    public Schema<?> getItems() {
         return items;
     }
 
-    public void setItems(Schema items) {
+    public void setItems(Schema<?> items) {
         this.items = items;
     }
 
-    public ArraySchema items(Schema items) {
+    public ArraySchema items(Schema<?> items) {
         this.items = items;
         return this;
     }
@@ -73,14 +62,13 @@ public class ArraySchema extends Schema {
             return false;
         }
         ArraySchema arraySchema = (ArraySchema) o;
-        return Objects.equals(this.type, arraySchema.type) &&
-                Objects.equals(this.items, arraySchema.items) &&
+        return Objects.equals(this.items, arraySchema.items) &&
                 super.equals(o);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(type, items, super.hashCode());
+        return Objects.hash(items, super.hashCode());
     }
 
     @Override
@@ -88,22 +76,8 @@ public class ArraySchema extends Schema {
         StringBuilder sb = new StringBuilder();
         sb.append("class ArraySchema {\n");
         sb.append("    ").append(toIndentedString(super.toString())).append("\n");
-        sb.append("    type: ").append(toIndentedString(type)).append("\n");
         sb.append("    items: ").append(toIndentedString(items)).append("\n");
         sb.append("}");
         return sb.toString();
     }
-
-    /**
-     * Convert the given object to string with each line indented by 4 spaces
-     * (except the first line).
-     */
-    private String toIndentedString(java.lang.Object o) {
-        if (o == null) {
-            return "null";
-        }
-        return o.toString().replace("\n", "\n    ");
-    }
-
 }
-

@@ -8,6 +8,7 @@ import io.swagger.v3.core.oas.models.Car;
 import io.swagger.v3.core.oas.models.Manufacturers;
 import io.swagger.v3.core.oas.models.ReadOnlyModel;
 import io.swagger.v3.core.util.Json;
+import io.swagger.v3.core.util.Yaml;
 import io.swagger.v3.oas.models.ExternalDocumentation;
 import io.swagger.v3.oas.models.media.ArraySchema;
 import io.swagger.v3.oas.models.media.DateSchema;
@@ -346,6 +347,24 @@ public class ModelSerializerTest {
 
         IntegerSchema ip = (IntegerSchema) model.getProperties().get("id");
         assertEquals(ip.getMultipleOf(), new BigDecimal("3.0"));
+
+    }
+
+    @Test
+    public void testEnumWithNull() throws Exception {
+        String yaml =
+                        "type: integer\n" +
+                        "description: some int values with null\n" +
+                        "format: int32\n" +
+                        "enum: \n" +
+                        "- 1\n" +
+                        "- 2\n" +
+                        "- null\n";
+
+        final Schema model = Yaml.mapper().readValue(yaml, Schema.class);
+
+        assertEquals(model.getEnum(), Arrays.asList(1, 2, null));
+        SerializationMatchers.assertEqualsToYaml(model, yaml);
 
     }
 }

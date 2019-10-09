@@ -23,31 +23,19 @@ import java.util.Objects;
  */
 
 public class ObjectSchema extends Schema<Object> {
-    private String type = "object";
-    private Object defaultObject = null;
 
-    /**
-     * returns the type property from a ObjectSchema instance.
-     *
-     * @return String type
-     **/
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
+    public ObjectSchema() {
+        super("object", null);
     }
 
     public ObjectSchema type(String type) {
-        this.type = type;
+        super.setType(type);
         return this;
     }
 
-    public Schema example(Object example) {
+    public ObjectSchema example(Object example) {
         if (example != null) {
-            super.example = example.toString();
+            super.setExample(example.toString());
         }
         return this;
     }
@@ -65,15 +53,12 @@ public class ObjectSchema extends Schema<Object> {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        ObjectSchema objectSchema = (ObjectSchema) o;
-        return Objects.equals(this.type, objectSchema.type) &&
-                Objects.equals(this.defaultObject, objectSchema.defaultObject) &&
-                super.equals(o);
+        return super.equals(o);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(type, defaultObject, super.hashCode());
+        return Objects.hash(super.hashCode());
     }
 
     @Override
@@ -81,22 +66,7 @@ public class ObjectSchema extends Schema<Object> {
         StringBuilder sb = new StringBuilder();
         sb.append("class ObjectSchema {\n");
         sb.append("    ").append(toIndentedString(super.toString())).append("\n");
-        sb.append("    type: ").append(toIndentedString(type)).append("\n");
-        sb.append("    defaultObject: ").append(toIndentedString(defaultObject)).append("\n");
         sb.append("}");
         return sb.toString();
     }
-
-    /**
-     * Convert the given object to string with each line indented by 4 spaces
-     * (except the first line).
-     */
-    private String toIndentedString(java.lang.Object o) {
-        if (o == null) {
-            return "null";
-        }
-        return o.toString().replace("\n", "\n    ");
-    }
-
 }
-

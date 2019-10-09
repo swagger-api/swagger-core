@@ -212,7 +212,7 @@ public enum PrimitiveType {
         dms.put("string_date-time", "date-time");
         dms.put("string_partial-time", "partial-time");
         dms.put("string_password", "password");
-        dms.put("boolean", "boolean");
+        dms.put("boolean_", "boolean");
         dms.put("object_", "object");
         datatypeMappings = Collections.unmodifiableMap(dms);
 
@@ -242,9 +242,9 @@ public enum PrimitiveType {
 
         final Map<String, PrimitiveType> externalClasses = new HashMap<String, PrimitiveType>();
         addKeys(externalClasses, DATE, "org.joda.time.LocalDate", "java.time.LocalDate");
-        addKeys(externalClasses, DATE_TIME, "org.joda.time.DateTime", "org.joda.time.ReadableDateTime",
-                "javax.xml.datatype.XMLGregorianCalendar", "java.time.LocalDateTime", "java.time.ZonedDateTime",
-                "java.time.OffsetDateTime");
+        addKeys(externalClasses, DATE_TIME, "java.time.LocalDateTime", "java.time.ZonedDateTime",
+                "java.time.OffsetDateTime", "javax.xml.datatype.XMLGregorianCalendar", "org.joda.time.LocalDateTime",
+                "org.joda.time.ReadableDateTime", "org.joda.time.DateTime");
         addKeys(externalClasses, LONG, "java.time.Instant");
         EXTERNAL_CLASSES = Collections.unmodifiableMap(externalClasses);
 

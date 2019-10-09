@@ -115,6 +115,10 @@ public class ModelConverters {
         return resolvedSchema;
     }
 
+    public boolean isRegisteredAsSkippedClass(String className) {
+        return skippedClasses.contains(className);
+    }
+
     private boolean shouldProcess(Type type) {
         final Class<?> cls = TypeFactory.defaultInstance().constructType(type).getRawClass();
         if (cls.isPrimitive()) {
@@ -126,12 +130,7 @@ public class ModelConverters {
                 return false;
             }
         }
-        for (String classToSkip : skippedClasses) {
-            if (className.equals(classToSkip)) {
-                return false;
-            }
-        }
-        return true;
+        return !skippedClasses.contains(className);
     }
 
     static {

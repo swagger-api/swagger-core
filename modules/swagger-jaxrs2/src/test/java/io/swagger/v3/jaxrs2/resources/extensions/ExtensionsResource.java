@@ -387,8 +387,6 @@ public class ExtensionsResource {
                     "servers:\n" +
                     "- variables:\n" +
                     "    aa:\n" +
-                    "      enum:\n" +
-                    "      - \"\"\n" +
                     "      default: aa\n" +
                     "      x-servervar:\n" +
                     "        name: Josh\n" +

@@ -20,6 +20,7 @@ import io.swagger.v3.oas.models.security.SecurityScheme;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -257,6 +258,18 @@ public class JsonDeserializationTest {
         assertEquals(s.getEnum().get(2), 31474836475505055L);
     }
 
+    @Test
+    public void deserializeDateExample() throws IOException {
+
+        final String jsonString = ResourceUtils.loadClassResource(getClass(), "specFiles/swos-126.yaml");
+        final OpenAPI swagger = Yaml.mapper().readValue(jsonString, OpenAPI.class);
+        assertNotNull(swagger);
+        Map<String, Schema> props = swagger.getComponents().getSchemas().get("MyModel").getProperties();
+        assertTrue(Yaml.pretty().writeValueAsString(props.get("date")).contains("example: 2019-08-05"));
+        assertTrue(Yaml.pretty().writeValueAsString(props.get("dateTime")).contains("example: 2019-08-05T12:34:56Z"));
+
+    }
+
     @Test(description = "Deserialize ref callback")
     public void testDeserializeRefCallback() throws Exception {
         String yaml = "openapi: 3.0.1\n" +
@@ -285,4 +298,75 @@ public class JsonDeserializationTest {
         OpenAPI oas = Yaml.mapper().readValue(yaml, OpenAPI.class);
         assertEquals(oas.getPaths().get("/simplecallback").getGet().getCallbacks().get("testCallback1").get$ref(), "#/components/callbacks/Callback");
     }
+
+    @Test(description = "Deserialize null enum item")
+    public void testNullEnumItem() throws Exception {
+        String yaml = "openapi: 3.0.1\n" +
+                "paths:\n" +
+                "  /:\n" +
+                "    get:\n" +
+                "      tags:\n" +
+                "      - MyTag\n" +
+                "      summary: Operation Summary\n" +
+                "      description: Operation Description\n" +
+                "      operationId: operationId\n" +
+                "      parameters:\n" +
+                "      - name: subscriptionId\n" +
+                "        in: query\n" +
+                "        schema:\n" +
+                "          type: string\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*': {}\n" +
+                "components:\n" +
+                "  schemas:\n" +
+                "    UserStatus:\n" +
+                "      type: integer\n" +
+                "      description: some int values with null\n" +
+                "      format: int32\n" +
+                "      enum:\n" +
+                "      - 1\n" +
+                "      - 2\n" +
+                "      - null\n";
+
+        OpenAPI oas = Yaml.mapper().readValue(yaml, OpenAPI.class);
+
+        assertEquals(oas.getComponents().getSchemas().get("UserStatus").getEnum(), Arrays.asList(1, 2, null));
+
+        yaml = "openapi: 3.0.1\n" +
+                "paths:\n" +
+                "  /:\n" +
+                "    get:\n" +
+                "      tags:\n" +
+                "      - MyTag\n" +
+                "      summary: Operation Summary\n" +
+                "      description: Operation Description\n" +
+                "      operationId: operationId\n" +
+                "      parameters:\n" +
+                "      - name: subscriptionId\n" +
+                "        in: query\n" +
+                "        schema:\n" +
+                "          type: string\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*': {}\n" +
+                "components:\n" +
+                "  schemas:\n" +
+                "    UserStatus:\n" +
+                "      type: string\n" +
+                "      description: some int values with null\n" +
+                "      enum:\n" +
+                "      - 1\n" +
+                "      - 2\n" +
+                "      - null\n";
+
+        oas = Yaml.mapper().readValue(yaml, OpenAPI.class);
+
+        assertEquals(oas.getComponents().getSchemas().get("UserStatus").getEnum(), Arrays.asList("1", "2", null));
+    }
+
 }

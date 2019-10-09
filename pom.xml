@@ -10,7 +10,7 @@
     <artifactId>swagger-project</artifactId>
     <packaging>pom</packaging>
     <name>swagger-project</name>
-    <version>2.0.7-SNAPSHOT</version>
+    <version>2.0.10-SNAPSHOT</version>
     <url>https://github.com/swagger-api/swagger-core</url>
     <scm>
         <connection>scm:git:git@github.com:swagger-api/swagger-core.git</connection>
@@ -430,9 +430,9 @@
                 <scope>test</scope>
             </dependency>
             <dependency>
-                <groupId>org.reflections</groupId>
-                <artifactId>reflections</artifactId>
-                <version>${reflections-version}</version>
+                <groupId>io.github.classgraph</groupId>
+                <artifactId>classgraph</artifactId>
+                <version>${classgraph-version}</version>
             </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.dataformat</groupId>
@@ -452,6 +452,11 @@
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-core</artifactId>
+                <version>${jackson-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.datatype</groupId>
+                <artifactId>jackson-datatype-jsr310</artifactId>
                 <version>${jackson-version}</version>
             </dependency>
             <dependency>
@@ -486,6 +491,12 @@
                 <artifactId>javax.ws.rs-api</artifactId>
                 <version>${javax.ws-version}</version>
             </dependency>
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>${guava-version}</version>
+                <scope>test</scope>
+            </dependency>
         </dependencies>
     </dependencyManagement>
     <properties>
@@ -496,10 +507,10 @@
         <felix-version>3.5.0</felix-version>
         <servlet-api-version>3.1.0</servlet-api-version>
         <jersey2-version>2.26</jersey2-version>
-        <jackson-version>2.9.5</jackson-version>
+        <jackson-version>2.9.10</jackson-version>
         <logback-version>1.2.3</logback-version>
-        <reflections-version>0.9.11</reflections-version>
-        <guava-version>23.0</guava-version>
+        <classgraph-version>4.6.32</classgraph-version>
+        <guava-version>27.0.1-jre</guava-version>
         <commons-lang-version>3.7</commons-lang-version>
         <commons-io-version>2.6</commons-io-version>
         <slf4j-version>1.7.25</slf4j-version>

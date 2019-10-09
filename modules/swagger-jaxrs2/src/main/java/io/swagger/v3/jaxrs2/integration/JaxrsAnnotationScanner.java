@@ -1,18 +1,13 @@
 package io.swagger.v3.jaxrs2.integration;
 
+import io.github.classgraph.ClassGraph;
+import io.github.classgraph.ScanResult;
 import io.swagger.v3.jaxrs2.integration.api.JaxrsOpenApiScanner;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.integration.IgnoredPackages;
 import io.swagger.v3.oas.integration.SwaggerConfiguration;
 import io.swagger.v3.oas.integration.api.OpenAPIConfiguration;
 import org.apache.commons.lang3.StringUtils;
-import org.reflections.Reflections;
-import org.reflections.scanners.ResourcesScanner;
-import org.reflections.scanners.SubTypesScanner;
-import org.reflections.scanners.TypeAnnotationsScanner;
-import org.reflections.util.ClasspathHelper;
-import org.reflections.util.ConfigurationBuilder;
-import org.reflections.util.FilterBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,6 +28,7 @@ public class JaxrsAnnotationScanner<T extends JaxrsAnnotationScanner<T>> impleme
     protected OpenAPIConfiguration openApiConfiguration;
     protected Application application;
     protected static Logger LOGGER = LoggerFactory.getLogger(JaxrsAnnotationScanner.class);
+    protected boolean onlyConsiderResourcePackages = false;
 
     public JaxrsAnnotationScanner application(Application application) {
         this.application = application;
@@ -61,7 +57,7 @@ public class JaxrsAnnotationScanner<T extends JaxrsAnnotationScanner<T>> impleme
             openApiConfiguration = new SwaggerConfiguration();
         }
 
-        ConfigurationBuilder config = new ConfigurationBuilder();
+        ClassGraph graph = new ClassGraph().enableAllInfo();
         Set<String> acceptablePackages = new HashSet<String>();
         Set<Class<?>> output = new HashSet<Class<?>>();
 
@@ -84,19 +80,19 @@ public class JaxrsAnnotationScanner<T extends JaxrsAnnotationScanner<T>> impleme
             for (String pkg : openApiConfiguration.getResourcePackages()) {
                 if (!isIgnored(pkg)) {
                     acceptablePackages.add(pkg);
-                    config.addUrls(ClasspathHelper.forPackage(pkg));
+                    graph.whitelistPackages(pkg);
                 }
             }
         } else {
-            allowAllPackages = true;
+            if (!onlyConsiderResourcePackages) {
+                allowAllPackages = true;
+            }
         }
-        config.filterInputsBy(new FilterBuilder().exclude(".*json").exclude(".*yaml"));
-        //config.filterInputsBy(new FilterBuilder().exclude(".*yaml"));
-        config.setScanners(new ResourcesScanner(), new TypeAnnotationsScanner(), new SubTypesScanner());
-        final Reflections reflections;
-        reflections = new Reflections(config);
-        Set<Class<?>> classes = reflections.getTypesAnnotatedWith(javax.ws.rs.Path.class);
-        classes.addAll(reflections.getTypesAnnotatedWith(OpenAPIDefinition.class));
+        final Set<Class<?>> classes;
+        try (ScanResult scanResult = graph.scan()) {
+            classes = new HashSet<>(scanResult.getClassesWithAnnotation(javax.ws.rs.Path.class.getName()).loadClasses());
+            classes.addAll(new HashSet<>(scanResult.getClassesWithAnnotation(OpenAPIDefinition.class.getName()).loadClasses()));
+        }
 
         for (Class<?> cls : classes) {
             if (allowAllPackages) {
