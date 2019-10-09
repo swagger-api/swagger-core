@@ -71,9 +71,9 @@ pluginBundle {
 
     plugins {
         swagger {
+            // id is captured from java-gradle-plugin configuration
             displayName = 'Swagger Gradle Plugin '
             description = project.description
-            id          = project.pluginId
         }
     }
 }
@@ -84,4 +84,11 @@ publishing {
             url mavenLocal().url
         }
     }
+}
+
+// override specific Gradle version
+tasks.named('wrapper', Wrapper).configure {
+    gradleVersion = '5.6.2'
+    distributionType = Wrapper.DistributionType.ALL
+    distributionSha256Sum = '027fdd265d277bae65a0d349b6b8da02135b0b8e14ba891e26281fa877fe37a2'
 }
