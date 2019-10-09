@@ -16,6 +16,7 @@ import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyMetadata;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.introspect.Annotated;
 import com.fasterxml.jackson.databind.introspect.AnnotatedClass;
 import com.fasterxml.jackson.databind.introspect.AnnotatedMember;
@@ -135,7 +136,25 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                                 (io.swagger.v3.oas.annotations.media.ArraySchema) resolvedSchemaOrArrayAnnotation :
                                 null;
 
-        final BeanDescription beanDesc = _mapper.getSerializationConfig().introspect(type);
+        final BeanDescription beanDesc;
+        {
+            BeanDescription recurBeanDesc = _mapper.getSerializationConfig().introspect(type);
+
+            HashSet<String> visited = new HashSet<>();
+            JsonSerialize jsonSerialize = recurBeanDesc.getClassAnnotations().get(JsonSerialize.class);
+            while (jsonSerialize != null && !Void.class.equals(jsonSerialize.as())) {
+                String asName = jsonSerialize.as().getName();
+                if (visited.contains(asName)) break;
+                visited.add(asName);
+
+                recurBeanDesc = _mapper.getSerializationConfig().introspect(
+                        _mapper.constructType(jsonSerialize.as())
+                );
+                jsonSerialize = recurBeanDesc.getClassAnnotations().get(JsonSerialize.class);
+            }
+            beanDesc = recurBeanDesc;
+        }
+
 
         String name = annotatedType.getName();
         if (StringUtils.isBlank(name)) {
