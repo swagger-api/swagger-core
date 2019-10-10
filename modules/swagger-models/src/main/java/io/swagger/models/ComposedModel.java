@@ -38,14 +38,6 @@ public class ComposedModel extends AbstractModel {
         this.description = description;
     }
 
-    public Map<String, Property> getProperties() {
-        return null;
-    }
-
-    public void setProperties(Map<String, Property> properties) {
-
-    }
-
     public Object getExample() {
         return example;
     }

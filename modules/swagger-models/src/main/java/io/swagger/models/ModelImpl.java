@@ -8,10 +8,7 @@ import io.swagger.models.properties.Property;
 import javax.xml.bind.annotation.XmlType;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 @XmlType(propOrder = {"type", "required", "discriminator", "properties"})
 @JsonPropertyOrder({"type", "required", "discriminator", "properties"})
@@ -20,8 +17,6 @@ public class ModelImpl extends AbstractModel {
     private String type;
     private String format;
     private String name;
-    private List<String> required;
-    private Map<String, Property> properties;
     private Boolean allowEmptyValue;
     private Boolean uniqueItems;
     private boolean isSimple = false;
@@ -208,65 +203,6 @@ public class ModelImpl extends AbstractModel {
         }
     }
 
-    public List<String> getRequired() {
-        List<String> output = new ArrayList<String>();
-        if (properties != null) {
-            for (String key : properties.keySet()) {
-                Property prop = properties.get(key);
-                if (prop != null && prop.getRequired()) {
-                    output.add(key);
-                }
-            }
-        }
-        Collections.sort(output);
-        if (output.size() > 0) {
-            return output;
-        } else {
-            return null;
-        }
-    }
-
-    public void setRequired(List<String> required) {
-        this.required = required;
-        if (required != null && properties != null){
-            for (String s : required) {
-                Property p = properties.get(s);
-                if (p != null) {
-                    p.setRequired(true);
-                }
-            }
-        }
-    }
-
-    public void addProperty(String key, Property property) {
-        if (property == null) {
-            return;
-        }
-        if (properties == null) {
-            properties = new LinkedHashMap<String, Property>();
-        }
-        if (required != null) {
-            for (String ek : required) {
-                if (key.equals(ek)) {
-                    property.setRequired(true);
-                }
-            }
-        }
-        properties.put(key, property);
-    }
-
-    public Map<String, Property> getProperties() {
-        return properties;
-    }
-
-    public void setProperties(Map<String, Property> properties) {
-        if (properties != null) {
-            for (String key : properties.keySet()) {
-                this.addProperty(key, properties.get(key));
-            }
-        }
-    }
-
     public Object getExample() {
         if (example == null) {
             // TODO: will add logic to construct examples based on payload here
@@ -350,12 +286,6 @@ public class ModelImpl extends AbstractModel {
         if (name != null ? !name.equals(model.name) : model.name != null) {
             return false;
         }
-        if (required != null ? !required.equals(model.required) : model.required != null) {
-            return false;
-        }
-        if (properties != null ? !properties.equals(model.properties) : model.properties != null) {
-            return false;
-        }
         if (allowEmptyValue != null ? !allowEmptyValue.equals(model.allowEmptyValue) : model.allowEmptyValue != null) {
             return false;
         }
@@ -393,8 +323,6 @@ public class ModelImpl extends AbstractModel {
         result = 31 * result + (type != null ? type.hashCode() : 0);
         result = 31 * result + (format != null ? format.hashCode() : 0);
         result = 31 * result + (name != null ? name.hashCode() : 0);
-        result = 31 * result + (required != null ? required.hashCode() : 0);
-        result = 31 * result + (properties != null ? properties.hashCode() : 0);
         result = 31 * result + (allowEmptyValue != null ? allowEmptyValue.hashCode() : 0);
         result = 31 * result + (uniqueItems != null ? uniqueItems.hashCode() : 0);
         result = 31 * result + (isSimple ? 1 : 0);
@@ -419,8 +347,6 @@ public class ModelImpl extends AbstractModel {
         super.cloneTo(cloned);
         cloned.type = this.type;
         cloned.name = this.name;
-        cloned.required = this.required;
-        if (this.properties != null) cloned.properties =  new LinkedHashMap<String, Property>(this.properties);
         cloned.isSimple = this.isSimple;
         cloned.description = this.description;
         cloned.example = this.example;
