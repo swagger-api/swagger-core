@@ -4,6 +4,7 @@ import io.swagger.v3.core.converter.ModelConverters;
 import io.swagger.v3.core.matchers.SerializationMatchers;
 import io.swagger.v3.core.oas.models.ModelWithEnumField;
 import io.swagger.v3.core.oas.models.ModelWithEnumProperty;
+import io.swagger.v3.core.oas.models.ModelWithEnumRefProperty;
 import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.media.StringSchema;
 import org.testng.annotations.Test;
@@ -57,5 +58,33 @@ public class EnumPropertyTest {
 
         final StringSchema stringProperty = (StringSchema) enumProperty;
         assertEquals(stringProperty.getEnum(), Arrays.asList("PRIVATE", "PUBLIC", "SYSTEM", "INVITE_ONLY"));
+    }
+
+    @Test(description = "it should read a model with an enum property as a reference")
+    public void testEnumRefProperty() {
+        final Map<String, Schema> models = ModelConverters.getInstance().readAll(ModelWithEnumRefProperty.class);
+        final String json = "{" +
+                "   \"ModelWithEnumRefProperty\":{" +
+                "      \"type\":\"object\"," +
+                "      \"properties\":{" +
+                "         \"a\":{" +
+                "            \"$ref\":\"#/components/schemas/TestEnum\"" +
+                "         }," +
+                "         \"b\":{" +
+                "            \"$ref\":\"#/components/schemas/TestEnum\"" +
+                "         }" +
+                "      }" +
+                "   }," +
+                "   \"TestEnum\":{" +
+                "      \"type\":\"string\"," +
+                "      \"enum\":[" +
+                "         \"PRIVATE\"," +
+                "         \"PUBLIC\"," +
+                "         \"SYSTEM\"," +
+                "         \"INVITE_ONLY\"" +
+                "      ]" +
+                "   }" +
+                "}";
+        SerializationMatchers.assertEqualsToJson(models, json);
     }
 }

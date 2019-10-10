@@ -264,9 +264,6 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
         if (model == null && type.isEnumType()) {
             model = new StringSchema();
-            if (resolvedSchemaAnnotation != null && resolvedSchemaAnnotation.enumAsRef()) {
-                model = model.$ref(name).name(name);
-            }
             _addEnumProps(type.getRawClass(), model);
             isPrimitive = true;
         }
@@ -321,6 +318,14 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 resolveArraySchema(annotatedType, schema, resolvedArrayAnnotation);
                 schema.setItems(model);
                 return schema;
+            }
+            if (type.isEnumType() &&
+                    resolvedSchemaAnnotation != null &&
+                    resolvedSchemaAnnotation.enumAsRef()) {
+                // Store off the ref and add the enum as a top-level model
+                context.defineModel(name, model, annotatedType, null);
+                // Return the model as a ref only property
+                model = new Schema().$ref(name);
             }
             return model;
         }

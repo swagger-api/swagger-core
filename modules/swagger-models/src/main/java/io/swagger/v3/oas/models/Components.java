@@ -72,7 +72,7 @@ public class Components {
         if (this.schemas == null) {
             this.schemas = new LinkedHashMap<>();
         }
-        this.schemas.put(key, schemasItem != null && schemasItem.getEnum() != null ? schemasItem.$ref(null) : schemasItem);
+        this.schemas.put(key, schemasItem);
         return this;
     }
 
