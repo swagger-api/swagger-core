@@ -11,6 +11,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -947,6 +948,12 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         }
 
         /**
+         * Remove the current class from the child classes. This happens if @JsonSubTypes references
+         * the annotated class as a subtype.
+         */
+        removeSelfFromSubTypes(types, bean);
+
+        /**
          * As the introspector will find @JsonSubTypes for a child class that are present on its super classes, the
          * code segment below will also run the introspector on the parent class, and then remove any sub-types that are
          * found for the parent from the sub-types found for the child. The same logic all applies to implemented
@@ -991,6 +998,16 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             }
         }
         return count != 0;
+    }
+
+    private void removeSelfFromSubTypes(List<NamedType> types, BeanDescription bean) {
+        Class<?> beanClass= bean.getType().getRawClass();
+        ListIterator<NamedType> iter = types.listIterator();
+        while(iter.hasNext()){
+            if (beanClass.equals(iter.next().getType())) {
+                iter.remove();
+            }
+        }
     }
 
     private void removeSuperClassAndInterfaceSubTypes(List<NamedType> types, BeanDescription bean) {

@@ -31,6 +31,7 @@ import io.swagger.resources.ClassWithExamplePost;
 import io.swagger.resources.ClassWithExamplePostClass;
 import io.swagger.resources.HiddenResource;
 import io.swagger.resources.Issue1979Resource;
+import io.swagger.resources.Issue3286Resource;
 import io.swagger.resources.NicknamedOperation;
 import io.swagger.resources.NotValidRootResource;
 import io.swagger.resources.Resource1041;
@@ -715,5 +716,15 @@ public class SimpleReaderTest {
 
         SerializableParameter allowEmptyParam = (SerializableParameter) swagger.getPath("/fun/allowEmpty").getGet().getParameters().get(0);
         assertTrue(allowEmptyParam.getAllowEmptyValue());
+    }
+
+    @Test
+    public void testTicket3286() {
+        Swagger swagger = getSwagger(Issue3286Resource.class);
+        BodyParameter bodyParam = (BodyParameter)swagger.getPath("/fun/{id}").getPost().getParameters().get(1);
+        assertEquals(bodyParam.getSchema().getReference(), "#/definitions/BookRequest");
+        assertEquals(swagger.getPath("/fun/{id}").getPost().getResponses().get("200").getResponseSchema().getReference(), "#/definitions/BookResponse");
+        assertTrue(swagger.getDefinitions().containsKey("BookRequest"));
+        assertTrue(swagger.getDefinitions().containsKey("BookResponse"));
     }
 }

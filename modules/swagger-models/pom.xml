@@ -4,7 +4,7 @@
     <parent>
         <groupId>io.swagger</groupId>
         <artifactId>swagger-project</artifactId>
-        <version>1.5.23-SNAPSHOT</version>
+        <version>1.5.25-SNAPSHOT</version>
         <relativePath>../..</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -40,6 +40,7 @@
                             io.swagger.models.parameters,
                             io.swagger.models.properties,
                             io.swagger.models.refs,
+                            io.swagger.models.utils,
                             io.swagger.models
                         </Export-Package>
                     </instructions>
