@@ -19,6 +19,16 @@ import java.util.List;
 
 public class SwaggerAnnotationIntrospector extends AnnotationIntrospector {
     private static final long serialVersionUID = 1L;
+    private final boolean _jAXBEnabled;
+
+    SwaggerAnnotationIntrospector() {
+        this(true);
+    }
+
+    SwaggerAnnotationIntrospector(boolean enableJAXB) {
+        super();
+        this._jAXBEnabled = enableJAXB;
+    }
 
     @Override
     public Version version() {
@@ -40,10 +50,12 @@ public class SwaggerAnnotationIntrospector extends AnnotationIntrospector {
 
     @Override
     public Boolean hasRequiredMarker(AnnotatedMember m) {
-        XmlElement elem = m.getAnnotation(XmlElement.class);
-        if (elem != null) {
-            if (elem.required()) {
-                return true;
+        if (_jAXBEnabled) {
+            XmlElement elem = m.getAnnotation(XmlElement.class);
+            if (elem != null) {
+                if (elem.required()) {
+                    return true;
+                }
             }
         }
         JsonProperty jsonProperty = m.getAnnotation(JsonProperty.class);

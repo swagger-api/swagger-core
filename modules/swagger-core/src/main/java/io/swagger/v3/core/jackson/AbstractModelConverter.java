@@ -23,6 +23,8 @@ public abstract class AbstractModelConverter implements ModelConverter {
     protected final ObjectMapper _mapper;
     protected final AnnotationIntrospector _intr;
     protected final TypeNameResolver _typeNameResolver;
+    final boolean _jAXBEnabled;
+
     /**
      * Minor optimization: no need to keep on resolving same types over and over
      * again.
@@ -33,12 +35,21 @@ public abstract class AbstractModelConverter implements ModelConverter {
         this (mapper, TypeNameResolver.std);
     }
 
+    protected AbstractModelConverter(ObjectMapper mapper, boolean enableJAXB) {
+        this (mapper, TypeNameResolver.std, enableJAXB);
+    }
+
     protected AbstractModelConverter(ObjectMapper mapper, TypeNameResolver typeNameResolver) {
+        this (mapper, typeNameResolver, true);
+    }
+
+    protected AbstractModelConverter(ObjectMapper mapper, TypeNameResolver typeNameResolver, boolean enableJAXB) {
+        _jAXBEnabled = enableJAXB;
         mapper.registerModule(
                 new SimpleModule("swagger", Version.unknownVersion()) {
                     @Override
                     public void setupModule(SetupContext context) {
-                        context.insertAnnotationIntrospector(new SwaggerAnnotationIntrospector());
+                        context.insertAnnotationIntrospector(new SwaggerAnnotationIntrospector(_jAXBEnabled));
                     }
                 });
         _mapper = mapper;
