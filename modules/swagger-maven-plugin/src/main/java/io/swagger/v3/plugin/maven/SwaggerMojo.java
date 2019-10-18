@@ -9,24 +9,35 @@ import io.swagger.v3.oas.integration.GenericOpenApiContextBuilder;
 import io.swagger.v3.oas.integration.OpenApiConfigurationException;
 import io.swagger.v3.oas.integration.SwaggerConfiguration;
 import io.swagger.v3.oas.models.OpenAPI;
+
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugin.descriptor.PluginDescriptor;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
-import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.classworlds.realm.ClassRealm;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.function.BiFunction;
 
 import static java.lang.String.format;
@@ -35,8 +46,7 @@ import static java.lang.String.format;
     name = "resolve",
     requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME,
     defaultPhase = LifecyclePhase.COMPILE,
-    threadSafe = true,
-    configurator = "include-project-dependencies"
+    threadSafe = true
 )
 public class SwaggerMojo extends AbstractMojo {
 
@@ -50,12 +60,6 @@ public class SwaggerMojo extends AbstractMojo {
         }
         getLog().info( "Resolving OpenAPI specification.." );
 
-        if (project != null) {
-            String pEnc = project.getProperties().getProperty("project.build.sourceEncoding");
-            if (StringUtils.isNotBlank(pEnc)) {
-                projectEncoding = pEnc;
-            }
-        }
         if (StringUtils.isBlank(encoding)) {
             encoding = projectEncoding;
         }
@@ -72,7 +76,11 @@ public class SwaggerMojo extends AbstractMojo {
 
         setDefaultsIfMissing(config);
 
-        try {
+        final ClassRealm classRealm = pluginDescriptor.getClassRealm();
+        final ClassLoader parentClassLoader = classRealm.getParentClassLoader();
+        try (URLClassLoader projectClassLoader = URLClassLoader.newInstance(buildProjectClasspath(), parentClassLoader)) {
+            classRealm.setParentClassLoader(projectClassLoader);
+
             GenericOpenApiContextBuilder builder = new JaxrsOpenApiContextBuilder()
                     .openApiConfiguration(config);
             if (StringUtils.isNotBlank(contextId)) {
@@ -136,6 +144,10 @@ public class SwaggerMojo extends AbstractMojo {
         } catch (Exception e) {
             getLog().error( "Error resolving API specification" , e);
             throw new MojoExecutionException(e.getMessage(), e);
+        } finally {
+            classRealm.setParentClassLoader(parentClassLoader);
+            // try to unload classes loaded by projectClassLoader
+            System.gc();
         }
     }
 
@@ -176,7 +188,7 @@ public class SwaggerMojo extends AbstractMojo {
             Path pathObj = Paths.get(filePath);
 
             // if file does not exist or is not an actual file, finish with error
-            if (!pathObj.toFile().exists() || !pathObj.toFile().isFile()) {
+            if (!Files.exists(pathObj) || !Files.isReadable(pathObj)) {
                 throw new IllegalArgumentException(
                         format("passed path does not exist or is not a file: '%s'", filePath));
             }
@@ -305,6 +317,19 @@ public class SwaggerMojo extends AbstractMojo {
         return collection != null && !collection.isEmpty();
     }
 
+    private URL[] buildProjectClasspath() throws MojoExecutionException {
+        // Add the projects classes and dependencies
+        final Collection<URL> urls = new ArrayList<URL>(classpath.size());
+        for (String element : classpath) {
+            try {
+                urls.add(new File(element).toURI().toURL());
+            } catch (IOException e) {
+                throw new MojoExecutionException("Unable to access project dependency: " + element, e);
+            }
+        }
+        return urls.toArray(new URL[urls.size()]);
+    }
+
     @Parameter( property = "resolve.outputFileName", defaultValue = "openapi")
     private String outputFileName = "openapi";
 
@@ -355,12 +380,16 @@ public class SwaggerMojo extends AbstractMojo {
     @Parameter(property = "resolve.configurationFilePath")
     private String configurationFilePath;
 
-    @Parameter(defaultValue = "${project}", readonly = true)
-    private MavenProject project;
+    @Parameter(defaultValue = "${plugin}", readonly = true, required = true)
+    private PluginDescriptor pluginDescriptor;
+
+    @Parameter(property = "project.compileClasspathElements", required = true, readonly = true)
+    private List<String> classpath;
 
     @Parameter( property = "resolve.encoding" )
     private String encoding;
 
+    @Parameter( property = "project.build.sourceEncoding" )
     private String projectEncoding = "UTF-8";
     private SwaggerConfiguration config;
 
@@ -382,5 +411,9 @@ public class SwaggerMojo extends AbstractMojo {
 
     SwaggerConfiguration getInternalConfiguration() {
         return config;
+    }
+
+    PluginDescriptor getPluginDescriptor() {
+        return pluginDescriptor;
     }
 }

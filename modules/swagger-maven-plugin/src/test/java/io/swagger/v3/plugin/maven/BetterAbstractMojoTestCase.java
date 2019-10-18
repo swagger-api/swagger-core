@@ -89,7 +89,6 @@ public abstract class BetterAbstractMojoTestCase extends AbstractMojoTestCase {
     protected Mojo lookupConfiguredMojo(File pom, String goal) throws Exception {
         assertNotNull(pom);
         assertTrue(pom.exists());
-        this.getContainer().addComponent(new IncludeProjectDependenciesComponentConfigurator(), org.codehaus.plexus.component.configurator.ComponentConfigurator.class, "include-project-dependencies");
         ProjectBuildingRequest buildingRequest = newMavenSession().getProjectBuildingRequest();
         ProjectBuilder projectBuilder = lookup(ProjectBuilder.class);
         MavenProject project = projectBuilder.build(pom, buildingRequest).getProject();
