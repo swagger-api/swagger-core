@@ -19,12 +19,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyMetadata;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.databind.introspect.Annotated;
-import com.fasterxml.jackson.databind.introspect.AnnotatedClass;
-import com.fasterxml.jackson.databind.introspect.AnnotatedMember;
-import com.fasterxml.jackson.databind.introspect.AnnotatedMethod;
-import com.fasterxml.jackson.databind.introspect.BeanPropertyDefinition;
-import com.fasterxml.jackson.databind.introspect.POJOPropertyBuilder;
+import com.fasterxml.jackson.databind.introspect.*;
 import com.fasterxml.jackson.databind.jsontype.NamedType;
 import com.fasterxml.jackson.databind.util.Annotations;
 import io.swagger.v3.core.converter.AnnotatedType;
@@ -92,17 +87,22 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
     public static boolean composedModelPropertiesAsSibling = System.getProperty(SET_PROPERTY_OF_COMPOSED_MODEL_AS_SIBLING) != null ? true : false;
 
+    private final boolean _jAXBEnabled;
+
     public ModelResolver(ObjectMapper mapper) {
         super(mapper);
-    }
-    public ModelResolver(ObjectMapper mapper, boolean enableJAXB) {
-        super(mapper, enableJAXB);
+        _jAXBEnabled = true;
     }
     public ModelResolver(ObjectMapper mapper, TypeNameResolver typeNameResolver) {
         super(mapper, typeNameResolver);
+        _jAXBEnabled = true;
+    }
+    public ModelResolver(ObjectMapper mapper, boolean enableJAXB) {
+        this(mapper, TypeNameResolver.std, enableJAXB);
     }
     public ModelResolver(ObjectMapper mapper, TypeNameResolver typeNameResolver, boolean enableJAXB) {
-        super(mapper, typeNameResolver, enableJAXB);
+        super(mapper, typeNameResolver, new SwaggerAnnotationIntrospector(enableJAXB));
+        _jAXBEnabled = enableJAXB;
     }
 
     public ObjectMapper objectMapper() {
