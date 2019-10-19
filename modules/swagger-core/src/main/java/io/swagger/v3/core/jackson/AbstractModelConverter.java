@@ -35,16 +35,7 @@ public abstract class AbstractModelConverter implements ModelConverter {
     }
 
     protected AbstractModelConverter(ObjectMapper mapper, TypeNameResolver typeNameResolver) {
-        mapper.registerModule(
-                new SimpleModule("swagger", Version.unknownVersion()) {
-                    @Override
-                    public void setupModule(SetupContext context) {
-                        context.insertAnnotationIntrospector(new SwaggerAnnotationIntrospector());
-                    }
-                });
-        _mapper = mapper;
-        _typeNameResolver = typeNameResolver;
-        _intr = mapper.getSerializationConfig().getAnnotationIntrospector();
+        this (mapper, typeNameResolver, new SwaggerAnnotationIntrospector());
     }
 
     protected AbstractModelConverter(ObjectMapper mapper, TypeNameResolver typeNameResolver, AnnotationIntrospector annotationIntrospector) {

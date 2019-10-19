@@ -90,12 +90,10 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
     private final boolean _jAXBEnabled;
 
     public ModelResolver(ObjectMapper mapper) {
-        super(mapper);
-        _jAXBEnabled = true;
+        this(mapper, true);
     }
     public ModelResolver(ObjectMapper mapper, TypeNameResolver typeNameResolver) {
-        super(mapper, typeNameResolver);
-        _jAXBEnabled = true;
+        this(mapper, typeNameResolver, true);
     }
     public ModelResolver(ObjectMapper mapper, boolean enableJAXB) {
         this(mapper, TypeNameResolver.std, enableJAXB);
