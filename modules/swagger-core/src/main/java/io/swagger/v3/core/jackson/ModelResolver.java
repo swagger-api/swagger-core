@@ -16,6 +16,7 @@ import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyMetadata;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.introspect.Annotated;
 import com.fasterxml.jackson.databind.introspect.AnnotatedClass;
 import com.fasterxml.jackson.databind.introspect.AnnotatedMember;
@@ -135,7 +136,25 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                                 (io.swagger.v3.oas.annotations.media.ArraySchema) resolvedSchemaOrArrayAnnotation :
                                 null;
 
-        final BeanDescription beanDesc = _mapper.getSerializationConfig().introspect(type);
+        final BeanDescription beanDesc;
+        {
+            BeanDescription recurBeanDesc = _mapper.getSerializationConfig().introspect(type);
+
+            HashSet<String> visited = new HashSet<>();
+            JsonSerialize jsonSerialize = recurBeanDesc.getClassAnnotations().get(JsonSerialize.class);
+            while (jsonSerialize != null && !Void.class.equals(jsonSerialize.as())) {
+                String asName = jsonSerialize.as().getName();
+                if (visited.contains(asName)) break;
+                visited.add(asName);
+
+                recurBeanDesc = _mapper.getSerializationConfig().introspect(
+                        _mapper.constructType(jsonSerialize.as())
+                );
+                jsonSerialize = recurBeanDesc.getClassAnnotations().get(JsonSerialize.class);
+            }
+            beanDesc = recurBeanDesc;
+        }
+
 
         String name = annotatedType.getName();
         if (StringUtils.isBlank(name)) {
@@ -317,7 +336,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
          */
         Schema resolvedModel = context.resolve(annotatedType);
         if (resolvedModel != null) {
-            if (name.equals(resolvedModel.getName())) {
+            if (name != null && name.equals(resolvedModel.getName())) {
                 return resolvedModel;
             }
         }
@@ -1166,6 +1185,12 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         }
 
         /**
+         * Remove the current class from the child classes. This happens if @JsonSubTypes references
+         * the annotated class as a subtype.
+         */
+        removeSelfFromSubTypes(types, bean);
+
+        /**
          * As the introspector will find @JsonSubTypes for a child class that are present on its super classes, the
          * code segment below will also run the introspector on the parent class, and then remove any sub-types that are
          * found for the parent from the sub-types found for the child. The same logic all applies to implemented
@@ -1260,6 +1285,11 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
         }
         return count != 0;
+    }
+
+    private void removeSelfFromSubTypes(List<NamedType> types, BeanDescription bean) {
+        Class<?> beanClass= bean.getType().getRawClass();
+        types.removeIf(type -> beanClass.equals(type.getType()));
     }
 
     private void removeSuperClassAndInterfaceSubTypes(List<NamedType> types, BeanDescription bean) {
@@ -1640,7 +1670,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 if (modelToUpdate.getProperties() == null || !modelToUpdate.getProperties().keySet().contains(typeInfoProp)) {
                     Schema discriminatorSchema = new StringSchema().name(typeInfoProp);
                     modelToUpdate.addProperties(typeInfoProp, discriminatorSchema);
-                    if (modelToUpdate.getRequired() == null || !model.getRequired().contains(typeInfoProp)) {
+                    if (modelToUpdate.getRequired() == null || !modelToUpdate.getRequired().contains(typeInfoProp)) {
                         modelToUpdate.addRequiredItem(typeInfoProp);
                     }
                 }
