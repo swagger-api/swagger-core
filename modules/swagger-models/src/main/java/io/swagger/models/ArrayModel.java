@@ -2,10 +2,7 @@ package io.swagger.models;
 
 import io.swagger.models.properties.Property;
 
-import java.util.Map;
-
 public class ArrayModel extends AbstractModel {
-    private Map<String, Property> properties;
     private String type;
     private String description;
     private Property items;

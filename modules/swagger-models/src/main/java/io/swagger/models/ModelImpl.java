@@ -204,10 +204,6 @@ public class ModelImpl extends AbstractModel {
     }
 
     public Object getExample() {
-        if (example == null) {
-            // TODO: will add logic to construct examples based on payload here
-        }
-
         return example;
     }
 
