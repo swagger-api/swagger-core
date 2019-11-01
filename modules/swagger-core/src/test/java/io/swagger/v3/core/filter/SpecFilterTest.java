@@ -255,6 +255,20 @@ public class SpecFilterTest {
         assertNotNull(filtered.getComponents().getSchemas().get("Category"));
         assertNotNull(filtered.getComponents().getSchemas().get("Pet"));
         assertNotNull(filtered.getComponents().getSchemas().get("Foo"));
+        assertNotNull(filtered.getComponents().getSchemas().get("allOfChild"));
+        assertNotNull(filtered.getComponents().getSchemas().get("anyOfChild"));
+        assertNotNull(filtered.getComponents().getSchemas().get("oneOfChild"));
+        assertNotNull(filtered.getComponents().getSchemas().get("allOfparentA"));
+        assertNotNull(filtered.getComponents().getSchemas().get("allOfparentB"));
+        assertNotNull(filtered.getComponents().getSchemas().get("anyOfparentA"));
+        assertNotNull(filtered.getComponents().getSchemas().get("anyOfparentB"));
+        assertNotNull(filtered.getComponents().getSchemas().get("oneOfparentA"));
+        assertNotNull(filtered.getComponents().getSchemas().get("oneOfparentB"));
+        assertNotNull(filtered.getComponents().getSchemas().get("oneOfNestedParentA"));
+        assertNotNull(filtered.getComponents().getSchemas().get("oneOfNestedParentB"));
+        assertNotNull(filtered.getComponents().getSchemas().get("discriminatorParent"));
+        assertNotNull(filtered.getComponents().getSchemas().get("discriminatorMatchedChildA"));
+        assertNotNull(filtered.getComponents().getSchemas().get("discriminatorMatchedChildB"));
     }
 
     @Test
