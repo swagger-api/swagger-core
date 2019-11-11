@@ -641,6 +641,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 property = clone(context.resolve(aType));
 
                 if (property != null) {
+                    property.setName(propName);
                     if (property.get$ref() == null) {
                         Boolean required = md.getRequired();
                         if (required != null && !Boolean.FALSE.equals(required)) {
@@ -682,7 +683,6 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                             property = new Schema().$ref(StringUtils.isNotEmpty(property.get$ref()) ? property.get$ref() : property.getName());
                         }
                     }
-                    property.setName(propName);
                     JAXBAnnotationsHelper.apply(propBeanDesc.getClassInfo(), annotations, property);
                     applyBeanValidatorAnnotations(property, annotations, model);
 
@@ -860,9 +860,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         if(property == null)
             return property;
         try {
-            String cloneName = property.getName();
             property = Json.mapper().readValue(Json.pretty(property), Schema.class);
-            property.setName(cloneName);
         } catch (IOException e) {
             LOGGER.error("Could not clone property, e");
         }
