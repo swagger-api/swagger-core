@@ -638,19 +638,10 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                         //return context.resolve(t);
                     }
                 });
-                property = context.resolve(aType);
+                property = clone(context.resolve(aType));
 
                 if (property != null) {
                     if (property.get$ref() == null) {
-                        if (!"object".equals(property.getType()) || (property instanceof MapSchema)) {
-                            try {
-                                String cloneName = property.getName();
-                                property = Json.mapper().readValue(Json.pretty(property), Schema.class);
-                                property.setName(cloneName);
-                            } catch (IOException e) {
-                                LOGGER.error("Could not clone property, e");
-                            }
-                        }
                         Boolean required = md.getRequired();
                         if (required != null && !Boolean.FALSE.equals(required)) {
                             addRequiredItem(model, propName);
@@ -863,6 +854,19 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         resolveDiscriminatorProperty(type, context, model);
 
         return model;
+    }
+
+    private Schema clone(Schema property) {
+        if(property == null)
+            return property;
+        try {
+            String cloneName = property.getName();
+            property = Json.mapper().readValue(Json.pretty(property), Schema.class);
+            property.setName(cloneName);
+        } catch (IOException e) {
+            LOGGER.error("Could not clone property, e");
+        }
+        return property;
     }
 
     private boolean isSubtype(AnnotatedClass childClass, Class<?> parentClass) {
