@@ -335,6 +335,11 @@ public abstract class AnnotationsUtils {
             exampleObject.setSummary(example.summary());
         }
 
+        if (StringUtils.isNotBlank(example.description())) {
+            isEmpty = false;
+            exampleObject.setDescription(example.description());
+        }
+
         if (StringUtils.isNotBlank(example.externalValue())) {
             isEmpty = false;
             exampleObject.setExternalValue(example.externalValue());
