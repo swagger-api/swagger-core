@@ -4,8 +4,13 @@ import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import io.swagger.models.properties.Property;
+
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 public abstract class AbstractModel implements Model {
@@ -22,6 +27,8 @@ public abstract class AbstractModel implements Model {
     private Integer minLength;
     private Integer maxLength;
     private String pattern;
+    protected Map<String, Property> properties;
+    protected List<String> required;
 
     @Override
     public ExternalDocs getExternalDocs() {
@@ -121,6 +128,65 @@ public abstract class AbstractModel implements Model {
     public void setVendorExtensions(Map<String, Object> vendorExtensions) {
         this.vendorExtensions = vendorExtensions;
     }
+    
+    public Map<String, Property> getProperties() {
+        return properties;
+    }
+
+    public void setProperties(Map<String, Property> properties) {
+        if (properties != null) {
+            for (String key : properties.keySet()) {
+                this.addProperty(key, properties.get(key));
+            }
+        }
+    }
+    
+    public void addProperty(String key, Property property) {
+        if (property == null) {
+            return;
+        }
+        if (properties == null) {
+            properties = new LinkedHashMap<String, Property>();
+        }
+        if (required != null) {
+            for (String ek : required) {
+                if (key.equals(ek)) {
+                    property.setRequired(true);
+                }
+            }
+        }
+        properties.put(key, property);
+    }
+    
+    public List<String> getRequired() {
+        List<String> output = new ArrayList<String>();
+        if (properties != null) {
+            for (String key : properties.keySet()) {
+                Property prop = properties.get(key);
+                if (prop != null && prop.getRequired()) {
+                    output.add(key);
+                }
+            }
+        }
+        Collections.sort(output);
+        if (output.size() > 0) {
+            return output;
+        } else {
+            return null;
+        }
+    }
+
+    public void setRequired(List<String> required) {
+        this.required = required;
+        if (required != null && properties != null){
+            for (String s : required) {
+                Property p = properties.get(s);
+                if (p != null) {
+                    p.setRequired(true);
+                }
+            }
+        }
+    }
 
     public void cloneTo(Object clone) {
         AbstractModel cloned = (AbstractModel) clone;
@@ -136,6 +202,8 @@ public abstract class AbstractModel implements Model {
         cloned.pattern = this.pattern;
         cloned.multipleOf = this.multipleOf;
         cloned.pattern = this.pattern;
+        if (this.properties != null) cloned.properties =  new LinkedHashMap<String, Property>(this.properties);
+        cloned.required = this.required;
         if (vendorExtensions == null) {
             cloned.vendorExtensions = vendorExtensions;
         } else {
@@ -172,6 +240,8 @@ public abstract class AbstractModel implements Model {
         result = prime * result + (pattern != null ? pattern.hashCode() : 0);
         result = prime * result + (multipleOf != null ? multipleOf.hashCode() : 0);
         result = prime * result + (pattern != null ? pattern.hashCode() : 0);
+        result = prime * result + (properties != null ? properties.hashCode() : 0);
+        result = prime * result + (required != null ? required.hashCode() : 0);
         return result;
     }
 
@@ -244,6 +314,12 @@ public abstract class AbstractModel implements Model {
             return false;
         }
         if (pattern != null ? !pattern.equals(other.pattern) : other.pattern != null) {
+            return false;
+        }        
+        if (required != null ? !required.equals(other.required) : other.required != null) {
+            return false;
+        }
+        if (properties != null ? !properties.equals(other.properties) : other.properties != null) {
             return false;
         }
 
