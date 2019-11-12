@@ -31,7 +31,7 @@ paths:
             examples:
               Default Request:
                 summary: Subscription  Example
-                description: Default Request
+                description: Subscription Example Description
                 value:
                   subscriptionId: "1"
                   subscriptionItem:

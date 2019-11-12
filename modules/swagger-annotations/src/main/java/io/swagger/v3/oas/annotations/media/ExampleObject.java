@@ -77,4 +77,12 @@ public @interface ExampleObject {
      **/
     String ref() default "";
 
+    /**
+     * A description of the purpose or context of the example
+     *
+     * @since 2.0.11
+     * @return a description of the example
+     **/
+    String description() default "";
+
 }
