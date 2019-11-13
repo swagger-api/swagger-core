@@ -9,14 +9,14 @@ paths:
         schema:
           type: string
       responses:
-        400:
+        "400":
           description: test description
           links:
             user:
               operationId: getUser
               parameters:
                 userId: $request.query.userId
-        200:
+        "200":
           description: 200 description
           links:
             pet:

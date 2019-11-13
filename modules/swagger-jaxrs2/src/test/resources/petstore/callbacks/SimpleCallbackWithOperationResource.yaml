@@ -5,7 +5,7 @@ paths:
       summary: Simple get operation
       operationId: getWithNoParameters
       responses:
-        200:
+        "200":
           description: voila!
       callbacks:
         testCallback1:
@@ -14,7 +14,7 @@ paths:
               summary: get all the reviews
               operationId: getAllReviews
               responses:
-                200:
+                "200":
                   description: successful operation
                   content:
                     application/json:
