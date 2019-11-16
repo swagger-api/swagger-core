@@ -312,7 +312,7 @@ public @interface Schema {
     /**
      * Allows enums to be resolved as a reference to a scheme added to components section.
      *
-     * @since 2.0.11
+     * @since 2.1.0
      * @return whether or not this must be resolved as a reference
      */
     boolean enumAsRef() default false;

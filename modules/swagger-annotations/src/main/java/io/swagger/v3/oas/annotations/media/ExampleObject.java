@@ -80,7 +80,7 @@ public @interface ExampleObject {
     /**
      * A description of the purpose or context of the example
      *
-     * @since 2.0.11
+     * @since 2.1.0
      * @return a description of the example
      **/
     String description() default "";
