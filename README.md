@@ -33,7 +33,8 @@ The OpenAPI Specification has undergone several revisions since initial creation
 
 Swagger core Version      | Release Date | OpenAPI Spec compatibility | Notes | Status
 ------------------------- | ------------ | -------------------------- | ----- | ----
-2.0.10 (**current stable**)| 2019-10-11   | 3.0           | [tag v2.0.10](https://github.com/swagger-api/swagger-core/tree/v2.0.10) | Supported
+2.1.0 (**current stable**)| 2019-11-16   | 3.0           | [tag v2.1.0](https://github.com/swagger-api/swagger-core/tree/v2.1.0) | Supported
+2.0.10                    | 2019-10-11   | 3.0           | [tag v2.0.10](https://github.com/swagger-api/swagger-core/tree/v2.0.10) | Supported
 2.0.9                     | 2019-08-22   | 3.0           | [tag v2.0.9](https://github.com/swagger-api/swagger-core/tree/v2.0.9) | Supported
 2.0.8                     | 2019-04-24   | 3.0           | [tag v2.0.8](https://github.com/swagger-api/swagger-core/tree/v2.0.8) | Supported
 2.0.7                     | 2019-02-18   | 3.0           | [tag v2.0.7](https://github.com/swagger-api/swagger-core/tree/v2.0.7) | Supported
@@ -41,7 +42,8 @@ Swagger core Version      | Release Date | OpenAPI Spec compatibility | Notes | 
 2.0.5                     | 2018-09-19   | 3.0           | [tag v2.0.5](https://github.com/swagger-api/swagger-core/tree/v2.0.5) | Supported
 2.0.4                     | 2018-09-05   | 3.0           | [tag v2.0.4](https://github.com/swagger-api/swagger-core/tree/v2.0.4) | Supported
 2.0.3                     | 2018-08-09   | 3.0           | [tag v2.0.3](https://github.com/swagger-api/swagger-core/tree/v2.0.3) | Supported
-1.5.24 (**current stable**)| 2019-10-11  | 2.0           | [tag v1.5.24](https://github.com/swagger-api/swagger-core/tree/v1.5.24) | Supported
+1.6.0 (**current stable**)| 2019-11-16  | 2.0           | [tag v1.6.0](https://github.com/swagger-api/swagger-core/tree/v1.6.0) | Supported
+1.5.24                    | 2019-10-11  | 2.0           | [tag v1.5.24](https://github.com/swagger-api/swagger-core/tree/v1.5.24) | Supported
 1.5.23                    | 2019-08-22  | 2.0           | [tag v1.5.23](https://github.com/swagger-api/swagger-core/tree/v1.5.23) | Supported
 1.5.22                    | 2019-02-18  | 2.0           | [tag v1.5.22](https://github.com/swagger-api/swagger-core/tree/v1.5.22) | Supported
 1.5.21                    | 2018-08-09  | 2.0           | [tag v1.5.21](https://github.com/swagger-api/swagger-core/tree/v1.5.21) | Supported
@@ -73,7 +75,7 @@ If you're interested in the change history of swagger and the swagger-core frame
 ### Prerequisites
 You need the following installed and available in your $PATH:
 
-* Java 7 (http://java.oracle.com)
+* Java 8 (http://java.oracle.com)
 * Apache maven 3.0.4 or greater (http://maven.apache.org/)
 
 ### Prerequisites 2.X
@@ -83,7 +85,7 @@ You need the following installed and available in your $PATH:
 * Apache maven 3.0.4 or greater (http://maven.apache.org/)
 
 
-### To build from source (currently 1.5.25-SNAPSHOT)
+### To build from source (currently 1.6.1-SNAPSHOT)
 ```
 # first time building locally
 mvn -N
