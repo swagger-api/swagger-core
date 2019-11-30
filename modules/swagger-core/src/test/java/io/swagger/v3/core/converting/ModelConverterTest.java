@@ -1,5 +1,7 @@
 package io.swagger.v3.core.converting;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.google.common.collect.ImmutableSet;
 import io.swagger.v3.core.converter.ModelConverters;
 import io.swagger.v3.core.matchers.SerializationMatchers;
@@ -31,6 +33,7 @@ import io.swagger.v3.oas.models.media.MapSchema;
 import io.swagger.v3.oas.models.media.NumberSchema;
 import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.media.StringSchema;
+import org.testng.annotations.Ignore;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
@@ -369,5 +372,43 @@ public class ModelConverterTest {
         public Float floatValue;
         @io.swagger.v3.oas.annotations.media.Schema
         public Double doubleValue;
+    }
+
+    @Test
+    public void indirectPropertiesRecognized() {
+        final Map<String, Schema> models = ModelConverters.getInstance().read(BaseClass.class);
+        final Schema model = models.get("BaseClass");
+        assertNotNull(model);
+        assertEquals(model.getName(), "BaseClass");
+        assertNotNull(model.getProperties());
+        assertEquals(model.getProperties().size(), 1);
+    }
+
+    @JsonSerialize(as = AnnotatedImplementationClass.class)
+    abstract class BaseClass {
+        public abstract String field();
+    }
+    class AnnotatedImplementationClass extends BaseClass {
+        @Override
+        @JsonProperty
+        public String field() {
+            return "value";
+        }
+    }
+
+    @Test
+    @Ignore
+    public void directPropertiesRecognized() {
+        final Map<String, Schema> models = ModelConverters.getInstance().read(AnnotatedBaseClass.class);
+        final Schema model = models.get("AnnotatedBaseClass");
+        assertNotNull(model);
+        assertEquals(model.getName(), "AnnotatedBaseClass");
+        assertNotNull(model.getProperties());
+        assertEquals(model.getProperties().size(), 1);
+    }
+
+    abstract class AnnotatedBaseClass {
+        @JsonProperty
+        public abstract String field();
     }
 }

@@ -16,6 +16,7 @@ import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyMetadata;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.introspect.Annotated;
 import com.fasterxml.jackson.databind.introspect.AnnotatedClass;
 import com.fasterxml.jackson.databind.introspect.AnnotatedMember;
@@ -87,8 +88,10 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
     private static List<String> NOT_NULL_ANNOTATIONS = Arrays.asList("NotNull", "NonNull", "NotBlank", "NotEmpty");
 
     public static final String SET_PROPERTY_OF_COMPOSED_MODEL_AS_SIBLING = "composed-model-properties-as-sibiling";
+    public static final String SET_PROPERTY_OF_ENUMS_AS_REF = "enums-as-ref";
 
     public static boolean composedModelPropertiesAsSibling = System.getProperty(SET_PROPERTY_OF_COMPOSED_MODEL_AS_SIBLING) != null ? true : false;
+    public static boolean enumsAsRef = System.getProperty(SET_PROPERTY_OF_ENUMS_AS_REF) != null ? true : false;
 
     public ModelResolver(ObjectMapper mapper) {
         super(mapper);
@@ -136,7 +139,25 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                                 (io.swagger.v3.oas.annotations.media.ArraySchema) resolvedSchemaOrArrayAnnotation :
                                 null;
 
-        final BeanDescription beanDesc = _mapper.getSerializationConfig().introspect(type);
+        final BeanDescription beanDesc;
+        {
+            BeanDescription recurBeanDesc = _mapper.getSerializationConfig().introspect(type);
+
+            HashSet<String> visited = new HashSet<>();
+            JsonSerialize jsonSerialize = recurBeanDesc.getClassAnnotations().get(JsonSerialize.class);
+            while (jsonSerialize != null && !Void.class.equals(jsonSerialize.as())) {
+                String asName = jsonSerialize.as().getName();
+                if (visited.contains(asName)) break;
+                visited.add(asName);
+
+                recurBeanDesc = _mapper.getSerializationConfig().introspect(
+                        _mapper.constructType(jsonSerialize.as())
+                );
+                jsonSerialize = recurBeanDesc.getClassAnnotations().get(JsonSerialize.class);
+            }
+            beanDesc = recurBeanDesc;
+        }
+
 
         String name = annotatedType.getName();
         if (StringUtils.isBlank(name)) {
@@ -301,6 +322,15 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 schema.setItems(model);
                 return schema;
             }
+            if (type.isEnumType() &&
+                    (resolvedSchemaAnnotation != null && resolvedSchemaAnnotation.enumAsRef()) ||
+                    ModelResolver.enumsAsRef
+            ) {
+                // Store off the ref and add the enum as a top-level model
+                context.defineModel(name, model, annotatedType, null);
+                // Return the model as a ref only property
+                model = new Schema().$ref(name);
+            }
             return model;
         }
 
@@ -318,7 +348,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
          */
         Schema resolvedModel = context.resolve(annotatedType);
         if (resolvedModel != null) {
-            if (name.equals(resolvedModel.getName())) {
+            if (name != null && name.equals(resolvedModel.getName())) {
                 return resolvedModel;
             }
         }
@@ -620,19 +650,10 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                         //return context.resolve(t);
                     }
                 });
-                property = context.resolve(aType);
+                property = clone(context.resolve(aType));
 
                 if (property != null) {
                     if (property.get$ref() == null) {
-                        if (!"object".equals(property.getType()) || (property instanceof MapSchema)) {
-                            try {
-                                String cloneName = property.getName();
-                                property = Json.mapper().readValue(Json.pretty(property), Schema.class);
-                                property.setName(cloneName);
-                            } catch (IOException e) {
-                                LOGGER.error("Could not clone property, e");
-                            }
-                        }
                         Boolean required = md.getRequired();
                         if (required != null && !Boolean.FALSE.equals(required)) {
                             addRequiredItem(model, propName);
@@ -845,6 +866,19 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         resolveDiscriminatorProperty(type, context, model);
 
         return model;
+    }
+
+    private Schema clone(Schema property) {
+        if(property == null)
+            return property;
+        try {
+            String cloneName = property.getName();
+            property = Json.mapper().readValue(Json.pretty(property), Schema.class);
+            property.setName(cloneName);
+        } catch (IOException e) {
+            LOGGER.error("Could not clone property, e");
+        }
+        return property;
     }
 
     private boolean isSubtype(AnnotatedClass childClass, Class<?> parentClass) {
@@ -1167,6 +1201,12 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         }
 
         /**
+         * Remove the current class from the child classes. This happens if @JsonSubTypes references
+         * the annotated class as a subtype.
+         */
+        removeSelfFromSubTypes(types, bean);
+
+        /**
          * As the introspector will find @JsonSubTypes for a child class that are present on its super classes, the
          * code segment below will also run the introspector on the parent class, and then remove any sub-types that are
          * found for the parent from the sub-types found for the child. The same logic all applies to implemented
@@ -1261,6 +1301,11 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
         }
         return count != 0;
+    }
+
+    private void removeSelfFromSubTypes(List<NamedType> types, BeanDescription bean) {
+        Class<?> beanClass= bean.getType().getRawClass();
+        types.removeIf(type -> beanClass.equals(type.getType()));
     }
 
     private void removeSuperClassAndInterfaceSubTypes(List<NamedType> types, BeanDescription bean) {
@@ -1641,7 +1686,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 if (modelToUpdate.getProperties() == null || !modelToUpdate.getProperties().keySet().contains(typeInfoProp)) {
                     Schema discriminatorSchema = new StringSchema().name(typeInfoProp);
                     modelToUpdate.addProperties(typeInfoProp, discriminatorSchema);
-                    if (modelToUpdate.getRequired() == null || !model.getRequired().contains(typeInfoProp)) {
+                    if (modelToUpdate.getRequired() == null || !modelToUpdate.getRequired().contains(typeInfoProp)) {
                         modelToUpdate.addRequiredItem(typeInfoProp);
                     }
                 }

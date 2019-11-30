@@ -38,14 +38,14 @@ public class EnumTest {
             "          - A\n" +
             "          - B\n" +
             "      responses:\n" +
-            "        200:\n" +
+            "        \"200\":\n" +
             "          content:\n" +
             "            application/json:\n" +
             "              schema:\n" +
             "                type: array\n" +
             "                items:\n" +
             "                  $ref: '#/components/schemas/TaskDTO'\n" +
-            "        404:\n" +
+            "        \"404\":\n" +
             "          description: User not found\n" +
             "components:\n" +
             "  schemas:\n" +

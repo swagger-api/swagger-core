@@ -158,6 +158,7 @@ public class ExamplesTest extends AbstractAnnotationTest {
                                 examples = {
                                         @ExampleObject(
                                                 name = "Default Request",
+                                                description = "Subscription Example Description",
                                                 value = "{\"subscriptionId\" : \"1\", \"subscriptionItem\" : {\"subscriptionItemId\" : \"2\"}}",
                                                 summary = "Subscription  Example")
                                 }
