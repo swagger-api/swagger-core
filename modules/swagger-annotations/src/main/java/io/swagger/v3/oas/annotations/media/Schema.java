@@ -310,6 +310,14 @@ public @interface Schema {
     boolean hidden() default false;
 
     /**
+     * Allows enums to be resolved as a reference to a scheme added to components section.
+     *
+     * @since 2.1.0
+     * @return whether or not this must be resolved as a reference
+     */
+    boolean enumAsRef() default false;
+
+    /**
      * An array of the sub types inheriting from this model.
      */
     Class<?>[] subTypes() default {};
