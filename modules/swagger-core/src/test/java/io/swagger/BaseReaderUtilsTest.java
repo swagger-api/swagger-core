@@ -32,7 +32,11 @@ public class BaseReaderUtilsTest {
                 {"methodFive", ImmutableMap.of(
                         "x-test1", ImmutableMap.of("test1", "value1", "test2", "value2"),
                         "x-test2", "value2")},
-                {"methodSix", ImmutableMap.of("x-test1", "value1", "x-test2", "value2")}
+                {"methodSix", ImmutableMap.of("x-test1", "value1", "x-test2", "value2")},
+                {"methodSeven", ImmutableMap.of(
+                        "x-test1", "[\"11\", [\"22\"]",
+                        "x-test2", "true",
+                        "x-test", ImmutableMap.of("test1", "", "test2", "value2"))},
         };
     }
 
@@ -110,6 +114,15 @@ public class BaseReaderUtilsTest {
             })
     })
     private void methodSix() {
+
+    }
+
+    @ApiOperation(value = "method", extensions = {
+            @Extension(properties = {
+                    @ExtensionProperty(name = "test1", value = "[\"11\", \"22\"]", parseValue = true),
+                    @ExtensionProperty(name = "test2", value = "true", parseValue = true)
+            })})
+    private void methodSeven() {
 
     }
 }
