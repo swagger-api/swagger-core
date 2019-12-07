@@ -34,9 +34,8 @@ public class BaseReaderUtilsTest {
                         "x-test2", "value2")},
                 {"methodSix", ImmutableMap.of("x-test1", "value1", "x-test2", "value2")},
                 {"methodSeven", ImmutableMap.of(
-                        "x-test1", "[\"11\", [\"22\"]",
-                        "x-test2", "true",
-                        "x-test", ImmutableMap.of("test1", "", "test2", "value2"))},
+                        "x-test1", "[\"11\",\"22\"]",
+                        "x-test2", "true")},
         };
     }
 
