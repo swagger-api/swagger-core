@@ -1,5 +1,8 @@
 package io.swagger;
 
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.BooleanNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.Extension;
 import io.swagger.annotations.ExtensionProperty;
@@ -18,6 +21,9 @@ public class BaseReaderUtilsTest {
 
     @DataProvider
     private Object[][] expectedData() {
+        ArrayNode testJsonArray =  JsonNodeFactory.instance.arrayNode().add("11").add("22");
+        BooleanNode testJsonBoolean = JsonNodeFactory.instance.booleanNode(true);
+
         return new Object[][]{
                 {"methodOne", Collections.emptyMap()},
                 {"methodTwo", Collections.emptyMap()},
@@ -33,9 +39,8 @@ public class BaseReaderUtilsTest {
                         "x-test1", ImmutableMap.of("test1", "value1", "test2", "value2"),
                         "x-test2", "value2")},
                 {"methodSix", ImmutableMap.of("x-test1", "value1", "x-test2", "value2")},
-                {"methodSeven", ImmutableMap.of(
-                        "x-test1", "[\"11\",\"22\"]",
-                        "x-test2", "true")},
+                {"methodSeven", ImmutableMap.of("x-test1", testJsonArray)},
+                {"methodEight", ImmutableMap.of("x-test1", testJsonBoolean)}
         };
     }
 
@@ -118,10 +123,17 @@ public class BaseReaderUtilsTest {
 
     @ApiOperation(value = "method", extensions = {
             @Extension(properties = {
-                    @ExtensionProperty(name = "test1", value = "[\"11\", \"22\"]", parseValue = true),
-                    @ExtensionProperty(name = "test2", value = "true", parseValue = true)
+                    @ExtensionProperty(name = "test1", value = "[\"11\", \"22\"]", parseValue = true)
             })})
     private void methodSeven() {
+
+    }
+
+    @ApiOperation(value = "method", extensions = {
+            @Extension(properties = {
+                    @ExtensionProperty(name = "test1", value = "true", parseValue = true)
+            })})
+    private void methodEight() {
 
     }
 }
