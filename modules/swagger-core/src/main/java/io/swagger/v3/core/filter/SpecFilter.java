@@ -291,6 +291,11 @@ public class SpecFilter {
             referencedDefinitions.add(schema.get$ref());
             return;
         }
+        if (schema.getDiscriminator() != null && schema.getDiscriminator().getMapping() != null) {
+            for (Map.Entry<String, String> mapping: schema.getDiscriminator().getMapping().entrySet()) {
+                referencedDefinitions.add(mapping.getValue());
+            }
+        }
 
         if (schema.getProperties() != null) {
             for (Object propName : schema.getProperties().keySet()) {
