@@ -268,6 +268,8 @@ public class SpecFilterTest {
         assertNotNull(filtered.getComponents().getSchemas().get("oneOfNestedParentB"));
         assertNotNull(filtered.getComponents().getSchemas().get("discriminatorParent"));
         assertNotNull(filtered.getComponents().getSchemas().get("discriminatorMatchedChildA"));
+        assertNotNull(filtered.getComponents().getSchemas().get("discriminatorRefProperty"));
+        assertNotNull(filtered.getComponents().getSchemas().get("discriminatorParentRefProperty"));
         assertNotNull(filtered.getComponents().getSchemas().get("discriminatorMatchedChildB"));
     }
 

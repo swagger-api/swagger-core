@@ -409,10 +409,31 @@
           "parentBStuff": {
             "type": "integer",
             "format": "int64"
+          },
+          "discriminatorRefProperty": {
+            "$ref": "#/components/schemas/discriminatorRefProperty"
+          }
+        }
+      },
+      "discriminatorRefProperty": {
+        "type": "object",
+        "properties": {
+          "parentBStuff": {
+            "type": "integer",
+            "format": "int64"
           }
         }
       },
       "discriminatorMatchedChildB": {
+        "type": "object",
+        "properties": {
+          "parentBStuff": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "discriminatorParentRefProperty": {
         "type": "object",
         "properties": {
           "parentBStuff": {
@@ -427,6 +448,9 @@
           "parentBStuff": {
             "type": "integer",
             "format": "int64"
+          },
+          "discriminatorParentRefProperty": {
+            "$ref": "#/components/schemas/discriminatorParentRefProperty"
           }
         },
         "discriminator": {
