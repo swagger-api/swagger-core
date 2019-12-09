@@ -3,6 +3,7 @@ package io.swagger.v3.core.util;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.introspect.Annotated;
 import io.swagger.v3.core.converter.AnnotatedType;
 import io.swagger.v3.core.converter.ModelConverters;
@@ -347,7 +348,8 @@ public abstract class AnnotationsUtils {
         if (StringUtils.isNotBlank(example.value())) {
             isEmpty = false;
             try {
-                exampleObject.setValue(Json.mapper().readTree(example.value()));
+                ObjectMapper mapper = ObjectMapperFactory.buildStrictGenericObjectMapper();
+                exampleObject.setValue(mapper.readTree(example.value()));
             } catch (IOException e) {
                 exampleObject.setValue(example.value());
             }
@@ -1895,4 +1897,5 @@ public abstract class AnnotationsUtils {
 
         return (io.swagger.v3.oas.annotations.media.ArraySchema)newArraySchema;
     }
+
 }

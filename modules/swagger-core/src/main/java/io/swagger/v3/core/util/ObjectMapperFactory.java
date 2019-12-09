@@ -143,4 +143,17 @@ public class ObjectMapperFactory {
 
         return mapper;
     }
+
+    public static ObjectMapper buildStrictGenericObjectMapper() {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+        mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+        mapper.configure(SerializationFeature.WRITE_ENUMS_USING_TO_STRING, true);
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        mapper.configure(SerializationFeature.WRITE_NULL_MAP_VALUES, false);
+        mapper.configure(DeserializationFeature.FAIL_ON_TRAILING_TOKENS, true);
+        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        return mapper;
+    }
+
 }
