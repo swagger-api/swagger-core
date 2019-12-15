@@ -310,7 +310,7 @@ public class Reader {
                 }
                 javax.ws.rs.Path methodPath = ReflectionUtils.getAnnotation(method, javax.ws.rs.Path.class);
 
-                String operationPath = getPath(apiPath, methodPath, parentPath, isSubresource);
+                String operationPath = ReaderUtils.getPath(apiPath, methodPath, parentPath, isSubresource);
                 Map<String, String> regexMap = new LinkedHashMap<String, String>();
                 operationPath = PathUtils.parsePath(operationPath, regexMap);
                 if (operationPath != null) {
@@ -733,46 +733,6 @@ public class Reader {
             }
         }
         return output;
-    }
-
-    private String getPath(javax.ws.rs.Path classLevelPath, javax.ws.rs.Path methodLevelPath, String parentPath,
-                           boolean isSubResource) {
-        if (classLevelPath == null && methodLevelPath == null && StringUtils.isEmpty(parentPath)) {
-            return null;
-        }
-        StringBuilder b = new StringBuilder();
-        if (parentPath != null && !"".equals(parentPath) && !"/".equals(parentPath)) {
-            if (!parentPath.startsWith("/")) {
-                parentPath = "/" + parentPath;
-            }
-            if (parentPath.endsWith("/")) {
-                parentPath = parentPath.substring(0, parentPath.length() - 1);
-            }
-
-            b.append(parentPath);
-        }
-        if (classLevelPath != null && !isSubResource) {
-            b.append(classLevelPath.value());
-        }
-        if (methodLevelPath != null && !"/".equals(methodLevelPath.value())) {
-            String methodPath = methodLevelPath.value();
-            if (!methodPath.startsWith("/") && !b.toString().endsWith("/")) {
-                b.append("/");
-            }
-            if (methodPath.endsWith("/")) {
-                methodPath = methodPath.substring(0, methodPath.length() - 1);
-            }
-            b.append(methodPath);
-        }
-        String output = b.toString();
-        if (!output.startsWith("/")) {
-            output = "/" + output;
-        }
-        if (output.endsWith("/") && output.length() > 1) {
-            return output.substring(0, output.length() - 1);
-        } else {
-            return output;
-        }
     }
 
     private Map<String, Property> parseResponseHeaders(ResponseHeader[] headers, JsonView jsonView) {
