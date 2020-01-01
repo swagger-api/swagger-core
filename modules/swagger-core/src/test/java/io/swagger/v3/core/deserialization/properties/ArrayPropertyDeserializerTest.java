@@ -16,7 +16,7 @@ public class ArrayPropertyDeserializerTest {
     private static final String yaml =
             "      operationId: something\n" +
                     "      responses:\n" +
-                    "        200:\n" +
+                    "        \"200\":\n" +
                     "          content:\n" +
                     "            '*/*':\n" +
                     "              examples:\n" +

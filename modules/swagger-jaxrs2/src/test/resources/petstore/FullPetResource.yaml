@@ -70,9 +70,9 @@ paths:
             application/xml:
               schema:
                 $ref: '#/components/schemas/Pet'
-        400:
+        "400":
           description: Invalid ID supplied
-        404:
+        "404":
           description: Pet not found
   /pet:
     put:
@@ -86,11 +86,11 @@ paths:
               $ref: '#/components/schemas/Pet'
         required: true
       responses:
-        400:
+        "400":
           description: Invalid ID supplied
-        404:
+        "404":
           description: Pet not found
-        405:
+        "405":
           description: Validation exception
     post:
       summary: Add a new pet to the store
@@ -106,7 +106,7 @@ paths:
               $ref: '#/components/schemas/Pet'
         required: true
       responses:
-        405:
+        "405":
           description: Invalid input
   /pet/bodynoannotation:
     post:
@@ -121,7 +121,7 @@ paths:
             schema:
               $ref: '#/components/schemas/Pet'
       responses:
-        405:
+        "405":
           description: Invalid input
   /pet/bodyid:
     post:
@@ -141,7 +141,7 @@ paths:
               format: int32
         required: true
       responses:
-        405:
+        "405":
           description: Invalid input
   /pet/bodyidnoannotation:
     post:
@@ -158,7 +158,7 @@ paths:
               type: integer
               format: int32
       responses:
-        405:
+        "405":
           description: Invalid input
   /pet/findByStatus:
     get:
@@ -188,7 +188,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Pet'
-        400:
+        "400":
           description: Invalid status value
   /pet/findByTags:
     get:
@@ -210,7 +210,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Pet'
-        400:
+        "400":
           description: Invalid tag value
   /complexcallback:
     get:
@@ -223,7 +223,7 @@ paths:
         schema:
           $ref: '#/components/schemas/User'
       responses:
-        200:
+        "200":
           description: voila!
       callbacks:
         testCallback1:
@@ -232,7 +232,7 @@ paths:
               summary: get all the reviews
               operationId: getAllReviews
               responses:
-                200:
+                "200":
                   description: successful operation
                   content:
                     application/json:
@@ -245,7 +245,7 @@ paths:
               summary: get a review
               operationId: getAnSpecificReviews
               responses:
-                200:
+                "200":
                   description: successful operation
                   content:
                     application/json:
@@ -256,7 +256,7 @@ paths:
       summary: Simple get operation
       operationId: getWithNoParameters_1
       responses:
-        200:
+        "200":
           description: voila!
       callbacks:
         testCallback1:
@@ -265,7 +265,7 @@ paths:
               summary: get all the reviews
               operationId: getAllReviews
               responses:
-                200:
+                "200":
                   description: successful operation
                   content:
                     application/json:
@@ -279,7 +279,7 @@ paths:
       summary: Simple get operation
       operationId: getWithNoParameters_2
       responses:
-        200:
+        "200":
           description: voila!
       callbacks:
         testCallback:
@@ -290,7 +290,7 @@ paths:
               summary: get all the reviews
               operationId: getAllReviews
               responses:
-                200:
+                "200":
                   description: successful operation
                   content:
                     application/json:
@@ -304,7 +304,7 @@ paths:
       summary: Simple get operation
       operationId: getWithNoParameters_3
       responses:
-        200:
+        "200":
           description: voila!
       callbacks:
         testCallback1:
@@ -313,7 +313,7 @@ paths:
               summary: get all the reviews
               operationId: getAllReviews
               responses:
-                200:
+                "200":
                   description: successful operation
                   content:
                     application/json:
@@ -472,9 +472,9 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/Pet'
-        400:
+        "400":
           description: Invalid ID supplied
-        404:
+        "404":
           description: Pet not found
   /interfaceoperation/{petId}:
     get:
@@ -554,9 +554,9 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/Pet'
-        400:
+        "400":
           description: Invalid ID supplied
-        404:
+        "404":
           description: Pet not found
     put:
       description: combinatedsameOperationName
@@ -1144,7 +1144,7 @@ paths:
       description: Returns the Pets
       operationId: getPets
       responses:
-        200:
+        "200":
           description: Response inside Operation
           content:
             '*/*':
@@ -1158,7 +1158,7 @@ paths:
                 type: string
                 description: Default Pet
                 example: New Pet
-        404:
+        "404":
           description: Couldn't find pet
   /implementationresponse:
     get:
@@ -1167,13 +1167,13 @@ paths:
         object
       operationId: getWithPayloadResponse
       responses:
-        200:
+        "200":
           description: voila!
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/SecondSampleResponseSchema'
-        400:
+        "400":
           description: boo
           content:
             '*/*':
@@ -1186,7 +1186,7 @@ paths:
       description: Returns the Pets
       operationId: getPets_1
       responses:
-        200:
+        "200":
           description: Status OK
   /noimplementationresponseresource:
     get:
@@ -1197,14 +1197,14 @@ paths:
         schema:
           type: string
       responses:
-        400:
+        "400":
           description: test description
           links:
             user:
               operationId: getUser
               parameters:
                 userId: $request.query.userId
-        200:
+        "200":
           description: 200 description
           links:
             pet:
@@ -1229,7 +1229,7 @@ paths:
       description: Returns the Users
       operationId: getUsers
       responses:
-        200:
+        "200":
           description: Status OK
   /priorityresponses:
     get:
@@ -1237,7 +1237,7 @@ paths:
       description: Returns the Pets
       operationId: getPets_3
       responses:
-        200:
+        "200":
           description: Inside Method Operation
   /security:
     get:

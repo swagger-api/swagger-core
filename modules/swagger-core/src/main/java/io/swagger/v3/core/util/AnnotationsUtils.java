@@ -3,6 +3,7 @@ package io.swagger.v3.core.util;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.introspect.Annotated;
 import io.swagger.v3.core.converter.AnnotatedType;
 import io.swagger.v3.core.converter.ModelConverters;
@@ -95,6 +96,7 @@ public abstract class AnnotationsUtils {
                 && schema.discriminatorMapping().length == 0
                 && schema.extensions().length == 0
                 && !schema.hidden()
+                && !schema.enumAsRef()
                 ) {
             return false;
         }
@@ -260,7 +262,9 @@ public abstract class AnnotationsUtils {
         if (thisSchema.hidden() != thatSchema.hidden()) {
             return false;
         }
-
+        if (thisSchema.enumAsRef() != thatSchema.enumAsRef()) {
+            return false;
+        }
         if (!thisSchema.implementation().equals(thatSchema.implementation())) {
             return false;
         }
@@ -332,6 +336,11 @@ public abstract class AnnotationsUtils {
             exampleObject.setSummary(example.summary());
         }
 
+        if (StringUtils.isNotBlank(example.description())) {
+            isEmpty = false;
+            exampleObject.setDescription(example.description());
+        }
+
         if (StringUtils.isNotBlank(example.externalValue())) {
             isEmpty = false;
             exampleObject.setExternalValue(example.externalValue());
@@ -339,7 +348,8 @@ public abstract class AnnotationsUtils {
         if (StringUtils.isNotBlank(example.value())) {
             isEmpty = false;
             try {
-                exampleObject.setValue(Json.mapper().readTree(example.value()));
+                ObjectMapper mapper = ObjectMapperFactory.buildStrictGenericObjectMapper();
+                exampleObject.setValue(mapper.readTree(example.value()));
             } catch (IOException e) {
                 exampleObject.setValue(example.value());
             }
@@ -1725,6 +1735,14 @@ public abstract class AnnotationsUtils {
             }
 
             @Override
+            public boolean enumAsRef() {
+                if (master.enumAsRef() || !patch.enumAsRef()) {
+                    return master.enumAsRef();
+                }
+                return patch.enumAsRef();
+            }
+
+            @Override
             public Class<?>[] subTypes() {
                 if (master.subTypes().length > 0 || patch.subTypes().length == 0) {
                     return master.subTypes();
@@ -1879,4 +1897,5 @@ public abstract class AnnotationsUtils {
 
         return (io.swagger.v3.oas.annotations.media.ArraySchema)newArraySchema;
     }
+
 }

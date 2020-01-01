@@ -30,6 +30,7 @@ import io.swagger.v3.core.converter.ModelConverterContext;
 import io.swagger.v3.core.util.AnnotationsUtils;
 import io.swagger.v3.core.util.Constants;
 import io.swagger.v3.core.util.Json;
+import io.swagger.v3.core.util.ObjectMapperFactory;
 import io.swagger.v3.core.util.PrimitiveType;
 import io.swagger.v3.core.util.ReflectionUtils;
 import io.swagger.v3.oas.annotations.media.DiscriminatorMapping;
@@ -87,8 +88,10 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
     Logger LOGGER = LoggerFactory.getLogger(ModelResolver.class);
 
     public static final String SET_PROPERTY_OF_COMPOSED_MODEL_AS_SIBLING = "composed-model-properties-as-sibiling";
+    public static final String SET_PROPERTY_OF_ENUMS_AS_REF = "enums-as-ref";
 
     public static boolean composedModelPropertiesAsSibling = System.getProperty(SET_PROPERTY_OF_COMPOSED_MODEL_AS_SIBLING) != null ? true : false;
+    public static boolean enumsAsRef = System.getProperty(SET_PROPERTY_OF_ENUMS_AS_REF) != null ? true : false;
 
     public ModelResolver(ObjectMapper mapper) {
         super(mapper);
@@ -318,6 +321,15 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 resolveArraySchema(annotatedType, schema, resolvedArrayAnnotation);
                 schema.setItems(model);
                 return schema;
+            }
+            if (type.isEnumType() &&
+                    (resolvedSchemaAnnotation != null && resolvedSchemaAnnotation.enumAsRef()) ||
+                    ModelResolver.enumsAsRef
+            ) {
+                // Store off the ref and add the enum as a top-level model
+                context.defineModel(name, model, annotatedType, null);
+                // Return the model as a ref only property
+                model = new Schema().$ref(name);
             }
             return model;
         }
@@ -638,19 +650,10 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                         //return context.resolve(t);
                     }
                 });
-                property = context.resolve(aType);
+                property = clone(context.resolve(aType));
 
                 if (property != null) {
                     if (property.get$ref() == null) {
-                        if (!"object".equals(property.getType()) || (property instanceof MapSchema)) {
-                            try {
-                                String cloneName = property.getName();
-                                property = Json.mapper().readValue(Json.pretty(property), Schema.class);
-                                property.setName(cloneName);
-                            } catch (IOException e) {
-                                LOGGER.error("Could not clone property, e");
-                            }
-                        }
                         Boolean required = md.getRequired();
                         if (required != null && !Boolean.FALSE.equals(required)) {
                             addRequiredItem(model, propName);
@@ -863,6 +866,19 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         resolveDiscriminatorProperty(type, context, model);
 
         return model;
+    }
+
+    private Schema clone(Schema property) {
+        if(property == null)
+            return property;
+        try {
+            String cloneName = property.getName();
+            property = Json.mapper().readValue(Json.pretty(property), Schema.class);
+            property.setName(cloneName);
+        } catch (IOException e) {
+            LOGGER.error("Could not clone property, e");
+        }
+        return property;
     }
 
     private boolean isSubtype(AnnotatedClass childClass, Class<?> parentClass) {
@@ -1409,7 +1425,8 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         if (schema != null) {
             if (!schema.example().isEmpty()) {
                 try {
-                    return Json.mapper().readTree(schema.example());
+                    ObjectMapper mapper = ObjectMapperFactory.buildStrictGenericObjectMapper();
+                    return mapper.readTree(schema.example());
                 } catch (IOException e) {
                     return schema.example();
                 }
