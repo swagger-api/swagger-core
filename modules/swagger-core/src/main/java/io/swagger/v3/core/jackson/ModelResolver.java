@@ -30,6 +30,7 @@ import io.swagger.v3.core.converter.ModelConverterContext;
 import io.swagger.v3.core.util.AnnotationsUtils;
 import io.swagger.v3.core.util.Constants;
 import io.swagger.v3.core.util.Json;
+import io.swagger.v3.core.util.ObjectMapperFactory;
 import io.swagger.v3.core.util.PrimitiveType;
 import io.swagger.v3.core.util.ReflectionUtils;
 import io.swagger.v3.oas.annotations.media.DiscriminatorMapping;
@@ -1424,7 +1425,8 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         if (schema != null) {
             if (!schema.example().isEmpty()) {
                 try {
-                    return Json.mapper().readTree(schema.example());
+                    ObjectMapper mapper = ObjectMapperFactory.buildStrictGenericObjectMapper();
+                    return mapper.readTree(schema.example());
                 } catch (IOException e) {
                     return schema.example();
                 }
