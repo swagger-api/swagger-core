@@ -91,6 +91,10 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
     public static final String SET_PROPERTY_OF_ENUMS_AS_REF = "enums-as-ref";
 
     public static boolean composedModelPropertiesAsSibling = System.getProperty(SET_PROPERTY_OF_COMPOSED_MODEL_AS_SIBLING) != null ? true : false;
+
+    /**
+     * Allows all enums to be resolved as a reference to a scheme added to the components section.
+     */
     public static boolean enumsAsRef = System.getProperty(SET_PROPERTY_OF_ENUMS_AS_REF) != null ? true : false;
 
     public ModelResolver(ObjectMapper mapper) {
@@ -322,10 +326,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 schema.setItems(model);
                 return schema;
             }
-            if (type.isEnumType() &&
-                    (resolvedSchemaAnnotation != null && resolvedSchemaAnnotation.enumAsRef()) ||
-                    ModelResolver.enumsAsRef
-            ) {
+            if (type.isEnumType() && shouldResolveEnumAsRef(resolvedSchemaAnnotation)) {
                 // Store off the ref and add the enum as a top-level model
                 context.defineModel(name, model, annotatedType, null);
                 // Return the model as a ref only property
@@ -866,6 +867,10 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         resolveDiscriminatorProperty(type, context, model);
 
         return model;
+    }
+
+    private boolean shouldResolveEnumAsRef(io.swagger.v3.oas.annotations.media.Schema resolvedSchemaAnnotation) {
+        return (resolvedSchemaAnnotation != null && resolvedSchemaAnnotation.enumAsRef()) || ModelResolver.enumsAsRef;
     }
 
     private Schema clone(Schema property) {
