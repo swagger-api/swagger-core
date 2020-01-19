@@ -1,0 +1,19 @@
+openapi: 3.0.0
+info:
+  title: ExampleBuilder and date-time examples
+  version: 0.0.0
+paths: {}
+
+components:
+  schemas:
+    MyModel:
+      type: object
+      properties:
+        date:
+          type: string
+          format: date
+          example: '2019-08-05'
+        dateTime:
+          type: string
+          format: date-time
+          example: '2019-08-05T12:34:56Z'

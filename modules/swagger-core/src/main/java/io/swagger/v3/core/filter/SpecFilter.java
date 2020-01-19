@@ -24,6 +24,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -45,60 +46,62 @@ public class SpecFilter {
         OpenAPI clone = new OpenAPI();
         clone.info(filteredOpenAPI.getInfo());
         clone.openapi(filteredOpenAPI.getOpenapi());
-        clone.setExtensions(openAPI.getExtensions());
-        clone.setExternalDocs(openAPI.getExternalDocs());
-        clone.setSecurity(openAPI.getSecurity());
-        clone.setServers(openAPI.getServers());
+        clone.setExtensions(filteredOpenAPI.getExtensions());
+        clone.setExternalDocs(filteredOpenAPI.getExternalDocs());
+        clone.setSecurity(filteredOpenAPI.getSecurity());
+        clone.setServers(filteredOpenAPI.getServers());
         clone.tags(filteredOpenAPI.getTags() == null ? null : new ArrayList<>(openAPI.getTags()));
 
         final Set<String> allowedTags = new HashSet<>();
         final Set<String> filteredTags = new HashSet<>();
 
         Paths clonedPaths = new Paths();
-        for (String resourcePath : openAPI.getPaths().keySet()) {
-            PathItem pathItem = openAPI.getPaths().get(resourcePath);
+        if (filteredOpenAPI.getPaths() != null) {
+            for (String resourcePath : filteredOpenAPI.getPaths().keySet()) {
+                PathItem pathItem = filteredOpenAPI.getPaths().get(resourcePath);
 
-            PathItem filteredPathItem = filterPathItem(filter, pathItem, resourcePath, params, cookies, headers);
+                PathItem filteredPathItem = filterPathItem(filter, pathItem, resourcePath, params, cookies, headers);
 
-            if (filteredPathItem != null) {
+                if (filteredPathItem != null) {
 
-                PathItem clonedPathItem = new PathItem();
-                clonedPathItem.set$ref(filteredPathItem.get$ref());
-                clonedPathItem.setDescription(filteredPathItem.getDescription());
-                clonedPathItem.setSummary(filteredPathItem.getSummary());
-                clonedPathItem.setExtensions(filteredPathItem.getExtensions());
-                clonedPathItem.setParameters(filteredPathItem.getParameters());
-                clonedPathItem.setServers(filteredPathItem.getServers());
+                    PathItem clonedPathItem = new PathItem();
+                    clonedPathItem.set$ref(filteredPathItem.get$ref());
+                    clonedPathItem.setDescription(filteredPathItem.getDescription());
+                    clonedPathItem.setSummary(filteredPathItem.getSummary());
+                    clonedPathItem.setExtensions(filteredPathItem.getExtensions());
+                    clonedPathItem.setParameters(filteredPathItem.getParameters());
+                    clonedPathItem.setServers(filteredPathItem.getServers());
 
-                Map<PathItem.HttpMethod, Operation> ops = filteredPathItem.readOperationsMap();
+                    Map<PathItem.HttpMethod, Operation> ops = filteredPathItem.readOperationsMap();
 
-                for (PathItem.HttpMethod key : ops.keySet()) {
-                    Operation op = ops.get(key);
-                    List<String> opTagsBeforeFilter = null;
-                    if (op.getTags() != null) {
-                        opTagsBeforeFilter = new ArrayList<>(op.getTags());
-                    } else {
-                        opTagsBeforeFilter = new ArrayList<>();
-                    }
-                    op = filterOperation(filter, op, resourcePath, key.toString(), params, cookies, headers);
-                    clonedPathItem.operation(key, op);
-                    if (op == null) {
-                        filteredTags.addAll(opTagsBeforeFilter);
-                    } else {
+                    for (PathItem.HttpMethod key : ops.keySet()) {
+                        Operation op = ops.get(key);
+                        List<String> opTagsBeforeFilter = null;
                         if (op.getTags() != null) {
-                            opTagsBeforeFilter.removeAll(op.getTags());
-                            allowedTags.addAll(op.getTags());
+                            opTagsBeforeFilter = new ArrayList<>(op.getTags());
+                        } else {
+                            opTagsBeforeFilter = new ArrayList<>();
                         }
-                        filteredTags.addAll(opTagsBeforeFilter);
-                    }
+                        op = filterOperation(filter, op, resourcePath, key.toString(), params, cookies, headers);
+                        clonedPathItem.operation(key, op);
+                        if (op == null) {
+                            filteredTags.addAll(opTagsBeforeFilter);
+                        } else {
+                            if (op.getTags() != null) {
+                                opTagsBeforeFilter.removeAll(op.getTags());
+                                allowedTags.addAll(op.getTags());
+                            }
+                            filteredTags.addAll(opTagsBeforeFilter);
+                        }
 
-                }
-                if (!clonedPathItem.readOperations().isEmpty()) {
-                    clonedPaths.addPathItem(resourcePath, clonedPathItem);
+                    }
+                    if (!clonedPathItem.readOperations().isEmpty()) {
+                        clonedPaths.addPathItem(resourcePath, clonedPathItem);
+                    }
                 }
             }
+            clone.paths(clonedPaths);
         }
-        clone.paths(clonedPaths);
 
         filteredTags.removeAll(allowedTags);
 
@@ -288,6 +291,11 @@ public class SpecFilter {
             referencedDefinitions.add(schema.get$ref());
             return;
         }
+        if (schema.getDiscriminator() != null && schema.getDiscriminator().getMapping() != null) {
+            for (Map.Entry<String, String> mapping: schema.getDiscriminator().getMapping().entrySet()) {
+                referencedDefinitions.add(mapping.getValue());
+            }
+        }
 
         if (schema.getProperties() != null) {
             for (Object propName : schema.getProperties().keySet()) {
@@ -390,24 +398,38 @@ public class SpecFilter {
             }
         }
 
-        Set<String> nestedReferencedDefinitions = new TreeSet<>();
-        for (String ref : referencedDefinitions) {
-            locateReferencedDefinitions(ref, nestedReferencedDefinitions, openApi);
-        }
-        referencedDefinitions.addAll(nestedReferencedDefinitions);
-        openApi.getComponents().getSchemas().keySet().retainAll(referencedDefinitions.stream().map(s -> (String) RefUtils.extractSimpleName(s).getLeft()).collect(Collectors.toSet()));
+        referencedDefinitions.addAll(resolveAllNestedRefs(referencedDefinitions, referencedDefinitions, openApi));
+        openApi.getComponents()
+                .getSchemas()
+                .keySet()
+                .retainAll(referencedDefinitions.stream()
+                        .map(s -> (String) RefUtils.extractSimpleName(s).getLeft())
+                        .collect(Collectors.toSet()));
         return openApi;
     }
 
+    protected Set<String> resolveAllNestedRefs(Set<String> refs, Set<String> accumulatedRefs, OpenAPI openApi) {
+        Set<String> justDiscoveredReferencedDefinitions = new TreeSet<>();
+        for (String ref : refs) {
+            locateReferencedDefinitions(ref, justDiscoveredReferencedDefinitions, openApi);
+        }
+        // Base case - no new references have been discovered. Halt discovery to avoid infinite loops
+        if (accumulatedRefs.containsAll(justDiscoveredReferencedDefinitions)) {
+            return Collections.emptySet();
+        } else {
+            // Remove all refs that have already been discovered.
+            justDiscoveredReferencedDefinitions.removeAll(accumulatedRefs);
+            accumulatedRefs.addAll(justDiscoveredReferencedDefinitions);
+            return resolveAllNestedRefs(justDiscoveredReferencedDefinitions, accumulatedRefs, openApi);
+        }
+    }
+
     protected void locateReferencedDefinitions(String ref, Set<String> nestedReferencedDefinitions, OpenAPI openAPI) {
-        // if not already processed so as to avoid infinite loops
-        if (!nestedReferencedDefinitions.contains(ref)) {
-            nestedReferencedDefinitions.add(ref);
-            String simpleName = (String) RefUtils.extractSimpleName(ref).getLeft();
-            Schema model = openAPI.getComponents().getSchemas().get(simpleName);
-            if (model != null) {
-                addSchemaRef(model, nestedReferencedDefinitions);
-            }
+        nestedReferencedDefinitions.add(ref);
+        String simpleName = (String) RefUtils.extractSimpleName(ref).getLeft();
+        Schema model = openAPI.getComponents().getSchemas().get(simpleName);
+        if (model != null) {
+            addSchemaRef(model, nestedReferencedDefinitions);
         }
     }
 }

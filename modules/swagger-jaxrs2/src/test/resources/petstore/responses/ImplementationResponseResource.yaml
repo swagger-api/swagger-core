@@ -7,13 +7,13 @@ paths:
         object
       operationId: getWithPayloadResponse
       responses:
-        200:
+        "200":
           description: voila!
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/SecondSampleResponseSchema'
-        400:
+        "400":
           description: boo
           content:
             '*/*':

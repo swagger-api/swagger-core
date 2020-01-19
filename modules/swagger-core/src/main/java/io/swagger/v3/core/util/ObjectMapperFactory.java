@@ -13,8 +13,10 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.ser.BeanSerializerModifier;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.swagger.v3.core.jackson.SchemaSerializer;
 import io.swagger.v3.core.jackson.mixin.ComponentsMixin;
+import io.swagger.v3.core.jackson.mixin.DateSchemaMixin;
 import io.swagger.v3.core.jackson.mixin.ExtensionsMixin;
 import io.swagger.v3.core.jackson.mixin.OpenAPIMixin;
 import io.swagger.v3.core.jackson.mixin.OperationMixin;
@@ -32,6 +34,8 @@ import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
 import io.swagger.v3.oas.models.links.Link;
 import io.swagger.v3.oas.models.links.LinkParameter;
+import io.swagger.v3.oas.models.media.DateSchema;
+import io.swagger.v3.oas.models.media.DateTimeSchema;
 import io.swagger.v3.oas.models.media.Encoding;
 import io.swagger.v3.oas.models.media.EncodingProperty;
 import io.swagger.v3.oas.models.media.MediaType;
@@ -92,6 +96,7 @@ public class ObjectMapperFactory {
 
         Module deserializerModule = new DeserializationModule();
         mapper.registerModule(deserializerModule);
+        mapper.registerModule(new JavaTimeModule());
 
         Map<Class<?>, Class<?>> sourceMixins = new LinkedHashMap<>();
 
@@ -126,6 +131,7 @@ public class ObjectMapperFactory {
         sourceMixins.put(Tag.class, ExtensionsMixin.class);
         sourceMixins.put(XML.class, ExtensionsMixin.class);
         sourceMixins.put(Schema.class, ExtensionsMixin.class);
+        sourceMixins.put(DateSchema.class, DateSchemaMixin.class);
 
         mapper.setMixIns(sourceMixins);
         mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
@@ -137,4 +143,17 @@ public class ObjectMapperFactory {
 
         return mapper;
     }
+
+    public static ObjectMapper buildStrictGenericObjectMapper() {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+        mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+        mapper.configure(SerializationFeature.WRITE_ENUMS_USING_TO_STRING, true);
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        mapper.configure(SerializationFeature.WRITE_NULL_MAP_VALUES, false);
+        mapper.configure(DeserializationFeature.FAIL_ON_TRAILING_TOKENS, true);
+        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        return mapper;
+    }
+
 }

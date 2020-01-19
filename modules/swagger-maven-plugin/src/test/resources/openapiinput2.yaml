@@ -1,0 +1,11 @@
+openapi: 3.0.1
+servers:
+  - url: http://bar
+    description: server 1
+    variables:
+      var1:
+        description: var 1
+        enum:
+          - "1"
+          - "2"
+        default: "1"
