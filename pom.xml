@@ -443,8 +443,8 @@
                 <scope>test</scope>
             </dependency>
             <dependency>
-                <groupId>javax.servlet</groupId>
-                <artifactId>servlet-api</artifactId>
+                <groupId>jakarta.servlet</groupId>
+                <artifactId>jakarta.servlet-api</artifactId>
                 <version>${servlet-api-version}</version>
                 <scope>provided</scope>
             </dependency>
@@ -487,7 +487,6 @@
         <joda-time-version>2.2</joda-time-version>
 
         <felix-version>2.3.4</felix-version>
-        <servlet-api-version>2.5</servlet-api-version>
         <jersey-version>1.13</jersey-version>
         <jersey2-version>2.1</jersey2-version>
         <jackson-version>2.4.5</jackson-version>
@@ -501,7 +500,7 @@
         <commons-lang-version>3.2.1</commons-lang-version>
         <slf4j-version>1.6.3</slf4j-version>
         <jetty-version>8.1.11.v20130520</jetty-version>
-        <servlet-api-version>2.5</servlet-api-version>
+        <servlet-api-version>4.0.3</servlet-api-version>
         <coverage.complexity.minimum>0.90</coverage.complexity.minimum>
         <coverage.line.minimum>0.90</coverage.line.minimum>
         <coverage.missed.classes>0</coverage.missed.classes>
