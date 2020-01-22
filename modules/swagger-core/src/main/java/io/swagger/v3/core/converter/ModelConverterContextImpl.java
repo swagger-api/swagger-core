@@ -1,5 +1,6 @@
 package io.swagger.v3.core.converter;
 
+import io.swagger.v3.oas.models.media.ComposedSchema;
 import io.swagger.v3.oas.models.media.Schema;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -52,6 +53,14 @@ public class ModelConverterContextImpl implements ModelConverterContext {
     }
     @Override
     public void defineModel(String name, Schema model, AnnotatedType type, String prevName) {
+        Schema oldSchema = modelByName.get(name);
+        if (null != oldSchema && oldSchema instanceof ComposedSchema
+                && !(model instanceof ComposedSchema)) {
+            // If the schema already exists and is a composed schema and the new one is not, simply
+            // return ignoring the new schema.
+            return;
+        }
+
         if (LOGGER.isTraceEnabled()) {
             LOGGER.trace(String.format("defineModel %s %s", name, model));
         }
@@ -90,12 +99,16 @@ public class ModelConverterContextImpl implements ModelConverterContext {
             resolved = converter.resolve(type, this, converters);
         }
         if (resolved != null) {
-            modelByType.put(type, resolved);
-
-            Schema resolvedImpl = resolved;
-            if (resolvedImpl.getName() != null) {
-                modelByName.put(resolvedImpl.getName(), resolved);
+            String name = resolved.getName();
+            // If the type is already defined, use the defined model instead of the re-resolved model.
+            if (null != name) {
+                if (modelByName.containsKey(name)) {
+                    resolved = modelByName.get(name);
+                } else {
+                    modelByName.put(name, resolved);
+                }
             }
+            modelByType.put(type, resolved);
         } else {
             processedTypes.remove(type);
         }
