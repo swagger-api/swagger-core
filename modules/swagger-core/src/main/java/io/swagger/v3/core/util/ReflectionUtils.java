@@ -81,6 +81,18 @@ public class ReflectionUtils {
             }
 
         }
+
+        if (!cls.equals(Object.class)) {
+            Method[] methods = cls.getMethods();
+            for (Method method : methods) {
+                // A generic return type leads to two methods being created by the Java compiler. Both methods are equal except for
+                // the return type. The return type of the overridden method is assignable from the return type of the overriding method.
+                if (method.getName().equals(methodToFind.getName()) && methodToFind.getReturnType().isAssignableFrom(method.getReturnType())
+                        && !methodToFind.getReturnType().equals(method.getReturnType()) && Arrays.equals(method.getParameterTypes(), methodToFind.getParameterTypes())) {
+                    return true;
+                }
+            }
+        }
         return false;
     }
 
