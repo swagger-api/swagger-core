@@ -770,9 +770,9 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             Class<?>[] oneOf = resolvedSchemaAnnotation.oneOf();
 
             List<Class<?>> allOfFiltered = Stream.of(allOf)
-                    .distinct()
                     .filter(c -> !this.shouldIgnoreClass(c))
                     .filter(c -> !(c.equals(Void.class)))
+                    .distinct()
                     .collect(Collectors.toList());
             allOfFiltered.forEach(c -> {
                 Schema allOfRef = context.resolve(new AnnotatedType().type(c).jsonViewAnnotation(annotatedType.getJsonViewAnnotation()));
@@ -788,9 +788,9 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             });
 
             List<Class<?>> anyOfFiltered = Stream.of(anyOf)
-                    .distinct()
                     .filter(c -> !this.shouldIgnoreClass(c))
                     .filter(c -> !(c.equals(Void.class)))
+                    .distinct()
                     .collect(Collectors.toList());
             anyOfFiltered.forEach(c -> {
                 Schema anyOfRef = context.resolve(new AnnotatedType().type(c).jsonViewAnnotation(annotatedType.getJsonViewAnnotation()));
