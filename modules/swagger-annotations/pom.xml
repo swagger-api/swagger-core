@@ -3,7 +3,7 @@
     <parent>
         <groupId>com.bandwidth.swagger</groupId>
         <artifactId>swagger-project</artifactId>
-        <version>1.0.0</version>
+        <version>1.0.1</version>
         <relativePath>../..</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
