@@ -6,42 +6,39 @@
         <version>5</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-    <groupId>io.swagger.core.v3</groupId>
+    <groupId>com.bandwidth.swagger</groupId>
     <artifactId>swagger-project</artifactId>
     <packaging>pom</packaging>
     <name>swagger-project</name>
-    <version>2.0.11-SNAPSHOT</version>
+    <version>1.0.0</version>
     <url>https://github.com/swagger-api/swagger-core</url>
     <scm>
-        <connection>scm:git:git@github.com:swagger-api/swagger-core.git</connection>
-        <developerConnection>scm:git:git@github.com:swagger-api/swagger-core.git</developerConnection>
-        <url>https://github.com/swagger-api/swagger-core</url>
+        <connection>scm:git:git@github.com:Bandwidth/swagger-core.git</connection>
+        <developerConnection>scm:git:git@github.com:Bandwidth/swagger-core.git</developerConnection>
+        <url>https://github.com/Bandwidth/swagger-core</url>
     </scm>
+    <distributionManagement>
+        <repository>
+            <id>artifactory</id>
+            <name>bandwidth-releases</name>
+            <url>https://bandwidth.jfrog.io/bandwidth/maven</url>
+        </repository>
+        <snapshotRepository>
+            <id>artifactory-snapshots</id>
+            <name>bandwidth-snapshots</name>
+            <url>https://bandwidth.jfrog.io/bandwidth/maven</url>
+        </snapshotRepository>
+    </distributionManagement>
     <prerequisites>
         <maven>2.2.0</maven>
     </prerequisites>
     <developers>
         <developer>
-            <id>fehguy</id>
-            <name>Tony Tam</name>
-            <email>fehguy@gmail.com</email>
-        </developer>
-        <developer>
-            <id>webron</id>
-            <name>Ron Ratovsky</name>
-            <email>webron@gmail.com</email>
+            <id>bandwidth</id>
+            <name>Bandwidth</name>
+            <email>dx@bandwidth.com</email>
         </developer>
     </developers>
-    <issueManagement>
-        <system>github</system>
-        <url>https://github.com/swagger-api/swagger-core/issues</url>
-    </issueManagement>
-    <mailingLists>
-        <mailingList>
-            <name>swagger-swaggersocket</name>
-            <archive>https://groups.google.com/forum/#!forum/swagger-swaggersocket</archive>
-        </mailingList>
-    </mailingLists>
     <licenses>
         <license>
             <name>Apache License 2.0</name>

@@ -68,6 +68,13 @@ public @interface Operation {
     String method() default "";
 
     /**
+     * Overrrides the calculated Path.
+     *
+     * @return the true external Url Path
+     **/
+    String externalPath() default "";
+
+    /**
      * Tags can be used for logical grouping of operations by resources or any other qualifier.
      *
      * @return the list of tags associated with this operation

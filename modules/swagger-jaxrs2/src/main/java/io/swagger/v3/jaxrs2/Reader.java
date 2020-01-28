@@ -581,6 +581,11 @@ public class Reader implements OpenApiReader {
                     }
 
                     PathItem pathItemObject;
+
+                    if(StringUtils.isNotEmpty(operation.getExternalPath())){
+                        operationPath = operation.getExternalPath();
+                    }
+
                     if (openAPI.getPaths() != null && openAPI.getPaths().get(operationPath) != null) {
                         pathItemObject = openAPI.getPaths().get(operationPath);
                     } else {
@@ -1160,6 +1165,9 @@ public class Reader implements OpenApiReader {
             JsonView jsonViewAnnotation) {
         if (StringUtils.isNotBlank(apiOperation.summary())) {
             operation.setSummary(apiOperation.summary());
+        }
+        if (StringUtils.isNotBlank(apiOperation.externalPath())) {
+            operation.setExternalPath(apiOperation.externalPath());
         }
         if (StringUtils.isNotBlank(apiOperation.description())) {
             operation.setDescription(apiOperation.description());

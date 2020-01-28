@@ -16,6 +16,7 @@
 
 package io.swagger.v3.oas.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.v3.oas.models.callbacks.Callback;
 import io.swagger.v3.oas.models.parameters.Parameter;
 import io.swagger.v3.oas.models.parameters.RequestBody;
@@ -38,6 +39,8 @@ public class Operation {
     private List<String> tags = null;
     private String summary = null;
     private String description = null;
+    @JsonIgnore
+    private String externalPath = null;
     private ExternalDocumentation externalDocs = null;
     private String operationId = null;
     private List<Parameter> parameters = null;
@@ -74,6 +77,20 @@ public class Operation {
         }
         this.tags.add(tagsItem);
         return this;
+    }
+
+    /**
+     * returns the externalPath property from a Operation instance.
+     *
+     * @return String externalPath
+     **/
+
+    public String getExternalPath() {
+        return externalPath;
+    }
+
+    public void setExternalPath(String externalPath) {
+        this.externalPath = externalPath;
     }
 
     /**

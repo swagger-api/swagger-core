@@ -2,9 +2,9 @@
          xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <parent>
-        <groupId>io.swagger.core.v3</groupId>
+        <groupId>com.bandwidth.swagger</groupId>
         <artifactId>swagger-project</artifactId>
-        <version>2.0.11-SNAPSHOT</version>
+        <version>1.0.0</version>
         <relativePath>../..</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -120,7 +120,7 @@
             </exclusions>
         </dependency>
         <dependency>
-            <groupId>io.swagger.core.v3</groupId>
+            <groupId>com.bandwidth.swagger</groupId>
             <artifactId>swagger-jaxrs2</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -178,4 +178,20 @@
         <maven.version>3.5.0</maven.version>
         <junit.version>4.12</junit.version>
     </properties>
+    <repositories>
+        <repository>
+            <id>artifactory</id>
+            <name>Bandwidth Artifactory</name>
+            <url>https://bandwidth.jfrog.io/bandwidth/maven</url>
+            <layout>default</layout>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>nexus-aws</id>
+            <name>nexus-public</name>
+            <url>https://nexus.devops.inetwork.com/content/groups/public/</url>
+        </repository>
+    </repositories>
 </project>
