@@ -9,6 +9,8 @@ import io.swagger.v3.oas.integration.GenericOpenApiContextBuilder;
 import io.swagger.v3.oas.integration.OpenApiConfigurationException;
 import io.swagger.v3.oas.integration.SwaggerConfiguration;
 import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.PathItem;
+
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -27,6 +29,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.Map.Entry;
 import java.util.function.BiFunction;
 
 import static java.lang.String.format;
@@ -103,6 +106,15 @@ public class SwaggerMojo extends AbstractMojo {
                     openapiJson = Json.mapper().writeValueAsString(openAPI);
                 }
 
+            }
+            if(null!=basePathResource) {
+                io.swagger.v3.oas.models.Paths paths = openAPI.getPaths();
+                io.swagger.v3.oas.models.Paths pathsNew = new io.swagger.v3.oas.models.Paths();
+                Set<Entry<String, PathItem>> entrySet = paths.entrySet();
+                for (Entry<String, PathItem> entry : entrySet) {
+                    pathsNew.addPathItem(basePathResource+entry.getKey(), entry.getValue());
+                }
+                openAPI.setPaths(pathsNew);
             }
             if (Format.YAML.equals(outputFormat) || Format.JSONANDYAML.equals(outputFormat)) {
                 if (prettyPrint) {
@@ -382,5 +394,20 @@ public class SwaggerMojo extends AbstractMojo {
 
     SwaggerConfiguration getInternalConfiguration() {
         return config;
+    }
+    
+    /**
+     * @since 2.1.1
+     */
+    
+    @Parameter( property = "resolve.basePathResource" )
+    private String basePathResource;
+
+    public String getBasePathResource() {
+        return basePathResource;
+    }
+
+    public void setBasePathResource(String basePathResource) {
+        this.basePathResource = basePathResource;
     }
 }
