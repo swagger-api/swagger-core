@@ -77,7 +77,7 @@ This will build the modules.
 
 Of course if you don't want to build locally you can grab artifacts from maven central:
 
-`http://repo1.maven.org/maven2/io/swagger/`
+`https://repo1.maven.org/maven2/io/swagger/core/`
 
 ## Sample Apps
 The samples have moved to [a new repository](https://github.com/swagger-api/swagger-samples/tree/2.0) and contain various integrations and configurations.
