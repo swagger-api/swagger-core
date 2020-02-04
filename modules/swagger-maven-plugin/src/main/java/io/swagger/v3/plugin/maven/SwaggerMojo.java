@@ -97,6 +97,16 @@ public class SwaggerMojo extends AbstractMojo {
                 }
             }
 
+            io.swagger.v3.oas.models.Paths oldPaths = openAPI.getPaths();
+            if(null!=basePathResource) {
+                io.swagger.v3.oas.models.Paths pathsNew = new io.swagger.v3.oas.models.Paths();
+                Set<Entry<String, PathItem>> entrySet = oldPaths.entrySet();
+                for (Entry<String, PathItem> entry : entrySet) {
+                    pathsNew.addPathItem(basePathResource+entry.getKey(), entry.getValue());
+                }
+                openAPI.setPaths(pathsNew);
+            }
+            
             String openapiJson = null;
             String openapiYaml = null;
             if (Format.JSON.equals(outputFormat) || Format.JSONANDYAML.equals(outputFormat)) {
@@ -106,15 +116,6 @@ public class SwaggerMojo extends AbstractMojo {
                     openapiJson = Json.mapper().writeValueAsString(openAPI);
                 }
 
-            }
-            if(null!=basePathResource) {
-                io.swagger.v3.oas.models.Paths paths = openAPI.getPaths();
-                io.swagger.v3.oas.models.Paths pathsNew = new io.swagger.v3.oas.models.Paths();
-                Set<Entry<String, PathItem>> entrySet = paths.entrySet();
-                for (Entry<String, PathItem> entry : entrySet) {
-                    pathsNew.addPathItem(basePathResource+entry.getKey(), entry.getValue());
-                }
-                openAPI.setPaths(pathsNew);
             }
             if (Format.YAML.equals(outputFormat) || Format.JSONANDYAML.equals(outputFormat)) {
                 if (prettyPrint) {
@@ -138,6 +139,9 @@ public class SwaggerMojo extends AbstractMojo {
                 path = Paths.get(outputPath, outputFileName + ".yaml");
                 Files.write(path, openapiYaml.getBytes(Charset.forName(encoding)));
             }
+            
+            //if plugin is invoke more times 
+            openAPI.setPaths(oldPaths);
 
         } catch (OpenApiConfigurationException e) {
             getLog().error( "Error resolving API specification" , e);
