@@ -1696,10 +1696,10 @@ public abstract class AnnotationsUtils {
 
             @Override
             public String[] allowableValues() {
-                if (master.requiredProperties().length > 0 || patch.requiredProperties().length == 0) {
-                    return master.requiredProperties();
+                if (master.allowableValues().length > 0 || patch.allowableValues().length == 0) {
+                    return master.allowableValues();
                 }
-                return patch.requiredProperties();
+                return patch.allowableValues();
             }
 
             @Override
@@ -1712,10 +1712,10 @@ public abstract class AnnotationsUtils {
 
             @Override
             public String discriminatorProperty() {
-                if (StringUtils.isNotBlank(master.defaultValue()) || StringUtils.isBlank(patch.defaultValue())) {
-                    return master.defaultValue();
+                if (StringUtils.isNotBlank(master.discriminatorProperty()) || StringUtils.isBlank(patch.discriminatorProperty())) {
+                    return master.discriminatorProperty();
                 }
-                return patch.defaultValue();
+                return patch.discriminatorProperty();
             }
 
             @Override

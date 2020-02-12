@@ -6,6 +6,7 @@ import io.swagger.v3.core.converter.ModelConverterContextImpl;
 import io.swagger.v3.core.converter.ModelConverters;
 import io.swagger.v3.core.jackson.ModelResolver;
 import io.swagger.v3.core.matchers.SerializationMatchers;
+import io.swagger.v3.core.oas.models.Model1979;
 import io.swagger.v3.core.oas.models.ModelWithEnumField;
 import io.swagger.v3.core.oas.models.ModelWithEnumProperty;
 import io.swagger.v3.core.oas.models.ModelWithEnumRefProperty;
@@ -137,6 +138,21 @@ public class EnumPropertyTest {
                 "  - PUBLIC\n" +
                 "  - SYSTEM\n" +
                 "  - INVITE_ONLY\n";
+        SerializationMatchers.assertEqualsToYaml(models, yaml);
+        ModelResolver.enumsAsRef = false;
+    }
+
+    @Test(description = "it should not affect non-enum models when the enumsAsRef property is enabled globally")
+    public void testEnumRefPropertyGlobalNotAffectingNonEnums() {
+        ModelResolver.enumsAsRef = true;
+        Schema schema = context.resolve(new AnnotatedType(Model1979.class));
+        final Map<String, Schema> models = context.getDefinedModels();
+        final String yaml = "Model1979:\n" +
+                "  type: object\n" +
+                "  properties:\n" +
+                "    id:\n" +
+                "      type: string\n" +
+                "      nullable: true";
         SerializationMatchers.assertEqualsToYaml(models, yaml);
         ModelResolver.enumsAsRef = false;
     }
