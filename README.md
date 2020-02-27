@@ -1,4 +1,4 @@
-[Since I could not get any feedback, this is no longer supported]
+## [Since I could not get any feedback, this is no longer supported]
 
 This is an extended version for Swagger Core with the addition of many features for those who would like to directly build the OpenAPI object instead of letting Swagger handle things automatically. Some options should also be valid for those using the automatic way.
 
