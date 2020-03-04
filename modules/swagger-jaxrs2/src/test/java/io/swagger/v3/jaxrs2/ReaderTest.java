@@ -66,6 +66,8 @@ import io.swagger.v3.jaxrs2.resources.extensions.OperationExtensionsResource;
 import io.swagger.v3.jaxrs2.resources.extensions.ParameterExtensionsResource;
 import io.swagger.v3.jaxrs2.resources.extensions.RequestBodyExtensionsResource;
 import io.swagger.v3.jaxrs2.resources.rs.ProcessTokenRestService;
+import io.swagger.v3.jaxrs2.resources.ticket3253.Ticket3253Implementation;
+import io.swagger.v3.jaxrs2.resources.ticket3253.Ticket3253Interface;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.ExternalDocumentation;
@@ -87,6 +89,8 @@ import io.swagger.v3.oas.models.responses.ApiResponse;
 import io.swagger.v3.oas.models.responses.ApiResponses;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
+
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import javax.ws.rs.Consumes;
@@ -2060,7 +2064,7 @@ public class ReaderTest {
                 "          type: string\n";
         SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
     }
-    
+
     @Test(description = "Filter class return type")
     public void testTicket3074() {
         Reader reader = new Reader(new OpenAPI());
@@ -2144,4 +2148,44 @@ public class ReaderTest {
         SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
     }
 
+    @Test(description = "testTicket3253Interface")
+    public void testTicket3253Interface() {
+        Reader reader = new Reader(new OpenAPI());
+        OpenAPI openAPI = reader.read(Ticket3253Interface.class);
+        for (Method method: Ticket3253Interface.class.getMethods()) {
+          System.out.println(method);
+        }
+        Paths paths = openAPI.getPaths();
+        {
+            PathItem pathItem = paths.get("/nums/single");
+            System.out.println(pathItem);
+            Assert.assertNotNull(pathItem);
+            Assert.assertNotNull(pathItem.getPost());
+        }
+        {
+            PathItem pathItem = paths.get("/nums/multiple");
+            System.out.println(pathItem);
+            Assert.assertNotNull(pathItem);
+            Assert.assertNotNull(pathItem.getPost());
+        }
+    }
+
+    @Test(description = "testTicket3253Implementation")
+    public void testTicket3253Implementation() {
+        Reader reader = new Reader(new OpenAPI());
+        OpenAPI openAPI = reader.read(Ticket3253Implementation.class);
+        Paths paths = openAPI.getPaths();
+        {
+          PathItem pathItem = paths.get("/nums/single");
+          System.out.println(pathItem);
+          Assert.assertNotNull(pathItem);
+          Assert.assertNotNull(pathItem.getPost());
+      }
+      {
+          PathItem pathItem = paths.get("/nums/multiple");
+          System.out.println(pathItem);
+          Assert.assertNotNull(pathItem);
+          Assert.assertNotNull(pathItem.getPost());
+      }
+    }
 }
