@@ -132,24 +132,23 @@ public class ModelConverterTest {
 
         final Schema employee = (Schema) schemas.get("employee");
         final Map<String, Schema> props = employee.getProperties();
-        final Iterator<String> et = props.keySet().iterator();
 
-        final Schema id = props.get(et.next());
+        final Schema id = props.get("id");
         assertTrue(id instanceof IntegerSchema);
 
-        final Schema firstName = props.get(et.next());
+        final Schema firstName = props.get("firstName");
         assertTrue(firstName instanceof StringSchema);
 
-        final Schema lastName = props.get(et.next());
+        final Schema lastName = props.get("lastName");
         assertTrue(lastName instanceof StringSchema);
 
-        final Schema department = props.get(et.next());
+        final Schema department = props.get("department");
         assertNotNull(department.get$ref());
 
-        final Schema manager = props.get(et.next());
+        final Schema manager = props.get("manager");
         assertNotNull(manager.get$ref());
 
-        final Schema team = props.get(et.next());
+        final Schema team = props.get("team");
         assertTrue(team instanceof ArraySchema);
 
         final ArraySchema ap = (ArraySchema) team;
