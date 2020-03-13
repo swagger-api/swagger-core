@@ -16,7 +16,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
+import java.util.TreeMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.BiFunction;
@@ -79,7 +79,7 @@ public class SnakeCaseConverterTest {
                 final Schema model = converter.resolve(type, context, chain);
                 if (model != null) {
                     final Map<String, Schema> properties = model.getProperties();
-                    final Map<String, Schema> updatedProperties = new LinkedHashMap<String, Schema>();
+                    final Map<String, Schema> updatedProperties = new TreeMap<String, Schema>();
                     if (properties != null) {
                         for (String key : properties.keySet()) {
                             String convertedKey = toSnakeCase(key);

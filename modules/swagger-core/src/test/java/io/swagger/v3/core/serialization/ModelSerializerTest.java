@@ -21,7 +21,7 @@ import org.testng.annotations.Test;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Arrays;
-import java.util.LinkedHashMap;
+import java.util.TreeMap;
 import java.util.Map;
 
 import static org.testng.Assert.assertEquals;
@@ -36,7 +36,7 @@ public class ModelSerializerTest {
     @Test(description = "it should convert a model")
     public void convertModel() throws JsonProcessingException {
         final Schema pet = new Schema();
-        final Map<String, Schema> props = new LinkedHashMap<String, Schema>();
+        final Map<String, Schema> props = new TreeMap<String, Schema>();
         props.put("intValue", new IntegerSchema());
         props.put("longValue", new IntegerSchema().format("int64"));
         props.put("dateValue", new DateSchema());

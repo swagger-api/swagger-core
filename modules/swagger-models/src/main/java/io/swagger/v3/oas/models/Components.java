@@ -27,7 +27,7 @@ import io.swagger.v3.oas.models.responses.ApiResponse;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 
 import java.util.HashMap;
-import java.util.LinkedHashMap;
+import java.util.TreeMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -70,7 +70,7 @@ public class Components {
 
     public Components addSchemas(String key, Schema schemasItem) {
         if (this.schemas == null) {
-            this.schemas = new LinkedHashMap<>();
+            this.schemas = new TreeMap<>();
         }
         this.schemas.put(key, schemasItem);
         return this;
@@ -97,7 +97,7 @@ public class Components {
 
     public Components addResponses(String key, ApiResponse responsesItem) {
         if (this.responses == null) {
-            this.responses = new LinkedHashMap<>();
+            this.responses = new TreeMap<>();
         }
         this.responses.put(key, responsesItem);
         return this;
@@ -124,7 +124,7 @@ public class Components {
 
     public Components addParameters(String key, Parameter parametersItem) {
         if (this.parameters == null) {
-            this.parameters = new LinkedHashMap<>();
+            this.parameters = new TreeMap<>();
         }
         this.parameters.put(key, parametersItem);
         return this;
@@ -151,7 +151,7 @@ public class Components {
 
     public Components addExamples(String key, Example examplesItem) {
         if (this.examples == null) {
-            this.examples = new LinkedHashMap<>();
+            this.examples = new TreeMap<>();
         }
         this.examples.put(key, examplesItem);
         return this;
@@ -178,7 +178,7 @@ public class Components {
 
     public Components addRequestBodies(String key, RequestBody requestBodiesItem) {
         if (this.requestBodies == null) {
-            this.requestBodies = new LinkedHashMap<>();
+            this.requestBodies = new TreeMap<>();
         }
         this.requestBodies.put(key, requestBodiesItem);
         return this;
@@ -205,7 +205,7 @@ public class Components {
 
     public Components addHeaders(String key, Header headersItem) {
         if (this.headers == null) {
-            this.headers = new LinkedHashMap<>();
+            this.headers = new TreeMap<>();
         }
         this.headers.put(key, headersItem);
         return this;
@@ -232,7 +232,7 @@ public class Components {
 
     public Components addSecuritySchemes(String key, SecurityScheme securitySchemesItem) {
         if (this.securitySchemes == null) {
-            this.securitySchemes = new LinkedHashMap<>();
+            this.securitySchemes = new TreeMap<>();
         }
         this.securitySchemes.put(key, securitySchemesItem);
         return this;
@@ -259,7 +259,7 @@ public class Components {
 
     public Components addLinks(String key, Link linksItem) {
         if (this.links == null) {
-            this.links = new LinkedHashMap<>();
+            this.links = new TreeMap<>();
         }
         this.links.put(key, linksItem);
         return this;
@@ -286,7 +286,7 @@ public class Components {
 
     public Components addCallbacks(String key, Callback callbacksItem) {
         if (this.callbacks == null) {
-            this.callbacks = new LinkedHashMap<>();
+            this.callbacks = new TreeMap<>();
         }
         this.callbacks.put(key, callbacksItem);
         return this;
@@ -327,7 +327,7 @@ public class Components {
             return;
         }
         if (this.extensions == null) {
-            this.extensions = new java.util.LinkedHashMap<>();
+            this.extensions = new java.util.TreeMap<>();
         }
         this.extensions.put(name, value);
     }

@@ -22,7 +22,7 @@ import io.swagger.v3.oas.models.ExternalDocumentation;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedHashMap;
+import java.util.TreeMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -531,7 +531,7 @@ public class Schema<T> {
 
     public Schema addProperties(String key, Schema propertiesItem) {
         if (this.properties == null) {
-            this.properties = new LinkedHashMap<>();
+            this.properties = new TreeMap<>();
         }
         this.properties.put(key, propertiesItem);
         return this;
@@ -812,7 +812,7 @@ public class Schema<T> {
             return;
         }
         if (this.extensions == null) {
-            this.extensions = new java.util.LinkedHashMap<>();
+            this.extensions = new java.util.TreeMap<>();
         }
         this.extensions.put(name, value);
     }

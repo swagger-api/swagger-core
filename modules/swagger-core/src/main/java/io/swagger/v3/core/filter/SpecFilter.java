@@ -27,7 +27,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
+import java.util.TreeMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -255,7 +255,7 @@ public class SpecFilter {
         if (schemasMap == null) {
             return null;
         }
-        Map<String, Schema> clonedComponentsSchema = new LinkedHashMap<>();
+        Map<String, Schema> clonedComponentsSchema = new TreeMap<>();
 
         for (String key : schemasMap.keySet()) {
             Schema definition = schemasMap.get(key);
@@ -263,7 +263,7 @@ public class SpecFilter {
             if (!filteredDefinition.isPresent()) {
                 continue;
             } else {
-                Map<String, Schema> clonedProperties = new LinkedHashMap<>();
+                Map<String, Schema> clonedProperties = new TreeMap<>();
                 if (filteredDefinition.get().getProperties() != null) {
                     for (Object propName : filteredDefinition.get().getProperties().keySet()) {
                         Schema property = (Schema) filteredDefinition.get().getProperties().get((String) propName);

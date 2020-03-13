@@ -61,7 +61,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
+import java.util.TreeMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -397,7 +397,7 @@ public class Reader implements OpenApiReader {
                 continue;
             }
 
-            Map<String, String> regexMap = new LinkedHashMap<>();
+            Map<String, String> regexMap = new TreeMap<>();
             operationPath = PathUtils.parsePath(operationPath, regexMap);
             if (operationPath != null) {
                 if (config != null && ReaderUtils.isIgnored(operationPath, config)) {
@@ -869,7 +869,7 @@ public class Reader implements OpenApiReader {
         ExternalDocumentation apiExternalDocumentation = ReflectionUtils.getAnnotation(method, ExternalDocumentation.class);
 
         // callbacks
-        Map<String, Callback> callbacks = new LinkedHashMap<>();
+        Map<String, Callback> callbacks = new TreeMap<>();
 
         if (apiCallbacks != null) {
             for (io.swagger.v3.oas.annotations.callbacks.Callback methodCallback : apiCallbacks) {

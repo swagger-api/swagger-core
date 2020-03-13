@@ -11,7 +11,7 @@ import io.swagger.v3.oas.models.Paths;
 
 import java.io.IOException;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
+import java.util.TreeMap;
 import java.util.Map;
 
 public class PathsDeserializer extends JsonDeserializer<Paths> {
@@ -21,7 +21,7 @@ public class PathsDeserializer extends JsonDeserializer<Paths> {
         Paths result = new Paths();
         JsonNode node = jp.getCodec().readTree(jp);
         ObjectNode objectNode = (ObjectNode)node;
-        Map<String, Object> extensions = new LinkedHashMap<>();
+        Map<String, Object> extensions = new TreeMap<>();
         for (Iterator<String> it = objectNode.fieldNames(); it.hasNext(); ) {
             String childName = it.next();
             JsonNode child = objectNode.get(childName);

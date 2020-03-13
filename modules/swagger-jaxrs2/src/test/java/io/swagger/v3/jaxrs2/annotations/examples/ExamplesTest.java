@@ -347,7 +347,8 @@ public class ExamplesTest extends AbstractAnnotationTest {
         int start = openApiYAML.indexOf("/test:");
         int end = openApiYAML.length() - 1;
         String extractedYAML = openApiYAML.substring(start, end);
-        String expectedYAML = "/test:\n" +
+        String expectedYAML =
+                "/test:\n" +
                 "    post:\n" +
                 "      description: subscribes a client to updates relevant to the requestor's account,\n" +
                 "        as identified by the input token.  The supplied url will be used as the delivery\n" +
@@ -416,16 +417,14 @@ public class ExamplesTest extends AbstractAnnotationTest {
                 "    User:\n" +
                 "      type: object\n" +
                 "      properties:\n" +
-                "        id:\n" +
-                "          type: integer\n" +
-                "          format: int64\n" +
-                "        username:\n" +
+                "        email:\n" +
                 "          type: string\n" +
                 "        firstName:\n" +
                 "          type: string\n" +
+                "        id:\n" +
+                "          type: integer\n" +
+                "          format: int64\n" +
                 "        lastName:\n" +
-                "          type: string\n" +
-                "        email:\n" +
                 "          type: string\n" +
                 "        password:\n" +
                 "          type: string\n" +
@@ -435,6 +434,8 @@ public class ExamplesTest extends AbstractAnnotationTest {
                 "          type: integer\n" +
                 "          description: User Status\n" +
                 "          format: int32\n" +
+                "        username:\n" +
+                "          type: string\n" +
                 "      xml:\n" +
                 "        name: User";
         assertEquals(extractedYAML, expectedYAML);

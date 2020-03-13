@@ -16,7 +16,7 @@
 
 package io.swagger.v3.oas.models.media;
 
-import java.util.LinkedHashMap;
+import java.util.TreeMap;
 import java.util.Objects;
 
 /**
@@ -25,7 +25,7 @@ import java.util.Objects;
  * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.0.1/versions/3.0.1.md#contentObject"
  */
 
-public class Content extends LinkedHashMap<String, MediaType> {
+public class Content extends TreeMap<String, MediaType> {
     public Content() {
     }
 

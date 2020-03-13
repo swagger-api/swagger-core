@@ -20,8 +20,7 @@ import io.swagger.v3.oas.models.examples.Example;
 import io.swagger.v3.oas.models.media.Content;
 import io.swagger.v3.oas.models.media.Schema;
 
-import java.util.HashMap;
-import java.util.LinkedHashMap;
+import java.util.TreeMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -198,7 +197,7 @@ public class Header {
 
     public Header addExample(String key, Example examplesItem) {
         if (this.examples == null) {
-            this.examples = new LinkedHashMap<>();
+            this.examples = new TreeMap<>();
         }
         this.examples.put(key, examplesItem);
         return this;
@@ -278,7 +277,7 @@ public class Header {
             return;
         }
         if (this.extensions == null) {
-            this.extensions = new java.util.LinkedHashMap<>();
+            this.extensions = new java.util.TreeMap<>();
         }
         this.extensions.put(name, value);
     }

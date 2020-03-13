@@ -75,7 +75,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
+import java.util.TreeMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -524,7 +524,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         }
 
         List<Schema> props = new ArrayList<Schema>();
-        Map<String, Schema> modelProps = new LinkedHashMap<String, Schema>();
+        Map<String, Schema> modelProps = new TreeMap<String, Schema>();
 
         List<BeanPropertyDefinition> properties = beanDesc.findProperties();
         List<String> ignoredProps = getIgnoredProperties(beanDesc);

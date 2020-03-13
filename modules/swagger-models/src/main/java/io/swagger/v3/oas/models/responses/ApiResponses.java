@@ -16,7 +16,7 @@
 
 package io.swagger.v3.oas.models.responses;
 
-import java.util.LinkedHashMap;
+import java.util.TreeMap;
 import java.util.Objects;
 
 /**
@@ -25,7 +25,7 @@ import java.util.Objects;
  * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.0.1/versions/3.0.1.md#responsesObject"
  */
 
-public class ApiResponses extends LinkedHashMap<String, ApiResponse> {
+public class ApiResponses extends TreeMap<String, ApiResponse> {
 
     public static final String DEFAULT = "default";
 
@@ -64,7 +64,7 @@ public class ApiResponses extends LinkedHashMap<String, ApiResponse> {
             return;
         }
         if (this.extensions == null) {
-            this.extensions = new java.util.LinkedHashMap<>();
+            this.extensions = new java.util.TreeMap<>();
         }
         this.extensions.put(name, value);
     }

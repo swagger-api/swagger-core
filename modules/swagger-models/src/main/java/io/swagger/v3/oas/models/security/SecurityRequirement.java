@@ -18,7 +18,7 @@ package io.swagger.v3.oas.models.security;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedHashMap;
+import java.util.TreeMap;
 import java.util.List;
 import java.util.Objects;
 
@@ -28,7 +28,7 @@ import java.util.Objects;
  * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.0.1/versions/3.0.1.md#securityRequirementObject"
  */
 
-public class SecurityRequirement extends LinkedHashMap<String, List<String>> {
+public class SecurityRequirement extends TreeMap<String, List<String>> {
     public SecurityRequirement() {
     }
 

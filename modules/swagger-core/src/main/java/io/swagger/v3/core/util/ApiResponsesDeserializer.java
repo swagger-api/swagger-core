@@ -11,7 +11,7 @@ import io.swagger.v3.oas.models.responses.ApiResponses;
 
 import java.io.IOException;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
+import java.util.TreeMap;
 import java.util.Map;
 
 public class ApiResponsesDeserializer extends JsonDeserializer<ApiResponses> {
@@ -21,7 +21,7 @@ public class ApiResponsesDeserializer extends JsonDeserializer<ApiResponses> {
         ApiResponses result = new ApiResponses();
         JsonNode node = jp.getCodec().readTree(jp);
         ObjectNode objectNode = (ObjectNode)node;
-        Map<String, Object> extensions = new LinkedHashMap<>();
+        Map<String, Object> extensions = new TreeMap<>();
         for (Iterator<String> it = objectNode.fieldNames(); it.hasNext(); ) {
             String childName = it.next();
             JsonNode child = objectNode.get(childName);
