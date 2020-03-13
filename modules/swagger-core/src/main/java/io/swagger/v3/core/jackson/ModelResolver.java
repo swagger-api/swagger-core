@@ -1976,7 +1976,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         return name;
     }
 
-    private boolean hiddenByJsonView(Annotation[] annotations,
+    protected boolean hiddenByJsonView(Annotation[] annotations,
                                      AnnotatedType type) {
         JsonView jsonView = type.getJsonViewAnnotation();
         if (jsonView == null)
