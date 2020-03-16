@@ -157,9 +157,16 @@ public enum PrimitiveType {
 
     /**
      * Allows to exclude specific classes from KEY_CLASSES mappings to primitive
-     * Joda lib.
+     *
      */
     private static Set<String> customExcludedClasses = new ConcurrentHashMap<String, String>().newKeySet();
+
+    /**
+     * Allows to exclude specific classes from EXTERNAL_CLASSES mappings to primitive
+     *
+     */
+    private static Set<String> customExcludedExternalClasses = new ConcurrentHashMap<String, String>().newKeySet();
+
 
     /**
      * Adds support for custom mapping of classes to primitive types
@@ -242,10 +249,15 @@ public enum PrimitiveType {
 
         final Map<String, PrimitiveType> externalClasses = new HashMap<String, PrimitiveType>();
         addKeys(externalClasses, DATE, "org.joda.time.LocalDate", "java.time.LocalDate");
-        addKeys(externalClasses, DATE_TIME, "java.time.LocalDateTime", "java.time.ZonedDateTime",
-                "java.time.OffsetDateTime", "javax.xml.datatype.XMLGregorianCalendar", "org.joda.time.LocalDateTime",
-                "org.joda.time.ReadableDateTime", "org.joda.time.DateTime");
-        addKeys(externalClasses, LONG, "java.time.Instant");
+        addKeys(externalClasses, DATE_TIME,
+                "java.time.LocalDateTime",
+                "java.time.ZonedDateTime",
+                "java.time.OffsetDateTime",
+                "javax.xml.datatype.XMLGregorianCalendar",
+                "org.joda.time.LocalDateTime",
+                "org.joda.time.ReadableDateTime",
+                "org.joda.time.DateTime",
+                "java.time.Instant");
         EXTERNAL_CLASSES = Collections.unmodifiableMap(externalClasses);
 
         final Map<String, PrimitiveType> names = new TreeMap<String, PrimitiveType>(String.CASE_INSENSITIVE_ORDER);
@@ -278,6 +290,16 @@ public enum PrimitiveType {
      */
     public static Set<String> customExcludedClasses() {
         return customExcludedClasses;
+    }
+
+    /**
+     * Adds support for custom mapping of classes to primitive types
+     *
+     * @return Map of custom classes to primitive type
+     * @since 2.1.2
+     */
+    public static Set<String> customExcludedExternalClasses() {
+        return customExcludedExternalClasses;
     }
 
     /**
@@ -336,7 +358,10 @@ public enum PrimitiveType {
 
         final PrimitiveType external = EXTERNAL_CLASSES.get(raw.getName());
         if (external != null) {
-            return external;
+            if (!customExcludedExternalClasses().contains(raw.getName())) {
+                return external;
+            }
+
         }
 
         for (Map.Entry<Class<?>, PrimitiveType> entry : BASE_CLASSES.entrySet()) {
@@ -353,7 +378,9 @@ public enum PrimitiveType {
         }
         PrimitiveType fromName = NAMES.get(name);
         if (fromName == null) {
-            fromName = EXTERNAL_CLASSES.get(name);
+            if (!customExcludedExternalClasses().contains(name)) {
+                fromName = EXTERNAL_CLASSES.get(name);
+            }
         }
         return fromName;
     }
