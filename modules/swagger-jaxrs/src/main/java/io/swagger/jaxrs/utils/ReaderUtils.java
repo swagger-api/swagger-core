@@ -26,6 +26,8 @@ import java.util.Set;
 
 import javax.ws.rs.core.Context;
 
+import org.apache.commons.lang3.StringUtils;
+
 public class ReaderUtils {
 
     /**
@@ -132,5 +134,44 @@ public class ReaderUtils {
             }
         }
         return false;
+    }
+
+    /**
+     * appends a path component string to a StringBuilder
+     * guarantees:
+     * <ul>
+     *     <li>nulls, empty strings and "/" are nops</li>
+     *     <li>output will always start with "/" and never end with "/"</li>
+     * </ul>
+     * @param component component to be added
+     * @param to output
+     */
+    private static void appendPathComponent(String component, StringBuilder to) {
+        if (component == null || component.isEmpty() || "/".equals(component)) {
+            return;
+        }
+        if (!component.startsWith("/") && (to.length() == 0 || '/' != to.charAt(to.length() - 1))) {
+            to.append("/");
+        }
+        if (component.endsWith("/")) {
+            to.append(component, 0, component.length() - 1);
+        } else {
+            to.append(component);
+        }
+    }
+
+    public static String getPath(javax.ws.rs.Path classLevelPath, javax.ws.rs.Path methodLevelPath, String parentPath, boolean isSubresource) {
+        if (classLevelPath == null && methodLevelPath == null && StringUtils.isEmpty(parentPath)) {
+            return null;
+        }
+        StringBuilder b = new StringBuilder();
+        appendPathComponent(parentPath, b);
+        if (classLevelPath != null && !isSubresource) {
+            appendPathComponent(classLevelPath.value(), b);
+        }
+        if (methodLevelPath != null) {
+            appendPathComponent(methodLevelPath.value(), b);
+        }
+        return b.length() == 0 ? "/" : b.toString();
     }
 }
