@@ -705,7 +705,6 @@ public class ReaderTest {
     public void test2497() {
         Reader reader = new Reader(new OpenAPI());
         OpenAPI openAPI = reader.read(ResponseContentWithArrayResource.class);
-
         Paths paths = openAPI.getPaths();
         assertEquals(paths.size(), 1);
         PathItem pathItem = paths.get("/user");
@@ -715,6 +714,8 @@ public class ReaderTest {
         ArraySchema schema = (ArraySchema) operation.getResponses().get("200").getContent().values().iterator().next().getSchema();
         assertNotNull(schema);
         assertEquals(schema.getItems().get$ref(), "#/components/schemas/User");
+
+        assertEquals(openAPI.getComponents().getSchemas().get("User").getRequired().get(0), "issue3438");
     }
 
     @Test(description = "test resource with subresources")
@@ -2058,7 +2059,7 @@ public class ReaderTest {
                 "          type: string\n";
         SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
     }
-    
+
     @Test(description = "Filter class return type")
     public void testTicket3074() {
         Reader reader = new Reader(new OpenAPI());

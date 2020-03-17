@@ -36,5 +36,8 @@ public class ResponseContentWithArrayResource {
 
     class User {
         public String foo;
+
+        @ArraySchema(arraySchema = @Schema(required = true), schema = @Schema(type = "string"))
+        public List<String> issue3438;
     }
 }
