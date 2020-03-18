@@ -1,14 +1,22 @@
 package io.swagger.v3.jaxrs2;
 
+import io.swagger.v3.core.converter.ModelConverters;
 import io.swagger.v3.jaxrs2.matchers.SerializationMatchers;
 import io.swagger.v3.jaxrs2.resources.JsonIdentityCyclicResource;
 import io.swagger.v3.jaxrs2.resources.JsonIdentityResource;
 import io.swagger.v3.oas.models.OpenAPI;
+
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
 
 public class JsonIdentityTest {
+
+    @BeforeMethod
+    public void beforeTest() {
+        ModelConverters.getInstance().resetContext();
+    }
 
     @Test(description = "Test JsonIdentity")
     public void testJsonIdentity() throws IOException {

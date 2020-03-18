@@ -1,5 +1,6 @@
 package io.swagger.v3.jaxrs2;
 
+import io.swagger.v3.core.converter.ModelConverters;
 import io.swagger.v3.jaxrs2.annotations.AbstractAnnotationTest;
 import io.swagger.v3.jaxrs2.matchers.SerializationMatchers;
 import io.swagger.v3.jaxrs2.petstore.EmptyPetResource;
@@ -256,6 +257,7 @@ public class PetResourceTest extends AbstractAnnotationTest {
      * @param source where is the yaml.
      */
     private void compare(final Class clazz, final String source) {
+        ModelConverters.getInstance().resetContext();
         final String file = source + clazz.getSimpleName() + YAML_EXTENSION;
         try {
             compareAsYaml(clazz, getOpenAPIAsString(file));

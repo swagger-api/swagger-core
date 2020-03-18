@@ -1,5 +1,6 @@
 package io.swagger.v3.jaxrs2;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.core.converter.AnnotatedType;
 import io.swagger.v3.core.converter.ModelConverter;
@@ -65,8 +66,11 @@ import io.swagger.v3.jaxrs2.resources.extensions.ExtensionsResource;
 import io.swagger.v3.jaxrs2.resources.extensions.OperationExtensionsResource;
 import io.swagger.v3.jaxrs2.resources.extensions.ParameterExtensionsResource;
 import io.swagger.v3.jaxrs2.resources.extensions.RequestBodyExtensionsResource;
+import io.swagger.v3.jaxrs2.resources.model.Pet;
 import io.swagger.v3.jaxrs2.resources.rs.ProcessTokenRestService;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.DiscriminatorMapping;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.ExternalDocumentation;
 import io.swagger.v3.oas.models.OpenAPI;
@@ -79,6 +83,7 @@ import io.swagger.v3.oas.models.headers.Header;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.links.Link;
 import io.swagger.v3.oas.models.media.ArraySchema;
+import io.swagger.v3.oas.models.media.ComposedSchema;
 import io.swagger.v3.oas.models.media.IntegerSchema;
 import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.parameters.Parameter;
@@ -87,17 +92,26 @@ import io.swagger.v3.oas.models.responses.ApiResponse;
 import io.swagger.v3.oas.models.responses.ApiResponses;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
+
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import javax.validation.constraints.AssertTrue;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.HEAD;
+import javax.ws.rs.NotFoundException;
 import javax.ws.rs.OPTIONS;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Response;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
@@ -154,6 +168,11 @@ public class ReaderTest {
     private static final int SECURITY_REQUIREMENT_NUMBER = 1;
     private static final int SCOPE_NUMBER = 2;
     private static final int PATHS_NUMBER = 1;
+
+    @BeforeMethod
+    public void beforeTest() {
+        ModelConverters.getInstance().resetContext();
+    }
 
     @Test(description = "test a simple resource class")
     public void testSimpleReadClass() {
@@ -277,6 +296,44 @@ public class ReaderTest {
         assertEquals(SECURITY_SCHEMAS, securitySchemes.size());
     }
 
+    @JsonSubTypes(@JsonSubTypes.Type(value = SubClass.class))
+    @io.swagger.v3.oas.annotations.media.Schema(discriminatorProperty = "type_", discriminatorMapping = {
+            @DiscriminatorMapping(value = "SubClass", schema = SubClass.class)})
+    private class SuperClass {
+        public int hi;
+    }
+
+    private class SubClass extends SuperClass{
+        public int whatsup;
+    }
+
+    private class AnotherController {
+
+        @Path("getSuperClass")
+        @io.swagger.v3.oas.annotations.Operation()
+        public void getSuperClass(SuperClass superClass) {
+        }
+    }
+
+    private class Controller {
+
+        @Path("getSubClass")
+        @io.swagger.v3.oas.annotations.Operation()
+        public void getSubClass(SubClass subClass) {
+        }
+    }
+
+    @Test(description = "Test a Set of classes")
+    public void testSetOfClassesSubtypeResolvedSeparatelyFirst() {
+
+        Set<Class<?>> classes = new HashSet<>();
+        classes.add(AnotherController.class);
+        classes.add(Controller.class);
+
+        Reader reader = new Reader(new OpenAPI());
+        OpenAPI openAPI = reader.read(classes);
+        assertTrue(openAPI.getComponents().getSchemas().get("SubClass") instanceof ComposedSchema);
+    }
     @Test(description = "Deprecated Method")
     public void testDeprecatedMethod() {
         Reader reader = new Reader(new OpenAPI());
@@ -2058,13 +2115,13 @@ public class ReaderTest {
                 "          type: string\n";
         SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
     }
-    
+
     @Test(description = "Filter class return type")
     public void testTicket3074() {
         Reader reader = new Reader(new OpenAPI());
         OpenAPI oasResult = reader.read(RefParameter3074Resource.class);
         SerializationMatchers.assertEqualsToYaml(oasResult, RefParameter3074Resource.EXPECTED_YAML_WITH_WRAPPER);
-
+        ModelConverters.getInstance().resetContext();
         ModelConverters.getInstance().addClassToSkip("io.swagger.v3.jaxrs2.resources.RefParameter3074Resource$Wrapper");
 
         reader = new Reader(new OpenAPI());

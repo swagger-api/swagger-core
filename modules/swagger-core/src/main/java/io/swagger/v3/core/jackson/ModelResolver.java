@@ -424,7 +424,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                     context.resolve(new AnnotatedType().type(valueType).jsonViewAnnotation(annotatedType.getJsonViewAnnotation()));
                     return null;
                 }
-                Schema items = context.resolve(new AnnotatedType()
+                Schema items = clone(context.resolve(new AnnotatedType()
                         .type(valueType)
                         .schemaProperty(annotatedType.isSchemaProperty())
                         .ctxAnnotations(schemaAnnotations)
@@ -432,7 +432,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                         .resolveAsRef(annotatedType.isResolveAsRef())
                         .propertyName(annotatedType.getPropertyName())
                         .jsonViewAnnotation(annotatedType.getJsonViewAnnotation())
-                        .parent(annotatedType.getParent()));
+                        .parent(annotatedType.getParent())));
 
                 if (items == null) {
                     return null;
