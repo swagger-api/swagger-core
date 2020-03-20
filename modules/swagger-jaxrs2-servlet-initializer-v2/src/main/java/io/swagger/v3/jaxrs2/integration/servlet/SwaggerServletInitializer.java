@@ -1,5 +1,6 @@
-package io.swagger.v3.jaxrs2.integration;
+package io.swagger.v3.jaxrs2.integration.servlet;
 
+import io.swagger.v3.jaxrs2.integration.JaxrsOpenApiContextBuilder;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.integration.IgnoredPackages;
 import io.swagger.v3.oas.integration.OpenApiConfigurationException;
@@ -16,10 +17,9 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- * deprecated since 2.1.2. Please use io.swagger.v3.jaxrs2.integration.SwaggerServletInitializer in
- * swagger-jaxrs2-servlet-initializer-v2
+ *
+ * @since 2.1.2
  */
-@Deprecated
 @HandlesTypes({Path.class, OpenAPIDefinition.class})
 public class SwaggerServletInitializer implements ServletContainerInitializer {
 
