@@ -654,15 +654,15 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 property = clone(context.resolve(aType));
 
                 if (property != null) {
-                    if (property.get$ref() == null) {
-                        Boolean required = md.getRequired();
-                        if (required != null && !Boolean.FALSE.equals(required)) {
+                    Boolean required = md.getRequired();
+                    if (required != null && !Boolean.FALSE.equals(required)) {
+                        addRequiredItem(model, propName);
+                    } else {
+                        if (propDef.isRequired()) {
                             addRequiredItem(model, propName);
-                        } else {
-                            if (propDef.isRequired()) {
-                                addRequiredItem(model, propName);
-                            }
                         }
+                    }
+                    if (property.get$ref() == null) {
                         if (accessMode != null) {
                             switch (accessMode) {
                                 case AUTO:
