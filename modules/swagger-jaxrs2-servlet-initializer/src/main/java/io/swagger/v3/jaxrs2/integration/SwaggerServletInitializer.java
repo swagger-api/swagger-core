@@ -15,6 +15,11 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * deprecated since 2.1.2. Please use io.swagger.v3.jaxrs2.integration.SwaggerServletInitializer in
+ * swagger-jaxrs2-servlet-initializer-v2
+ */
+@Deprecated
 @HandlesTypes({Path.class, OpenAPIDefinition.class})
 public class SwaggerServletInitializer implements ServletContainerInitializer {
 

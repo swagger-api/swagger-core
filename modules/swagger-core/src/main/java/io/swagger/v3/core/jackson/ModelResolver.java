@@ -30,6 +30,7 @@ import io.swagger.v3.core.converter.ModelConverterContext;
 import io.swagger.v3.core.util.AnnotationsUtils;
 import io.swagger.v3.core.util.Constants;
 import io.swagger.v3.core.util.Json;
+import io.swagger.v3.core.util.ObjectMapperFactory;
 import io.swagger.v3.core.util.PrimitiveType;
 import io.swagger.v3.core.util.ReflectionUtils;
 import io.swagger.v3.oas.annotations.media.DiscriminatorMapping;
@@ -65,6 +66,8 @@ import javax.xml.bind.annotation.XmlElementRefs;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -87,8 +90,14 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
     Logger LOGGER = LoggerFactory.getLogger(ModelResolver.class);
 
     public static final String SET_PROPERTY_OF_COMPOSED_MODEL_AS_SIBLING = "composed-model-properties-as-sibiling";
+    public static final String SET_PROPERTY_OF_ENUMS_AS_REF = "enums-as-ref";
 
     public static boolean composedModelPropertiesAsSibling = System.getProperty(SET_PROPERTY_OF_COMPOSED_MODEL_AS_SIBLING) != null ? true : false;
+
+    /**
+     * Allows all enums to be resolved as a reference to a scheme added to the components section.
+     */
+    public static boolean enumsAsRef = System.getProperty(SET_PROPERTY_OF_ENUMS_AS_REF) != null ? true : false;
 
     public ModelResolver(ObjectMapper mapper) {
         super(mapper);
@@ -319,6 +328,12 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 schema.setItems(model);
                 return schema;
             }
+            if (type.isEnumType() && shouldResolveEnumAsRef(resolvedSchemaAnnotation)) {
+                // Store off the ref and add the enum as a top-level model
+                context.defineModel(name, model, annotatedType, null);
+                // Return the model as a ref only property
+                model = new Schema().$ref(name);
+            }
             return model;
         }
 
@@ -341,12 +356,11 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             }
         }
 
-        // using deprecated method to maintain compatibility with jackson version < 2.9
-        //alternatively use AnnotatedMember jsonValueMember = beanDesc.findJsonValueAccessor();
-        final AnnotatedMethod jsonValueMethod  = beanDesc.findJsonValueMethod();
-        if(jsonValueMethod != null) {
+        Type jsonValueType = findJsonValueType(beanDesc);
+
+        if(jsonValueType != null) {
             AnnotatedType aType = new AnnotatedType()
-                    .type(jsonValueMethod.getType())
+                    .type(jsonValueType)
                     .parent(annotatedType.getParent())
                     .name(annotatedType.getName())
                     .schemaProperty(annotatedType.isSchemaProperty())
@@ -638,27 +652,18 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                         //return context.resolve(t);
                     }
                 });
-                property = context.resolve(aType);
+                property = clone(context.resolve(aType));
 
                 if (property != null) {
-                    if (property.get$ref() == null) {
-                        if (!"object".equals(property.getType()) || (property instanceof MapSchema)) {
-                            try {
-                                String cloneName = property.getName();
-                                property = Json.mapper().readValue(Json.pretty(property), Schema.class);
-                                property.setName(cloneName);
-                            } catch (IOException e) {
-                                LOGGER.error("Could not clone property, e");
-                            }
-                        }
-                        Boolean required = md.getRequired();
-                        if (required != null && !Boolean.FALSE.equals(required)) {
+                    Boolean required = md.getRequired();
+                    if (required != null && !Boolean.FALSE.equals(required)) {
+                        addRequiredItem(model, propName);
+                    } else {
+                        if (propDef.isRequired()) {
                             addRequiredItem(model, propName);
-                        } else {
-                            if (propDef.isRequired()) {
-                                addRequiredItem(model, propName);
-                            }
                         }
+                    }
+                    if (property.get$ref() == null) {
                         if (accessMode != null) {
                             switch (accessMode) {
                                 case AUTO:
@@ -863,6 +868,43 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         resolveDiscriminatorProperty(type, context, model);
 
         return model;
+    }
+
+    private boolean shouldResolveEnumAsRef(io.swagger.v3.oas.annotations.media.Schema resolvedSchemaAnnotation) {
+        return (resolvedSchemaAnnotation != null && resolvedSchemaAnnotation.enumAsRef()) || ModelResolver.enumsAsRef;
+    }
+
+    protected Type findJsonValueType(final BeanDescription beanDesc) {
+
+        // use recursion to check for method findJsonValueAccessor existence (Jackson 2.9+)
+        // if not found use previous deprecated method which could lead to inaccurate result
+        try {
+            Method m = BeanDescription.class.getMethod("findJsonValueAccessor", null);
+            AnnotatedMember jsonValueMember = (AnnotatedMember)m.invoke(beanDesc, null);
+            if (jsonValueMember != null) {
+                return jsonValueMember.getType();
+            }
+        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+            LOGGER.warn("jackson BeanDescription.findJsonValueAccessor not found, this could lead to inaccurate result, please update jackson to 2.9+");
+            final AnnotatedMethod jsonValueMethod  = beanDesc.findJsonValueMethod();
+            if (jsonValueMethod != null) {
+                return jsonValueMethod.getType();
+            }
+        }
+        return null;
+    }
+
+    private Schema clone(Schema property) {
+        if(property == null)
+            return property;
+        try {
+            String cloneName = property.getName();
+            property = Json.mapper().readValue(Json.pretty(property), Schema.class);
+            property.setName(cloneName);
+        } catch (IOException e) {
+            LOGGER.error("Could not clone property, e");
+        }
+        return property;
     }
 
     private boolean isSubtype(AnnotatedClass childClass, Class<?> parentClass) {
@@ -1409,7 +1451,8 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         if (schema != null) {
             if (!schema.example().isEmpty()) {
                 try {
-                    return Json.mapper().readTree(schema.example());
+                    ObjectMapper mapper = ObjectMapperFactory.buildStrictGenericObjectMapper();
+                    return mapper.readTree(schema.example());
                 } catch (IOException e) {
                     return schema.example();
                 }
@@ -1954,7 +1997,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         return name;
     }
 
-    private boolean hiddenByJsonView(Annotation[] annotations,
+    protected boolean hiddenByJsonView(Annotation[] annotations,
                                      AnnotatedType type) {
         JsonView jsonView = type.getJsonViewAnnotation();
         if (jsonView == null)
