@@ -1,6 +1,7 @@
 package io.swagger.v3.jaxrs2.resources.model;
 
 @io.swagger.v3.oas.annotations.media.Schema(
+        allOf = MultiInheritanceBaseBean.class,
         description = "MultiInheritanceSubaBaseBean",
         subTypes = { MultiInheritanceSub1aBean.class, MultiInheritanceSub2aBean.class },
         discriminatorProperty = "beanType"

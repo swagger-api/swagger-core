@@ -13,8 +13,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
@@ -156,7 +154,7 @@ public class CompositeBeanResource {
         "    get:\n" +
         "      summary: List all available beans\n" +
         "      description: Description\n" +
-        "      operationId: listSub1as\n" +
+        "      operationId: list\n" +
         "      responses:\n" +
         "        default:\n" +
         "          description: All available beans\n" +
@@ -174,44 +172,20 @@ public class CompositeBeanResource {
         "      allOf:\n" +
         "      - $ref: '#/components/schemas/MultiInheritanceSubaBaseBean'\n" +
         "      - type: object\n" +        
-        "      properties:\n" +
-        "        c:\n" +
-        "          type: integer\n" +
-        "          format: int32\n" +
+        "        properties:\n" +
+        "          c:\n" +
+        "            type: integer\n" +
+        "            format: int32\n" +
         "    MultiInheritanceSub1bBean:\n" +
         "      type: object\n" +
         "      description: MultiInheritanceSub1bBean\n" +
         "      allOf:\n" +
         "      - $ref: '#/components/schemas/MultiInheritanceBaseBean'\n" +
         "      - type: object\n" +        
-        "      properties:\n" +
-        "        e:\n" +
-        "          type: integer\n" +
-        "          format: int32\n" +
-        "    MultiInheritanceSubaBaseBean:\n" +
-        "      type: object\n" +
-        "      description: MultiInheritanceSubaBaseBean\n" +
-        "      allOf:\n" +
-        "      - $ref: '#/components/schemas/MultiInheritanceBaseBean'\n" +
-        "      - type: object\n" +
         "        properties:\n" +
-        "          a:\n" +
+        "          e:\n" +
         "            type: integer\n" +
         "            format: int32\n" +
-        "          b:\n" +
-        "            type: string\n" +
-        "      discriminator:\n" +
-        "        propertyName: beanType\n" +
-        "    MultiInheritanceSub2aBean:\n" +
-        "      type: object\n" +
-        "      description: MultiInheritanceSub2aBean\n" +
-        "      allOf:\n" +
-        "      - $ref: '#/components/schemas/MultiInheritanceSubaBaseBean'\n" +
-        "      - type: object\n" +        
-        "      properties:\n" +
-        "        d:\n" +
-        "          type: integer\n" +
-        "          format: int32\n" +
         "    MultiInheritanceBaseBean:\n" +
         "      type: object\n" +
         "      properties:\n" +
@@ -224,5 +198,29 @@ public class CompositeBeanResource {
         "          type: string\n" +
         "      description: MultiInheritanceBaseBean\n" +
         "      discriminator:\n" +
-        "        propertyName: beanType\n";
+        "        propertyName: beanType\n" +
+        "    MultiInheritanceSub2aBean:\n" +
+        "      type: object\n" +
+        "      description: MultiInheritanceSub2aBean\n" +
+        "      allOf:\n" +
+        "      - $ref: '#/components/schemas/MultiInheritanceSubaBaseBean'\n" +
+        "      - type: object\n" +        
+        "        properties:\n" +
+        "          d:\n" +
+        "            type: integer\n" +
+        "            format: int32\n" +       
+        "    MultiInheritanceSubaBaseBean:\n" +
+        "      type: object\n" +
+        "      description: MultiInheritanceSubaBaseBean\n" +
+        "      discriminator:\n" +
+        "        propertyName: beanType\n" +
+        "      allOf:\n" +
+        "      - $ref: '#/components/schemas/MultiInheritanceBaseBean'\n" +
+        "      - type: object\n" +
+        "        properties:\n" +
+        "          a:\n" +
+        "            type: integer\n" +
+        "            format: int32\n" +
+        "          b:\n" +
+        "            type: string\n";
 }
