@@ -1,7 +1,10 @@
 package io.swagger.v3.jaxrs2.integration;
 
+import io.swagger.v3.jaxrs2.Reader;
 import io.swagger.v3.jaxrs2.integration.api.WebOpenApiContext;
+import io.swagger.v3.oas.integration.api.OpenAPIConfiguration;
 import io.swagger.v3.oas.integration.api.OpenApiConfigurationLoader;
+import io.swagger.v3.oas.integration.api.OpenApiReader;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,4 +70,14 @@ public class XmlWebOpenApiContext<T extends XmlWebOpenApiContext<T>> extends Jax
         return map;
     }
 
+    @Override
+    protected OpenApiReader buildReader(OpenAPIConfiguration openApiConfiguration) throws Exception {
+        OpenApiReader reader = super.buildReader(openApiConfiguration);
+        if (reader instanceof Reader) {
+            if (servletConfig != null) {
+                ((Reader) reader).setContextPath(servletConfig.getServletContext().getContextPath());
+            }
+        }
+        return reader;
+    }
 }
