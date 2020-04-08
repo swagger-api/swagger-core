@@ -28,11 +28,13 @@ public class PasswordSchema extends Schema<String> {
         super("string", "password");
     }
 
+    @Override
     public PasswordSchema type(String type) {
         super.setType(type);
         return this;
     }
 
+    @Override
     public PasswordSchema format(String format) {
         super.setFormat(format);
         return this;

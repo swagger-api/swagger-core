@@ -30,6 +30,7 @@ public class BooleanSchema extends Schema<Boolean> {
         super("boolean", null);
     }
 
+    @Override
     public BooleanSchema type(String type) {
         super.setType(type);
         return this;

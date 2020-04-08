@@ -29,6 +29,7 @@ public class ArraySchema extends Schema<Object> {
         super("array", null);
     }
 
+    @Override
     public ArraySchema type(String type) {
         super.setType(type);
         return this;

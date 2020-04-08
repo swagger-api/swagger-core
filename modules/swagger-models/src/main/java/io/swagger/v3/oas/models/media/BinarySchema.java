@@ -29,13 +29,15 @@ public class BinarySchema extends Schema<byte[]> {
         super("string", "binary");
     }
 
+    @Override
     public BinarySchema type(String type) {
         super.setType(type);
         return this;
     }
 
+    @Override
     public BinarySchema format(String format) {
-        super.setFormat(format);;
+        super.setFormat(format);
         return this;
     }
 
