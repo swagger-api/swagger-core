@@ -31,7 +31,7 @@ public class SwaggerSerializers implements MessageBodyWriter<OpenAPI> {
 
     @Override
     public long getSize(OpenAPI data, Class type, Type genericType, Annotation[] annotations, MediaType mediaType) {
-        return -1;
+        return -1L;
     }
 
     @Override
@@ -58,7 +58,7 @@ public class SwaggerSerializers implements MessageBodyWriter<OpenAPI> {
             }
         } else if (mediaType.isCompatible(MediaType.APPLICATION_XML_TYPE)) {
             headers.remove("Content-Type");
-            headers.add("Content-Type", "application/json");
+            headers.add("Content-Type", MediaType.APPLICATION_JSON);
             if (prettyPrint) {
                 out.write(Json.pretty().writeValueAsBytes(data));
             } else {
