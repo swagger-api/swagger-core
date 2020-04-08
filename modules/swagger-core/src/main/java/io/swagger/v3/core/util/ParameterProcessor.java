@@ -65,7 +65,7 @@ public class ParameterProcessor {
         if (resolvedSchema.schema != null) {
             parameter.setSchema(resolvedSchema.schema);
         }
-        resolvedSchema.referencedSchemas.forEach((key, schema) -> components.addSchemas(key, schema));
+        resolvedSchema.referencedSchemas.forEach(components::addSchemas);
 
         for (Annotation annotation : annotations) {
             if (annotation instanceof io.swagger.v3.oas.annotations.Parameter) {
@@ -108,7 +108,6 @@ public class ParameterProcessor {
                 }
 
                 Map<String, Example> exampleMap = new HashMap<>();
-                final Object exampleValue;
                 if (p.examples().length == 1 && StringUtils.isBlank(p.examples()[0].name())) {
                     Optional<Example> exampleOptional = AnnotationsUtils.getExample(p.examples()[0], true);
                     if (exampleOptional.isPresent()) {
@@ -125,10 +124,8 @@ public class ParameterProcessor {
 
                 if (p.extensions().length > 0) {
                     Map<String, Object> extensionMap = AnnotationsUtils.getExtensions(p.extensions());
-                    if (extensionMap != null && extensionMap.size() > 0) {
-                        for (String ext : extensionMap.keySet()) {
-                            parameter.addExtension(ext, extensionMap.get(ext));
-                        }
+                    if (extensionMap != null && ! extensionMap.isEmpty()) {
+                        extensionMap.forEach(parameter::addExtension);
                     }
                 }
 
@@ -196,7 +193,7 @@ public class ParameterProcessor {
 
         Schema paramSchema = parameter.getSchema();
         if (paramSchema == null) {
-            if (parameter.getContent() != null && parameter.getContent().values().size() > 0) {
+            if (parameter.getContent() != null && !parameter.getContent().values().isEmpty()) {
                 paramSchema = parameter.getContent().values().iterator().next().getSchema();
             }
         }

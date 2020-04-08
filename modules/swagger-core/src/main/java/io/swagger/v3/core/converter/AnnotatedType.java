@@ -236,9 +236,9 @@ public class AnnotatedType {
         int result = 1;
         result = 31 * result + (type == null ? 0 : Objects.hash(type, "fixed"));
         if (hasDifference) {
-            result = 31 * result + (meaningfulAnnotations == null ? 0 : Arrays.hashCode(meaningfulAnnotations.toArray(new Annotation[meaningfulAnnotations.size()])));
+            result = 31 * result + meaningfulAnnotations.hashCode();
         } else {
-            result = 31 * result + (ctxAnnotations == null ? 0 : Arrays.hashCode(ctxAnnotations));
+            result = 31 * result + Arrays.hashCode(ctxAnnotations);
         }
         return result;
     }

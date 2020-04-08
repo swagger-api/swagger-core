@@ -59,9 +59,7 @@ public class ReflectionUtils {
      */
     public static boolean isOverriddenMethod(Method methodToFind, Class<?> cls) {
         Set<Class<?>> superClasses = new HashSet<>();
-        for (Class c : cls.getInterfaces()) {
-            superClasses.add(c);
-        }
+        Collections.addAll(superClasses, cls.getInterfaces());
 
         if (cls.getSuperclass() != null) {
             superClasses.add(cls.getSuperclass());
@@ -180,8 +178,8 @@ public class ReflectionUtils {
         if (cls == null || Object.class.equals(cls)) {
             return Collections.emptyList();
         }
-        final List<Field> fields = new ArrayList<Field>();
-        final Set<String> fieldNames = new HashSet<String>();
+        final List<Field> fields = new ArrayList<>();
+        final Set<String> fieldNames = new HashSet<>();
         for (Field field : cls.getDeclaredFields()) {
             fields.add(field);
             fieldNames.add(field.getName());
@@ -227,7 +225,6 @@ public class ReflectionUtils {
                 if (annotation != null) {
                     return annotation;
                 }
-                ;
             }
             Class<?> superClass = cls.getSuperclass();
             if (superClass != null && !(superClass.equals(Object.class))) {
@@ -241,7 +238,6 @@ public class ReflectionUtils {
                     if (annotation != null) {
                         return annotation;
                     }
-                    ;
                 }
                 annotation = getAnnotation(anInterface, annotationClass);
                 if (annotation != null) {
@@ -368,9 +364,6 @@ public class ReflectionUtils {
                 }
             }
         }
-        if (type.isArrayType()) {
-            return true;
-        }
-        return false;
+        return type.isArrayType();
     }
 }
