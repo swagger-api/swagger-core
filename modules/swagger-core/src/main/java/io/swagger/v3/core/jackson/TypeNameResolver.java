@@ -20,14 +20,15 @@ import java.util.Set;
 public class TypeNameResolver {
     public final static TypeNameResolver std = new TypeNameResolver();
     private boolean useFqn=false;
-
-    public void setUseFqn(boolean useFqn) {
-		this.useFqn = useFqn;
-	}
-
-	protected TypeNameResolver() {
+    
+    protected TypeNameResolver() {
     }
 
+    public void setUseFqn(boolean useFqn) {
+        this.useFqn = useFqn;
+    }
+
+	
     public String nameForType(JavaType type, Options... options) {
         return nameForType(type, options.length == 0 ? Collections.<Options>emptySet() :
                 EnumSet.copyOf(Arrays.asList(options)));
@@ -56,9 +57,9 @@ public class TypeNameResolver {
         return modelName == null ? getNameOfClass(cls) : modelName;
     }
 
-	private String getNameOfClass(Class<?> cls) {
-		return useFqn?cls.getName():cls.getSimpleName();
-	}
+    protected String getNameOfClass(Class<?> cls) {
+        return useFqn?cls.getName():cls.getSimpleName();
+    }
 
     protected String nameForGenericType(JavaType type, Set<Options> options) {
         final StringBuilder generic = new StringBuilder(nameForClass(type, options));
