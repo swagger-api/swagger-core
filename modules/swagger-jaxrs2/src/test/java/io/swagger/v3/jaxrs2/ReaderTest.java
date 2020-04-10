@@ -705,7 +705,6 @@ public class ReaderTest {
     public void test2497() {
         Reader reader = new Reader(new OpenAPI());
         OpenAPI openAPI = reader.read(ResponseContentWithArrayResource.class);
-
         Paths paths = openAPI.getPaths();
         assertEquals(paths.size(), 1);
         PathItem pathItem = paths.get("/user");
@@ -715,6 +714,8 @@ public class ReaderTest {
         ArraySchema schema = (ArraySchema) operation.getResponses().get("200").getContent().values().iterator().next().getSchema();
         assertNotNull(schema);
         assertEquals(schema.getItems().get$ref(), "#/components/schemas/User");
+
+        assertEquals(openAPI.getComponents().getSchemas().get("User").getRequired().get(0), "issue3438");
     }
 
     @Test(description = "test resource with subresources")
@@ -1267,7 +1268,6 @@ public class ReaderTest {
                 "      description: Defines a simple get operation with no inputs and a complex output\n" +
                 "        object\n" +
                 "      operationId: getWithPayloadResponse\n" +
-                "      parameters: []\n" +
                 "      responses:\n" +
                 "        \"200\":\n" +
                 "          description: voila!\n" +
@@ -1427,7 +1427,6 @@ public class ReaderTest {
                 "      summary: Simple get operation\n" +
                 "      description: Defines a simple get operation with a payload complex input object\n" +
                 "      operationId: sendPayload\n" +
-                "      parameters: []\n" +
                 "      requestBody:\n" +
                 "        $ref: '#/components/requestBodies/User'\n" +
                 "      responses:\n" +
@@ -2060,7 +2059,7 @@ public class ReaderTest {
                 "          type: string\n";
         SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
     }
-    
+
     @Test(description = "Filter class return type")
     public void testTicket3074() {
         Reader reader = new Reader(new OpenAPI());
@@ -2073,7 +2072,6 @@ public class ReaderTest {
         oasResult = reader.read(RefParameter3074Resource.class);
         SerializationMatchers.assertEqualsToYaml(oasResult, RefParameter3074Resource.EXPECTED_YAML_WITHOUT_WRAPPER);
     }
-
 
     @Test(description = "Single Example")
     public void testSingleExample() {

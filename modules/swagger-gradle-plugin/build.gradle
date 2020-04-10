@@ -6,7 +6,7 @@ plugins {
     id 'java-gradle-plugin'
     id 'net.researchgate.release' version '2.6.0'
     // Publishing publicly
-    id 'com.gradle.plugin-publish' version '0.10.1'
+    id 'com.gradle.plugin-publish' version '0.11.0'
     // Publishing to maven
     id 'maven-publish'
 }

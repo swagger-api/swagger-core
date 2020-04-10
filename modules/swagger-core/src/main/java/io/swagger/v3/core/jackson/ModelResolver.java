@@ -66,6 +66,8 @@ import javax.xml.bind.annotation.XmlElementRefs;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -354,12 +356,11 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             }
         }
 
-        // using deprecated method to maintain compatibility with jackson version < 2.9
-        //alternatively use AnnotatedMember jsonValueMember = beanDesc.findJsonValueAccessor();
-        final AnnotatedMethod jsonValueMethod  = beanDesc.findJsonValueMethod();
-        if(jsonValueMethod != null) {
+        Type jsonValueType = findJsonValueType(beanDesc);
+
+        if(jsonValueType != null) {
             AnnotatedType aType = new AnnotatedType()
-                    .type(jsonValueMethod.getType())
+                    .type(jsonValueType)
                     .parent(annotatedType.getParent())
                     .name(annotatedType.getName())
                     .schemaProperty(annotatedType.isSchemaProperty())
@@ -654,15 +655,15 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 property = clone(context.resolve(aType));
 
                 if (property != null) {
-                    if (property.get$ref() == null) {
-                        Boolean required = md.getRequired();
-                        if (required != null && !Boolean.FALSE.equals(required)) {
+                    Boolean required = md.getRequired();
+                    if (required != null && !Boolean.FALSE.equals(required)) {
+                        addRequiredItem(model, propName);
+                    } else {
+                        if (propDef.isRequired()) {
                             addRequiredItem(model, propName);
-                        } else {
-                            if (propDef.isRequired()) {
-                                addRequiredItem(model, propName);
-                            }
                         }
+                    }
+                    if (property.get$ref() == null) {
                         if (accessMode != null) {
                             switch (accessMode) {
                                 case AUTO:
@@ -871,6 +872,26 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
     private boolean shouldResolveEnumAsRef(io.swagger.v3.oas.annotations.media.Schema resolvedSchemaAnnotation) {
         return (resolvedSchemaAnnotation != null && resolvedSchemaAnnotation.enumAsRef()) || ModelResolver.enumsAsRef;
+    }
+
+    protected Type findJsonValueType(final BeanDescription beanDesc) {
+
+        // use recursion to check for method findJsonValueAccessor existence (Jackson 2.9+)
+        // if not found use previous deprecated method which could lead to inaccurate result
+        try {
+            Method m = BeanDescription.class.getMethod("findJsonValueAccessor", null);
+            AnnotatedMember jsonValueMember = (AnnotatedMember)m.invoke(beanDesc, null);
+            if (jsonValueMember != null) {
+                return jsonValueMember.getType();
+            }
+        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+            LOGGER.warn("jackson BeanDescription.findJsonValueAccessor not found, this could lead to inaccurate result, please update jackson to 2.9+");
+            final AnnotatedMethod jsonValueMethod  = beanDesc.findJsonValueMethod();
+            if (jsonValueMethod != null) {
+                return jsonValueMethod.getType();
+            }
+        }
+        return null;
     }
 
     private Schema clone(Schema property) {
@@ -1976,7 +1997,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         return name;
     }
 
-    private boolean hiddenByJsonView(Annotation[] annotations,
+    protected boolean hiddenByJsonView(Annotation[] annotations,
                                      AnnotatedType type) {
         JsonView jsonView = type.getJsonViewAnnotation();
         if (jsonView == null)

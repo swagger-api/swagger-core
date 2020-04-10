@@ -161,7 +161,7 @@ public class SpecFilterTest {
     }
 
     private void validateParameters(Operation operation) {
-        if (operation != null) {
+        if (operation != null && operation.getParameters() != null) {
             for (Parameter parameter : operation.getParameters()) {
                 assertNotEquals(QUERY, parameter.getIn());
             }

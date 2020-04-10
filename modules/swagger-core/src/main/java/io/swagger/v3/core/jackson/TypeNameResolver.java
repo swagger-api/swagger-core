@@ -19,10 +19,16 @@ import java.util.Set;
  */
 public class TypeNameResolver {
     public final static TypeNameResolver std = new TypeNameResolver();
-
+    private boolean useFqn=false;
+    
     protected TypeNameResolver() {
     }
 
+    public void setUseFqn(boolean useFqn) {
+        this.useFqn = useFqn;
+    }
+
+	
     public String nameForType(JavaType type, Options... options) {
         return nameForType(type, options.length == 0 ? Collections.<Options>emptySet() :
                 EnumSet.copyOf(Arrays.asList(options)));
@@ -42,13 +48,17 @@ public class TypeNameResolver {
 
     protected String nameForClass(Class<?> cls, Set<Options> options) {
         if (options.contains(Options.SKIP_API_MODEL)) {
-            return cls.getSimpleName();
+            return getNameOfClass(cls);
         }
 
         io.swagger.v3.oas.annotations.media.Schema mp = AnnotationsUtils.getSchemaDeclaredAnnotation(cls);
 
         final String modelName = mp == null ? null : StringUtils.trimToNull(mp.name());
-        return modelName == null ? cls.getSimpleName() : modelName;
+        return modelName == null ? getNameOfClass(cls) : modelName;
+    }
+
+    protected String getNameOfClass(Class<?> cls) {
+        return useFqn?cls.getName():cls.getSimpleName();
     }
 
     protected String nameForGenericType(JavaType type, Set<Options> options) {

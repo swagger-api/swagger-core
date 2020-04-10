@@ -157,6 +157,19 @@ public class SpecFilter {
             if (filteredOperation.isPresent()) {
                 List<Parameter> filteredParameters = new ArrayList<>();
                 Operation filteredOperationGet = filteredOperation.get();
+
+                Operation clone = new Operation();
+                clone.setCallbacks(filteredOperationGet.getCallbacks());
+                clone.setDeprecated(filteredOperationGet.getDeprecated());
+                clone.setDescription(filteredOperationGet.getDescription());
+                clone.setExtensions(filteredOperationGet.getExtensions());
+                clone.setExternalDocs(filteredOperationGet.getExternalDocs());
+                clone.setOperationId(filteredOperationGet.getOperationId());
+                clone.setSecurity(filteredOperationGet.getSecurity());
+                clone.setServers(filteredOperationGet.getServers());
+                clone.setSummary(filteredOperationGet.getSummary());
+                clone.setTags(filteredOperationGet.getTags());
+
                 List<Parameter> parameters = filteredOperationGet.getParameters();
                 if (parameters != null) {
                     for (Parameter parameter : parameters) {
@@ -165,13 +178,13 @@ public class SpecFilter {
                             filteredParameters.add(filteredParameter);
                         }
                     }
+                    clone.setParameters(filteredParameters);
                 }
-                filteredOperationGet.setParameters(filteredParameters);
 
                 RequestBody requestBody = filteredOperation.get().getRequestBody();
                 if (requestBody != null) {
                     RequestBody filteredRequestBody = filterRequestBody(filter, operation, requestBody, resourcePath, key, params, cookies, headers);
-                    filteredOperationGet.setRequestBody(filteredRequestBody);
+                    clone.setRequestBody(filteredRequestBody);
 
                 }
 
@@ -184,10 +197,10 @@ public class SpecFilter {
                             clonedResponses.addApiResponse(responseKey, filteredResponse);
                         }
                     });
-                    filteredOperationGet.setResponses(clonedResponses);
+                    clone.setResponses(clonedResponses);
                 }
 
-                return filteredOperationGet;
+                return clone;
             }
         }
         return null;

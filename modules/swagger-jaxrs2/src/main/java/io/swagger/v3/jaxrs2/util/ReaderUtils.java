@@ -10,7 +10,6 @@ import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.parameters.Parameter;
 import org.apache.commons.lang3.StringUtils;
 
-import javax.ws.rs.DELETE;
 import javax.ws.rs.HttpMethod;
 import javax.ws.rs.core.Context;
 import java.lang.annotation.Annotation;
@@ -212,8 +211,6 @@ public class ReaderUtils {
             return OPTIONS_METHOD;
         } else if (method.getAnnotation(javax.ws.rs.HEAD.class) != null) {
             return HEAD_METHOD;
-        } else if (method.getAnnotation(DELETE.class) != null) {
-            return DELETE_METHOD;
         } else if (method.getAnnotation(HttpMethod.class) != null) {
             HttpMethod httpMethod = method.getAnnotation(HttpMethod.class);
             return httpMethod.value().toLowerCase();
