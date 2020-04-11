@@ -16,7 +16,7 @@ import java.util.Set;
 
 public class GenericOpenApiScanner implements OpenApiScanner {
 
-    static final Set<String> ignored = new HashSet();
+    static final Set<String> ignored = new HashSet<>();
 
     static {
         ignored.addAll(IgnoredPackages.ignored);
@@ -41,18 +41,18 @@ public class GenericOpenApiScanner implements OpenApiScanner {
 
         boolean allowAllPackages = false;
 
-        // if classes are passed, use them
         if (openApiConfiguration.getResourceClasses() != null && !openApiConfiguration.getResourceClasses().isEmpty()) {
             for (String className : openApiConfiguration.getResourceClasses()) {
                 if (!isIgnored(className)) {
                     try {
-                        output.add(Class.forName(className));
+                    	Class<?> resourceClass = Class.forName(className);
+                    	// this is generic, specific Jaxrs scanner will also look for @Path
+                        if (resourceClass.isAnnotationPresent(OpenAPIDefinition.class)) output.add(resourceClass);
                     } catch (ClassNotFoundException e) {
                         LOGGER.warn("error loading class from resourceClasses: " + e.getMessage(), e);
                     }
                 }
             }
-            return output;
         }
 
         if (openApiConfiguration.getResourcePackages() != null && !openApiConfiguration.getResourcePackages().isEmpty()) {
