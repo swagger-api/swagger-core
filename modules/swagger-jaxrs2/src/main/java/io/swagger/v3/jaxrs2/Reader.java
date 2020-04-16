@@ -383,7 +383,7 @@ public class Reader implements OpenApiReader {
             javax.ws.rs.Produces methodProduces = ReflectionUtils.getAnnotation(method, javax.ws.rs.Produces.class);
             javax.ws.rs.Consumes methodConsumes = ReflectionUtils.getAnnotation(method, javax.ws.rs.Consumes.class);
 
-            if (ReflectionUtils.isOverriddenMethod(method, cls)) {
+            if (isMethodOverridden(method, cls)) {
                 continue;
             }
 
@@ -1360,6 +1360,10 @@ public class Reader implements OpenApiReader {
             return true;
         }
         return false;
+    }
+
+    protected boolean isMethodOverridden(Method method, Class<?> cls) {
+        return ReflectionUtils.isOverriddenMethod(method, cls);
     }
 
     public void setApplication(Application application) {
