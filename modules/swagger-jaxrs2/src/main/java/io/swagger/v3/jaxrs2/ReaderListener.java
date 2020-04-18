@@ -1,5 +1,6 @@
 package io.swagger.v3.jaxrs2;
 
+import io.swagger.v3.oas.integration.api.OpenApiReader;
 import io.swagger.v3.oas.models.OpenAPI;
 
 /**
@@ -19,7 +20,7 @@ public interface ReaderListener {
      * @param openAPI the initial OpenAPI definition
      */
 
-    void beforeScan(Reader reader, OpenAPI openAPI);
+    void beforeScan(OpenApiReader reader, OpenAPI openAPI);
 
     /**
      * Called after a OpenAPI definition has been populated from scanned classes. Use this method to
@@ -29,5 +30,5 @@ public interface ReaderListener {
      * @param openAPI the configured OpenAPI definition
      */
 
-    void afterScan(Reader reader, OpenAPI openAPI);
+    void afterScan(OpenApiReader reader, OpenAPI openAPI);
 }
