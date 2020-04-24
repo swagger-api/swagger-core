@@ -60,6 +60,9 @@ public class SwaggerAnnotationIntrospector extends AnnotationIntrospector {
         }
         ArraySchema arraySchema = m.getAnnotation(ArraySchema.class);
         if (arraySchema != null) {
+            if (arraySchema.arraySchema().required()) {
+                return arraySchema.arraySchema().required();
+            }
             if (arraySchema.schema().required()) {
                 return arraySchema.schema().required();
             }

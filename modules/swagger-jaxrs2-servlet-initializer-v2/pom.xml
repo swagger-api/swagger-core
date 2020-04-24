@@ -9,9 +9,9 @@
         <relativePath>../../</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>swagger-jaxrs2-servlet-initializer</artifactId>
+    <artifactId>swagger-jaxrs2-servlet-initializer-v2</artifactId>
     <packaging>bundle</packaging>
-    <name>swagger-jaxrs2-servlet-initializer</name>
+    <name>swagger-jaxrs2-servlet-initializer-v2</name>
     <build>
         <sourceDirectory>src/main/java</sourceDirectory>
         <defaultGoal>install</defaultGoal>
@@ -29,13 +29,13 @@
                 <configuration>
                     <instructions>
                         <Export-Package>
-                            io.swagger.v3.jaxrs2.integration
+                            io.swagger.v3.jaxrs2.integration.servlet
                         </Export-Package>
                         <Import-Package>
                             javax.ws.rs*;version="2.0",
                             *
                         </Import-Package>
-                        <Automatic-Module-Name>io.swagger.v3.jaxrs2.integration</Automatic-Module-Name>
+                        <Automatic-Module-Name>io.swagger.v3.jaxrs2.integration.servlet</Automatic-Module-Name>
                     </instructions>
                 </configuration>
             </plugin>

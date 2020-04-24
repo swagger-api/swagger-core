@@ -553,10 +553,12 @@ public abstract class AnnotationsUtils {
     }
 
     public static Schema resolveSchemaFromType(Class<?> schemaImplementation, Components components, JsonView jsonViewAnnotation) {
-        Schema schemaObject = new Schema();
-        if (schemaImplementation.getName().startsWith("java.lang")) {
-            schemaObject.setType(schemaImplementation.getSimpleName().toLowerCase());
+        Schema schemaObject;
+        PrimitiveType primitiveType = PrimitiveType.fromType(schemaImplementation);
+        if (primitiveType != null) {
+            schemaObject = primitiveType.createProperty();
         } else {
+            schemaObject = new Schema();
             ResolvedSchema resolvedSchema = ModelConverters.getInstance().readAllAsResolvedSchema(new AnnotatedType().type(schemaImplementation).jsonViewAnnotation(jsonViewAnnotation));
             Map<String, Schema> schemaMap;
             if (resolvedSchema != null) {
@@ -566,7 +568,11 @@ public abstract class AnnotationsUtils {
                         components.addSchemas(key, referencedSchema);
                     }
                 });
-                schemaObject.set$ref(COMPONENTS_REF + resolvedSchema.schema.getName());
+                if (StringUtils.isNotBlank(resolvedSchema.schema.getName())) {
+                    schemaObject.set$ref(COMPONENTS_REF + resolvedSchema.schema.getName());
+                } else {
+                    schemaObject = resolvedSchema.schema;
+                }
             }
         }
         if (StringUtils.isBlank(schemaObject.get$ref()) && StringUtils.isBlank(schemaObject.getType())) {
@@ -1116,28 +1122,10 @@ public abstract class AnnotationsUtils {
                                                        Class<?> schemaImplementation,
                                                        Components components,
                                                        JsonView jsonViewAnnotation) {
-        Map<String, Schema> schemaMap;
         if (schemaImplementation != Void.class) {
-            Schema schemaObject = new Schema();
-            if (schemaImplementation.getName().startsWith("java.lang")) {
-                schemaObject.setType(schemaImplementation.getSimpleName().toLowerCase());
-            } else {
-                ResolvedSchema resolvedSchema = ModelConverters.getInstance().readAllAsResolvedSchema(new AnnotatedType().type(schemaImplementation).jsonViewAnnotation(jsonViewAnnotation));
-                if (resolvedSchema != null) {
-                    schemaMap = resolvedSchema.referencedSchemas;
-                    schemaMap.forEach((key, schema) -> {
-                        components.addSchemas(key, schema);
-                    });
-                    if (resolvedSchema.schema != null && StringUtils.isNotBlank(resolvedSchema.schema.getName())) {
-                        schemaObject.set$ref(COMPONENTS_REF + resolvedSchema.schema.getName());
-                    } else if (resolvedSchema.schema != null){
-                        schemaObject = resolvedSchema.schema;
-                    }
-                }
-            }
-            if (StringUtils.isBlank(schemaObject.get$ref()) && StringUtils.isBlank(schemaObject.getType())) {
-                // default to string
-                schemaObject.setType("string");
+            Schema schemaObject = resolveSchemaFromType(schemaImplementation, components, jsonViewAnnotation);
+            if (StringUtils.isNotBlank(schemaAnnotation.format())) {
+               schemaObject.setFormat(schemaAnnotation.format());
             }
             if (isArray) {
                 Optional<ArraySchema> arraySchema = AnnotationsUtils.getArraySchema(arrayAnnotation, components, jsonViewAnnotation);

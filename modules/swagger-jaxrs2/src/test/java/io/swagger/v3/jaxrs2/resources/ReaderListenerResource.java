@@ -1,11 +1,11 @@
 package io.swagger.v3.jaxrs2.resources;
 
-import io.swagger.v3.jaxrs2.Reader;
 import io.swagger.v3.jaxrs2.ReaderListener;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.integration.api.OpenApiReader;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.tags.Tag;
 
@@ -35,12 +35,12 @@ public class ReaderListenerResource implements ReaderListener {
     }
 
     @Override
-    public void beforeScan(Reader reader, OpenAPI openAPI) {
+    public void beforeScan(OpenApiReader reader, OpenAPI openAPI) {
         openAPI.addTagsItem(new Tag().name("Tag-added-before-read"));
     }
 
     @Override
-    public void afterScan(Reader reader, OpenAPI openAPI) {
+    public void afterScan(OpenApiReader reader, OpenAPI openAPI) {
         openAPI.addTagsItem(new Tag().name("Tag-added-after-read"));
     }
 }

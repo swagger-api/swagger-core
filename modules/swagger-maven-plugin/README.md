@@ -14,7 +14,7 @@ to `swagger` [configuration property](https://github.com/swagger-api/swagger-cor
             <plugin>
                 <groupId>io.swagger.core.v3</groupId>
                 <artifactId>swagger-maven-plugin</artifactId>
-                <version>2.1.0</version>
+                <version>2.1.1</version>
                 <configuration>
                     <outputFileName>openapi</outputFileName>
                     <outputPath>${project.build.directory}/generatedtest</outputPath>
@@ -39,7 +39,7 @@ to `swagger` [configuration property](https://github.com/swagger-api/swagger-cor
         <dependency>
             <groupId>io.swagger.core.v3</groupId>
             <artifactId>swagger-jaxrs2</artifactId>
-            <version>2.1.0</version>
+            <version>2.1.1</version>
         </dependency>
 
         <dependency>
@@ -65,7 +65,7 @@ to `swagger` [configuration property](https://github.com/swagger-api/swagger-cor
             <plugin>
                 <groupId>io.swagger.core.v3</groupId>
                 <artifactId>swagger-maven-plugin</artifactId>
-                <version>2.1.0</version>
+                <version>2.1.1</version>
                 <configuration>
                     <outputFileName>openapi</outputFileName>
                     <outputPath>${project.build.directory}/generatedtest</outputPath>
