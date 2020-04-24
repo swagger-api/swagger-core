@@ -830,6 +830,7 @@ public class Schema<T> {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("class Schema {\n");
+        sb.append("    name: ").append(toIndentedString(name)).append("\n");
         sb.append("    type: ").append(toIndentedString(type)).append("\n");
         sb.append("    format: ").append(toIndentedString(format)).append("\n");
         sb.append("    $ref: ").append(toIndentedString($ref)).append("\n");

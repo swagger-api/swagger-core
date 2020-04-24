@@ -379,16 +379,16 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                     context.resolve(new AnnotatedType().type(valueType).jsonViewAnnotation(annotatedType.getJsonViewAnnotation()));
                     return null;
                 }
-                Schema addPropertiesSchema = context.resolve(
+                Schema addPropertiesSchema = this.resolve(
                         new AnnotatedType()
-                                .type(valueType)
-                                .schemaProperty(annotatedType.isSchemaProperty())
-                                .ctxAnnotations(schemaAnnotations)
-                                .skipSchemaName(true)
-                                .resolveAsRef(annotatedType.isResolveAsRef())
-                                .jsonViewAnnotation(annotatedType.getJsonViewAnnotation())
-                                .propertyName(annotatedType.getPropertyName())
-                                .parent(annotatedType.getParent()));
+                        .type(valueType)
+                        .schemaProperty(annotatedType.isSchemaProperty())
+                        .ctxAnnotations(schemaAnnotations) //JLC maybe here
+                        .skipSchemaName(true)
+                        .resolveAsRef(annotatedType.isResolveAsRef())
+                        .jsonViewAnnotation(annotatedType.getJsonViewAnnotation())
+                        .propertyName(annotatedType.getPropertyName())
+                        .parent(annotatedType.getParent()), context,  next );
                 if (addPropertiesSchema != null) {
                     if (StringUtils.isNotBlank(addPropertiesSchema.getName())) {
                         pName = addPropertiesSchema.getName();
