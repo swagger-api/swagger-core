@@ -1805,7 +1805,6 @@ public class ReaderTest {
                 "      type: oauth2\n" +
                 "      description: myOauthSecurity Description\n" +
                 "      $ref: '#/components/securitySchemes/Security'\n" +
-                "      in: header\n" +
                 "      flows:\n" +
                 "        implicit:\n" +
                 "          authorizationUrl: http://x.com\n" +

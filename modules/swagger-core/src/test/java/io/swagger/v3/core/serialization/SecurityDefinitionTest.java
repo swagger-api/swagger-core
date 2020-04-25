@@ -61,6 +61,7 @@ public class SecurityDefinitionTest {
 
         oas.schemaRequirement("githubAccessCode",
                 new SecurityScheme()
+                        .type(SecurityScheme.Type.OAUTH2)
                         .flows(new OAuthFlows()
                                 .authorizationCode(new OAuthFlow()
                                         .scopes(new Scopes().addString("user:email", "Grants read access to a user’s email addresses.")))));

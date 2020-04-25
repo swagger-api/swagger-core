@@ -19,7 +19,7 @@ import static org.testng.Assert.assertEquals;
 
 public class SecurityTest extends AbstractAnnotationTest {
     @Test
-    public void testSecuritySheme() {
+    public void testSecurityScheme() {
         String openApiYAML = readIntoYaml(SecurityTest.OAuth2SchemeOnClass.class);
         int start = openApiYAML.indexOf("components:");
         String extractedYAML = openApiYAML.substring(start, openApiYAML.length() - 1);
@@ -27,7 +27,6 @@ public class SecurityTest extends AbstractAnnotationTest {
                 "  securitySchemes:\n" +
                 "    myOauth2Security:\n" +
                 "      type: oauth2\n" +
-                "      in: header\n" +
                 "      flows:\n" +
                 "        implicit:\n" +
                 "          authorizationUrl: http://url.com/auth\n" +
@@ -79,7 +78,6 @@ public class SecurityTest extends AbstractAnnotationTest {
                 "    myOauth2Security:\n" +
                 "      type: oauth2\n" +
                 "      description: myOauthSecurity Description\n" +
-                "      in: header\n" +
                 "      flows:\n" +
                 "        implicit:\n" +
                 "          authorizationUrl: http://x.com\n" +
@@ -102,7 +100,6 @@ public class SecurityTest extends AbstractAnnotationTest {
                 "      in: header\n" +
                 "    myOauth2Security:\n" +
                 "      type: oauth2\n" +
-                "      in: header\n" +
                 "      flows:\n" +
                 "        implicit:\n" +
                 "          authorizationUrl: http://url.com/auth\n" +
