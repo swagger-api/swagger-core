@@ -510,7 +510,7 @@
         <jersey2-version>2.26</jersey2-version>
         <jackson-version>2.10.1</jackson-version>
         <logback-version>1.2.3</logback-version>
-        <classgraph-version>4.8.65</classgraph-version>
+        <classgraph-version>4.8.75</classgraph-version>
         <guava-version>27.0.1-jre</guava-version>
         <commons-lang-version>3.7</commons-lang-version>
         <commons-io-version>2.6</commons-io-version>
