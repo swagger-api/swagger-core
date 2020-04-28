@@ -10,6 +10,10 @@ import io.swagger.v3.oas.models.media.Schema;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 public class SchemaSerializer extends JsonSerializer<Schema> implements ResolvableSerializer {
 
@@ -18,7 +22,7 @@ public class SchemaSerializer extends JsonSerializer<Schema> implements Resolvab
     public SchemaSerializer(JsonSerializer<Object> serializer) {
         defaultSerializer = serializer;
     }
-
+    
     @Override
     public void resolve(SerializerProvider serializerProvider) throws JsonMappingException {
         if (defaultSerializer instanceof ResolvableSerializer) {
@@ -36,8 +40,74 @@ public class SchemaSerializer extends JsonSerializer<Schema> implements Resolvab
             defaultSerializer.serialize(value, jgen, provider);
         } else {
             jgen.writeStartObject();
-            jgen.writeStringField("$ref", value.get$ref());
+             jgen.writeStringField("$ref", value.get$ref());
+            copyExtensions(value, jgen);
             jgen.writeEndObject();
+        }
+    }
+
+    protected void copyExtensions(Schema value, JsonGenerator jgen) throws IOException {
+        Map<String, Object> extensions = value.getExtensions();
+        if(extensions!=null)
+        {
+            Set<Entry<String, Object>> extensionEntrySet = extensions.entrySet();
+            for (Entry<String, Object> entry : extensionEntrySet) 
+            {
+                String extensionKey = entry.getKey();
+                Object extensionValue = entry.getValue();
+                if(extensionValue!=null)
+                {
+                    if(extensionValue instanceof Number)
+                    {
+                        if(extensionValue instanceof BigDecimal)
+                        {
+                            jgen.writeNumberField(extensionKey, (BigDecimal)extensionValue);
+                        }
+                        else if(extensionValue instanceof Double)
+                        {
+                            jgen.writeNumberField(extensionKey, (Double)extensionValue);
+                        }
+                        else if(extensionValue instanceof Float)
+                        {
+                            jgen.writeNumberField(extensionKey, (Float)extensionValue);
+                        }
+                        else if(extensionValue instanceof Long)
+                        {
+                            jgen.writeNumberField(extensionKey, (Long)extensionValue);
+                        }
+                        else if(extensionValue instanceof Integer)
+                        {
+                            jgen.writeNumberField(extensionKey, (Long)extensionValue);
+                        }
+                        else
+                        {
+                            //no other Number types in writeNumberField method
+                            jgen.writeObjectField(extensionKey, extensionValue);
+                        }
+                    }
+                    else if(extensionValue instanceof Boolean)
+                    {
+                        jgen.writeBooleanField(extensionKey, (Boolean)extensionValue);
+                    }
+                    else if(extensionValue instanceof String)
+                    {
+                        jgen.writeStringField(extensionKey, (String)extensionValue);
+                    }
+                    else if(extensionValue instanceof byte[])
+                    {
+                        jgen.writeBinaryField(extensionKey, (byte[])extensionValue);
+                    }
+                    else
+                    {
+                        jgen.writeObjectField(extensionKey, extensionValue);
+                    }
+                    
+                }
+                else
+                {
+                    jgen.writeNullField(extensionKey);
+                }
+            }
         }
     }
 }
