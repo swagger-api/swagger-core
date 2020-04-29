@@ -10,9 +10,7 @@ import io.swagger.v3.oas.models.media.Schema;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 public class SchemaSerializer extends JsonSerializer<Schema> implements ResolvableSerializer {
@@ -48,22 +46,17 @@ public class SchemaSerializer extends JsonSerializer<Schema> implements Resolvab
 
     protected void copyExtensions(Schema value, JsonGenerator jgen) throws IOException {
         Map<String, Object> extensions = value.getExtensions();
-        if(extensions!=null)
-        {
-            Set<Entry<String, Object>> extensionEntrySet = extensions.entrySet();
-            for (Entry<String, Object> entry : extensionEntrySet) 
-            {
-                String extensionKey = entry.getKey();
-                Object extensionValue = entry.getValue();
-                if(extensionValue!=null)
-                {
+        if(extensions!=null) {
+            Set<String> extensionsKeySet = extensions.keySet();
+            for (String extensionKey : extensionsKeySet) {
+                Object extensionValue = extensions.get(extensionKey);
+                if(extensionValue!=null) {
                    jgen.writeObjectField(extensionKey, extensionValue);
-                }
-                else
-                {
+                } else {
                     jgen.writeNullField(extensionKey);
                 }
             }
+
         }
     }
 }
