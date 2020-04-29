@@ -57,51 +57,7 @@ public class SchemaSerializer extends JsonSerializer<Schema> implements Resolvab
                 Object extensionValue = entry.getValue();
                 if(extensionValue!=null)
                 {
-                    if(extensionValue instanceof Number)
-                    {
-                        if(extensionValue instanceof BigDecimal)
-                        {
-                            jgen.writeNumberField(extensionKey, (BigDecimal)extensionValue);
-                        }
-                        else if(extensionValue instanceof Double)
-                        {
-                            jgen.writeNumberField(extensionKey, (Double)extensionValue);
-                        }
-                        else if(extensionValue instanceof Float)
-                        {
-                            jgen.writeNumberField(extensionKey, (Float)extensionValue);
-                        }
-                        else if(extensionValue instanceof Long)
-                        {
-                            jgen.writeNumberField(extensionKey, (Long)extensionValue);
-                        }
-                        else if(extensionValue instanceof Integer)
-                        {
-                            jgen.writeNumberField(extensionKey, (Long)extensionValue);
-                        }
-                        else
-                        {
-                            //no other Number types in writeNumberField method
-                            jgen.writeObjectField(extensionKey, extensionValue);
-                        }
-                    }
-                    else if(extensionValue instanceof Boolean)
-                    {
-                        jgen.writeBooleanField(extensionKey, (Boolean)extensionValue);
-                    }
-                    else if(extensionValue instanceof String)
-                    {
-                        jgen.writeStringField(extensionKey, (String)extensionValue);
-                    }
-                    else if(extensionValue instanceof byte[])
-                    {
-                        jgen.writeBinaryField(extensionKey, (byte[])extensionValue);
-                    }
-                    else
-                    {
-                        jgen.writeObjectField(extensionKey, extensionValue);
-                    }
-                    
+                   jgen.writeObjectField(extensionKey, extensionValue);
                 }
                 else
                 {
