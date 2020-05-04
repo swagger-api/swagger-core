@@ -49,7 +49,7 @@ public class IntegerSchema extends Schema<Number> {
         if (value != null) {
             try {
                 Number casted = NumberFormat.getInstance().parse(value.toString());
-                if (casted.longValue() <= Integer.MAX_VALUE) {
+                if (Integer.MIN_VALUE <= casted.longValue() && casted.longValue() <= Integer.MAX_VALUE) {
                     return Integer.parseInt(value.toString());
                 } else {
                     return Long.parseLong(value.toString());
