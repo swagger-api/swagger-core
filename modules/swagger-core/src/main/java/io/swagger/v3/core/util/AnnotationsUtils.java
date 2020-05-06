@@ -3,6 +3,7 @@ package io.swagger.v3.core.util;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.introspect.Annotated;
 import io.swagger.v3.core.converter.AnnotatedType;
 import io.swagger.v3.core.converter.ModelConverters;
@@ -347,7 +348,8 @@ public abstract class AnnotationsUtils {
         if (StringUtils.isNotBlank(example.value())) {
             isEmpty = false;
             try {
-                exampleObject.setValue(Json.mapper().readTree(example.value()));
+                ObjectMapper mapper = ObjectMapperFactory.buildStrictGenericObjectMapper();
+                exampleObject.setValue(mapper.readTree(example.value()));
             } catch (IOException e) {
                 exampleObject.setValue(example.value());
             }
@@ -551,10 +553,12 @@ public abstract class AnnotationsUtils {
     }
 
     public static Schema resolveSchemaFromType(Class<?> schemaImplementation, Components components, JsonView jsonViewAnnotation) {
-        Schema schemaObject = new Schema();
-        if (schemaImplementation.getName().startsWith("java.lang")) {
-            schemaObject.setType(schemaImplementation.getSimpleName().toLowerCase());
+        Schema schemaObject;
+        PrimitiveType primitiveType = PrimitiveType.fromType(schemaImplementation);
+        if (primitiveType != null) {
+            schemaObject = primitiveType.createProperty();
         } else {
+            schemaObject = new Schema();
             ResolvedSchema resolvedSchema = ModelConverters.getInstance().readAllAsResolvedSchema(new AnnotatedType().type(schemaImplementation).jsonViewAnnotation(jsonViewAnnotation));
             Map<String, Schema> schemaMap;
             if (resolvedSchema != null) {
@@ -564,7 +568,11 @@ public abstract class AnnotationsUtils {
                         components.addSchemas(key, referencedSchema);
                     }
                 });
-                schemaObject.set$ref(COMPONENTS_REF + resolvedSchema.schema.getName());
+                if (StringUtils.isNotBlank(resolvedSchema.schema.getName())) {
+                    schemaObject.set$ref(COMPONENTS_REF + resolvedSchema.schema.getName());
+                } else {
+                    schemaObject = resolvedSchema.schema;
+                }
             }
         }
         if (StringUtils.isBlank(schemaObject.get$ref()) && StringUtils.isBlank(schemaObject.getType())) {
@@ -1114,28 +1122,10 @@ public abstract class AnnotationsUtils {
                                                        Class<?> schemaImplementation,
                                                        Components components,
                                                        JsonView jsonViewAnnotation) {
-        Map<String, Schema> schemaMap;
         if (schemaImplementation != Void.class) {
-            Schema schemaObject = new Schema();
-            if (schemaImplementation.getName().startsWith("java.lang")) {
-                schemaObject.setType(schemaImplementation.getSimpleName().toLowerCase());
-            } else {
-                ResolvedSchema resolvedSchema = ModelConverters.getInstance().readAllAsResolvedSchema(new AnnotatedType().type(schemaImplementation).jsonViewAnnotation(jsonViewAnnotation));
-                if (resolvedSchema != null) {
-                    schemaMap = resolvedSchema.referencedSchemas;
-                    schemaMap.forEach((key, schema) -> {
-                        components.addSchemas(key, schema);
-                    });
-                    if (resolvedSchema.schema != null && StringUtils.isNotBlank(resolvedSchema.schema.getName())) {
-                        schemaObject.set$ref(COMPONENTS_REF + resolvedSchema.schema.getName());
-                    } else if (resolvedSchema.schema != null){
-                        schemaObject = resolvedSchema.schema;
-                    }
-                }
-            }
-            if (StringUtils.isBlank(schemaObject.get$ref()) && StringUtils.isBlank(schemaObject.getType())) {
-                // default to string
-                schemaObject.setType("string");
+            Schema schemaObject = resolveSchemaFromType(schemaImplementation, components, jsonViewAnnotation);
+            if (StringUtils.isNotBlank(schemaAnnotation.format())) {
+               schemaObject.setFormat(schemaAnnotation.format());
             }
             if (isArray) {
                 Optional<ArraySchema> arraySchema = AnnotationsUtils.getArraySchema(arrayAnnotation, components, jsonViewAnnotation);
@@ -1694,10 +1684,10 @@ public abstract class AnnotationsUtils {
 
             @Override
             public String[] allowableValues() {
-                if (master.requiredProperties().length > 0 || patch.requiredProperties().length == 0) {
-                    return master.requiredProperties();
+                if (master.allowableValues().length > 0 || patch.allowableValues().length == 0) {
+                    return master.allowableValues();
                 }
-                return patch.requiredProperties();
+                return patch.allowableValues();
             }
 
             @Override
@@ -1710,10 +1700,10 @@ public abstract class AnnotationsUtils {
 
             @Override
             public String discriminatorProperty() {
-                if (StringUtils.isNotBlank(master.defaultValue()) || StringUtils.isBlank(patch.defaultValue())) {
-                    return master.defaultValue();
+                if (StringUtils.isNotBlank(master.discriminatorProperty()) || StringUtils.isBlank(patch.discriminatorProperty())) {
+                    return master.discriminatorProperty();
                 }
-                return patch.defaultValue();
+                return patch.discriminatorProperty();
             }
 
             @Override
@@ -1895,4 +1885,5 @@ public abstract class AnnotationsUtils {
 
         return (io.swagger.v3.oas.annotations.media.ArraySchema)newArraySchema;
     }
+
 }
