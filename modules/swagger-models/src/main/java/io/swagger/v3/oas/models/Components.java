@@ -26,10 +26,10 @@ import io.swagger.v3.oas.models.parameters.RequestBody;
 import io.swagger.v3.oas.models.responses.ApiResponse;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.TreeMap;
 
 /**
  * Components
@@ -64,13 +64,13 @@ public class Components {
     }
 
     public Components schemas(Map<String, Schema> schemas) {
-        this.schemas = schemas;
+        this.schemas = new TreeMap<>(schemas);
         return this;
     }
 
     public Components addSchemas(String key, Schema schemasItem) {
         if (this.schemas == null) {
-            this.schemas = new LinkedHashMap<>();
+            this.schemas = new TreeMap<>();
         }
         this.schemas.put(key, schemasItem);
         return this;

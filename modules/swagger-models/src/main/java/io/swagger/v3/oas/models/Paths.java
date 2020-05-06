@@ -16,8 +16,8 @@
 
 package io.swagger.v3.oas.models;
 
-import java.util.LinkedHashMap;
 import java.util.Objects;
+import java.util.TreeMap;
 
 /**
  * Paths
@@ -25,7 +25,7 @@ import java.util.Objects;
  * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.0.1/versions/3.0.1.md#pathsObject"
  */
 
-public class Paths extends LinkedHashMap<String, PathItem> {
+public class Paths extends TreeMap<String, PathItem> {
     public Paths() {
     }
 
