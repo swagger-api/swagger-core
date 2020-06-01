@@ -35,9 +35,9 @@ public class GenericOpenApiScanner implements OpenApiScanner {
     public Set<Class<?>> classes() {
         ClassGraph graph = new ClassGraph().enableAllInfo();
 
-        Set<String> acceptablePackages = new HashSet<String>();
+        Set<String> acceptablePackages = new HashSet<>();
 
-        Set<Class<?>> output = new HashSet<Class<?>>();
+        Set<Class<?>> output = new HashSet<>();
 
         boolean allowAllPackages = false;
 
@@ -97,7 +97,7 @@ public class GenericOpenApiScanner implements OpenApiScanner {
         if (StringUtils.isBlank(classOrPackageName)) {
             return true;
         }
-        return ignored.stream().anyMatch(i -> classOrPackageName.startsWith(i));
+        return ignored.stream().anyMatch(classOrPackageName::startsWith);
     }
 
 }
