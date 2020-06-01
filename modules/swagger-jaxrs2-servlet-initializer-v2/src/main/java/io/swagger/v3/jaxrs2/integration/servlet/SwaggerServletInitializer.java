@@ -32,8 +32,9 @@ public class SwaggerServletInitializer implements ServletContainerInitializer {
     public SwaggerServletInitializer() {
     }
 
+    @Override
     public void onStartup(Set<Class<?>> classes, ServletContext servletContext) throws ServletException {
-        if (classes != null && classes.size() != 0) {
+        if (classes != null && ! classes.isEmpty()) {
             Set<Class<?>> resources = new LinkedHashSet();
             classes.stream()
                     .filter(c -> ignored.stream().noneMatch(i -> c.getName().startsWith(i)))
@@ -42,7 +43,7 @@ public class SwaggerServletInitializer implements ServletContainerInitializer {
                 // init context
                 try {
                     SwaggerConfiguration oasConfig = new SwaggerConfiguration()
-                            .resourceClasses(resources.stream().map(c -> c.getName()).collect(Collectors.toSet()));
+                            .resourceClasses(resources.stream().map(Class::getName).collect(Collectors.toSet()));
 
                     new JaxrsOpenApiContextBuilder()
                             .openApiConfiguration(oasConfig)
