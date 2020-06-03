@@ -139,11 +139,6 @@
                             "schema": {
                                 "$ref": "#/components/schemas/Pet"
                             }
-                        },
-                        "application/xml": {
-                            "schema": {
-                                "$ref": "#/components/schemas/Tag"
-                            }
                         }
                     },
                     "required": true
@@ -276,12 +271,45 @@
                         "type": "integer",
                         "format": "int64"
                     },
+                    "foo": {
+                        "$ref": "#/components/schemas/Foo"
+                    },
                     "name": {
                         "type": "string"
                     }
                 },
                 "xml": {
                     "name": "Tag"
+                }
+            },
+            "Foo": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "name": {
+                        "type": "string"
+                    }
+                },
+                "xml": {
+                    "name": "Foo"
+                }
+            },
+            "Bar": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "name": {
+                        "type": "string"
+                    }
+                },
+                "xml": {
+                    "name": "Bar"
                 }
             },
             "Pet": {

@@ -17,10 +17,8 @@
 package io.swagger.v3.oas.models.links;
 
 import io.swagger.v3.oas.models.headers.Header;
-import io.swagger.v3.oas.models.parameters.RequestBody;
 import io.swagger.v3.oas.models.servers.Server;
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -238,7 +236,7 @@ public class Link {
     }
 
     public void set$ref(String $ref) {
-        if ($ref != null && ($ref.indexOf(".") == -1 && $ref.indexOf("/") == -1)) {
+        if ($ref != null && ($ref.indexOf('.') == -1 && $ref.indexOf('/') == -1)) {
             $ref = "#/components/links/" + $ref;
         }
         this.$ref = $ref;

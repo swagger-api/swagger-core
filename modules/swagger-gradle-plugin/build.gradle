@@ -6,7 +6,7 @@ plugins {
     id 'java-gradle-plugin'
     id 'net.researchgate.release' version '2.6.0'
     // Publishing publicly
-    id 'com.gradle.plugin-publish' version '0.10.1'
+    id 'com.gradle.plugin-publish' version '0.11.0'
     // Publishing to maven
     id 'maven-publish'
 }
@@ -27,7 +27,6 @@ dependencies {
 
     testCompile gradleTestKit()
     testCompile 'com.github.tomakehurst:wiremock:2.14.0'
-    testCompile 'commons-io:commons-io:2.6'
     testCompile 'javax.servlet:javax.servlet-api:3.1.0'
     testCompile 'javax.ws.rs:javax.ws.rs-api:2.1'
     testCompile "io.swagger.core.v3:swagger-jaxrs2:${project.version}"

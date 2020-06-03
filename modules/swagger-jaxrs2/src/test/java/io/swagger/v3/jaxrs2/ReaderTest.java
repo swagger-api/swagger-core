@@ -51,6 +51,7 @@ import io.swagger.v3.jaxrs2.resources.SubResourceHead;
 import io.swagger.v3.jaxrs2.resources.TagsResource;
 import io.swagger.v3.jaxrs2.resources.Test2607;
 import io.swagger.v3.jaxrs2.resources.TestResource;
+import io.swagger.v3.jaxrs2.resources.Ticket2340Resource;
 import io.swagger.v3.jaxrs2.resources.Ticket2644ConcreteImplementation;
 import io.swagger.v3.jaxrs2.resources.Ticket2763Resource;
 import io.swagger.v3.jaxrs2.resources.Ticket2793Resource;
@@ -349,15 +350,15 @@ public class ReaderTest {
                 "        object\n" +
                 "      operationId: getWithPayloadResponse\n" +
                 "      responses:\n" +
-                "        200:\n" +
+                "        \"200\":\n" +
                 "          description: voila!\n" +
                 "          content:\n" +
                 "            application/json:\n" +
                 "              schema:\n" +
                 "                $ref: '#/components/schemas/SampleResponseSchema'\n" +
-                "        404:\n" +
+                "        \"404\":\n" +
                 "          description: not found!\n" +
-                "        400:\n" +
+                "        \"400\":\n" +
                 "          description: boo\n" +
                 "          content:\n" +
                 "            '*/*':\n" +
@@ -388,7 +389,7 @@ public class ReaderTest {
                 "        object\n" +
                 "      operationId: getWithPayloadResponse\n" +
                 "      responses:\n" +
-                "        200:\n" +
+                "        \"200\":\n" +
                 "          description: voila!\n" +
                 "          content:\n" +
                 "            application/json:\n" +
@@ -415,7 +416,7 @@ public class ReaderTest {
                 "          format: int32\n" +
                 "        example: 1\n" +
                 "      responses:\n" +
-                "        200:\n" +
+                "        \"200\":\n" +
                 "          description: bean answer\n" +
                 "          content:\n" +
                 "            application/json:\n" +
@@ -437,7 +438,7 @@ public class ReaderTest {
                 "          format: int32\n" +
                 "        example: 1\n" +
                 "      responses:\n" +
-                "        200:\n" +
+                "        \"200\":\n" +
                 "          description: bean answer\n" +
                 "          content:\n" +
                 "            application/json:\n" +
@@ -459,7 +460,7 @@ public class ReaderTest {
                 "          format: int32\n" +
                 "        example: 1\n" +
                 "      responses:\n" +
-                "        200:\n" +
+                "        \"200\":\n" +
                 "          description: bean answer\n" +
                 "          content:\n" +
                 "            application/json:\n" +
@@ -469,17 +470,30 @@ public class ReaderTest {
                 "                - $ref: '#/components/schemas/MultipleSub2Bean'\n" +
                 "components:\n" +
                 "  schemas:\n" +
+                "    SampleResponseSchema:\n" +
+                "      type: object\n" +
+                "    GenericError:\n" +
+                "      type: object\n" +
+                "    MultipleSub1Bean:\n" +
+                "      type: object\n" +
+                "      description: MultipleSub1Bean\n" +
+                "      allOf:\n" +
+                "      - $ref: '#/components/schemas/MultipleBaseBean'\n" +
+                "      - type: object\n" +
+                "        properties:\n" +
+                "          c:\n" +
+                "            type: integer\n" +
+                "            format: int32\n" +
                 "    MultipleSub2Bean:\n" +
                 "      type: object\n" +
-                "      properties:\n" +
-                "        d:\n" +
-                "          type: integer\n" +
-                "          format: int32\n" +
                 "      description: MultipleSub2Bean\n" +
                 "      allOf:\n" +
                 "      - $ref: '#/components/schemas/MultipleBaseBean'\n" +
-                "    GenericError:\n" +
-                "      type: object\n" +
+                "      - type: object\n" +
+                "        properties:\n" +
+                "          d:\n" +
+                "            type: integer\n" +
+                "            format: int32\n" +
                 "    MultipleBaseBean:\n" +
                 "      type: object\n" +
                 "      properties:\n" +
@@ -490,18 +504,7 @@ public class ReaderTest {
                 "          format: int32\n" +
                 "        b:\n" +
                 "          type: string\n" +
-                "      description: MultipleBaseBean\n" +
-                "    MultipleSub1Bean:\n" +
-                "      type: object\n" +
-                "      properties:\n" +
-                "        c:\n" +
-                "          type: integer\n" +
-                "          format: int32\n" +
-                "      description: MultipleSub1Bean\n" +
-                "      allOf:\n" +
-                "      - $ref: '#/components/schemas/MultipleBaseBean'\n" +
-                "    SampleResponseSchema:\n" +
-                "      type: object";
+                "      description: MultipleBaseBean";
         SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
     }
 
@@ -702,7 +705,6 @@ public class ReaderTest {
     public void test2497() {
         Reader reader = new Reader(new OpenAPI());
         OpenAPI openAPI = reader.read(ResponseContentWithArrayResource.class);
-
         Paths paths = openAPI.getPaths();
         assertEquals(paths.size(), 1);
         PathItem pathItem = paths.get("/user");
@@ -712,6 +714,8 @@ public class ReaderTest {
         ArraySchema schema = (ArraySchema) operation.getResponses().get("200").getContent().values().iterator().next().getSchema();
         assertNotNull(schema);
         assertEquals(schema.getItems().get$ref(), "#/components/schemas/User");
+
+        assertEquals(openAPI.getComponents().getSchemas().get("User").getRequired().get(0), "issue3438");
     }
 
     @Test(description = "test resource with subresources")
@@ -991,6 +995,60 @@ public class ReaderTest {
         SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
     }
 
+    @Test(description = "Responses with array schema")
+    public void testTicket2340() {
+        Reader reader = new Reader(new OpenAPI());
+
+        OpenAPI openAPI = reader.read(Ticket2340Resource.class);
+        String yaml = "openapi: 3.0.1\n" +
+                "paths:\n" +
+                "  /test/test:\n" +
+                "    post:\n" +
+                "      operationId: getAnimal\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          application/json:\n" +
+                "            schema:\n" +
+                "              $ref: '#/components/schemas/Animal'\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            application/json:\n" +
+                "              schema:\n" +
+                "                type: string\n" +
+                "components:\n" +
+                "  schemas:\n" +
+                "    Animal:\n" +
+                "      required:\n" +
+                "      - type\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        type:\n" +
+                "          type: string\n" +
+                "      discriminator:\n" +
+                "        propertyName: type\n" +
+                "    Cat:\n" +
+                "      type: object\n" +
+                "      allOf:\n" +
+                "      - $ref: '#/components/schemas/Animal'\n" +
+                "      - type: object\n" +
+                "        properties:\n" +
+                "          lives:\n" +
+                "            type: integer\n" +
+                "            format: int32\n" +
+                "    Dog:\n" +
+                "      type: object\n" +
+                "      allOf:\n" +
+                "      - $ref: '#/components/schemas/Animal'\n" +
+                "      - type: object\n" +
+                "        properties:\n" +
+                "          barkVolume:\n" +
+                "            type: number\n" +
+                "            format: double\n";
+        SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
+    }
+
     @Test(description = "array schema example")
     public void testTicket2806() {
         Reader reader = new Reader(new OpenAPI());
@@ -1104,7 +1162,7 @@ public class ReaderTest {
                 "    get:\n" +
                 "      operationId: getDistances\n" +
                 "      responses:\n" +
-                "        200:\n" +
+                "        \"200\":\n" +
                 "          content:\n" +
                 "            application/json:\n" +
                 "              schema:\n" +
@@ -1157,7 +1215,7 @@ public class ReaderTest {
                 "        object\n" +
                 "      operationId: getWithPayloadResponse\n" +
                 "      responses:\n" +
-                "        200:\n" +
+                "        \"200\":\n" +
                 "          description: voila!\n" +
                 "          content:\n" +
                 "            application/json:\n" +
@@ -1169,7 +1227,7 @@ public class ReaderTest {
                 "            '*/*':\n" +
                 "              schema:\n" +
                 "                $ref: '#/components/schemas/GenericError'\n" +
-                "        401:\n" +
+                "        \"401\":\n" +
                 "          $ref: '#/components/responses/invalidJWT'\n" +
                 "      deprecated: true\n" +
                 "components:\n" +
@@ -1210,9 +1268,8 @@ public class ReaderTest {
                 "      description: Defines a simple get operation with no inputs and a complex output\n" +
                 "        object\n" +
                 "      operationId: getWithPayloadResponse\n" +
-                "      parameters: []\n" +
                 "      responses:\n" +
-                "        200:\n" +
+                "        \"200\":\n" +
                 "          description: voila!\n" +
                 "          content:\n" +
                 "            application/json:\n" +
@@ -1224,7 +1281,7 @@ public class ReaderTest {
                 "            '*/*':\n" +
                 "              schema:\n" +
                 "                $ref: '#/components/schemas/GenericError'\n" +
-                "        401:\n" +
+                "        \"401\":\n" +
                 "          $ref: '#/components/responses/invalidJWT'\n" +
                 "      deprecated: true\n" +
                 "components:\n" +
@@ -1370,7 +1427,6 @@ public class ReaderTest {
                 "      summary: Simple get operation\n" +
                 "      description: Defines a simple get operation with a payload complex input object\n" +
                 "      operationId: sendPayload\n" +
-                "      parameters: []\n" +
                 "      requestBody:\n" +
                 "        $ref: '#/components/requestBodies/User'\n" +
                 "      responses:\n" +
@@ -1693,7 +1749,7 @@ public class ReaderTest {
                 "      description: Defines a simple get operation with no inputs and a complex output\n" +
                 "      operationId: getWithPayloadResponse\n" +
                 "      responses:\n" +
-                "        200:\n" +
+                "        \"200\":\n" +
                 "          description: voila!\n" +
                 "          headers:\n" +
                 "            Rate-Limit-Limit:\n" +
@@ -1822,7 +1878,7 @@ public class ReaderTest {
                 "      summary: Simple get operation\n" +
                 "      operationId: getWithNoParameters\n" +
                 "      responses:\n" +
-                "        200:\n" +
+                "        \"200\":\n" +
                 "          description: voila!\n" +
                 "      callbacks:\n" +
                 "        testCallback1:\n" +
@@ -1846,16 +1902,16 @@ public class ReaderTest {
                 "    get:\n" +
                 "      operationId: schemaImpl\n" +
                 "      responses:\n" +
-                "        200:\n" +
+                "        \"200\":\n" +
                 "          description: OK\n" +
                 "          content:\n" +
                 "            '*/*':\n" +
                 "              schema:\n" +
                 "                type: string\n" +
                 "                format: uri\n" +
-                "        400:\n" +
+                "        \"400\":\n" +
                 "          description: Bad Request\n" +
-                "        500:\n" +
+                "        \"500\":\n" +
                 "          description: Internal Server Error\n";
         SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
         PrimitiveType.customExcludedClasses().add(URI.class.getName());
@@ -1866,7 +1922,7 @@ public class ReaderTest {
                 "    get:\n" +
                 "      operationId: schemaImpl_1\n" +
                 "      responses:\n" +
-                "        200:\n" +
+                "        \"200\":\n" +
                 "          description: OK\n" +
                 "          content:\n" +
                 "            '*/*':\n" +
@@ -1908,9 +1964,9 @@ public class ReaderTest {
                 "                    type: boolean\n" +
                 "                  opaque:\n" +
                 "                    type: boolean\n" +
-                "        400:\n" +
+                "        \"400\":\n" +
                 "          description: Bad Request\n" +
-                "        500:\n" +
+                "        \"500\":\n" +
                 "          description: Internal Server Error\n";
         SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
         PrimitiveType.customExcludedClasses().remove(URI.class.getName());
@@ -2003,7 +2059,7 @@ public class ReaderTest {
                 "          type: string\n";
         SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
     }
-    
+
     @Test(description = "Filter class return type")
     public void testTicket3074() {
         Reader reader = new Reader(new OpenAPI());
@@ -2016,7 +2072,6 @@ public class ReaderTest {
         oasResult = reader.read(RefParameter3074Resource.class);
         SerializationMatchers.assertEqualsToYaml(oasResult, RefParameter3074Resource.EXPECTED_YAML_WITHOUT_WRAPPER);
     }
-
 
     @Test(description = "Single Example")
     public void testSingleExample() {

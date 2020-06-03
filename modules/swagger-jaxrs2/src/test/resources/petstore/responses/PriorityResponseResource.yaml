@@ -6,5 +6,5 @@ paths:
       description: Returns the Pets
       operationId: getPets
       responses:
-        200:
+        "200":
           description: Inside Method Operation

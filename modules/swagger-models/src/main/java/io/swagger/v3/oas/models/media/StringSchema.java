@@ -29,6 +29,7 @@ public class StringSchema extends Schema<String> {
         super("string", null);
     }
 
+    @Override
     public StringSchema type(String type) {
         super.setType(type);
         return this;

@@ -24,6 +24,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -156,6 +157,19 @@ public class SpecFilter {
             if (filteredOperation.isPresent()) {
                 List<Parameter> filteredParameters = new ArrayList<>();
                 Operation filteredOperationGet = filteredOperation.get();
+
+                Operation clone = new Operation();
+                clone.setCallbacks(filteredOperationGet.getCallbacks());
+                clone.setDeprecated(filteredOperationGet.getDeprecated());
+                clone.setDescription(filteredOperationGet.getDescription());
+                clone.setExtensions(filteredOperationGet.getExtensions());
+                clone.setExternalDocs(filteredOperationGet.getExternalDocs());
+                clone.setOperationId(filteredOperationGet.getOperationId());
+                clone.setSecurity(filteredOperationGet.getSecurity());
+                clone.setServers(filteredOperationGet.getServers());
+                clone.setSummary(filteredOperationGet.getSummary());
+                clone.setTags(filteredOperationGet.getTags());
+
                 List<Parameter> parameters = filteredOperationGet.getParameters();
                 if (parameters != null) {
                     for (Parameter parameter : parameters) {
@@ -164,13 +178,13 @@ public class SpecFilter {
                             filteredParameters.add(filteredParameter);
                         }
                     }
+                    clone.setParameters(filteredParameters);
                 }
-                filteredOperationGet.setParameters(filteredParameters);
 
                 RequestBody requestBody = filteredOperation.get().getRequestBody();
                 if (requestBody != null) {
                     RequestBody filteredRequestBody = filterRequestBody(filter, operation, requestBody, resourcePath, key, params, cookies, headers);
-                    filteredOperationGet.setRequestBody(filteredRequestBody);
+                    clone.setRequestBody(filteredRequestBody);
 
                 }
 
@@ -183,10 +197,10 @@ public class SpecFilter {
                             clonedResponses.addApiResponse(responseKey, filteredResponse);
                         }
                     });
-                    filteredOperationGet.setResponses(clonedResponses);
+                    clone.setResponses(clonedResponses);
                 }
 
-                return filteredOperationGet;
+                return clone;
             }
         }
         return null;
@@ -290,6 +304,11 @@ public class SpecFilter {
             referencedDefinitions.add(schema.get$ref());
             return;
         }
+        if (schema.getDiscriminator() != null && schema.getDiscriminator().getMapping() != null) {
+            for (Map.Entry<String, String> mapping: schema.getDiscriminator().getMapping().entrySet()) {
+                referencedDefinitions.add(mapping.getValue());
+            }
+        }
 
         if (schema.getProperties() != null) {
             for (Object propName : schema.getProperties().keySet()) {
@@ -392,24 +411,38 @@ public class SpecFilter {
             }
         }
 
-        Set<String> nestedReferencedDefinitions = new TreeSet<>();
-        for (String ref : referencedDefinitions) {
-            locateReferencedDefinitions(ref, nestedReferencedDefinitions, openApi);
-        }
-        referencedDefinitions.addAll(nestedReferencedDefinitions);
-        openApi.getComponents().getSchemas().keySet().retainAll(referencedDefinitions.stream().map(s -> (String) RefUtils.extractSimpleName(s).getLeft()).collect(Collectors.toSet()));
+        referencedDefinitions.addAll(resolveAllNestedRefs(referencedDefinitions, referencedDefinitions, openApi));
+        openApi.getComponents()
+                .getSchemas()
+                .keySet()
+                .retainAll(referencedDefinitions.stream()
+                        .map(s -> (String) RefUtils.extractSimpleName(s).getLeft())
+                        .collect(Collectors.toSet()));
         return openApi;
     }
 
+    protected Set<String> resolveAllNestedRefs(Set<String> refs, Set<String> accumulatedRefs, OpenAPI openApi) {
+        Set<String> justDiscoveredReferencedDefinitions = new TreeSet<>();
+        for (String ref : refs) {
+            locateReferencedDefinitions(ref, justDiscoveredReferencedDefinitions, openApi);
+        }
+        // Base case - no new references have been discovered. Halt discovery to avoid infinite loops
+        if (accumulatedRefs.containsAll(justDiscoveredReferencedDefinitions)) {
+            return Collections.emptySet();
+        } else {
+            // Remove all refs that have already been discovered.
+            justDiscoveredReferencedDefinitions.removeAll(accumulatedRefs);
+            accumulatedRefs.addAll(justDiscoveredReferencedDefinitions);
+            return resolveAllNestedRefs(justDiscoveredReferencedDefinitions, accumulatedRefs, openApi);
+        }
+    }
+
     protected void locateReferencedDefinitions(String ref, Set<String> nestedReferencedDefinitions, OpenAPI openAPI) {
-        // if not already processed so as to avoid infinite loops
-        if (!nestedReferencedDefinitions.contains(ref)) {
-            nestedReferencedDefinitions.add(ref);
-            String simpleName = (String) RefUtils.extractSimpleName(ref).getLeft();
-            Schema model = openAPI.getComponents().getSchemas().get(simpleName);
-            if (model != null) {
-                addSchemaRef(model, nestedReferencedDefinitions);
-            }
+        nestedReferencedDefinitions.add(ref);
+        String simpleName = (String) RefUtils.extractSimpleName(ref).getLeft();
+        Schema model = openAPI.getComponents().getSchemas().get(simpleName);
+        if (model != null) {
+            addSchemaRef(model, nestedReferencedDefinitions);
         }
     }
 }

@@ -6,7 +6,7 @@ paths:
       description: Returns the Pets
       operationId: getPets
       responses:
-        200:
+        "200":
           description: Response inside Operation
           content:
             '*/*':
@@ -20,7 +20,7 @@ paths:
                 type: string
                 description: Default Pet
                 example: New Pet
-        404:
+        "404":
           description: Couldn't find pet
 components:
   schemas:

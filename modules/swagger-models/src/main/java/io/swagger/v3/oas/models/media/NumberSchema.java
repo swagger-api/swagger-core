@@ -30,6 +30,7 @@ public class NumberSchema extends Schema<BigDecimal> {
         super("number", null);
     }
 
+    @Override
     public NumberSchema type(String type) {
         super.setType(type);
         return this;

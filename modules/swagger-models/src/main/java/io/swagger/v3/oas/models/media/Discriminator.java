@@ -1,6 +1,5 @@
 package io.swagger.v3.oas.models.media;
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 

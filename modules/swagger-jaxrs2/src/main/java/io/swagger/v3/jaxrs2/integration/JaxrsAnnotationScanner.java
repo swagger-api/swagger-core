@@ -28,6 +28,7 @@ public class JaxrsAnnotationScanner<T extends JaxrsAnnotationScanner<T>> impleme
     protected OpenAPIConfiguration openApiConfiguration;
     protected Application application;
     protected static Logger LOGGER = LoggerFactory.getLogger(JaxrsAnnotationScanner.class);
+    protected boolean onlyConsiderResourcePackages = false;
 
     public JaxrsAnnotationScanner application(Application application) {
         this.application = application;
@@ -83,7 +84,9 @@ public class JaxrsAnnotationScanner<T extends JaxrsAnnotationScanner<T>> impleme
                 }
             }
         } else {
-            allowAllPackages = true;
+            if (!onlyConsiderResourcePackages) {
+                allowAllPackages = true;
+            }
         }
         final Set<Class<?>> classes;
         try (ScanResult scanResult = graph.scan()) {

@@ -35,9 +35,9 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/Pet'
-        400:
+        "400":
           description: Invalid ID supplied
-        404:
+        "404":
           description: Pet not found
     put:
       description: combinatedsameOperationName

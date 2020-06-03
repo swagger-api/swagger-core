@@ -444,15 +444,13 @@ public class Schema<T> {
         List<String> list = new ArrayList<>();
         if (required != null) {
             for (String req : required) {
-                if (this.properties == null) {
-                    list.add(req);
-                } else if (this.properties.containsKey(req)) {
+                if (this.properties == null || this.properties.containsKey(req)) {
                     list.add(req);
                 }
             }
         }
         Collections.sort(list);
-        if (list.size() == 0) {
+        if (list.isEmpty()) {
             list = null;
         }
         this.required = list;
@@ -465,7 +463,7 @@ public class Schema<T> {
 
     public Schema addRequiredItem(String requiredItem) {
         if (this.required == null) {
-            this.required = new ArrayList<String>();
+            this.required = new ArrayList<>();
         }
         this.required.add(requiredItem);
         Collections.sort(required);
@@ -607,7 +605,7 @@ public class Schema<T> {
     }
 
     public void set$ref(String $ref) {
-        if ($ref != null && ($ref.indexOf(".") == -1 && $ref.indexOf("/") == -1)) {
+        if ($ref != null && ($ref.indexOf('.') == -1 && $ref.indexOf('/') == -1)) {
             $ref = "#/components/schemas/" + $ref;
         }
         this.$ref = $ref;
@@ -691,7 +689,7 @@ public class Schema<T> {
     }
 
     public Schema example(Object example) {
-        this.example = cast(example);
+        setExample(example);
         return this;
     }
 
