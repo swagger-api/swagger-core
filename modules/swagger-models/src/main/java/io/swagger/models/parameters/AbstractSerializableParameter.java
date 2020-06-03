@@ -413,12 +413,12 @@ public abstract class AbstractSerializableParameter<T extends AbstractSerializab
             } else if (DecimalProperty.TYPE.equals(type)) {
                 return Double.valueOf(example);
             } else if (BooleanProperty.TYPE.equals(type)) {
-                if ("true".equalsIgnoreCase(example) || "false".equalsIgnoreCase(defaultValue)) {
+                if ("true".equalsIgnoreCase(example) || "false".equalsIgnoreCase(example)) {
                     return Boolean.valueOf(example);
                 }
             }
         } catch (NumberFormatException e) {
-            LOGGER.warn(String.format("Illegal DefaultValue %s for parameter type %s", defaultValue, type), e);
+            LOGGER.warn(String.format("Illegal Example %s for parameter type %s", example, type), e);
         }
         return example;
     }
