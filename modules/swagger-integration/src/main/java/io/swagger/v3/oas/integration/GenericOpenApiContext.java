@@ -122,6 +122,7 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
         return (T) this;
     }
 
+    @Override
     public String getConfigLocation() {
         return configLocation;
     }
@@ -240,8 +241,7 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
 
                 @Override
                 public OpenAPI read(Set<Class<?>> classes, Map<String, Object> resources) {
-                    OpenAPI openApi = openApiConfiguration.getOpenAPI();
-                    return openApi;
+                    return openApiConfiguration.getOpenAPI();
                 }
             };
         }

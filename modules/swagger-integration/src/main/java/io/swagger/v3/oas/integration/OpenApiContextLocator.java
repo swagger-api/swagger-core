@@ -9,7 +9,7 @@ public class OpenApiContextLocator {
 
     private static OpenApiContextLocator instance;
 
-    private ConcurrentMap<String, OpenApiContext> map = new ConcurrentHashMap<String, OpenApiContext>();
+    private ConcurrentMap<String, OpenApiContext> map = new ConcurrentHashMap<>();
 
     private OpenApiContextLocator() {
     }
