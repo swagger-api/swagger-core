@@ -29,11 +29,13 @@ public class ByteArraySchema extends Schema<byte[]> {
         super("string", "byte");
     }
 
+    @Override
     public ByteArraySchema type(String type) {
         super.setType(type);
         return this;
     }
 
+    @Override
     public ByteArraySchema format(String format) {
         super.setFormat(format);
         return this;
