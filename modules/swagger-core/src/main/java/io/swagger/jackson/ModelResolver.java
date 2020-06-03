@@ -220,7 +220,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             }
             property._enum(n);
         }
-        
+
         if (!useIndex && !useToString) {
             property._enum(Arrays.asList(_intr.findEnumValues(propClass, enumClass.getEnumConstants(), property.getEnum().toArray(new String[0]))));
         }
@@ -422,7 +422,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                     allowEmptyValue = null;
                 }
 
-                JavaType propType = member.getType(beanDesc.bindingsForBeanType());
+                JavaType propType = member.getType();
 
                 // allow override of name from annotation
                 if (mp != null && !mp.name().isEmpty()) {
@@ -755,7 +755,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                     final String name = def.getName();
                     if (name != null && name.equals(propertyName)) {
                         final AnnotatedMember propMember = def.getPrimaryMember();
-                        final JavaType propType = propMember.getType(beanDesc.bindingsForBeanType());
+                        final JavaType propType = propMember.getType();
                         if (PrimitiveType.fromType(propType) != null) {
                             return PrimitiveType.createProperty(propType);
                         } else {
