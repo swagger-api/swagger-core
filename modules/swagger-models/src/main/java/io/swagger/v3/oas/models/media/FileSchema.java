@@ -28,11 +28,13 @@ public class FileSchema extends Schema<String> {
         super("string", "binary");
     }
 
+    @Override
     public FileSchema type(String type) {
         super.setType(type);
         return this;
     }
 
+    @Override
     public FileSchema format(String format) {
         super.setFormat(format);
         return this;

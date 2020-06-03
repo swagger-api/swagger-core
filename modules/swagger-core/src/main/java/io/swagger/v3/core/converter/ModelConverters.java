@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Type;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -40,6 +41,10 @@ public class ModelConverters {
 
     public void removeConverter(ModelConverter converter) {
         converters.remove(converter);
+    }
+
+    public List<ModelConverter> getConverters() {
+        return Collections.unmodifiableList(converters);
     }
 
     public void addPackageToSkip(String pkg) {

@@ -32,11 +32,13 @@ public class DateTimeSchema extends Schema<OffsetDateTime> {
         super("string", "date-time");
     }
 
+    @Override
     public DateTimeSchema type(String type) {
         super.setType(type);
         return this;
     }
 
+    @Override
     public DateTimeSchema format(String format) {
         super.setFormat(format);
         return this;

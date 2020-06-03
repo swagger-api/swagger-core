@@ -29,11 +29,13 @@ public class IntegerSchema extends Schema<Number> {
         super("integer", "int32");
     }
 
+    @Override
     public IntegerSchema type(String type) {
         super.setType(type);
         return this;
     }
 
+    @Override
     public IntegerSchema format(String format) {
         super.setFormat(format);
         return this;
