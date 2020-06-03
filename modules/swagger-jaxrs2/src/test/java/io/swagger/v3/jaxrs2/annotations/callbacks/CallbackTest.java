@@ -17,11 +17,13 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
 
+import java.io.IOException;
+
 import static org.testng.Assert.assertEquals;
 
 public class CallbackTest extends AbstractAnnotationTest {
     @Test
-    public void testSimpleCallback() {
+    public void testSimpleCallback() throws IOException {
         String openApiYAML = readIntoYaml(SimpleCallback.class);
         int start = openApiYAML.indexOf("/test:");
         int end = openApiYAML.length() - 1;
@@ -85,7 +87,7 @@ public class CallbackTest extends AbstractAnnotationTest {
                 "      properties:\n" +
                 "        subscriptionId:\n" +
                 "          type: string";
-        assertEquals(extractedYAML, expectedYAML);
+        compareAsYaml(extractedYAML, expectedYAML);
     }
 
     static class SimpleCallback {

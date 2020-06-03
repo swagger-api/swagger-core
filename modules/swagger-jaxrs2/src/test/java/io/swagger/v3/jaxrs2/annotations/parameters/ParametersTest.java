@@ -19,6 +19,7 @@ import org.testng.annotations.Test;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -41,7 +42,7 @@ public class ParametersTest extends AbstractAnnotationTest {
     }
 
     @Test
-    public void testParameters() {
+    public void testParameters() throws IOException {
         String openApiYAML = readIntoYaml(ParametersTest.SimpleOperations.class);
         int start = openApiYAML.indexOf("/test:");
         int end = openApiYAML.length() - 1;
@@ -129,11 +130,11 @@ public class ParametersTest extends AbstractAnnotationTest {
                 "      properties:\n" +
                 "        subscriptionId:\n" +
                 "          type: string";
-        assertEquals(extractedYAML, expectedYAML);
+        compareAsYaml(extractedYAML, expectedYAML);
     }
 
     @Test
-    public void testArraySchemaParameters() {
+    public void testArraySchemaParameters() throws IOException {
         String openApiYAML = readIntoYaml(ParametersTest.ArraySchemaOperations.class);
         int start = openApiYAML.indexOf("/test:");
         int end = openApiYAML.length() - 1;
@@ -169,11 +170,11 @@ public class ParametersTest extends AbstractAnnotationTest {
                 "      properties:\n" +
                 "        subscriptionId:\n" +
                 "          type: string";
-        assertEquals(extractedYAML, expectedYAML);
+        compareAsYaml(extractedYAML, expectedYAML);
     }
 
     @Test
-    public void testRepeatableParameters() {
+    public void testRepeatableParameters() throws IOException {
         String openApiYAML = readIntoYaml(ParametersTest.RepeatableParametersOperations.class);
         int start = openApiYAML.indexOf("/test:");
         int end = openApiYAML.length() - 1;
@@ -261,7 +262,7 @@ public class ParametersTest extends AbstractAnnotationTest {
                 "      properties:\n" +
                 "        subscriptionId:\n" +
                 "          type: string";
-        assertEquals(extractedYAML, expectedYAML);
+        compareAsYaml(extractedYAML, expectedYAML);
     }
 
     @Test(description = "JsonUnwrapped, JsonIgnore, JsonValue should be honoured")

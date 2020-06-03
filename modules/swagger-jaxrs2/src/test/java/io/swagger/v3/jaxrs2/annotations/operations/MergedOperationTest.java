@@ -12,6 +12,8 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
 
+import java.io.IOException;
+
 import static org.testng.Assert.assertEquals;
 
 public class MergedOperationTest extends AbstractAnnotationTest {
@@ -34,10 +36,10 @@ public class MergedOperationTest extends AbstractAnnotationTest {
     }
 
     @Test(description = "shows how a method with parameters and no special annotations is processed")
-    public void testAnnotatedParameters() {
+    public void testAnnotatedParameters() throws IOException {
         String yaml = readIntoYaml(MethodWithParameters.class);
 
-        assertEquals(yaml,
+        compareAsYaml(yaml,
                 "openapi: 3.0.1\n" +
                         "paths:\n" +
                         "  /findAll:\n" +
@@ -80,7 +82,7 @@ public class MergedOperationTest extends AbstractAnnotationTest {
     }
 
     @Test(description = "shows how annotations can decorate an operation")
-    public void testPartiallyAnnotatedMethod() {
+    public void testPartiallyAnnotatedMethod() throws IOException {
         String yaml = readIntoYaml(MethodWithPartialAnnotation.class);
         String expectedYaml = "openapi: 3.0.1\n" +
                 "paths:\n" +
@@ -114,7 +116,7 @@ public class MergedOperationTest extends AbstractAnnotationTest {
                 "    SimpleResponse:\n" +
                 "      type: object\n";
 
-        assertEquals(yaml, expectedYaml);
+        compareAsYaml(yaml, expectedYaml);
     }
 
     static class MethodWithPartialAnnotation {
@@ -134,7 +136,7 @@ public class MergedOperationTest extends AbstractAnnotationTest {
     }
 
     @Test(description = "shows how a request body is passed")
-    public void testRequestBody() {
+    public void testRequestBody() throws IOException {
         String yaml = readIntoYaml(MethodWithRequestBody.class);
         String expectedYaml = "openapi: 3.0.1\n" +
                 "paths:\n" +
@@ -155,7 +157,7 @@ public class MergedOperationTest extends AbstractAnnotationTest {
                 "    InputValue:\n" +
                 "      type: object\n";
 
-        assertEquals(yaml, expectedYaml);
+        compareAsYaml(yaml, expectedYaml);
     }
 
     static class MethodWithRequestBody {

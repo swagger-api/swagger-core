@@ -265,8 +265,10 @@ public class JsonDeserializationTest {
         final OpenAPI swagger = Yaml.mapper().readValue(jsonString, OpenAPI.class);
         assertNotNull(swagger);
         Map<String, Schema> props = swagger.getComponents().getSchemas().get("MyModel").getProperties();
-        assertTrue(Yaml.pretty().writeValueAsString(props.get("date")).contains("example: 2019-08-05"));
-        assertTrue(Yaml.pretty().writeValueAsString(props.get("dateTime")).contains("example: 2019-08-05T12:34:56Z"));
+        final String dateYaml = Yaml.mapper().writeValueAsString(props.get("date"));
+        assertEquals(Yaml.mapper().readTree(dateYaml).path("example").asText(), "2019-08-05");
+        final String dateTimeYaml = Yaml.mapper().writeValueAsString(props.get("dateTime"));
+        assertEquals(Yaml.mapper().readTree(dateTimeYaml).path("example").asText(), "2019-08-05T12:34:56Z");
 
     }
 

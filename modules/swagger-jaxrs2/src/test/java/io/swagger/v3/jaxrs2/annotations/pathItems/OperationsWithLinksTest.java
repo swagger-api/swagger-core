@@ -292,7 +292,7 @@ public class OperationsWithLinksTest extends AbstractAnnotationTest {
     }
 
     @Test(description = "Shows creating simple links")
-    public void createOperationWithLinkReferences() {
+    public void createOperationWithLinkReferences() throws IOException {
         String openApiYAML = readIntoYaml(ClassWithOperationAndLinkReferences.class);
         int start = openApiYAML.indexOf("/users:");
         int end = openApiYAML.length() - 1;
@@ -327,7 +327,7 @@ public class OperationsWithLinksTest extends AbstractAnnotationTest {
                 "        username:\n" +
                 "          type: string";
         String extractedYAML = openApiYAML.substring(start, end);
-        assertEquals(extractedYAML, expectedYaml);
+        compareAsYaml(extractedYAML, expectedYaml);
     }
 
     static class ClassWithOperationAndLinkReferences {

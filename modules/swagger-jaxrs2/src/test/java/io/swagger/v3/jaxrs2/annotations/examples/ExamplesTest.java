@@ -17,6 +17,8 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 
+import java.io.IOException;
+
 import static org.testng.Assert.assertEquals;
 
 public class ExamplesTest extends AbstractAnnotationTest {
@@ -342,7 +344,7 @@ public class ExamplesTest extends AbstractAnnotationTest {
 
 
     @Test
-    public void testFullExample() {
+    public void testFullExample() throws IOException {
         String openApiYAML = readIntoYaml(ExamplesTest.SimpleOperations.class);
         int start = openApiYAML.indexOf("/test:");
         int end = openApiYAML.length() - 1;
@@ -437,7 +439,7 @@ public class ExamplesTest extends AbstractAnnotationTest {
                 "          format: int32\n" +
                 "      xml:\n" +
                 "        name: User";
-        assertEquals(extractedYAML, expectedYAML);
+        compareAsYaml(extractedYAML, expectedYAML);
     }
 
     static class SimpleOperations {

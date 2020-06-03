@@ -48,11 +48,11 @@ public abstract class AbstractAnnotationTest {
     }
 
     public void compareAsYaml(final String actualYaml, final String expectedYaml) throws IOException {
-        SerializationMatchers.assertEqualsToYaml(Yaml.mapper().readValue(actualYaml, OpenAPI.class), expectedYaml);
+        SerializationMatchers.assertEqualsToYaml(Yaml.mapper().readValue(actualYaml, JsonNode.class), expectedYaml);
     }
 
     public void compareAsJson(final String actualJson, final String expectedJson) throws IOException {
-        SerializationMatchers.assertEqualsToJson(Yaml.mapper().readValue(actualJson, OpenAPI.class), expectedJson);
+        SerializationMatchers.assertEqualsToJson(Yaml.mapper().readValue(actualJson, JsonNode.class), expectedJson);
     }
 
     protected String getOpenAPIAsString(final String file) throws IOException {

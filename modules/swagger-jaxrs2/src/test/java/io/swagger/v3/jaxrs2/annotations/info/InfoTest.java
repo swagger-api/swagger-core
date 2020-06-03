@@ -7,11 +7,13 @@ import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.info.License;
 import org.testng.annotations.Test;
 
+import java.io.IOException;
+
 import static org.testng.Assert.assertEquals;
 
 public class InfoTest extends AbstractAnnotationTest {
     @Test
-    public void testSimpleInfoGet() {
+    public void testSimpleInfoGet() throws IOException {
         String openApiYAML = readIntoYaml(InfoTest.ClassWithInfoAnnotation.class);
         int start = openApiYAML.indexOf("info:");
         int end = openApiYAML.length() - 1;
@@ -29,7 +31,7 @@ public class InfoTest extends AbstractAnnotationTest {
                 "  version: \"0.0\"";
         String extractedYAML = openApiYAML.substring(start, end);
 
-        assertEquals(extractedYAML, expectedYAML);
+        compareAsYaml(extractedYAML, expectedYAML);
     }
 
     @OpenAPIDefinition(info = @Info(

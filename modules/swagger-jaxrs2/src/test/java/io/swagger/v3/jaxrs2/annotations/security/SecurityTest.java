@@ -19,7 +19,7 @@ import static org.testng.Assert.assertEquals;
 
 public class SecurityTest extends AbstractAnnotationTest {
     @Test
-    public void testSecuritySheme() {
+    public void testSecuritySheme() throws IOException {
         String openApiYAML = readIntoYaml(SecurityTest.OAuth2SchemeOnClass.class);
         int start = openApiYAML.indexOf("components:");
         String extractedYAML = openApiYAML.substring(start, openApiYAML.length() - 1);
@@ -33,7 +33,7 @@ public class SecurityTest extends AbstractAnnotationTest {
                 "          authorizationUrl: http://url.com/auth\n" +
                 "          scopes:\n" +
                 "            write:pets: modify pets in your account";
-        assertEquals(extractedYAML, expectedYAML);
+        compareAsYaml(extractedYAML, expectedYAML);
 
     }
 
@@ -90,7 +90,7 @@ public class SecurityTest extends AbstractAnnotationTest {
     }
 
     @Test
-    public void testMultipleSecurityShemes() {
+    public void testMultipleSecurityShemes() throws IOException {
         String openApiYAML = readIntoYaml(SecurityTest.MultipleSchemesOnClass.class);
         int start = openApiYAML.indexOf("components:");
         String extractedYAML = openApiYAML.substring(start, openApiYAML.length() - 1);
@@ -108,12 +108,12 @@ public class SecurityTest extends AbstractAnnotationTest {
                 "          authorizationUrl: http://url.com/auth\n" +
                 "          scopes:\n" +
                 "            write:pets: modify pets in your account";
-        assertEquals(extractedYAML, expectedYAML);
+        compareAsYaml(extractedYAML, expectedYAML);
 
     }
 
     @Test
-    public void testTicket2767() {
+    public void testTicket2767() throws IOException {
         String openApiYAML = readIntoYaml(SecurityTest.Ticket2767.class);
         String expectedYAML = "openapi: 3.0.1\n" +
                 "info:\n" +
@@ -126,12 +126,12 @@ public class SecurityTest extends AbstractAnnotationTest {
                 "    basicAuth:\n" +
                 "      type: http\n" +
                 "      scheme: basic\n";
-        assertEquals(openApiYAML, expectedYAML);
+        compareAsYaml(openApiYAML, expectedYAML);
 
     }
 
     @Test
-    public void testTicket2767_2() {
+    public void testTicket2767_2() throws IOException {
         String openApiYAML = readIntoYaml(SecurityTest.Ticket2767_2.class);
         String expectedYAML = "openapi: 3.0.1\n" +
                 "info:\n" +
@@ -144,7 +144,7 @@ public class SecurityTest extends AbstractAnnotationTest {
                 "    api_key:\n" +
                 "      type: apiKey\n" +
                 "      name: API_KEY\n";
-        assertEquals(openApiYAML, expectedYAML);
+        compareAsYaml(openApiYAML, expectedYAML);
 
     }
 

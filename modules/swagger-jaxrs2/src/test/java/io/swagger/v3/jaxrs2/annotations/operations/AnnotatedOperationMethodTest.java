@@ -98,7 +98,7 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
     }
 
     @Test
-    public void testGetOperationWithResponsePayloadAndAlternateCodes() {
+    public void testGetOperationWithResponsePayloadAndAlternateCodes() throws IOException {
         String openApiYAML = readIntoYaml(GetOperationWithResponsePayloadAndAlternateCodes.class);
         int start = openApiYAML.indexOf("get:");
         int end = openApiYAML.indexOf("components:");
@@ -128,7 +128,7 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
                 "                  externalValue: example of external value\n" +
                 "      deprecated: true\n";
 
-        assertEquals(extractedYAML, expectedYAML);
+        compareAsYaml(extractedYAML, expectedYAML);
     }
 
     static class GetOperationWithResponsePayloadAndAlternateCodes {
@@ -177,7 +177,7 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
     }
 
     @Test(description = "reads an operation with response examples defined")
-    public void testOperationWithResponseExamples() {
+    public void testOperationWithResponseExamples() throws IOException {
         String openApiYAML = readIntoYaml(GetOperationWithResponseExamples.class);
         int start = openApiYAML.indexOf("get:");
         int end = openApiYAML.indexOf("components:");
@@ -199,11 +199,11 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
                 "                  description: basic\n" +
                 "                  value: '{id: 19877734}'\n" +
                 "      deprecated: true\n";
-        assertEquals(extractedYAML, expectedYAML);
+        compareAsYaml(extractedYAML, expectedYAML);
     }
 
     @Test(description = "reads an operation with response examples defined")
-    public void testOperationWithParameterExample() {
+    public void testOperationWithParameterExample() throws IOException {
         String openApiYAML = readIntoYaml(GetOperationWithParameterExample.class);
         int start = openApiYAML.indexOf("get:");
         int end = openApiYAML.indexOf("components:");
@@ -231,7 +231,7 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
                 "                  description: basic\n" +
                 "                  value: '{id: 19877734}'\n" +
                 "      deprecated: true\n";
-        assertEquals(extractedYAML, expectedYAML);
+        compareAsYaml(extractedYAML, expectedYAML);
     }
 
     static class GetOperationWithResponseExamples {
@@ -1055,7 +1055,7 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
     }
 
     @Test
-    public void testSimpleGetOperationWithSecurity() {
+    public void testSimpleGetOperationWithSecurity() throws IOException {
 
         String openApiYAML = readIntoYaml(SimpleGetOperationWithSecurity.class);
         int start = openApiYAML.indexOf("get:");
@@ -1073,7 +1073,7 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
                 "        - write:pets";
         String extractedYAML = openApiYAML.substring(start, end);
 
-        assertEquals(expectedYAML, extractedYAML);
+        compareAsYaml(expectedYAML, extractedYAML);
     }
 
     static class SimpleGetOperationWithSecurity {
@@ -1096,7 +1096,7 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
     }
 
     @Test
-    public void testSimpleGetOperationWithMultipleSecurity() {
+    public void testSimpleGetOperationWithMultipleSecurity() throws IOException {
 
         String openApiYAML = readIntoYaml(SimpleGetOperationWithMultipleSecurityScopes.class);
         int start = openApiYAML.indexOf("get:");
@@ -1115,7 +1115,7 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
                 "        - read:pets";
         String extractedYAML = openApiYAML.substring(start, end);
 
-        assertEquals(extractedYAML, expectedYAML);
+        compareAsYaml(extractedYAML, expectedYAML);
     }
 
     static class SimpleGetOperationWithMultipleSecurityScopes {
@@ -1138,7 +1138,7 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
     }
 
     @Test
-    public void testSimpleGetOperationWithMultipleSecurityAnnotations() {
+    public void testSimpleGetOperationWithMultipleSecurityAnnotations() throws IOException {
 
         String openApiYAML = readIntoYaml(SimpleGetOperationWithMultipleSecurityAnnotations.class);
         int start = openApiYAML.indexOf("get:");
@@ -1160,7 +1160,7 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
                 "      - api_key: []";
         String extractedYAML = openApiYAML.substring(start, end);
 
-        assertEquals(extractedYAML, expectedYAML);
+        compareAsYaml(extractedYAML, expectedYAML);
     }
 
     static class SimpleGetOperationWithMultipleSecurityAnnotations {
