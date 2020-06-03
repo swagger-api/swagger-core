@@ -28,11 +28,13 @@ public class ObjectSchema extends Schema<Object> {
         super("object", null);
     }
 
+    @Override
     public ObjectSchema type(String type) {
         super.setType(type);
         return this;
     }
 
+    @Override
     public ObjectSchema example(Object example) {
         if (example != null) {
             super.setExample(example.toString());
