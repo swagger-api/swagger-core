@@ -28,6 +28,7 @@ public class MapSchema extends Schema<Object> {
         super("object", null);
     }
 
+    @Override
     public MapSchema type(String type) {
         super.setType(type);
         return this;

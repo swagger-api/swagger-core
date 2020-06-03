@@ -116,7 +116,7 @@ public class RequestBody {
     }
 
     public void set$ref(String $ref) {
-        if ($ref != null && ($ref.indexOf(".") == -1 && $ref.indexOf("/") == -1)) {
+        if ($ref != null && ($ref.indexOf('.') == -1 && $ref.indexOf('/') == -1)) {
             $ref = "#/components/requestBodies/" + $ref;
         }
         this.$ref = $ref;

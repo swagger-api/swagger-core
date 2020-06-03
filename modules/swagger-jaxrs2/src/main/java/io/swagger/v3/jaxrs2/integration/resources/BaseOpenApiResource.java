@@ -14,7 +14,6 @@ import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletConfig;
 import javax.ws.rs.core.Application;
-import javax.ws.rs.core.Cookie;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
@@ -83,34 +82,25 @@ public abstract class BaseOpenApiResource {
     }
 
     private static Map<String, List<String>> getQueryParams(MultivaluedMap<String, String> params) {
-        Map<String, List<String>> output = new HashMap<String, List<String>>();
+        Map<String, List<String>> output = new HashMap<>();
         if (params != null) {
-            for (String key : params.keySet()) {
-                List<String> values = params.get(key);
-                output.put(key, values);
-            }
+            params.forEach(output::put);
         }
         return output;
     }
 
     private static Map<String, String> getCookies(HttpHeaders headers) {
-        Map<String, String> output = new HashMap<String, String>();
+        Map<String, String> output = new HashMap<>();
         if (headers != null) {
-            for (String key : headers.getCookies().keySet()) {
-                Cookie cookie = headers.getCookies().get(key);
-                output.put(key, cookie.getValue());
-            }
+            headers.getCookies().forEach((k, v) -> output.put(k, v.getValue()));
         }
         return output;
     }
 
     private static Map<String, List<String>> getHeaders(HttpHeaders headers) {
-        Map<String, List<String>> output = new HashMap<String, List<String>>();
+        Map<String, List<String>> output = new HashMap<>();
         if (headers != null) {
-            for (String key : headers.getRequestHeaders().keySet()) {
-                List<String> values = headers.getRequestHeaders().get(key);
-                output.put(key, values);
-            }
+            headers.getRequestHeaders().forEach(output::put);
         }
         return output;
     }

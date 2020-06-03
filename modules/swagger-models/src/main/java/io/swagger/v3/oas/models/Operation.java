@@ -70,7 +70,7 @@ public class Operation {
 
     public Operation addTagsItem(String tagsItem) {
         if (this.tags == null) {
-            this.tags = new ArrayList<String>();
+            this.tags = new ArrayList<>();
         }
         this.tags.add(tagsItem);
         return this;
@@ -173,7 +173,7 @@ public class Operation {
 
     public Operation addParametersItem(Parameter parametersItem) {
         if (this.parameters == null) {
-            this.parameters = new ArrayList<Parameter>();
+            this.parameters = new ArrayList<>();
         }
         this.parameters.add(parametersItem);
         return this;
@@ -276,7 +276,7 @@ public class Operation {
 
     public Operation addSecurityItem(SecurityRequirement securityItem) {
         if (this.security == null) {
-            this.security = new ArrayList<SecurityRequirement>();
+            this.security = new ArrayList<>();
         }
         this.security.add(securityItem);
         return this;
@@ -303,7 +303,7 @@ public class Operation {
 
     public Operation addServersItem(Server serversItem) {
         if (this.servers == null) {
-            this.servers = new ArrayList<Server>();
+            this.servers = new ArrayList<>();
         }
         this.servers.add(serversItem);
         return this;
