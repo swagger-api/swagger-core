@@ -13,6 +13,7 @@ import io.swagger.v3.core.util.ParameterProcessor;
 import io.swagger.v3.jaxrs2.ext.AbstractOpenAPIExtension;
 import io.swagger.v3.jaxrs2.ext.OpenAPIExtension;
 import io.swagger.v3.jaxrs2.ext.OpenAPIExtensions;
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.parameters.Parameter;
 import org.apache.commons.lang3.StringUtils;
@@ -223,6 +224,22 @@ public class DefaultParameterExtension extends AbstractOpenAPIExtension {
                     continue;
                 }
 
+                // skip hidden properties
+                boolean hidden  = false;
+                for (Annotation a : paramAnnotations) {
+                    if (a instanceof io.swagger.v3.oas.annotations.media.Schema) {
+                        if (((io.swagger.v3.oas.annotations.media.Schema) a).hidden()) {
+                            hidden = true;
+                            break;
+                        };
+                    } else if (a instanceof Hidden) {
+                        hidden = true;
+                        break;
+                    }
+                }
+                if (hidden) {
+                    continue;
+                }
                 // Re-process all Bean fields and let the default swagger-jaxrs/swagger-jersey-jaxrs processors do their thing
                 ResolvedParameter resolvedParameter = extensions.next().extractParameters(
                         paramAnnotations,
