@@ -20,6 +20,7 @@ import io.swagger.v3.oas.models.callbacks.Callback;
 import io.swagger.v3.oas.models.examples.Example;
 import io.swagger.v3.oas.models.headers.Header;
 import io.swagger.v3.oas.models.links.Link;
+import io.swagger.v3.oas.models.media.ComposedSchema;
 import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.parameters.Parameter;
 import io.swagger.v3.oas.models.parameters.RequestBody;
@@ -71,7 +72,16 @@ public class Components {
         if (this.schemas == null) {
             this.schemas = new LinkedHashMap<>();
         }
-        this.schemas.put(key, schemasItem);
+        Schema oldSchema = schemas.get(key);
+        if (null == oldSchema
+                || !(oldSchema instanceof ComposedSchema) && schemasItem instanceof ComposedSchema
+                || null == oldSchema.getDiscriminator() && null != schemasItem.getDiscriminator()
+                    && (!(oldSchema instanceof ComposedSchema) || schemasItem instanceof ComposedSchema)) {
+            // Only set the schema if it does not exist yet, we do not simplify it (replace a ComposedSchema with a normal Schema) or it is
+            // a working parent schema (having an appropriate discriminator). Do not replace an old composed schema having no discriminator
+            // with a non-composed schema having a discriminator.
+            this.schemas.put(key, schemasItem);
+        }
         return this;
     }
 

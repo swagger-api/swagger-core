@@ -17,6 +17,7 @@ import io.swagger.v3.jaxrs2.resources.BasicFieldsResource;
 import io.swagger.v3.jaxrs2.resources.BookStoreTicket2646;
 import io.swagger.v3.jaxrs2.resources.ClassPathParentResource;
 import io.swagger.v3.jaxrs2.resources.ClassPathSubResource;
+import io.swagger.v3.jaxrs2.resources.CompositeBeanResource;
 import io.swagger.v3.jaxrs2.resources.CompleteFieldsResource;
 import io.swagger.v3.jaxrs2.resources.DeprecatedFieldsResource;
 import io.swagger.v3.jaxrs2.resources.DuplicatedOperationIdResource;
@@ -2140,6 +2141,15 @@ public class ReaderTest {
                 "      xml:\n" +
                 "        name: User\n";
         SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
+    }
+
+    @Test(description = "Polymorphism with operations returning all base/derived types")
+    public void testPolymorphism() {
+
+        Reader reader = new Reader(new OpenAPI());
+        OpenAPI openAPI = reader.read(CompositeBeanResource.class);
+
+        SerializationMatchers.assertEqualsToYaml(openAPI, CompositeBeanResource.YAML);
     }
 
 }
