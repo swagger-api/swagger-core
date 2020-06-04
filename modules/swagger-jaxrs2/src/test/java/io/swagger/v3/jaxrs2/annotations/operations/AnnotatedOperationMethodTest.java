@@ -412,6 +412,7 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
                 "                $ref: '#/components/schemas/Pet'\n" +
                 "        \"400\":\n" +
                 "          description: Invalid tag value\n" +
+                "      deprecated: true\n" +
                 "  /pet/findByCategory/{category}:\n" +
                 "    get:\n" +
                 "      summary: Finds Pets by category\n" +
@@ -1180,6 +1181,80 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
                         @SecurityRequirement(
                                 name = "api_key",
                                 scopes = {}),})
+        @GET
+        @Path("/path")
+        public void simpleGet() {
+        }
+    }
+
+    @Test
+    public void testSimpleDeprecatedGetOperation() {
+        String openApiYAML = readIntoYaml(SimpleDeprecatedGetOperationTest.class);
+        int start = openApiYAML.indexOf("get:");
+        int end = openApiYAML.length() - 1;
+
+        String expectedYAML = "get:\n" +
+                "      summary: Deprecated get operation\n" +
+                "      description: Defines a deprecated get operation with no inputs and a complex\n" +
+                "      operationId: getWithNoParameters\n" +
+                "      responses:\n" +
+                "        \"200\":\n" +
+                "          description: voila!\n" +
+                "      deprecated: true";
+        String extractedYAML = openApiYAML.substring(start, end);
+
+        assertEquals(extractedYAML, expectedYAML);
+    }
+
+    static class SimpleDeprecatedGetOperationTest {
+        @Operation(
+                summary = "Deprecated get operation",
+                description = "Defines a deprecated get operation with no inputs and a complex",
+                operationId = "getWithNoParameters",
+                responses = {
+                        @ApiResponse(
+                                responseCode = "200",
+                                description = "voila!")
+                }
+        )
+        @GET
+        @Path("/path")
+        @Deprecated
+        public void deprecatedGet() {
+        }
+    }
+
+    @Test
+    public void testSimpleGetOperationInDeprecatedClass() {
+        String openApiYAML = readIntoYaml(DeprecatedSimpleGetOperationTest.class);
+        int start = openApiYAML.indexOf("get:");
+        int end = openApiYAML.length() - 1;
+
+        String expectedYAML = "get:\n" +
+                "      summary: Simple get operation in deprecated class\n" +
+                "      description: Defines a simple get operation in a deprecated class with no inputs\n" +
+                "      operationId: getWithNoParameters\n" +
+                "      responses:\n" +
+                "        \"200\":\n" +
+                "          description: voila!\n" +
+                "      deprecated: true";
+        String extractedYAML = openApiYAML.substring(start, end);
+
+        assertEquals(extractedYAML, expectedYAML);
+    }
+
+    @Deprecated
+    static class DeprecatedSimpleGetOperationTest {
+        @Operation(
+                summary = "Simple get operation in deprecated class",
+                description = "Defines a simple get operation in a deprecated class with no inputs",
+                operationId = "getWithNoParameters",
+                responses = {
+                        @ApiResponse(
+                                responseCode = "200",
+                                description = "voila!")
+                }
+        )
         @GET
         @Path("/path")
         public void simpleGet() {

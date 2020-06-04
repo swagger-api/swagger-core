@@ -954,7 +954,10 @@ public class Reader implements OpenApiReader {
         }
 
         if (apiOperation != null) {
-            setOperationObjectFromApiOperationAnnotation(operation, apiOperation, methodProduces, classProduces, methodConsumes, classConsumes, jsonViewAnnotation);
+            boolean classOrMethodDeprecated = method.getDeclaringClass().isAnnotationPresent(Deprecated.class) || method.isAnnotationPresent(Deprecated.class);
+            setOperationObjectFromApiOperationAnnotation(
+                    operation, apiOperation, methodProduces, classProduces, methodConsumes,
+                    classConsumes, jsonViewAnnotation, classOrMethodDeprecated);
         }
 
         // apiResponses
@@ -1105,7 +1108,8 @@ public class Reader implements OpenApiReader {
                     classProduces,
                     methodConsumes,
                     classConsumes,
-                    jsonViewAnnotation);
+                    jsonViewAnnotation,
+                    false);
             setPathItemOperation(pathItemObject, callbackOperation.method(), callbackNewOperation);
         }
 
@@ -1154,7 +1158,8 @@ public class Reader implements OpenApiReader {
             Produces classProduces,
             Consumes methodConsumes,
             Consumes classConsumes,
-            JsonView jsonViewAnnotation) {
+            JsonView jsonViewAnnotation,
+            boolean classOrMethodDeprecated) {
         if (StringUtils.isNotBlank(apiOperation.summary())) {
             operation.setSummary(apiOperation.summary());
         }
@@ -1164,7 +1169,9 @@ public class Reader implements OpenApiReader {
         if (StringUtils.isNotBlank(apiOperation.operationId())) {
             operation.setOperationId(getOperationId(apiOperation.operationId()));
         }
-        if (apiOperation.deprecated()) {
+        if (classOrMethodDeprecated) {
+            operation.setDeprecated(true);
+        } else if (apiOperation.deprecated()) {
             operation.setDeprecated(apiOperation.deprecated());
         }
 
