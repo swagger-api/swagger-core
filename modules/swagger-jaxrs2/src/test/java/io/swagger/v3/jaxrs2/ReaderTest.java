@@ -60,6 +60,7 @@ import io.swagger.v3.jaxrs2.resources.Ticket2806Resource;
 import io.swagger.v3.jaxrs2.resources.Ticket2818Resource;
 import io.swagger.v3.jaxrs2.resources.Ticket2848Resource;
 import io.swagger.v3.jaxrs2.resources.Ticket3015Resource;
+import io.swagger.v3.jaxrs2.resources.TicketRequiredPropsResource;
 import io.swagger.v3.jaxrs2.resources.UserAnnotationResource;
 import io.swagger.v3.jaxrs2.resources.extensions.ExtensionsResource;
 import io.swagger.v3.jaxrs2.resources.extensions.OperationExtensionsResource;
@@ -110,6 +111,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
+import javax.ws.rs.core.MediaType;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
@@ -1190,6 +1192,23 @@ public class ReaderTest {
         assertEquals(operation.getParameters().get(0).getSchema().getType(), "integer");
         assertEquals(operation.getParameters().get(0).getSchema().getFormat(), "int32");
 
+    }
+
+    @Test(description = "test required props from @RequestBody(@Content(@Schema)) annotation")
+    public void testRequiredProps() {
+        Reader reader = new Reader(new OpenAPI());
+        OpenAPI openAPI = reader.read(TicketRequiredPropsResource.class);
+        Paths paths = openAPI.getPaths();
+        assertEquals(paths.size(), 1);
+        PathItem pathItem = paths.get("/test/login");
+        assertNotNull(pathItem);
+        Operation operation = pathItem.getPut();
+        assertNotNull(operation);
+
+        io.swagger.v3.oas.models.media.MediaType type = operation.getRequestBody()
+                .getContent().get(MediaType.APPLICATION_FORM_URLENCODED);
+        assertNotNull(type.getSchema().getRequired());
+        assertEquals(type.getSchema().getRequired().size(), 2);
     }
 
     @Test(description = "Responses with ref")
