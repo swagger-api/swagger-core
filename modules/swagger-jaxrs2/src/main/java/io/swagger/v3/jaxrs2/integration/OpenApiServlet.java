@@ -18,6 +18,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.core.MultivaluedHashMap;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Collections;
@@ -107,8 +108,8 @@ public class OpenApiServlet extends HttpServlet {
 
     }
 
-    public static Map<String, List<String>> getQueryParams(String queryString) {
-        Map<String, List<String>> queryParameters = new HashMap<>();
+    public static MultivaluedHashMap<String, String> getQueryParams(String queryString) {
+        MultivaluedHashMap<String, String> queryParameters = new MultivaluedHashMap<>();
 
         if (StringUtils.isEmpty(queryString)) {
             return queryParameters;
@@ -135,7 +136,7 @@ public class OpenApiServlet extends HttpServlet {
 
     public static Map<String, List<String>> getHeaders(HttpServletRequest req) {
         if (req.getHeaderNames() == null) {
-            return new HashMap<>();
+            return Collections.emptyMap();
         } else {
             return Collections
                     .list(req.getHeaderNames())
