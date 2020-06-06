@@ -18,7 +18,6 @@ package io.swagger.v3.oas.models.media;
 
 import io.swagger.v3.oas.models.headers.Header;
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;

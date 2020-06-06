@@ -85,9 +85,7 @@ public class SecurityParser {
         if (securityScheme.extensions().length > 0) {
             Map<String, Object> extensions = AnnotationsUtils.getExtensions(securityScheme.extensions());
             if (extensions != null) {
-                for (String ext : extensions.keySet()) {
-                    securitySchemeObject.addExtension(ext, extensions.get(ext));
-                }
+                extensions.forEach(securitySchemeObject::addExtension);
             }
         }
 
@@ -107,9 +105,7 @@ public class SecurityParser {
         if (oAuthFlows.extensions().length > 0) {
             Map<String, Object> extensions = AnnotationsUtils.getExtensions(oAuthFlows.extensions());
             if (extensions != null) {
-                for (String ext : extensions.keySet()) {
-                    oAuthFlowsObject.addExtension(ext, extensions.get(ext));
-                }
+                extensions.forEach(oAuthFlowsObject::addExtension);
             }
         }
 
@@ -137,9 +133,7 @@ public class SecurityParser {
         if (oAuthFlow.extensions().length > 0) {
             Map<String, Object> extensions = AnnotationsUtils.getExtensions(oAuthFlow.extensions());
             if (extensions != null) {
-                for (String ext : extensions.keySet()) {
-                    oAuthFlowObject.addExtension(ext, extensions.get(ext));
-                }
+                extensions.forEach(oAuthFlowObject::addExtension);
             }
         }
 
@@ -183,10 +177,7 @@ public class SecurityParser {
         if (!isEmpty(oAuthFlows.password())) {
             return false;
         }
-        if (oAuthFlows.extensions().length > 0) {
-            return false;
-        }
-        return true;
+        return oAuthFlows.extensions().length == 0;
     }
 
     private static boolean isEmpty(io.swagger.v3.oas.annotations.security.OAuthFlow oAuthFlow) {
@@ -205,17 +196,11 @@ public class SecurityParser {
         if (!isEmpty(oAuthFlow.scopes())) {
             return false;
         }
-        if (oAuthFlow.extensions().length > 0) {
-            return false;
-        }
-        return true;
+        return oAuthFlow.extensions().length == 0;
     }
 
     private static boolean isEmpty(OAuthScope[] scopes) {
-        if (scopes == null || scopes.length == 0) {
-            return true;
-        }
-        return false;
+        return scopes == null || scopes.length == 0;
     }
 
 }
