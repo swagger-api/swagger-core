@@ -1,0 +1,27 @@
+{
+  "openapi": "3.0.1",
+  "servers": [
+    {
+      "url": "http://foo",
+      "description": "server 1",
+      "variables": {
+        "var1": {
+          "description": "var 1",
+          "enum": [
+            "1",
+            "2"
+          ],
+          "default": "1"
+        },
+        "var2": {
+          "description": "var 2",
+          "enum": [
+            "1",
+            "2"
+          ],
+          "default": "1"
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,82 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "version": "1.0.0",
+    "license": {
+      "name": "MIT"
+    },
+    "title": "Swagger Petstore"
+  },
+  "servers": [
+    {
+      "url": "http://petstore.swagger.io/v1"
+    }
+  ],
+  "paths": {},
+  "components": {
+    "schemas": {
+      "Pet": {
+        "discriminator": {
+          "propertyName": "pet_type",
+          "mapping": {
+            "cachorro": "#/components/schemas/Dog"
+          }
+        },
+        "required": [
+          "pet_type"
+        ],
+        "type": "object",
+        "properties": {
+          "pet_type": {
+            "type": "string"
+          }
+        }
+      },
+      "Lizard": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Pet"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "lovesRocks": {
+                "type": "boolean"
+              }
+            }
+          }
+        ]
+      },
+      "Dog": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Pet"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "bark": {
+                "type": "string"
+              }
+            }
+          }
+        ]
+      },
+      "Cat": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Pet"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              }
+            }
+          }
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,67 @@
+openapi: 3.0.1
+paths:
+  /security:
+    get:
+      description: description
+      operationId: Operation Id
+      responses:
+        default:
+          description: default response
+          content:
+            '*/*': {}
+      security:
+      - security_key:
+        - write:pets
+        - read:pets
+      - myOauth2Security:
+        - write:pets
+    put:
+      description: description 3
+      operationId: Operation Id 3
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              type: string
+      responses:
+        default:
+          description: default response
+          content:
+            '*/*': {}
+      security:
+      - security_key:
+        - write:pets
+        - read:pets
+      - myOauth2Security:
+        - write:pets
+      - security_key3:
+        - write:pets
+        - read:pets
+    patch:
+      description: description 2
+      operationId: Operation Id 2
+      responses:
+        default:
+          description: default response
+          content:
+            '*/*': {}
+      security:
+      - security_key:
+        - write:pets
+        - read:pets
+      - myOauth2Security:
+        - write:pets
+      - security_key2:
+        - write:pets
+        - read:pets
+components:
+  securitySchemes:
+    myOauth2Security:
+      type: oauth2
+      description: myOauthSecurity Description
+      in: header
+      flows:
+        implicit:
+          authorizationUrl: http://x.com
+          scopes:
+            write:pets: modify pets in your account

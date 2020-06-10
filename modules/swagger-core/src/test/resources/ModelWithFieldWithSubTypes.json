@@ -1,7 +1,9 @@
 {
     "AbstractBaseModelWithSubTypes": {
         "type": "object",
-        "discriminator": "_type",
+        "discriminator" : {
+            "propertyName" : "_type"
+        },
         "properties": {
             "_type": {
                 "type": "string",
@@ -22,16 +24,17 @@
         "type": "object",
         "properties": {
             "z": {
-                "description": "Contained field with sub-types",
-                "$ref": "#/definitions/AbstractBaseModelWithSubTypes"
+                "$ref": "#/components/schemas/AbstractBaseModelWithSubTypes"
             }
         },
         "description": "Class that has a field that is the AbstractBaseModelWithSubTypes"
     },
     "Thing1": {
+        "type": "object",
+        "description": "Shake hands with Thing1",
         "allOf": [
             {
-                "$ref": "#/definitions/AbstractBaseModelWithSubTypes"
+                "$ref": "#/components/schemas/AbstractBaseModelWithSubTypes"
             },
             {
                 "type": "object",
@@ -45,15 +48,16 @@
                         "format": "int32",
                         "description": "Thing1 has an additional field"
                     }
-                },
-                "description": "Shake hands with Thing1"
+                }
             }
         ]
     },
     "Thing2": {
+        "type": "object",
+        "description": "and Thing2",
         "allOf": [
             {
-                "$ref": "#/definitions/AbstractBaseModelWithSubTypes"
+                "$ref": "#/components/schemas/AbstractBaseModelWithSubTypes"
             },
             {
                 "type": "object",
@@ -66,8 +70,7 @@
                         "type": "string",
                         "description": "Thing2 has an additional field"
                     }
-                },
-                "description": "and Thing2"
+                }
             }
         ]
     }

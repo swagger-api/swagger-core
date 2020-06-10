@@ -1,0 +1,15 @@
+openapi: 3.0.1
+paths:
+  /multiplenoannotatedparameter:
+    post:
+      operationId: create User
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              type: string
+      responses:
+        default:
+          description: default response
+          content:
+            '*/*': {}

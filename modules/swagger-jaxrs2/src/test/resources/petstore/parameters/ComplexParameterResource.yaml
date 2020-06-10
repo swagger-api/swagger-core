@@ -1,0 +1,58 @@
+openapi: 3.0.1
+paths:
+  /complexparameter:
+    get:
+      operationId: create User
+      parameters:
+      - name: id
+        in: query
+        description: idParam
+        schema:
+          type: string
+      - name: lastName
+        in: query
+        schema:
+          type: string
+      - name: address
+        in: query
+        description: address
+        schema:
+          $ref: '#/components/schemas/User'
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              type: string
+      responses:
+        default:
+          description: default response
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/User'
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        username:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+        phone:
+          type: string
+        userStatus:
+          type: integer
+          description: User Status
+          format: int32
+      xml:
+        name: User

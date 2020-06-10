@@ -1,0 +1,1389 @@
+openapi: 3.0
+servers:
+- url: http://petstore.swagger.io/api
+- url: https://development.gigantic-server.com/api
+  description: Development server
+- url: https://{username}.gigantic-server.com:{port}/{basePath}
+  x-server: server extension
+  description: The production API server
+  variables:
+      username:
+        # note! no enum here means it is an open value
+        default: demo
+        description: this value is assigned by the service provider, in this example `gigantic-server.com`
+      port:
+        enum:
+          - 8443
+          - 443
+        default: 8443
+      basePath:
+        # open meaning there is the opportunity to use special base paths as assigned by the provider, default is `v2`
+        default: v2
+        description: testing overwriting
+        enum:
+          - 2222
+          - 333
+x-origin:
+- url: http://petstore.swagger.io/v2/swagger.json
+  format: swagger
+  version: '2.0'
+  converter:
+    url: https://github.com/mermade/swagger2openapi
+    version: 1.2.1
+x-api-title: pet store test api
+security:
+  - api_key: []
+  - tokenAuth: []
+info:
+  description: 'This is a sample server Petstore'
+  version: 1.0.0
+  title: testing source file
+  termsOfService: http://swagger.io/terms/
+  x-info: info extension
+  contact:
+    name: API Support
+    url: http://www.example.com/support
+    email: support@example.com
+    x-contact: contact extension
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+    x-license: license extension
+  version: 1.0.1
+tags:
+- name: pet
+  description: Everything about your Pets
+  externalDocs:
+    description: Find out more
+    url: http://swagger.io
+- name: store
+  description: Access to Petstore orders
+- name: user
+  description: Operations about user
+  externalDocs:
+    description: Find out more about our store
+    url: http://swagger.io
+paths:
+  "/pet":
+    summary: summary
+    description: description
+    post:
+      x-swagger-router-controller: TestController
+      externalDocs:
+        description: Find out more
+        url: http://swagger.io
+      tags:
+      - pet
+      summary: Add a new pet to the store
+      description: ''
+      operationId: addPet
+      parameters: []
+      responses:
+        '200':
+          description: party time!
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/Dog"
+        '405':
+          description: Invalid input
+          headers:
+            X-Rate-Limit:
+              description: calls per hour allowed by the user
+              schema:
+                title: header schema
+                type: integer
+                format: int32
+            X-Expires-After:
+              description: date in UTC when token expires
+              schema:
+                type: string
+                format: date-time
+      security:
+      - petstore_auth:
+        - write:pets
+        - read:pets
+      requestBody:
+        description: user to add to the system
+        required: true
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/Dog'
+    servers:
+    - url: http://petstore.swagger.io/v2
+    put:
+      tags:
+      - pet
+      summary: Update an existing pet
+      description: ''
+      operationId: updatePet
+      parameters: []
+      responses:
+        '400':
+          description: A complex object array response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/VeryComplexType'
+        '404':
+          description: Pet not found
+        '405':
+          description: Validation exception
+      security:
+      - petstore_auth:
+        - write:pets
+        - read:pets
+      requestBody:
+        "$ref": "#/components/requestBodies/requestBody1"
+  "/producesTest":
+      get:
+        parameters: []
+        responses:
+          '200':
+            description: it works
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+  "/fileUpload":
+      post:
+        x-swagger-router-controller: TestController
+        operationId: uploadFile
+        requestBody:
+          content:
+            multipart/form-data:
+              schema:
+                properties:
+                  theFile:
+                    type: string
+                    format: binary
+                  stringMetadata:
+                    type: string
+                  intMetadata:
+                    type: integer
+                    format: int32
+        responses:
+          '200':
+            description: the stringMetadata passed in
+            content:
+              "*/*":
+                schema:
+                  type: string
+  "/primitiveBody/inline":
+    post:
+      x-swagger-router-controller: TestController
+      operationId: inlineRequiredBody
+      requestBody:
+        content:
+          "application/json":
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+        required: true
+      responses:
+        '200':
+          description: ok!
+  "/primitiveBody/string":
+    post:
+      x-swagger-router-controller: TestController
+      operationId: stringBody
+      requestBody:
+        content:
+          "application/yaml":
+            schema:
+              type: string
+        required: false
+      responses:
+        '200':
+          description: ok!
+  "/primitiveBody/integer":
+    post:
+      x-swagger-router-controller: TestController
+      operationId: integerBody
+      requestBody:
+        content:
+          "*/*":
+            schema:
+              type: integer
+              format: int32
+        required: false
+      responses:
+        '200':
+          description: ok!
+  "/primitiveBody/binary":
+    post:
+      x-swagger-router-controller: TestController
+      operationId: binaryBody
+      requestBody:
+        content:
+          application/octet-stream:
+            schema:
+              type: string
+              format: binary
+        required: false
+      responses:
+        '200':
+          description: ok!
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+  "/hidden":
+    get:
+      x-inflector-hidden: true
+      responses:
+        default:
+          description: ok
+  "/arrayInputTest":
+    get:
+      x-swagger-router-controller: TestController
+      operationId: arrayInputTest
+      tags:
+      - inputTest
+      parameters:
+      - name: users
+        in: query
+        required: true
+        style: form
+        schema:
+          type: array
+          items:
+            type: string
+      responses:
+        '200':
+          description: success!
+  "/formTest":
+    post:
+      operationId: formTest
+      x-swagger-router-controller: TestController
+      requestBody:
+        content:
+          x-www-form-urlencoded:
+            schema:
+              properties:
+                user:
+                  type: string
+      responses:
+        '200':
+          description: success!
+  "/mockResponses":
+      get:
+        tags:
+          - mockResponses
+        parameters:
+        - name: user
+          in: query
+          required: true
+          schema:
+            type: string
+        responses:
+          '200':
+            description: success!
+  "/mockResponses/primitiveFloatResponse":
+    get:
+      tags:
+        - mockResponses
+      parameters:
+      - name: user
+        in: query
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: success!
+          content:
+            application/json:
+              schema:
+                type: number
+                format: float
+  "/mockResponses/primitiveDoubleResponse":
+    get:
+      tags:
+        - mockResponses
+      parameters:
+      - name: user
+        in: query
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: success!
+          content:
+            application/json:
+              schema:
+                type: number
+                format: double
+  "/mockResponses/primitiveStringResponse":
+    get:
+      tags:
+        - mockResponses
+      parameters:
+      - name: user
+        in: query
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: success!
+          content:
+            application/json:
+              schema:
+                type: string
+  "/mockResponses/primitiveStringResponseWithExample":
+    get:
+      tags:
+        - mockResponses
+      parameters:
+      - name: user
+        in: query
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: success!
+          content:
+            application/json:
+              schema:
+                type: string
+                example: fun
+  "/mockResponses/responseWithExamples":
+    get:
+      tags:
+      - mockResponses
+      responses:
+        '200':
+          description: success!
+          content:
+            application/json:
+              examples:
+                application/json:
+                  value: {"test":"jsonvalue"}
+            application/yaml:
+              examples:
+                application/yaml:
+                  value:
+                    test: yamlvalue
+  "/mockResponses/primitiveDateResponse":
+    get:
+      tags:
+        - mockResponses
+      parameters:
+      - name: user
+        in: query
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: success!
+          content:
+            application/json:
+              schema:
+                type: string
+                format: date
+  "/mockResponses/primitiveDateTimeResponse":
+    get:
+      tags:
+        - mockResponses
+      parameters:
+      - name: user
+        in: query
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: success!
+          content:
+            application/json:
+              schema:
+                type: string
+                format: date-time
+  "/mockResponses/primitiveBigDecimalResponse":
+    get:
+      tags:
+        - mockResponses
+      parameters:
+      - name: user
+        in: query
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: success!
+          content:
+            application/json:
+              schema:
+                type: number
+  "/mockResponses/primitiveEmailResponse":
+    get:
+      tags:
+        - mockResponses
+      parameters:
+      - name: user
+        in: query
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: success!
+          content:
+            application/json:
+              schema:
+                type: string
+                format: email
+  "/mockResponses/primitiveUUIDResponse":
+    get:
+      tags:
+        - mockResponses
+      parameters:
+      - name: user
+        in: query
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: success!
+          content:
+            application/json:
+              schema:
+                type: string
+                format: uuid
+  "/mockResponses/primitiaveMapResponse":
+    get:
+      tags:
+        - mockResponses
+      parameters:
+      - name: user
+        in: query
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: success!
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+  "/mockResponses/complexResponse":
+    get:
+      tags:
+        - mockResponses
+      parameters:
+      - name: user
+        in: query
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: success!
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/Address"
+  "/mockResponses/complexResponseWithExample":
+    get:
+      tags:
+        - mockResponses
+      responses:
+        '200':
+          description: success!
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/User"
+  "/mockResponses/complexArrayResponse":
+    get:
+      tags:
+      - mockResponses
+      parameters:
+      - name: user
+        in: query
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: success!
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  "$ref": "#/components/schemas/Address"
+  "/mockResponses/complexArrayResponseWithExample":
+    get:
+      tags:
+        - mockResponses
+      parameters:
+      - name: user
+        in: query
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: success!
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+  "/issue-125":
+      get:
+        parameters: []
+        responses:
+          '200':
+            description: int16
+            content:
+              "*/*":
+                schema:
+                  type: integer
+                  format: int16
+  "/issue-128":
+    get:
+      responses:
+        '303':
+          description: issue 128
+          content:
+            "application/json":
+              schema:
+                type: string
+                format: url
+                example: http://foo.bar/other
+  "/issue-130":
+    get:
+      responses:
+        '200':
+          description: issue 130
+          content:
+            "application/json":
+              schema:
+                type: object
+                description: an object with array properties
+                properties:
+                  aStringArray:
+                    type: array
+                    items:
+                      type: string
+                      example: a string value
+                  anIntegerArray:
+                    type: array
+                    items:
+                      type: integer
+                      format: int32
+                      example: 99
+  "/issue-132":
+    get:
+      responses:
+        '303':
+          description: issue 132
+          headers:
+            Location:
+              schema:
+                type: string
+                format: url
+              example: 'http://foo.bar/other'
+              description: URI of the entity affected by the property change
+  "/issue-132.2":
+    get:
+      responses:
+        '303':
+          description: issue 133, alternate example
+          headers:
+            _links:
+              description: array of locations
+              schema:
+                type: array
+                items:
+                  type: string
+                  format: url
+                  example: 'http://foo.bar/other'
+  "/form":
+    post:
+      x-swagger-router-controller: TestController
+      operationId: postFormData
+      requestBody:
+        content: {}
+      responses:
+        '200':
+          description: ok
+  "/goodbye":
+    get:
+      operationId: goodbye
+      x-swagger-router-controller: TestController
+      parameters:
+      - name: happy
+        in: query
+        required: true
+        style: form
+        schema:
+          type: array
+          items:
+            type: string
+      responses:
+        '200':
+          description: success!
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/User"
+  "/hello":
+    get:
+      tags:
+      - test1
+      operationId: testMe
+      parameters:
+      - name: limit
+        in: query
+        required: true
+        schema:
+          minimum: 0
+          type: integer
+          format: int32
+      - name: min
+        in: query
+        required: true
+        schema:
+          minimum: 10
+          type: integer
+          format: int32
+      responses:
+        '200':
+          description: fun!
+          content:
+            application/json:
+              schema:
+                type: string
+  "/withModelArray/{id}":
+    post:
+      operationId: withModelArray
+      x-swagger-router-controller: TestController
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/Address'
+        required: true
+      responses:
+        '200':
+          description: success!
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/Animal"
+  "/withModel/{id}":
+    get:
+      tags:
+        - test2
+      operationId: withModel
+      x-swagger-router-controller: TestController
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: success!
+          content:
+            "*/*":
+              schema:
+                "$ref": "#/components/schemas/Animal"
+    post:
+      tags:
+        - test2
+      operationId: withModel
+      x-swagger-router-controller: TestController
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          "*/*":
+            schema:
+              "$ref": "#/components/schemas/Address"
+        required: false
+      responses:
+        '200':
+          description: success!
+          content:
+            "*/*":
+              schema:
+                "$ref": "#/components/schemas/Address"
+  "/withInvalidComposedModel":
+    post:
+      operationId: withInvalidComposedModel
+      x-swagger-router-controller: TestController
+      requestBody:
+        content:
+          "*/*":
+            schema:
+              "$ref": "#/components/schemas/ExtendedAddress"
+        required: false
+      responses:
+        '200':
+          description: success!
+  "/withValidComposedModel":
+    post:
+      operationId: withValidComposedModel
+      x-swagger-router-controller: TestController
+      requestBody:
+        content:
+          "application/json":
+            schema:
+              "$ref": "#/components/schemas/ExtendedAddress"
+        required: false
+      responses:
+        '200':
+          description: success!
+  "/withInvalidComposedModelArray":
+    post:
+      operationId: withInvalidComposedModelArray
+      x-swagger-router-controller: TestController
+      requestBody:
+        content:
+          "*/*":
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/ExtendedAddress'
+        required: false
+      responses:
+        '200':
+          description: success!
+  "/unmappedWithModel/{id}":
+    post:
+      tags:
+      - test2
+      operationId: unmappedWithModelInput
+      x-swagger-router-controller: TestController
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          "application/json":
+            schema:
+              "$ref": "#/components/schemas/Address"
+        required: false
+      responses:
+        '200':
+          description: success!
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/Address"
+  "/mappedWithDefinedModel/{id}":
+    post:
+      tags:
+      - test2
+      operationId: mappedWithDefinedModel
+      x-swagger-router-controller: TestController
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          "application/json":
+            schema:
+              "$ref": "#/components/schemas/Dog"
+        required: false
+      responses:
+        '200':
+          description: success!
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/Dog"
+  "/unmappedWithUndefinedModel/{id}":
+    post:
+      tags:
+      - test2
+      operationId: unmappedWithUndefinedModel
+      x-swagger-router-controller: TestController
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          "application/json":
+            schema:
+              "$ref": "#/components/schemas/UnmappedModel"
+        required: false
+      responses:
+        '200':
+          description: success!
+  "/withPath/{id}":
+    get:
+      tags:
+      - test1
+      operationId: withPath
+      x-swagger-router-controller: TestController
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: success!
+          content:
+            "*/*":
+              schema:
+                "$ref": "#/components/schemas/User"
+  "/withDate/{date}":
+    get:
+      tags:
+      - test1
+      operationId: withDateTime
+      x-swagger-router-controller: TestController
+      parameters:
+      - name: date
+        in: path
+        required: true
+        schema:
+          type: string
+          format: date-time
+      responses:
+        '200':
+          description: success!
+          content:
+            "application/json":
+              schema:
+                "$ref": "#/components/schemas/User"
+  "/withIntegerEnum/{stage}":
+    get:
+      tags:
+        - test1
+      operationId: withDateTime
+      x-swagger-router-controller: TestController
+      parameters:
+      - name: stage
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+          enum:
+          - 2147483647
+          - 3147483647
+          - 31474836475505055
+          - -9223372036854775808
+      responses:
+        '200':
+          description: success!
+          content:
+            "*/*":
+              schema:
+                "$ref": "#/components/schemas/User"
+  "/overloaded":
+    get:
+      tags:
+      - overloaded
+      operationId: overloadedResponse
+      x-swagger-router-controller: TestController
+      parameters:
+      - name: arg1
+        in: query
+        schema:
+          type: string
+      responses:
+        '200':
+          description: success!
+          content:
+            "*/*":
+              schema:
+                "$ref": "#/components/schemas/User"
+  "/throwApiException":
+    get:
+      tags:
+      - throw
+      operationId: throwApiException
+      x-swagger-router-controller: TestController
+      responses:
+        '200':
+          description: success!
+  "/throwApiExceptionAsCause":
+    get:
+      tags:
+      - throw
+      operationId: throwApiExceptionAsCause
+      x-swagger-router-controller: TestController
+      responses:
+        '200':
+          description: success!
+  "/throwNonApiException":
+    get:
+      tags:
+      - throw
+      operationId: throwNonApiException
+      x-swagger-router-controller: TestController
+      responses:
+        '200':
+          description: success!
+  "/returnNonRfc2616Status":
+    get:
+      tags:
+        - throw
+      operationId: returnNonRfc2616Status
+      x-swagger-router-controller: TestController
+      responses:
+        '200':
+          description: success!
+  "/responseHeaders":
+    get:
+      tags:
+        - response
+      operationId: returnWithResponseHeaders
+      x-swagger-router-controller: TestController
+      responses:
+        '200':
+          description: success
+externalDocs:
+  description: Find out more about Swagger
+  url: http://swagger.io
+components:
+  schemas:
+    Water:
+      properties:
+        clear:
+          type: boolean
+        name:
+          type: string
+        prices:
+          type: array
+        id:
+          type: string
+          format: uuid
+    ExtendedAddress:
+      type: object
+      x-swagger-router-model: io.swagger.oas.test.models.ExtendedAddress
+      allOf:
+        - $ref: '#/components/schemas/Address'
+        - type: object
+          required:
+          - gps
+          properties:
+            gps:
+              type: string
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+      description: the name!
+      example: |
+            {
+              "foo":"bar"
+            }
+    Address:
+      required:
+      - street
+      type: object
+      x-swagger-router-model: io.swagger.oas.test.models.Address
+      properties:
+        street:
+          type: string
+          example: 12345 El Monte Road
+        city:
+          type: string
+          example: Los Altos Hills
+        state:
+          type: string
+          example: CA
+        zip:
+          type: string
+          example: '94022'
+    UnmappedModel:
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+    Animal:
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        address:
+          "$ref": "#/components/schemas/Address"
+      description: the name!
+    Dog:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        dogType:
+          type: string
+    VeryComplexType:
+      type: integer
+      format: int32
+    ExtendedErrorModel:
+      allOf:
+      - type: object
+        required:
+        - rootCause
+        properties:
+          rootCause:
+            type: string
+            "$ref": "#/components/schemas/Category"
+    Order:
+      type: object
+      not:
+        type: integer
+        format: int32
+      additionalProperties:
+        type: integer
+      properties:
+        id:
+          type: integer
+          format: int64
+        petId:
+          type: integer
+          format: int64
+        quantity:
+          type: integer
+          format: int32
+        shipDate:
+          type: string
+          format: date-time
+        status:
+          type: string
+          description: Order Status
+          enum:
+          - placed
+          - approved
+          - delivered
+        complete:
+          type: boolean
+          default: false
+      xml:
+        name: Order
+      properties:
+        id:
+          type: integer
+          format: int64
+        petId:
+          type: integer
+          format: int64
+        quantity:
+          type: integer
+          format: int32
+        shipDate:
+          type: string
+          format: date-time
+        status:
+          type: string
+          description: Order Status
+          enum:
+          - placed
+          - approved
+          - delivered
+        complete:
+          type: boolean
+          default: false
+      xml:
+        name: Order
+    Category:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+      xml:
+        name: Category
+    Tag:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+      xml:
+        name: Tag
+    Pet:
+      type: object
+      required:
+      - name
+      - photoUrls
+      properties:
+        id:
+          type: integer
+          format: int64
+        category:
+          "$ref": "#/components/schemas/Category"
+        user:
+          type: string
+          example: doggie
+        photoUrls:
+          type: array
+          xml:
+            name: photoUrl
+            wrapped: true
+          items:
+            type: string
+        tags:
+          type: array
+          xml:
+            name: tag
+            wrapped: true
+        status:
+          type: string
+          description: pet status in the store
+          enum:
+          - available
+          - pending
+          - sold
+      xml:
+        name: Pet
+    ApiResponse:
+      type: object
+      required:
+      - name
+      - photoUrls
+      properties:
+        code:
+          type: integer
+          format: int32
+        type:
+          type: string
+        message:
+          type: string
+  responses:
+    NotFound:
+      description: Entity not found.
+    IllegalInput:
+      description: Illegal input for operation.
+      headers:
+        X-Ref-Limit-Limit:
+          "$ref": "#/components/headers/X-Rate-Limit-Reset"
+      links:
+        address:
+          "$ref": "#/components/links/unsubscribe"
+    GeneralError:
+      description: General Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ExtendedErrorModel'
+  parameters:
+    contentParameter:
+      in: query
+      name: coordinates
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ExtendedErrorModel'
+      examples:
+        cat:
+          summary: An example of a cat
+          value:
+            name: Fluffy
+            petType: Cat
+            color: White
+            gender: male
+            breed: Persian
+    refParam:
+      "$ref": "#/components/parameters/limitParam"
+    newParam:
+      name: skip
+      in: query
+      description: number of items to skip
+      required: true
+      schema:
+        type: integer
+        format: int32
+        "$ref": "#/components/schemas/Tag"
+    skipParam:
+      name: skip
+      in: query
+      description: number of items to skip
+      required: true
+      schema:
+        type: integer
+        format: int32
+    limitParam:
+      name: limit
+      in: query
+      description: max records to return
+      required: true
+      schema:
+        type: integer
+        format: int32
+  examples:
+    cat:
+      summary: An example of a cat
+      value:
+        name: Fluffy
+        petType: Cat
+        color: White
+        gender: male
+        breed: Persian
+    dog:
+      summary: An example of a dog with a cat's name
+      value:
+        name: Puma
+        petType: Dog
+        color: Black
+        gender: Female
+        breed: Mixed
+    frog:
+      $ref: "#/components/examples/cat"
+  requestBodies:
+    requestBody1:
+      description: request body in components
+      content:
+        application/json:
+          description: Pet object that needs to be added to the store
+          schema:
+            "$ref": "#/components/schemas/Pet"
+        application/xml:
+          description: Pet object that needs to be added to the store
+          schema:
+            "$ref": "#/components/schemas/Pet"
+    requestBody2:
+      content:
+        application/json:
+          description: List of user object
+          schema:
+            type: array
+            items:
+              "$ref": "#/components/schemas/User"
+    requestBody3:
+      "$ref": "#/components/requestBodies/requestBody2"
+  securitySchemes:
+    reference:
+      "$ref": "#/components/securitySchemes/api_key"
+    petstore_auth:
+      type: oauth2
+      flows:
+        implicit:
+          authorizationUrl: http://petstore.swagger.io/oauth/dialog
+          scopes:
+            write:pets: modify pets in your account
+            read:pets: read your pets
+    api_key:
+      type: apiKey
+      name: api_key
+      in: header
+  headers:
+    X-Ref-Limit-Limit:
+      "$ref": "#/components/headers/X-Rate-Limit-Reset"
+    X-Rate-Limit-Limit:
+      description: The number of allowed requests in the current period
+      schema:
+        type: integer
+      example: "This is a header example"
+    X-Rate-Limit-Remaining:
+      description: The number of remaining requests in the current period
+      schema:
+        type: integer
+    X-Rate-Limit-Reset:
+      description: The number of seconds left in the current period
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ExtendedErrorModel'
+      examples:
+        dog:
+          $ref: "#/components/examples/dog"
+  links:
+    referenced:
+      "$ref": "#/components/links/unsubscribe"
+    unsubscribe:
+      operationId: cancelHookCallback
+      parameters:
+        id: $response.body#/hookId
+      x-link: link extension
+  callbacks:
+    referenced:
+      '$response.body#/failedUrl':
+        "$ref": "#/components/callbacks/failed"
+    heartbeat:
+      '$request.query.heartbeat-url':
+        post:
+          requestBody:
+            $ref: '#/components/requestBodies/requestBody3'
+          responses:
+            '200':
+              description: Consumer acknowledged the callback
+    failed:
+      '$response.body#/failedUrl':
+        post:
+          requestBody:
+            $ref: '#/components/requestBodies/requestBody3'
+          responses:
+            '200':
+              description: Consumer acknowledged the callback failed
+    success:
+      '$response.body#/successUrl':
+        post:
+          requestBody:
+            $ref: '#/components/requestBodies/requestBody1'
+          responses:
+            '200':
+              description: Consumer acknowledged the callback
+  x-component:
+  - url: http://component.swagger.io/v2/swagger.json
+    format: OAS
+    version: '3.0'
+    converter:
+      url: https://github.com/mermade/oas3
+      version: 1.2.3
+  x-api-title: pet store test api in components

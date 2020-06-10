@@ -1,0 +1,10 @@
+openapi: 3.0.1
+tags:
+- name: Fourth Tag Full
+  description: desc class
+  externalDocs:
+    description: docs desc class
+- name: Fifth Tag Full
+  description: desc class
+  externalDocs:
+    description: docs desc class

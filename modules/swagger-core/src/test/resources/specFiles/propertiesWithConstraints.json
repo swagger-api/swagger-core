@@ -1,0 +1,61 @@
+{
+    "oas": "3.0.1",
+    "paths": {
+        "/health": {
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "schema": {
+                            "$ref": "#/definitions/Health"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "Health": {
+                "properties": {
+                    "array_with_min": {
+                        "type": "array",
+                        "minItems": 5,
+                        "items": {
+                            "$ref": "#/definitions/Health"
+                        }
+                    },
+                    "array_with_max": {
+                        "type": "array",
+                        "maxItems": 10,
+                        "items": {
+                            "$ref": "#/definitions/Health"
+                        }
+                    },
+                    "array_with_unique": {
+                        "type": "array",
+                        "uniqueItems": true,
+                        "items": {
+                            "$ref": "#/definitions/Health"
+                        }
+                    },
+                    "array_with_all": {
+                        "type": "array",
+                        "minItems": 1,
+                        "maxItems": 10,
+                        "uniqueItems": true,
+                        "items": {
+                            "$ref": "#/definitions/Health"
+                        }
+                    },
+                    "string_with_constraints": {
+                        "type": "string",
+                        "minLength": 10,
+                        "maxLength": 100,
+                        "pattern": "apattern"
+                    }
+                }
+            }
+        }
+    }
+}

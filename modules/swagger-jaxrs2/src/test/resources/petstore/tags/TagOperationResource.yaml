@@ -1,0 +1,13 @@
+openapi: 3.0.1
+paths:
+  /tagoperation:
+    get:
+      tags:
+      - Example Tag
+      - Second Tag
+      operationId: getTags
+      responses:
+        default:
+          description: default response
+          content:
+            '*/*': {}

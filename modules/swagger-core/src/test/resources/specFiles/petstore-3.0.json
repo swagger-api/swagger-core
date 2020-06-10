@@ -1,0 +1,175 @@
+{
+    "info": {
+        "version": "1.0.0",
+        "license": {
+            "name": "MIT"
+        },
+        "title": "Swagger Petstore"
+    },
+    "paths": {
+        "/pets": {
+            "post": {
+                "tags": [
+                    "pets"
+                ],
+                "summary": "Create a pet",
+                "responses": {
+                    "default": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        },
+                        "description": "unexpected error"
+                    },
+                    "201": {
+                        "description": "Null response"
+                    }
+                },
+                "operationId": "createPets"
+            },
+            "get": {
+                "tags": [
+                    "pets"
+                ],
+                "summary": "List all pets",
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Pets"
+                                }
+                            }
+                        },
+                        "headers": {
+                            "x-next": {
+                                "description": "A link to the next page of responses",
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        },
+                        "description": "An paged array of pets"
+                    },
+                    "default": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        },
+                        "description": "unexpected error"
+                    }
+                },
+                "parameters": [
+                    {
+                        "required": false,
+                        "in": "query",
+                        "description": "How many items to return at one time (max 100)",
+                        "name": "limit",
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32"
+                        }
+                    }
+                ],
+                "operationId": "listPets"
+            }
+        },
+        "/pets/{petId}": {
+            "get": {
+                "tags": [
+                    "pets"
+                ],
+                "summary": "Info for a specific pet",
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Pets"
+                                }
+                            }
+                        },
+                        "description": "Expected response to a valid request"
+                    },
+                    "default": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Error"
+                                }
+                            }
+                        },
+                        "description": "unexpected error"
+                    }
+                },
+                "parameters": [
+                    {
+                        "required": true,
+                        "in": "path",
+                        "description": "The id of the pet to retrieve",
+                        "name": "petId",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "operationId": "showPetById"
+            }
+        }
+    },
+    "openapi": "3.0.1",
+    "components": {
+        "schemas": {
+            "Pet": {
+                "required": [
+                    "id",
+                    "name"
+                ],
+                "properties": {
+                    "tag": {
+                        "type": "string"
+                    },
+                    "id": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "name": {
+                        "type": "string"
+                    }
+                }
+            },
+            "Pets": {
+                "items": {
+                    "$ref": "#/components/schemas/Pet"
+                },
+                "type": "array"
+            },
+            "Error": {
+                "required": [
+                    "code",
+                    "message"
+                ],
+                "properties": {
+                    "message": {
+                        "type": "string"
+                    },
+                    "code": {
+                        "type": "integer",
+                        "format": "int32"
+                    }
+                }
+            }
+        }
+    },
+    "servers": [
+        {
+            "url": "http://petstore.swagger.io/v1"
+        }
+    ]
+}

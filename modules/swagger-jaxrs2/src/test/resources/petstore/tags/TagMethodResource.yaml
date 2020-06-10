@@ -1,0 +1,19 @@
+openapi: 3.0.1
+tags:
+- name: Fourth Tag Full
+  description: desc
+  externalDocs:
+    description: docs desc
+paths:
+  /tagsinmethod:
+    get:
+      tags:
+      - Third Tag
+      - Second Tag
+      - Fourth Tag Full
+      operationId: getTags
+      responses:
+        default:
+          description: default response
+          content:
+            '*/*': {}

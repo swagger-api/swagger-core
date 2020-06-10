@@ -1,0 +1,106 @@
+{
+    "openapi": "3.0.1",
+    "tags": [
+        {
+            "name": "Recursive Model Resource"
+        }
+    ],
+    "paths": {
+        "/r/indirect": {
+            "get": {
+                "tags": [
+                    "Recursive Model Resource"
+                ],
+                "operationId": "getIndirectRecursiveModel",
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/IndirectRecursiveModelA"
+                                }
+                            },
+                            "application/xml": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/IndirectRecursiveModelA"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/r/self": {
+            "get": {
+                "tags": [
+                    "Recursive Model Resource"
+                ],
+                "operationId": "getSelfReferencingModel",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SelfReferencingModel"
+                                }
+                            },
+                            "application/xml": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SelfReferencingModel"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "SelfReferencingModel": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "children": {
+                        "type": "array",
+                        "properties": {
+                            "nested": {
+                                "$ref": "#/components/schemas/SelfReferencingModel"
+                            }
+                        }
+                    }
+                }
+            },
+            "IndirectRecursiveModelA": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "indirectRecursiveModelB": {
+                        "$ref": "#/components/schemas/IndirectRecursiveModelB"
+                    }
+                }
+            },
+            "IndirectRecursiveModelB": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "indirectRecursiveModelA": {
+                        "$ref": "#/components/schemas/IndirectRecursiveModelA"
+                    }
+                }
+            }
+        }
+    }
+}

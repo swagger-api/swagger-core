@@ -1,0 +1,30 @@
+openapi: 3.0.1
+paths:
+  /test:
+    post:
+      description: subscribes a client to updates relevant to the requestor's account,
+        as identified by the input token.  The supplied url will be used as the delivery
+        address for response payloads
+      operationId: subscribe
+      responses:
+        default:
+          description: test description
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/SubscriptionResponse'
+              examples:
+                Default Response:
+                  summary: Subscription Response Example
+                  description: Default Response
+                  value:
+                    subscriptionId: "1"
+                    subscriptionItem:
+                      subscriptionItemId: "2"
+components:
+  schemas:
+    SubscriptionResponse:
+      type: object
+      properties:
+        subscriptionId:
+          type: string

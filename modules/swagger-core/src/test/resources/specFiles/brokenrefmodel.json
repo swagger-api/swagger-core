@@ -1,0 +1,53 @@
+{
+  "swagger" : "2.0",
+  "tags" : [ {
+    "name" : "Broken References Resource"
+  } ],
+  "paths" : {
+    "/r/nested" : {
+      "get" : {
+        "tags" : [ "Broken References Resource" ],
+        "operationId" : "getNestedModel",
+        "parameters" : [ ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/refname"
+            },
+            "headers" : { }
+          }
+        }
+      }
+    },
+    "/r/root" : {
+      "get" : {
+        "tags" : [ "Broken References Resource" ],
+        "operationId" : "getRootModel",
+        "parameters" : [ ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/RootModel"
+            },
+            "headers" : { }
+          }
+        }
+      }
+    }
+  },
+  "definitions" : {
+    "RootModel" : {
+      "type" : "object",
+      "properties" : {
+        "nested" : {
+          "$ref" : "#/definitions/refname"
+        }
+      }
+    },
+    "NestedModel" : {
+      "type" : "object"
+    }
+  }
+}

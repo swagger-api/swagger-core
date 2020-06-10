@@ -1,0 +1,5 @@
+openapi: 3.0.1
+tags:
+- name: Definition First Tag
+- name: Definition Second Tag full
+  description: desc definition

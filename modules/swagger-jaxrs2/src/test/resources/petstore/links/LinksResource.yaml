@@ -1,0 +1,26 @@
+openapi: 3.0.1
+paths:
+  /links:
+    get:
+      operationId: getUserWithAddress
+      parameters:
+      - name: userId
+        in: query
+        schema:
+          type: string
+      responses:
+        default:
+          description: test description
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/User'
+          links:
+            address:
+              operationId: getAddress
+              parameters:
+                userId: $request.query.userId
+            user:
+              operationId: getUser
+              parameters:
+                userId: $request.query.userId
