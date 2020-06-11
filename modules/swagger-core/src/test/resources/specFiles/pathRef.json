@@ -1,5 +1,5 @@
 {
-  "swagger": "2.0",
+  "swagger": "3.0",
   "title": "Petstore Sample API",
   "info": {
     "description": "A sample API that uses a petstore as an example to demonstrate features in the swagger-2.0 specification",
@@ -45,17 +45,18 @@
         "tags": [
           "user"
         ],
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "description": "Created user object",
-            "required": false,
-            "schema": {
-              "$ref": "#/definitions/User"
+        "requestBody": {
+          "description": "Created user object",
+          "required": false,
+          "content":
+            {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/definitions/User"
+                }
+              }
             }
-          }
-        ]
+        }
       }
     }
   },

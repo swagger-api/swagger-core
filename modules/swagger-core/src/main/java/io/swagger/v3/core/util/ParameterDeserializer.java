@@ -1,5 +1,6 @@
 package io.swagger.v3.core.util;
 
+import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
@@ -30,20 +31,26 @@ public class ParameterDeserializer extends JsonDeserializer<Parameter> {
         } else if (inNode != null) {
             String in = inNode.asText();
 
-            ObjectReader reader = null;
+            ObjectReader reader;
 
-            if ("query".equals(in)) {
-                reader = Json.mapper().readerFor(QueryParameter.class);
-            } else if ("header".equals(in)) {
-                reader = Json.mapper().readerFor(HeaderParameter.class);
-            } else if ("path".equals(in)) {
-                reader = Json.mapper().readerFor(PathParameter.class);
-            } else if ("cookie".equals(in)) {
-                reader = Json.mapper().readerFor(CookieParameter.class);
+            switch (in) {
+                case "query":
+                    reader = Json.mapper().readerFor(QueryParameter.class);
+                    break;
+                case "header":
+                    reader = Json.mapper().readerFor(HeaderParameter.class);
+                    break;
+                case "path":
+                    reader = Json.mapper().readerFor(PathParameter.class);
+                    break;
+                case "cookie":
+                    reader = Json.mapper().readerFor(CookieParameter.class);
+                    break;
+                default:
+                    throw new JsonParseException(jp, String.format("Parameter location %s not allowed", in));
             }
-            if (reader != null) {
-                result = reader.with(DeserializationFeature.READ_ENUMS_USING_TO_STRING).readValue(node);
-            }
+
+            result = reader.with(DeserializationFeature.READ_ENUMS_USING_TO_STRING).readValue(node);
         }
 
         return result;

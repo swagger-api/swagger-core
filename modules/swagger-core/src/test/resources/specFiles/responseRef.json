@@ -1,5 +1,5 @@
 {
-  "swagger": "2.0",
+  "swagger": "3.0",
   "title": "Petstore Sample API",
   "info": {
     "description": "A sample API that uses a petstore as an example to demonstrate features in the swagger-2.0 specification",
@@ -42,17 +42,17 @@
         "tags": [
           "pet"
         ],
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "description": "Pet object that needs to be added to the store",
-            "required": false,
-            "schema": {
-              "$ref": "#/definitions/Pet"
+        "requestBody": {
+          "description": "Pet object that needs to be added to the store",
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/definitions/Pet"
+              }
             }
           }
-        ],
+        },
         "responses": {
           "405": {
             "$ref": "http://my.company.com/responses/errors.json#/method-not-allowed"
