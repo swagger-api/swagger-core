@@ -130,15 +130,15 @@ public class Reader implements OpenApiReader {
      */
     public OpenAPI read(Set<Class<?>> classes) {
         Set<Class<?>> sortedClasses = new TreeSet<>((class1, class2) -> {
-                if (class1.equals(class2)) {
-                    return 0;
-                } else if (class1.isAssignableFrom(class2)) {
-                    return -1;
-                } else if (class2.isAssignableFrom(class1)) {
-                    return 1;
-                }
-                return class1.getName().compareTo(class2.getName());
-            });
+            if (class1.equals(class2)) {
+                return 0;
+            } else if (class1.isAssignableFrom(class2)) {
+                return -1;
+            } else if (class2.isAssignableFrom(class1)) {
+                return 1;
+            }
+            return class1.getName().compareTo(class2.getName());
+        });
         sortedClasses.addAll(classes);
 
         Map<Class<?>, ReaderListener> listeners = new HashMap<>();
@@ -267,6 +267,8 @@ public class Reader implements OpenApiReader {
         javax.ws.rs.Consumes classConsumes = ReflectionUtils.getAnnotation(cls, javax.ws.rs.Consumes.class);
         javax.ws.rs.Produces classProduces = ReflectionUtils.getAnnotation(cls, javax.ws.rs.Produces.class);
 
+        boolean classDeprecated = ReflectionUtils.getAnnotation(cls, Deprecated.class) != null;
+
         // OpenApiDefinition
         OpenAPIDefinition openAPIDefinition = ReflectionUtils.getAnnotation(cls, OpenAPIDefinition.class);
 
@@ -384,6 +386,8 @@ public class Reader implements OpenApiReader {
                 continue;
             }
 
+            boolean methodDeprecated = ReflectionUtils.getAnnotation(method, Deprecated.class) != null;
+
             javax.ws.rs.Path methodPath = ReflectionUtils.getAnnotation(method, javax.ws.rs.Path.class);
 
             String operationPath = ReaderUtils.getPath(apiPath, methodPath, parentPath, isSubresource);
@@ -462,6 +466,10 @@ public class Reader implements OpenApiReader {
                         classResponses,
                         annotatedMethod);
                 if (operation != null) {
+
+                    if (classDeprecated || methodDeprecated) {
+                        operation.setDeprecated(true);
+                    }
 
                     List<Parameter> operationParameters = new ArrayList<>();
                     List<Parameter> formParameters = new ArrayList<>();
@@ -954,10 +962,7 @@ public class Reader implements OpenApiReader {
         }
 
         if (apiOperation != null) {
-            boolean classOrMethodDeprecated = method.getDeclaringClass().isAnnotationPresent(Deprecated.class) || method.isAnnotationPresent(Deprecated.class);
-            setOperationObjectFromApiOperationAnnotation(
-                    operation, apiOperation, methodProduces, classProduces, methodConsumes,
-                    classConsumes, jsonViewAnnotation, classOrMethodDeprecated);
+            setOperationObjectFromApiOperationAnnotation(operation, apiOperation, methodProduces, classProduces, methodConsumes, classConsumes, jsonViewAnnotation);
         }
 
         // apiResponses
@@ -1108,8 +1113,7 @@ public class Reader implements OpenApiReader {
                     classProduces,
                     methodConsumes,
                     classConsumes,
-                    jsonViewAnnotation,
-                    false);
+                    jsonViewAnnotation);
             setPathItemOperation(pathItemObject, callbackOperation.method(), callbackNewOperation);
         }
 
@@ -1158,8 +1162,7 @@ public class Reader implements OpenApiReader {
             Produces classProduces,
             Consumes methodConsumes,
             Consumes classConsumes,
-            JsonView jsonViewAnnotation,
-            boolean classOrMethodDeprecated) {
+            JsonView jsonViewAnnotation) {
         if (StringUtils.isNotBlank(apiOperation.summary())) {
             operation.setSummary(apiOperation.summary());
         }
@@ -1169,9 +1172,7 @@ public class Reader implements OpenApiReader {
         if (StringUtils.isNotBlank(apiOperation.operationId())) {
             operation.setOperationId(getOperationId(apiOperation.operationId()));
         }
-        if (classOrMethodDeprecated) {
-            operation.setDeprecated(true);
-        } else if (apiOperation.deprecated()) {
+        if (apiOperation.deprecated()) {
             operation.setDeprecated(apiOperation.deprecated());
         }
 
