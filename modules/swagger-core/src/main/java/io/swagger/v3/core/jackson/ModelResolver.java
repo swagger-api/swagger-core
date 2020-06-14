@@ -88,6 +88,7 @@ import static io.swagger.v3.core.util.RefUtils.constructRef;
 
 public class ModelResolver extends AbstractModelConverter implements ModelConverter {
     Logger LOGGER = LoggerFactory.getLogger(ModelResolver.class);
+    public static List<String> NOT_NULL_ANNOTATIONS = Arrays.asList("NotNull", "NonNull", "NotBlank", "NotEmpty");
 
     public static final String SET_PROPERTY_OF_COMPOSED_MODEL_AS_SIBLING = "composed-model-properties-as-sibiling";
     public static final String SET_PROPERTY_OF_ENUMS_AS_REF = "enums-as-ref";
@@ -1161,13 +1162,13 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 annos.put(anno.annotationType().getName(), anno);
             }
         }
-        if (parent != null &&
-                (
-                        annos.containsKey("javax.validation.constraints.NotNull") ||
-                        annos.containsKey("javax.validation.constraints.NotBlank") ||
-                        annos.containsKey("javax.validation.constraints.NotEmpty")
-                )) {
-            addRequiredItem(parent, property.getName());
+        if (parent != null && annotations != null) {
+            boolean requiredItem = Arrays.stream(annotations).anyMatch(annotation ->
+                    NOT_NULL_ANNOTATIONS.contains(annotation.annotationType().getSimpleName())
+            );
+            if (requiredItem) {
+                addRequiredItem(parent, property.getName());
+            }
         }
         if (annos.containsKey("javax.validation.constraints.Min")) {
             if ("integer".equals(property.getType()) || "number".equals(property.getType())) {

@@ -60,6 +60,7 @@ import io.swagger.v3.jaxrs2.resources.Ticket2806Resource;
 import io.swagger.v3.jaxrs2.resources.Ticket2818Resource;
 import io.swagger.v3.jaxrs2.resources.Ticket2848Resource;
 import io.swagger.v3.jaxrs2.resources.Ticket3015Resource;
+import io.swagger.v3.jaxrs2.resources.UploadResource;
 import io.swagger.v3.jaxrs2.resources.UserAnnotationResource;
 import io.swagger.v3.jaxrs2.resources.extensions.ExtensionsResource;
 import io.swagger.v3.jaxrs2.resources.extensions.OperationExtensionsResource;
@@ -2142,4 +2143,58 @@ public class ReaderTest {
         SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
     }
 
+    @Test
+    public void testTicket3092() {
+        Reader reader = new Reader(new OpenAPI());
+
+        OpenAPI openAPI = reader.read(UploadResource.class);
+        String yaml = "openapi: 3.0.1\n" +
+                "paths:\n" +
+                "  /upload:\n" +
+                "    post:\n" +
+                "      operationId: uploadWithBean\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          multipart/form-data:\n" +
+                "            schema:\n" +
+                "              type: object\n" +
+                "              properties:\n" +
+                "                name:\n" +
+                "                  type: string\n" +
+                "                picture:\n" +
+                "                  $ref: '#/components/schemas/picture'\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            application/json: {}\n" +
+                "  /upload/requestbody:\n" +
+                "    post:\n" +
+                "      operationId: uploadWithBeanAndRequestBody\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          multipart/form-data:\n" +
+                "            schema:\n" +
+                "              $ref: '#/components/schemas/UploadRequest'\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            application/json: {}\n" +
+                "components:\n" +
+                "  schemas:\n" +
+                "    picture:\n" +
+                "      type: object\n" +
+                "      format: binary\n" +
+                "    UploadRequest:\n" +
+                "      title: Schema for Upload\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        name:\n" +
+                "          type: string\n" +
+                "        picture:\n" +
+                "          type: string\n" +
+                "          format: binary";
+        SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
+    }
 }

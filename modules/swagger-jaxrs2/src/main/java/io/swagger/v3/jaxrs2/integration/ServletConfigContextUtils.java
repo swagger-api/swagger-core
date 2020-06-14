@@ -103,9 +103,7 @@ public class ServletConfigContextUtils {
         if (!isServletConfigAvailable(sc)) {
             return null;
         }
-        return sc.getInitParameter(paramKey) == null ?
-                sc.getInitParameter(paramKey) :
-                sc.getInitParameter(paramKey);
+        return sc.getInitParameter(paramKey);
     }
 
     public static Boolean getBooleanInitParam(ServletConfig sc, String paramKey) {

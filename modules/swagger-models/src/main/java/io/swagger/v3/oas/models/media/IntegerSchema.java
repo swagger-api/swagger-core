@@ -29,11 +29,13 @@ public class IntegerSchema extends Schema<Number> {
         super("integer", "int32");
     }
 
+    @Override
     public IntegerSchema type(String type) {
         super.setType(type);
         return this;
     }
 
+    @Override
     public IntegerSchema format(String format) {
         super.setFormat(format);
         return this;
@@ -49,7 +51,7 @@ public class IntegerSchema extends Schema<Number> {
         if (value != null) {
             try {
                 Number casted = NumberFormat.getInstance().parse(value.toString());
-                if (casted.longValue() <= Integer.MAX_VALUE) {
+                if (Integer.MIN_VALUE <= casted.longValue() && casted.longValue() <= Integer.MAX_VALUE) {
                     return Integer.parseInt(value.toString());
                 } else {
                     return Long.parseLong(value.toString());

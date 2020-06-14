@@ -89,14 +89,14 @@ public class OpenApiServlet extends HttpServlet {
 
         if (type.equalsIgnoreCase("yaml")) {
             resp.setContentType(APPLICATION_YAML);
-            PrintWriter pw = resp.getWriter();
-            pw.write(pretty ? Yaml.pretty(oas) : Yaml.mapper().writeValueAsString(oas));
-            pw.close();
+            try (PrintWriter pw = resp.getWriter()) {
+                pw.write(pretty ? Yaml.pretty(oas) : Yaml.mapper().writeValueAsString(oas));
+            }
         } else {
             resp.setContentType(APPLICATION_JSON);
-            PrintWriter pw = resp.getWriter();
-            pw.write(pretty ? Json.pretty(oas) : Json.mapper().writeValueAsString(oas));
-            pw.close();
+            try (PrintWriter pw = resp.getWriter()) {
+                pw.write(pretty ? Json.pretty(oas) : Json.mapper().writeValueAsString(oas));
+            }
         }
 
     }

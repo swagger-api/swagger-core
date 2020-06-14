@@ -119,10 +119,7 @@ public class ServletOpenApiConfigurationLoader implements OpenApiConfigurationLo
             if (getInitParam(servletConfig, OPENAPI_CONFIGURATION_OBJECT_MAPPER_PROCESSOR_KEY) != null) {
                 return true;
             }
-            if (resolveModelConverterClasses(servletConfig) != null) {
-                return true;
-            }
-            return false;
+            return resolveModelConverterClasses(servletConfig) != null;
         }
         String location = ServletConfigContextUtils.getInitParam(servletConfig, path);
         if (!StringUtils.isBlank(location)) {
