@@ -256,6 +256,7 @@ public class JsonDeserializationTest {
         assertEquals(s.getEnum().get(0), 2147483647);
         assertEquals(s.getEnum().get(1), 3147483647L);
         assertEquals(s.getEnum().get(2), 31474836475505055L);
+        assertEquals(s.getEnum().get(3), -9223372036854775808L);
     }
 
     @Test

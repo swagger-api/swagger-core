@@ -122,7 +122,7 @@ public class OpenAPI {
 
     public OpenAPI addServersItem(Server serversItem) {
         if (this.servers == null) {
-            this.servers = new ArrayList<Server>();
+            this.servers = new ArrayList<>();
         }
         this.servers.add(serversItem);
         return this;
@@ -149,7 +149,7 @@ public class OpenAPI {
 
     public OpenAPI addSecurityItem(SecurityRequirement securityItem) {
         if (this.security == null) {
-            this.security = new ArrayList<SecurityRequirement>();
+            this.security = new ArrayList<>();
         }
         this.security.add(securityItem);
         return this;
@@ -176,7 +176,7 @@ public class OpenAPI {
 
     public OpenAPI addTagsItem(Tag tagsItem) {
         if (this.tags == null) {
-            this.tags = new ArrayList<Tag>();
+            this.tags = new ArrayList<>();
         }
         this.tags.add(tagsItem);
         return this;

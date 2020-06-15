@@ -30,11 +30,13 @@ public class DateSchema extends Schema<Date> {
         super("string", "date");
     }
 
+    @Override
     public DateSchema type(String type) {
         super.setType(type);
         return this;
     }
 
+    @Override
     public DateSchema format(String format) {
         super.setFormat(format);
         return this;

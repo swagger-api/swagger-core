@@ -15,7 +15,7 @@ public class JaxrsApplicationAndResourcePackagesAnnotationScanner extends JaxrsA
     @Override
     public Set<Class<?>> classes() {
         Set<Class<?>> classes = super.classes();
-        Set<Class<?>> output = new HashSet<Class<?>>();
+        Set<Class<?>> output = new HashSet<>();
         if (application != null) {
             Set<Class<?>> clzs = application.getClasses();
             if (clzs != null) {

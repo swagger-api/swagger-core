@@ -57,7 +57,6 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -130,18 +129,15 @@ public class Reader implements OpenApiReader {
      * @return the generated OpenAPI definition
      */
     public OpenAPI read(Set<Class<?>> classes) {
-        Set<Class<?>> sortedClasses = new TreeSet<>(new Comparator<Class<?>>() {
-            @Override
-            public int compare(Class<?> class1, Class<?> class2) {
-                if (class1.equals(class2)) {
-                    return 0;
-                } else if (class1.isAssignableFrom(class2)) {
-                    return -1;
-                } else if (class2.isAssignableFrom(class1)) {
-                    return 1;
-                }
-                return class1.getName().compareTo(class2.getName());
+        Set<Class<?>> sortedClasses = new TreeSet<>((class1, class2) -> {
+            if (class1.equals(class2)) {
+                return 0;
+            } else if (class1.isAssignableFrom(class2)) {
+                return -1;
+            } else if (class2.isAssignableFrom(class1)) {
+                return 1;
             }
+            return class1.getName().compareTo(class2.getName());
         });
         sortedClasses.addAll(classes);
 
@@ -192,6 +188,7 @@ public class Reader implements OpenApiReader {
         }
     }
 
+    @Override
     public OpenAPI read(Set<Class<?>> classes, Map<String, Object> resources) {
         return read(classes);
     }
@@ -213,9 +210,9 @@ public class Reader implements OpenApiReader {
             // look for inner application, e.g. ResourceConfig
             try {
                 Application innerApp = application;
-                Method m = application.getClass().getMethod("getApplication", null);
+                Method m = application.getClass().getMethod("getApplication");
                 while (m != null) {
-                    Application retrievedApp = (Application) m.invoke(innerApp, null);
+                    Application retrievedApp = (Application) m.invoke(innerApp);
                     if (retrievedApp == null) {
                         break;
                     }
@@ -229,7 +226,7 @@ public class Reader implements OpenApiReader {
                             return applicationPath.value();
                         }
                     }
-                    m = innerApp.getClass().getMethod("getApplication", null);
+                    m = innerApp.getClass().getMethod("getApplication");
                 }
             } catch (NoSuchMethodException e) {
                 // no inner application found
@@ -269,6 +266,8 @@ public class Reader implements OpenApiReader {
 
         javax.ws.rs.Consumes classConsumes = ReflectionUtils.getAnnotation(cls, javax.ws.rs.Consumes.class);
         javax.ws.rs.Produces classProduces = ReflectionUtils.getAnnotation(cls, javax.ws.rs.Produces.class);
+
+        boolean classDeprecated = ReflectionUtils.getAnnotation(cls, Deprecated.class) != null;
 
         // OpenApiDefinition
         OpenAPIDefinition openAPIDefinition = ReflectionUtils.getAnnotation(cls, OpenAPIDefinition.class);
@@ -340,8 +339,8 @@ public class Reader implements OpenApiReader {
                     .getTags(apiTags, false).ifPresent(tags ->
                     tags
                             .stream()
-                            .map(t -> t.getName())
-                            .forEach(t -> classTags.add(t))
+                            .map(Tag::getName)
+                            .forEach(classTags::add)
             );
         }
 
@@ -355,7 +354,7 @@ public class Reader implements OpenApiReader {
         // servers
         final List<io.swagger.v3.oas.models.servers.Server> classServers = new ArrayList<>();
         if (apiServers != null) {
-            AnnotationsUtils.getServers(apiServers).ifPresent(servers -> classServers.addAll(servers));
+            AnnotationsUtils.getServers(apiServers).ifPresent(classServers::addAll);
         }
 
         // class external docs
@@ -374,7 +373,7 @@ public class Reader implements OpenApiReader {
         globalParameters.addAll(ReaderUtils.collectFieldParameters(cls, components, classConsumes, null));
 
         // iterate class methods
-        Method methods[] = cls.getMethods();
+        Method[] methods = cls.getMethods();
         for (Method method : methods) {
             if (isOperationHidden(method)) {
                 continue;
@@ -386,6 +385,8 @@ public class Reader implements OpenApiReader {
             if (isMethodOverridden(method, cls)) {
                 continue;
             }
+
+            boolean methodDeprecated = ReflectionUtils.getAnnotation(method, Deprecated.class) != null;
 
             javax.ws.rs.Path methodPath = ReflectionUtils.getAnnotation(method, javax.ws.rs.Path.class);
 
@@ -466,6 +467,10 @@ public class Reader implements OpenApiReader {
                         annotatedMethod);
                 if (operation != null) {
 
+                    if (classDeprecated || methodDeprecated) {
+                        operation.setDeprecated(true);
+                    }
+
                     List<Parameter> operationParameters = new ArrayList<>();
                     List<Parameter> formParameters = new ArrayList<>();
                     Annotation[][] paramAnnotations = ReflectionUtils.getParameterAnnotations(method);
@@ -529,7 +534,7 @@ public class Reader implements OpenApiReader {
                         }
                     }
                     // if we have form parameters, need to merge them into single schema and use as request body..
-                    if (formParameters.size() > 0) {
+                    if (!formParameters.isEmpty()) {
                         Schema mergedSchema = new ObjectSchema();
                         for (Parameter formParam: formParameters) {
                             mergedSchema.addProperties(formParam.getName(), formParam.getSchema());
@@ -549,7 +554,7 @@ public class Reader implements OpenApiReader {
                                 jsonViewAnnotationForRequestBody);
 
                     }
-                    if (operationParameters.size() > 0) {
+                    if (!operationParameters.isEmpty()) {
                         for (Parameter operationParameter : operationParameters) {
                             operation.addParametersItem(operationParameter);
                         }
@@ -908,7 +913,7 @@ public class Reader implements OpenApiReader {
         if (apiTags != null) {
             apiTags.stream()
                     .filter(t -> operation.getTags() == null || (operation.getTags() != null && !operation.getTags().contains(t.name())))
-                    .map(t -> t.name())
+                    .map(io.swagger.v3.oas.annotations.tags.Tag::name)
                     .forEach(operation::addTagsItem);
             AnnotationsUtils.getTags(apiTags.toArray(new io.swagger.v3.oas.annotations.tags.Tag[apiTags.size()]), true).ifPresent(tags -> openApiTags.addAll(tags));
         }
@@ -961,7 +966,7 @@ public class Reader implements OpenApiReader {
         }
 
         // apiResponses
-        if (apiResponses != null && apiResponses.size() > 0) {
+        if (apiResponses != null && !apiResponses.isEmpty()) {
             OperationParser.getApiResponses(
                     apiResponses.toArray(new io.swagger.v3.oas.annotations.responses.ApiResponse[apiResponses.size()]),
                     classProduces,
@@ -1074,7 +1079,7 @@ public class Reader implements OpenApiReader {
             rawClassName = className.replace("[simple type, class ", "");
             rawClassName = rawClassName.substring(0, rawClassName.length() -1);
         }
-        ignore = ignore || rawClassName.startsWith("javax.ws.rs.");
+        ignore = rawClassName.startsWith("javax.ws.rs.");
         ignore = ignore || rawClassName.equalsIgnoreCase("void");
         ignore = ignore || ModelConverters.getInstance().isRegisteredAsSkippedClass(rawClassName);
         return ignore;
@@ -1171,11 +1176,10 @@ public class Reader implements OpenApiReader {
             operation.setDeprecated(apiOperation.deprecated());
         }
 
-        ReaderUtils.getStringListFromStringArray(apiOperation.tags()).ifPresent(tags -> {
+        ReaderUtils.getStringListFromStringArray(apiOperation.tags()).ifPresent(tags ->
             tags.stream()
                     .filter(t -> operation.getTags() == null || (operation.getTags() != null && !operation.getTags().contains(t)))
-                    .forEach(operation::addTagsItem);
-        });
+                    .forEach(operation::addTagsItem));
 
         if (operation.getExternalDocs() == null) { // if not set in root annotation
             AnnotationsUtils.getExternalDocumentation(apiOperation.externalDocs()).ifPresent(operation::setExternalDocs);
@@ -1206,18 +1210,16 @@ public class Reader implements OpenApiReader {
         }
 
         // RequestBody in Operation
-        if (apiOperation != null && apiOperation.requestBody() != null && operation.getRequestBody() == null) {
+        if (apiOperation.requestBody() != null && operation.getRequestBody() == null) {
             OperationParser.getRequestBody(apiOperation.requestBody(), classConsumes, methodConsumes, components, jsonViewAnnotation).ifPresent(
-                    requestBodyObject -> operation.setRequestBody(requestBodyObject));
+                    operation::setRequestBody);
         }
 
         // Extensions in Operation
         if (apiOperation.extensions().length > 0) {
             Map<String, Object> extensions = AnnotationsUtils.getExtensions(apiOperation.extensions());
             if (extensions != null) {
-                for (String ext : extensions.keySet()) {
-                    operation.addExtension(ext, extensions.get(ext));
-                }
+                extensions.forEach(operation::addExtension);
             }
         }
     }
@@ -1262,7 +1264,7 @@ public class Reader implements OpenApiReader {
             ResolvedParameter resolvedParameter = getParameters(ParameterProcessor.getParameterType(parameter), Collections.singletonList(parameter), operation, classConsumes, methodConsumes, jsonViewAnnotation);
             parametersObject.addAll(resolvedParameter.parameters);
         }
-        if (parametersObject.size() == 0) {
+        if (parametersObject.isEmpty()) {
             return Optional.empty();
         }
         return Optional.of(parametersObject);
@@ -1279,8 +1281,7 @@ public class Reader implements OpenApiReader {
         final OpenAPIExtension extension = chain.next();
         LOGGER.debug("trying extension {}", extension);
 
-        final ResolvedParameter extractParametersResult = extension.extractParameters(annotations, type, typesToSkip, components, classConsumes, methodConsumes, true, jsonViewAnnotation, chain);
-        return extractParametersResult;
+        return extension.extractParameters(annotations, type, typesToSkip, components, classConsumes, methodConsumes, true, jsonViewAnnotation, chain);
     }
 
     private Set<String> extractOperationIdFromPathItem(PathItem path) {
@@ -1395,10 +1396,7 @@ public class Reader implements OpenApiReader {
                 path = path.substring(0, path.length() - 1);
             }
         }
-        if (path.equals(parentPath)) {
-            return true;
-        }
-        return false;
+        return path.equals(parentPath);
     }
 
     protected Class<?> getSubResourceWithJaxRsSubresourceLocatorSpecs(Method method) {
