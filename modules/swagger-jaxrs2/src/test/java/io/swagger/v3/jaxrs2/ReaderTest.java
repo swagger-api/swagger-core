@@ -1302,7 +1302,7 @@ public class ReaderTest {
     class RefResponseFilter extends AbstractSpecFilter {
 
         @Override
-        public Optional<Operation> filterOperation(Operation operation, ApiDescription api, Map<String, List<String>> params, Map<String, String> cookies, Map<String, List<String>> headers) {
+        public Optional<Operation> filterOperation(Operation operation, ApiDescription api, Map<String, List<String>> params, Map<String, List<String>> cookies, Map<String, List<String>> headers) {
             if ("getWithPayloadResponse".equals(operation.getOperationId())) {
                 final ApiResponses apiResponses = (operation.getResponses() == null) ? new ApiResponses() : operation.getResponses();
                 apiResponses.addApiResponse("401", new ApiResponse().$ref("#/components/responses/invalidJWT"));
@@ -1472,7 +1472,7 @@ public class ReaderTest {
     class RefRequestBodyFilter extends AbstractSpecFilter {
         @Override
         public Optional<Operation> filterOperation(Operation operation, ApiDescription api, Map<String, List<String>> params,
-                                                   Map<String, String> cookies, Map<String, List<String>> headers) {
+                                                   Map<String, List<String>> cookies, Map<String, List<String>> headers) {
             if ("sendPayload".equals(operation.getOperationId())) {
                 final RequestBody requestBody = new RequestBody();
                 requestBody.set$ref("#/components/requestBodies/User");
@@ -1583,7 +1583,7 @@ public class ReaderTest {
     class RefParameterFilter extends AbstractSpecFilter {
         @Override
         public Optional<Operation> filterOperation(Operation operation, ApiDescription api, Map<String, List<String>> params,
-                                                   Map<String, String> cookies, Map<String, List<String>> headers) {
+                                                   Map<String, List<String>> cookies, Map<String, List<String>> headers) {
             if ("sendPayload".equals(operation.getOperationId())) {
                 final Parameter parameter = new Parameter();
                 parameter.set$ref("#/components/parameters/id");
@@ -1718,7 +1718,7 @@ public class ReaderTest {
     class RefExampleFilter extends AbstractSpecFilter {
         @Override
         public Optional<Operation> filterOperation(Operation operation, ApiDescription api, Map<String, List<String>> params,
-                                                   Map<String, String> cookies, Map<String, List<String>> headers) {
+                                                   Map<String, List<String>> cookies, Map<String, List<String>> headers) {
             if ("subscribe".equals(operation.getOperationId())) {
                 final Parameter parameter = new Parameter();
                 parameter.setExample(new Example().$ref("#/components/examples/Id"));

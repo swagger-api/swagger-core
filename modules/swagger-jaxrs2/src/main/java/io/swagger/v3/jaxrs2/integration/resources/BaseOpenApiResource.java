@@ -16,6 +16,7 @@ import javax.servlet.ServletConfig;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
@@ -89,10 +90,10 @@ public abstract class BaseOpenApiResource {
         return output;
     }
 
-    private static Map<String, String> getCookies(HttpHeaders headers) {
-        Map<String, String> output = new HashMap<>();
+    private static Map<String, List<String>> getCookies(HttpHeaders headers) {
+        MultivaluedHashMap<String, String> output = new MultivaluedHashMap<>();
         if (headers != null) {
-            headers.getCookies().forEach((k, v) -> output.put(k, v.getValue()));
+            headers.getCookies().forEach((k, v) -> output.add(k, v.getValue()));
         }
         return output;
     }

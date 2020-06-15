@@ -14,7 +14,7 @@ import java.util.Optional;
  */
 public class InternalModelPropertiesRemoverFilter extends AbstractSpecFilter {
     @Override
-    public Optional<Schema> filterSchemaProperty(Schema property, Schema schema, String propName, Map<String, List<String>> params, Map<String, String> cookies, Map<String, List<String>> headers) {
+    public Optional<Schema> filterSchemaProperty(Schema property, Schema schema, String propName, Map<String, List<String>> params, Map<String, List<String>> cookies, Map<String, List<String>> headers) {
         if (StringUtils.isNotBlank(property.getName()) && property.getName().startsWith("_")) {
             if (headers != null && headers.containsKey("super-user")) {
                 return Optional.of(property);
