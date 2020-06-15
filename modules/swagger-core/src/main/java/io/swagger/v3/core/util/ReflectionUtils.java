@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
@@ -17,6 +18,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 public class ReflectionUtils {
@@ -372,5 +374,14 @@ public class ReflectionUtils {
             return true;
         }
         return false;
+    }
+
+    public static Optional<Object> safeInvoke(Method method, Object obj, Object... args) {
+        try {
+            return Optional.ofNullable(method.invoke(obj, args));
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            return Optional.empty();
+        }
+
     }
 }
