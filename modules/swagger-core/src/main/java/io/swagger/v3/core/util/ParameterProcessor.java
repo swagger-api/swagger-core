@@ -21,7 +21,7 @@ import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -107,7 +107,7 @@ public class ParameterProcessor {
                     parameter.setAllowReserved(p.allowReserved());
                 }
 
-                Map<String, Example> exampleMap = new HashMap<>();
+                Map<String, Example> exampleMap = new LinkedHashMap<>();
                 if (p.examples().length == 1 && StringUtils.isBlank(p.examples()[0].name())) {
                     Optional<Example> exampleOptional = AnnotationsUtils.getExample(p.examples()[0], true);
                     if (exampleOptional.isPresent()) {

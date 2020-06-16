@@ -555,15 +555,19 @@ public abstract class AnnotationsUtils {
             Map<String, Schema> schemaMap;
             if (resolvedSchema != null) {
                 schemaMap = resolvedSchema.referencedSchemas;
-                schemaMap.forEach((key, referencedSchema) -> {
-                    if (components != null) {
-                        components.addSchemas(key, referencedSchema);
+                if (schemaMap != null) {
+                    schemaMap.forEach((key, referencedSchema) -> {
+                        if (components != null) {
+                            components.addSchemas(key, referencedSchema);
+                        }
+                    });
+                }
+                if (resolvedSchema.schema != null) {
+                    if (StringUtils.isNotBlank(resolvedSchema.schema.getName())) {
+                        schemaObject.set$ref(COMPONENTS_REF + resolvedSchema.schema.getName());
+                    } else {
+                        schemaObject = resolvedSchema.schema;
                     }
-                });
-                if (StringUtils.isNotBlank(resolvedSchema.schema.getName())) {
-                    schemaObject.set$ref(COMPONENTS_REF + resolvedSchema.schema.getName());
-                } else {
-                    schemaObject = resolvedSchema.schema;
                 }
             }
         }

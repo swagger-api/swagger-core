@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
+import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.annotation.ObjectIdGenerator;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
@@ -81,6 +82,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -938,11 +940,29 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         final boolean useIndex = _mapper.isEnabled(SerializationFeature.WRITE_ENUMS_USING_INDEX);
         final boolean useToString = _mapper.isEnabled(SerializationFeature.WRITE_ENUMS_USING_TO_STRING);
 
+
+        Optional<Method> jsonValueMethod = Arrays.stream(propClass.getMethods())
+                .filter(m -> m.isAnnotationPresent(JsonValue.class))
+                .filter(m -> m.getAnnotation(JsonValue.class).value())
+                .findFirst();
+
         @SuppressWarnings("unchecked")
         Class<Enum<?>> enumClass = (Class<Enum<?>>) propClass;
-        for (Enum<?> en : enumClass.getEnumConstants()) {
+
+        Enum<?>[] enumConstants = enumClass.getEnumConstants();
+        String[] enumValues = _intr.findEnumValues(propClass, enumConstants, new String[enumConstants.length]);
+
+        for (Enum<?> en : enumConstants) {
             String n;
-            if (useIndex) {
+
+            String enumValue = enumValues[en.ordinal()];
+            String s = jsonValueMethod.flatMap(m -> ReflectionUtils.safeInvoke(m, en)).map(Object::toString).orElse(null);
+
+            if (s != null) {
+                n = s;
+            } else if (enumValue != null) {
+                n = enumValue;
+            } else if (useIndex) {
                 n = String.valueOf(en.ordinal());
             } else if (useToString) {
                 n = en.toString();
