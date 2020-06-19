@@ -361,16 +361,16 @@ public class ExamplesTest extends AbstractAnnotationTest {
                 "        schema:\n" +
                 "          $ref: '#/components/schemas/SubscriptionResponse'\n" +
                 "        examples:\n" +
-                "          subscriptionId_2:\n" +
-                "            summary: Subscription number 54321\n" +
-                "            description: subscriptionId_2\n" +
-                "            value: 54321\n" +
-                "            externalValue: Subscription external value 2\n" +
                 "          subscriptionId_1:\n" +
                 "            summary: Subscription number 12345\n" +
                 "            description: subscriptionId_1\n" +
                 "            value: 12345\n" +
                 "            externalValue: Subscription external value 1\n" +
+                "          subscriptionId_2:\n" +
+                "            summary: Subscription number 54321\n" +
+                "            description: subscriptionId_2\n" +
+                "            value: 54321\n" +
+                "            externalValue: Subscription external value 2\n" +
                 "        example: example\n" +
                 "      requestBody:\n" +
                 "        description: Created user object\n" +
