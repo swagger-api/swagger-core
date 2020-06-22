@@ -27,7 +27,7 @@ public abstract class AbstractModelConverter implements ModelConverter {
      * Minor optimization: no need to keep on resolving same types over and over
      * again.
      */
-    protected Map<JavaType, String> _resolvedTypeNames = new ConcurrentHashMap<JavaType, String>();
+    protected Map<JavaType, String> _resolvedTypeNames = new ConcurrentHashMap<>();
 
     protected AbstractModelConverter(ObjectMapper mapper) {
         this (mapper, TypeNameResolver.std);

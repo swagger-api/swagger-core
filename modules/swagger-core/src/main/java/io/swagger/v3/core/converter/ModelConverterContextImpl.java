@@ -36,6 +36,7 @@ public class ModelConverterContextImpl implements ModelConverterContext {
         converters.add(converter);
     }
 
+    @Override
     public Iterator<ModelConverter> getConverters() {
         return converters.iterator();
     }
@@ -86,7 +87,7 @@ public class ModelConverterContextImpl implements ModelConverterContext {
         Schema resolved = null;
         if (converters.hasNext()) {
             ModelConverter converter = converters.next();
-            LOGGER.trace("trying extension " + converter);
+            LOGGER.trace("trying extension {}", converter);
             resolved = converter.resolve(type, this, converters);
         }
         if (resolved != null) {
