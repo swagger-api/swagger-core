@@ -7,7 +7,7 @@
 
 ```
 plugins {
-  id "io.swagger.core.v3.swagger-gradle-plugin" version "2.1.3-SNAPSHOT"
+  id "io.swagger.core.v3.swagger-gradle-plugin" version "2.1.3"
 }
 ```
 ### Gradle 1.x and 2.0
@@ -24,7 +24,7 @@ buildscript {
     }
   }
   dependencies {
-    classpath "io.swagger.core.v3:swagger-gradle-plugin:2.1.3-SNAPSHOT"
+    classpath "io.swagger.core.v3:swagger-gradle-plugin:2.1.3"
   }
 }
 
@@ -76,7 +76,7 @@ Parameter | Description | Required | Default
 `outputPath`|**DEPRECATED** output path where file(s) are saved|false|
 
 
-**Note** parameter `openApiFile` corresponds to [config](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties) openAPI. It points to a location of a file in YAML or JSON format representing the input spec that will be merged with the resolved spec. Typically used to add Info section, or any other meta data. 
+**Note** parameter `openApiFile` corresponds to [config](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties) openAPI. It points to a location of a file in YAML or JSON format representing the input spec that will be merged with the resolved spec. Typically used to add Info section, or any other meta data.
 An example of such file:
 
 ```yaml
