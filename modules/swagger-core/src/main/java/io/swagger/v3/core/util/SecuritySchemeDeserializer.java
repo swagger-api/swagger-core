@@ -2,7 +2,6 @@ package io.swagger.v3.core.util;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -15,7 +14,7 @@ import java.util.Arrays;
 public class SecuritySchemeDeserializer extends JsonDeserializer<SecurityScheme> {
     @Override
     public SecurityScheme deserialize(JsonParser jp, DeserializationContext ctxt)
-            throws IOException, JsonProcessingException {
+            throws IOException {
         SecurityScheme result = null;
 
         JsonNode node = jp.getCodec().readTree(jp);

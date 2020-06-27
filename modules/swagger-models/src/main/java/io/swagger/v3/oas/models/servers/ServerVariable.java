@@ -53,7 +53,7 @@ public class ServerVariable {
 
     public ServerVariable addEnumItem(String _enumItem) {
         if (this._enum == null) {
-            this._enum = new ArrayList<String>();
+            this._enum = new ArrayList<>();
         }
         this._enum.add(_enumItem);
         return this;

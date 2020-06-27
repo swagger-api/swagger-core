@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.ServiceLoader;
 
 public class OpenAPIExtensions {
-    private static Logger LOGGER = LoggerFactory.getLogger(OpenAPIExtensions.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(OpenAPIExtensions.class);
 
     private static List<OpenAPIExtension> extensions = null;
 
@@ -30,7 +30,7 @@ public class OpenAPIExtensions {
         extensions = new ArrayList<>();
         ServiceLoader<OpenAPIExtension> loader = ServiceLoader.load(OpenAPIExtension.class);
         for (OpenAPIExtension ext : loader) {
-            LOGGER.debug("adding extension " + ext);
+            LOGGER.debug("adding extension {}", ext);
             extensions.add(ext);
         }
         extensions.add(new DefaultParameterExtension());

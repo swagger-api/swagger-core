@@ -1,7 +1,6 @@
 package io.swagger.v3.core.util;
 
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -17,7 +16,7 @@ import java.util.Map;
 public class PathsDeserializer extends JsonDeserializer<Paths> {
     @Override
     public Paths deserialize(JsonParser jp, DeserializationContext ctxt)
-            throws IOException, JsonProcessingException {
+            throws IOException {
         Paths result = new Paths();
         JsonNode node = jp.getCodec().readTree(jp);
         ObjectNode objectNode = (ObjectNode)node;
