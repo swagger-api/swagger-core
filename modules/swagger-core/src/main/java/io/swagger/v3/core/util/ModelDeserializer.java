@@ -1,7 +1,6 @@
 package io.swagger.v3.core.util;
 
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -28,7 +27,7 @@ import java.io.IOException;
 public class ModelDeserializer extends JsonDeserializer<Schema> {
     @Override
     public Schema deserialize(JsonParser jp, DeserializationContext ctxt)
-            throws IOException, JsonProcessingException {
+            throws IOException {
         JsonNode node = jp.getCodec().readTree(jp);
         JsonNode allOf = node.get("allOf");
         JsonNode anyOf = node.get("anyOf");
@@ -38,8 +37,7 @@ public class ModelDeserializer extends JsonDeserializer<Schema> {
 
         if (allOf != null || anyOf != null || oneOf != null) {
 
-            ComposedSchema composedSchema = Json.mapper().convertValue(node, ComposedSchema.class);
-            return composedSchema;
+            return Json.mapper().convertValue(node, ComposedSchema.class);
 
         } else {
 
