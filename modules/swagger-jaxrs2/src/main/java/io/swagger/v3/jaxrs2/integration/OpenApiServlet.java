@@ -1,12 +1,17 @@
 package io.swagger.v3.jaxrs2.integration;
 
+import io.swagger.v3.core.filter.OpenAPISpecFilter;
+import io.swagger.v3.core.filter.SpecFilter;
 import io.swagger.v3.core.util.Json;
 import io.swagger.v3.core.util.Yaml;
+import io.swagger.v3.jaxrs2.util.ServletUtils;
 import io.swagger.v3.oas.integration.OpenApiConfigurationException;
 import io.swagger.v3.oas.integration.OpenApiContextLocator;
 import io.swagger.v3.oas.integration.api.OpenApiContext;
 import io.swagger.v3.oas.models.OpenAPI;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -19,6 +24,8 @@ import java.io.PrintWriter;
 import static io.swagger.v3.jaxrs2.integration.ServletConfigContextUtils.getContextIdFromServletConfig;
 
 public class OpenApiServlet extends HttpServlet {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(OpenApiServlet.class);
 
     public static final String APPLICATION_JSON = "application/json";
     public static final String APPLICATION_YAML = "application/yaml";
@@ -47,6 +54,19 @@ public class OpenApiServlet extends HttpServlet {
         String ctxId = getContextIdFromServletConfig(getServletConfig());
         OpenApiContext ctx = OpenApiContextLocator.getInstance().getOpenApiContext(ctxId);
         OpenAPI oas = ctx.read();
+
+        if (oas != null) {
+            if (ctx.getOpenApiConfiguration() != null && ctx.getOpenApiConfiguration().getFilterClass() != null) {
+                try {
+                    OpenAPISpecFilter filterImpl = (OpenAPISpecFilter) Class.forName(ctx.getOpenApiConfiguration().getFilterClass()).newInstance();
+                    SpecFilter f = new SpecFilter();
+                    oas = f.filter(oas, filterImpl, ServletUtils.getQueryParams(req.getParameterMap()),
+                            ServletUtils.getCookies(req.getCookies()), ServletUtils.getHeaders(req));
+                } catch (Exception e) {
+                    LOGGER.error("failed to load filter", e);
+                }
+            }
+        }
 
         String type = "json";
 

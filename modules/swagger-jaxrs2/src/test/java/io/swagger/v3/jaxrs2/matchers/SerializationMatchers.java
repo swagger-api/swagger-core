@@ -4,11 +4,11 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.NumericNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import io.swagger.v3.core.util.Json;
 import io.swagger.v3.core.util.Yaml;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.util.Comparator;
 
@@ -18,14 +18,18 @@ public class SerializationMatchers {
     private static final Logger LOGGER = LoggerFactory.getLogger(SerializationMatchers.class);
 
     public static void assertEqualsToYaml(Object objectToSerialize, String yamlStr) {
-        apply(objectToSerialize, yamlStr, Yaml.mapper());
+        apply(objectToSerialize, yamlStr, Yaml.mapper(), false);
+    }
+
+    public static void assertEqualsToYamlExact(Object objectToSerialize, String yamlStr) {
+        apply(objectToSerialize, yamlStr, Yaml.mapper(), true);
     }
 
     public static void assertEqualsToJson(Object objectToSerialize, String jsonStr) {
-        apply(objectToSerialize, jsonStr, Json.mapper());
+        apply(objectToSerialize, jsonStr, Json.mapper(), false);
     }
 
-    private static void apply(Object objectToSerialize, String str, ObjectMapper mapper) {
+    private static void apply(Object objectToSerialize, String str, ObjectMapper mapper, boolean exactMatch) {
         final ObjectNode lhs = mapper.convertValue(objectToSerialize, ObjectNode.class);
         ObjectNode rhs = null;
         try {
@@ -33,7 +37,7 @@ public class SerializationMatchers {
         } catch (IOException e) {
             LOGGER.error("Failed to read value", e);
         }
-        if (!lhs.equals(new ObjectNodeComparator(), rhs)) {
+        if (exactMatch || !lhs.equals(new ObjectNodeComparator(), rhs)) {
             assertEquals(Yaml.pretty(lhs), Yaml.pretty(rhs));
             //fail(String.format("Serialized object:\n%s\ndoes not equal to expected serialized string:\n%s", lhs, rhs));
         }
@@ -57,4 +61,5 @@ public class SerializationMatchers {
             return comp;
         }
     }
+
 }

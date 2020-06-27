@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
@@ -17,6 +18,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 public class ReflectionUtils {
@@ -59,9 +61,7 @@ public class ReflectionUtils {
      */
     public static boolean isOverriddenMethod(Method methodToFind, Class<?> cls) {
         Set<Class<?>> superClasses = new HashSet<>();
-        for (Class c : cls.getInterfaces()) {
-            superClasses.add(c);
-        }
+        Collections.addAll(superClasses, cls.getInterfaces());
 
         if (cls.getSuperclass() != null) {
             superClasses.add(cls.getSuperclass());
@@ -180,8 +180,8 @@ public class ReflectionUtils {
         if (cls == null || Object.class.equals(cls)) {
             return Collections.emptyList();
         }
-        final List<Field> fields = new ArrayList<Field>();
-        final Set<String> fieldNames = new HashSet<String>();
+        final List<Field> fields = new ArrayList<>();
+        final Set<String> fieldNames = new HashSet<>();
         for (Field field : cls.getDeclaredFields()) {
             fields.add(field);
             fieldNames.add(field.getName());
@@ -227,7 +227,6 @@ public class ReflectionUtils {
                 if (annotation != null) {
                     return annotation;
                 }
-                ;
             }
             Class<?> superClass = cls.getSuperclass();
             if (superClass != null && !(superClass.equals(Object.class))) {
@@ -241,7 +240,6 @@ public class ReflectionUtils {
                     if (annotation != null) {
                         return annotation;
                     }
-                    ;
                 }
                 annotation = getAnnotation(anInterface, annotationClass);
                 if (annotation != null) {
@@ -368,9 +366,15 @@ public class ReflectionUtils {
                 }
             }
         }
-        if (type.isArrayType()) {
-            return true;
+        return type.isArrayType();
+    }
+
+    public static Optional<Object> safeInvoke(Method method, Object obj, Object... args) {
+        try {
+            return Optional.ofNullable(method.invoke(obj, args));
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            return Optional.empty();
         }
-        return false;
+
     }
 }
