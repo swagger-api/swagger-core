@@ -197,7 +197,7 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
                 "                basic:\n" +
                 "                  summary: shows a basic example\n" +
                 "                  description: basic\n" +
-                "                  value: '{id: 19877734}'\n" +
+                "                  value: \"{id: 19877734}\"\n" +
                 "      deprecated: true\n";
         assertEquals(extractedYAML, expectedYAML);
     }
@@ -229,7 +229,7 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
                 "                basic:\n" +
                 "                  summary: shows a basic example\n" +
                 "                  description: basic\n" +
-                "                  value: '{id: 19877734}'\n" +
+                "                  value: \"{id: 19877734}\"\n" +
                 "      deprecated: true\n";
         assertEquals(extractedYAML, expectedYAML);
     }

@@ -32,10 +32,7 @@ public class SwaggerAnnotationIntrospector extends AnnotationIntrospector {
             return true;
         }
         Hidden hidden = m.getAnnotation(Hidden.class);
-        if (hidden != null) {
-            return true;
-        }
-        return false;
+        return hidden != null;
     }
 
     @Override

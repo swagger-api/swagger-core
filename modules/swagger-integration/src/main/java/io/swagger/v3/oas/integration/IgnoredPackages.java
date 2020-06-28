@@ -5,7 +5,7 @@ import java.util.Set;
 
 public final class IgnoredPackages {
 
-    public static final Set<String> ignored = new HashSet();
+    public static final Set<String> ignored = new HashSet<>();
 
     static {
         ignored.add("io.swagger.v3.jaxrs2.integration.resources");
