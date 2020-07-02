@@ -16,6 +16,7 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -173,6 +174,9 @@ public class ReflectionUtils {
      * excluding <code>Object</code> class. If the field from child class hides the field from superclass,
      * the field from superclass won't be added to the result list.
      *
+     * The list is sorted by name to make the output of this method deterministic.
+     * See https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html#getFields--
+     *
      * @param cls is the processing class
      * @return list of Fields
      */
@@ -191,6 +195,10 @@ public class ReflectionUtils {
                 fields.add(field);
             }
         }
+
+        // Make sure the order is deterministic
+        fields.sort(Comparator.comparing(Field::getName));
+
         return fields;
     }
 
