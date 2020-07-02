@@ -3,6 +3,7 @@ package io.swagger.v3.core.util.reflection;
 import io.swagger.v3.core.util.ReflectionUtils;
 import io.swagger.v3.core.util.reflection.resources.Child;
 import io.swagger.v3.core.util.reflection.resources.IParent;
+import io.swagger.v3.core.util.reflection.resources.ObjectWithManyFields;
 import io.swagger.v3.core.util.reflection.resources.Parent;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -11,10 +12,13 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import javax.ws.rs.Path;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.testng.Assert.assertNull;
 
@@ -132,6 +136,14 @@ public class ReflectionUtilsTest {
     public void getDeclaredFieldsFromInterfaceTest() throws NoSuchMethodException {
         final Class cls = IParent.class;
         Assert.assertEquals(Collections.emptyList(), ReflectionUtils.getDeclaredFields(cls));
+    }
+
+    @Test
+    public void declaredFieldsShouldBeSorted() {
+        final Class cls = ObjectWithManyFields.class;
+        final List<Field> declaredFields = ReflectionUtils.getDeclaredFields(cls);
+        Assert.assertEquals(4, declaredFields.size());
+        Assert.assertEquals(Arrays.asList("a", "b", "c", "d"), declaredFields.stream().map(Field::getName).collect(Collectors.toList()));
     }
 
     @Test

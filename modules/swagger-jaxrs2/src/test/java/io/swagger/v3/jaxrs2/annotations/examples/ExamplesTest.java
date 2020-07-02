@@ -17,6 +17,10 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
 import static org.testng.Assert.assertEquals;
 
 public class ExamplesTest extends AbstractAnnotationTest {
@@ -416,16 +420,14 @@ public class ExamplesTest extends AbstractAnnotationTest {
                 "    User:\n" +
                 "      type: object\n" +
                 "      properties:\n" +
-                "        id:\n" +
-                "          type: integer\n" +
-                "          format: int64\n" +
-                "        username:\n" +
+                "        email:\n" +
                 "          type: string\n" +
                 "        firstName:\n" +
                 "          type: string\n" +
+                "        id:\n" +
+                "          type: integer\n" +
+                "          format: int64\n" +
                 "        lastName:\n" +
-                "          type: string\n" +
-                "        email:\n" +
                 "          type: string\n" +
                 "        password:\n" +
                 "          type: string\n" +
@@ -435,6 +437,8 @@ public class ExamplesTest extends AbstractAnnotationTest {
                 "          type: integer\n" +
                 "          description: User Status\n" +
                 "          format: int32\n" +
+                "        username:\n" +
+                "          type: string\n" +
                 "      xml:\n" +
                 "        name: User";
         assertEquals(extractedYAML, expectedYAML);

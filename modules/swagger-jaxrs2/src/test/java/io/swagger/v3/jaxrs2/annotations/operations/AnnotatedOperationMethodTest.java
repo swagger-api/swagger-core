@@ -373,16 +373,16 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
                 "        \"200\":\n" +
                 "          description: voila!\n" +
                 "          headers:\n" +
-                "            X-Rate-Limit-Desc:\n" +
-                "              description: The description of rate limit\n" +
-                "              style: simple\n" +
-                "              schema:\n" +
-                "                type: string\n" +
                 "            Rate-Limit-Limit:\n" +
                 "              description: The number of allowed requests in the current period\n" +
                 "              style: simple\n" +
                 "              schema:\n" +
                 "                type: integer\n" +
+                "            X-Rate-Limit-Desc:\n" +
+                "              description: The description of rate limit\n" +
+                "              style: simple\n" +
+                "              schema:\n" +
+                "                type: string\n" +
                 "      deprecated: true\n";
         assertEquals(expectedYAML, extractedYAML);
     }

@@ -58,6 +58,7 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -68,6 +69,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Reader implements OpenApiReader {
     private static final Logger LOGGER = LoggerFactory.getLogger(Reader.class);
@@ -373,8 +376,13 @@ public class Reader implements OpenApiReader {
         // look for field-level annotated properties
         globalParameters.addAll(ReaderUtils.collectFieldParameters(cls, components, classConsumes, null));
 
+        // Make sure that the class methods are sorted for deterministic order
+        // See https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html#getMethods--
+        final List<Method> methods = Arrays.stream(cls.getMethods())
+                .sorted(Comparator.comparing(Method::getName))
+                .collect(Collectors.toList());
+
         // iterate class methods
-        Method[] methods = cls.getMethods();
         for (Method method : methods) {
             if (isOperationHidden(method)) {
                 continue;
