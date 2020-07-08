@@ -209,7 +209,11 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
         @SuppressWarnings("unchecked")
         Class<Enum<?>> enumClass = (Class<Enum<?>>) propClass;
-        for (Enum<?> en : enumClass.getEnumConstants()) {
+        Enum<?>[] enumConstants = enumClass.getEnumConstants();
+        if (enumConstants == null) {
+            return;
+        }
+        for (Enum<?> en : enumConstants) {
             String n;
             if (useIndex) {
                 n = String.valueOf(en.ordinal());
