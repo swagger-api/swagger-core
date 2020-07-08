@@ -19,7 +19,7 @@ import java.lang.annotation.Annotation;
  * applying JAXB annotations to property definitions.
  */
 class JAXBAnnotationsHelper {
-    private static final String JAXB_DEFAULT = "##default";
+    public static final String JAXB_DEFAULT = "##default";
 
     private JAXBAnnotationsHelper() {
     }
@@ -65,7 +65,7 @@ class JAXBAnnotationsHelper {
             final XML xml = getXml(property);
             xml.setWrapped(true);
             // No need to set the xml name if the name provided by xmlelementwrapper annotation is ##default or equal to the property name | https://github.com/swagger-api/swagger-core/pull/2050
-            if (!"##default".equals(wrapper.name()) && !wrapper.name().isEmpty() && !wrapper.name().equals(property.getName())) {
+            if (!JAXB_DEFAULT.equals(wrapper.name()) && !wrapper.name().isEmpty() && !wrapper.name().equals(property.getName())) {
                 xml.setName(wrapper.name());
             }
         }
@@ -153,10 +153,7 @@ class JAXBAnnotationsHelper {
                 return false;
             }
         }
-        if (!StringUtils.isBlank(property.get$ref())) {
-            return false;
-        }
-        return true;
+        return StringUtils.isBlank(property.get$ref());
     }
 
     private static boolean isEmpty(String name) {

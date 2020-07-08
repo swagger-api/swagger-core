@@ -1,7 +1,5 @@
 package io.swagger.v3.core.jackson;
 
-//import io.swagger.annotations.ApiModel;
-
 import com.fasterxml.jackson.databind.JavaType;
 import io.swagger.v3.core.util.AnnotationsUtils;
 import io.swagger.v3.core.util.PrimitiveType;
@@ -18,9 +16,9 @@ import java.util.Set;
  * Swagger type names.
  */
 public class TypeNameResolver {
-    public final static TypeNameResolver std = new TypeNameResolver();
+    public static final TypeNameResolver std = new TypeNameResolver();
     private boolean useFqn=false;
-    
+
     protected TypeNameResolver() {
     }
 
@@ -28,7 +26,7 @@ public class TypeNameResolver {
         this.useFqn = useFqn;
     }
 
-	
+
     public String nameForType(JavaType type, Options... options) {
         return nameForType(type, options.length == 0 ? Collections.<Options>emptySet() :
                 EnumSet.copyOf(Arrays.asList(options)));

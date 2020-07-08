@@ -15,7 +15,7 @@ public class RefUtils {
     }
 
     public static Pair extractSimpleName(String ref) {
-        int idx = ref.lastIndexOf("/");
+        int idx = ref.lastIndexOf('/');
         if (idx > 0) {
             String simple = ref.substring(idx + 1);
             if (!StringUtils.isBlank(simple)) {

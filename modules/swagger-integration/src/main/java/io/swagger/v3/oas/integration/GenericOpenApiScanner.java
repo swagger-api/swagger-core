@@ -16,7 +16,7 @@ import java.util.Set;
 
 public class GenericOpenApiScanner implements OpenApiScanner {
 
-    static final Set<String> ignored = new HashSet();
+    static final Set<String> ignored = new HashSet<>();
 
     static {
         ignored.addAll(IgnoredPackages.ignored);
