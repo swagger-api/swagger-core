@@ -223,6 +223,9 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         Class<Enum<?>> enumClass = (Class<Enum<?>>) propClass;
         
         Enum<?>[] enumConstants = enumClass.getEnumConstants();
+        if (enumConstants == null) {
+            return;
+        }
         String[] enumValues = _intr.findEnumValues(propClass, enumConstants, new String[enumConstants.length]);
 
         for (Enum<?> en : enumConstants) {        
