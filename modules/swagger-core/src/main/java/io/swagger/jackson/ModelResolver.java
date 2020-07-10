@@ -1,6 +1,7 @@
 package io.swagger.jackson;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -30,7 +31,6 @@ import javax.xml.bind.annotation.XmlElementRefs;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchema;
 
-import io.swagger.models.refs.RefFormat;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,6 +42,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
+import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.annotation.ObjectIdGenerator;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
@@ -76,6 +77,7 @@ import io.swagger.models.properties.PropertyBuilder;
 import io.swagger.models.properties.RefProperty;
 import io.swagger.models.properties.StringProperty;
 import io.swagger.models.properties.UUIDProperty;
+import io.swagger.models.refs.RefFormat;
 import io.swagger.util.AllowableValues;
 import io.swagger.util.AllowableValuesUtils;
 import io.swagger.util.BaseReaderUtils;
@@ -207,15 +209,41 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         final boolean useIndex = _mapper.isEnabled(SerializationFeature.WRITE_ENUMS_USING_INDEX);
         final boolean useToString = _mapper.isEnabled(SerializationFeature.WRITE_ENUMS_USING_TO_STRING);
 
+        Method jsonValueMethod = null;
+        Method[] methodList = propClass.getMethods();
+        for (Method m : methodList) {
+        	if (m.isAnnotationPresent(JsonValue.class) 
+        			&& m.getAnnotation(JsonValue.class).value()) {
+        		jsonValueMethod = m;
+        		break;
+        	}
+        }
+        
         @SuppressWarnings("unchecked")
         Class<Enum<?>> enumClass = (Class<Enum<?>>) propClass;
+        
         Enum<?>[] enumConstants = enumClass.getEnumConstants();
         if (enumConstants == null) {
             return;
         }
-        for (Enum<?> en : enumConstants) {
+        String[] enumValues = _intr.findEnumValues(propClass, enumConstants, new String[enumConstants.length]);
+
+        for (Enum<?> en : enumConstants) {        
+            String s = null; 
+            String enumValue = enumValues[en.ordinal()];
+            if (jsonValueMethod != null) {
+            	Object invokeResult = ReflectionUtils.safeInvoke(jsonValueMethod, en);
+            	if (invokeResult != null) {
+            		s = invokeResult.toString();
+            	}
+            }
+
             String n;
-            if (useIndex) {
+            if (s != null) {
+                n = s;
+            } else if (enumValue != null) {
+                n = enumValue;
+            } else if (useIndex) {            
                 n = String.valueOf(en.ordinal());
             } else if (useToString) {
                 n = en.toString();
