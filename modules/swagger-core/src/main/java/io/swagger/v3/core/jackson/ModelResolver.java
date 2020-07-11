@@ -33,6 +33,7 @@ import io.swagger.v3.core.util.AnnotationsUtils;
 import io.swagger.v3.core.util.Constants;
 import io.swagger.v3.core.util.Json;
 import io.swagger.v3.core.util.ObjectMapperFactory;
+import io.swagger.v3.core.util.OptionalUtils;
 import io.swagger.v3.core.util.PrimitiveType;
 import io.swagger.v3.core.util.ReflectionUtils;
 import io.swagger.v3.oas.annotations.media.DiscriminatorMapping;
@@ -486,17 +487,8 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                     .type("object")
                     .name(name);
         } else {
-            if (_isOptionalType(type)) {
-                AnnotatedType aType = new AnnotatedType()
-                        .type(type.containedType(0))
-                        .ctxAnnotations(annotatedType.getCtxAnnotations())
-                        .parent(annotatedType.getParent())
-                        .schemaProperty(annotatedType.isSchemaProperty())
-                        .name(annotatedType.getName())
-                        .resolveAsRef(annotatedType.isResolveAsRef())
-                        .jsonViewAnnotation(annotatedType.getJsonViewAnnotation())
-                        .propertyName(annotatedType.getPropertyName())
-                        .skipOverride(true);
+            AnnotatedType aType = OptionalUtils.unwrapOptional(annotatedType);
+            if (aType != null) {
                 model = context.resolve(aType);
                 return model;
             } else {

@@ -1,5 +1,6 @@
 package io.swagger.v3.core.converter;
 
+import io.swagger.v3.core.util.OptionalUtils;
 import io.swagger.v3.oas.models.media.Schema;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -74,6 +75,11 @@ public class ModelConverterContextImpl implements ModelConverterContext {
 
     @Override
     public Schema resolve(AnnotatedType type) {
+
+        AnnotatedType aType = OptionalUtils.unwrapOptional(type);
+        if (aType != null) {
+            return resolve(aType);
+        }
 
         if (processedTypes.contains(type)) {
             return modelByType.get(type);
