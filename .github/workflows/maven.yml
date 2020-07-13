@@ -33,9 +33,6 @@ jobs:
           ${{ runner.os }}-maven-
     - name: Build with Maven
       run: ./mvnw -B package --file pom.xml
-    - name: change dir to gradle plugin
-      run: cd modules/swagger-gradle-plugin
     - name: Build Gradle plugin
       run: ./gradlew build --info
-    - name: change dir to root
-      run: cd ../..
+      working-directory: ./modules/swagger-gradle-plugin
