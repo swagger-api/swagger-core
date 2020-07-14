@@ -21,6 +21,9 @@ jobs:
       uses: actions/setup-java@v1
       with:
         java-version: ${{ matrix.java }}
+        server-id: sonatype-nexus-snapshots
+        server-username: MAVEN_USERNAME
+        server-password: MAVEN_PASSWORD
     - name: Cache local Maven repository
       uses: actions/cache@v2
       with:
