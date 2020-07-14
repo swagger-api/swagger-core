@@ -33,7 +33,7 @@ jobs:
           ${{ runner.os }}-maven-
     - name: Build with Maven and Gradle
       run: |
-        ./mvnw -B package --file pom.xml
+        ./mvnw -B install --file pom.xml
         cd ./modules/swagger-gradle-plugin
         ./gradlew build --info
         ../..
