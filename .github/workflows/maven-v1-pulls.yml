@@ -1,8 +1,8 @@
-name: Build Test PR
+name: Build Test PR 1.5
 
 on:
   pull_request:
-    branches: [ "master" ]
+    branches: [ "1.5" ]
 
 jobs:
   build:
@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        java: [ 8, 11, 14 ]
+        java: [ 8 ]
 
     steps:
     - uses: actions/checkout@v2
@@ -26,8 +26,4 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-maven-
     - name: Build with Maven and Gradle
-      run: |
-        ./mvnw --no-transfer-progress -B install --file pom.xml
-        cd ./modules/swagger-gradle-plugin
-        ./gradlew build --info
-        cd ../..
+      run: ./mvnw --no-transfer-progress -B -Dhttps.protocols=TLSv1.2 verify --file pom.xml
