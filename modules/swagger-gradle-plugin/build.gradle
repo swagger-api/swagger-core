@@ -2,7 +2,6 @@
 // Plugins
 // * * * * * * * * * * * *
 plugins {
-    id 'groovy'
     id 'java-gradle-plugin'
     id 'net.researchgate.release' version '2.6.0'
     // Publishing publicly
