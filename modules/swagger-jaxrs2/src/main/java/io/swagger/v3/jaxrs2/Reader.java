@@ -720,7 +720,8 @@ public class Reader implements OpenApiReader {
                 }
             } else if (requestBodyParameter.getSchema() != null) {
                 // This allows us to use RequestBody on the method for encoding attributes
-                // it does make it so the
+                // The particular methodology employed here means that all attributes
+                // outside of the schema for application/x-www-form-urlencoded are carried over.
                 boolean formParams = false;
                 if(methodConsumes != null) {
                     for (String methodConsume : methodConsumes.value()) {
@@ -738,8 +739,8 @@ public class Reader implements OpenApiReader {
                         }
                     }
                 }
-                Content content = operation.getRequestBody().getContent();
                 if(formParams) {
+                    Content content = operation.getRequestBody().getContent();
                     content.get("application/x-www-form-urlencoded").schema(requestBodyParameter.getSchema());
                 }
             }
