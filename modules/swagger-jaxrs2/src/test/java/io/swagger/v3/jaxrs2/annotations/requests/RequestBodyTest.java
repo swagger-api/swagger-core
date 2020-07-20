@@ -15,7 +15,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.PathItem;
-import org.jboss.arquillian.test.spi.annotation.TestScoped;
 import org.testng.annotations.Test;
 
 import javax.ws.rs.Consumes;
@@ -538,29 +537,45 @@ public class RequestBodyTest extends AbstractAnnotationTest {
                 "                id:\n" +
                 "                  type: array\n" +
                 "                  items:\n" +
-                "                    type: string\n"+
-                "                name:\n" +
-                "                  type: array\n" +
-                "                  items:\n" +
-                "                    type: string\n"+
-                "                gender:\n" +
-                "                  type: array\n" +
-                "                  items:\n" +
                 "                    type: string\n" +
-                "                pet:\n" +
+                "                name:\n" +
                 "                  type: array\n" +
                 "                  items:\n" +
                 "                    type: string\n" +
                 "            encoding:\n" +
                 "              id:\n" +
                 "                style: form\n" +
-                "                explode: true\n"+
+                "                explode: true\n" +
                 "              name:\n" +
                 "                style: form\n" +
-                "                explode: true\n"+
-                "              pet:\n" +
-                "                style: spaceDelimited\n" +
-                "              gender:\n" +
+                "                explode: true\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            application/json: {}\n" +
+                "  /things/sriracha:\n" +
+                "    post:\n" +
+                "      operationId: srirachaThing\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          application/x-www-form-urlencoded:\n" +
+                "            schema:\n" +
+                "              type: object\n" +
+                "              properties:\n" +
+                "                id:\n" +
+                "                  type: array\n" +
+                "                  items:\n" +
+                "                    type: string\n"+
+                "                name:\n" +
+                "                  type: array\n" +
+                "                  items:\n" +
+                "                    type: string\n" +
+                "            encoding:\n" +
+                "              id:\n" +
+                "                style: form\n" +
+                "                explode: true\n" +
+                "              name:\n" +
                 "                style: form\n" +
                 "                explode: true\n" +
                 "      responses:\n" +
@@ -568,6 +583,7 @@ public class RequestBodyTest extends AbstractAnnotationTest {
                 "          description: default response\n" +
                 "          content:\n" +
                 "            application/json: {}";
+        ;
         compareAsYaml(UrlEncodedResourceWithEncodings.class, expectedYAML);
     }
 }

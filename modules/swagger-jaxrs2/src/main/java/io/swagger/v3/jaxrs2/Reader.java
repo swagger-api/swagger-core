@@ -709,7 +709,7 @@ public class Reader implements OpenApiReader {
                     isRequestBodyEmpty = false;
                 }
 
-                if (requestBodyParameter.getSchema() != null ) {
+                if (requestBodyParameter.getSchema() != null) {
                     Content content = processContent(null, requestBodyParameter.getSchema(), methodConsumes, classConsumes);
                     requestBody.setContent(content);
                     isRequestBodyEmpty = false;
@@ -718,9 +718,11 @@ public class Reader implements OpenApiReader {
                     //requestBody.setExtensions(extensions);
                     operation.setRequestBody(requestBody);
                 }
-            } else if( requestBodyParameter.getSchema() != null ) {
+            } else if (requestBodyParameter.getSchema() != null) {
+                // This allows us to use RequestBody on the method for encoding attributes
+                // it does make it so the
                 boolean formParams = false;
-                if( methodConsumes != null ) {
+                if(methodConsumes != null) {
                     for (String methodConsume : methodConsumes.value()) {
                         if ("application/x-www-form-urlencoded".equalsIgnoreCase(methodConsume)) {
                             formParams = true;
@@ -728,7 +730,7 @@ public class Reader implements OpenApiReader {
                         }
                     }
                 }
-                if ( !formParams && classConsumes != null ) {
+                if (!formParams && classConsumes != null) {
                     for (String classConsume : classConsumes.value()) {
                         if ("application/x-www-form-urlencoded".equalsIgnoreCase(classConsume)) {
                             formParams = true;
@@ -737,7 +739,7 @@ public class Reader implements OpenApiReader {
                     }
                 }
                 Content content = operation.getRequestBody().getContent();
-                if( formParams ) {
+                if(formParams) {
                     content.get("application/x-www-form-urlencoded").schema(requestBodyParameter.getSchema());
                 }
             }
