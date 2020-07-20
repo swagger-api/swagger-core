@@ -688,7 +688,9 @@ public class Schema<T> {
 
     public void setExample(Object example) {
         this.example = cast(example);
-        exampleSetFlag = true;
+        if (!(example != null && this.example == null)) {
+            exampleSetFlag = true;
+        }
     }
 
     public Schema example(Object example) {
