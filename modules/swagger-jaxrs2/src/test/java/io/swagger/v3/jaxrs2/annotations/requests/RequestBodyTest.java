@@ -5,6 +5,7 @@ import io.swagger.v3.jaxrs2.annotations.AbstractAnnotationTest;
 import io.swagger.v3.jaxrs2.it.resources.MultiPartFileResource;
 import io.swagger.v3.jaxrs2.it.resources.OctetStreamResource;
 import io.swagger.v3.jaxrs2.it.resources.UrlEncodedResource;
+import io.swagger.v3.jaxrs2.it.resources.UrlEncodedResourceWithEncodings;
 import io.swagger.v3.jaxrs2.resources.model.Pet;
 import io.swagger.v3.jaxrs2.resources.model.User;
 import io.swagger.v3.oas.annotations.Operation;
@@ -14,6 +15,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.PathItem;
+import org.jboss.arquillian.test.spi.annotation.TestScoped;
 import org.testng.annotations.Test;
 
 import javax.ws.rs.Consumes;
@@ -520,4 +522,52 @@ public class RequestBodyTest extends AbstractAnnotationTest {
         compareAsYaml(MultiPartFileResource.class, expectedYAML);
     }
 
+    @Test
+    public void testUrlEncodedWithEncoding() throws IOException {
+        String expectedYAML = "openapi: 3.0.1\n" +
+                "paths:\n" +
+                "  /things/search:\n" +
+                "    post:\n" +
+                "      operationId: searchForThings\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          application/x-www-form-urlencoded:\n" +
+                "            schema:\n" +
+                "              type: object\n" +
+                "              properties:\n" +
+                "                id:\n" +
+                "                  type: array\n" +
+                "                  items:\n" +
+                "                    type: string\n"+
+                "                name:\n" +
+                "                  type: array\n" +
+                "                  items:\n" +
+                "                    type: string\n"+
+                "                gender:\n" +
+                "                  type: array\n" +
+                "                  items:\n" +
+                "                    type: string\n" +
+                "                pet:\n" +
+                "                  type: array\n" +
+                "                  items:\n" +
+                "                    type: string\n" +
+                "            encoding:\n" +
+                "              id:\n" +
+                "                style: form\n" +
+                "                explode: true\n"+
+                "              name:\n" +
+                "                style: form\n" +
+                "                explode: true\n"+
+                "              pet:\n" +
+                "                style: spaceDelimited\n" +
+                "              gender:\n" +
+                "                style: form\n" +
+                "                explode: true\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            application/json: {}";
+        compareAsYaml(UrlEncodedResourceWithEncodings.class, expectedYAML);
+    }
 }

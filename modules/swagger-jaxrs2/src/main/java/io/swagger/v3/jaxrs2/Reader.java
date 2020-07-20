@@ -709,7 +709,7 @@ public class Reader implements OpenApiReader {
                     isRequestBodyEmpty = false;
                 }
 
-                if (requestBodyParameter.getSchema() != null) {
+                if (requestBodyParameter.getSchema() != null ) {
                     Content content = processContent(null, requestBodyParameter.getSchema(), methodConsumes, classConsumes);
                     requestBody.setContent(content);
                     isRequestBodyEmpty = false;
@@ -717,6 +717,28 @@ public class Reader implements OpenApiReader {
                 if (!isRequestBodyEmpty) {
                     //requestBody.setExtensions(extensions);
                     operation.setRequestBody(requestBody);
+                }
+            } else if( requestBodyParameter.getSchema() != null ) {
+                boolean formParams = false;
+                if( methodConsumes != null ) {
+                    for (String methodConsume : methodConsumes.value()) {
+                        if ("application/x-www-form-urlencoded".equalsIgnoreCase(methodConsume)) {
+                            formParams = true;
+                            break;
+                        }
+                    }
+                }
+                if ( !formParams && classConsumes != null ) {
+                    for (String classConsume : classConsumes.value()) {
+                        if ("application/x-www-form-urlencoded".equalsIgnoreCase(classConsume)) {
+                            formParams = true;
+                            break;
+                        }
+                    }
+                }
+                Content content = operation.getRequestBody().getContent();
+                if( formParams ) {
+                    content.get("application/x-www-form-urlencoded").schema(requestBodyParameter.getSchema());
                 }
             }
         }

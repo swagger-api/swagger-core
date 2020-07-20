@@ -174,6 +174,71 @@ public class OpenApiResourceIT extends AbstractAnnotationTest {
             "                }\n" +
             "            }\n" +
             "        },\n" +
+            "        \"/things/search\": {\n" +
+            "            \"post\": {\n" +
+            "                \"operationId\": \"searchForThings\",\n" +
+            "                \"requestBody\": {\n"+
+            "                    \"content\": {\n"+
+            "                        \"application/x-www-form-urlencoded\": {\n"+
+            "                            \"schema\":{\n"+
+            "                                \"type\":\"object\",\n" +
+            "                                \"properties\": {\n" +
+            "                                    \"id\":{\n"+
+            "                                        \"type\":\"array\",\n" +
+            "                                        \"items\":{\n" +
+            "                                            \"type\":\"string\"\n" +
+            "                                        }\n" +
+            "                                    },\n" +
+            "                                    \"name\":{\n" +
+            "                                        \"type\":\"array\",\n" +
+            "                                        \"items\":{\n" +
+            "                                            \"type\":\"string\"\n" +
+            "                                        }\n" +
+            "                                    },\n" +
+            "                                    \"gender\":{\n" +
+            "                                        \"type\":\"array\",\n" +
+            "                                        \"items\":{\n" +
+            "                                            \"type\":\"string\"\n" +
+            "                                        }\n" +
+            "                                    },\n" +
+            "                                    \"pet\":{\n" +
+            "                                        \"type\":\"array\",\n" +
+            "                                        \"items\":{\n" +
+            "                                            \"type\":\"string\"\n" +
+            "                                        }\n"+
+            "                                    }\n" +
+            "                                }\n" +
+            "                            },\n" +
+            "                            \"encoding\":{\n" +
+            "                                \"id\":{\n" +
+            "                                    \"style\":\"form\",\n" +
+            "                                    \"explode\":true" +
+            "                                },\n" +
+            "                                \"name\":{\n" +
+            "                                    \"style\":\"form\",\n" +
+            "                                    \"explode\":true\n" +
+            "                                },\n" +
+            "                                \"gender\":{\n" +
+            "                                    \"style\":\"form\",\n" +
+            "                                    \"explode\":true\n" +
+            "                                },\n" +
+            "                                \"pet\":{\n" +
+            "                                    \"style\":\"spaceDelimited\"\n" +
+            "                                }\n" +
+            "                            }\n" +
+            "                        }\n" +
+            "                    }\n" +
+            "                },\n" +
+            "                \"responses\":{\n" +
+            "                    \"default\":{\n" +
+            "                        \"description\":\"default response\",\n" +
+            "                        \"content\":{\n" +
+            "                            \"application/json\":{}\n" +
+            "                        }\n" +
+            "                    }\n" +
+            "                }\n" +
+            "            }\n" +
+            "        },\n" +
             "        \"/users/add\": {\n" +
             "            \"post\": {\n" +
             "                \"operationId\": \"addUser\",\n" +
@@ -450,6 +515,48 @@ public class OpenApiResourceIT extends AbstractAnnotationTest {
             "          description: default response\n" +
             "          content:\n" +
             "            application/json: {}\n" +
+            "  /things/search:\n" +
+            "    post:\n" +
+            "      operationId: searchForThings\n" +
+            "      requestBody:\n" +
+            "        content:\n" +
+            "          application/x-www-form-urlencoded:\n" +
+            "            schema:\n" +
+            "              type: object\n" +
+            "              properties:\n" +
+            "                gender:\n" +
+            "                  type: array\n" +
+            "                  items:\n" +
+            "                    type: string\n" +
+            "                id:\n" +
+            "                  type: array\n" +
+            "                  items:\n" +
+            "                    type: string\n" +
+            "                name:\n" +
+            "                  type: array\n" +
+            "                  items:\n" +
+            "                    type: string\n" +
+            "                pet:\n" +
+            "                  type: array\n" +
+            "                  items:\n" +
+            "                    type: string\n" +
+            "            encoding:\n" +
+            "              gender:\n" +
+            "                style: form\n" +
+            "                explode: true\n" +
+            "              id:\n" +
+            "                style: form\n" +
+            "                explode: true\n" +
+            "              name:\n" +
+            "                style: form\n" +
+            "                explode: true\n" +
+            "              pet:\n" +
+            "                style: spaceDelimited\n" +
+            "      responses:\n" +
+            "        default:\n" +
+            "          description: default response\n" +
+            "          content:\n" +
+            "            application/json: {}\n" +
             "  /users/add:\n" +
             "    post:\n" +
             "      operationId: addUser\n" +
@@ -591,6 +698,10 @@ public class OpenApiResourceIT extends AbstractAnnotationTest {
                 .contentType(ContentType.JSON)
                 .extract()
                 .response().body().asString();
+
+        System.err.print("actualBody is: " + actualBody + "\n");
+        String json = formatJson(actualBody);
+        System.err.print("formatted actualBody is: " + json + "\n");
 
         compareAsJson(formatJson(actualBody), EXPECTED_JSON);
     }
