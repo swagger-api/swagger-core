@@ -26,4 +26,4 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-maven-
     - name: Build with Maven and Gradle
-      run: ./mvnw --no-transfer-progress -B -Dhttps.protocols=TLSv1.2 verify --file pom.xml
+      run: ./mvnw -B -Dhttps.protocols=TLSv1.2 verify --file pom.xml
