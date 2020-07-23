@@ -26,6 +26,7 @@ import com.fasterxml.jackson.databind.introspect.AnnotationMap;
 import com.fasterxml.jackson.databind.introspect.BeanPropertyDefinition;
 import com.fasterxml.jackson.databind.introspect.POJOPropertyBuilder;
 import com.fasterxml.jackson.databind.jsontype.NamedType;
+import com.fasterxml.jackson.databind.util.Annotations;
 import io.swagger.v3.core.converter.AnnotatedType;
 import io.swagger.v3.core.converter.ModelConverter;
 import io.swagger.v3.core.converter.ModelConverterContext;
@@ -517,11 +518,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         final XmlAccessorType xmlAccessorTypeAnnotation = beanDesc.getClassAnnotations().get(XmlAccessorType.class);
 
         // see if @JsonIgnoreProperties exist
-        Set<String> propertiesToIgnore = new HashSet<>();
-        JsonIgnoreProperties ignoreProperties = beanDesc.getClassAnnotations().get(JsonIgnoreProperties.class);
-        if (ignoreProperties != null) {
-            propertiesToIgnore.addAll(Arrays.asList(ignoreProperties.value()));
-        }
+        Set<String> propertiesToIgnore = resolveIgnoredProperties(beanDesc.getClassAnnotations(), annotatedType.getCtxAnnotations());
 
         List<Schema> props = new ArrayList<>();
         Map<String, Schema> modelProps = new LinkedHashMap<>();
@@ -1819,6 +1816,31 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             return xml;
         }
         return null;
+    }
+
+    protected Set<String> resolveIgnoredProperties(Annotations a, Annotation[] annotations) {
+
+        Set<String> propertiesToIgnore = new HashSet<>();
+        JsonIgnoreProperties ignoreProperties = a.get(JsonIgnoreProperties.class);
+        if (ignoreProperties != null) {
+            propertiesToIgnore.addAll(Arrays.asList(ignoreProperties.value()));
+        }
+        propertiesToIgnore.addAll(resolveIgnoredProperties(annotations));
+        return propertiesToIgnore;
+    }
+
+    protected Set<String> resolveIgnoredProperties(Annotation[] annotations) {
+
+        Set<String> propertiesToIgnore = new HashSet<>();
+        if (annotations != null) {
+            for (Annotation annotation : annotations) {
+                if (annotation instanceof JsonIgnoreProperties) {
+                    propertiesToIgnore.addAll(Arrays.asList(((JsonIgnoreProperties) annotation).value()));
+                    break;
+                }
+            }
+        }
+        return propertiesToIgnore;
     }
 
     protected Integer resolveMinItems(AnnotatedType a, io.swagger.v3.oas.annotations.media.ArraySchema arraySchema) {
