@@ -10,18 +10,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: test env
-      id: test-env
-      run: |
-        echo "APP_ID: ${{ secrets.APP_ID }}"
-        echo "APP_PRIVATE_KEY: ${{ secrets.APP_PRIVATE_KEY }}"
-        echo "GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}"
-        echo "OSSRH_GPG_PRIVATE_KEY: ${{ secrets.OSSRH_GPG_PRIVATE_KEY }}"
-        echo "OSSRH_GPG_PRIVATE_PASSPHRASE: ${{ secrets.OSSRH_GPG_PRIVATE_PASSPHRASE }}"
-        echo "OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}"
-        echo "OSSRH_TOKEN: ${{ secrets.OSSRH_TOKEN }}"
-        echo "GRADLE_PUBLISH_KEY: ${{ secrets.GRADLE_PUBLISH_KEY }}"
-        echo "GRADLE_PUBLISH_SECRET: ${{ secrets.GRADLE_PUBLISH_SECRET }}"
     - uses: actions/checkout@v2
     - uses: tibdex/github-app-token@v1
       id: generate-token
