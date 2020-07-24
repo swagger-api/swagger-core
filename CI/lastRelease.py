@@ -8,7 +8,7 @@ def getLastReleaseTag():
         draft = l["draft"]
         tag = l["tag_name"]
         if str(draft) != 'True' and tag.startswith("v2"):
-            return tag
+            return tag[1:]
 
 # main
 def main():
