@@ -44,9 +44,6 @@ def getReleases():
 
 # main
 def main(last_release, release_title, tag):
-    print "last_release " + last_release
-    print "release_title " + release_title
-    print "tag " + tag
     result = allPulls(lastReleaseDate('v' + last_release))
     addRelease (release_title, tag, result)
 
