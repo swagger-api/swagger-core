@@ -13,8 +13,6 @@ GH_AUTH = "Bearer %s" % GH_TOKEN
 
 def readUrl(name):
     try:
-        print "AUTH LEN " + str(len(GH_AUTH))
-        print "URL " + GH_BASE_URL + name
         request = urllib2.Request(GH_BASE_URL + name)
         request.add_header("Authorization", GH_AUTH)
         content = urllib2.urlopen(request).read()
