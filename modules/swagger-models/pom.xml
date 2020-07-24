@@ -11,6 +11,7 @@
     <artifactId>swagger-models</artifactId>
     <packaging>bundle</packaging>
     <name>swagger-models</name>
+    <description>swagger-models</description>
     <build>
         <sourceDirectory>src/main/java</sourceDirectory>
         <defaultGoal>install</defaultGoal>

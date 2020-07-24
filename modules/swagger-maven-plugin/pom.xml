@@ -11,6 +11,7 @@
     <artifactId>swagger-maven-plugin</artifactId>
     <packaging>maven-plugin</packaging>
     <name>swagger-maven-plugin</name>
+    <description>swagger-maven-plugin</description>
     <build>
         <plugins>
             <plugin>

@@ -10,6 +10,7 @@
     <artifactId>swagger-core</artifactId>
     <packaging>bundle</packaging>
     <name>swagger-core</name>
+    <description>swagger-core</description>
     <build>
         <sourceDirectory>src/main/java</sourceDirectory>
         <defaultGoal>install</defaultGoal>
