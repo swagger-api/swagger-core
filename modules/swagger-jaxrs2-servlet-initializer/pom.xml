@@ -12,6 +12,7 @@
     <artifactId>swagger-jaxrs2-servlet-initializer</artifactId>
     <packaging>bundle</packaging>
     <name>swagger-jaxrs2-servlet-initializer</name>
+    <description>swagger-servlet-initializer</description>
     <build>
         <sourceDirectory>src/main/java</sourceDirectory>
         <defaultGoal>install</defaultGoal>

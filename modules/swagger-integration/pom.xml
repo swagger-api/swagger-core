@@ -12,6 +12,7 @@
 	<artifactId>swagger-integration</artifactId>
 	<packaging>bundle</packaging>
 	<name>swagger-integration</name>
+	<description>swagger-integration</description>
 	<dependencies>
 		<dependency>
 			<groupId>io.github.classgraph</groupId>

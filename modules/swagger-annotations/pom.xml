@@ -10,6 +10,7 @@
     <artifactId>swagger-annotations</artifactId>
     <packaging>bundle</packaging>
     <name>swagger-annotations</name>
+    <description>swagger-annotations</description>
     <build>
         <sourceDirectory>src/main/java</sourceDirectory>
         <defaultGoal>install</defaultGoal>

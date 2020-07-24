@@ -5,6 +5,7 @@
     <artifactId>swagger-project</artifactId>
     <packaging>pom</packaging>
     <name>swagger-project</name>
+    <description>swagger-project</description>
     <version>2.1.4</version>
     <url>https://github.com/swagger-api/swagger-core</url>
     <scm>
