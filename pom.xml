@@ -1,10 +1,5 @@
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-    <parent>
-        <groupId>org.sonatype.oss</groupId>
-        <artifactId>oss-parent</artifactId>
-        <version>5</version>
-    </parent>
     <modelVersion>4.0.0</modelVersion>
     <groupId>io.swagger.core.v3</groupId>
     <artifactId>swagger-project</artifactId>
@@ -17,6 +12,16 @@
         <developerConnection>scm:git:git@github.com:swagger-api/swagger-core.git</developerConnection>
         <url>https://github.com/swagger-api/swagger-core</url>
     </scm>
+    <distributionManagement>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+        <repository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+    </distributionManagement>
     <prerequisites>
         <maven>2.2.0</maven>
     </prerequisites>
@@ -107,6 +112,10 @@
                                     <onlyWhenRelease>true</onlyWhenRelease>
                                     <message>No Snapshots Allowed!</message>
                                 </requireReleaseDeps>
+                                <requireMavenVersion>
+                                    <version>(,2.1.0),(2.1.0,2.2.0),(2.2.0,)</version>
+                                    <message>Maven 2.1.0 and 2.2.0 produce incorrect GPG signatures and checksums respectively.</message>
+                                </requireMavenVersion>
                             </rules>
                         </configuration>
                     </execution>
@@ -129,7 +138,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
-                <version>3.0.1</version>
+                <version>3.2.1</version>
                 <executions>
                     <execution>
                         <id>attach-sources</id>
@@ -143,7 +152,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.0.0</version>
+                <version>3.1.1</version>
                 <configuration>
                     <aggregate>true</aggregate>
                     <source>1.8</source>
@@ -185,23 +194,35 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-site-plugin</artifactId>
-                <version>3.7</version>
+                <version>3.7.1</version>
             </plugin>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-release-plugin</artifactId>
-                <version>2.5.3</version>
+                <groupId>org.sonatype.plugins</groupId>
+                <artifactId>nexus-staging-maven-plugin</artifactId>
+                <version>1.6.8</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <serverId>ossrh</serverId>
+                    <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                    <autoReleaseAfterClose>true</autoReleaseAfterClose>
+<!--                    <skipStaging>true</skipStaging>
+                    <skipRemoteStaging>true</skipRemoteStaging>
+                    <skipNexusStagingDeployMojo>true</skipNexusStagingDeployMojo>-->
+                </configuration>
             </plugin>
-            <!-- TODO tests coverage -->
         </plugins>
         <pluginManagement>
             <plugins>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-gpg-plugin</artifactId>
+                    <version>1.6</version>
                     <configuration>
-                        <releaseProfiles>release</releaseProfiles>
-                        <goals>sign</goals>
+                        <!-- Prevent `gpg` from using pinentry programs -->
+                        <gpgArguments>
+                            <arg>--pinentry-mode</arg>
+                            <arg>loopback</arg>
+                        </gpgArguments>
                     </configuration>
                 </plugin>
                 <plugin>
@@ -270,18 +291,20 @@
     </build>
     <profiles>
         <profile>
-            <id>release-sign-artifacts</id>
-            <activation>
-                <property>
-                    <name>performRelease</name>
-                    <value>true</value>
-                </property>
-            </activation>
+            <id>release</id>
             <build>
                 <plugins>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
+                        <version>1.6</version>
+                        <configuration>
+                            <!-- Prevent `gpg` from using pinentry programs -->
+                            <gpgArguments>
+                                <arg>--pinentry-mode</arg>
+                                <arg>loopback</arg>
+                            </gpgArguments>
+                        </configuration>
                         <executions>
                             <execution>
                                 <id>sign-artifacts</id>
@@ -294,16 +317,6 @@
                     </plugin>
                 </plugins>
             </build>
-        </profile>
-        <profile>
-            <!-- The auth module, which is not complete -->
-            <id>auth</id>
-            <activation>
-                <property>
-                    <name>env</name>
-                    <value>auth</value>
-                </property>
-            </activation>
         </profile>
     </profiles>
     <modules>
@@ -522,12 +535,14 @@
         <httpcomponents-version>4.5.3</httpcomponents-version>
 
         <surefire-version>2.21.0</surefire-version>
-        <enforcer-plugin-version>3.0.0-M1</enforcer-plugin-version>
-        <failsafe-plugin-version>2.21.0</failsafe-plugin-version>
+        <enforcer-plugin-version>3.0.0-M2</enforcer-plugin-version>
+        <failsafe-plugin-version>2.22.2</failsafe-plugin-version>
 
         <coverage.complexity.minimum>0.90</coverage.complexity.minimum>
         <coverage.line.minimum>0.90</coverage.line.minimum>
         <coverage.missed.classes>0</coverage.missed.classes>
 
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <sonatypeOssDistMgmtSnapshotsUrl>https://oss.sonatype.org/content/repositories/snapshots/</sonatypeOssDistMgmtSnapshotsUrl>
     </properties>
 </project>
