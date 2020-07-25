@@ -60,31 +60,6 @@ jobs:
         git config --global user.name "GitHub Action"
         git config --global hub.protocol https
         git remote set-url origin https://\${{ secrets.GITHUB_TOKEN }}:x-oauth-basic@github.com/''' + 'swagger-api/swagger-core' + '''.git
-    - name: Run maven deploy/release (action-maven-publish)
-      uses: samuelmeuli/action-maven-publish@v1
-      if: env.RELEASE_OK == 'yes'
-      with:
-        gpg_private_key: ${{ secrets.OSSRH_GPG_PRIVATE_KEY }}
-        gpg_passphrase: ${{ secrets.OSSRH_GPG_PRIVATE_PASSPHRASE }}
-        nexus_username: ${{ secrets.OSSRH_USERNAME }}
-        nexus_password: ${{ secrets.OSSRH_TOKEN }}
-        maven_profiles: "release"
-    - name: Run prepare javadocs script
-      id: prepareJavadocs
-      if: env.RELEASE_OK == 'yes'
-      run: |
-        . ./CI/prepare-javadocs.sh
-    - name: Checkout gh-pages
-      uses: actions/checkout@v2
-      with:
-        ref: "gh-pages"
-        fetch-depth: 0
-    - name: Run publish javadocs script
-      id: publishJavadocs
-      if: env.RELEASE_OK == 'yes'
-      run: |
-        TMPDIR="$(dirname -- "${0}")"
-        . $TMPDIR/publish-javadocs.sh
     - name: Checkout master
       uses: actions/checkout@v2
       with:
