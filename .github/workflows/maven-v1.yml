@@ -3,8 +3,6 @@ name: Build Test Deploy 1.5
 on:
   push:
     branches: [ "1.5" ]
-  pull_request:
-    branches: [ "1.5" ]
 
 jobs:
   build:
