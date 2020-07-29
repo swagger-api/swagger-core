@@ -5,12 +5,8 @@ SC_VERSION="$2"
 CUR=$(pwd)
 
 #####################
-### update v2 versions in redme
+### update v2 versions in readme
 #####################
-sc_find="currently $SC_VERSION-SNAPSHOT"
-sc_replace="currently $SC_NEXT_VERSION-SNAPSHOT"
-sed -i -e "s/$sc_find/$sc_replace/g" $CUR/README.md
-
 sc_find="$SC_LAST_RELEASE (\*\*current stable\*\*)"
 sc_replace="$SC_LAST_RELEASE                     "
 sed -i -e "s/$sc_find/$sc_replace/g" $CUR/README.md

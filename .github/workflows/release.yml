@@ -113,7 +113,7 @@ jobs:
       if: env.RELEASE_OK == 'yes'
       run: |
         TMPDIR="$(dirname -- "${0}")"
-        . $TMPDIR/update-v1-readme.sh ${{ env.SC_VERSION }} ${{ env.SC_NEXT_VERSION }}
+        . $TMPDIR/update-v1-readme.sh ${{ env.SC_LAST_RELEASE }} ${{ env.SC_VERSION }}
     - name: Create Update V1 Readme Pull Request
       uses: peter-evans/create-pull-request@v2
       if: env.RELEASE_OK == 'yes'
