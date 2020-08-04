@@ -2035,7 +2035,11 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
     private List<String> getIgnoredProperties(BeanDescription beanDescription) {
         AnnotationIntrospector introspector = _mapper.getSerializationConfig().getAnnotationIntrospector();
-        Set<String> ignored = introspector.findPropertyIgnorals(beanDescription.getClassInfo()).findIgnoredForSerialization();
+        JsonIgnoreProperties.Value v = introspector.findPropertyIgnorals(beanDescription.getClassInfo());
+        Set<String> ignored = null;
+        if (v != null) {
+            ignored = v.findIgnoredForSerialization();
+        }
         return ignored == null ? Collections.emptyList() : new ArrayList<>(ignored);
     }
 
