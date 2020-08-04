@@ -212,6 +212,7 @@ paths:
                 $ref: '#/components/schemas/Pet'
         "400":
           description: Invalid tag value
+      deprecated: true
   /complexcallback:
     get:
       summary: Simple get operation

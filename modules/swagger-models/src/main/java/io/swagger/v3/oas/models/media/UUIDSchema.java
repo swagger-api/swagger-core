@@ -30,11 +30,13 @@ public class UUIDSchema extends Schema<UUID> {
         super("string", "uuid");
     }
 
+    @Override
     public UUIDSchema type(String type) {
         super.setType(type);
         return this;
     }
 
+    @Override
     public UUIDSchema format(String format) {
         super.setFormat(format);
         return this;

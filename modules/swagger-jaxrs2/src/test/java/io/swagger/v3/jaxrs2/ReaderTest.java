@@ -1,6 +1,7 @@
 package io.swagger.v3.jaxrs2;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import io.swagger.v3.core.converter.AnnotatedType;
 import io.swagger.v3.core.converter.ModelConverter;
 import io.swagger.v3.core.converter.ModelConverterContextImpl;
@@ -60,12 +61,15 @@ import io.swagger.v3.jaxrs2.resources.Ticket2806Resource;
 import io.swagger.v3.jaxrs2.resources.Ticket2818Resource;
 import io.swagger.v3.jaxrs2.resources.Ticket2848Resource;
 import io.swagger.v3.jaxrs2.resources.Ticket3015Resource;
+import io.swagger.v3.jaxrs2.resources.Ticket3587Resource;
+import io.swagger.v3.jaxrs2.resources.UploadResource;
 import io.swagger.v3.jaxrs2.resources.UserAnnotationResource;
 import io.swagger.v3.jaxrs2.resources.extensions.ExtensionsResource;
 import io.swagger.v3.jaxrs2.resources.extensions.OperationExtensionsResource;
 import io.swagger.v3.jaxrs2.resources.extensions.ParameterExtensionsResource;
 import io.swagger.v3.jaxrs2.resources.extensions.RequestBodyExtensionsResource;
 import io.swagger.v3.jaxrs2.resources.rs.ProcessTokenRestService;
+import io.swagger.v3.jaxrs2.resources.ticket3624.Service;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.ExternalDocumentation;
@@ -2141,4 +2145,203 @@ public class ReaderTest {
         SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
     }
 
+    @Test
+    public void testTicket3092() {
+        Reader reader = new Reader(new OpenAPI());
+
+        OpenAPI openAPI = reader.read(UploadResource.class);
+        String yaml = "openapi: 3.0.1\n" +
+                "paths:\n" +
+                "  /upload:\n" +
+                "    post:\n" +
+                "      operationId: uploadWithBean\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          multipart/form-data:\n" +
+                "            schema:\n" +
+                "              type: object\n" +
+                "              properties:\n" +
+                "                name:\n" +
+                "                  type: string\n" +
+                "                picture:\n" +
+                "                  $ref: '#/components/schemas/picture'\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            application/json: {}\n" +
+                "  /upload/requestbody:\n" +
+                "    post:\n" +
+                "      operationId: uploadWithBeanAndRequestBody\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          multipart/form-data:\n" +
+                "            schema:\n" +
+                "              $ref: '#/components/schemas/UploadRequest'\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            application/json: {}\n" +
+                "components:\n" +
+                "  schemas:\n" +
+                "    picture:\n" +
+                "      type: object\n" +
+                "      format: binary\n" +
+                "    UploadRequest:\n" +
+                "      title: Schema for Upload\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        name:\n" +
+                "          type: string\n" +
+                "        picture:\n" +
+                "          type: string\n" +
+                "          format: binary";
+        SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
+    }
+
+    @Test(description = "Parameter examples ordering")
+    public void testTicket3587() {
+        Reader reader = new Reader(new OpenAPI());
+
+        OpenAPI openAPI = reader.read(Ticket3587Resource.class);
+        String yaml = "openapi: 3.0.1\n"
+                + "paths:\n"
+                + "  /test/test:\n"
+                + "    get:\n"
+                + "      operationId: parameterExamplesOrderingTest\n"
+                + "      parameters:\n"
+                + "      - in: query\n"
+                + "        schema:\n"
+                + "          type: string\n"
+                + "        examples:\n"
+                + "          Example One:\n"
+                + "            description: Example One\n"
+                + "          Example Two:\n"
+                + "            description: Example Two\n"
+                + "          Example Three:\n"
+                + "            description: Example Three\n"
+                + "      - in: query\n"
+                + "        schema:\n"
+                + "          type: string\n"
+                + "        examples:\n"
+                + "          Example Three:\n"
+                + "            description: Example Three\n"
+                + "          Example Two:\n"
+                + "            description: Example Two\n"
+                + "          Example One:\n"
+                + "            description: Example One\n"
+                + "      responses:\n"
+                + "        default:\n"
+                + "          description: default response\n"
+                + "          content:\n"
+                + "            '*/*': {}";
+        SerializationMatchers.assertEqualsToYamlExact(openAPI, yaml);
+    }
+
+    @Test(description = "Optional hanlding")
+    public void testTicket3624() {
+        Reader reader = new Reader(new OpenAPI());
+
+        OpenAPI openAPI = reader.read(Service.class);
+        String yaml = "openapi: 3.0.1\n" +
+                "paths:\n" +
+                "  /example/model:\n" +
+                "    get:\n" +
+                "      tags:\n" +
+                "      - ExampleService\n" +
+                "      summary: ' Retrieve models for display to the user'\n" +
+                "      operationId: getModels\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            application/json:\n" +
+                "              schema:\n" +
+                "                $ref: '#/components/schemas/Response'\n" +
+                "  /example/model/by/ids:\n" +
+                "    get:\n" +
+                "      tags:\n" +
+                "      - ExampleService\n" +
+                "      summary: ' Retrieve models by their ids'\n" +
+                "      operationId: getModelsById\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            application/json:\n" +
+                "              schema:\n" +
+                "                $ref: '#/components/schemas/ByIdResponse'\n" +
+                "  /example/containerized/model:\n" +
+                "    get:\n" +
+                "      tags:\n" +
+                "      - ExampleService\n" +
+                "      summary: ' Retrieve review insights for a specific product'\n" +
+                "      operationId: getContainerizedModels\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            application/json:\n" +
+                "              schema:\n" +
+                "                $ref: '#/components/schemas/ContainerizedResponse'\n" +
+                "components:\n" +
+                "  schemas:\n" +
+                "    Model:\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        text:\n" +
+                "          type: string\n" +
+                "        title:\n" +
+                "          type: string\n" +
+                "        active:\n" +
+                "          type: boolean\n" +
+                "        schemaParent:\n" +
+                "          $ref: '#/components/schemas/Model'\n" +
+                "        optionalString:\n" +
+                "          type: string\n" +
+                "        parent:\n" +
+                "          $ref: '#/components/schemas/Model'\n" +
+                "        id:\n" +
+                "          type: integer\n" +
+                "          format: int32\n" +
+                "    Response:\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        count:\n" +
+                "          type: integer\n" +
+                "          format: int32\n" +
+                "        models:\n" +
+                "          type: array\n" +
+                "          items:\n" +
+                "            $ref: '#/components/schemas/Model'\n" +
+                "    ByIdResponse:\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        modelsById:\n" +
+                "          type: object\n" +
+                "          additionalProperties:\n" +
+                "            $ref: '#/components/schemas/Model'\n" +
+                "    ContainerizedResponse:\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        totalCount:\n" +
+                "          type: integer\n" +
+                "          format: int32\n" +
+                "        containerizedModels:\n" +
+                "          type: array\n" +
+                "          items:\n" +
+                "            $ref: '#/components/schemas/ModelContainer'\n" +
+                "    ModelContainer:\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        text:\n" +
+                "          type: string\n" +
+                "        model:\n" +
+                "          $ref: '#/components/schemas/Model'\n" +
+                "        id:\n" +
+                "          type: integer\n" +
+                "          format: int32";
+        SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
+    }
 }

@@ -20,6 +20,7 @@ import io.swagger.v3.core.jackson.mixin.DateSchemaMixin;
 import io.swagger.v3.core.jackson.mixin.ExtensionsMixin;
 import io.swagger.v3.core.jackson.mixin.OpenAPIMixin;
 import io.swagger.v3.core.jackson.mixin.OperationMixin;
+import io.swagger.v3.core.jackson.mixin.SchemaMixin;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.ExternalDocumentation;
 import io.swagger.v3.oas.models.OpenAPI;
@@ -34,9 +35,7 @@ import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
 import io.swagger.v3.oas.models.links.Link;
 import io.swagger.v3.oas.models.links.LinkParameter;
-import io.swagger.v3.oas.models.media.DateSchema;
-import io.swagger.v3.oas.models.media.DateTimeSchema;
-import io.swagger.v3.oas.models.media.Encoding;
+import io.swagger.v3.oas.models.media.DateSchema;import io.swagger.v3.oas.models.media.Encoding;
 import io.swagger.v3.oas.models.media.EncodingProperty;
 import io.swagger.v3.oas.models.media.MediaType;
 import io.swagger.v3.oas.models.media.Schema;
@@ -130,7 +129,7 @@ public class ObjectMapperFactory {
         sourceMixins.put(ServerVariables.class, ExtensionsMixin.class);
         sourceMixins.put(Tag.class, ExtensionsMixin.class);
         sourceMixins.put(XML.class, ExtensionsMixin.class);
-        sourceMixins.put(Schema.class, ExtensionsMixin.class);
+        sourceMixins.put(Schema.class, SchemaMixin.class);
         sourceMixins.put(DateSchema.class, DateSchemaMixin.class);
 
         mapper.setMixIns(sourceMixins);

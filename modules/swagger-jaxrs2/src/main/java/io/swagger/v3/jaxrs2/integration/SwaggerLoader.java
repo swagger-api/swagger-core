@@ -229,21 +229,21 @@ public class SwaggerLoader {
             String openapiJson = null;
             String openapiYaml = null;
             if ("JSON".equals(outputFormat) || "JSONANDYAML".equals(outputFormat)) {
-                if (prettyPrint) {
+                if (prettyPrint != null && prettyPrint) {
                     openapiJson = Json.pretty(openAPI);
                 } else {
                     openapiJson = Json.mapper().writeValueAsString(openAPI);
                 }
             }
             if ("YAML".equals(outputFormat) || "JSONANDYAML".equals(outputFormat)) {
-                if (prettyPrint) {
+                if (prettyPrint != null && prettyPrint) {
                     openapiYaml = Yaml.pretty(openAPI);
                 } else {
                     openapiYaml = Yaml.mapper().writeValueAsString(openAPI);
                 }
 
             }
-            HashMap<String, String> map = new HashMap();
+            Map<String, String> map = new HashMap<>();
             map.put("JSON", openapiJson);
             map.put("YAML", openapiYaml);
             return map;

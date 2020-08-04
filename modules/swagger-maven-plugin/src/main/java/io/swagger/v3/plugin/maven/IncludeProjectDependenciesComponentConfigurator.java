@@ -54,7 +54,7 @@ public class IncludeProjectDependenciesComponentConfigurator extends AbstractCom
 
     private URL[] buildURLs(List<String> runtimeClasspathElements) throws ComponentConfigurationException {
         // Add the projects classes and dependencies
-        List<URL> urls = new ArrayList<URL>(runtimeClasspathElements.size());
+        List<URL> urls = new ArrayList<>(runtimeClasspathElements.size());
         for (String element : runtimeClasspathElements) {
             try {
                 final URL url = new File(element).toURI().toURL();

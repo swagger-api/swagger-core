@@ -111,8 +111,9 @@ public class ResolveTask extends DefaultTask {
     /**
      * @deprecated Use {@linkplain #getOutputDir()} instead.
      */
-    @Internal
     @Deprecated
+    @Input
+    @Optional
     public String getOutputPath() {
         return outputPath;
     }
@@ -120,7 +121,6 @@ public class ResolveTask extends DefaultTask {
     /**
      * @deprecated Use {@linkplain #setOutputDir(File)} instead.
      */
-    @Internal
     @Deprecated
     public void setOutputPath(String outputPath) {
         this.outputPath = outputPath;
