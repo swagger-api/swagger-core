@@ -1,6 +1,8 @@
 package io.swagger.v3.core.converter;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import com.fasterxml.jackson.databind.type.TypeBase;
+
 import io.swagger.v3.oas.models.media.Schema;
 
 import java.lang.annotation.Annotation;
@@ -10,6 +12,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
+
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 
 public class AnnotatedType {
     private Type type;
@@ -157,6 +162,20 @@ public class AnnotatedType {
         this.type = type;
     }
 
+    /**
+     * Get the canonical type name of the inner type.
+     */
+    public String getTypeName() {
+        Type type = this.getType();
+        if (type instanceof TypeBase) {
+            return ((TypeBase) type).toCanonical();
+        } else if (type instanceof Class) {
+            return ((Class) type).getName();
+        } else {
+            return null;
+        }
+    }
+
     public AnnotatedType type(Type type) {
         setType(type);
         return this;
@@ -211,8 +230,11 @@ public class AnnotatedType {
             return false;
         }
 
-        if (type != null && that.type != null && !type.equals(that.type)) {
+        if (type != null && that.type != null && !StringUtils.equals(that.getTypeName(), getTypeName())) {
             return false;
+        }
+        if (ArrayUtils.isEmpty(this.ctxAnnotations) && ArrayUtils.isEmpty(that.ctxAnnotations)) {
+            return true;
         }
         return Arrays.equals(this.ctxAnnotations, that.ctxAnnotations);
     }
@@ -221,7 +243,7 @@ public class AnnotatedType {
     @Override
     public int hashCode() {
         if (ctxAnnotations == null || ctxAnnotations.length == 0) {
-            return Objects.hash(type, "fixed");
+            return Objects.hash(getTypeName(), "fixed");
         }
         List<Annotation> meaningfulAnnotations = new ArrayList<>();
 
@@ -234,7 +256,7 @@ public class AnnotatedType {
             }
         }
         int result = 1;
-        result = 31 * result + (type == null ? 0 : Objects.hash(type, "fixed"));
+        result = 31 * result + (type == null ? 0 : Objects.hash(getTypeName(), "fixed"));
         if (hasDifference) {
             result = 31 * result + meaningfulAnnotations.hashCode();
         } else {

@@ -1,5 +1,6 @@
 package io.swagger.v3.jaxrs2;
 
+import io.swagger.v3.core.converter.ModelConverters;
 import io.swagger.v3.core.util.Json;
 import io.swagger.v3.core.util.Yaml;
 import io.swagger.v3.oas.annotations.Operation;
@@ -169,6 +170,7 @@ public class JsonViewTest {
         Assert.assertFalse(openApiJson.contains("made"));
         Assert.assertFalse(openApiJson.contains("condition"));
 
+        ModelConverters.getInstance().resetContext();
         reader = new Reader(new OpenAPI());
         openAPI = reader.read(CarSummaryUpdateApi.class);
         Set carSummarySchemaProperties = openAPI.getComponents()
@@ -199,6 +201,7 @@ public class JsonViewTest {
         Assert.assertFalse(carSummarySchemaProperties.contains("condition"));
         Assert.assertTrue(carSummaryUpdateApiRequestBodySchemaRef.contains("Car_Summary"));
 
+        ModelConverters.getInstance().resetContext();
         reader = new Reader(new OpenAPI());
         openAPI = reader.read(CarDetailApi.class);
         openApiJson = Json.mapper().writeValueAsString(openAPI);
@@ -210,6 +213,7 @@ public class JsonViewTest {
         Assert.assertTrue(openApiJson.contains("condition"));
         Assert.assertTrue(openApiJson.contains("Car_Detail"));
 
+        ModelConverters.getInstance().resetContext();
         reader = new Reader(new OpenAPI());
         openAPI = reader.read(CarSaleSummaryApi.class);
         openApiJson = Json.mapper().writeValueAsString(openAPI);
@@ -222,6 +226,7 @@ public class JsonViewTest {
         Assert.assertFalse(openApiJson.contains("made"));
         Assert.assertFalse(openApiJson.contains("condition"));
 
+        ModelConverters.getInstance().resetContext();
         reader = new Reader(new OpenAPI());
         openAPI = reader.read(CarApi.class);
         openApiJson = Json.mapper().writeValueAsString(openAPI);
@@ -233,6 +238,7 @@ public class JsonViewTest {
         Assert.assertFalse(openApiJson.contains("made"));
         Assert.assertTrue(openApiJson.contains("condition"));
 
+        ModelConverters.getInstance().resetContext();
         reader = new Reader(new OpenAPI());
         openAPI = reader.read(CarIgnoreApi.class);
         openApiJson = Json.mapper().writeValueAsString(openAPI);

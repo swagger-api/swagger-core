@@ -83,9 +83,8 @@ public class ModelConverterContextImpl implements ModelConverterContext {
 
         if (processedTypes.contains(type)) {
             return modelByType.get(type);
-        } else {
-            processedTypes.add(type);
         }
+        processedTypes.add(type);
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug(String.format("resolve %s", type.getType()));
         }

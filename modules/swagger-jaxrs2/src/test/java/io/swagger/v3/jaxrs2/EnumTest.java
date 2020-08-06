@@ -1,5 +1,6 @@
 package io.swagger.v3.jaxrs2;
 
+import io.swagger.v3.core.converter.ModelConverters;
 import io.swagger.v3.jaxrs2.matchers.SerializationMatchers;
 import io.swagger.v3.jaxrs2.resources.EnumParameterResource;
 import io.swagger.v3.jaxrs2.resources.JsonIdentityCyclicResource;
@@ -13,6 +14,7 @@ public class EnumTest {
 
     @Test(description = "Test enum")
     public void testEnum() throws IOException {
+        ModelConverters.getInstance().resetContext();
         Reader reader = new Reader(new OpenAPI());
         OpenAPI openAPI = reader.read(EnumParameterResource.class);
         SerializationMatchers.assertEqualsToYaml(openAPI, EXPECTED_YAML);

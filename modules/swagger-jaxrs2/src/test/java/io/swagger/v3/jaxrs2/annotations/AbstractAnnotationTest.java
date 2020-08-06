@@ -2,11 +2,15 @@ package io.swagger.v3.jaxrs2.annotations;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.JsonNode;
+
+import io.swagger.v3.core.converter.ModelConverter;
+import io.swagger.v3.core.converter.ModelConverters;
 import io.swagger.v3.core.util.Yaml;
 import io.swagger.v3.jaxrs2.Reader;
 import io.swagger.v3.jaxrs2.matchers.SerializationMatchers;
 import io.swagger.v3.oas.models.OpenAPI;
 import org.apache.commons.io.IOUtils;
+import org.testng.annotations.BeforeMethod;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -15,6 +19,11 @@ import java.nio.charset.StandardCharsets;
 import static org.testng.Assert.fail;
 
 public abstract class AbstractAnnotationTest {
+    @BeforeMethod
+    public void beforeTest() {
+        ModelConverters.getInstance().resetContext();
+    }
+
     public String readIntoYaml(final Class<?> cls) {
         Reader reader = new Reader(new OpenAPI());
         OpenAPI openAPI = reader.read(cls);
@@ -42,6 +51,7 @@ public abstract class AbstractAnnotationTest {
     }
 
     public void compareAsYaml(final Class<?> cls, final String yaml) throws IOException {
+        ModelConverters.getInstance().resetContext();
         Reader reader = new Reader(new OpenAPI());
         OpenAPI openAPI = reader.read(cls);
         SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
