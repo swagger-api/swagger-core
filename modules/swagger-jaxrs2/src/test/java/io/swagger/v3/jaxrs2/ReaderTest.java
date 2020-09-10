@@ -63,6 +63,7 @@ import io.swagger.v3.jaxrs2.resources.Ticket2848Resource;
 import io.swagger.v3.jaxrs2.resources.Ticket3015Resource;
 import io.swagger.v3.jaxrs2.resources.Ticket3587Resource;
 import io.swagger.v3.jaxrs2.resources.UploadResource;
+import io.swagger.v3.jaxrs2.resources.UrlEncodedResourceWithEncodings;
 import io.swagger.v3.jaxrs2.resources.UserAnnotationResource;
 import io.swagger.v3.jaxrs2.resources.extensions.ExtensionsResource;
 import io.swagger.v3.jaxrs2.resources.extensions.OperationExtensionsResource;
@@ -2343,6 +2344,76 @@ public class ReaderTest {
                 "        id:\n" +
                 "          type: integer\n" +
                 "          format: int32";
+        SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
+    }
+
+    @Test
+    public void testRequestBodyEncoding() {
+        Reader reader = new Reader(new OpenAPI());
+
+        OpenAPI openAPI = reader.read(UrlEncodedResourceWithEncodings.class);
+        String yaml = "openapi: 3.0.1\n" +
+                "paths:\n" +
+                "  /things/search:\n" +
+                "    post:\n" +
+                "      operationId: searchForThings\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          application/x-www-form-urlencoded:\n" +
+                "            schema:\n" +
+                "              type: object\n" +
+                "              properties:\n" +
+                "                id:\n" +
+                "                  type: array\n" +
+                "                  description: id param\n" +
+                "                  items:\n" +
+                "                    type: string\n" +
+                "                name:\n" +
+                "                  type: array\n" +
+                "                  items:\n" +
+                "                    type: string\n" +
+                "            encoding:\n" +
+                "              id:\n" +
+                "                style: form\n" +
+                "                explode: true\n" +
+                "              name:\n" +
+                "                style: form\n" +
+                "                explode: false\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            application/json: {}\n" +
+                "  /things/sriracha:\n" +
+                "    post:\n" +
+                "      operationId: srirachaThing\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          application/x-www-form-urlencoded:\n" +
+                "            schema:\n" +
+                "              type: object\n" +
+                "              properties:\n" +
+                "                id:\n" +
+                "                  type: array\n" +
+                "                  description: id param\n" +
+                "                  items:\n" +
+                "                    type: string\n" +
+                "                name:\n" +
+                "                  type: array\n" +
+                "                  items:\n" +
+                "                    type: string\n" +
+                "            encoding:\n" +
+                "              id:\n" +
+                "                style: form\n" +
+                "                explode: true\n" +
+                "              name:\n" +
+                "                style: form\n" +
+                "                explode: false\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            application/json: {}\n";
         SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
     }
 }

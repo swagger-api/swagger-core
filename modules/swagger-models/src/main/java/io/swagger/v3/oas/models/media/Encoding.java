@@ -51,6 +51,15 @@ public class Encoding {
         public String toString() {
             return String.valueOf(value);
         }
+
+        public static StyleEnum fromString(String value) {
+            for (StyleEnum e : values()) {
+                if (e.value.equals(value)) {
+                    return e;
+                }
+            }
+            return null;
+        }
     }
 
     public Encoding() {
