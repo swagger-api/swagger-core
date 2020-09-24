@@ -1,6 +1,6 @@
 # Swagger Core library
 
-[![Build Status](https://img.shields.io/jenkins/s/https/jenkins.swagger.io/view/OSS%20-%20Java/job/oss-swagger-core-1.5.svg)](https://jenkins.swagger.io/view/OSS%20-%20Java/job/oss-swagger-core-1.5)
+![Build Test Deploy 1.5](https://github.com/swagger-api/swagger-core/workflows/Build%20Test%20Deploy%201.5/badge.svg?branch=1.5)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.swagger/swagger-project/badge.svg?style=plastic)](https://maven-badges.herokuapp.com/maven-central/io.swagger/swagger-project)
 
 Javadocs for annotations with the current release are [available online](http://docs.swagger.io/swagger-core/current/apidocs/index.html).
