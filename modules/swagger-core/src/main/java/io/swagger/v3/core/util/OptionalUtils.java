@@ -42,7 +42,7 @@ public abstract class OptionalUtils {
                         .name(type.getName())
                         .parent(type.getParent())
                         .jsonUnwrappedHandler(type.getJsonUnwrappedHandler())
-                        .skipOverride(true)
+                        .skipOverride(type.isSkipOverride())
                         .schemaProperty(type.isSchemaProperty())
                         .ctxAnnotations(type.getCtxAnnotations())
                         .resolveAsRef(type.isResolveAsRef())

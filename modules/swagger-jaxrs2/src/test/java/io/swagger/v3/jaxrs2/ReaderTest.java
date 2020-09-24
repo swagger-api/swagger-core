@@ -2248,7 +2248,7 @@ public class ReaderTest {
         SerializationMatchers.assertEqualsToYamlExact(openAPI, yaml);
     }
 
-    @Test(description = "Optional hanlding")
+    @Test(description = "Optional handling")
     public void testTicket3624() {
         Reader reader = new Reader(new OpenAPI());
 
