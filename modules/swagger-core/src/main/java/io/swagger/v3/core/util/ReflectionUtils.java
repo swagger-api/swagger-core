@@ -61,6 +61,10 @@ public class ReflectionUtils {
      * @return true if the method is overridden method
      */
     public static boolean isOverriddenMethod(Method methodToFind, Class<?> cls) {
+
+        if (!hasOverriddenMethods(methodToFind, cls)) {
+            return false;
+        }
         Set<Class<?>> superClasses = new HashSet<>();
         Collections.addAll(superClasses, cls.getInterfaces());
 
@@ -70,14 +74,60 @@ public class ReflectionUtils {
 
         for (Class<?> superClass : superClasses) {
             if (superClass != null && !(superClass.equals(Object.class))) {
-                for (Method method : superClass.getMethods()) {
-                    if (method.getName().equals(methodToFind.getName()) && method.getReturnType().isAssignableFrom(methodToFind.getReturnType())
-                            && Arrays.equals(method.getParameterTypes(), methodToFind.getParameterTypes()) && !Arrays.equals(method.getGenericParameterTypes(), methodToFind.getGenericParameterTypes())) {
-                        return true;
+                try {
+                    Method found = superClass.getMethod(methodToFind.getName(), methodToFind.getParameterTypes());
+                    if (found.getReturnType().equals(methodToFind.getReturnType())) {
+                        if (!methodToFind.getDeclaringClass().equals(superClass)){
+                            return true;
+                        } else {
+                            if (getOverriddenMethod(found) == null) {
+                                return true;
+                            }
+                        }
+
                     }
+                } catch (NoSuchMethodException e) {
+                    // expected
                 }
                 if (isOverriddenMethod(methodToFind, superClass)) {
                     return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public static boolean hasOverriddenMethods(Method methodToFind, Class<?> cls) {
+        if (cls == null || methodToFind == null) {
+            return false;
+        }
+        boolean found = false;
+        for (Method method: cls.getMethods()) {
+            boolean equalsMethodName = method.getName().equals(methodToFind.getName());
+            boolean superClassReturnAssignable = method.getReturnType().isAssignableFrom(methodToFind.getReturnType());
+            boolean classReturnAssignable = methodToFind.getReturnType().isAssignableFrom(method.getReturnType());
+            boolean equalsParamCount = method.getParameterCount() == methodToFind.getParameterCount();
+
+            if (equalsMethodName && equalsParamCount && (superClassReturnAssignable || classReturnAssignable)){
+
+                Class[] paramsToFind = methodToFind.getParameterTypes();
+                if (paramsToFind == null || paramsToFind.length == 0) {
+                    continue;
+                }
+                boolean assignableParams = true;
+                for (int i = 0; i < paramsToFind.length; i++) {
+                    boolean superClassParamAssignable = method.getParameterTypes()[i].isAssignableFrom(paramsToFind[i]);
+                    boolean classParamAssignable = paramsToFind[i].isAssignableFrom(method.getParameterTypes()[i]);
+                    if (!superClassParamAssignable &&  !classParamAssignable) {
+                        assignableParams = false;
+                    }
+                }
+                if (assignableParams) {
+                    if (!found) {
+                        found = true;
+                    } else {
+                        return true;
+                    }
                 }
             }
 

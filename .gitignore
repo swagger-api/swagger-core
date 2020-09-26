@@ -13,3 +13,4 @@ atlassian-ide-plugin.xml
 .java-version
 sonar-project.properties
 test-output/
+*.pyc

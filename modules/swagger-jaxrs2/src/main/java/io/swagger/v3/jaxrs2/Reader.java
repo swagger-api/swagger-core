@@ -32,6 +32,7 @@ import io.swagger.v3.oas.models.PathItem;
 import io.swagger.v3.oas.models.Paths;
 import io.swagger.v3.oas.models.callbacks.Callback;
 import io.swagger.v3.oas.models.media.Content;
+import io.swagger.v3.oas.models.media.Encoding;
 import io.swagger.v3.oas.models.media.MediaType;
 import io.swagger.v3.oas.models.media.ObjectSchema;
 import io.swagger.v3.oas.models.media.Schema;
@@ -508,7 +509,8 @@ public class Reader implements OpenApiReader {
                                         operationParameters,
                                         paramAnnotations[i],
                                         type,
-                                        jsonViewAnnotationForRequestBody);
+                                        jsonViewAnnotationForRequestBody,
+                                        null);
                             }
                         }
                     } else {
@@ -537,15 +539,32 @@ public class Reader implements OpenApiReader {
                                         operationParameters,
                                         paramAnnotations[i],
                                         type,
-                                        jsonViewAnnotationForRequestBody);
+                                        jsonViewAnnotationForRequestBody,
+                                        null);
                             }
                         }
                     }
                     // if we have form parameters, need to merge them into single schema and use as request body..
                     if (!formParameters.isEmpty()) {
                         Schema mergedSchema = new ObjectSchema();
+                        Map<String, Encoding> encoding = new LinkedHashMap<>();
                         for (Parameter formParam: formParameters) {
+                            if (formParam.getExplode() != null || (formParam.getStyle() != null) && Encoding.StyleEnum.fromString(formParam.getStyle().toString()) != null) {
+                                Encoding e = new Encoding();
+                                if (formParam.getExplode() != null) {
+                                    e.explode(formParam.getExplode());
+                                }
+                                if (formParam.getStyle() != null  && Encoding.StyleEnum.fromString(formParam.getStyle().toString()) != null) {
+                                    e.style(Encoding.StyleEnum.fromString(formParam.getStyle().toString()));
+                                }
+                                encoding.put(formParam.getName(), e);
+                            }
                             mergedSchema.addProperties(formParam.getName(), formParam.getSchema());
+                            if (formParam.getSchema() != null &&
+                                    StringUtils.isNotBlank(formParam.getDescription()) &&
+                                    StringUtils.isBlank(formParam.getSchema().getDescription())) {
+                                formParam.getSchema().description(formParam.getDescription());
+                            }
                             if (null != formParam.getRequired() && formParam.getRequired()) {
                                 mergedSchema.addRequiredItem(formParam.getName());
                             }
@@ -559,7 +578,8 @@ public class Reader implements OpenApiReader {
                                 operationParameters,
                                 new Annotation[0],
                                 null,
-                                jsonViewAnnotationForRequestBody);
+                                jsonViewAnnotationForRequestBody,
+                                encoding);
 
                     }
                     if (!operationParameters.isEmpty()) {
@@ -667,7 +687,8 @@ public class Reader implements OpenApiReader {
                                       Consumes methodConsumes, Consumes classConsumes,
                                       List<Parameter> operationParameters,
                                       Annotation[] paramAnnotations, Type type,
-                                      JsonView jsonViewAnnotation) {
+                                      JsonView jsonViewAnnotation,
+                                      Map<String, Encoding> encoding) {
 
         io.swagger.v3.oas.annotations.parameters.RequestBody requestBodyAnnotation = getRequestBody(Arrays.asList(paramAnnotations));
         if (requestBodyAnnotation != null) {
@@ -725,6 +746,18 @@ public class Reader implements OpenApiReader {
                 if (!isRequestBodyEmpty) {
                     //requestBody.setExtensions(extensions);
                     operation.setRequestBody(requestBody);
+                }
+            }
+        }
+        if (operation.getRequestBody() != null &&
+                operation.getRequestBody().getContent() != null &&
+                encoding != null && !encoding.isEmpty()) {
+            Content content = operation.getRequestBody().getContent();
+            for (String mediaKey: content.keySet()) {
+                if (mediaKey.equals(javax.ws.rs.core.MediaType.APPLICATION_FORM_URLENCODED) ||
+                        mediaKey.equals(javax.ws.rs.core.MediaType.MULTIPART_FORM_DATA)) {
+                    MediaType m = content.get(mediaKey);
+                    m.encoding(encoding);
                 }
             }
         }

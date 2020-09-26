@@ -1,5 +1,6 @@
 package io.swagger.v3.core.resolving;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import io.swagger.v3.core.converter.ModelConverters;
 import io.swagger.v3.core.matchers.SerializationMatchers;
 import io.swagger.v3.core.resolving.resources.User2169;
@@ -124,5 +125,72 @@ public class JsonPropertyTest {
                 "    approvePairing:\n" +
                 "      type: boolean\n" +
                 "      writeOnly: true\n");
+    }
+
+    @Test(description = "test ticket 2845")
+    public void testTicket2845() {
+
+        SerializationMatchers.assertEqualsToYaml(ModelConverters.getInstance().readAll(Ticket2845Holder.class), "Ticket2845Child:\n" +
+                "  type: object\n" +
+                "  properties:\n" +
+                "    bar:\n" +
+                "      type: string\n" +
+                "    meow:\n" +
+                "      type: string\n" +
+                "Ticket2845Holder:\n" +
+                "  type: object\n" +
+                "  properties:\n" +
+                "    child:\n" +
+                "      $ref: '#/components/schemas/Ticket2845Child'");
+
+        /*
+            TODO: Test demonstrating annotation not being resolved when class is used/refernces elsewhere with different annotations
+            in this case the annotation isn't resolved or not consistently resolved as the same object is also present
+            and referenced  (in the same or different class) with no or different @JsonIgnoreProperties annotations.
+            The possible solutions are either resolve into different unrelated schemas or resolve inline
+            (see https://github.com/swagger-api/swagger-core/issues/3366 and other related tickets)
+         */
+        SerializationMatchers.assertEqualsToYaml(
+                ModelConverters.getInstance().readAll(Ticket2845HolderNoAnnotationNotWorking.class),
+                "Ticket2845Child:\n" +
+                        "  type: object\n" +
+                        "  properties:\n" +
+                        "    foo:\n" +
+                        "      type: string\n" +
+                        "    bar:\n" +
+                        "      type: string\n" +
+                        "    meow:\n" +
+                        "      type: string\n" +
+                        "Ticket2845HolderNoAnnotationNotWorking:\n" +
+                        "  type: object\n" +
+                        "  properties:\n" +
+                        "    child:\n" +
+                        "      $ref: '#/components/schemas/Ticket2845Child'\n" +
+                        "    childNoAnnotation:\n" +
+                        "      $ref: '#/components/schemas/Ticket2845Child'");
+    }
+
+    static class Ticket2845Parent {
+        public String foo;
+        public String bar;
+        public String bob;
+    }
+
+    @JsonIgnoreProperties({"bob"})
+    static class Ticket2845Child extends Ticket2845Parent {
+        public String meow;
+    }
+
+    static class Ticket2845Holder {
+        @JsonIgnoreProperties({"foo"})
+        public Ticket2845Child child;
+
+    }
+
+    static class Ticket2845HolderNoAnnotationNotWorking {
+        @JsonIgnoreProperties({"foo"})
+        public Ticket2845Child child;
+
+        public Ticket2845Child childNoAnnotation;
     }
 }
