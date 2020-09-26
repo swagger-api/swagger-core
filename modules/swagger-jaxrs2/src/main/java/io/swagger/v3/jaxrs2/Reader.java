@@ -379,7 +379,7 @@ public class Reader implements OpenApiReader {
         // Make sure that the class methods are sorted for deterministic order
         // See https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html#getMethods--
         final List<Method> methods = Arrays.stream(cls.getMethods())
-                .sorted(Comparator.comparing(Method::getName))
+                .sorted(new MethodComparator())
                 .collect(Collectors.toList());
 
         // iterate class methods
@@ -1477,6 +1477,38 @@ public class Reader implements OpenApiReader {
         } else {
             LOGGER.error("Unknown class definition: {}", cls);
             return null;
+        }
+    }
+
+    /**
+     * Comparator for uniquely sorting a collection of Method objects.
+     * Supports overloaded methods (with the same name).
+     *
+     * @see Method
+     */
+    private static class MethodComparator implements Comparator<Method> {
+
+        @Override
+        public int compare(Method m1, Method m2) {
+            // First compare the names of the method
+            int val = m1.getName().compareTo(m2.getName());
+
+            // If the names are equal, compare each argument type
+            if (val == 0) {
+                val = m1.getParameterTypes().length - m2.getParameterTypes().length;
+                if (val == 0) {
+                    Class<?>[] types1 = m1.getParameterTypes();
+                    Class<?>[] types2 = m2.getParameterTypes();
+                    for (int i = 0; i < types1.length; i++) {
+                        val = types1[i].getName().compareTo(types2[i].getName());
+
+                        if (val != 0) {
+                            break;
+                        }
+                    }
+                }
+            }
+            return val;
         }
     }
 }
