@@ -522,7 +522,7 @@
         <felix-version>4.2.1</felix-version>
         <servlet-api-version>4.0.3</servlet-api-version>
         <jersey2-version>2.26</jersey2-version>
-        <jackson-version>2.11.1</jackson-version>
+        <jackson-version>2.11.3</jackson-version>
         <logback-version>1.2.3</logback-version>
         <classgraph-version>4.8.65</classgraph-version>
         <guava-version>27.0.1-jre</guava-version>
