@@ -34,4 +34,8 @@ public class Yaml {
             e.printStackTrace();
         }
     }
+
+    public static void setMapper(ObjectMapper mapper) {
+        Yaml.mapper = mapper;
+    }
 }
