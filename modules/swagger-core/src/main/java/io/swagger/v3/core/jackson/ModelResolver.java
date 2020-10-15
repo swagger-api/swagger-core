@@ -37,6 +37,7 @@ import io.swagger.v3.core.util.ObjectMapperFactory;
 import io.swagger.v3.core.util.OptionalUtils;
 import io.swagger.v3.core.util.PrimitiveType;
 import io.swagger.v3.core.util.ReflectionUtils;
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.media.DiscriminatorMapping;
 import io.swagger.v3.oas.models.ExternalDocumentation;
 import io.swagger.v3.oas.models.media.ArraySchema;
@@ -570,7 +571,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
             PropertyMetadata md = propDef.getMetadata();
 
-            if (member != null && !ignore(member, xmlAccessorTypeAnnotation, propName, propertiesToIgnore)) {
+            if (member != null && !ignore(member, xmlAccessorTypeAnnotation, propName, propertiesToIgnore, propDef)) {
 
                 List<Annotation> annotationList = new ArrayList<>();
                 AnnotationMap annotationMap = member.getAllAnnotations();
@@ -988,12 +989,42 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
 
     protected boolean ignore(final Annotated member, final XmlAccessorType xmlAccessorTypeAnnotation, final String propName, final Set<String> propertiesToIgnore) {
+        return ignore (member, xmlAccessorTypeAnnotation, propName, propertiesToIgnore, null);
+    }
+
+    protected boolean hasHiddenAnnotation(Annotated annotated) {
+        return annotated.hasAnnotation(Hidden.class) || (
+                annotated.hasAnnotation(io.swagger.v3.oas.annotations.media.Schema.class) &&
+                annotated.getAnnotation(io.swagger.v3.oas.annotations.media.Schema.class).hidden()
+        );
+    }
+
+    protected boolean ignore(final Annotated member, final XmlAccessorType xmlAccessorTypeAnnotation, final String propName, final Set<String> propertiesToIgnore, BeanPropertyDefinition propDef) {
         if (propertiesToIgnore.contains(propName)) {
             return true;
         }
         if (member.hasAnnotation(JsonIgnore.class)) {
             return true;
         }
+        if (hasHiddenAnnotation(member)) {
+            return true;
+        }
+
+        if (propDef != null) {
+            if (propDef.hasGetter() && hasHiddenAnnotation(propDef.getGetter())) {
+                return true;
+            }
+            if (propDef.hasSetter() && hasHiddenAnnotation(propDef.getSetter())) {
+                return true;
+            }
+            if (propDef.hasConstructorParameter() && hasHiddenAnnotation(propDef.getConstructorParameter())) {
+                return true;
+            }
+            if (propDef.hasField() && hasHiddenAnnotation(propDef.getField())) {
+                return true;
+            }
+        }
+
         if (xmlAccessorTypeAnnotation == null) {
             return false;
         }
