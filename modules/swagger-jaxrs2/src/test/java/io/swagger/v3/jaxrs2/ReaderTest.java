@@ -62,6 +62,8 @@ import io.swagger.v3.jaxrs2.resources.Ticket2818Resource;
 import io.swagger.v3.jaxrs2.resources.Ticket2848Resource;
 import io.swagger.v3.jaxrs2.resources.Ticket3015Resource;
 import io.swagger.v3.jaxrs2.resources.Ticket3587Resource;
+import io.swagger.v3.jaxrs2.resources.Ticket3731BisResource;
+import io.swagger.v3.jaxrs2.resources.Ticket3731Resource;
 import io.swagger.v3.jaxrs2.resources.UploadResource;
 import io.swagger.v3.jaxrs2.resources.UrlEncodedResourceWithEncodings;
 import io.swagger.v3.jaxrs2.resources.UserAnnotationResource;
@@ -2769,6 +2771,44 @@ public class ReaderTest {
                 "            '*/*':\n" +
                 "              schema:\n" +
                 "                type: string";
+        SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
+    }
+
+    @Test(description = "Constraints annotations in models")
+    public void testTicket3731() {
+        Reader reader = new Reader(new OpenAPI());
+
+        OpenAPI openAPI = reader.read(Ticket3731Resource.class);
+        String yaml = "openapi: 3.0.1\n" +
+                "paths:\n" +
+                "  /test/cart:\n" +
+                "    get:\n" +
+                "      summary: Get cart items\n" +
+                "      description: Paging follows RFC 5005.\n" +
+                "      operationId: getCart\n" +
+                "      parameters:\n" +
+                "      - name: pageSize\n" +
+                "        in: query\n" +
+                "        description: \"Number of items per page. Range[1, 200]\"\n" +
+                "        schema:\n" +
+                "          maximum: 200\n" +
+                "          minimum: 1\n" +
+                "          type: integer\n" +
+                "          format: int32\n" +
+                "          default: 50\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*':\n" +
+                "              schema:\n" +
+                "                type: array\n" +
+                "                items:\n" +
+                "                  type: string\n";
+        SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
+
+        reader = new Reader(new OpenAPI());
+        openAPI = reader.read(Ticket3731BisResource.class);
         SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
     }
 }

@@ -138,6 +138,7 @@ public class ObjectMapperFactory {
         mapper.configure(SerializationFeature.WRITE_ENUMS_USING_TO_STRING, true);
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         mapper.configure(SerializationFeature.WRITE_NULL_MAP_VALUES, false);
+        mapper.configure(SerializationFeature.WRITE_BIGDECIMAL_AS_PLAIN, true);
         mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
 
         return mapper;
