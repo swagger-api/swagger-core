@@ -46,14 +46,14 @@ jobs:
         if [[ $MY_POM_VERSION =~ ^.*SNAPSHOT$ ]];
         then
           echo "not releasing snapshot version: " ${MY_POM_VERSION}
-          echo "::set-env name=RELEASE_OK::no"
+          echo "RELEASE_OK=no" >> $GITHUB_ENV
         else
           . ./CI/pre-release.sh
-          echo "::set-env name=RELEASE_OK::yes"
+          echo "RELEASE_OK=yes" >> $GITHUB_ENV
         fi
-        echo "::set-env name=SC_VERSION::$SC_VERSION"
-        echo "::set-env name=SC_NEXT_VERSION::$SC_NEXT_VERSION"
-        echo "::set-env name=SC_LAST_RELEASE::$SC_LAST_RELEASE"
+        echo "SC_VERSION=$SC_VERSION" >> $GITHUB_ENV
+        echo "SC_NEXT_VERSION=$SC_NEXT_VERSION" >> $GITHUB_ENV
+        echo "SC_LAST_RELEASE=$SC_LAST_RELEASE" >> $GITHUB_ENV
     - name: configure git user email
       run: |
         git config --global user.email "action@github.com"
