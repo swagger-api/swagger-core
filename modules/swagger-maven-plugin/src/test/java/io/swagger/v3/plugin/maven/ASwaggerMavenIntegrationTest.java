@@ -33,9 +33,11 @@ public abstract class ASwaggerMavenIntegrationTest extends BetterAbstractMojoTes
         assertTrue(pom.exists());
 
         SwaggerMojo swaggerMojo = (SwaggerMojo) lookupConfiguredMojo(pom, "resolve");
+        assertNotNull(swaggerMojo);
         // set random context id to not mix states with multiple tests
         swaggerMojo.setContextId(RandomStringUtils.randomAscii(32));
-        assertNotNull(swaggerMojo);
+        // set ClassRealm
+        swaggerMojo.getPluginDescriptor().setClassRealm(getContainer().createChildRealm(RandomStringUtils.randomAscii(32)));
 
         swaggerMojo.execute();
 
