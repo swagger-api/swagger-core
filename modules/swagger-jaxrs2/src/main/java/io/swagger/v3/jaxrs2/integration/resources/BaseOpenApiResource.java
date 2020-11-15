@@ -30,13 +30,17 @@ public abstract class BaseOpenApiResource {
 
     private static Logger LOGGER = LoggerFactory.getLogger(BaseOpenApiResource.class);
 
+    protected String getContextId(ServletConfig config) {
+        return getContextIdFromServletConfig(config);
+    }
+
     protected Response getOpenApi(HttpHeaders headers,
                                   ServletConfig config,
                                   Application app,
                                   UriInfo uriInfo,
                                   String type) throws Exception {
 
-        String ctxId = getContextIdFromServletConfig(config);
+        String ctxId = getContextId(config);
         OpenApiContext ctx = new JaxrsOpenApiContextBuilder()
                 .servletConfig(config)
                 .application(app)

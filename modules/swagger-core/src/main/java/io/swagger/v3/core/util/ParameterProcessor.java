@@ -67,6 +67,31 @@ public class ParameterProcessor {
         }
         resolvedSchema.referencedSchemas.forEach(components::addSchemas);
 
+        // handle first FormParam as it affects Explode resolving
+        for (Annotation annotation : annotations) {
+            if (annotation.annotationType().getName().equals("javax.ws.rs.FormParam")) {
+                try {
+                    String name = (String) annotation.annotationType().getMethod("value").invoke(annotation);
+                    if (StringUtils.isNotBlank(name)) {
+                        parameter.setName(name);
+                    }
+                } catch (Exception e) {
+                }
+                // set temporarily to "form" to inform caller that we need to further process along other form parameters
+                parameter.setIn("form");
+            } else if (annotation.annotationType().getName().endsWith("FormDataParam")) {
+                try {
+                    String name = (String) annotation.annotationType().getMethod("value").invoke(annotation);
+                    if (StringUtils.isNotBlank(name)) {
+                        parameter.setName(name);
+                    }
+                } catch (Exception e) {
+                }
+                // set temporarily to "form" to inform caller that we need to further process along other form parameters
+                parameter.setIn("form");
+            }
+        }
+
         for (Annotation annotation : annotations) {
             if (annotation instanceof io.swagger.v3.oas.annotations.Parameter) {
                 io.swagger.v3.oas.annotations.Parameter p = (io.swagger.v3.oas.annotations.Parameter) annotation;
@@ -167,26 +192,6 @@ public class ParameterProcessor {
                 }
             } else if (ModelResolver.NOT_NULL_ANNOTATIONS.contains(annotation.annotationType().getSimpleName())) {
                 parameter.setRequired(true);
-            } else if (annotation.annotationType().getName().equals("javax.ws.rs.FormParam")) {
-                try {
-                    String name = (String) annotation.annotationType().getMethod("value").invoke(annotation);
-                    if (StringUtils.isNotBlank(name)) {
-                        parameter.setName(name);
-                    }
-                } catch (Exception e) {
-                }
-                // set temporarely to "form" to inform caller that we need to further process along other form parameters
-                parameter.setIn("form");
-            } else if (annotation.annotationType().getName().endsWith("FormDataParam")) {
-                try {
-                    String name = (String) annotation.annotationType().getMethod("value").invoke(annotation);
-                    if (StringUtils.isNotBlank(name)) {
-                        parameter.setName(name);
-                    }
-                } catch (Exception e) {
-                }
-                // set temporarely to "form" to inform caller that we need to further process along other form parameters
-                parameter.setIn("form");
             }
         }
         final String defaultValue = helper.getDefaultValue();
@@ -213,7 +218,7 @@ public class ParameterProcessor {
     }
 
     public static void setParameterExplode(Parameter parameter, io.swagger.v3.oas.annotations.Parameter p) {
-        if (isExplodable(p)) {
+        if (isExplodable(p, parameter)) {
             if (Explode.TRUE.equals(p.explode())) {
                 parameter.setExplode(Boolean.TRUE);
             } else if (Explode.FALSE.equals(p.explode())) {
@@ -222,9 +227,12 @@ public class ParameterProcessor {
         }
     }
 
-    private static boolean isExplodable(io.swagger.v3.oas.annotations.Parameter p) {
+    private static boolean isExplodable(io.swagger.v3.oas.annotations.Parameter p, Parameter parameter) {
         io.swagger.v3.oas.annotations.media.Schema schema = p.schema();
         boolean explode = true;
+        if ("form".equals(parameter.getIn())){
+            return true;
+        }
         if (schema != null) {
             Class implementation = schema.implementation();
             if (implementation == Void.class) {

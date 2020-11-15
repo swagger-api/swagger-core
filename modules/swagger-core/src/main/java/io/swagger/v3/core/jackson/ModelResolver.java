@@ -37,7 +37,9 @@ import io.swagger.v3.core.util.ObjectMapperFactory;
 import io.swagger.v3.core.util.OptionalUtils;
 import io.swagger.v3.core.util.PrimitiveType;
 import io.swagger.v3.core.util.ReflectionUtils;
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.media.DiscriminatorMapping;
+import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.ExternalDocumentation;
 import io.swagger.v3.oas.models.media.ArraySchema;
 import io.swagger.v3.oas.models.media.ComposedSchema;
@@ -327,8 +329,8 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             if (xml != null) {
                 model.xml(xml);
             }
+            applyBeanValidatorAnnotations(model, annotatedType.getCtxAnnotations(), null);
             resolveSchemaMembers(model, annotatedType);
-
             if (resolvedArrayAnnotation != null) {
                 ArraySchema schema = new ArraySchema();
                 resolveArraySchema(annotatedType, schema, resolvedArrayAnnotation);
@@ -339,7 +341,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 // Store off the ref and add the enum as a top-level model
                 context.defineModel(name, model, annotatedType, null);
                 // Return the model as a ref only property
-                model = new Schema().$ref(name);
+                model = new Schema().$ref(Components.COMPONENTS_SCHEMAS_REF + name);
             }
             return model;
         }
@@ -568,7 +570,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
             PropertyMetadata md = propDef.getMetadata();
 
-            if (member != null && !ignore(member, xmlAccessorTypeAnnotation, propName, propertiesToIgnore)) {
+            if (member != null && !ignore(member, xmlAccessorTypeAnnotation, propName, propertiesToIgnore, propDef)) {
 
                 List<Annotation> annotationList = new ArrayList<>();
                 AnnotationMap annotationMap = member.getAllAnnotations();
@@ -966,12 +968,42 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
     }
 
     protected boolean ignore(final Annotated member, final XmlAccessorType xmlAccessorTypeAnnotation, final String propName, final Set<String> propertiesToIgnore) {
+        return ignore (member, xmlAccessorTypeAnnotation, propName, propertiesToIgnore, null);
+    }
+
+    protected boolean hasHiddenAnnotation(Annotated annotated) {
+        return annotated.hasAnnotation(Hidden.class) || (
+                annotated.hasAnnotation(io.swagger.v3.oas.annotations.media.Schema.class) &&
+                annotated.getAnnotation(io.swagger.v3.oas.annotations.media.Schema.class).hidden()
+        );
+    }
+
+    protected boolean ignore(final Annotated member, final XmlAccessorType xmlAccessorTypeAnnotation, final String propName, final Set<String> propertiesToIgnore, BeanPropertyDefinition propDef) {
         if (propertiesToIgnore.contains(propName)) {
             return true;
         }
         if (member.hasAnnotation(JsonIgnore.class)) {
             return true;
         }
+        if (hasHiddenAnnotation(member)) {
+            return true;
+        }
+
+        if (propDef != null) {
+            if (propDef.hasGetter() && hasHiddenAnnotation(propDef.getGetter())) {
+                return true;
+            }
+            if (propDef.hasSetter() && hasHiddenAnnotation(propDef.getSetter())) {
+                return true;
+            }
+            if (propDef.hasConstructorParameter() && hasHiddenAnnotation(propDef.getConstructorParameter())) {
+                return true;
+            }
+            if (propDef.hasField() && hasHiddenAnnotation(propDef.getField())) {
+                return true;
+            }
+        }
+
         if (xmlAccessorTypeAnnotation == null) {
             return false;
         }

@@ -17,6 +17,7 @@
 package io.swagger.v3.oas.models.media;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.ExternalDocumentation;
 
 import java.math.BigDecimal;
@@ -608,7 +609,7 @@ public class Schema<T> {
 
     public void set$ref(String $ref) {
         if ($ref != null && ($ref.indexOf('.') == -1 && $ref.indexOf('/') == -1)) {
-            $ref = "#/components/schemas/" + $ref;
+            $ref = Components.COMPONENTS_SCHEMAS_REF + $ref;
         }
         this.$ref = $ref;
     }
