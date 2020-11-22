@@ -53,7 +53,7 @@ import java.util.Set;
 public abstract class AnnotationsUtils {
 
     private static Logger LOGGER = LoggerFactory.getLogger(AnnotationsUtils.class);
-    public static final String COMPONENTS_REF = "#/components/schemas/";
+    public static final String COMPONENTS_REF = Components.COMPONENTS_SCHEMAS_REF;
 
     public static boolean hasSchemaAnnotation(io.swagger.v3.oas.annotations.media.Schema schema) {
         if (schema == null) {

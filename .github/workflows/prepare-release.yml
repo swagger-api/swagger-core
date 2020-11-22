@@ -41,13 +41,13 @@ jobs:
         if [[ $MY_POM_VERSION =~ ^.*SNAPSHOT$ ]];
         then
           . ./CI/prepare-release.sh
-          echo "::set-env name=PREPARE_RELEASE_OK::yes"
+          echo "PREPARE_RELEASE_OK=yes" >> $GITHUB_ENV
         else
           echo "not preparing release for release version: " ${MY_POM_VERSION}
-          echo "::set-env name=PREPARE_RELEASE_OK::no"
+          echo "PREPARE_RELEASE_OK=no" >> $GITHUB_ENV
         fi
-        echo "::set-env name=SC_VERSION::$SC_VERSION"
-        echo "::set-env name=SC_NEXT_VERSION::$SC_NEXT_VERSION"
+        echo "SC_VERSION=$SC_VERSION" >> $GITHUB_ENV
+        echo "SC_NEXT_VERSION=$SC_NEXT_VERSION" >> $GITHUB_ENV
     - name: Create Prepare Release Pull Request
       uses: peter-evans/create-pull-request@v2
       if: env.PREPARE_RELEASE_OK == 'yes'
