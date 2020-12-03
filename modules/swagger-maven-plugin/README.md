@@ -96,6 +96,7 @@ Parameter | Description | Required | Default
 `resourcePackages`|see [configuration property](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)|false|
 `resourceClasses`|see [configuration property](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)|false|
 `prettyPrint`|see [configuration property](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)|false|`TRUE`
+`sortOutput`|see [configuration property](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)|false|`FALSE`
 `openapiFilePath`|path to openapi file to be merged with resolved specification, see [config](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)|false|
 `configurationFilePath`|path to swagger config file to be merged with resolved specification, see [config](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration)|false|
 `filterClass`|see [configuration property](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)|false|
@@ -109,4 +110,7 @@ Parameter | Description | Required | Default
 
 ***
 
-Since version 2.0.8, configurationFilePath parameter is available, allowing to specify a path to a [swagger configuration file](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration); If single maven configuration parameters (e.g. `prettyPrint`) are also defined, these will overwrite any value set in configuration file; the same applies to `openapiFilePath` which takes precedence over `openAPI` field in configuration file.
+Since version 2.0.8, `configurationFilePath` parameter is available, allowing to specify a path to a [swagger configuration file](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration); If single maven configuration parameters (e.g. `prettyPrint`) are also defined, these will overwrite any value set in configuration file; the same applies to `openapiFilePath` which takes precedence over `openAPI` field in configuration file.
+
+Since version 2.1.6, `sortOutput` parameter is available, allowing to sort object properties and map keys alphabetically.
+Since version 2.1.6, `objectMapperProcessorClass` allows to configure also the ObjectMapper instance used to serialize the resolved OpenAPI

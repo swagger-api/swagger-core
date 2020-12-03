@@ -70,7 +70,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class Reader implements OpenApiReader {
     private static final Logger LOGGER = LoggerFactory.getLogger(Reader.class);

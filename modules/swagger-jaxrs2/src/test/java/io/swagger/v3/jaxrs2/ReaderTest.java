@@ -2216,37 +2216,37 @@ public class ReaderTest {
         Reader reader = new Reader(new OpenAPI());
 
         OpenAPI openAPI = reader.read(Ticket3587Resource.class);
-        String yaml = "openapi: 3.0.1\n" +
-                "paths:\n" +
-                "  /test/test:\n" +
-                "    get:\n" +
-                "      operationId: parameterExamplesOrderingTest\n" +
-                "      parameters:\n" +
-                "      - in: query\n" +
-                "        schema:\n" +
-                "          type: string\n" +
-                "        examples:\n" +
-                "          Example One:\n" +
-                "            description: Example One\n" +
-                "          Example Three:\n" +
-                "            description: Example Three\n" +
-                "          Example Two:\n" +
-                "            description: Example Two\n" +
-                "      - in: query\n" +
-                "        schema:\n" +
-                "          type: string\n" +
-                "        examples:\n" +
-                "          Example One:\n" +
-                "            description: Example One\n" +
-                "          Example Three:\n" +
-                "            description: Example Three\n" +
-                "          Example Two:\n" +
-                "            description: Example Two\n" +
-                "      responses:\n" +
-                "        default:\n" +
-                "          description: default response\n" +
-                "          content:\n" +
-                "            '*/*': {}\n";
+        String yaml = "openapi: 3.0.1\n"
+                + "paths:\n"
+                + "  /test/test:\n"
+                + "    get:\n"
+                + "      operationId: parameterExamplesOrderingTest\n"
+                + "      parameters:\n"
+                + "      - in: query\n"
+                + "        schema:\n"
+                + "          type: string\n"
+                + "        examples:\n"
+                + "          Example One:\n"
+                + "            description: Example One\n"
+                + "          Example Two:\n"
+                + "            description: Example Two\n"
+                + "          Example Three:\n"
+                + "            description: Example Three\n"
+                + "      - in: query\n"
+                + "        schema:\n"
+                + "          type: string\n"
+                + "        examples:\n"
+                + "          Example Three:\n"
+                + "            description: Example Three\n"
+                + "          Example Two:\n"
+                + "            description: Example Two\n"
+                + "          Example One:\n"
+                + "            description: Example One\n"
+                + "      responses:\n"
+                + "        default:\n"
+                + "          description: default response\n"
+                + "          content:\n"
+                + "            '*/*': {}";
         SerializationMatchers.assertEqualsToYamlExact(openAPI, yaml);
     }
 

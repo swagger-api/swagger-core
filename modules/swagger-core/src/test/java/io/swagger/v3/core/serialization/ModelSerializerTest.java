@@ -195,7 +195,7 @@ public class ModelSerializerTest {
                 "}";
 
         final Schema model = Json.mapper().readValue(json, Schema.class);
-        assertEquals(Json.mapper().writeValueAsString(model.getExample()), "{\"code\":1,\"fields\":\"abc\",\"message\":\"hello\"}");
+        assertEquals(Json.mapper().writeValueAsString(model.getExample()), "{\"code\":1,\"message\":\"hello\",\"fields\":\"abc\"}");
     }
 
     @Test(description = "it should deserialize a model with read-only property")

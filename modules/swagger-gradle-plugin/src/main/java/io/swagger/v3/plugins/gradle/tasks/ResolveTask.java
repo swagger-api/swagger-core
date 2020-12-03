@@ -66,6 +66,8 @@ public class ResolveTask extends DefaultTask {
     private LinkedHashSet<String> modelConverterClasses;
     private String objectMapperProcessorClass;
 
+    private Boolean sortOutput = Boolean.FALSE;
+
     private String contextId;
 
     @Input
@@ -294,6 +296,17 @@ public class ResolveTask extends DefaultTask {
         this.encoding = encoding;
     }
 
+    @Input
+    @Optional
+    public Boolean getSortOutput() {
+        return sortOutput;
+    }
+
+    public void setSortOutput(Boolean sortOutput) {
+        this.sortOutput = sortOutput;
+    }
+
+
     @TaskAction
     public void resolve() throws GradleException {
         if (skip) {
@@ -389,6 +402,9 @@ public class ResolveTask extends DefaultTask {
 
             method=swaggerLoaderClass.getDeclaredMethod("setPrettyPrint", Boolean.class);
             method.invoke(swaggerLoader, prettyPrint);
+
+            method=swaggerLoaderClass.getDeclaredMethod("setSortOutput", Boolean.class);
+            method.invoke(swaggerLoader, sortOutput);
 
             method=swaggerLoaderClass.getDeclaredMethod("setReadAllResources", Boolean.class);
             method.invoke(swaggerLoader, readAllResources);
