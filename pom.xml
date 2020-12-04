@@ -206,6 +206,7 @@
                     <serverId>ossrh</serverId>
                     <nexusUrl>https://oss.sonatype.org/</nexusUrl>
                     <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                    <stagingProgressTimeoutMinutes>30</stagingProgressTimeoutMinutes>
 <!--                    <skipStaging>true</skipStaging>
                     <skipRemoteStaging>true</skipRemoteStaging>
                     <skipNexusStagingDeployMojo>true</skipNexusStagingDeployMojo>-->
