@@ -120,10 +120,12 @@ public class SwaggerMojo extends AbstractMojo {
             if (openapiJson != null) {
                 path = Paths.get(outputPath, outputFileName + ".json");
                 Files.write(path, openapiJson.getBytes(Charset.forName(encoding)));
+                getLog().info( "JSON output: " + path.toFile().getCanonicalPath());
             }
             if (openapiYaml != null) {
                 path = Paths.get(outputPath, outputFileName + ".yaml");
                 Files.write(path, openapiYaml.getBytes(Charset.forName(encoding)));
+                getLog().info( "YAML output: " + path.toFile().getCanonicalPath());
             }
 
         } catch (OpenApiConfigurationException e) {
