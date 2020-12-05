@@ -528,6 +528,18 @@
                 <version>${guava-version}</version>
                 <scope>test</scope>
             </dependency>
+            <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>${junit-version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.ant</groupId>
+                <artifactId>ant</artifactId>
+                <version>${ant-version}</version>
+                <scope>test</scope>
+            </dependency>
         </dependencies>
     </dependencyManagement>
     <properties>
@@ -540,10 +552,12 @@
         <felix-version>4.2.1</felix-version>
         <servlet-api-version>4.0.3</servlet-api-version>
         <jersey2-version>2.26</jersey2-version>
+        <junit-version>4.13.1</junit-version>
         <jackson-version>2.11.1</jackson-version>
         <logback-version>1.2.3</logback-version>
         <classgraph-version>4.8.65</classgraph-version>
         <guava-version>27.0.1-jre</guava-version>
+        <ant-version>1.10.9</ant-version>
         <commons-lang-version>3.7</commons-lang-version>
         <commons-io-version>2.6</commons-io-version>
         <slf4j-version>1.7.25</slf4j-version>
