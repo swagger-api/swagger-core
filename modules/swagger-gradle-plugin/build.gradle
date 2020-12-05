@@ -31,6 +31,15 @@ dependencies {
     testCompile 'javax.ws.rs:javax.ws.rs-api:2.1'
     testCompile "io.swagger.core.v3:swagger-jaxrs2:${project.version}"
     testCompile 'junit:junit:4+'
+    testCompile 'org.eclipse.jetty:jetty-server:9.4.22.v20191022'
+    testCompile 'org.eclipse.jetty:jetty-servlet:9.4.22.v20191022'
+    testCompile 'org.eclipse.jetty:jetty-servlets:9.4.22.v20191022'
+    testCompile 'org.eclipse.jetty:jetty-webapp:9.4.22.v20191022'
+    testCompile 'org.eclipse.jetty:jetty-proxy:9.4.22.v20191022'
+    testCompile 'org.eclipse.jetty:jetty-proxy:9.4.22.v20191022'
+    testCompile 'org.apache.httpcomponents:httpclient:4.5.13'
+    testCompile 'commons-codec:commons-codec:1.15'
+    testCompile 'org.apache.commons:commons-compress:1.20'
 }
 
 // * * * * * * * * * * * *
