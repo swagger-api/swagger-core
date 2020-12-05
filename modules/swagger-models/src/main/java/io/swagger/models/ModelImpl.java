@@ -355,4 +355,9 @@ public class ModelImpl extends AbstractModel {
         return cloned;
     }
 
+    @JsonIgnore
+    public List<String> getSpecSpecifiedRequired() {
+        return required;
+    }
+
 }
