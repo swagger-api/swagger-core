@@ -422,6 +422,11 @@
                 <scope>test</scope>
             </dependency>
             <dependency>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpclient</artifactId>
+                <version>${httpcomponents-version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-core</artifactId>
                 <version>${mockito-version}</version>
@@ -432,6 +437,16 @@
                 <artifactId>jakarta.servlet-api</artifactId>
                 <version>${servlet-api-version}</version>
                 <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>jakarta.xml.bind</groupId>
+                <artifactId>jakarta.xml.bind-api</artifactId>
+                <version>${jakarta.xml.bind-api-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>jakarta.activation</groupId>
+                <artifactId>jakarta.activation-api</artifactId>
+                <version>${jakarta.activation-api-version}</version>
             </dependency>
             <dependency>
                 <groupId>org.slf4j</groupId>
@@ -520,6 +535,8 @@
         <joda-time-version>2.9.9</joda-time-version>
         <snakeyaml-version>1.26</snakeyaml-version>
         <jakarta.ws-version>2.1.6</jakarta.ws-version>
+        <jakarta.xml.bind-api-version>2.3.3</jakarta.xml.bind-api-version>
+        <jakarta.activation-api-version>1.2.2</jakarta.activation-api-version>
         <felix-version>4.2.1</felix-version>
         <servlet-api-version>4.0.3</servlet-api-version>
         <jersey2-version>2.26</jersey2-version>
@@ -531,10 +548,10 @@
         <commons-io-version>2.6</commons-io-version>
         <slf4j-version>1.7.25</slf4j-version>
         <jetty-version>9.4.9.v20180320</jetty-version>
-        <testng-version>7.1.0</testng-version>
-        <mockito-version>2.16.0</mockito-version>
-        <rest-assured-version>3.0.7</rest-assured-version>
-        <httpcomponents-version>4.5.3</httpcomponents-version>
+        <testng-version>7.3.0</testng-version>
+        <mockito-version>2.28.2</mockito-version>
+        <rest-assured-version>4.3.2</rest-assured-version>
+        <httpcomponents-version>4.5.13</httpcomponents-version>
 
         <surefire-version>2.21.0</surefire-version>
         <enforcer-plugin-version>3.0.0-M2</enforcer-plugin-version>
