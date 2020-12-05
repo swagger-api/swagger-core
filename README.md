@@ -1,6 +1,6 @@
 # Swagger Core library
 
-[![Build Status](https://img.shields.io/jenkins/s/https/jenkins.swagger.io/view/OSS%20-%20Java/job/oss-swagger-core-1.5.svg)](https://jenkins.swagger.io/view/OSS%20-%20Java/job/oss-swagger-core-1.5)
+![Build Test Deploy 1.5](https://github.com/swagger-api/swagger-core/workflows/Build%20Test%20Deploy%201.5/badge.svg?branch=1.5)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.swagger/swagger-project/badge.svg?style=plastic)](https://maven-badges.herokuapp.com/maven-central/io.swagger/swagger-project)
 
 Javadocs for annotations with the current release are [available online](http://docs.swagger.io/swagger-core/current/apidocs/index.html).
@@ -9,7 +9,7 @@ The goal of Swagger™ is to define a standard, language-agnostic interface to R
 
 Swagger Core is the Java implementation of Swagger. Current version supports *JAX-RS* and plain servlets.  Integration with the Play! framework has been moved to [Swagger-Play](https://github.com/swagger-api/swagger-play).
 
-Check out [Swagger-Spec](https://github.com/OAI/OpenAPI-Specification) for additional information about the Swagger project, including additional libraries with support for SpringMVC, other languages and more. 
+Check out [Swagger-Spec](https://github.com/OAI/OpenAPI-Specification) for additional information about the Swagger project, including additional libraries with support for SpringMVC, other languages and more.
 
 ![Swagger Screenshot](https://raw.github.com/swagger-api/swagger-core/1.5/swagger-shot.jpg)
 
@@ -33,13 +33,27 @@ The OpenAPI Specification has undergone several revisions since initial creation
 
 Swagger core Version      | Release Date | OpenAPI Spec compatibility | Notes | Status
 ------------------------- | ------------ | -------------------------- | ----- | ----
-2.0.8 (**current stable**)| 2019-04-24   | 3.0           | [tag v2.0.8](https://github.com/swagger-api/swagger-core/tree/v2.0.8) | Supported
+2.1.6 (**current stable**)| 2020-12-04   | 3.0           | [tag v2.1.6](https://github.com/swagger-api/swagger-core/tree/v2.1.6) | Supported
+2.1.5                     | 2020-10-01   | 3.0           | [tag v2.1.5](https://github.com/swagger-api/swagger-core/tree/v2.1.5) | Supported
+2.1.4                     | 2020-07-25   | 3.0           | [tag v2.1.4](https://github.com/swagger-api/swagger-core/tree/v2.1.4) | Supported
+2.1.3                     | 2020-06-27   | 3.0           | [tag v2.1.3](https://github.com/swagger-api/swagger-core/tree/v2.1.3) | Supported
+2.1.2                     | 2020-04-01   | 3.0           | [tag v2.1.2](https://github.com/swagger-api/swagger-core/tree/v2.1.2) | Supported
+2.1.1                     | 2020-01-02   | 3.0           | [tag v2.1.1](https://github.com/swagger-api/swagger-core/tree/v2.1.1) | Supported
+2.1.0                     | 2019-11-16   | 3.0           | [tag v2.1.0](https://github.com/swagger-api/swagger-core/tree/v2.1.0) | Supported
+2.0.10                    | 2019-10-11   | 3.0           | [tag v2.0.10](https://github.com/swagger-api/swagger-core/tree/v2.0.10) | Supported
+2.0.9                     | 2019-08-22   | 3.0           | [tag v2.0.9](https://github.com/swagger-api/swagger-core/tree/v2.0.9) | Supported
+2.0.8                     | 2019-04-24   | 3.0           | [tag v2.0.8](https://github.com/swagger-api/swagger-core/tree/v2.0.8) | Supported
 2.0.7                     | 2019-02-18   | 3.0           | [tag v2.0.7](https://github.com/swagger-api/swagger-core/tree/v2.0.7) | Supported
 2.0.6                     | 2018-11-27   | 3.0           | [tag v2.0.6](https://github.com/swagger-api/swagger-core/tree/v2.0.6) | Supported
 2.0.5                     | 2018-09-19   | 3.0           | [tag v2.0.5](https://github.com/swagger-api/swagger-core/tree/v2.0.5) | Supported
 2.0.4                     | 2018-09-05   | 3.0           | [tag v2.0.4](https://github.com/swagger-api/swagger-core/tree/v2.0.4) | Supported
 2.0.3                     | 2018-08-09   | 3.0           | [tag v2.0.3](https://github.com/swagger-api/swagger-core/tree/v2.0.3) | Supported
-1.5.22 (**current stable**)| 2019-02-18  | 2.0           | [tag v1.5.22](https://github.com/swagger-api/swagger-core/tree/v1.5.22) | Supported
+1.6.2 (**current stable**)| 2020-07-01  | 2.0           | [tag v1.6.2](https://github.com/swagger-api/swagger-core/tree/v1.6.2) | Supported
+1.6.1                     | 2020-04-01  | 2.0           | [tag v1.6.1](https://github.com/swagger-api/swagger-core/tree/v1.6.1) | Supported
+1.6.0                     | 2019-11-16  | 2.0           | [tag v1.6.0](https://github.com/swagger-api/swagger-core/tree/v1.6.0) | Supported
+1.5.24                    | 2019-10-11  | 2.0           | [tag v1.5.24](https://github.com/swagger-api/swagger-core/tree/v1.5.24) | Supported
+1.5.23                    | 2019-08-22  | 2.0           | [tag v1.5.23](https://github.com/swagger-api/swagger-core/tree/v1.5.23) | Supported
+1.5.22                    | 2019-02-18  | 2.0           | [tag v1.5.22](https://github.com/swagger-api/swagger-core/tree/v1.5.22) | Supported
 1.5.21                    | 2018-08-09  | 2.0           | [tag v1.5.21](https://github.com/swagger-api/swagger-core/tree/v1.5.21) | Supported
 1.5.20                    | 2018-05-23  | 2.0           | [tag v1.5.20](https://github.com/swagger-api/swagger-core/tree/v1.5.20) | Supported
 2.0.2                     | 2018-05-23   | 3.0           | [tag v2.0.2](https://github.com/swagger-api/swagger-core/tree/v2.0.2) | Supported
@@ -61,7 +75,7 @@ Swagger core Version      | Release Date | OpenAPI Spec compatibility | Notes | 
 To allow independent development, scala support has been moved into a separate project.  See the [swagger-scala-module](https://github.com/swagger-api/swagger-scala-module) for details.  Play! framework support has moved to [swagger-play](https://github.com/swagger-api/swagger-play).
 
 ## Overview
-This is a project to build the swagger-core library, which is required for the Swagger implementation of the OpenAPI Spec. 
+This is a project to build the swagger-core library, which is required for the Swagger implementation of the OpenAPI Spec.
 
 ### Change History
 If you're interested in the change history of swagger and the swagger-core framework, see [here](https://github.com/swagger-api/swagger-core/releases).
@@ -69,7 +83,7 @@ If you're interested in the change history of swagger and the swagger-core frame
 ### Prerequisites
 You need the following installed and available in your $PATH:
 
-* Java 7 (http://java.oracle.com)
+* Java 8 (http://java.oracle.com)
 * Apache maven 3.0.4 or greater (http://maven.apache.org/)
 
 ### Prerequisites 2.X
@@ -79,7 +93,7 @@ You need the following installed and available in your $PATH:
 * Apache maven 3.0.4 or greater (http://maven.apache.org/)
 
 
-### To build from source (currently 1.5.23-SNAPSHOT)
+### To build from source (currently 1.6.3-SNAPSHOT)
 ```
 # first time building locally
 mvn -N
@@ -94,7 +108,7 @@ This will build the modules.
 
 Of course if you don't want to build locally you can grab artifacts from maven central:
 
-`http://repo1.maven.org/maven2/io/swagger/`
+`https://repo1.maven.org/maven2/io/swagger/`
 
 ## Sample Apps - *UPDATED*
 The samples have moved to [a new repository](https://github.com/swagger-api/swagger-samples) and contain various integrations and configurations.
@@ -102,19 +116,3 @@ The samples have moved to [a new repository](https://github.com/swagger-api/swag
 ## Security contact
 
 Please disclose any security-related issues or vulnerabilities by emailing [security@swagger.io](mailto:security@swagger.io), instead of using the public issue tracker.
-
-## License
-
-```
-Copyright 2018 SmartBear Software
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at [apache.org/licenses/LICENSE-2.0](http://www.apache.org/licenses/LICENSE-2.0)
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-```

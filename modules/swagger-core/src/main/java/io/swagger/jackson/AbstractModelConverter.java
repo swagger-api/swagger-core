@@ -9,11 +9,13 @@ import com.fasterxml.jackson.databind.PropertyName;
 import com.fasterxml.jackson.databind.introspect.Annotated;
 import com.fasterxml.jackson.databind.jsontype.NamedType;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import io.swagger.converter.ModelConverter;
 import io.swagger.converter.ModelConverterContext;
 import io.swagger.models.Model;
 import io.swagger.models.properties.Property;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.xml.bind.annotation.XmlElement;
 import java.lang.annotation.Annotation;
@@ -102,6 +104,16 @@ public abstract class AbstractModelConverter implements ModelConverter {
         return name;
     }
 
+    /**
+     * whether to resolve schema name by first using AnnotationInspector registered implementations
+     * defaults to false, override returning `true` to obtain pre-1.5.24 behaviour
+     *
+     * @return false
+     * @since 1.5.24
+     */
+    protected boolean prioritizeAnnotationInspectorSchemaName() {
+        return false;
+    }
     protected String _findTypeName(JavaType type, BeanDescription beanDesc) {
         // First, handle container types; they require recursion
         if (type.isArrayType()) {
@@ -122,6 +134,12 @@ public abstract class AbstractModelConverter implements ModelConverter {
             beanDesc = _mapper.getSerializationConfig().introspectClassAnnotations(type);
         }
 
+        if (!prioritizeAnnotationInspectorSchemaName()) {
+            final ApiModel model = type.getRawClass().getAnnotation(ApiModel.class);
+            if (model != null && StringUtils.isNotBlank(model.value())) {
+                return _typeNameResolver.nameForType(type);
+            }
+        }
         PropertyName rootName = _intr.findRootName(beanDesc.getClassInfo());
         if (rootName != null && rootName.hasSimpleName()) {
             return rootName.getSimpleName();

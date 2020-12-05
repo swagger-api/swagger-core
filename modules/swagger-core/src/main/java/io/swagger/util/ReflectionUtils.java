@@ -3,6 +3,7 @@ package io.swagger.util;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
@@ -13,12 +14,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.google.common.collect.Sets;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import com.fasterxml.jackson.databind.type.TypeFactory;
+import com.google.common.collect.Sets;
 
 public class ReflectionUtils {
     private static final Logger LOGGER = LoggerFactory.getLogger(ReflectionUtils.class);
@@ -289,5 +291,14 @@ public class ReflectionUtils {
     public static boolean isVoid(Type type) {
         final Class<?> cls = TypeFactory.defaultInstance().constructType(type).getRawClass();
         return Void.class.isAssignableFrom(cls) || Void.TYPE.isAssignableFrom(cls);
+    }
+
+    public static Object safeInvoke(Method method, Object obj, Object... args) {
+        try {
+            return method.invoke(obj, args);
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            return null;
+        }
+
     }
 }

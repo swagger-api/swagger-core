@@ -1,6 +1,7 @@
 package io.swagger.jackson;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -11,6 +12,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -29,7 +31,6 @@ import javax.xml.bind.annotation.XmlElementRefs;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchema;
 
-import io.swagger.models.refs.RefFormat;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,6 +42,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
+import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.annotation.ObjectIdGenerator;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
@@ -75,6 +77,7 @@ import io.swagger.models.properties.PropertyBuilder;
 import io.swagger.models.properties.RefProperty;
 import io.swagger.models.properties.StringProperty;
 import io.swagger.models.properties.UUIDProperty;
+import io.swagger.models.refs.RefFormat;
 import io.swagger.util.AllowableValues;
 import io.swagger.util.AllowableValuesUtils;
 import io.swagger.util.BaseReaderUtils;
@@ -206,11 +209,41 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         final boolean useIndex = _mapper.isEnabled(SerializationFeature.WRITE_ENUMS_USING_INDEX);
         final boolean useToString = _mapper.isEnabled(SerializationFeature.WRITE_ENUMS_USING_TO_STRING);
 
+        Method jsonValueMethod = null;
+        Method[] methodList = propClass.getMethods();
+        for (Method m : methodList) {
+        	if (m.isAnnotationPresent(JsonValue.class) 
+        			&& m.getAnnotation(JsonValue.class).value()) {
+        		jsonValueMethod = m;
+        		break;
+        	}
+        }
+        
         @SuppressWarnings("unchecked")
         Class<Enum<?>> enumClass = (Class<Enum<?>>) propClass;
-        for (Enum<?> en : enumClass.getEnumConstants()) {
+        
+        Enum<?>[] enumConstants = enumClass.getEnumConstants();
+        if (enumConstants == null) {
+            return;
+        }
+        String[] enumValues = _intr.findEnumValues(propClass, enumConstants, new String[enumConstants.length]);
+
+        for (Enum<?> en : enumConstants) {        
+            String s = null; 
+            String enumValue = enumValues[en.ordinal()];
+            if (jsonValueMethod != null) {
+            	Object invokeResult = ReflectionUtils.safeInvoke(jsonValueMethod, en);
+            	if (invokeResult != null) {
+            		s = invokeResult.toString();
+            	}
+            }
+
             String n;
-            if (useIndex) {
+            if (s != null) {
+                n = s;
+            } else if (enumValue != null) {
+                n = enumValue;
+            } else if (useIndex) {            
                 n = String.valueOf(en.ordinal());
             } else if (useToString) {
                 n = en.toString();
@@ -219,7 +252,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             }
             property._enum(n);
         }
-        
+
         if (!useIndex && !useToString) {
             property._enum(Arrays.asList(_intr.findEnumValues(propClass, enumClass.getEnumConstants(), property.getEnum().toArray(new String[0]))));
         }
@@ -311,7 +344,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         //If JsonSerialize(as=...) is specified then use that bean to figure out all the json-like bits
         JsonSerialize jasonSerialize = beanDesc.getClassAnnotations().get(JsonSerialize.class);
         if (jasonSerialize != null) {
-            if (jasonSerialize.as() != null) {
+            if (jasonSerialize.as() != Void.class) {
                 JavaType asType = _mapper.constructType(jasonSerialize.as());
                 beanDesc = _mapper.getSerializationConfig().introspect(asType);
             }
@@ -421,7 +454,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                     allowEmptyValue = null;
                 }
 
-                JavaType propType = member.getType(beanDesc.bindingsForBeanType());
+                JavaType propType = member.getType();
 
                 // allow override of name from annotation
                 if (mp != null && !mp.name().isEmpty()) {
@@ -754,7 +787,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                     final String name = def.getName();
                     if (name != null && name.equals(propertyName)) {
                         final AnnotatedMember propMember = def.getPrimaryMember();
-                        final JavaType propType = propMember.getType(beanDesc.bindingsForBeanType());
+                        final JavaType propType = propMember.getType();
                         if (PrimitiveType.fromType(propType) != null) {
                             return PrimitiveType.createProperty(propType);
                         } else {
@@ -947,6 +980,12 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         }
 
         /**
+         * Remove the current class from the child classes. This happens if @JsonSubTypes references
+         * the annotated class as a subtype.
+         */
+        removeSelfFromSubTypes(types, bean);
+
+        /**
          * As the introspector will find @JsonSubTypes for a child class that are present on its super classes, the
          * code segment below will also run the introspector on the parent class, and then remove any sub-types that are
          * found for the parent from the sub-types found for the child. The same logic all applies to implemented
@@ -991,6 +1030,16 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             }
         }
         return count != 0;
+    }
+
+    private void removeSelfFromSubTypes(List<NamedType> types, BeanDescription bean) {
+        Class<?> beanClass= bean.getType().getRawClass();
+        ListIterator<NamedType> iter = types.listIterator();
+        while(iter.hasNext()){
+            if (beanClass.equals(iter.next().getType())) {
+                iter.remove();
+            }
+        }
     }
 
     private void removeSuperClassAndInterfaceSubTypes(List<NamedType> types, BeanDescription bean) {
