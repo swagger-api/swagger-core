@@ -31,14 +31,14 @@ dependencies {
     testImplementation 'javax.ws.rs:javax.ws.rs-api:2.1'
     testImplementation "io.swagger.core.v3:swagger-jaxrs2:${project.version}"
     testImplementation 'junit:junit:4+'
-    testImplementation 'org.eclipse.jetty:jetty-server:${jettyVersion}'
-    testImplementation 'org.eclipse.jetty:jetty-servlet:${jettyVersion}'
-    testImplementation 'org.eclipse.jetty:jetty-servlets:${jettyVersion}'
-    testImplementation 'org.eclipse.jetty:jetty-webapp:${jettyVersion}'
-    testImplementation 'org.eclipse.jetty:jetty-proxy:${jettyVersion}'
-    testImplementation 'org.apache.httpcomponents:httpclient:4.5.13'
-    testImplementation 'commons-codec:commons-codec:1.15'
-    testImplementation 'org.apache.commons:commons-compress:1.20'
+    testImplementation "org.eclipse.jetty:jetty-server:${project.jettyVersion}"
+    testImplementation "org.eclipse.jetty:jetty-servlet:${project.jettyVersion}"
+    testImplementation "org.eclipse.jetty:jetty-servlets:${project.jettyVersion}"
+    testImplementation "org.eclipse.jetty:jetty-webapp:${project.jettyVersion}"
+    testImplementation "org.eclipse.jetty:jetty-proxy:${project.jettyVersion}"
+    testImplementation "org.apache.httpcomponents:httpclient:4.5.13"
+    testImplementation "commons-codec:commons-codec:1.15"
+    testImplementation "org.apache.commons:commons-compress:1.20"
 
     testImplementation('com.github.tomakehurst:wiremock:2.27.2') {
         exclude group: 'org.eclipse.jetty', module: 'jetty-server'
