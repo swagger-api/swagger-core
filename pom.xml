@@ -540,6 +540,12 @@
                 <version>${ant-version}</version>
                 <scope>test</scope>
             </dependency>
+            <dependency>
+                <groupId>commons-codec</groupId>
+                <artifactId>commons-codec</artifactId>
+                <version>${commons-codec-version}</version>
+                <scope>test</scope>
+            </dependency>
         </dependencies>
     </dependencyManagement>
     <properties>
@@ -566,6 +572,7 @@
         <mockito-version>2.28.2</mockito-version>
         <rest-assured-version>4.3.2</rest-assured-version>
         <httpcomponents-version>4.5.13</httpcomponents-version>
+        <commons-codec-version>1.15</commons-codec-version>
 
         <surefire-version>2.21.0</surefire-version>
         <enforcer-plugin-version>3.0.0-M2</enforcer-plugin-version>
