@@ -36,6 +36,12 @@ sc_find="$SC_LAST_RELEASE (\*\*current stable\*\*)"
 sc_replace="$SC_LAST_RELEASE                     "
 sed -i -e "s/$sc_find/$sc_replace/g" $CUR/README.md
 
+### update timestamp for Reproducible Build
+TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+sc_find="<project.build.outputTimestamp>....-..-..T..:..:..Z"
+sc_replace="<project.build.outputTimestamp>$TIMESTAMP"
+sed -i -e "s/$sc_find/$sc_replace/g" $CUR/pom.xml
+
 # update readme with a line for the new release replacing the previous
 CURDATE=$(date +"%Y-%m-%d")
 sc_find="------------------------- | ------------ | -------------------------- | ----- | ----"

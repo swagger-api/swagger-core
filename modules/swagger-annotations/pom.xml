@@ -23,6 +23,8 @@
                 <configuration>
                     <instructions>
                         <Automatic-Module-Name>io.swagger.v3.oas.annotations</Automatic-Module-Name>
+                        <_removeheaders>Bnd-LastModified</_removeheaders>
+                        <_reproducible>true</_reproducible>
                     </instructions>
                 </configuration>
             </plugin>
