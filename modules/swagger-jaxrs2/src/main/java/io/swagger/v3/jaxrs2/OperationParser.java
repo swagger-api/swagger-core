@@ -16,7 +16,7 @@ import java.util.Optional;
 
 public class OperationParser {
 
-    public static final String COMPONENTS_REF = "#/components/schemas/";
+    public static final String COMPONENTS_REF = Components.COMPONENTS_SCHEMAS_REF;
 
     public static Optional<RequestBody> getRequestBody(io.swagger.v3.oas.annotations.parameters.RequestBody requestBody, Consumes classConsumes, Consumes methodConsumes, Components components, JsonView jsonViewAnnotation) {
         if (requestBody == null) {
