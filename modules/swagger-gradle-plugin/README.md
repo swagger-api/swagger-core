@@ -7,7 +7,7 @@
 
 ```
 plugins {
-  id "io.swagger.core.v3.swagger-gradle-plugin" version "2.1.5"
+  id "io.swagger.core.v3.swagger-gradle-plugin" version "2.1.6"
 }
 ```
 ### Gradle 1.x and 2.0
@@ -24,7 +24,7 @@ buildscript {
     }
   }
   dependencies {
-    classpath "io.swagger.core.v3:swagger-gradle-plugin:2.1.5"
+    classpath "io.swagger.core.v3:swagger-gradle-plugin:2.1.6"
   }
 }
 
@@ -64,6 +64,7 @@ Parameter | Description | Required | Default
 `resourcePackages`|see [configuration property](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)|false|
 `resourceClasses`|see [configuration property](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)|false|
 `prettyPrint`|see [configuration property](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)|false|`TRUE`
+`sortOutput`|see [configuration property](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)|false|`FALSE`
 `openApiFile`|openapi file to be merged with resolved specification, equivalent to [config](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties) openAPI|false|
 `filterClass`|see [configuration property](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)|false|
 `readerClass`|see [configuration property](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)|false|
@@ -95,3 +96,6 @@ info:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
 ```
+
+Since version 2.1.6, `sortOutput` parameter is available, allowing to sort object properties and map keys alphabetically.
+Since version 2.1.6, `objectMapperProcessorClass` allows to configure also the ObjectMapper instance used to serialize the resolved OpenAPI

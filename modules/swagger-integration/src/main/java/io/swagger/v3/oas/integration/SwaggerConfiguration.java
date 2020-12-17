@@ -30,6 +30,8 @@ public class SwaggerConfiguration implements OpenAPIConfiguration {
     private Set<String> modelConverterClasses;
     private String objectMapperProcessorClass;
 
+    private Boolean sortOutput;
+
     public Long getCacheTTL() {
         return cacheTTL;
     }
@@ -229,6 +231,29 @@ public class SwaggerConfiguration implements OpenAPIConfiguration {
      */
     public SwaggerConfiguration modelConverterClasses(Set<String> modelConverterClasses) {
         this.modelConverterClasses = modelConverterClasses;
+        return this;
+    }
+
+    /**
+     * @since 2.1.6
+     */
+    @Override
+    public Boolean isSortOutput() {
+        return sortOutput;
+    }
+
+    /**
+     * @since 2.1.6
+     */
+    public void setSortOutput(Boolean sortOutput) {
+        this.sortOutput = sortOutput;
+    }
+
+    /**
+     * @since 2.1.6
+     */
+    public SwaggerConfiguration sortOutput(Boolean sortOutput) {
+        setSortOutput(sortOutput);
         return this;
     }
 }

@@ -7,12 +7,24 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  */
 public interface ObjectMapperProcessor {
 
-    void processJsonObjectMapper(ObjectMapper mapper);
+    default void processJsonObjectMapper(ObjectMapper mapper) {};
 
     /**
      * @deprecated since 2.0.7, as no-op
      *
      */
     @Deprecated
-    void processYamlObjectMapper(ObjectMapper mapper);
+    default void processYamlObjectMapper(ObjectMapper mapper) {}
+
+    /**
+     * @since 2.1.6
+     */
+    default void processOutputJsonObjectMapper(ObjectMapper mapper) {}
+
+    /**
+     * @since 2.1.6
+     */
+    default void processOutputYamlObjectMapper(ObjectMapper mapper) {
+        processOutputJsonObjectMapper(mapper);
+    }
 }

@@ -58,6 +58,7 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -68,6 +69,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 public class Reader implements OpenApiReader {
     private static final Logger LOGGER = LoggerFactory.getLogger(Reader.class);
@@ -373,8 +375,13 @@ public class Reader implements OpenApiReader {
         // look for field-level annotated properties
         globalParameters.addAll(ReaderUtils.collectFieldParameters(cls, components, classConsumes, null));
 
+        // Make sure that the class methods are sorted for deterministic order
+        // See https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html#getMethods--
+        final List<Method> methods = Arrays.stream(cls.getMethods())
+                .sorted(new MethodComparator())
+                .collect(Collectors.toList());
+
         // iterate class methods
-        Method[] methods = cls.getMethods();
         for (Method method : methods) {
             if (isOperationHidden(method)) {
                 continue;
@@ -1469,6 +1476,38 @@ public class Reader implements OpenApiReader {
         } else {
             LOGGER.error("Unknown class definition: {}", cls);
             return null;
+        }
+    }
+
+    /**
+     * Comparator for uniquely sorting a collection of Method objects.
+     * Supports overloaded methods (with the same name).
+     *
+     * @see Method
+     */
+    private static class MethodComparator implements Comparator<Method> {
+
+        @Override
+        public int compare(Method m1, Method m2) {
+            // First compare the names of the method
+            int val = m1.getName().compareTo(m2.getName());
+
+            // If the names are equal, compare each argument type
+            if (val == 0) {
+                val = m1.getParameterTypes().length - m2.getParameterTypes().length;
+                if (val == 0) {
+                    Class<?>[] types1 = m1.getParameterTypes();
+                    Class<?>[] types2 = m2.getParameterTypes();
+                    for (int i = 0; i < types1.length; i++) {
+                        val = types1[i].getName().compareTo(types2[i].getName());
+
+                        if (val != 0) {
+                            break;
+                        }
+                    }
+                }
+            }
+            return val;
         }
     }
 }
