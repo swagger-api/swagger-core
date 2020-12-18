@@ -37,6 +37,11 @@ import java.util.Objects;
  */
 
 public class Components {
+
+    /**
+     * @since 2.1.6
+     */
+    public static final String COMPONENTS_SCHEMAS_REF = "#/components/schemas/";
     private Map<String, Schema> schemas = null;
     private Map<String, ApiResponse> responses = null;
     private Map<String, Parameter> parameters = null;

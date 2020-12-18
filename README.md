@@ -2,9 +2,8 @@
 
 **NOTE:** If you're looking for Swagger Core 1.5.X and OpenAPI 2.0, please refer to [1.5 branch](https://github.com/swagger-api/swagger-core/tree/1.5).
 
-[![Build Status](https://jenkins.swagger.io/view/OSS%20-%20Java/job/oss-swagger-core-master-java-8/badge/icon?subject=jenkins%20build%20-%20java%208)](https://jenkins.swagger.io/view/OSS%20-%20Java/job/oss-swagger-core-master-java-8/)
-
-[![Build Status](https://jenkins.swagger.io/view/OSS%20-%20Java/job/oss-swagger-core-master-java-9/badge/icon?subject=jenkins%20build%20-%20java%209)](https://jenkins.swagger.io/view/OSS%20-%20Java/job/oss-swagger-core-master-java-9/)
+![Build Test Deploy](https://github.com/swagger-api/swagger-core/workflows/Build%20Test%20Deploy%20master/badge.svg?branch=master)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.swagger.core.v3/swagger-project/badge.svg?style=plastic)](https://maven-badges.herokuapp.com/maven-central/io.swagger.core.v3/swagger-project)
 
 Swagger Core is a Java implementation of the OpenAPI Specification. Current version supports *JAX-RS2*.
 
@@ -19,7 +18,8 @@ The OpenAPI Specification has undergone several revisions since initial creation
 
 Swagger core Version      | Release Date | OpenAPI Spec compatibility | Notes | Status
 ------------------------- | ------------ | -------------------------- | ----- | ----
-2.1.5 (**current stable**)| 2020-10-01   | 3.0           | [tag v2.1.5](https://github.com/swagger-api/swagger-core/tree/v2.1.5) | Supported
+2.1.6 (**current stable**)| 2020-12-04   | 3.0           | [tag v2.1.6](https://github.com/swagger-api/swagger-core/tree/v2.1.6) | Supported
+2.1.5                     | 2020-10-01   | 3.0           | [tag v2.1.5](https://github.com/swagger-api/swagger-core/tree/v2.1.5) | Supported
 2.1.4                     | 2020-07-24   | 3.0           | [tag v2.1.4](https://github.com/swagger-api/swagger-core/tree/v2.1.4) | Supported
 2.1.3                     | 2020-06-27   | 3.0           | [tag v2.1.3](https://github.com/swagger-api/swagger-core/tree/v2.1.3) | Supported
 2.1.2                     | 2020-04-01   | 3.0           | [tag v2.1.2](https://github.com/swagger-api/swagger-core/tree/v2.1.2) | Supported
@@ -68,7 +68,7 @@ You need the following installed and available in your $PATH:
 * Jackson 2.4.5 or greater
 
 
-### To build from source (currently 2.1.6-SNAPSHOT)
+### To build from source (currently 2.1.7-SNAPSHOT)
 ```
 # first time building locally
 mvn -N

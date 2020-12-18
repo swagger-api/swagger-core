@@ -5,7 +5,7 @@
     <parent>
         <artifactId>swagger-project</artifactId>
         <groupId>io.swagger.core.v3</groupId>
-        <version>2.1.6-SNAPSHOT</version>
+        <version>2.1.7-SNAPSHOT</version>
         <relativePath>../../</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -209,7 +209,7 @@
         <dependency>
             <groupId>org.jboss.arquillian.testng</groupId>
             <artifactId>arquillian-testng-container</artifactId>
-            <version>1.4.0.Final</version>
+            <version>1.7.0.Alpha4</version>
             <scope>test</scope>
         </dependency>
         <dependency>
