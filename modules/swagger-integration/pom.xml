@@ -10,7 +10,6 @@
 		<relativePath>../..</relativePath>
 	</parent>
 	<artifactId>swagger-integration</artifactId>
-	<packaging>bundle</packaging>
 	<name>swagger-integration</name>
 	<description>swagger-integration</description>
 	<dependencies>
@@ -43,17 +42,22 @@
 		<sourceDirectory>src/main/java</sourceDirectory>
 		<defaultGoal>install</defaultGoal>
 		<plugins>
-			<plugin>
-				<groupId>org.apache.felix</groupId>
-				<artifactId>maven-bundle-plugin</artifactId>
-				<version>${felix-version}</version>
-				<extensions>true</extensions>
-				<configuration>
-					<instructions>
-						<Automatic-Module-Name>io.swagger.v3.oas.integration</Automatic-Module-Name>
-					</instructions>
-				</configuration>
-			</plugin>
+            <plugin>
+                <groupId>biz.aQute.bnd</groupId>
+                <artifactId>bnd-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
+						<manifestEntries>
+							<Automatic-Module-Name>io.swagger.v3.oas.integration</Automatic-Module-Name>
+						</manifestEntries>
+					</archive>
+                </configuration>
+            </plugin>
 		</plugins>
 	</build>
 </project>

@@ -216,6 +216,49 @@
         <pluginManagement>
             <plugins>
                 <plugin>
+                    <groupId>biz.aQute.bnd</groupId>
+                    <artifactId>bnd-maven-plugin</artifactId>
+                    <version>${bnd-version}</version>
+                    <configuration>
+                        <bnd><![CDATA[
+                            Bundle-SymbolicName: ${project.groupId}.${project.artifactId}
+                            -exportcontents: ${packages;NAMED;!*.internal}
+                            -noextraheaders: true
+                            -noclassforname: true
+                            -snapshot: SNAPSHOT
+                            -contract: \
+                                JavaJAXRS;resolution:=optional,\
+                                JavaServlet;resolution:=optional
+                            -define-contract: \
+                                osgi.contract;\
+                                    osgi.contract=JavaJAXRS;\
+                                    version:List<Version>="2.0";\
+                                    uses:="\
+                                        javax.ws.rs,\
+                                        javax.ws.rs.core,\
+                                        javax.ws.rs.ext,\
+                                        javax.ws.rs.client,\
+                                        javax.ws.rs.container",\
+                                osgi.contract;\
+                                    osgi.contract=JavaServlet;\
+                                    version:List<Version>="4.0";\
+                                    uses:="\
+                                        javax.servlet,\
+                                        javax.servlet.annotation,\
+                                        javax.servlet.descriptor,\
+                                        javax.servlet.http"
+                            -cdiannotations:
+                        ]]></bnd>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>bnd-process</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-gpg-plugin</artifactId>
                     <version>1.6</version>
@@ -379,11 +422,6 @@
                 <groupId>org.apache.maven</groupId>
                 <artifactId>maven-plugin-tools-api</artifactId>
                 <version>3.5.1</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-bundle-plugin</artifactId>
-                <version>${felix-version}</version>
             </dependency>
             <dependency>
                 <groupId>org.slf4j</groupId>
@@ -561,7 +599,7 @@
         <jakarta.ws-version>2.1.6</jakarta.ws-version>
         <jakarta.xml.bind-api-version>2.3.3</jakarta.xml.bind-api-version>
         <jakarta.activation-api-version>1.2.2</jakarta.activation-api-version>
-        <felix-version>4.2.1</felix-version>
+        <bnd-version>5.1.2</bnd-version>
         <servlet-api-version>4.0.3</servlet-api-version>
         <jersey2-version>2.26</jersey2-version>
         <junit-version>4.13.1</junit-version>
