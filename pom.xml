@@ -568,7 +568,7 @@
         <jackson-version>2.11.1</jackson-version>
         <logback-version>1.2.3</logback-version>
         <classgraph-version>4.8.95</classgraph-version>
-        <guava-version>27.0.1-jre</guava-version>
+        <guava-version>30.1-jre</guava-version>
         <ant-version>1.10.9</ant-version>
         <commons-lang-version>3.7</commons-lang-version>
         <commons-io-version>2.6</commons-io-version>

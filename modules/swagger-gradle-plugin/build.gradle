@@ -27,7 +27,7 @@ dependencies {
     testImplementation gradleTestKit()
     testImplementation 'com.github.tomakehurst:wiremock:2.27.2'
     testImplementation 'javax.servlet:javax.servlet-api:3.1.0'
-    testImplementation 'com.google.guava:guava:27.0.1-jre'
+    testImplementation 'com.google.guava:guava:30.1-jre'
     testImplementation 'javax.ws.rs:javax.ws.rs-api:2.1'
     testImplementation "io.swagger.core.v3:swagger-jaxrs2:${project.version}"
     testImplementation 'junit:junit:4+'
