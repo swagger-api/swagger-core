@@ -65,8 +65,8 @@ import java.util.function.Function;
 
 public abstract class CopyUtil {
 
-    public static Object copy(Object o) {
-        if(o == null) {
+    private static Object copy(Object o) {
+        if (o == null) {
             return null;
         }
         // Immutable types
@@ -77,11 +77,9 @@ public abstract class CopyUtil {
         // Mutable types
         else if (o instanceof JsonNode) {
             return ((JsonNode) o).deepCopy();
-        }
-        else if (o instanceof Date) {
+        } else if (o instanceof Date) {
             return ((Date) o).clone();
-        }
-        else if (o instanceof byte[]) {
+        } else if (o instanceof byte[]) {
             return ((byte[]) o).clone();
         }
         try {
@@ -92,59 +90,75 @@ public abstract class CopyUtil {
     }
 
     public static ApiResponse copy(ApiResponse response) {
+        return copy(response, CopyUtil::copy);
+    }
+
+    public static ApiResponse copy(ApiResponse response, Function<Object, Object> objectCopy) {
         if (response == null) {
             return null;
         }
         ApiResponse newResponse = new ApiResponse()
                 .description(response.getDescription())
-                .content(copy(response.getContent()))
+                .content(copy(response.getContent(), objectCopy))
                 .$ref(response.get$ref());
 
         if (response.getHeaders() != null) {
             newResponse.setHeaders(new LinkedHashMap<>());
-            response.getHeaders().forEach((k,v) -> newResponse.addHeaderObject(k, copy(v)));
+            response.getHeaders().forEach((k, v) -> newResponse.addHeaderObject(k, copy(v, objectCopy)));
         }
         if (response.getLinks() != null) {
             newResponse.setLinks(new LinkedHashMap<>());
-            response.getLinks().forEach((k,v) -> newResponse.link(k, copy(v)));
+            response.getLinks().forEach((k, v) -> newResponse.link(k, copy(v, objectCopy)));
         }
         if (response.getExtensions() != null) {
             newResponse.setExtensions(new LinkedHashMap<>());
-            response.getExtensions().forEach((k,v) -> newResponse.addExtension(k, copy(v)));
+            response.getExtensions().forEach((k, v) -> newResponse.addExtension(k, objectCopy.apply(v)));
         }
         return newResponse;
     }
 
     public static ApiResponses copy(ApiResponses responses) {
-        if(responses == null) {
+        return copy(responses, CopyUtil::copy);
+    }
+
+    public static ApiResponses copy(ApiResponses responses, Function<Object, Object> objectCopy) {
+        if (responses == null) {
             return null;
         }
         ApiResponses newResponses = new ApiResponses();
-        responses.forEach((k,v) -> newResponses.addApiResponse(k, copy(v)));
+        responses.forEach((k, v) -> newResponses.addApiResponse(k, copy(v, objectCopy)));
         if (responses.getExtensions() != null) {
             newResponses.setExtensions(new LinkedHashMap<>());
-            responses.getExtensions().forEach((k,v) -> newResponses.addExtension(k, copy(v)));
+            responses.getExtensions().forEach((k, v) -> newResponses.addExtension(k, objectCopy.apply(v)));
         }
         return newResponses;
     }
 
     public static Callback copy(Callback callback) {
+        return copy(callback, CopyUtil::copy);
+    }
+
+    public static Callback copy(Callback callback, Function<Object, Object> objectCopy) {
         if (callback == null) {
             return null;
         }
         Callback newCallback = new Callback()
                 .$ref(callback.get$ref());
 
-        callback.forEach((k,v) -> newCallback.addPathItem(k, copy(v)));
+        callback.forEach((k, v) -> newCallback.addPathItem(k, copy(v, objectCopy)));
 
         if (callback.getExtensions() != null) {
             newCallback.setExtensions(new LinkedHashMap<>());
-            callback.getExtensions().forEach((k,v) -> newCallback.addExtension(k, copy(v)));
+            callback.getExtensions().forEach((k, v) -> newCallback.addExtension(k, objectCopy.apply(v)));
         }
         return newCallback;
     }
 
     public static Components copy(Components components) {
+        return copy(components, CopyUtil::copy);
+    }
+
+    public static Components copy(Components components, Function<Object, Object> objectCopy) {
         if (components == null) {
             return null;
         }
@@ -152,48 +166,52 @@ public abstract class CopyUtil {
 
         if (components.getSchemas() != null) {
             newComponents.setSchemas(new LinkedHashMap<>());
-            components.getSchemas().forEach((k,v) -> newComponents.addSchemas(k, copy(v)));
+            components.getSchemas().forEach((k, v) -> newComponents.addSchemas(k, copy(v, objectCopy)));
         }
         if (components.getResponses() != null) {
             newComponents.setResponses(new LinkedHashMap<>());
-            components.getResponses().forEach((k,v) -> newComponents.addResponses(k, copy(v)));
+            components.getResponses().forEach((k, v) -> newComponents.addResponses(k, copy(v, objectCopy)));
         }
         if (components.getParameters() != null) {
             newComponents.setParameters(new LinkedHashMap<>());
-            components.getParameters().forEach((k,v) -> newComponents.addParameters(k, copy(v)));
+            components.getParameters().forEach((k, v) -> newComponents.addParameters(k, copy(v, objectCopy)));
         }
         if (components.getExamples() != null) {
             newComponents.setExamples(new LinkedHashMap<>());
-            components.getExamples().forEach((k,v) -> newComponents.addExamples(k, copy(v)));
+            components.getExamples().forEach((k, v) -> newComponents.addExamples(k, copy(v, objectCopy)));
         }
         if (components.getRequestBodies() != null) {
             newComponents.setRequestBodies(new LinkedHashMap<>());
-            components.getRequestBodies().forEach((k,v) -> newComponents.addRequestBodies(k, copy(v)));
+            components.getRequestBodies().forEach((k, v) -> newComponents.addRequestBodies(k, copy(v, objectCopy)));
         }
         if (components.getHeaders() != null) {
             newComponents.setHeaders(new LinkedHashMap<>());
-            components.getHeaders().forEach((k,v) -> newComponents.addHeaders(k, copy(v)));
+            components.getHeaders().forEach((k, v) -> newComponents.addHeaders(k, copy(v, objectCopy)));
         }
         if (components.getSecuritySchemes() != null) {
             newComponents.setSecuritySchemes(new LinkedHashMap<>());
-            components.getSecuritySchemes().forEach((k,v) -> newComponents.addSecuritySchemes(k, copy(v)));
+            components.getSecuritySchemes().forEach((k, v) -> newComponents.addSecuritySchemes(k, copy(v, objectCopy)));
         }
         if (components.getLinks() != null) {
             newComponents.setLinks(new LinkedHashMap<>());
-            components.getLinks().forEach((k,v) -> newComponents.addLinks(k, copy(v)));
+            components.getLinks().forEach((k, v) -> newComponents.addLinks(k, copy(v, objectCopy)));
         }
         if (components.getCallbacks() != null) {
             newComponents.setCallbacks(new LinkedHashMap<>());
-            components.getCallbacks().forEach((k,v) -> newComponents.addCallbacks(k, copy(v)));
+            components.getCallbacks().forEach((k, v) -> newComponents.addCallbacks(k, copy(v, objectCopy)));
         }
         if (components.getExtensions() != null) {
             newComponents.setExtensions(new LinkedHashMap<>());
-            components.getExtensions().forEach((k,v) -> newComponents.addExtension(k, copy(v)));
+            components.getExtensions().forEach((k, v) -> newComponents.addExtension(k, objectCopy.apply(v)));
         }
         return newComponents;
     }
 
     public static Contact copy(Contact contact) {
+        return copy(contact, CopyUtil::copy);
+    }
+
+    public static Contact copy(Contact contact, Function<Object, Object> objectCopy) {
         if (contact == null) {
             return null;
         }
@@ -204,17 +222,21 @@ public abstract class CopyUtil {
 
         if (contact.getExtensions() != null) {
             newContact.setExtensions(new LinkedHashMap<>());
-            contact.getExtensions().forEach((k,v) -> newContact.addExtension(k, copy(v)));
+            contact.getExtensions().forEach((k, v) -> newContact.addExtension(k, objectCopy.apply(v)));
         }
         return newContact;
     }
 
     public static Content copy(Content content) {
+        return copy(content, CopyUtil::copy);
+    }
+
+    public static Content copy(Content content, Function<Object, Object> objectCopy) {
         if (content == null) {
             return null;
         }
         Content newContent = new Content();
-        content.forEach((k,v) -> newContent.addMediaType(k, copy(v)));
+        content.forEach((k, v) -> newContent.addMediaType(k, copy(v, objectCopy)));
         return newContent;
     }
 
@@ -233,6 +255,10 @@ public abstract class CopyUtil {
     }
 
     public static Encoding copy(Encoding encoding) {
+        return copy(encoding, CopyUtil::copy);
+    }
+
+    public static Encoding copy(Encoding encoding, Function<Object, Object> objectCopy) {
         if (encoding == null) {
             return null;
         }
@@ -244,11 +270,11 @@ public abstract class CopyUtil {
 
         if (encoding.getHeaders() != null) {
             newEncoding.setHeaders(new LinkedHashMap<>());
-            encoding.getHeaders().forEach((k,v) -> newEncoding.addHeader(k, copy(v)));
+            encoding.getHeaders().forEach((k, v) -> newEncoding.addHeader(k, copy(v, objectCopy)));
         }
         if (encoding.getExtensions() != null) {
             newEncoding.setExtensions(new LinkedHashMap<>());
-            encoding.getExtensions().forEach((k,v) -> newEncoding.addExtension(k, copy(v)));
+            encoding.getExtensions().forEach((k, v) -> newEncoding.addExtension(k, objectCopy.apply(v)));
         }
         return newEncoding;
     }
@@ -270,12 +296,16 @@ public abstract class CopyUtil {
 
         if (example.getExtensions() != null) {
             newExample.setExtensions(new LinkedHashMap<>());
-            example.getExtensions().forEach((k,v) -> newExample.addExtension(k, objectCopy.apply(v)));
+            example.getExtensions().forEach((k, v) -> newExample.addExtension(k, objectCopy.apply(v)));
         }
         return newExample;
     }
 
     public static ExternalDocumentation copy(ExternalDocumentation documentation) {
+        return copy(documentation, CopyUtil::copy);
+    }
+
+    public static ExternalDocumentation copy(ExternalDocumentation documentation, Function<Object, Object> objectCopy) {
         if (documentation == null) {
             return null;
         }
@@ -285,12 +315,16 @@ public abstract class CopyUtil {
 
         if (documentation.getExtensions() != null) {
             newDocumentation.setExtensions(new LinkedHashMap<>());
-            documentation.getExtensions().forEach((k,v) -> newDocumentation.addExtension(k, copy(v)));
+            documentation.getExtensions().forEach((k, v) -> newDocumentation.addExtension(k, objectCopy.apply(v)));
         }
         return newDocumentation;
     }
 
     public static Header copy(Header header) {
+        return copy(header, CopyUtil::copy);
+    }
+
+    public static Header copy(Header header, Function<Object, Object> objectCopy) {
         if (header == null) {
             return null;
         }
@@ -301,18 +335,22 @@ public abstract class CopyUtil {
                 .deprecated(header.getDeprecated())
                 .style(header.getStyle())
                 .explode(header.getExplode())
-                .schema(copy(header.getSchema()))
-                .example(copy(header.getExample()))
-                .content(copy(header.getContent()));
+                .schema(copy(header.getSchema(), objectCopy))
+                .example(objectCopy.apply(header.getExample()))
+                .content(copy(header.getContent(), objectCopy));
 
         if (header.getExtensions() != null) {
             newHeader.setExtensions(new LinkedHashMap<>());
-            header.getExtensions().forEach((k,v) -> newHeader.addExtension(k, copy(v)));
+            header.getExtensions().forEach((k, v) -> newHeader.addExtension(k, objectCopy.apply(v)));
         }
         return newHeader;
     }
 
     public static Info copy(Info info) {
+        return copy(info, CopyUtil::copy);
+    }
+
+    public static Info copy(Info info, Function<Object, Object> objectCopy) {
         if (info == null) {
             return null;
         }
@@ -320,18 +358,22 @@ public abstract class CopyUtil {
                 .title(info.getTitle())
                 .description(info.getDescription())
                 .termsOfService(info.getTermsOfService())
-                .contact(copy(info.getContact()))
-                .license(copy(info.getLicense()))
+                .contact(copy(info.getContact(), objectCopy))
+                .license(copy(info.getLicense(), objectCopy))
                 .version(info.getVersion());
 
         if (info.getExtensions() != null) {
             newInfo.setExtensions(new LinkedHashMap<>());
-            info.getExtensions().forEach((k,v) -> newInfo.addExtension(k, copy(v)));
+            info.getExtensions().forEach((k, v) -> newInfo.addExtension(k, objectCopy.apply(v)));
         }
         return newInfo;
     }
 
     public static License copy(License license) {
+        return copy(license, CopyUtil::copy);
+    }
+
+    public static License copy(License license, Function<Object, Object> objectCopy) {
         if (license == null) {
             return null;
         }
@@ -341,22 +383,26 @@ public abstract class CopyUtil {
 
         if (license.getExtensions() != null) {
             newLicense.setExtensions(new LinkedHashMap<>());
-            license.getExtensions().forEach((k,v) -> newLicense.addExtension(k, copy(v)));
+            license.getExtensions().forEach((k, v) -> newLicense.addExtension(k, objectCopy.apply(v)));
         }
         return newLicense;
     }
 
     public static Link copy(Link link) {
+        return copy(link, CopyUtil::copy);
+    }
+
+    public static Link copy(Link link, Function<Object, Object> objectCopy) {
         if (link == null) {
             return null;
         }
         Link newLink = new Link()
                 .operationRef(link.getOperationRef())
                 .operationId(link.getOperationId())
-                .requestBody(copy(link.getRequestBody()))
+                .requestBody(objectCopy.apply(link.getRequestBody()))
                 .description(link.getDescription())
                 .$ref(link.get$ref())
-                .server(copy(link.getServer()));
+                .server(copy(link.getServer(), objectCopy));
 
         if (link.getParameters() != null) {
             newLink.setParameters(new LinkedHashMap<>());
@@ -364,39 +410,47 @@ public abstract class CopyUtil {
         }
         if (link.getHeaders() != null) {
             newLink.setHeaders(new LinkedHashMap<>());
-            link.getHeaders().forEach((k,v) -> newLink.addHeaderObject(k, copy(v)));
+            link.getHeaders().forEach((k, v) -> newLink.addHeaderObject(k, copy(v, objectCopy)));
         }
         if (link.getExtensions() != null) {
             newLink.setExtensions(new LinkedHashMap<>());
-            link.getExtensions().forEach((k,v) -> newLink.addExtension(k, copy(v)));
+            link.getExtensions().forEach((k, v) -> newLink.addExtension(k, objectCopy.apply(v)));
         }
         return newLink;
     }
 
     public static MediaType copy(MediaType mediaType) {
+        return copy(mediaType, CopyUtil::copy);
+    }
+
+    public static MediaType copy(MediaType mediaType, Function<Object, Object> objectCopy) {
         if (mediaType == null) {
             return null;
         }
         MediaType newMediaType = new MediaType()
-                .schema(copy(mediaType.getSchema()))
-                .example(copy(mediaType.getExample()));
+                .schema(copy(mediaType.getSchema(), objectCopy))
+                .example(objectCopy.apply(mediaType.getExample()));
 
         if (mediaType.getExamples() != null) {
             newMediaType.setExamples(new LinkedHashMap<>());
-            mediaType.getExamples().forEach((k,v) -> newMediaType.addExamples(k, copy(v)));
+            mediaType.getExamples().forEach((k, v) -> newMediaType.addExamples(k, copy(v, objectCopy)));
         }
         if (mediaType.getEncoding() != null) {
             newMediaType.setEncoding(new LinkedHashMap<>());
-            mediaType.getEncoding().forEach((k,v) -> newMediaType.addEncoding(k, copy(v)));
+            mediaType.getEncoding().forEach((k, v) -> newMediaType.addEncoding(k, copy(v, objectCopy)));
         }
         if (mediaType.getExtensions() != null) {
             newMediaType.setExtensions(new LinkedHashMap<>());
-            mediaType.getExtensions().forEach((k,v) -> newMediaType.addExtension(k, copy(v)));
+            mediaType.getExtensions().forEach((k, v) -> newMediaType.addExtension(k, objectCopy.apply(v)));
         }
         return newMediaType;
     }
 
     public static OAuthFlow copy(OAuthFlow flow) {
+        return copy(flow, CopyUtil::copy);
+    }
+
+    public static OAuthFlow copy(OAuthFlow flow, Function<Object, Object> objectCopy) {
         if (flow == null) {
             return null;
         }
@@ -404,46 +458,54 @@ public abstract class CopyUtil {
                 .authorizationUrl(flow.getAuthorizationUrl())
                 .tokenUrl(flow.getTokenUrl())
                 .refreshUrl(flow.getRefreshUrl())
-                .scopes(copy(flow.getScopes()));
+                .scopes(copy(flow.getScopes(), objectCopy));
 
         if (flow.getExtensions() != null) {
             newFlow.setExtensions(new LinkedHashMap<>());
-            flow.getExtensions().forEach((k,v) -> newFlow.addExtension(k, copy(v)));
+            flow.getExtensions().forEach((k, v) -> newFlow.addExtension(k, objectCopy.apply(v)));
         }
         return newFlow;
     }
 
     public static OAuthFlows copy(OAuthFlows flows) {
+        return copy(flows, CopyUtil::copy);
+    }
+
+    public static OAuthFlows copy(OAuthFlows flows, Function<Object, Object> objectCopy) {
         if (flows == null) {
             return null;
         }
         OAuthFlows newFlows = new OAuthFlows()
-                .implicit(copy(flows.getImplicit()))
-                .password(copy(flows.getPassword()))
-                .clientCredentials(copy(flows.getClientCredentials()))
-                .authorizationCode(copy(flows.getAuthorizationCode()));
+                .implicit(copy(flows.getImplicit(), objectCopy))
+                .password(copy(flows.getPassword(), objectCopy))
+                .clientCredentials(copy(flows.getClientCredentials(), objectCopy))
+                .authorizationCode(copy(flows.getAuthorizationCode(), objectCopy));
 
         if (flows.getExtensions() != null) {
             newFlows.setExtensions(new LinkedHashMap<>());
-            flows.getExtensions().forEach((k,v) -> newFlows.addExtension(k, copy(v)));
+            flows.getExtensions().forEach((k, v) -> newFlows.addExtension(k, objectCopy.apply(v)));
         }
         return newFlows;
     }
 
     public static OpenAPI copy(OpenAPI openAPI) {
+        return copy(openAPI, CopyUtil::copy);
+    }
+
+    public static OpenAPI copy(OpenAPI openAPI, Function<Object, Object> objectCopy) {
         if (openAPI == null) {
             return null;
         }
         OpenAPI newOpenAPI = new OpenAPI()
                 .openapi(openAPI.getOpenapi())
-                .info(copy(openAPI.getInfo()))
-                .externalDocs(copy(openAPI.getExternalDocs()))
-                .paths(copy(openAPI.getPaths()))
-                .components(copy(openAPI.getComponents()));
+                .info(copy(openAPI.getInfo(), objectCopy))
+                .externalDocs(copy(openAPI.getExternalDocs(), objectCopy))
+                .paths(copy(openAPI.getPaths(), objectCopy))
+                .components(copy(openAPI.getComponents(), objectCopy));
 
         if (openAPI.getServers() != null) {
             newOpenAPI.setServers(new ArrayList<>());
-            openAPI.getServers().forEach(v -> newOpenAPI.addServersItem(copy(v)));
+            openAPI.getServers().forEach(v -> newOpenAPI.addServersItem(copy(v, objectCopy)));
         }
         if (openAPI.getSecurity() != null) {
             newOpenAPI.setSecurity(new ArrayList<>());
@@ -451,26 +513,30 @@ public abstract class CopyUtil {
         }
         if (openAPI.getTags() != null) {
             newOpenAPI.setTags(new ArrayList<>());
-            openAPI.getTags().forEach(v -> newOpenAPI.addTagsItem(copy(v)));
+            openAPI.getTags().forEach(v -> newOpenAPI.addTagsItem(copy(v, objectCopy)));
         }
         if (openAPI.getExtensions() != null) {
             newOpenAPI.setExtensions(new LinkedHashMap<>());
-            openAPI.getExtensions().forEach((k,v) -> newOpenAPI.addExtension(k, copy(v)));
+            openAPI.getExtensions().forEach((k, v) -> newOpenAPI.addExtension(k, objectCopy.apply(v)));
         }
         return newOpenAPI;
     }
 
     public static Operation copy(Operation operation) {
+        return copy(operation, CopyUtil::copy);
+    }
+
+    public static Operation copy(Operation operation, Function<Object, Object> objectCopy) {
         if (operation == null) {
             return null;
         }
         Operation newOperation = new Operation()
                 .summary(operation.getSummary())
                 .description(operation.getDescription())
-                .externalDocs(copy(operation.getExternalDocs()))
+                .externalDocs(copy(operation.getExternalDocs(), objectCopy))
                 .operationId(operation.getOperationId())
-                .requestBody(copy(operation.getRequestBody()))
-                .responses(copy(operation.getResponses()))
+                .requestBody(copy(operation.getRequestBody(), objectCopy))
+                .responses(copy(operation.getResponses(), objectCopy))
                 .deprecated(operation.getDeprecated());
 
         if (operation.getTags() != null) {
@@ -479,11 +545,11 @@ public abstract class CopyUtil {
         }
         if (operation.getParameters() != null) {
             newOperation.setParameters(new ArrayList<>());
-            operation.getParameters().forEach(v -> newOperation.addParametersItem(copy(v)));
+            operation.getParameters().forEach(v -> newOperation.addParametersItem(copy(v, objectCopy)));
         }
         if (operation.getCallbacks() != null) {
             newOperation.setCallbacks(new LinkedHashMap<>());
-            operation.getCallbacks().forEach((k,v) -> newOperation.addCallbackItem(k, copy(v)));
+            operation.getCallbacks().forEach((k, v) -> newOperation.addCallbackItem(k, copy(v, objectCopy)));
         }
         if (operation.getSecurity() != null) {
             newOperation.setSecurity(new ArrayList<>());
@@ -491,52 +557,68 @@ public abstract class CopyUtil {
         }
         if (operation.getServers() != null) {
             newOperation.setServers(new ArrayList<>());
-            operation.getServers().forEach(v -> newOperation.addServersItem(copy(v)));
+            operation.getServers().forEach(v -> newOperation.addServersItem(copy(v, objectCopy)));
         }
         if (operation.getExtensions() != null) {
             newOperation.setExtensions(new LinkedHashMap<>());
-            operation.getExtensions().forEach((k,v) -> newOperation.addExtension(k, copy(v)));
+            operation.getExtensions().forEach((k, v) -> newOperation.addExtension(k, objectCopy.apply(v)));
         }
         return newOperation;
     }
 
     public static CookieParameter copy(CookieParameter parameter) {
+        return copy(parameter, CopyUtil::copy);
+    }
+
+    public static CookieParameter copy(CookieParameter parameter, Function<Object, Object> objectCopy) {
         if (parameter == null) {
             return null;
         }
         CookieParameter newParameter = new CookieParameter();
-        mapParameterProperties(parameter, newParameter);
+        mapParameterProperties(parameter, newParameter, objectCopy);
         return newParameter;
     }
 
     public static PathParameter copy(PathParameter parameter) {
+        return copy(parameter, CopyUtil::copy);
+    }
+
+    public static PathParameter copy(PathParameter parameter, Function<Object, Object> objectCopy) {
         if (parameter == null) {
             return null;
         }
         PathParameter newParameter = new PathParameter();
-        mapParameterProperties(parameter, newParameter);
+        mapParameterProperties(parameter, newParameter, objectCopy);
         return newParameter;
     }
 
     public static QueryParameter copy(QueryParameter parameter) {
+        return copy(parameter, CopyUtil::copy);
+    }
+
+    public static QueryParameter copy(QueryParameter parameter, Function<Object, Object> objectCopy) {
         if (parameter == null) {
             return null;
         }
         QueryParameter newParameter = new QueryParameter();
-        mapParameterProperties(parameter, newParameter);
+        mapParameterProperties(parameter, newParameter, objectCopy);
         return newParameter;
     }
 
     public static HeaderParameter copy(HeaderParameter parameter) {
+        return copy(parameter, CopyUtil::copy);
+    }
+
+    public static HeaderParameter copy(HeaderParameter parameter, Function<Object, Object> objectCopy) {
         if (parameter == null) {
             return null;
         }
         HeaderParameter newParameter = new HeaderParameter();
-        mapParameterProperties(parameter, newParameter);
+        mapParameterProperties(parameter, newParameter, objectCopy);
         return newParameter;
     }
 
-    private static void mapParameterProperties(Parameter from, Parameter to) {
+    private static void mapParameterProperties(Parameter from, Parameter to, Function<Object, Object> objectCopy) {
         to
                 .name(from.getName())
                 .in(from.getIn())
@@ -548,101 +630,121 @@ public abstract class CopyUtil {
                 .style(from.getStyle())
                 .explode(from.getExplode())
                 .allowReserved(from.getAllowReserved())
-                .schema(copy(from.getSchema()))
-                .example(copy(from.getExample()))
-                .content(copy(from.getContent()));
+                .schema(copy(from.getSchema(), objectCopy))
+                .example(objectCopy.apply(from.getExample()))
+                .content(copy(from.getContent(), objectCopy));
 
         if (from.getExamples() != null) {
             to.setExamples(new LinkedHashMap<>());
-            from.getExamples().forEach((k,v) -> to.addExample(k, copy(v)));
+            from.getExamples().forEach((k, v) -> to.addExample(k, copy(v, objectCopy)));
         }
         if (from.getExtensions() != null) {
             to.setExtensions(new LinkedHashMap<>());
-            from.getExtensions().forEach((k,v) -> to.addExtension(k, copy(v)));
+            from.getExtensions().forEach((k, v) -> to.addExtension(k, objectCopy.apply(v)));
         }
     }
 
     public static Parameter copy(Parameter parameter) {
+        return copy(parameter, CopyUtil::copy);
+    }
+
+    public static Parameter copy(Parameter parameter, Function<Object, Object> objectCopy) {
         if (parameter == null) {
             return null;
         } else if (parameter instanceof CookieParameter) {
-            return copy((CookieParameter) parameter);
+            return copy((CookieParameter) parameter, objectCopy);
         } else if (parameter instanceof HeaderParameter) {
-            return copy((HeaderParameter) parameter);
+            return copy((HeaderParameter) parameter, objectCopy);
         } else if (parameter instanceof PathParameter) {
-            return copy((PathParameter) parameter);
+            return copy((PathParameter) parameter, objectCopy);
         } else if (parameter instanceof QueryParameter) {
-            return copy((QueryParameter) parameter);
+            return copy((QueryParameter) parameter, objectCopy);
         }
         Parameter newParameter = new Parameter();
-        mapParameterProperties(parameter, newParameter);
+        mapParameterProperties(parameter, newParameter, objectCopy);
         return newParameter;
     }
 
     public static Paths copy(Paths paths) {
+        return copy(paths, CopyUtil::copy);
+    }
+
+    public static Paths copy(Paths paths, Function<Object, Object> objectCopy) {
         if (paths == null) {
             return null;
         }
         Paths newPaths = new Paths();
-        paths.forEach((k,v) -> newPaths.addPathItem(k, copy(v)));
+        paths.forEach((k, v) -> newPaths.addPathItem(k, copy(v, objectCopy)));
 
         if (paths.getExtensions() != null) {
             newPaths.setExtensions(new LinkedHashMap<>());
-            paths.getExtensions().forEach((k,v) -> newPaths.addExtension(k, copy(v)));
+            paths.getExtensions().forEach((k, v) -> newPaths.addExtension(k, objectCopy.apply(v)));
         }
         return newPaths;
     }
 
     public static PathItem copy(PathItem pathItem) {
+        return copy(pathItem, CopyUtil::copy);
+    }
+
+    public static PathItem copy(PathItem pathItem, Function<Object, Object> objectCopy) {
         if (pathItem == null) {
             return null;
         }
         PathItem newPathItem = new PathItem()
                 .summary(pathItem.getSummary())
                 .description(pathItem.getDescription())
-                .get(copy(pathItem.getGet()))
-                .put(copy(pathItem.getPut()))
-                .post(copy(pathItem.getPost()))
-                .delete(copy(pathItem.getDelete()))
-                .options(copy(pathItem.getOptions()))
-                .head(copy(pathItem.getHead()))
-                .patch(copy(pathItem.getPatch()))
-                .trace(copy(pathItem.getTrace()))
+                .get(copy(pathItem.getGet(), objectCopy))
+                .put(copy(pathItem.getPut(), objectCopy))
+                .post(copy(pathItem.getPost(), objectCopy))
+                .delete(copy(pathItem.getDelete(), objectCopy))
+                .options(copy(pathItem.getOptions(), objectCopy))
+                .head(copy(pathItem.getHead(), objectCopy))
+                .patch(copy(pathItem.getPatch(), objectCopy))
+                .trace(copy(pathItem.getTrace(), objectCopy))
                 .$ref(pathItem.get$ref());
 
         if (pathItem.getServers() != null) {
             newPathItem.setServers(new ArrayList<>());
-            pathItem.getServers().forEach(v -> newPathItem.addServersItem(copy(v)));
+            pathItem.getServers().forEach(v -> newPathItem.addServersItem(copy(v, objectCopy)));
         }
         if (pathItem.getParameters() != null) {
             newPathItem.setParameters(new ArrayList<>());
-            pathItem.getParameters().forEach(v -> newPathItem.addParametersItem(copy(v)));
+            pathItem.getParameters().forEach(v -> newPathItem.addParametersItem(copy(v, objectCopy)));
         }
         if (pathItem.getExtensions() != null) {
             newPathItem.setExtensions(new LinkedHashMap<>());
-            pathItem.getExtensions().forEach((k,v) -> newPathItem.addExtension(k, copy(v)));
+            pathItem.getExtensions().forEach((k, v) -> newPathItem.addExtension(k, objectCopy.apply(v)));
         }
         return newPathItem;
     }
 
     public static RequestBody copy(RequestBody requestBody) {
+        return copy(requestBody, CopyUtil::copy);
+    }
+
+    public static RequestBody copy(RequestBody requestBody, Function<Object, Object> objectCopy) {
         if (requestBody == null) {
             return null;
         }
         RequestBody newRequestBody = new RequestBody()
                 .description(requestBody.getDescription())
-                .content(copy(requestBody.getContent()))
+                .content(copy(requestBody.getContent(), objectCopy))
                 .required(requestBody.getRequired())
                 .$ref(requestBody.get$ref());
 
         if (requestBody.getExtensions() != null) {
             newRequestBody.setExtensions(new LinkedHashMap<>());
-            requestBody.getExtensions().forEach((k,v) -> newRequestBody.addExtension(k, copy(v)));
+            requestBody.getExtensions().forEach((k, v) -> newRequestBody.addExtension(k, objectCopy.apply(v)));
         }
         return newRequestBody;
     }
 
     public static Scopes copy(Scopes scopes) {
+        return copy(scopes, CopyUtil::copy);
+    }
+
+    public static Scopes copy(Scopes scopes, Function<Object, Object> objectCopy) {
         if (scopes == null) {
             return null;
         }
@@ -650,7 +752,7 @@ public abstract class CopyUtil {
         scopes.forEach(newScopes::addString);
         if (scopes.getExtensions() != null) {
             newScopes.setExtensions(new LinkedHashMap<>());
-            scopes.getExtensions().forEach((k,v) -> newScopes.addExtension(k, copy(v)));
+            scopes.getExtensions().forEach((k, v) -> newScopes.addExtension(k, objectCopy.apply(v)));
         }
         return newScopes;
     }
@@ -660,11 +762,15 @@ public abstract class CopyUtil {
             return null;
         }
         SecurityRequirement newSecurity = new SecurityRequirement();
-        security.forEach((k,v) -> newSecurity.addList(k, new ArrayList<>(v)));
+        security.forEach((k, v) -> newSecurity.addList(k, new ArrayList<>(v)));
         return newSecurity;
     }
 
     public static SecurityScheme copy(SecurityScheme securityScheme) {
+        return copy(securityScheme, CopyUtil::copy);
+    }
+
+    public static SecurityScheme copy(SecurityScheme securityScheme, Function<Object, Object> objectCopy) {
         if (securityScheme == null) {
             return null;
         }
@@ -676,33 +782,41 @@ public abstract class CopyUtil {
                 .in(securityScheme.getIn())
                 .scheme(securityScheme.getScheme())
                 .bearerFormat(securityScheme.getBearerFormat())
-                .flows(copy(securityScheme.getFlows()))
+                .flows(copy(securityScheme.getFlows(), objectCopy))
                 .openIdConnectUrl(securityScheme.getOpenIdConnectUrl());
 
         if (securityScheme.getExtensions() != null) {
             newSecurityScheme.setExtensions(new LinkedHashMap<>());
-            securityScheme.getExtensions().forEach((k,v) -> newSecurityScheme.addExtension(k, copy(v)));
+            securityScheme.getExtensions().forEach((k, v) -> newSecurityScheme.addExtension(k, objectCopy.apply(v)));
         }
         return newSecurityScheme;
     }
 
     public static Server copy(Server server) {
+        return copy(server, CopyUtil::copy);
+    }
+
+    public static Server copy(Server server, Function<Object, Object> objectCopy) {
         if (server == null) {
             return null;
         }
         Server newServer = new Server()
                 .url(server.getUrl())
                 .description(server.getDescription())
-                .variables(copy(server.getVariables()));
+                .variables(copy(server.getVariables(), objectCopy));
 
         if (server.getExtensions() != null) {
             newServer.setExtensions(new LinkedHashMap<>());
-            server.getExtensions().forEach((k,v) -> newServer.addExtension(k, copy(v)));
+            server.getExtensions().forEach((k, v) -> newServer.addExtension(k, objectCopy.apply(v)));
         }
         return newServer;
     }
 
     public static ServerVariable copy(ServerVariable variable) {
+        return copy(variable, CopyUtil::copy);
+    }
+
+    public static ServerVariable copy(ServerVariable variable, Function<Object, Object> objectCopy) {
         if (variable == null) {
             return null;
         }
@@ -713,224 +827,296 @@ public abstract class CopyUtil {
 
         if (variable.getExtensions() != null) {
             newVariable.setExtensions(new LinkedHashMap<>());
-            variable.getExtensions().forEach((k,v) -> newVariable.addExtension(k, copy(v)));
+            variable.getExtensions().forEach((k, v) -> newVariable.addExtension(k, objectCopy.apply(v)));
         }
         return newVariable;
     }
 
     public static ServerVariables copy(ServerVariables variables) {
+        return copy(variables, CopyUtil::copy);
+    }
+
+    public static ServerVariables copy(ServerVariables variables, Function<Object, Object> objectCopy) {
         if (variables == null) {
             return null;
         }
         ServerVariables newVariables = new ServerVariables();
-        variables.forEach((k,v) -> newVariables.addServerVariable(k, copy(v)));
+        variables.forEach((k, v) -> newVariables.addServerVariable(k, copy(v, objectCopy)));
 
         if (variables.getExtensions() != null) {
             newVariables.setExtensions(new LinkedHashMap<>());
-            variables.getExtensions().forEach((k,v) -> newVariables.addExtension(k, copy(v)));
+            variables.getExtensions().forEach((k, v) -> newVariables.addExtension(k, objectCopy.apply(v)));
         }
         return newVariables;
     }
 
     public static Schema copy(Schema schema) {
+        return copy(schema, CopyUtil::copy);
+    }
+
+    public static Schema copy(Schema schema, Function<Object, Object> objectCopy) {
         if (schema == null) {
             return null;
         } else if (schema instanceof ArraySchema) {
-            return copy((ArraySchema) schema);
+            return copy((ArraySchema) schema, objectCopy);
         } else if (schema instanceof BinarySchema) {
-            return copy((BinarySchema) schema);
+            return copy((BinarySchema) schema, objectCopy);
         } else if (schema instanceof BooleanSchema) {
-            return copy((BooleanSchema) schema);
+            return copy((BooleanSchema) schema, objectCopy);
         } else if (schema instanceof ByteArraySchema) {
-            return copy((ByteArraySchema) schema);
+            return copy((ByteArraySchema) schema, objectCopy);
         } else if (schema instanceof ComposedSchema) {
-            return copy((ComposedSchema) schema);
+            return copy((ComposedSchema) schema, objectCopy);
         } else if (schema instanceof DateSchema) {
-            return copy((DateSchema) schema);
+            return copy((DateSchema) schema, objectCopy);
         } else if (schema instanceof DateTimeSchema) {
-            return copy((DateTimeSchema) schema);
+            return copy((DateTimeSchema) schema, objectCopy);
         } else if (schema instanceof EmailSchema) {
-            return copy((EmailSchema) schema);
+            return copy((EmailSchema) schema, objectCopy);
         } else if (schema instanceof FileSchema) {
-            return copy((FileSchema) schema);
+            return copy((FileSchema) schema, objectCopy);
         } else if (schema instanceof IntegerSchema) {
-            return copy((IntegerSchema) schema);
+            return copy((IntegerSchema) schema, objectCopy);
         } else if (schema instanceof MapSchema) {
-            return copy((MapSchema) schema);
+            return copy((MapSchema) schema, objectCopy);
         } else if (schema instanceof NumberSchema) {
-            return copy((NumberSchema) schema);
+            return copy((NumberSchema) schema, objectCopy);
         } else if (schema instanceof ObjectSchema) {
-            return copy((ObjectSchema) schema);
+            return copy((ObjectSchema) schema, objectCopy);
         } else if (schema instanceof PasswordSchema) {
-            return copy((PasswordSchema) schema);
+            return copy((PasswordSchema) schema, objectCopy);
         } else if (schema instanceof StringSchema) {
-            return copy((StringSchema) schema);
+            return copy((StringSchema) schema, objectCopy);
         } else if (schema instanceof UUIDSchema) {
-            return copy((UUIDSchema) schema);
+            return copy((UUIDSchema) schema, objectCopy);
         }
         Schema newSchema = new Schema();
-        mapSchemaProperties(schema, newSchema);
+        mapSchemaProperties(schema, newSchema, objectCopy);
         return newSchema;
     }
 
     public static BinarySchema copy(BinarySchema schema) {
+        return copy(schema, CopyUtil::copy);
+    }
+
+    public static BinarySchema copy(BinarySchema schema, Function<Object, Object> objectCopy) {
         if (schema == null) {
             return null;
         }
         BinarySchema newSchema = new BinarySchema();
-        mapSchemaProperties(schema, newSchema);
+        mapSchemaProperties(schema, newSchema, objectCopy);
         return newSchema;
     }
 
     public static BooleanSchema copy(BooleanSchema schema) {
+        return copy(schema, CopyUtil::copy);
+    }
+
+    public static BooleanSchema copy(BooleanSchema schema, Function<Object, Object> objectCopy) {
         if (schema == null) {
             return null;
         }
         BooleanSchema newSchema = new BooleanSchema();
-        mapSchemaProperties(schema, newSchema);
+        mapSchemaProperties(schema, newSchema, objectCopy);
         return newSchema;
     }
 
     public static ByteArraySchema copy(ByteArraySchema schema) {
+        return copy(schema, CopyUtil::copy);
+    }
+
+    public static ByteArraySchema copy(ByteArraySchema schema, Function<Object, Object> objectCopy) {
         if (schema == null) {
             return null;
         }
         ByteArraySchema newSchema = new ByteArraySchema();
-        mapSchemaProperties(schema, newSchema);
+        mapSchemaProperties(schema, newSchema, objectCopy);
         return newSchema;
     }
 
     public static DateSchema copy(DateSchema schema) {
+        return copy(schema, CopyUtil::copy);
+    }
+
+    public static DateSchema copy(DateSchema schema, Function<Object, Object> objectCopy) {
         if (schema == null) {
             return null;
         }
         DateSchema newSchema = new DateSchema();
-        mapSchemaProperties(schema, newSchema);
+        mapSchemaProperties(schema, newSchema, objectCopy);
         return newSchema;
     }
 
     public static DateTimeSchema copy(DateTimeSchema schema) {
+        return copy(schema, CopyUtil::copy);
+    }
+
+    public static DateTimeSchema copy(DateTimeSchema schema, Function<Object, Object> objectCopy) {
         if (schema == null) {
             return null;
         }
         DateTimeSchema newSchema = new DateTimeSchema();
-        mapSchemaProperties(schema, newSchema);
+        mapSchemaProperties(schema, newSchema, objectCopy);
         return newSchema;
     }
 
     public static EmailSchema copy(EmailSchema schema) {
+        return copy(schema, CopyUtil::copy);
+    }
+
+    public static EmailSchema copy(EmailSchema schema, Function<Object, Object> objectCopy) {
         if (schema == null) {
             return null;
         }
         EmailSchema newSchema = new EmailSchema();
-        mapSchemaProperties(schema, newSchema);
+        mapSchemaProperties(schema, newSchema, objectCopy);
         return newSchema;
     }
 
     public static FileSchema copy(FileSchema schema) {
+        return copy(schema, CopyUtil::copy);
+    }
+
+    public static FileSchema copy(FileSchema schema, Function<Object, Object> objectCopy) {
         if (schema == null) {
             return null;
         }
         FileSchema newSchema = new FileSchema();
-        mapSchemaProperties(schema, newSchema);
+        mapSchemaProperties(schema, newSchema, objectCopy);
         return newSchema;
     }
 
     public static IntegerSchema copy(IntegerSchema schema) {
+        return copy(schema, CopyUtil::copy);
+    }
+
+    public static IntegerSchema copy(IntegerSchema schema, Function<Object, Object> objectCopy) {
         if (schema == null) {
             return null;
         }
         IntegerSchema newSchema = new IntegerSchema();
-        mapSchemaProperties(schema, newSchema);
+        mapSchemaProperties(schema, newSchema, objectCopy);
         return newSchema;
     }
 
     public static MapSchema copy(MapSchema schema) {
+        return copy(schema, CopyUtil::copy);
+    }
+
+    public static MapSchema copy(MapSchema schema, Function<Object, Object> objectCopy) {
         if (schema == null) {
             return null;
         }
         MapSchema newSchema = new MapSchema();
-        mapSchemaProperties(schema, newSchema);
+        mapSchemaProperties(schema, newSchema, objectCopy);
         return newSchema;
     }
 
     public static NumberSchema copy(NumberSchema schema) {
+        return copy(schema, CopyUtil::copy);
+    }
+
+    public static NumberSchema copy(NumberSchema schema, Function<Object, Object> objectCopy) {
         if (schema == null) {
             return null;
         }
         NumberSchema newSchema = new NumberSchema();
-        mapSchemaProperties(schema, newSchema);
+        mapSchemaProperties(schema, newSchema, objectCopy);
         return newSchema;
     }
 
     public static ObjectSchema copy(ObjectSchema schema) {
+        return copy(schema, CopyUtil::copy);
+    }
+
+    public static ObjectSchema copy(ObjectSchema schema, Function<Object, Object> objectCopy) {
         if (schema == null) {
             return null;
         }
         ObjectSchema newSchema = new ObjectSchema();
-        mapSchemaProperties(schema, newSchema);
+        mapSchemaProperties(schema, newSchema, objectCopy);
         return newSchema;
     }
 
     public static PasswordSchema copy(PasswordSchema schema) {
+        return copy(schema, CopyUtil::copy);
+    }
+
+    public static PasswordSchema copy(PasswordSchema schema, Function<Object, Object> objectCopy) {
         if (schema == null) {
             return null;
         }
         PasswordSchema newSchema = new PasswordSchema();
-        mapSchemaProperties(schema, newSchema);
+        mapSchemaProperties(schema, newSchema, objectCopy);
         return newSchema;
     }
 
     public static StringSchema copy(StringSchema schema) {
+        return copy(schema, CopyUtil::copy);
+    }
+
+    public static StringSchema copy(StringSchema schema, Function<Object, Object> objectCopy) {
         if (schema == null) {
             return null;
         }
         StringSchema newSchema = new StringSchema();
-        mapSchemaProperties(schema, newSchema);
+        mapSchemaProperties(schema, newSchema, objectCopy);
         return newSchema;
     }
 
     public static UUIDSchema copy(UUIDSchema schema) {
+        return copy(schema, CopyUtil::copy);
+    }
+
+    public static UUIDSchema copy(UUIDSchema schema, Function<Object, Object> objectCopy) {
         if (schema == null) {
             return null;
         }
         UUIDSchema newSchema = new UUIDSchema();
-        mapSchemaProperties(schema, newSchema);
+        mapSchemaProperties(schema, newSchema, objectCopy);
         return newSchema;
     }
 
     public static ArraySchema copy(ArraySchema schema) {
+        return copy(schema, CopyUtil::copy);
+    }
+
+    public static ArraySchema copy(ArraySchema schema, Function<Object, Object> objectCopy) {
         if (schema == null) {
             return null;
         }
         ArraySchema newSchema = new ArraySchema()
-                .items(copy(schema.getItems()));
-        mapSchemaProperties(schema, newSchema);
+                .items(copy(schema.getItems(), objectCopy));
+        mapSchemaProperties(schema, newSchema, objectCopy);
         return newSchema;
     }
 
     public static ComposedSchema copy(ComposedSchema schema) {
+        return copy(schema, CopyUtil::copy);
+    }
+
+    public static ComposedSchema copy(ComposedSchema schema, Function<Object, Object> objectCopy) {
         if (schema == null) {
             return null;
         }
         ComposedSchema newSchema = new ComposedSchema();
         if (schema.getAllOf() != null) {
             newSchema.setAllOf(new ArrayList<>());
-            schema.getAllOf().forEach(v -> newSchema.addAllOfItem(copy(v)));
+            schema.getAllOf().forEach(v -> newSchema.addAllOfItem(copy(v, objectCopy)));
         }
         if (schema.getOneOf() != null) {
             newSchema.setOneOf(new ArrayList<>());
-            schema.getOneOf().forEach(v -> newSchema.addOneOfItem(copy(v)));
+            schema.getOneOf().forEach(v -> newSchema.addOneOfItem(copy(v, objectCopy)));
         }
         if (schema.getAnyOf() != null) {
             newSchema.setAnyOf(new ArrayList<>());
-            schema.getAnyOf().forEach(v -> newSchema.addAnyOfItem(copy(v)));
+            schema.getAnyOf().forEach(v -> newSchema.addAnyOfItem(copy(v, objectCopy)));
         }
-        mapSchemaProperties(schema, newSchema);
+        mapSchemaProperties(schema, newSchema, objectCopy);
         return newSchema;
     }
 
-    private static void mapSchemaProperties(Schema from, Schema to) {
+    private static void mapSchemaProperties(Schema from, Schema to, Function<Object, Object> objectCopy) {
         to
                 .name(from.getName())
                 .title(from.getTitle())
@@ -948,57 +1134,65 @@ public abstract class CopyUtil {
                 .maxProperties(from.getMaxProperties())
                 .minProperties(from.getMinProperties())
                 .type(from.getType())
-                .not(copy(from.getNot()))
-                .additionalProperties(copy(from.getAdditionalProperties()))
+                .not(copy(from.getNot(), objectCopy))
+                .additionalProperties(objectCopy.apply(from.getAdditionalProperties()))
                 .description(from.getDescription())
                 .format(from.getFormat())
                 .$ref(from.get$ref())
                 .nullable(from.getNullable())
                 .readOnly(from.getReadOnly())
                 .writeOnly(from.getWriteOnly())
-                .example(copy(from.getExample()))
-                .externalDocs(copy(from.getExternalDocs()))
+                .example(objectCopy.apply(from.getExample()))
+                .externalDocs(copy(from.getExternalDocs(), objectCopy))
                 .deprecated(from.getDeprecated())
-                .xml(copy(from.getXml()))
+                .xml(copy(from.getXml(), objectCopy))
                 .discriminator(copy(from.getDiscriminator()));
-        to.setDefault(copy(from.getDefault()));
+        to.setDefault(objectCopy.apply(from.getDefault()));
 
         if (from.getRequired() != null) {
             to.setRequired(new ArrayList<>());
-            ((List<String>)from.getRequired()).forEach(to::addRequiredItem);
+            ((List<String>) from.getRequired()).forEach(to::addRequiredItem);
         }
         if (from.getProperties() != null) {
             to.setProperties(new LinkedHashMap<>());
-            ((Map<String, Schema>)from.getProperties()).forEach((k,v) -> to.addProperties(k, copy(v)));
+            ((Map<String, Schema>) from.getProperties()).forEach((k, v) -> to.addProperties(k, copy(v, objectCopy)));
         }
         if (from.getExtensions() != null) {
             to.setExtensions(new LinkedHashMap<>());
-            ((Map<String, Object>)from.getExtensions()).forEach((k,v) -> to.addExtension(k, copy(v)));
+            ((Map<String, Object>) from.getExtensions()).forEach((k, v) -> to.addExtension(k, objectCopy.apply(v)));
         }
         if (from.getEnum() != null) {
             to.setEnum(new ArrayList());
-            from.getEnum().forEach(v -> to.addEnumItemObject(copy(v)));
+            from.getEnum().forEach(v -> to.addEnumItemObject(objectCopy.apply(v)));
         }
     }
 
     public static Tag copy(Tag tag) {
+        return copy(tag, CopyUtil::copy);
+    }
+
+    public static Tag copy(Tag tag, Function<Object, Object> objectCopy) {
         if (tag == null) {
             return null;
         }
         Tag newTag = new Tag()
                 .name(tag.getName())
                 .description(tag.getDescription())
-                .externalDocs(copy(tag.getExternalDocs()));
+                .externalDocs(copy(tag.getExternalDocs(), objectCopy));
 
         if (tag.getExtensions() != null) {
             newTag.setExtensions(new LinkedHashMap<>());
-            tag.getExtensions().forEach((k,v) -> newTag.addExtension(k, copy(v)));
+            tag.getExtensions().forEach((k, v) -> newTag.addExtension(k, objectCopy.apply(v)));
         }
         return newTag;
 
     }
 
     public static XML copy(XML xml) {
+        return copy(xml, CopyUtil::copy);
+    }
+
+    public static XML copy(XML xml, Function<Object, Object> objectCopy) {
         if (xml == null) {
             return null;
         }
@@ -1011,7 +1205,7 @@ public abstract class CopyUtil {
 
         if (xml.getExtensions() != null) {
             newXml.setExtensions(new LinkedHashMap<>());
-            xml.getExtensions().forEach((k,v) -> newXml.addExtension(k, copy(v)));
+            xml.getExtensions().forEach((k, v) -> newXml.addExtension(k, objectCopy.apply(v)));
         }
         return newXml;
     }
