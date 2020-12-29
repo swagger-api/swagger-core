@@ -81,6 +81,8 @@ public abstract class CopyUtil {
             return ((Date) o).clone();
         } else if (o instanceof byte[]) {
             return ((byte[]) o).clone();
+        } else if (o instanceof Schema) {
+            return copy((Schema) o, CopyUtil::copy);
         }
         try {
             return Json.mapper().readTree(Json.pretty(o));

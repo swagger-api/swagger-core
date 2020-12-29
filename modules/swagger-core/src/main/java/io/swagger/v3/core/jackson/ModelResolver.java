@@ -32,7 +32,7 @@ import io.swagger.v3.core.converter.ModelConverter;
 import io.swagger.v3.core.converter.ModelConverterContext;
 import io.swagger.v3.core.util.AnnotationsUtils;
 import io.swagger.v3.core.util.Constants;
-import io.swagger.v3.core.util.Json;
+import io.swagger.v3.core.util.CopyUtil;
 import io.swagger.v3.core.util.ObjectMapperFactory;
 import io.swagger.v3.core.util.OptionalUtils;
 import io.swagger.v3.core.util.PrimitiveType;
@@ -894,15 +894,12 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
     }
 
     private Schema clone(Schema property) {
-        if(property == null)
+        if(property == null) {
             return property;
-        try {
-            String cloneName = property.getName();
-            property = Json.mapper().readValue(Json.pretty(property), Schema.class);
-            property.setName(cloneName);
-        } catch (IOException e) {
-            LOGGER.error("Could not clone property, e");
         }
+        String cloneName = property.getName();
+        property = CopyUtil.copy(property);
+        property.setName(cloneName);
         return property;
     }
 
@@ -1033,14 +1030,9 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             }
             if (innerModel.getProperties() != null) {
                 for (Schema prop : (Collection<Schema>) innerModel.getProperties().values()) {
-                    try {
-                        Schema clonedProp = Json.mapper().readValue(Json.pretty(prop), Schema.class);
-                        clonedProp.setName(prefix + prop.getName() + suffix);
-                        props.add(clonedProp);
-                    } catch (IOException e) {
-                        LOGGER.error("Exception cloning property", e);
-                        return;
-                    }
+                    Schema clonedProp = CopyUtil.copy(prop);
+                    clonedProp.setName(prefix + prop.getName() + suffix);
+                    props.add(clonedProp);
                 }
             }
         }
