@@ -43,6 +43,8 @@
                             io.swagger.v3.oas.models.tags
                         </Export-Package>
                         <Automatic-Module-Name>io.swagger.v3.oas.models</Automatic-Module-Name>
+                        <_removeheaders>Bnd-LastModified</_removeheaders>
+                        <_reproducible>true</_reproducible>
                     </instructions>
                 </configuration>
             </plugin>
