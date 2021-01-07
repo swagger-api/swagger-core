@@ -69,7 +69,7 @@ public class ParameterProcessor {
 
         // handle first FormParam as it affects Explode resolving
         for (Annotation annotation : annotations) {
-            if (annotation.annotationType().getName().equals("javax.ws.rs.FormParam")) {
+            if (annotation.annotationType().getName().equals("jakarta.ws.rs.FormParam")) {
                 try {
                     String name = (String) annotation.annotationType().getMethod("value").invoke(annotation);
                     if (StringUtils.isNotBlank(name)) {
@@ -162,7 +162,7 @@ public class ParameterProcessor {
                 setParameterStyle(parameter, p);
                 setParameterExplode(parameter, p);
 
-            } else if (annotation.annotationType().getName().equals("javax.ws.rs.PathParam")) {
+            } else if (annotation.annotationType().getName().equals("jakarta.ws.rs.PathParam")) {
                 try {
                     String name = (String) annotation.annotationType().getMethod("value").invoke(annotation);
                     if (StringUtils.isNotBlank(name)) {
@@ -170,7 +170,7 @@ public class ParameterProcessor {
                     }
                 } catch (Exception e) {
                 }
-            } else if (annotation.annotationType().getName().equals("javax.validation.constraints.Size")) {
+            } else if (annotation.annotationType().getName().equals("jakarta.validation.constraints.Size")) {
                 try {
                     if (parameter.getSchema() == null) {
                         parameter.setSchema(new ArraySchema());
@@ -350,9 +350,9 @@ public class ParameterProcessor {
             String rsDefault = null;
             if (annotations != null) {
                 for (Annotation item : annotations) {
-                    if ("javax.ws.rs.core.Context".equals(item.annotationType().getName())) {
+                    if ("jakarta.ws.rs.core.Context".equals(item.annotationType().getName())) {
                         context = true;
-                    } else if ("javax.ws.rs.DefaultValue".equals(item.annotationType().getName())) {
+                    } else if ("jakarta.ws.rs.DefaultValue".equals(item.annotationType().getName())) {
                         try {
                             rsDefault = (String) item.annotationType().getMethod("value").invoke(item);
                         } catch (Exception ex) {

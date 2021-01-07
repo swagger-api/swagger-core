@@ -10,8 +10,8 @@ import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.parameters.Parameter;
 import org.apache.commons.lang3.StringUtils;
 
-import javax.ws.rs.HttpMethod;
-import javax.ws.rs.core.Context;
+import jakarta.ws.rs.HttpMethod;
+import jakarta.ws.rs.core.Context;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -42,7 +42,7 @@ public class ReaderUtils {
      * @param components
      * @return the collection of supported parameters
      */
-    public static List<Parameter> collectConstructorParameters(Class<?> cls, Components components, javax.ws.rs.Consumes classConsumes, JsonView jsonViewAnnotation) {
+    public static List<Parameter> collectConstructorParameters(Class<?> cls, Components components, jakarta.ws.rs.Consumes classConsumes, JsonView jsonViewAnnotation) {
         if (cls.isLocalClass() || (cls.isMemberClass() && !Modifier.isStatic(cls.getModifiers()))) {
             return Collections.emptyList();
         }
@@ -103,7 +103,7 @@ public class ReaderUtils {
      * @param components
      * @return the collection of supported parameters
      */
-    public static List<Parameter> collectFieldParameters(Class<?> cls, Components components, javax.ws.rs.Consumes classConsumes, JsonView jsonViewAnnotation) {
+    public static List<Parameter> collectFieldParameters(Class<?> cls, Components components, jakarta.ws.rs.Consumes classConsumes, JsonView jsonViewAnnotation) {
         final List<Parameter> parameters = new ArrayList<>();
         for (Field field : ReflectionUtils.getDeclaredFields(cls)) {
             final List<Annotation> annotations = Arrays.asList(field.getAnnotations());
@@ -113,7 +113,7 @@ public class ReaderUtils {
         return parameters;
     }
 
-    private static List<Parameter> collectParameters(Type type, List<Annotation> annotations, Components components, javax.ws.rs.Consumes classConsumes, JsonView jsonViewAnnotation) {
+    private static List<Parameter> collectParameters(Type type, List<Annotation> annotations, Components components, jakarta.ws.rs.Consumes classConsumes, JsonView jsonViewAnnotation) {
         final Iterator<OpenAPIExtension> chain = OpenAPIExtensions.chain();
         return chain.hasNext() ? chain.next().extractParameters(annotations, type, new HashSet<>(), components, classConsumes, null, false, jsonViewAnnotation, chain).parameters :
                 Collections.emptyList();
@@ -159,7 +159,7 @@ public class ReaderUtils {
         return false;
     }
 
-    public static String getPath(javax.ws.rs.Path classLevelPath, javax.ws.rs.Path methodLevelPath, String parentPath, boolean isSubresource) {
+    public static String getPath(jakarta.ws.rs.Path classLevelPath, jakarta.ws.rs.Path methodLevelPath, String parentPath, boolean isSubresource) {
         if (classLevelPath == null && methodLevelPath == null && StringUtils.isEmpty(parentPath)) {
             return null;
         }
@@ -199,17 +199,17 @@ public class ReaderUtils {
     }
 
     public static String extractOperationMethod(Method method, Iterator<OpenAPIExtension> chain) {
-        if (method.getAnnotation(javax.ws.rs.GET.class) != null) {
+        if (method.getAnnotation(jakarta.ws.rs.GET.class) != null) {
             return GET_METHOD;
-        } else if (method.getAnnotation(javax.ws.rs.PUT.class) != null) {
+        } else if (method.getAnnotation(jakarta.ws.rs.PUT.class) != null) {
             return PUT_METHOD;
-        } else if (method.getAnnotation(javax.ws.rs.POST.class) != null) {
+        } else if (method.getAnnotation(jakarta.ws.rs.POST.class) != null) {
             return POST_METHOD;
-        } else if (method.getAnnotation(javax.ws.rs.DELETE.class) != null) {
+        } else if (method.getAnnotation(jakarta.ws.rs.DELETE.class) != null) {
             return DELETE_METHOD;
-        } else if (method.getAnnotation(javax.ws.rs.OPTIONS.class) != null) {
+        } else if (method.getAnnotation(jakarta.ws.rs.OPTIONS.class) != null) {
             return OPTIONS_METHOD;
-        } else if (method.getAnnotation(javax.ws.rs.HEAD.class) != null) {
+        } else if (method.getAnnotation(jakarta.ws.rs.HEAD.class) != null) {
             return HEAD_METHOD;
         } else if (method.getAnnotation(HttpMethod.class) != null) {
             HttpMethod httpMethod = method.getAnnotation(HttpMethod.class);

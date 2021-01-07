@@ -9,8 +9,8 @@ import io.swagger.v3.oas.models.responses.ApiResponse;
 import io.swagger.v3.oas.models.responses.ApiResponses;
 import org.apache.commons.lang3.StringUtils;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.Produces;
+import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.Produces;
 import java.util.Map;
 import java.util.Optional;
 

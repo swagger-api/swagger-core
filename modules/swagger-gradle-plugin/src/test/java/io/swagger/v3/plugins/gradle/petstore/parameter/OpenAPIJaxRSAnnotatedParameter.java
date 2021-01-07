@@ -4,9 +4,9 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.plugins.gradle.resources.model.User;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.QueryParam;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.QueryParam;
 
 /**
  * Class with a single parameter annotated with jaxrs and open api annotation.

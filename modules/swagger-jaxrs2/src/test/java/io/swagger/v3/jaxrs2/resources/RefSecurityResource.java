@@ -5,8 +5,8 @@ import io.swagger.v3.oas.annotations.enums.SecuritySchemeIn;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
 import io.swagger.v3.oas.annotations.security.*;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
 
 @SecurityScheme(name = "myOauth2Security",
         type = SecuritySchemeType.OAUTH2,

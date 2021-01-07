@@ -65,7 +65,6 @@
         <dependency>
             <groupId>jakarta.xml.bind</groupId>
             <artifactId>jakarta.xml.bind-api</artifactId>
-            <version>2.3.2</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -141,9 +140,8 @@
             <artifactId>commons-io</artifactId>
         </dependency>
         <dependency>
-            <groupId>javax.ws.rs</groupId>
-            <artifactId>jsr311-api</artifactId>
-            <version>1.1.1</version>
+            <groupId>jakarta.ws.rs</groupId>
+            <artifactId>jakarta.ws.rs-api</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -155,7 +153,7 @@
     </dependencies>
     <properties>
         <!-- TODO increase coverage -->
-        <validation-api-version>2.0.2</validation-api-version>
+        <validation-api-version>3.0.0</validation-api-version>
         <coverage.complexity.minimum>0.60</coverage.complexity.minimum>
         <coverage.line.minimum>0.0</coverage.line.minimum>
         <coverage.missed.classes>3</coverage.missed.classes>

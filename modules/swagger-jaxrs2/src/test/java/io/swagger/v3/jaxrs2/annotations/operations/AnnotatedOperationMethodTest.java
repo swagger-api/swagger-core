@@ -19,8 +19,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.testng.annotations.Test;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
 import java.io.IOException;
 
 import static org.testng.Assert.assertEquals;

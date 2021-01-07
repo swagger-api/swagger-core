@@ -8,8 +8,8 @@ import javax.enterprise.inject.spi.AnnotatedType;
 import javax.enterprise.inject.spi.Extension;
 import javax.enterprise.inject.spi.ProcessAnnotatedType;
 import javax.enterprise.inject.spi.WithAnnotations;
-import javax.ws.rs.Path;
-import javax.ws.rs.ext.Provider;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.ext.Provider;
 
 public class DiscoveryTestExtension implements Extension {
 

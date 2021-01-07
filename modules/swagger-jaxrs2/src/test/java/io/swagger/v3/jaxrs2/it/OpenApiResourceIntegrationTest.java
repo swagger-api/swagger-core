@@ -1,26 +1,38 @@
 package io.swagger.v3.jaxrs2.it;
 
-import com.fasterxml.jackson.databind.SerializationFeature;
-
-import io.restassured.http.ContentType;
-import io.swagger.v3.core.util.Json;
-import io.swagger.v3.core.util.Yaml;
-import io.swagger.v3.jaxrs2.annotations.AbstractAnnotationTest;
-import org.testng.SkipException;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Test;
+import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
+import java.net.URI;
 
-import static io.restassured.RestAssured.given;
+import org.glassfish.jersey.client.ClientConfig;
+import org.glassfish.jersey.logging.LoggingFeature;
+import org.glassfish.jersey.media.multipart.MultiPartFeature;
+import org.glassfish.jersey.server.ResourceConfig;
+import org.glassfish.jersey.test.ContainerPerClassTestNgStrategy;
+import org.glassfish.jersey.test.JerseyTestNg;
+import org.glassfish.jersey.test.TestProperties;
+import org.glassfish.jersey.test.spi.TestNgStrategy;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Test;
+
+import com.fasterxml.jackson.databind.SerializationFeature;
+
+import io.swagger.v3.core.util.Json;
+import io.swagger.v3.core.util.Yaml;
+import io.swagger.v3.jaxrs2.matchers.SerializationMatchers;
+import io.swagger.v3.oas.models.OpenAPI;
+import jakarta.ws.rs.core.Application;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 
 /**
  * <p>
- * An functional integration test that runs during maven's integration-test phase,
- * uses RestAssured to define REST API tests, and Jetty's Maven plugin to serve a simple
- * sample app just prior to the integration-test phase starting.
+ * An functional test that for the OpenApiResource.
  */
-public class OpenApiResourceIT extends AbstractAnnotationTest {
+public class OpenApiResourceIntegrationTest extends JerseyTestNg
+{
     private static final String EXPECTED_JSON = "{\n" +
             "    \"openapi\": \"3.0.1\",\n" +
             "    \"paths\": {\n" +
@@ -567,83 +579,87 @@ public class OpenApiResourceIT extends AbstractAnnotationTest {
             "        id:\n" +
             "          type: string\n";
 
-    private static final int jettyPort = System.getProperties().containsKey("jetty.port") ? Integer.parseInt(System.getProperty("jetty.port")): -1;
+    
+    @Override
+    protected Application configure() {
+        return new ResourceConfig().property("jersey.config.server.wadl.disableWadl", true)
+                .property("openApi.configuration.prettyPrint", true).property(TestProperties.LOG_TRAFFIC, true)
+                .property(TestProperties.DUMP_ENTITY, true).register(MultiPartFeature.class)
+                .packages("io.swagger.v3.jaxrs2.it.resources");
+    }
 
-    @BeforeMethod
-    public void checkJetty() {
-        if (jettyPort == -1) {
-            throw new SkipException("Jetty not configured");
-        }
+    @Override
+    protected URI getBaseUri() {
+        return URI.create(super.getBaseUri().toString());
+    }
+
+    @Override
+    protected void configureClient(ClientConfig config) {
+        config.register(MultiPartFeature.class);
+        config.register(LoggingFeature.class);
+    }
+
+    @Override
+    protected TestNgStrategy configureStrategy() {
+        return new ContainerPerClassTestNgStrategy();
+    }
+
+    @BeforeClass
+    @Override
+    public void setUp() throws Exception {
+        super.setUp();
+    }
+
+    @AfterClass
+    @Override
+    public void tearDown() throws Exception {
+        super.tearDown();
     }
 
     @Test
     public void testSwaggerJson() throws Exception {
+        final Response response = target("openapi.json").request().get();
 
-        final String actualBody = given()
-                .port(jettyPort)
-                .log().all()
-                .when()
-                .get("/openapi.json")
-                .then()
-                .log().all()
-                .assertThat()
-                .statusCode(200)
-                .contentType(ContentType.JSON)
-                .extract()
-                .response().body().asString();
+        assertEquals(response.getStatus(), 200);
+        assertEquals(response.getMediaType(), MediaType.APPLICATION_JSON_TYPE);
+
+        final String actualBody = response.readEntity(String.class);
 
         compareAsJson(formatJson(actualBody), EXPECTED_JSON);
     }
 
     @Test
     public void testSwaggerJsonUsingAcceptHeader() throws Exception {
-        final String actualBody = given()
-                .port(jettyPort)
-                .log().all()
-                .accept(ContentType.JSON)
-                .when()
-                .get("/openapi")
-                .then()
-                .log().all()
-                .assertThat()
-                .statusCode(200)
-                .contentType(ContentType.JSON)
-                .extract().response().body().asString();
+        final Response response = target("openapi").request().accept(MediaType.APPLICATION_JSON_TYPE).get();
+
+        assertEquals(response.getStatus(), 200);
+        assertEquals(response.getMediaType(), MediaType.APPLICATION_JSON_TYPE);
+
+        final String actualBody = response.readEntity(String.class);
 
         compareAsJson(formatJson(actualBody), EXPECTED_JSON);
     }
 
     @Test
     public void testSwaggerYaml() throws Exception {
-        final String actualBody = given()
-                .port(jettyPort)
-                .log().all()
-                .when()
-                .get("/openapi.yaml")
-                .then()
-                .log().all()
-                .assertThat()
-                .statusCode(200)
-                .contentType("application/yaml")
-                .extract().response().body().asString();
+        final Response response = target("openapi.yaml").request().get();
+
+        assertEquals(response.getStatus(), 200);
+        assertEquals(response.getMediaType().toString(), "application/yaml");
+
+        final String actualBody = response.readEntity(String.class);
 
         compareAsYaml(formatYaml(actualBody), EXPECTED_YAML);
     }
 
     @Test
     public void testSwaggerYamlUsingAcceptHeader() throws Exception {
-        final String actualBody = given()
-                .port(jettyPort)
-                .log().all()
-                .accept("application/yaml")
-                .when()
-                .get("/openapi")
-                .then()
-                .log().all()
-                .assertThat()
-                .statusCode(200)
-                .contentType("application/yaml")
-                .extract().response().body().asString();
+        final Response response = target("openapi.yaml").request().accept("application/yaml").get();
+
+        assertEquals(response.getStatus(), 200);
+        assertEquals(response.getMediaType().toString(), "application/yaml");
+
+        final String actualBody = response.readEntity(String.class);
 
         compareAsYaml(formatYaml(actualBody), EXPECTED_YAML);
     }
@@ -658,5 +674,13 @@ public class OpenApiResourceIT extends AbstractAnnotationTest {
         return Json.mapper().configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, true)
                 .writerWithDefaultPrettyPrinter()
                 .writeValueAsString(Json.mapper().readValue(source, Object.class));
+    }
+
+    private void compareAsYaml(final String actualYaml, final String expectedYaml) throws IOException {
+        SerializationMatchers.assertEqualsToYaml(Yaml.mapper().readValue(actualYaml, OpenAPI.class), expectedYaml);
+    }
+
+    private void compareAsJson(final String actualJson, final String expectedJson) throws IOException {
+        SerializationMatchers.assertEqualsToJson(Yaml.mapper().readValue(actualJson, OpenAPI.class), expectedJson);
     }
 }

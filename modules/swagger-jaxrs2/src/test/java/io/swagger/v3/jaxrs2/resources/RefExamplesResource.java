@@ -12,8 +12,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.Path;
 
 /**
  * Examples Resource Scenario

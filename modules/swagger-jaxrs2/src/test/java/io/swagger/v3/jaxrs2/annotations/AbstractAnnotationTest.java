@@ -1,20 +1,23 @@
 package io.swagger.v3.jaxrs2.annotations;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.JsonNode;
-import io.swagger.v3.core.util.Yaml;
-import io.swagger.v3.jaxrs2.Reader;
-import io.swagger.v3.jaxrs2.matchers.SerializationMatchers;
-import io.swagger.v3.oas.models.OpenAPI;
-import org.apache.commons.io.IOUtils;
+import static org.testng.Assert.fail;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
-import static org.testng.Assert.fail;
+import org.apache.commons.io.IOUtils;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.JsonNode;
+
+import io.swagger.v3.core.util.Yaml;
+import io.swagger.v3.jaxrs2.Reader;
+import io.swagger.v3.jaxrs2.matchers.SerializationMatchers;
+import io.swagger.v3.oas.models.OpenAPI;
 
 public abstract class AbstractAnnotationTest {
+
     public String readIntoYaml(final Class<?> cls) {
         Reader reader = new Reader(new OpenAPI());
         OpenAPI openAPI = reader.read(cls);

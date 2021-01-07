@@ -23,8 +23,8 @@ import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.testng.annotations.Test;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
 
 import static org.testng.Assert.assertEquals;
 

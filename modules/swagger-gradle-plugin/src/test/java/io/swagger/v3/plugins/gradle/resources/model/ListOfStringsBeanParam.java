@@ -1,6 +1,6 @@
 package io.swagger.v3.plugins.gradle.resources.model;
 
-import javax.ws.rs.QueryParam;
+import jakarta.ws.rs.QueryParam;
 import java.util.List;
 
 public class ListOfStringsBeanParam {

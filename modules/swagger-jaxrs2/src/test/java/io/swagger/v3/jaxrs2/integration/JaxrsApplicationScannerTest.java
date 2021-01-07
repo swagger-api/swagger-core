@@ -3,7 +3,7 @@ package io.swagger.v3.jaxrs2.integration;
 import java.util.Collections;
 import java.util.Set;
 
-import javax.ws.rs.core.Application;
+import jakarta.ws.rs.core.Application;
 
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;

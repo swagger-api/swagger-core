@@ -1,6 +1,6 @@
 package io.swagger.v3.jaxrs2.resources;
 
-import javax.ws.rs.Path;
+import jakarta.ws.rs.Path;
 
 @Path("/head")
 public class SubResourceHead {

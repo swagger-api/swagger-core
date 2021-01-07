@@ -30,11 +30,11 @@ import io.swagger.v3.oas.annotations.servers.Server;
 import io.swagger.v3.oas.annotations.servers.ServerVariable;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.QueryParam;
+import jakarta.ws.rs.core.Response;
 
 @OpenAPIDefinition(
         extensions = {

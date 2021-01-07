@@ -1,7 +1,7 @@
 package io.swagger.v3.jaxrs2.resources.rs;
 
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.Path;
 
 public interface EntityRestService<DTO> {
 

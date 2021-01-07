@@ -27,8 +27,8 @@ public abstract class AbstractOpenAPIExtension implements OpenAPIExtension {
 
     @Override
     public ResolvedParameter extractParameters(List<Annotation> annotations, Type type, Set<Type> typesToSkip,
-                                               Components components, javax.ws.rs.Consumes classConsumes,
-                                               javax.ws.rs.Consumes methodConsumes, boolean includeRequestBody, JsonView jsonViewAnnotation, Iterator<OpenAPIExtension> chain) {
+                                               Components components, jakarta.ws.rs.Consumes classConsumes,
+                                               jakarta.ws.rs.Consumes methodConsumes, boolean includeRequestBody, JsonView jsonViewAnnotation, Iterator<OpenAPIExtension> chain) {
         if (chain.hasNext()) {
             return chain.next().extractParameters(annotations, type, typesToSkip, components, classConsumes, methodConsumes, includeRequestBody, jsonViewAnnotation, chain);
         } else {

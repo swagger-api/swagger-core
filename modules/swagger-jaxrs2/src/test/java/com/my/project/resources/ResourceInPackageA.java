@@ -3,8 +3,8 @@ package com.my.project.resources;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
 import java.util.ArrayList;
 
 @Path("/packageA")

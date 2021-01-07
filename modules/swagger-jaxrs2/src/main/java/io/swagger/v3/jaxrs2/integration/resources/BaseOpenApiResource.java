@@ -12,12 +12,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletConfig;
-import javax.ws.rs.core.Application;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
+import jakarta.ws.rs.core.Application;
+import jakarta.ws.rs.core.HttpHeaders;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.MultivaluedMap;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.UriInfo;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

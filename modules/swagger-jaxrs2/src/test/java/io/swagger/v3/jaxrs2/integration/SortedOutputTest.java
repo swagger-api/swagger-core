@@ -24,9 +24,9 @@ import io.swagger.v3.oas.models.media.Schema;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.core.Application;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.core.Application;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Map;

@@ -8,7 +8,7 @@ import io.swagger.v3.oas.models.parameters.RequestBody;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import javax.ws.rs.*;
+import jakarta.ws.rs.*;
 
 public class FormParamBeanTest {
 

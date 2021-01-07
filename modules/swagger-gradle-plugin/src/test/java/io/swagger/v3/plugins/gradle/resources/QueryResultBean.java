@@ -16,7 +16,7 @@
 
 package io.swagger.v3.plugins.gradle.resources;
 
-import javax.ws.rs.QueryParam;
+import jakarta.ws.rs.QueryParam;
 
 public class QueryResultBean {
     @QueryParam("skip")

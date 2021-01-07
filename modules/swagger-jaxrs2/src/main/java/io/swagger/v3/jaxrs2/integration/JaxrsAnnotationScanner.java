@@ -11,7 +11,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.ws.rs.core.Application;
+import jakarta.ws.rs.core.Application;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -90,7 +90,7 @@ public class JaxrsAnnotationScanner<T extends JaxrsAnnotationScanner<T>> impleme
         }
         final Set<Class<?>> classes;
         try (ScanResult scanResult = graph.scan()) {
-            classes = new HashSet<>(scanResult.getClassesWithAnnotation(javax.ws.rs.Path.class.getName()).loadClasses());
+            classes = new HashSet<>(scanResult.getClassesWithAnnotation(jakarta.ws.rs.Path.class.getName()).loadClasses());
             classes.addAll(new HashSet<>(scanResult.getClassesWithAnnotation(OpenAPIDefinition.class.getName()).loadClasses()));
         }
 

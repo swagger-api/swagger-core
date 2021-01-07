@@ -4,8 +4,8 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
 
 @Path("test")
 public class Ticket3587Resource {

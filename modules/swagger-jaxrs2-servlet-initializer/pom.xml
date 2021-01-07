@@ -42,82 +42,6 @@
                     </archive>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>build-helper-maven-plugin</artifactId>
-                <version>3.0.0</version>
-                <configuration>
-                    <portNames>
-                        <portName>jetty.port</portName>
-                        <portName>jetty.port.stop</portName>
-                    </portNames>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>reserve-port</id>
-                        <phase>pre-integration-test</phase>
-                        <goals>
-                            <goal>reserve-network-port</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-failsafe-plugin</artifactId>
-                <version>${failsafe-plugin-version}</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>integration-test</goal>
-                            <goal>verify</goal>
-                        </goals>
-                        <configuration>
-                            <systemPropertyVariables>
-                                <jetty.port>${jetty.port}</jetty.port>
-                            </systemPropertyVariables>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.eclipse.jetty</groupId>
-                <artifactId>jetty-maven-plugin</artifactId>
-                <configuration>
-                    <scanIntervalSeconds>10</scanIntervalSeconds>
-                    <httpConnector><port>${jetty.port}</port></httpConnector>
-                    <stopKey>a</stopKey>
-                    <stopPort>${jetty.port.stop}</stopPort>
-                    <useTestScope>true</useTestScope>
-                    <webAppSourceDirectory>${project.basedir}/src/test/webapp</webAppSourceDirectory>
-                </configuration>
-                <dependencies>
-                    <dependency>
-                        <groupId>io.swagger.core.v3</groupId>
-                        <artifactId>swagger-jaxrs2</artifactId>
-                        <version>${project.version}</version>
-                    </dependency>
-                </dependencies>
-                <executions>
-                    <execution>
-                        <id>start-jetty</id>
-                        <phase>pre-integration-test</phase>
-                        <goals>
-                            <goal>start</goal>
-                        </goals>
-                        <configuration>
-                            <scanIntervalSeconds>0</scanIntervalSeconds>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>stop-jetty</id>
-                        <phase>post-integration-test</phase>
-                        <goals>
-                            <goal>stop</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
         </plugins>
     </build>
 
@@ -147,43 +71,6 @@
             <artifactId>swagger-jaxrs2</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.testng</groupId>
-            <artifactId>testng</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>io.rest-assured</groupId>
-            <artifactId>rest-assured</artifactId>
-            <scope>test</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>javax.xml.bind</groupId>
-                    <artifactId>jaxb-api</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.apache.httpcomponents</groupId>
-                    <artifactId>httpmime</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-core</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.glassfish.jersey.core</groupId>
-            <artifactId>jersey-server</artifactId>
-            <version>${jersey2-version}</version>
-            <scope>test</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.javassist</groupId>
-                    <artifactId>javassist</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
     </dependencies>
 </project>

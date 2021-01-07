@@ -18,7 +18,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import javax.ws.rs.core.Application;
+import jakarta.ws.rs.core.Application;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;

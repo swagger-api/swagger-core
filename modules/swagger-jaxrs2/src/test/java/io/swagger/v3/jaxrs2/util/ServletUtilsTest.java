@@ -3,7 +3,7 @@ package io.swagger.v3.jaxrs2.util;
 import org.hamcrest.collection.IsMapContaining;
 import org.testng.annotations.Test;
 
-import javax.ws.rs.core.MultivaluedHashMap;
+import jakarta.ws.rs.core.MultivaluedHashMap;
 import java.net.URLEncoder;
 import java.util.Arrays;
 import java.util.HashMap;

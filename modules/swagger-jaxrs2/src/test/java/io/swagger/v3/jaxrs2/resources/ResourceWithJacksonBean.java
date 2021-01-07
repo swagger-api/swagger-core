@@ -3,9 +3,9 @@ package io.swagger.v3.jaxrs2.resources;
 import io.swagger.v3.jaxrs2.resources.model.JacksonBean;
 import io.swagger.v3.oas.annotations.Operation;
 
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
+import jakarta.ws.rs.POST;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.Produces;
 
 @Path("test")
 @Produces("application/json")

@@ -9,10 +9,10 @@ import io.swagger.v3.oas.integration.api.OpenApiReader;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.tags.Tag;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.QueryParam;
+import jakarta.ws.rs.core.Response;
 
 public class ReaderListenerResource implements ReaderListener {
 

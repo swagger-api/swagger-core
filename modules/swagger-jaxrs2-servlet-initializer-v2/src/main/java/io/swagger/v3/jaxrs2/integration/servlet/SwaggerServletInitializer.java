@@ -10,7 +10,7 @@ import javax.servlet.ServletContainerInitializer;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.HandlesTypes;
-import javax.ws.rs.Path;
+import jakarta.ws.rs.Path;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;

@@ -17,7 +17,7 @@ public interface OpenAPIExtension {
     String extractOperationMethod(Method method, Iterator<OpenAPIExtension> chain);
 
     ResolvedParameter extractParameters(List<Annotation> annotations, Type type, Set<Type> typesToSkip, Components components,
-                                        javax.ws.rs.Consumes classConsumes, javax.ws.rs.Consumes methodConsumes, boolean includeRequestBody, JsonView jsonViewAnnotation, Iterator<OpenAPIExtension> chain);
+                                        jakarta.ws.rs.Consumes classConsumes, jakarta.ws.rs.Consumes methodConsumes, boolean includeRequestBody, JsonView jsonViewAnnotation, Iterator<OpenAPIExtension> chain);
 
     /**
      * Decorates operation with additional vendor based extensions.

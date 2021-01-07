@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.MultivaluedHashMap;
+import jakarta.ws.rs.core.MultivaluedHashMap;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;

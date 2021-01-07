@@ -2,9 +2,9 @@ package io.swagger.v3.jaxrs2;
 
 import java.util.List;
 
-import javax.ws.rs.BeanParam;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
+import jakarta.ws.rs.BeanParam;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
