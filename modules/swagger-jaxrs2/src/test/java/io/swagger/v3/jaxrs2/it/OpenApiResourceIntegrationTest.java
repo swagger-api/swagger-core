@@ -4,35 +4,46 @@ import static org.testng.Assert.assertEquals;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import javax.servlet.ServletConfig;
 
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.logging.LoggingFeature;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
-import org.glassfish.jersey.server.ResourceConfig;
-import org.glassfish.jersey.test.ContainerPerClassTestNgStrategy;
 import org.glassfish.jersey.test.JerseyTestNg;
 import org.glassfish.jersey.test.TestProperties;
-import org.glassfish.jersey.test.spi.TestNgStrategy;
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.fasterxml.jackson.databind.SerializationFeature;
 
 import io.swagger.v3.core.util.Json;
 import io.swagger.v3.core.util.Yaml;
+import io.swagger.v3.jaxrs2.integration.JaxrsOpenApiContextBuilder;
+import io.swagger.v3.jaxrs2.integration.resources.AcceptHeaderOpenApiResource;
+import io.swagger.v3.jaxrs2.integration.resources.OpenApiResource;
+import io.swagger.v3.jaxrs2.it.resources.CarResource;
+import io.swagger.v3.jaxrs2.it.resources.MultiPartFileResource;
+import io.swagger.v3.jaxrs2.it.resources.OctetStreamResource;
+import io.swagger.v3.jaxrs2.it.resources.UrlEncodedResource;
+import io.swagger.v3.jaxrs2.it.resources.WidgetResource;
 import io.swagger.v3.jaxrs2.matchers.SerializationMatchers;
+import io.swagger.v3.oas.integration.OpenApiConfigurationException;
+import io.swagger.v3.oas.integration.SwaggerConfiguration;
 import io.swagger.v3.oas.models.OpenAPI;
 import jakarta.ws.rs.core.Application;
+import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
 /**
  * <p>
- * An functional test that for the OpenApiResource.
+ * An functional test for the OpenApiResource.
  */
-public class OpenApiResourceIntegrationTest extends JerseyTestNg
-{
+public class OpenApiResourceIntegrationTest extends JerseyTestNg.ContainerPerClassTest {
+ 
     private static final String EXPECTED_JSON = "{\n" +
             "    \"openapi\": \"3.0.1\",\n" +
             "    \"paths\": {\n" +
@@ -579,18 +590,48 @@ public class OpenApiResourceIntegrationTest extends JerseyTestNg
             "        id:\n" +
             "          type: string\n";
 
-    
-    @Override
-    protected Application configure() {
-        return new ResourceConfig().property("jersey.config.server.wadl.disableWadl", true)
-                .property("openApi.configuration.prettyPrint", true).property(TestProperties.LOG_TRAFFIC, true)
-                .property(TestProperties.DUMP_ENTITY, true).register(MultiPartFeature.class)
-                .packages("io.swagger.v3.jaxrs2.it.resources");
-    }
+	public static class TestApplication extends Application {
+		public TestApplication(@Context ServletConfig servletConfig) {
+			super();
+			
+			OpenAPI oas = new OpenAPI();
+			SwaggerConfiguration oasConfig = new SwaggerConfiguration().openAPI(oas).prettyPrint(true).resourcePackages(
+					Stream.of("io.swagger.v3.jaxrs2.integration.resources,io.swagger.v3.jaxrs2.it.resources")
+							.collect(Collectors.toSet()));
+
+			try {
+				new JaxrsOpenApiContextBuilder().servletConfig(servletConfig).application(this)
+						.openApiConfiguration(oasConfig).buildContext(true);
+			} catch (OpenApiConfigurationException e) {
+				throw new RuntimeException(e.getMessage(), e);
+			}
+		}
+
+		public Set<Class<?>> getClasses() {
+			return Stream
+					.of(MultiPartFeature.class, 
+							CarResource.class, 
+							MultiPartFileResource.class,
+							OctetStreamResource.class, 
+							UrlEncodedResource.class, 
+							WidgetResource.class,
+							AcceptHeaderOpenApiResource.class, 
+							OpenApiResource.class)
+					.collect(Collectors.toSet());
+		}
+	}
 
     @Override
+	protected Application configure() {
+    	enable(TestProperties.LOG_TRAFFIC);
+    	enable(TestProperties.DUMP_ENTITY);
+
+		return new TestApplication(null);
+	}
+    
+    @Override
     protected URI getBaseUri() {
-        return URI.create(super.getBaseUri().toString());
+    	return URI.create(super.getBaseUri().toString() + "jersey");
     }
 
     @Override
@@ -598,24 +639,7 @@ public class OpenApiResourceIntegrationTest extends JerseyTestNg
         config.register(MultiPartFeature.class);
         config.register(LoggingFeature.class);
     }
-
-    @Override
-    protected TestNgStrategy configureStrategy() {
-        return new ContainerPerClassTestNgStrategy();
-    }
-
-    @BeforeClass
-    @Override
-    public void setUp() throws Exception {
-        super.setUp();
-    }
-
-    @AfterClass
-    @Override
-    public void tearDown() throws Exception {
-        super.tearDown();
-    }
-
+    
     @Test
     public void testSwaggerJson() throws Exception {
         final Response response = target("openapi.json").request().get();
