@@ -151,19 +151,57 @@
             <artifactId>jersey-container-servlet</artifactId>
             <version>${jersey2-version}</version>
             <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.javassist</groupId>
+                    <artifactId>javassist</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.glassfish.jersey.media</groupId>
             <artifactId>jersey-media-multipart</artifactId>
             <version>${jersey2-version}</version>
             <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.javassist</groupId>
+                    <artifactId>javassist</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.glassfish.jersey.inject</groupId>
             <artifactId>jersey-hk2</artifactId>
             <version>${jersey2-version}</version>
             <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.javassist</groupId>
+                    <artifactId>javassist</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
+        <dependency>
+		    <groupId>org.glassfish.jersey.media</groupId>
+		    <artifactId>jersey-media-json-jackson</artifactId>
+		    <version>${jersey2-version}</version>
+		    <scope>test</scope>
+		     <exclusions>
+            	<exclusion>
+            		<groupId>com.fasterxml.jackson.jaxrs</groupId>
+            		<artifactId>jackson-jaxrs-base</artifactId>
+            	</exclusion>
+            	<exclusion>
+            		<groupId>com.fasterxml.jackson.module</groupId>
+            		<artifactId>jackson-module-jaxb-annotations</artifactId>
+            	</exclusion>
+            	<exclusion>
+            		<groupId>javax.xml.bind</groupId>
+            		<artifactId>jaxb-api</artifactId>
+            	</exclusion>
+		     </exclusions>
+		</dependency>
        <dependency>
             <groupId>org.glassfish.jersey.test-framework.providers</groupId>
             <artifactId>jersey-test-framework-provider-grizzly2</artifactId>
@@ -200,11 +238,5 @@
             <classifier>jakarta</classifier>
             <scope>test</scope>
         </dependency>
-        <dependency>
-		    <groupId>org.glassfish.jersey.media</groupId>
-		    <artifactId>jersey-media-json-jackson</artifactId>
-		    <version>${jersey2-version}</version>
-		    <scope>test</scope>
-		</dependency>
     </dependencies>
 </project>
