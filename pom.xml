@@ -613,7 +613,7 @@
         <slf4j-version>1.7.25</slf4j-version>
         <jetty-version>9.4.9.v20180320</jetty-version>
         <testng-version>7.3.0</testng-version>
-        <mockito-version>2.28.2</mockito-version>
+        <mockito-version>3.7.7</mockito-version>
         <rest-assured-version>4.3.2</rest-assured-version>
         <httpcomponents-version>4.5.13</httpcomponents-version>
         <commons-codec-version>1.15</commons-codec-version>
