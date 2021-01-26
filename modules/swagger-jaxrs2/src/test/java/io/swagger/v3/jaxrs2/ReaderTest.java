@@ -396,26 +396,6 @@ public class ReaderTest {
         OpenAPI openAPI = reader.read(ResponsesResource.class);
         String yaml = "openapi: 3.0.1\n" +
                 "paths:\n" +
-                "  /:\n" +
-                "    get:\n" +
-                "      summary: Simple get operation\n" +
-                "      description: Defines a simple get operation with no inputs and a complex output\n" +
-                "        object\n" +
-                "      operationId: getWithPayloadResponse\n" +
-                "      responses:\n" +
-                "        \"200\":\n" +
-                "          description: voila!\n" +
-                "          content:\n" +
-                "            application/json:\n" +
-                "              schema:\n" +
-                "                $ref: '#/components/schemas/SampleResponseSchema'\n" +
-                "        default:\n" +
-                "          description: boo\n" +
-                "          content:\n" +
-                "            '*/*':\n" +
-                "              schema:\n" +
-                "                $ref: '#/components/schemas/GenericError'\n" +
-                "      deprecated: true\n" +
                 "  /allOf:\n" +
                 "    get:\n" +
                 "      summary: Test inheritance / polymorphism\n" +
@@ -482,12 +462,56 @@ public class ReaderTest {
                 "                oneOf:\n" +
                 "                - $ref: '#/components/schemas/MultipleSub1Bean'\n" +
                 "                - $ref: '#/components/schemas/MultipleSub2Bean'\n" +
+                "  /:\n" +
+                "    get:\n" +
+                "      summary: Simple get operation\n" +
+                "      description: Defines a simple get operation with no inputs and a complex output\n" +
+                "        object\n" +
+                "      operationId: getWithPayloadResponse\n" +
+                "      responses:\n" +
+                "        \"200\":\n" +
+                "          description: voila!\n" +
+                "          content:\n" +
+                "            application/json:\n" +
+                "              schema:\n" +
+                "                $ref: '#/components/schemas/SampleResponseSchema'\n" +
+                "        default:\n" +
+                "          description: boo\n" +
+                "          content:\n" +
+                "            '*/*':\n" +
+                "              schema:\n" +
+                "                $ref: '#/components/schemas/GenericError'\n" +
+                "      deprecated: true\n" +
+                "    post:\n" +
+                "      summary: Test inheritance / polymorphism with POST\n" +
+                "      operationId: postOne\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          '*/*':\n" +
+                "            schema:\n" +
+                "              $ref: '#/components/schemas/MultipleBaseBean'\n" +
+                "      responses:\n" +
+                "        \"200\":\n" +
+                "          description: bean answer\n" +
+                "          content:\n" +
+                "            application/json:\n" +
+                "              schema:\n" +
+                "                oneOf:\n" +
+                "                - $ref: '#/components/schemas/MultipleSub1Bean'\n" +
+                "                - $ref: '#/components/schemas/MultipleSub2Bean'\n" +
                 "components:\n" +
                 "  schemas:\n" +
-                "    SampleResponseSchema:\n" +
+                "    MultipleBaseBean:\n" +
                 "      type: object\n" +
-                "    GenericError:\n" +
-                "      type: object\n" +
+                "      properties:\n" +
+                "        beanType:\n" +
+                "          type: string\n" +
+                "        a:\n" +
+                "          type: integer\n" +
+                "          format: int32\n" +
+                "        b:\n" +
+                "          type: string\n" +
+                "      description: MultipleBaseBean\n" +
                 "    MultipleSub1Bean:\n" +
                 "      type: object\n" +
                 "      description: MultipleSub1Bean\n" +
@@ -508,17 +532,21 @@ public class ReaderTest {
                 "          d:\n" +
                 "            type: integer\n" +
                 "            format: int32\n" +
-                "    MultipleBaseBean:\n" +
+                "    MultipleSubSub1Bean:\n" +
                 "      type: object\n" +
-                "      properties:\n" +
-                "        beanType:\n" +
-                "          type: string\n" +
-                "        a:\n" +
-                "          type: integer\n" +
-                "          format: int32\n" +
-                "        b:\n" +
-                "          type: string\n" +
-                "      description: MultipleBaseBean";
+                "      allOf:\n" +
+                "      - $ref: '#/components/schemas/MultipleSub1Bean'\n" +
+                "      - type: object\n" +
+                "        properties:\n" +
+                "          beans:\n" +
+                "            type: array\n" +
+                "            items:\n" +
+                "              $ref: '#/components/schemas/MultipleBaseBean'\n" +
+                "    SampleResponseSchema:\n" +
+                "      type: object\n" +
+                "    GenericError:\n" +
+                "      type: object\n" +
+                "";
         SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
     }
 
