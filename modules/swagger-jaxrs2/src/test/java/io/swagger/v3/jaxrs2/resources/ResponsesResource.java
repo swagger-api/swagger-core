@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.POST;
@@ -86,6 +87,7 @@ public class ResponsesResource {
             ) }
     )
     @Produces({ MediaType.APPLICATION_JSON })
+    @Consumes({ MediaType.APPLICATION_JSON })
     public MultipleBaseBean postOne(
             @Context final HttpServletRequest req,
             @RequestBody(content = @Content(schema = @Schema(implementation = MultipleBaseBean.class))) //
