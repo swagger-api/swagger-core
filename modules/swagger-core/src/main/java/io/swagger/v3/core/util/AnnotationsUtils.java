@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.extensions.ExtensionProperty;
 import io.swagger.v3.oas.annotations.links.LinkParameter;
 import io.swagger.v3.oas.annotations.media.DiscriminatorMapping;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.media.Schema.Empty;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.ExternalDocumentation;
 import io.swagger.v3.oas.models.examples.Example;
@@ -545,7 +546,10 @@ public abstract class AnnotationsUtils {
     }
 
     public static Schema resolveSchemaFromType(Class<?> schemaImplementation, Components components, JsonView jsonViewAnnotation) {
-        Schema schemaObject;
+	if (Empty.class.equals(schemaImplementation)) {
+	    return new Schema();
+	}
+	Schema schemaObject;
         PrimitiveType primitiveType = PrimitiveType.fromType(schemaImplementation);
         if (primitiveType != null) {
             schemaObject = primitiveType.createProperty();

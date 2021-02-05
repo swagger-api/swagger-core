@@ -20,6 +20,7 @@ import io.swagger.v3.jaxrs2.util.ReaderUtils;
 import io.swagger.v3.oas.annotations.ExternalDocumentation;
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.media.Schema.Empty;
 import io.swagger.v3.oas.annotations.servers.Server;
 import io.swagger.v3.oas.integration.ContextUtils;
 import io.swagger.v3.oas.integration.SwaggerConfiguration;
@@ -66,6 +67,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
@@ -1089,6 +1091,21 @@ public class Reader implements OpenApiReader {
                         }
                     }
                 }
+                operation.getResponses().forEach((k,value) -> {
+                    if (value.getContent() == null) {
+                	value.setContent(content);
+                    } else {
+                        for (Entry<String, MediaType> entry : value.getContent().entrySet()) {
+                            if (entry.getValue().getSchema() == null) {
+                                entry.getValue().setSchema(returnTypeSchema);
+                            } else if (entry.getValue().getSchema().getType() == null && entry.getValue().getSchema().get$ref() == null) {
+                        	entry.getValue().setSchema(null);
+                            }
+                        }                	
+                    }
+                });
+
+                
                 Map<String, Schema> schemaMap = resolvedSchema.referencedSchemas;
                 if (schemaMap != null) {
                     schemaMap.forEach((key, schema) -> components.addSchemas(key, schema));
