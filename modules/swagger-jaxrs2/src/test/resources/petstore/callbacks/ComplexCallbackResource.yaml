@@ -13,6 +13,10 @@ paths:
       responses:
         "200":
           description: voila!
+          content:
+            '*/*':
+              schema:
+                type: string
       callbacks:
         testCallback1:
           http://www.url.com:

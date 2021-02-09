@@ -226,6 +226,10 @@ paths:
       responses:
         "200":
           description: voila!
+          content:
+            '*/*':
+              schema:
+                type: string
       callbacks:
         testCallback1:
           http://www.url.com:
@@ -259,6 +263,10 @@ paths:
       responses:
         "200":
           description: voila!
+          content:
+            '*/*':
+              schema:
+                type: string
       callbacks:
         testCallback1:
           http://www.url.com:
@@ -282,6 +290,10 @@ paths:
       responses:
         "200":
           description: voila!
+          content:
+            '*/*':
+              schema:
+                type: string
       callbacks:
         testCallback:
           http://$requests.query.url: {}
@@ -307,6 +319,10 @@ paths:
       responses:
         "200":
           description: voila!
+          content:
+            '*/*':
+              schema:
+                type: string
       callbacks:
         testCallback1:
           http://www.url.com:
@@ -1200,6 +1216,10 @@ paths:
       responses:
         "400":
           description: test description
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/User'
           links:
             user:
               operationId: getUser
@@ -1207,6 +1227,10 @@ paths:
                 userId: $request.query.userId
         "200":
           description: 200 description
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/User'
           links:
             pet:
               operationId: getUser

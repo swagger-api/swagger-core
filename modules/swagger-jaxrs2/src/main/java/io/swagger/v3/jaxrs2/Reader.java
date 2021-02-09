@@ -20,7 +20,6 @@ import io.swagger.v3.jaxrs2.util.ReaderUtils;
 import io.swagger.v3.oas.annotations.ExternalDocumentation;
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
-import io.swagger.v3.oas.annotations.media.Schema.Empty;
 import io.swagger.v3.oas.annotations.servers.Server;
 import io.swagger.v3.oas.integration.ContextUtils;
 import io.swagger.v3.oas.integration.SwaggerConfiguration;
@@ -1091,21 +1090,28 @@ public class Reader implements OpenApiReader {
                         }
                     }
                 }
-                operation.getResponses().forEach((k,value) -> {
+                operation.getResponses().forEach((k, value) -> {
                     if (value.getContent() == null) {
-                	value.setContent(content);
-                    } else {
-                        for (Entry<String, MediaType> entry : value.getContent().entrySet()) {
-                            if (entry.getValue().getSchema() == null) {
-                                entry.getValue().setSchema(returnTypeSchema);
-                            } else if (entry.getValue().getSchema().getType() == null && entry.getValue().getSchema().get$ref() == null) {
-                        	entry.getValue().setSchema(null);
+                        value.setContent(content);
+                    } else if (!"default".equals(k)) {
+                        if (value.getContent().size() == 1) {
+                            Entry<String, MediaType> firstEntry = value.getContent().entrySet().iterator().next();
+                            if (firstEntry.getKey().equals(DEFAULT_MEDIA_TYPE_VALUE) && isEmptyContent(value.getContent())) {
+                                value.setContent(null);
                             }
-                        }                	
+                        } else {
+                            for (Entry<String, MediaType> entry : value.getContent().entrySet()) {
+                                Schema sch = entry.getValue().getSchema();
+                                if (sch == null) {
+                                    entry.getValue().setSchema(returnTypeSchema);
+                                } else if (new Schema().equals(sch)) {
+                                    entry.getValue().setSchema(null);
+                                }
+                            }
+                        }
                     }
                 });
 
-                
                 Map<String, Schema> schemaMap = resolvedSchema.referencedSchemas;
                 if (schemaMap != null) {
                     schemaMap.forEach((key, schema) -> components.addSchemas(key, schema));
@@ -1124,6 +1130,25 @@ public class Reader implements OpenApiReader {
         }
 
         return operation;
+    }
+    
+    private final static MediaType EMPTY_MEDIA_TYPE = new MediaType().schema(new Schema());
+    
+    private boolean isEmptyMediaType(MediaType mediaType) {
+        if (mediaType != null && EMPTY_MEDIA_TYPE.equals(mediaType)) {
+            return true;
+        }
+        return false;
+    }
+    
+    private boolean isEmptyContent(Content content) {
+        if (content.size() == 0) {
+            return true;
+        } else if (content.size() == 1) {
+            MediaType mediaType = content.get(ParameterProcessor.MEDIA_TYPE);
+            return isEmptyMediaType(mediaType);
+        }
+        return false;
     }
 
     private boolean shouldIgnoreClass(String className) {

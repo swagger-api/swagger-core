@@ -986,6 +986,13 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
                 "      responses:\n" +
                 "        \"200\":\n" +
                 "          description: aaa\n" +
+                "          content:\n" + 
+                "            application/json:\n" + 
+                "              schema:\n" + 
+                "                $ref: '#/components/schemas/User'\n" + 
+                "            application/xml:\n" + 
+                "              schema:\n" + 
+                "                $ref: '#/components/schemas/User'\n" +
                 "components:\n" +
                 "  schemas:\n" +
                 "    User:\n" +

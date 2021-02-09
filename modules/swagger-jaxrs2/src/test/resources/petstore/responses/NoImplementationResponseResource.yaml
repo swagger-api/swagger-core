@@ -11,6 +11,10 @@ paths:
       responses:
         "400":
           description: test description
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/User'
           links:
             user:
               operationId: getUser
@@ -18,6 +22,10 @@ paths:
                 userId: $request.query.userId
         "200":
           description: 200 description
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/User'
           links:
             pet:
               operationId: getUser

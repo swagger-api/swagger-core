@@ -39,6 +39,7 @@ import io.swagger.v3.jaxrs2.resources.RefResponsesResource;
 import io.swagger.v3.jaxrs2.resources.RefSecurityResource;
 import io.swagger.v3.jaxrs2.resources.ResourceWithSubResource;
 import io.swagger.v3.jaxrs2.resources.ResponseContentWithArrayResource;
+import io.swagger.v3.jaxrs2.resources.ResponseEmptySchemaResource;
 import io.swagger.v3.jaxrs2.resources.ResponsesResource;
 import io.swagger.v3.jaxrs2.resources.SecurityResource;
 import io.swagger.v3.jaxrs2.resources.ServersResource;
@@ -522,6 +523,105 @@ public class ReaderTest {
         SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
     }
 
+    @Test(description = "Response with empty schema")
+    public void testGetResponseWithEmptySchema() {
+        Reader reader = new Reader(new OpenAPI());
+
+        OpenAPI openAPI = reader.read(ResponseEmptySchemaResource.class);
+        String yaml = "openapi: 3.0.1\n" + 
+                "paths:\n" + 
+                "  /user:\n" + 
+                "    get:\n" + 
+                "      summary: Get a list of users\n" + 
+                "      description: Get a list of users registered in the system\n" + 
+                "      operationId: getUser\n" + 
+                "      responses:\n" + 
+                "        \"200\":\n" + 
+                "          description: The response for the user request\n" + 
+                "          content:\n" + 
+                "            '*/*':\n" + 
+                "              schema:\n" + 
+                "                $ref: '#/components/schemas/User'\n" + 
+                "  /user/customSchemaImpl:\n" + 
+                "    get:\n" + 
+                "      summary: Get a list of users\n" + 
+                "      description: Get a list of users registered in the system\n" + 
+                "      operationId: getUserCustomSchemaImpl\n" + 
+                "      responses:\n" + 
+                "        \"200\":\n" + 
+                "          description: The response for the user request\n" + 
+                "          content:\n" + 
+                "            '*/*':\n" + 
+                "              schema:\n" + 
+                "                $ref: '#/components/schemas/CustomUser'\n" + 
+                "  /user/defaultApiResponse:\n" + 
+                "    get:\n" + 
+                "      summary: Get a list of users\n" + 
+                "      description: Get a list of users registered in the system\n" + 
+                "      operationId: getUserDefaultApiResponse\n" + 
+                "      responses:\n" + 
+                "        default:\n" + 
+                "          description: default response\n" + 
+                "          content:\n" + 
+                "            '*/*':\n" + 
+                "              schema:\n" + 
+                "                $ref: '#/components/schemas/User'\n" + 
+                "  /user/defaultContentAnnotation:\n" + 
+                "    get:\n" + 
+                "      summary: Get a list of users\n" + 
+                "      description: Get a list of users registered in the system\n" + 
+                "      operationId: getUserDefaultContentAnnotation\n" + 
+                "      responses:\n" + 
+                "        \"200\":\n" + 
+                "          description: The response for the user request\n" + 
+                "          content:\n" + 
+                "            '*/*': {}\n" + 
+                "  /user/defaultSchemaAnnotation:\n" + 
+                "    get:\n" + 
+                "      summary: Get a list of users\n" + 
+                "      description: Get a list of users registered in the system\n" + 
+                "      operationId: getUserDefaultSchemaAnnotation\n" + 
+                "      responses:\n" + 
+                "        \"200\":\n" + 
+                "          description: The response for the user request\n" + 
+                "          content:\n" + 
+                "            '*/*': {}\n" + 
+                "  /user/defaultSchemaAnnotationWithExamples:\n" + 
+                "    get:\n" + 
+                "      summary: Get a list of users\n" + 
+                "      description: Get a list of users registered in the system\n" + 
+                "      operationId: getUserDefaultSchemaAnnotationWithExamples\n" + 
+                "      responses:\n" + 
+                "        \"200\":\n" + 
+                "          description: The response for the user request\n" + 
+                "          content:\n" + 
+                "            '*/*':\n" + 
+                "              example: Example content\n" + 
+                "  /user/noContent:\n" + 
+                "    get:\n" + 
+                "      summary: Get a list of users\n" + 
+                "      description: Get a list of users registered in the system\n" + 
+                "      operationId: getUserNoContent\n" + 
+                "      responses:\n" + 
+                "        \"200\":\n" + 
+                "          description: The response for the user request\n" + 
+                "components:\n" + 
+                "  schemas:\n" + 
+                "    User:\n" + 
+                "      type: object\n" + 
+                "      properties:\n" + 
+                "        foo:\n" + 
+                "          type: string\n" + 
+                "    CustomUser:\n" + 
+                "      type: object\n" + 
+                "      properties:\n" + 
+                "        foo:\n" + 
+                "          type: string\n" + 
+                "        foo2:\n" + 
+                "          type: string";
+        SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
+    }
+    
     @Test(description = "External Docs")
     public void testGetExternalDocs() {
         Reader reader = new Reader(new OpenAPI());
@@ -1883,24 +1983,28 @@ public class ReaderTest {
         Reader reader = new Reader(oas);
         OpenAPI openAPI = reader.read(RefCallbackResource.class);
 
-        String yaml = "openapi: 3.0.1\n" +
-                "info:\n" +
-                "  description: info\n" +
-                "paths:\n" +
-                "  /simplecallback:\n" +
-                "    get:\n" +
-                "      summary: Simple get operation\n" +
-                "      operationId: getWithNoParameters\n" +
-                "      responses:\n" +
-                "        \"200\":\n" +
-                "          description: voila!\n" +
-                "      callbacks:\n" +
-                "        testCallback1:\n" +
-                "          $ref: '#/components/callbacks/Callback'\n" +
-                "components:\n" +
-                "  callbacks:\n" +
-                "    Callback:\n" +
-                "      /post:\n" +
+        String yaml = "openapi: 3.0.1\n" + 
+                "info:\n" + 
+                "  description: info\n" + 
+                "paths:\n" + 
+                "  /simplecallback:\n" + 
+                "    get:\n" + 
+                "      summary: Simple get operation\n" + 
+                "      operationId: getWithNoParameters\n" + 
+                "      responses:\n" + 
+                "        \"200\":\n" + 
+                "          description: voila!\n" + 
+                "          content:\n" + 
+                "            '*/*':\n" + 
+                "              schema:\n" + 
+                "                type: string\n" + 
+                "      callbacks:\n" + 
+                "        testCallback1:\n" + 
+                "          $ref: '#/components/callbacks/Callback'\n" + 
+                "components:\n" + 
+                "  callbacks:\n" + 
+                "    Callback:\n" + 
+                "      /post:\n" + 
                 "        description: Post Path Item\n";
         SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
     }
@@ -2688,13 +2792,29 @@ public class ReaderTest {
                 "              $ref: '#/components/schemas/SampleDTO'\n" +
                 "      responses:\n" +
                 "        \"201\":\n" +
-                "          description: Created\n" +
+                "          description: Created\n" + 
+                "          content:\n" + 
+                "            '*/*':\n" + 
+                "              schema:\n" + 
+                "                type: string\n" + 
                 "        \"400\":\n" +
                 "          description: Bad Request\n" +
+                "          content:\n" + 
+                "            '*/*':\n" + 
+                "              schema:\n" + 
+                "                type: string\n" + 
                 "        \"403\":\n" +
                 "          description: Forbidden\n" +
+                "          content:\n" + 
+                "            '*/*':\n" + 
+                "              schema:\n" + 
+                "                type: string\n" + 
                 "        \"404\":\n" +
                 "          description: Not Found\n" +
+                "          content:\n" + 
+                "            '*/*':\n" + 
+                "              schema:\n" + 
+                "                type: string\n" + 
                 "  /test/{id}:\n" +
                 "    get:\n" +
                 "      tags:\n" +
@@ -2708,12 +2828,28 @@ public class ReaderTest {
                 "      responses:\n" +
                 "        \"200\":\n" +
                 "          description: OK\n" +
+                "          content:\n" + 
+                "            '*/*':\n" + 
+                "              schema:\n" + 
+                "                type: string\n" + 
                 "        \"400\":\n" +
                 "          description: Bad Request\n" +
+                "          content:\n" + 
+                "            '*/*':\n" + 
+                "              schema:\n" + 
+                "                type: string\n" + 
                 "        \"403\":\n" +
                 "          description: Forbidden\n" +
+                "          content:\n" + 
+                "            '*/*':\n" + 
+                "              schema:\n" + 
+                "                type: string\n" + 
                 "        \"404\":\n" +
                 "          description: Not Found\n" +
+                "          content:\n" + 
+                "            '*/*':\n" + 
+                "              schema:\n" + 
+                "                type: string\n" + 
                 "  /test/original/{id}:\n" +
                 "    get:\n" +
                 "      tags:\n" +
@@ -2727,12 +2863,28 @@ public class ReaderTest {
                 "      responses:\n" +
                 "        \"200\":\n" +
                 "          description: OK\n" +
+                "          content:\n" + 
+                "            '*/*':\n" + 
+                "              schema:\n" + 
+                "                type: string\n" + 
                 "        \"400\":\n" +
                 "          description: Bad Request\n" +
+                "          content:\n" + 
+                "            '*/*':\n" + 
+                "              schema:\n" + 
+                "                type: string\n" + 
                 "        \"403\":\n" +
                 "          description: Forbidden\n" +
+                "          content:\n" + 
+                "            '*/*':\n" + 
+                "              schema:\n" + 
+                "                type: string\n" + 
                 "        \"404\":\n" +
                 "          description: Not Found\n" +
+                "          content:\n" + 
+                "            '*/*':\n" + 
+                "              schema:\n" + 
+                "                type: string\n" + 
                 "components:\n" +
                 "  schemas:\n" +
                 "    SampleDTO:\n" +
