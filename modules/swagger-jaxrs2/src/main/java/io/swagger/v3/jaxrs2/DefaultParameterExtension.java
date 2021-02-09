@@ -55,6 +55,7 @@ public class DefaultParameterExtension extends AbstractOpenAPIExtension {
 
 
         Parameter parameter = null;
+        boolean isBeanParam = false;
         for (Annotation annotation : annotations) {
             if (annotation instanceof QueryParam) {
                 QueryParam param = (QueryParam) annotation;
@@ -98,6 +99,7 @@ public class DefaultParameterExtension extends AbstractOpenAPIExtension {
                     parameter.$ref(((io.swagger.v3.oas.annotations.Parameter) annotation).ref());
                 }
             } else {
+                isBeanParam = annotation instanceof BeanParam;
                 List<Parameter> formParameters = new ArrayList<>();
                 List<Parameter> parameters = new ArrayList<>();
                 if (handleAdditionalAnnotation(parameters, formParameters, annotation, type, typesToSkip, classConsumes, methodConsumes, components, includeRequestBody, jsonViewAnnotation)) {
@@ -127,7 +129,7 @@ public class DefaultParameterExtension extends AbstractOpenAPIExtension {
                 } else if ("form".equals(unknownParameter.getIn())) {
                     unknownParameter.setIn(null);
                     extractParametersResult.formParameters.add(unknownParameter);
-                } else {            // return as request body
+                } else if (!isBeanParam) { // return as request body
                     extractParametersResult.requestBody = unknownParameter;
                 }
             }
