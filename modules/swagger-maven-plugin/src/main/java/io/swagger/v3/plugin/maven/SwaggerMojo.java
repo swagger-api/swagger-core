@@ -83,9 +83,9 @@ public class SwaggerMojo extends AbstractMojo {
             OpenApiContext context = builder.buildContext(true);
             OpenAPI openAPI = context.read();
 
-            if (StringUtils.isNotBlank(filterClass)) {
+            if (StringUtils.isNotBlank(config.getFilterClass())) {
                 try {
-                    OpenAPISpecFilter filterImpl = (OpenAPISpecFilter) this.getClass().getClassLoader().loadClass(filterClass).newInstance();
+                    OpenAPISpecFilter filterImpl = (OpenAPISpecFilter) this.getClass().getClassLoader().loadClass(config.getFilterClass()).newInstance();
                     SpecFilter f = new SpecFilter();
                     openAPI = f.filter(openAPI, filterImpl, new HashMap<>(), new HashMap<>(),
                             new HashMap<>());
@@ -98,14 +98,14 @@ public class SwaggerMojo extends AbstractMojo {
             String openapiJson = null;
             String openapiYaml = null;
             if (Format.JSON.equals(outputFormat) || Format.JSONANDYAML.equals(outputFormat)) {
-                if (prettyPrint != null && prettyPrint) {
+                if (config.isPrettyPrint() != null && config.isPrettyPrint()) {
                     openapiJson = context.getOutputJsonMapper().writer(new DefaultPrettyPrinter()).writeValueAsString(openAPI);
                 } else {
                     openapiJson = context.getOutputJsonMapper().writeValueAsString(openAPI);
                 }
             }
             if (Format.YAML.equals(outputFormat) || Format.JSONANDYAML.equals(outputFormat)) {
-                if (prettyPrint != null && prettyPrint) {
+                if (config.isPrettyPrint() != null && config.isPrettyPrint()) {
                     openapiYaml = context.getOutputYamlMapper().writer(new DefaultPrettyPrinter()).writeValueAsString(openAPI);
                 } else {
                     openapiYaml = context.getOutputYamlMapper().writeValueAsString(openAPI);
