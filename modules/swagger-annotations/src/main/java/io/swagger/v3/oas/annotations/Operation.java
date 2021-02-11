@@ -18,6 +18,7 @@ package io.swagger.v3.oas.annotations;
 
 import io.swagger.v3.oas.annotations.extensions.Extension;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.ratelimits.RateLimit;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.servers.Server;
@@ -164,4 +165,11 @@ public @interface Operation {
      * @return whether or not to ignore JsonView annotations
      */
     boolean ignoreJsonView() default false;
+    
+    /**
+     * The list of rate limits applied to this operation
+     *
+     * @return the list of rate limits for this operation
+     */
+    RateLimit[] rateLimits() default {};
 }
