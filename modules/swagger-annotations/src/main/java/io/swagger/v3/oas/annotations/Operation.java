@@ -62,6 +62,13 @@ import static java.lang.annotation.ElementType.METHOD;
 @Inherited
 public @interface Operation {
     /**
+     * The path of the operation.
+     *
+     * @return the path of the operation
+     */
+    String path();
+    
+    /**
      * The HTTP method for this operation.
      *
      * @return the HTTP method of this operation
