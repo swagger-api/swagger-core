@@ -2,10 +2,10 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>io.swagger.core.v3</groupId>
-    <artifactId>swagger-project</artifactId>
+    <artifactId>swagger-project-jakarta</artifactId>
     <packaging>pom</packaging>
-    <name>swagger-project</name>
-    <description>swagger-project</description>
+    <name>swagger-project-jakarta</name>
+    <description>swagger-project-jakarta</description>
     <version>2.1.7-SNAPSHOT</version>
     <url>https://github.com/swagger-api/swagger-core</url>
     <scm>
@@ -28,14 +28,9 @@
     </prerequisites>
     <developers>
         <developer>
-            <id>fehguy</id>
-            <name>Tony Tam</name>
-            <email>fehguy@gmail.com</email>
-        </developer>
-        <developer>
-            <id>webron</id>
-            <name>Ron Ratovsky</name>
-            <email>webron@gmail.com</email>
+            <id>frantuma</id>
+            <name>Francesco Tumanischvili</name>
+            <email>frantuma@yahoo.com</email>
         </developer>
     </developers>
     <issueManagement>
@@ -56,34 +51,6 @@
         </license>
     </licenses>
     <build>
-        <scriptSourceDirectory>src/main/scripts</scriptSourceDirectory>
-        <outputDirectory>target/classes</outputDirectory>
-        <testOutputDirectory>target/test-classes</testOutputDirectory>
-        <resources>
-            <resource>
-                <directory>src/main/resources</directory>
-                <excludes>
-                    <exclude>logback.xml</exclude>
-                </excludes>
-            </resource>
-        </resources>
-        <extensions>
-            <extension>
-                <groupId>org.jvnet.wagon-svn</groupId>
-                <artifactId>wagon-svn</artifactId>
-                <version>1.12</version>
-            </extension>
-            <extension>
-                <groupId>org.apache.maven.wagon</groupId>
-                <artifactId>wagon-ssh-external</artifactId>
-                <version>3.0.0</version>
-            </extension>
-            <extension>
-                <groupId>org.apache.maven.wagon</groupId>
-                <artifactId>wagon-webdav</artifactId>
-                <version>1.0-beta-2</version>
-            </extension>
-        </extensions>
         <defaultGoal>install</defaultGoal>
         <directory>target</directory>
         <finalName>${project.artifactId}-${project.version}</finalName>
@@ -126,6 +93,7 @@
                 <artifactId>maven-dependency-plugin</artifactId>
                 <executions>
                     <execution>
+                        <id>copy-deps</id>
                         <phase>package</phase>
                         <goals>
                             <goal>copy-dependencies</goal>
@@ -138,64 +106,36 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-source-plugin</artifactId>
-                <version>3.2.1</version>
-                <executions>
-                    <execution>
-                        <id>attach-sources</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>jar-no-fork</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.1.1</version>
-                <configuration>
-                    <aggregate>true</aggregate>
-                    <source>1.8</source>
-                    <encoding>UTF-8</encoding>
-                    <maxmemory>1g</maxmemory>
-                    <links>
-                        <link>http://docs.oracle.com/javase/8/docs/api</link>
-                    </links>
-                    <excludePackageNames>${javadoc.package.exclude}</excludePackageNames>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>attach-javadocs</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>3.0.2</version>
-                <configuration>
-                    <excludes>
-                        <exclude>**/logback.xml</exclude>
-                    </excludes>
-                    <archive>
-                        <manifestEntries>
-                            <mode>development</mode>
-                            <url>${project.url}</url>
-                            <implementation-version>${project.version}</implementation-version>
-                            <package>io.swagger</package>
-                        </manifestEntries>
-                    </archive>
-                </configuration>
+                <version>3.2.0</version>
             </plugin>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-site-plugin</artifactId>
-                <version>3.7.1</version>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>3.2.0</version>
+                <executions>
+                    <execution>
+                        <id>copy-resources</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}</outputDirectory>
+                            <overwrite>true</overwrite>
+                            <resources>
+                                <resource>
+                                    <directory>transformed</directory>
+                                    <filtering>false</filtering>
+                                    <includes>
+                                        <include>${project.artifactId}-${project.version}.jar</include>
+                                        <!-- for swagger-maven-plugin-jakarta as transformed artifact has `maven-plugin` ext -->
+                                        <!--<include>${project.artifactId}-${project.version}.maven-plugin</include>-->
+                                    </includes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.sonatype.plugins</groupId>
@@ -212,70 +152,9 @@
                     <skipNexusStagingDeployMojo>true</skipNexusStagingDeployMojo>-->
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>org.eclipse.transformer</groupId>
-                <artifactId>org.eclipse.transformer.maven</artifactId>
-                <version>0.2.0</version>
-                <configuration>
-                    <classifier>jakarta</classifier>
-                    <outputDirectory>${project.basedir}/../swagger-project-jakarta/modules/${project.artifactId}-jakarta/transformed</outputDirectory>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>transform-jakarta</id>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                        <phase>package</phase>
-                    </execution>
-                </executions>
-            </plugin>
         </plugins>
         <pluginManagement>
             <plugins>
-                <plugin>
-                    <groupId>biz.aQute.bnd</groupId>
-                    <artifactId>bnd-maven-plugin</artifactId>
-                    <version>${bnd-version}</version>
-                    <configuration>
-                        <bnd><![CDATA[
-                            Bundle-SymbolicName: ${project.groupId}.${project.artifactId}
-                            -exportcontents: ${packages;NAMED;!*.internal}
-                            -noextraheaders: true
-                            -noclassforname: true
-                            -snapshot: SNAPSHOT
-                            -contract: \
-                                JavaJAXRS;resolution:=optional,\
-                                JavaServlet;resolution:=optional
-                            -define-contract: \
-                                osgi.contract;\
-                                    osgi.contract=JavaJAXRS;\
-                                    version:List<Version>="2.0";\
-                                    uses:="\
-                                        javax.ws.rs,\
-                                        javax.ws.rs.core,\
-                                        javax.ws.rs.ext,\
-                                        javax.ws.rs.client,\
-                                        javax.ws.rs.container",\
-                                osgi.contract;\
-                                    osgi.contract=JavaServlet;\
-                                    version:List<Version>="4.0";\
-                                    uses:="\
-                                        javax.servlet,\
-                                        javax.servlet.annotation,\
-                                        javax.servlet.descriptor,\
-                                        javax.servlet.http"
-                            -cdiannotations:
-                        ]]></bnd>
-                    </configuration>
-                    <executions>
-                        <execution>
-                            <goals>
-                                <goal>bnd-process</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-gpg-plugin</artifactId>
@@ -344,11 +223,6 @@
                     <artifactId>maven-enforcer-plugin</artifactId>
                     <version>${enforcer-plugin-version}</version>
                 </plugin>
-                <plugin>
-                    <groupId>org.jacoco</groupId>
-                    <artifactId>jacoco-maven-plugin</artifactId>
-                    <version>0.8.1</version>
-                </plugin>
             </plugins>
         </pluginManagement>
     </build>
@@ -383,15 +257,14 @@
         </profile>
     </profiles>
     <modules>
-        <module>modules/swagger-annotations</module>
-        <module>modules/swagger-models</module>
-        <module>modules/swagger-core</module>
-        <module>modules/swagger-integration</module>
-        <module>modules/swagger-jaxrs2</module>
-        <module>modules/swagger-jaxrs2-servlet-initializer</module>
-        <module>modules/swagger-jaxrs2-servlet-initializer-v2</module>
-        <module>modules/swagger-maven-plugin</module>
-        <module>modules/swagger-project-jakarta</module>
+        <module>modules/swagger-annotations-jakarta</module>
+        <module>modules/swagger-models-jakarta</module>
+        <module>modules/swagger-core-jakarta</module>
+        <module>modules/swagger-integration-jakarta</module>
+        <module>modules/swagger-jaxrs2-jakarta</module>
+        <module>modules/swagger-jaxrs2-servlet-initializer-jakarta</module>
+        <module>modules/swagger-jaxrs2-servlet-initializer-v2-jakarta</module>
+        <module>modules/swagger-maven-plugin-jakarta</module>
 
     </modules>
     <reporting>
@@ -444,15 +317,21 @@
             </dependency>
             <dependency>
                 <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>${slf4j-version}</version>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-ext</artifactId>
                 <version>${slf4j-version}</version>
                 <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-api</artifactId>
+                <artifactId>slf4j-log4j12</artifactId>
                 <version>${slf4j-version}</version>
-                <scope>compile</scope>
+                <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>org.apache.commons</groupId>
@@ -461,55 +340,9 @@
                 <scope>compile</scope>
             </dependency>
             <dependency>
-                <groupId>org.testng</groupId>
-                <artifactId>testng</artifactId>
-                <version>${testng-version}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>io.rest-assured</groupId>
-                <artifactId>rest-assured</artifactId>
-                <version>${rest-assured-version}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.httpcomponents</groupId>
-                <artifactId>httpmime</artifactId>
-                <version>${httpcomponents-version}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
                 <artifactId>httpclient</artifactId>
                 <version>${httpcomponents-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.mockito</groupId>
-                <artifactId>mockito-core</artifactId>
-                <version>${mockito-version}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>jakarta.servlet</groupId>
-                <artifactId>jakarta.servlet-api</artifactId>
-                <version>${servlet-api-version}</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>jakarta.xml.bind</groupId>
-                <artifactId>jakarta.xml.bind-api</artifactId>
-                <version>${jakarta.xml.bind-api-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>jakarta.activation</groupId>
-                <artifactId>jakarta.activation-api</artifactId>
-                <version>${jakarta.activation-api-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-log4j12</artifactId>
-                <version>${slf4j-version}</version>
-                <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>commons-io</groupId>
@@ -521,31 +354,6 @@
                 <groupId>io.github.classgraph</groupId>
                 <artifactId>classgraph</artifactId>
                 <version>${classgraph-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson.dataformat</groupId>
-                <artifactId>jackson-dataformat-yaml</artifactId>
-                <version>${jackson-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson.core</groupId>
-                <artifactId>jackson-annotations</artifactId>
-                <version>${jackson-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson.core</groupId>
-                <artifactId>jackson-databind</artifactId>
-                <version>${jackson-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson.core</groupId>
-                <artifactId>jackson-core</artifactId>
-                <version>${jackson-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson.datatype</groupId>
-                <artifactId>jackson-datatype-jsr310</artifactId>
-                <version>${jackson-version}</version>
             </dependency>
             <dependency>
                 <groupId>ch.qos.logback</groupId>
@@ -574,40 +382,111 @@
                 <artifactId>snakeyaml</artifactId>
                 <version>${snakeyaml-version}</version>
             </dependency>
+
+
+            <!-- JEE / JAKARTA AND RELATED -->
+            <dependency>
+                <groupId>jakarta.servlet</groupId>
+                <artifactId>jakarta.servlet-api</artifactId>
+                <version>${servlet-api-version}</version>
+                <scope>provided</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>jakarta.xml.bind</groupId>
+                <artifactId>jakarta.xml.bind-api</artifactId>
+                <version>${jakarta.xml.bind-api-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>jakarta.activation</groupId>
+                <artifactId>jakarta.activation-api</artifactId>
+                <version>${jakarta.activation-api-version}</version>
+            </dependency>
             <dependency>
                 <groupId>jakarta.ws.rs</groupId>
                 <artifactId>jakarta.ws.rs-api</artifactId>
                 <version>${jakarta.ws-version}</version>
             </dependency>
             <dependency>
-                <groupId>com.google.guava</groupId>
-                <artifactId>guava</artifactId>
-                <version>${guava-version}</version>
-                <scope>test</scope>
+                <groupId>jakarta.validation</groupId>
+                <artifactId>jakarta.validation-api</artifactId>
+                <version>${jakarta.ws-version}</version>
+            </dependency>
+
+
+            <!-- JACKSON -->
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-annotations</artifactId>
+                <version>${jackson-version}</version>
             </dependency>
             <dependency>
-                <groupId>junit</groupId>
-                <artifactId>junit</artifactId>
-                <version>${junit-version}</version>
-                <scope>test</scope>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-core</artifactId>
+                <version>${jackson-version}</version>
             </dependency>
             <dependency>
-                <groupId>org.apache.ant</groupId>
-                <artifactId>ant</artifactId>
-                <version>${ant-version}</version>
-                <scope>test</scope>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>${jackson-version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>jakarta.activation</groupId>
+                        <artifactId>jakarta.activation-api</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>jakarta.xml.bind</groupId>
+                        <artifactId>jakarta.xml.bind-api</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
-                <groupId>commons-codec</groupId>
-                <artifactId>commons-codec</artifactId>
-                <version>${commons-codec-version}</version>
-                <scope>test</scope>
+                <groupId>com.fasterxml.jackson.dataformat</groupId>
+                <artifactId>jackson-dataformat-yaml</artifactId>
+                <version>${jackson-version}</version>
             </dependency>
             <dependency>
-                <groupId>org.codehaus.groovy</groupId>
-                <artifactId>groovy</artifactId>
-                <version>3.0.7</version>
-                <scope>test</scope>
+                <groupId>com.fasterxml.jackson.datatype</groupId>
+                <artifactId>jackson-datatype-jsr310</artifactId>
+                <version>${jackson-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.jaxrs</groupId>
+                <artifactId>jackson-jaxrs-json-provider</artifactId>
+                <classifier>jakarta</classifier>
+                <version>${jackson-version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>jakarta.activation</groupId>
+                        <artifactId>jakarta.activation-api</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>jakarta.xml.bind</groupId>
+                        <artifactId>jakarta.xml.bind-api</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.jaxrs</groupId>
+                <artifactId>jackson-jaxrs-base</artifactId>
+                <classifier>jakarta</classifier>
+                <version>${jackson-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.module</groupId>
+                <artifactId>jackson-module-jaxb-annotations</artifactId>
+                <classifier>jakarta</classifier>
+                <version>${jackson-version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>jakarta.activation</groupId>
+                        <artifactId>jakarta.activation-api</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>jakarta.xml.bind</groupId>
+                        <artifactId>jakarta.xml.bind-api</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -615,12 +494,12 @@
         <joda-version>1.9.2</joda-version>
         <joda-time-version>2.9.9</joda-time-version>
         <snakeyaml-version>1.27</snakeyaml-version>
-        <jakarta.ws-version>2.1.6</jakarta.ws-version>
-        <jakarta.xml.bind-api-version>2.3.3</jakarta.xml.bind-api-version>
-        <jakarta.activation-api-version>1.2.2</jakarta.activation-api-version>
+        <jakarta.ws-version>3.0.0</jakarta.ws-version>
+        <jakarta.xml.bind-api-version>3.0.0</jakarta.xml.bind-api-version>
+        <jakarta.activation-api-version>2.0.0</jakarta.activation-api-version>
         <bnd-version>5.1.2</bnd-version>
-        <servlet-api-version>4.0.3</servlet-api-version>
-        <jersey2-version>2.26</jersey2-version>
+        <servlet-api-version>5.0.0</servlet-api-version>
+        <jersey2-version>3.0.1</jersey2-version>
         <junit-version>4.13.1</junit-version>
         <jackson-version>2.12.1</jackson-version>
         <logback-version>1.2.3</logback-version>
@@ -647,5 +526,8 @@
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <sonatypeOssDistMgmtSnapshotsUrl>https://oss.sonatype.org/content/repositories/snapshots/</sonatypeOssDistMgmtSnapshotsUrl>
+
+        <maven.version>3.6.3</maven.version>
+        <commons-compress-version>1.20</commons-compress-version>
     </properties>
 </project>

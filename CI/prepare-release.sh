@@ -25,6 +25,11 @@ $CUR/CI/releaseNotes.py "$SC_LAST_RELEASE" "$SC_RELEASE_TITLE" "$SC_RELEASE_TAG"
 ./mvnw versions:set -DnewVersion=$SC_VERSION
 ./mvnw versions:commit
 
+cd modules/swagger-project-jakarta
+../../mvnw versions:set -DnewVersion=$SC_VERSION
+cd ../..
+
+
 #####################
 ### update all other versions in files around to the new release, including readme and gradle ###
 #####################
