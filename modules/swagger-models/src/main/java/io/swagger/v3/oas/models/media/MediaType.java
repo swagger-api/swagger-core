@@ -22,6 +22,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  * MediaType
  *
@@ -195,5 +197,13 @@ public class MediaType {
         return o.toString().replace("\n", "\n    ");
     }
 
+    @JsonIgnore
+    public boolean isEmpty() {
+        return (schema == null || schema.isEmpty()) &&
+            examples == null &&
+            example == null &&
+            encoding == null &&
+            extensions == null;
+    }
 }
 

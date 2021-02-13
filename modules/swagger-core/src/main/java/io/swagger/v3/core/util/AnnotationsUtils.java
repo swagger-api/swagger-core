@@ -541,13 +541,15 @@ public abstract class AnnotationsUtils {
             }
         }
 
-
+        if (schemaObject.isEmpty()) {
+            return Optional.of(schemaObject.noContent(true));
+        }
         return Optional.of(schemaObject);
     }
 
     public static Schema resolveSchemaFromType(Class<?> schemaImplementation, Components components, JsonView jsonViewAnnotation) {
 	if (Empty.class.equals(schemaImplementation)) {
-	    return new Schema();
+	    return new Schema().noContent(true);
 	}
 	Schema schemaObject;
         PrimitiveType primitiveType = PrimitiveType.fromType(schemaImplementation);
@@ -1092,6 +1094,8 @@ public abstract class AnnotationsUtils {
             if (schemaImplementation != Void.class) {
                 isArray = true;
             }
+        } else if (schemaImplementation == Empty.class) {
+            return Optional.of(new Schema<>().noContent(true));
         }
         return getSchema(annotationContent.schema(), annotationContent.array(), isArray, schemaImplementation, components, jsonViewAnnotation);
     }

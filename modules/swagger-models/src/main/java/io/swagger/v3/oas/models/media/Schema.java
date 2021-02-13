@@ -72,6 +72,8 @@ public class Schema<T> {
     private Discriminator discriminator = null;
 
     private boolean exampleSetFlag;
+    
+    private boolean noContentFlag = false;
 
     public Schema() {
     }
@@ -894,5 +896,53 @@ public class Schema<T> {
         return o.toString().replace("\n", "\n    ");
     }
 
+    @JsonIgnore
+    public boolean isEmpty() {
+        return name == null &&
+                title == null &&
+                multipleOf == null &&
+                maximum == null &&
+                exclusiveMaximum == null &&
+                minimum == null &&
+                exclusiveMinimum == null &&
+                maxLength == null &&
+                minLength == null &&
+                pattern == null &&
+                maxItems == null &&
+                minItems == null &&
+                uniqueItems == null &&
+                maxProperties == null &&
+                minProperties == null &&
+                required == null &&
+                type == null &&
+                not == null &&
+                properties == null &&
+                additionalProperties == null &&
+                description == null &&
+                format == null &&
+                $ref == null &&
+                nullable == null &&
+                readOnly == null &&
+                writeOnly == null &&
+                example == null &&
+                externalDocs == null &&
+                deprecated == null &&
+                xml == null &&
+                extensions == null &&
+                _enum == null &&
+                discriminator == null &&
+                exampleSetFlag == false &&
+                noContentFlag == false;
+    }
+    
+    @JsonIgnore
+    public boolean isNoContent() {
+        return this.noContentFlag;
+    }
+    
+    public Schema noContent(boolean noContentFlag) {
+        this.noContentFlag = noContentFlag;
+        return this;
+    }
 }
 

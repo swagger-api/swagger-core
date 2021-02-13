@@ -66,7 +66,6 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
@@ -1091,23 +1090,33 @@ public class Reader implements OpenApiReader {
                     }
                 }
                 operation.getResponses().forEach((k, value) -> {
-                    if (value.getContent() == null) {
+                    if (value.getContent() == null) { // no content annotation -> DEFAULT CONTENT/SCHEMA
                         value.setContent(content);
                     } else if (!"default".equals(k)) {
-                        if (value.getContent().size() == 1) {
-                            Entry<String, MediaType> firstEntry = value.getContent().entrySet().iterator().next();
-                            if (firstEntry.getKey().equals(DEFAULT_MEDIA_TYPE_VALUE) && isEmptyContent(value.getContent())) {
-                                value.setContent(null);
-                            }
-                        } else {
-                            for (Entry<String, MediaType> entry : value.getContent().entrySet()) {
-                                Schema sch = entry.getValue().getSchema();
-                                if (sch == null) {
-                                    entry.getValue().setSchema(returnTypeSchema);
-                                } else if (new Schema().equals(sch)) {
-                                    entry.getValue().setSchema(null);
+                        Set<String> contentsToRemove = new HashSet<>();
+                        value.getContent().forEach((mediaStr, mediaObj) -> {
+                            if (mediaObj.isEmpty()) { // content annotation empty or only mediaType field defined -> DEFAULT CONTENT/SCHEMA
+                                if (value.getContent().size() == 1) {
+                                    value.setContent(new Content().addMediaType(mediaStr, mediaType));
+                                } else {
+                                    mediaObj.setSchema(returnTypeSchema);
+                                }
+                            } else {
+                                Schema schemaObj = mediaObj.getSchema();
+                                if (schemaObj == null || schemaObj.isEmpty()) {
+                                    mediaObj.setSchema(returnTypeSchema);
+                                } else if (schemaObj.isNoContent()) {
+                                    mediaObj.setSchema(null);
+                                    if (mediaObj.isEmpty()) {
+                                        contentsToRemove.add(mediaStr);
+                                    }
                                 }
                             }
+                        });
+                        
+                        contentsToRemove.stream().forEach(s -> value.getContent().remove(s));
+                        if (value.getContent().isEmpty()) {
+                            value.setContent(null);
                         }
                     }
                 });
@@ -1132,25 +1141,6 @@ public class Reader implements OpenApiReader {
         return operation;
     }
     
-    private final static MediaType EMPTY_MEDIA_TYPE = new MediaType().schema(new Schema());
-    
-    private boolean isEmptyMediaType(MediaType mediaType) {
-        if (mediaType != null && EMPTY_MEDIA_TYPE.equals(mediaType)) {
-            return true;
-        }
-        return false;
-    }
-    
-    private boolean isEmptyContent(Content content) {
-        if (content.size() == 0) {
-            return true;
-        } else if (content.size() == 1) {
-            MediaType mediaType = content.get(ParameterProcessor.MEDIA_TYPE);
-            return isEmptyMediaType(mediaType);
-        }
-        return false;
-    }
-
     private boolean shouldIgnoreClass(String className) {
         if (StringUtils.isBlank(className)) {
             return true;
