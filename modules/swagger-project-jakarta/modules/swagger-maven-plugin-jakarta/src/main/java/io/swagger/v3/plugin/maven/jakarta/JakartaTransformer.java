@@ -8,6 +8,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.URI;
@@ -137,43 +138,38 @@ public class JakartaTransformer {
         Path source = Paths.get(inPath);
 
         try (ZipInputStream zis = new ZipInputStream(new FileInputStream(source.toFile()))) {
-
-            // list files in zip
             ZipEntry zipEntry = zis.getNextEntry();
 
             while (zipEntry != null) {
+                Path path = target.resolve(zipEntry.getName()).normalize();
 
-                boolean isDirectory = false;
-
-                if (zipEntry.getName().endsWith(File.separator)) {
-                    isDirectory = true;
+                if (!path.startsWith(target + File.separator)) {
+                    throw new IOException("Entry is outside of the target dir: " + zipEntry.getName());
                 }
 
-                Path targetDirResolved = target.resolve(zipEntry.getName());
-
-                Path normalizePath = targetDirResolved.normalize();
-                if (!normalizePath.startsWith(target)) {
-                    throw new IOException("Bad zip entry: " + zipEntry.getName());
-                }
-
-                Path newPath = normalizePath;
-
-                if (isDirectory) {
-                    Files.createDirectories(newPath);
+                if (zipEntry.isDirectory()) {
+                    if (!Files.isDirectory(path)) {
+                        Files.createDirectories(path);
+                    }
                 } else {
-                    if (newPath.getParent() != null) {
-                        if (Files.notExists(newPath.getParent())) {
-                            Files.createDirectories(newPath.getParent());
+                    // fix for Windows-created archives
+                    Path parent = path.getParent();
+                    if (!Files.isDirectory(parent)) {
+                        Files.createDirectories(parent);
+                    }
+
+                    // write file content
+                    try (OutputStream os = Files.newOutputStream(path)) {
+                        byte[] buffer = new byte[1024];
+                        int len;
+                        while ((len = zis.read(buffer)) > 0) {
+                            os.write(buffer, 0, len);
                         }
                     }
-                    Files.copy(zis, newPath, StandardCopyOption.REPLACE_EXISTING);
                 }
-
                 zipEntry = zis.getNextEntry();
-
             }
             zis.closeEntry();
-
         }
     }
 
@@ -182,10 +178,9 @@ public class JakartaTransformer {
      * Compress temp directory back into Jar after transformed
      *
      */
-
     public static void jar(Path sourcePath, String outJarPath) throws IOException {
 
-        URI uri = URI.create("jar:file:" + outJarPath);
+        URI uri = URI.create("jar:" + Paths.get(outJarPath).normalize().toUri());
 
         Files.walkFileTree(sourcePath, new SimpleFileVisitor<Path>() {
             @Override
