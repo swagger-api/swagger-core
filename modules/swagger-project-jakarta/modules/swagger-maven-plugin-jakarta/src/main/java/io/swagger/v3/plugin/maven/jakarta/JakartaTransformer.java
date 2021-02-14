@@ -132,46 +132,46 @@ public class JakartaTransformer {
      * Extracts Jar into temp directory
      *
      */
-	private static void extract(String inPath, String outPath) throws Exception {
+    private static void extract(String inPath, String outPath) throws Exception {
 
-		Path target = Paths.get(outPath);
-		Path source = Paths.get(inPath);
+        Path target = Paths.get(outPath);
+        Path source = Paths.get(inPath);
 
-		try (ZipInputStream zis = new ZipInputStream(new FileInputStream(source.toFile()))) {
-			ZipEntry zipEntry = zis.getNextEntry();
+        try (ZipInputStream zis = new ZipInputStream(new FileInputStream(source.toFile()))) {
+            ZipEntry zipEntry = zis.getNextEntry();
 
-			while (zipEntry != null) {
-				Path path = target.resolve(zipEntry.getName()).normalize();
+            while (zipEntry != null) {
+                Path path = target.resolve(zipEntry.getName()).normalize();
 
-				if (!path.startsWith(target + File.separator)) {
-					throw new IOException("Entry is outside of the target dir: " + zipEntry.getName());
-				}
+                if (!path.startsWith(target + File.separator)) {
+                    throw new IOException("Entry is outside of the target dir: " + zipEntry.getName());
+                }
 
-				if (zipEntry.isDirectory()) {
-					if (!Files.isDirectory(path)) {
-						Files.createDirectories(path);
-					}
-				} else {
-					// fix for Windows-created archives
-					Path parent = path.getParent();
-					if (!Files.isDirectory(parent)) {
-						Files.createDirectories(parent);
-					}
+                if (zipEntry.isDirectory()) {
+                    if (!Files.isDirectory(path)) {
+                        Files.createDirectories(path);
+                    }
+                } else {
+                    // fix for Windows-created archives
+                    Path parent = path.getParent();
+                    if (!Files.isDirectory(parent)) {
+                        Files.createDirectories(parent);
+                    }
 
-					// write file content
-					try (OutputStream os = Files.newOutputStream(path)) {
-						byte[] buffer = new byte[1024];
-						int len;
-						while ((len = zis.read(buffer)) > 0) {
-							os.write(buffer, 0, len);
-						}
-					}
-				}
-				zipEntry = zis.getNextEntry();
-			}
-			zis.closeEntry();
-		}
-	}
+                    // write file content
+                    try (OutputStream os = Files.newOutputStream(path)) {
+                        byte[] buffer = new byte[1024];
+                        int len;
+                        while ((len = zis.read(buffer)) > 0) {
+                            os.write(buffer, 0, len);
+                        }
+                    }
+                }
+                zipEntry = zis.getNextEntry();
+            }
+            zis.closeEntry();
+        }
+    }
 
     /**
      *
