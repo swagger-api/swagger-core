@@ -18,13 +18,13 @@ def readUrl(name):
         content = urllib2.urlopen(request).read()
         jcont = json.loads(content)
         return jcont;
-    except urllib2.HTTPError, e:
+    except urllib2.HTTPError as e:
         print ('HTTPError = ' + str(e.code))
         raise e
-    except urllib2.URLError, e:
+    except urllib2.URLError as e:
         print ('URLError = ' + str(e.reason))
         raise e
-    except httplib.HTTPException, e:
+    except httplib.HTTPException as e:
         print ('HTTPException = ' + str(e))
         raise e
     except Exception:
@@ -42,14 +42,14 @@ def postUrl(name, body):
         content = urllib2.urlopen(request, body).read()
         jcont = json.loads(content)
         return jcont;
-    except urllib2.HTTPError, e:
+    except urllib2.HTTPError as e:
         print ('HTTPError = ' + str(e.code))
         print (str(e))
         raise e
-    except urllib2.URLError, e:
+    except urllib2.URLError as e:
         print ('URLError = ' + str(e.reason))
         raise e
-    except httplib.HTTPException, e:
+    except httplib.HTTPException as e:
         print ('HTTPException = ' + str(e))
         raise e
     except Exception:
