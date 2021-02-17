@@ -13,7 +13,7 @@ def getLastReleaseTag():
 # main
 def main():
     result = getLastReleaseTag()
-    print result
+    print (result)
 
 # here start main
 main()
