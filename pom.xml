@@ -367,6 +367,9 @@
                                 <arg>--pinentry-mode</arg>
                                 <arg>loopback</arg>
                             </gpgArguments>
+                            <excludes>
+                                <exclude>**/*-jakarta*.jar</exclude>
+                            </excludes>
                         </configuration>
                         <executions>
                             <execution>
