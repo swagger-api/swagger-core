@@ -15,7 +15,7 @@ cd ../..
 #####################
 ### publish pre-prepared release (tag is created)
 #####################
-$CUR/CI/publishRelease.py "$SC_RELEASE_TAG"
+python $CUR/CI/publishRelease.py "$SC_RELEASE_TAG"
 
 #####################
 ### update the version to next snapshot in maven project with set version
