@@ -108,6 +108,10 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
                 <version>3.2.1</version>
+                <configuration>
+                    <forceCreation>true</forceCreation>
+                    <includePom>true</includePom>
+                </configuration>
                 <executions>
                     <execution>
                         <id>attach-sources</id>
