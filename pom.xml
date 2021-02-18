@@ -212,6 +212,7 @@
                     <skipNexusStagingDeployMojo>true</skipNexusStagingDeployMojo>-->
                 </configuration>
             </plugin>
+<!-- TODO replace custom plugin with Eclipse's when attachment of transformed JAR supports being optional.
             <plugin>
                 <groupId>org.eclipse.transformer</groupId>
                 <artifactId>org.eclipse.transformer.maven</artifactId>
@@ -229,7 +230,7 @@
                         <phase>package</phase>
                     </execution>
                 </executions>
-            </plugin>
+            </plugin>-->
         </plugins>
         <pluginManagement>
             <plugins>
@@ -367,9 +368,6 @@
                                 <arg>--pinentry-mode</arg>
                                 <arg>loopback</arg>
                             </gpgArguments>
-                            <excludes>
-                                <exclude>**/*jakarta*</exclude>
-                            </excludes>
                         </configuration>
                         <executions>
                             <execution>
@@ -386,6 +384,7 @@
         </profile>
     </profiles>
     <modules>
+        <module>modules/swagger-eclipse-transformer-maven-plugin</module>
         <module>modules/swagger-annotations</module>
         <module>modules/swagger-models</module>
         <module>modules/swagger-core</module>
