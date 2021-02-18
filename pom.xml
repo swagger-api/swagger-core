@@ -368,7 +368,7 @@
                                 <arg>loopback</arg>
                             </gpgArguments>
                             <excludes>
-                                <exclude>**/*-jakarta*.jar</exclude>
+                                <exclude>**/*jakarta*</exclude>
                             </excludes>
                         </configuration>
                         <executions>
