@@ -69,6 +69,10 @@ sc_find="name: 'swagger-jaxrs2', version:'$SC_VERSION-SNAPSHOT"
 sc_replace="name: 'swagger-jaxrs2', version:'$SC_VERSION"
 sed -i -e "s/$sc_find/$sc_replace/g" $CUR/modules/swagger-gradle-plugin/src/test/java/io/swagger/v3/plugins/gradle/SwaggerResolveTest.java
 
+sc_find="<version>$SC_LAST_RELEASE<\/version>"
+sc_replace="<version>$SC_VERSION<\/version>"
+sed -i -e "s/$sc_find/$sc_replace/g" $CUR/modules/swagger-maven-plugin/README.md
+
 #####################
 ### build and test maven ###
 #####################
