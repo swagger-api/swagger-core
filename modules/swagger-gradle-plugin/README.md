@@ -2,12 +2,31 @@
 
 **`swagger-gradle-plugin` supports gradle 3.2 and higher.**
 
+## Jakarta namespace support
+
+Since version 2.1.7 Swagger Core supports also Jakarta namespace, with a parallel set of artifacts with `-jakarta` suffix, providing the same functionality as the "standard" `javax` namespace ones.
+Please check [Wiki](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Getting-started) for more details
+
+To have gradle plugin use the `jakarta` namespace artifacts, you need to provide a value to parameter `buildClasspath`
+In many cases it is sufficient to set it to the `classpath` value, like:
+
+`buildClasspath = classpath`
+
+Alternatively provide as value a classpath with the following dependencies (replacing the provided [`javax` ones](https://github.com/swagger-api/swagger-core/blob/master/modules/swagger-gradle-plugin/src/main/java/io/swagger/v3/plugins/gradle/SwaggerPlugin.java#L16-L25)):
+
+* org.apache.commons:commons-lang3:3.7
+* io.swagger.core.v3:swagger-jaxrs2-jakarta:2.1.7
+* jakarta.ws.rs:jakarta.ws.rs-api:3.0.0
+* jakarta.servlet:jakarta.servlet-api:5.0.0
+
 ## Installation
+
+
 ### Gradle 3.2 and higher
 
 ```
 plugins {
-  id "io.swagger.core.v3.swagger-gradle-plugin" version "2.1.6"
+  id "io.swagger.core.v3.swagger-gradle-plugin" version "2.1.7"
 }
 ```
 ### Gradle 1.x and 2.0
@@ -24,7 +43,7 @@ buildscript {
     }
   }
   dependencies {
-    classpath "io.swagger.core.v3:swagger-gradle-plugin:2.1.6"
+    classpath "io.swagger.core.v3:swagger-gradle-plugin:2.1.7"
   }
 }
 

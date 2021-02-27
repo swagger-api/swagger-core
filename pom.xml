@@ -6,7 +6,7 @@
     <packaging>pom</packaging>
     <name>swagger-project</name>
     <description>swagger-project</description>
-    <version>2.1.7-SNAPSHOT</version>
+    <version>2.1.8-SNAPSHOT</version>
     <url>https://github.com/swagger-api/swagger-core</url>
     <scm>
         <connection>scm:git:git@github.com:swagger-api/swagger-core.git</connection>
@@ -212,9 +212,71 @@
                     <skipNexusStagingDeployMojo>true</skipNexusStagingDeployMojo>-->
                 </configuration>
             </plugin>
+<!-- TODO replace custom plugin with Eclipse's when attachment of transformed JAR supports being optional.
+            <plugin>
+                <groupId>org.eclipse.transformer</groupId>
+                <artifactId>org.eclipse.transformer.maven</artifactId>
+                <version>0.2.0</version>
+                <configuration>
+                    <classifier>jakarta</classifier>
+                    <outputDirectory>${project.basedir}/../swagger-project-jakarta/modules/${project.artifactId}-jakarta/transformed</outputDirectory>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>transform-jakarta</id>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <phase>package</phase>
+                    </execution>
+                </executions>
+            </plugin>-->
         </plugins>
         <pluginManagement>
             <plugins>
+                <plugin>
+                    <groupId>biz.aQute.bnd</groupId>
+                    <artifactId>bnd-maven-plugin</artifactId>
+                    <version>${bnd-version}</version>
+                    <configuration>
+                        <bnd><![CDATA[
+                            Bundle-SymbolicName: ${project.groupId}.${project.artifactId}
+                            -exportcontents: ${packages;NAMED;!*.internal}
+                            -noextraheaders: true
+                            -noclassforname: true
+                            -snapshot: SNAPSHOT
+                            -contract: \
+                                JavaJAXRS;resolution:=optional,\
+                                JavaServlet;resolution:=optional
+                            -define-contract: \
+                                osgi.contract;\
+                                    osgi.contract=JavaJAXRS;\
+                                    version:List<Version>="2.0";\
+                                    uses:="\
+                                        javax.ws.rs,\
+                                        javax.ws.rs.core,\
+                                        javax.ws.rs.ext,\
+                                        javax.ws.rs.client,\
+                                        javax.ws.rs.container",\
+                                osgi.contract;\
+                                    osgi.contract=JavaServlet;\
+                                    version:List<Version>="4.0";\
+                                    uses:="\
+                                        javax.servlet,\
+                                        javax.servlet.annotation,\
+                                        javax.servlet.descriptor,\
+                                        javax.servlet.http"
+                            -cdiannotations:
+                        ]]></bnd>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>bnd-process</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-gpg-plugin</artifactId>
@@ -322,6 +384,7 @@
         </profile>
     </profiles>
     <modules>
+        <module>modules/swagger-eclipse-transformer-maven-plugin</module>
         <module>modules/swagger-annotations</module>
         <module>modules/swagger-models</module>
         <module>modules/swagger-core</module>
@@ -330,6 +393,7 @@
         <module>modules/swagger-jaxrs2-servlet-initializer</module>
         <module>modules/swagger-jaxrs2-servlet-initializer-v2</module>
         <module>modules/swagger-maven-plugin</module>
+        <module>modules/swagger-project-jakarta</module>
 
     </modules>
     <reporting>
@@ -379,11 +443,6 @@
                 <groupId>org.apache.maven</groupId>
                 <artifactId>maven-plugin-tools-api</artifactId>
                 <version>3.5.1</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-bundle-plugin</artifactId>
-                <version>${felix-version}</version>
             </dependency>
             <dependency>
                 <groupId>org.slf4j</groupId>
@@ -562,18 +621,18 @@
     <properties>
         <joda-version>1.9.2</joda-version>
         <joda-time-version>2.9.9</joda-time-version>
-        <snakeyaml-version>1.26</snakeyaml-version>
+        <snakeyaml-version>1.27</snakeyaml-version>
         <jakarta.ws-version>2.1.6</jakarta.ws-version>
         <jakarta.xml.bind-api-version>2.3.3</jakarta.xml.bind-api-version>
         <jakarta.activation-api-version>1.2.2</jakarta.activation-api-version>
-        <felix-version>4.2.1</felix-version>
+        <bnd-version>5.1.2</bnd-version>
         <servlet-api-version>4.0.3</servlet-api-version>
         <jersey2-version>2.26</jersey2-version>
         <junit-version>4.13.1</junit-version>
-        <jackson-version>2.11.1</jackson-version>
+        <jackson-version>2.12.1</jackson-version>
         <logback-version>1.2.3</logback-version>
-        <classgraph-version>4.8.65</classgraph-version>
-        <guava-version>27.0.1-jre</guava-version>
+        <classgraph-version>4.8.95</classgraph-version>
+        <guava-version>30.1-jre</guava-version>
         <ant-version>1.10.9</ant-version>
         <commons-lang-version>3.7</commons-lang-version>
         <commons-io-version>2.6</commons-io-version>

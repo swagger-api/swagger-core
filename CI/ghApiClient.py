@@ -18,18 +18,18 @@ def readUrl(name):
         content = urllib2.urlopen(request).read()
         jcont = json.loads(content)
         return jcont;
-    except urllib2.HTTPError, e:
-        print 'HTTPError = ' + str(e.code)
+    except urllib2.HTTPError as e:
+        print ('HTTPError = ' + str(e.code))
         raise e
-    except urllib2.URLError, e:
-        print 'URLError = ' + str(e.reason)
+    except urllib2.URLError as e:
+        print ('URLError = ' + str(e.reason))
         raise e
-    except httplib.HTTPException, e:
-        print 'HTTPException = ' + str(e)
+    except httplib.HTTPException as e:
+        print ('HTTPException = ' + str(e))
         raise e
     except Exception:
         import traceback
-        print 'generic exception: ' + traceback.format_exc()
+        print ('generic exception: ' + traceback.format_exc())
         raise IOError
 
 def postUrl(name, body):
@@ -42,17 +42,17 @@ def postUrl(name, body):
         content = urllib2.urlopen(request, body).read()
         jcont = json.loads(content)
         return jcont;
-    except urllib2.HTTPError, e:
-        print 'HTTPError = ' + str(e.code)
-        print str(e)
+    except urllib2.HTTPError as e:
+        print ('HTTPError = ' + str(e.code))
+        print (str(e))
         raise e
-    except urllib2.URLError, e:
-        print 'URLError = ' + str(e.reason)
+    except urllib2.URLError as e:
+        print ('URLError = ' + str(e.reason))
         raise e
-    except httplib.HTTPException, e:
-        print 'HTTPException = ' + str(e)
+    except httplib.HTTPException as e:
+        print ('HTTPException = ' + str(e))
         raise e
     except Exception:
         import traceback
-        print 'generic exception: ' + traceback.format_exc()
+        print ('generic exception: ' + traceback.format_exc())
         raise IOError
