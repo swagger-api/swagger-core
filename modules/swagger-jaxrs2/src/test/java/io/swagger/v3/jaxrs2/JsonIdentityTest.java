@@ -85,22 +85,6 @@ public class JsonIdentityTest {
             "            application/xml: {}\n" +
             "components:\n" +
             "  schemas:\n" +
-            "    SourceDefinition4:\n" +
-            "      type: object\n" +
-            "      properties:\n" +
-            "        name:\n" +
-            "          type: string\n" +
-            "        testName2:\n" +
-            "          type: integer\n" +
-            "          format: int32\n" +
-            "    SourceDefinition5:\n" +
-            "      type: object\n" +
-            "      properties:\n" +
-            "        name:\n" +
-            "          type: string\n" +
-            "        '@id':\n" +
-            "          type: integer\n" +
-            "          format: int32\n" +
             "    ModelWithJsonIdentity:\n" +
             "      type: object\n" +
             "      properties:\n" +
@@ -144,15 +128,6 @@ public class JsonIdentityTest {
             "          $ref: '#/components/schemas/SourceDefinition10'\n" +
             "        IntSequenceGeneratorAtClassLevel:\n" +
             "          $ref: '#/components/schemas/SourceDefinition11'\n" +
-            "    SourceDefinition3:\n" +
-            "      type: object\n" +
-            "      properties:\n" +
-            "        name:\n" +
-            "          type: string\n" +
-            "        driverId:\n" +
-            "          type: string\n" +
-            "        '@id':\n" +
-            "          type: string\n" +
             "    SourceDefinition1:\n" +
             "      type: object\n" +
             "      properties:\n" +
@@ -168,20 +143,38 @@ public class JsonIdentityTest {
             "        name:\n" +
             "          type: string\n" +
             "    SourceDefinition11:\n" +
-            "      title: SourceDefinition11\n" +
+            "      type: object\n" +
             "      properties:\n" +
+            "        'name':\n" +
+            "          type: string\n" +
             "        '@id':\n" +
             "          type: integer\n" +
             "          format: int32\n"+
-            "        'name':\n" +
-            "          type: string\n" +
-            "    SourceDefinition8:\n" +
+            "    SourceDefinition3:\n" +
             "      type: object\n" +
             "      properties:\n" +
             "        name:\n" +
             "          type: string\n" +
             "        driverId:\n" +
             "          type: string\n" +
+            "        '@id':\n" +
+            "          type: string\n" +
+            "    SourceDefinition4:\n" +
+            "      type: object\n" +
+            "      properties:\n" +
+            "        name:\n" +
+            "          type: string\n" +
+            "        testName2:\n" +
+            "          type: integer\n" +
+            "          format: int32\n" +
+            "    SourceDefinition5:\n" +
+            "      type: object\n" +
+            "      properties:\n" +
+            "        name:\n" +
+            "          type: string\n" +
+            "        '@id':\n" +
+            "          type: integer\n" +
+            "          format: int32\n" +
             "    SourceDefinition6:\n" +
             "      type: object\n" +
             "      properties:\n" +
@@ -197,5 +190,13 @@ public class JsonIdentityTest {
             "          type: string\n" +
             "        '@id':\n" +
             "          type: string\n" +
-            "          format: uuid\n";
+            "          format: uuid\n" +
+            "    SourceDefinition8:\n" +
+            "      type: object\n" +
+            "      properties:\n" +
+            "        name:\n" +
+            "          type: string\n" +
+            "        driverId:\n" +
+            "          type: string\n";
+
 }
