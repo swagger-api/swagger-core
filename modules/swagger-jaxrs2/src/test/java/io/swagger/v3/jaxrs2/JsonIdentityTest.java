@@ -142,6 +142,8 @@ public class JsonIdentityTest {
             "          type: string\n" +
             "        WithoutJsonIdentityReference:\n" +
             "          $ref: '#/components/schemas/SourceDefinition10'\n" +
+            "        IntSequenceGeneratorAtClassLevel:\n" +
+            "          $ref: '#/components/schemas/SourceDefinition11'\n" +
             "    SourceDefinition3:\n" +
             "      type: object\n" +
             "      properties:\n" +
@@ -164,6 +166,14 @@ public class JsonIdentityTest {
             "        driver:\n" +
             "          type: string\n" +
             "        name:\n" +
+            "          type: string\n" +
+            "    SourceDefinition11:\n" +
+            "      title: SourceDefinition11\n" +
+            "      properties:\n" +
+            "        '@id':\n" +
+            "          type: integer\n" +
+            "          format: int32\n"+
+            "        'name':\n" +
             "          type: string\n" +
             "    SourceDefinition8:\n" +
             "      type: object\n" +
