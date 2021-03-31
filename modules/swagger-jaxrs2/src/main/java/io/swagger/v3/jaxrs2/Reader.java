@@ -606,11 +606,7 @@ public class Reader implements OpenApiReader {
                         continue;
                     }
 
-                    final Iterator<OpenAPIExtension> chain = OpenAPIExtensions.chain();
-                    if (chain.hasNext()) {
-                        final OpenAPIExtension extension = chain.next();
-                        extension.decorateOperation(operation, method, chain);
-                    }
+                    decorateOperation(cls, operation, method);
 
                     PathItem pathItemObject;
                     if (openAPI.getPaths() != null && openAPI.getPaths().get(operationPath) != null) {
@@ -662,6 +658,20 @@ public class Reader implements OpenApiReader {
         }
 
         return openAPI;
+    }
+
+    protected void decorateOperation(Class<?> cls, Operation operation, Method method) {
+        final Iterator<OpenAPIExtension> chain = OpenAPIExtensions.chain();
+        if (chain.hasNext()) {
+            final OpenAPIExtension extension = chain.next();
+            extension.decorateOperation(operation, method, chain);
+        }
+
+        final Iterator<OpenAPIExtension> chain2 = OpenAPIExtensions.chain();
+        if (chain2.hasNext()) {
+            final OpenAPIExtension extension = chain2.next();
+            extension.decorateOperation(cls, operation, method, chain2);
+        }
     }
 
     protected Content processContent(Content content, Schema schema, Consumes methodConsumes, Consumes classConsumes) {

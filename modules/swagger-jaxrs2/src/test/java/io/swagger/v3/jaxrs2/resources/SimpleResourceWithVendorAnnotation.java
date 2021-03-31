@@ -69,4 +69,5 @@ public class SimpleResourceWithVendorAnnotation {
     public static @interface VendorFunnyAnnotation {
 
     }
+
 }

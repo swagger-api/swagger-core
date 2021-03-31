@@ -43,6 +43,13 @@ public abstract class AbstractOpenAPIExtension implements OpenAPIExtension {
         }
     }
 
+    @Override
+    public void decorateOperation(Class<?> clazz, Operation operation, Method method, Iterator<OpenAPIExtension> chain) {
+        if (chain.hasNext()) {
+            chain.next().decorateOperation(clazz, operation, method, chain);
+        }
+    }
+
     protected boolean shouldIgnoreClass(Class<?> cls) {
         return false;
     }
