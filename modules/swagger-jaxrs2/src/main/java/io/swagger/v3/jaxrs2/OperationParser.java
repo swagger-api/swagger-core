@@ -16,7 +16,7 @@ import java.util.Optional;
 
 public class OperationParser {
 
-    public static final String COMPONENTS_REF = "#/components/schemas/";
+    public static final String COMPONENTS_REF = Components.COMPONENTS_SCHEMAS_REF;
 
     public static Optional<RequestBody> getRequestBody(io.swagger.v3.oas.annotations.parameters.RequestBody requestBody, Consumes classConsumes, Consumes methodConsumes, Components components, JsonView jsonViewAnnotation) {
         if (requestBody == null) {
@@ -41,9 +41,7 @@ public class OperationParser {
         if (requestBody.extensions().length > 0) {
             Map<String, Object> extensions = AnnotationsUtils.getExtensions(requestBody.extensions());
             if (extensions != null) {
-                for (String ext : extensions.keySet()) {
-                    requestBodyObject.addExtension(ext, extensions.get(ext));
-                }
+                extensions.forEach(requestBodyObject::addExtension);
             }
             isEmpty = false;
         }
@@ -82,9 +80,7 @@ public class OperationParser {
             if (response.extensions().length > 0) {
                 Map<String, Object> extensions = AnnotationsUtils.getExtensions(response.extensions());
                 if (extensions != null) {
-                    for (String ext : extensions.keySet()) {
-                        apiResponseObject.addExtension(ext, extensions.get(ext));
-                    }
+                    extensions.forEach(apiResponseObject::addExtension);
                 }
             }
 

@@ -1,0 +1,156 @@
+name: Release
+
+on:
+  workflow_dispatch:
+    branches: ["master"]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - uses: tibdex/github-app-token@v1
+      id: generate-token
+      with:
+        app_id: ${{ secrets.APP_ID }}
+        private_key: ${{ secrets.APP_PRIVATE_KEY }}
+    - name: Set up Python 2.7
+      uses: actions/setup-python@v2
+      with:
+        python-version: 2.x
+    - name: Set up Java 8
+      uses: actions/setup-java@v1
+      with:
+        java-version: 8
+        server-id: ossrh
+        server-username: MAVEN_USERNAME
+        server-password: MAVEN_PASSWORD
+    - name: Cache local Maven repository
+      uses: actions/cache@v2
+      with:
+        path: ~/.m2/repository
+        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+        restore-keys: |
+          ${{ runner.os }}-maven-
+    - name: Set up Gradle credentials
+      run: |
+        mkdir -p ~/.gradle
+        echo "gradle.publish.key=${GRADLE_PUBLISH_KEY}\ngradle.publish.secret=${GRADLE_PUBLISH_SECRET}" > ~/.gradle/gradle.properties
+    - name: Run pre release script
+      id: preRelease
+      run: |
+        # export GPG_TTY=$(tty)
+        export MY_POM_VERSION=`./mvnw -q -Dexec.executable="echo" -Dexec.args='${projects.version}' --non-recursive org.codehaus.mojo:exec-maven-plugin:1.3.1:exec`
+        if [[ $MY_POM_VERSION =~ ^.*SNAPSHOT$ ]];
+        then
+          echo "not releasing snapshot version: " ${MY_POM_VERSION}
+          echo "RELEASE_OK=no" >> $GITHUB_ENV
+        else
+          . ./CI/pre-release.sh
+          echo "RELEASE_OK=yes" >> $GITHUB_ENV
+        fi
+        echo "SC_VERSION=$SC_VERSION" >> $GITHUB_ENV
+        echo "SC_NEXT_VERSION=$SC_NEXT_VERSION" >> $GITHUB_ENV
+        echo "SC_LAST_RELEASE=$SC_LAST_RELEASE" >> $GITHUB_ENV
+    - name: configure git user email
+      run: |
+        git config --global user.email "action@github.com"
+        git config --global user.name "GitHub Action"
+        git config --global hub.protocol https
+        git remote set-url origin https://\${{ secrets.GITHUB_TOKEN }}:x-oauth-basic@github.com/''' + 'swagger-api/swagger-core' + '''.git
+    - name: Run maven deploy/release (action-maven-publish)
+      uses: samuelmeuli/action-maven-publish@v1
+      if: env.RELEASE_OK == 'yes'
+      with:
+        gpg_private_key: ${{ secrets.OSSRH_GPG_PRIVATE_KEY }}
+        gpg_passphrase: ${{ secrets.OSSRH_GPG_PRIVATE_PASSPHRASE }}
+        nexus_username: ${{ secrets.OSSRH_USERNAME }}
+        nexus_password: ${{ secrets.OSSRH_TOKEN }}
+        maven_profiles: "release"
+    - name: Run prepare javadocs script
+      id: prepareJavadocs
+      if: env.RELEASE_OK == 'yes'
+      run: |
+        . ./CI/prepare-javadocs.sh
+    - name: Checkout gh-pages
+      uses: actions/checkout@v2
+      with:
+        ref: "gh-pages"
+        fetch-depth: 0
+    - name: Run publish javadocs script
+      id: publishJavadocs
+      if: env.RELEASE_OK == 'yes'
+      run: |
+        TMPDIR="$(dirname -- "${0}")"
+        . $TMPDIR/publish-javadocs.sh
+    - name: Checkout master
+      uses: actions/checkout@v2
+      with:
+        ref: "master"
+        fetch-depth: 0
+    - name: Run post release script
+      id: postRelease
+      if: env.RELEASE_OK == 'yes'
+      run: |
+        . ./CI/post-release.sh
+    - name: Create Next Snapshot Pull Request
+      uses: peter-evans/create-pull-request@v2
+      if: env.RELEASE_OK == 'yes'
+      with:
+        token: ${{ steps.generate-token.outputs.token }}
+        commit-message: bump snapshot ${{ env.SC_NEXT_VERSION }}-SNAPSHOT
+        title: 'bump snapshot ${{ env.SC_NEXT_VERSION }}-SNAPSHOT'
+        branch: bump-snap-${{ env.SC_NEXT_VERSION }}-SNAPSHOT
+    - name: Checkout 1.5
+      uses: actions/checkout@v2
+      with:
+        ref: "1.5"
+        fetch-depth: 0
+    - name: updateV1Readme script
+      id: updateV1Readme
+      if: env.RELEASE_OK == 'yes'
+      run: |
+        TMPDIR="$(dirname -- "${0}")"
+        . $TMPDIR/update-v1-readme.sh ${{ env.SC_LAST_RELEASE }} ${{ env.SC_VERSION }}
+    - name: Create Update V1 Readme Pull Request
+      uses: peter-evans/create-pull-request@v2
+      if: env.RELEASE_OK == 'yes'
+      with:
+        token: ${{ steps.generate-token.outputs.token }}
+        commit-message: update 1.5 Readme with new v2 version ${{ env.SC_VERSION }}
+        title: 'update 1.5 Readme with new v2 version ${{ env.SC_VERSION }}'
+        branch: update-v1-readme-${{ env.SC_VERSION }}
+    - name: Checkout Wiki
+      uses: actions/checkout@v2
+      with:
+        repository: swagger-api/swagger-core.wiki
+        token: ${{ steps.generate-token.outputs.token }}
+        path: wiki
+        ref: "master"
+        fetch-depth: 0
+
+    - name: Run update wiki script
+      id: updateWiki
+      if: env.RELEASE_OK == 'yes'
+      run: |
+        TMPDIR="$(dirname -- "${0}")"
+        . $TMPDIR/update-wiki.sh
+    - name: Checkout master
+      uses: actions/checkout@v2
+      with:
+        ref: "master"
+        fetch-depth: 0
+
+    env:
+      ACTIONS_ALLOW_UNSECURE_COMMANDS:  true
+      MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+      MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      SC_VERSION:
+      SC_NEXT_VERSION:
+      GPG_PRIVATE_KEY: ${{ secrets.OSSRH_GPG_PRIVATE_KEY }}
+      GPG_PASSPHRASE: ${{ secrets.OSSRH_GPG_PRIVATE_PASSPHRASE }}
+      GRADLE_PUBLISH_KEY: ${{ secrets.GRADLE_PUBLISH_KEY }}
+      GRADLE_PUBLISH_SECRET: ${{ secrets.GRADLE_PUBLISH_SECRET }}

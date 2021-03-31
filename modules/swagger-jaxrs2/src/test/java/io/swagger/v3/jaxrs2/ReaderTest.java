@@ -1,6 +1,7 @@
 package io.swagger.v3.jaxrs2;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import io.swagger.v3.core.converter.AnnotatedType;
 import io.swagger.v3.core.converter.ModelConverter;
 import io.swagger.v3.core.converter.ModelConverterContextImpl;
@@ -60,12 +61,25 @@ import io.swagger.v3.jaxrs2.resources.Ticket2806Resource;
 import io.swagger.v3.jaxrs2.resources.Ticket2818Resource;
 import io.swagger.v3.jaxrs2.resources.Ticket2848Resource;
 import io.swagger.v3.jaxrs2.resources.Ticket3015Resource;
+import io.swagger.v3.jaxrs2.resources.Ticket3587Resource;
+import io.swagger.v3.jaxrs2.resources.Ticket3731BisResource;
+import io.swagger.v3.jaxrs2.resources.Ticket3731Resource;
+import io.swagger.v3.jaxrs2.resources.UploadResource;
+import io.swagger.v3.jaxrs2.resources.UrlEncodedResourceWithEncodings;
 import io.swagger.v3.jaxrs2.resources.UserAnnotationResource;
 import io.swagger.v3.jaxrs2.resources.extensions.ExtensionsResource;
 import io.swagger.v3.jaxrs2.resources.extensions.OperationExtensionsResource;
 import io.swagger.v3.jaxrs2.resources.extensions.ParameterExtensionsResource;
 import io.swagger.v3.jaxrs2.resources.extensions.RequestBodyExtensionsResource;
+import io.swagger.v3.jaxrs2.resources.generics.ticket2144.ItemResource;
+import io.swagger.v3.jaxrs2.resources.generics.ticket3149.MainResource;
+import io.swagger.v3.jaxrs2.resources.generics.ticket3426.Ticket3426Resource;
+import io.swagger.v3.jaxrs2.resources.generics.ticket3694.Ticket3694Resource;
+import io.swagger.v3.jaxrs2.resources.generics.ticket3694.Ticket3694ResourceExtendedType;
+import io.swagger.v3.jaxrs2.resources.generics.ticket3694.Ticket3694ResourceSimple;
+import io.swagger.v3.jaxrs2.resources.generics.ticket3694.Ticket3694ResourceSimpleSameReturn;
 import io.swagger.v3.jaxrs2.resources.rs.ProcessTokenRestService;
+import io.swagger.v3.jaxrs2.resources.ticket3624.Service;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.ExternalDocumentation;
@@ -2142,4 +2156,659 @@ public class ReaderTest {
         SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
     }
 
+    @Test
+    public void testTicket3092() {
+        Reader reader = new Reader(new OpenAPI());
+
+        OpenAPI openAPI = reader.read(UploadResource.class);
+        String yaml = "openapi: 3.0.1\n" +
+                "paths:\n" +
+                "  /upload:\n" +
+                "    post:\n" +
+                "      operationId: uploadWithBean\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          multipart/form-data:\n" +
+                "            schema:\n" +
+                "              type: object\n" +
+                "              properties:\n" +
+                "                name:\n" +
+                "                  type: string\n" +
+                "                picture:\n" +
+                "                  $ref: '#/components/schemas/picture'\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            application/json: {}\n" +
+                "  /upload/requestbody:\n" +
+                "    post:\n" +
+                "      operationId: uploadWithBeanAndRequestBody\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          multipart/form-data:\n" +
+                "            schema:\n" +
+                "              $ref: '#/components/schemas/UploadRequest'\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            application/json: {}\n" +
+                "components:\n" +
+                "  schemas:\n" +
+                "    picture:\n" +
+                "      type: object\n" +
+                "      format: binary\n" +
+                "    UploadRequest:\n" +
+                "      title: Schema for Upload\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        name:\n" +
+                "          type: string\n" +
+                "        picture:\n" +
+                "          type: string\n" +
+                "          format: binary";
+        SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
+    }
+
+    @Test(description = "Parameter examples ordering")
+    public void testTicket3587() {
+        Reader reader = new Reader(new OpenAPI());
+
+        OpenAPI openAPI = reader.read(Ticket3587Resource.class);
+        String yaml = "openapi: 3.0.1\n"
+                + "paths:\n"
+                + "  /test/test:\n"
+                + "    get:\n"
+                + "      operationId: parameterExamplesOrderingTest\n"
+                + "      parameters:\n"
+                + "      - in: query\n"
+                + "        schema:\n"
+                + "          type: string\n"
+                + "        examples:\n"
+                + "          Example One:\n"
+                + "            description: Example One\n"
+                + "          Example Two:\n"
+                + "            description: Example Two\n"
+                + "          Example Three:\n"
+                + "            description: Example Three\n"
+                + "      - in: query\n"
+                + "        schema:\n"
+                + "          type: string\n"
+                + "        examples:\n"
+                + "          Example Three:\n"
+                + "            description: Example Three\n"
+                + "          Example Two:\n"
+                + "            description: Example Two\n"
+                + "          Example One:\n"
+                + "            description: Example One\n"
+                + "      responses:\n"
+                + "        default:\n"
+                + "          description: default response\n"
+                + "          content:\n"
+                + "            '*/*': {}";
+        SerializationMatchers.assertEqualsToYamlExact(openAPI, yaml);
+    }
+
+    @Test(description = "Optional handling")
+    public void testTicket3624() {
+        Reader reader = new Reader(new OpenAPI());
+
+        OpenAPI openAPI = reader.read(Service.class);
+        String yaml = "openapi: 3.0.1\n" +
+                "paths:\n" +
+                "  /example/model:\n" +
+                "    get:\n" +
+                "      tags:\n" +
+                "      - ExampleService\n" +
+                "      summary: ' Retrieve models for display to the user'\n" +
+                "      operationId: getModels\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            application/json:\n" +
+                "              schema:\n" +
+                "                $ref: '#/components/schemas/Response'\n" +
+                "  /example/model/by/ids:\n" +
+                "    get:\n" +
+                "      tags:\n" +
+                "      - ExampleService\n" +
+                "      summary: ' Retrieve models by their ids'\n" +
+                "      operationId: getModelsById\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            application/json:\n" +
+                "              schema:\n" +
+                "                $ref: '#/components/schemas/ByIdResponse'\n" +
+                "  /example/containerized/model:\n" +
+                "    get:\n" +
+                "      tags:\n" +
+                "      - ExampleService\n" +
+                "      summary: ' Retrieve review insights for a specific product'\n" +
+                "      operationId: getContainerizedModels\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            application/json:\n" +
+                "              schema:\n" +
+                "                $ref: '#/components/schemas/ContainerizedResponse'\n" +
+                "components:\n" +
+                "  schemas:\n" +
+                "    Model:\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        text:\n" +
+                "          type: string\n" +
+                "        title:\n" +
+                "          type: string\n" +
+                "        active:\n" +
+                "          type: boolean\n" +
+                "        schemaParent:\n" +
+                "          $ref: '#/components/schemas/Model'\n" +
+                "        optionalString:\n" +
+                "          type: string\n" +
+                "        parent:\n" +
+                "          $ref: '#/components/schemas/Model'\n" +
+                "        id:\n" +
+                "          type: integer\n" +
+                "          format: int32\n" +
+                "    Response:\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        count:\n" +
+                "          type: integer\n" +
+                "          format: int32\n" +
+                "        models:\n" +
+                "          type: array\n" +
+                "          items:\n" +
+                "            $ref: '#/components/schemas/Model'\n" +
+                "    ByIdResponse:\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        modelsById:\n" +
+                "          type: object\n" +
+                "          additionalProperties:\n" +
+                "            $ref: '#/components/schemas/Model'\n" +
+                "    ContainerizedResponse:\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        totalCount:\n" +
+                "          type: integer\n" +
+                "          format: int32\n" +
+                "        containerizedModels:\n" +
+                "          type: array\n" +
+                "          items:\n" +
+                "            $ref: '#/components/schemas/ModelContainer'\n" +
+                "    ModelContainer:\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        text:\n" +
+                "          type: string\n" +
+                "        model:\n" +
+                "          $ref: '#/components/schemas/Model'\n" +
+                "        id:\n" +
+                "          type: integer\n" +
+                "          format: int32";
+        SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
+    }
+
+    @Test
+    public void testRequestBodyEncoding() {
+        Reader reader = new Reader(new OpenAPI());
+
+        OpenAPI openAPI = reader.read(UrlEncodedResourceWithEncodings.class);
+        String yaml = "openapi: 3.0.1\n" +
+                "paths:\n" +
+                "  /things/search:\n" +
+                "    post:\n" +
+                "      operationId: searchForThings\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          application/x-www-form-urlencoded:\n" +
+                "            schema:\n" +
+                "              type: object\n" +
+                "              properties:\n" +
+                "                id:\n" +
+                "                  type: array\n" +
+                "                  description: id param\n" +
+                "                  items:\n" +
+                "                    type: string\n" +
+                "                name:\n" +
+                "                  type: array\n" +
+                "                  items:\n" +
+                "                    type: string\n" +
+                "            encoding:\n" +
+                "              id:\n" +
+                "                style: form\n" +
+                "                explode: true\n" +
+                "              name:\n" +
+                "                style: form\n" +
+                "                explode: false\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            application/json: {}\n" +
+                "  /things/sriracha:\n" +
+                "    post:\n" +
+                "      operationId: srirachaThing\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          application/x-www-form-urlencoded:\n" +
+                "            schema:\n" +
+                "              type: object\n" +
+                "              properties:\n" +
+                "                id:\n" +
+                "                  type: array\n" +
+                "                  description: id param\n" +
+                "                  items:\n" +
+                "                    type: string\n" +
+                "                name:\n" +
+                "                  type: array\n" +
+                "                  items:\n" +
+                "                    type: string\n" +
+                "            encoding:\n" +
+                "              id:\n" +
+                "                style: form\n" +
+                "                explode: true\n" +
+                "              name:\n" +
+                "                style: form\n" +
+                "                explode: false\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            application/json: {}\n";
+        SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
+    }
+
+    @Test(description = "overridden generic resource methods")
+    public void testTicket3694() {
+        Reader reader = new Reader(new OpenAPI());
+
+        OpenAPI openAPI = reader.read(Ticket3694ResourceExtendedType.class);
+        String yaml = "openapi: 3.0.1\n" +
+                "paths:\n" +
+                "  /foo:\n" +
+                "    post:\n" +
+                "      tags:\n" +
+                "      - Foo\n" +
+                "      summary: Foo List in Interface\n" +
+                "      operationId: foo\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          application/json:\n" +
+                "            schema:\n" +
+                "              type: array\n" +
+                "              items:\n" +
+                "                type: string\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*': {}\n" +
+                "  /bar:\n" +
+                "    post:\n" +
+                "      operationId: bar\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          application/json:\n" +
+                "            schema:\n" +
+                "              type: array\n" +
+                "              items:\n" +
+                "                type: string\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*':\n" +
+                "              schema:\n" +
+                "                type: string\n" +
+                "  /another:\n" +
+                "    post:\n" +
+                "      operationId: another\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          application/json:\n" +
+                "            schema:\n" +
+                "              type: string\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*': {}";
+        SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
+
+        reader = new Reader(new OpenAPI());
+        openAPI = reader.read(Ticket3694Resource.class);
+        yaml = "openapi: 3.0.1\n" +
+                "paths:\n" +
+                "  /foo:\n" +
+                "    post:\n" +
+                "      tags:\n" +
+                "      - Foo\n" +
+                "      summary: Foo List in Interface\n" +
+                "      operationId: foo\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          application/json:\n" +
+                "            schema:\n" +
+                "              type: array\n" +
+                "              items:\n" +
+                "                type: string\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*': {}\n" +
+                "  /bar:\n" +
+                "    post:\n" +
+                "      operationId: bar\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          application/json:\n" +
+                "            schema:\n" +
+                "              type: array\n" +
+                "              items:\n" +
+                "                type: string\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*':\n" +
+                "              schema:\n" +
+                "                type: string\n" +
+                "  /another:\n" +
+                "    post:\n" +
+                "      operationId: another\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          application/json:\n" +
+                "            schema:\n" +
+                "              type: string\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*': {}";
+        SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
+
+        reader = new Reader(new OpenAPI());
+        openAPI = reader.read(Ticket3694ResourceSimple.class);
+        yaml = "openapi: 3.0.1\n" +
+                "paths:\n" +
+                "  /bar:\n" +
+                "    post:\n" +
+                "      operationId: bar\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          application/json:\n" +
+                "            schema:\n" +
+                "              type: array\n" +
+                "              items:\n" +
+                "                type: string\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*':\n" +
+                "              schema:\n" +
+                "                type: string";
+        SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
+
+        reader = new Reader(new OpenAPI());
+        openAPI = reader.read(Ticket3694ResourceSimpleSameReturn.class);
+        yaml = "openapi: 3.0.1\n" +
+                "paths:\n" +
+                "  /bar:\n" +
+                "    post:\n" +
+                "      operationId: bar\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          application/json:\n" +
+                "            schema:\n" +
+                "              type: array\n" +
+                "              items:\n" +
+                "                type: string\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*': {}";
+        SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
+    }
+
+    @Test(description = "non consistent overridden generic resource methods")
+    public void testTicket2144() {
+        Reader reader = new Reader(new OpenAPI());
+
+        OpenAPI openAPI = reader.read(ItemResource.class);
+        String yaml = "openapi: 3.0.1\n" +
+                "paths:\n" +
+                "  /item/{id}:\n" +
+                "    get:\n" +
+                "      operationId: getById\n" +
+                "      parameters:\n" +
+                "      - name: id\n" +
+                "        in: path\n" +
+                "        required: true\n" +
+                "        schema:\n" +
+                "          type: string\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*':\n" +
+                "              schema:\n" +
+                "                $ref: '#/components/schemas/ItemWithChildren'\n" +
+                "  /item/nogeneric/{id}:\n" +
+                "    get:\n" +
+                "      operationId: getByIdNoGeneric\n" +
+                "      parameters:\n" +
+                "      - name: id\n" +
+                "        in: path\n" +
+                "        required: true\n" +
+                "        schema:\n" +
+                "          type: string\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*':\n" +
+                "              schema:\n" +
+                "                $ref: '#/components/schemas/ItemWithChildren'\n" +
+                "  /item/nogenericsamereturn/{id}:\n" +
+                "    get:\n" +
+                "      operationId: getByIdNoGenericSameReturn\n" +
+                "      parameters:\n" +
+                "      - name: id\n" +
+                "        in: path\n" +
+                "        required: true\n" +
+                "        schema:\n" +
+                "          type: string\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*':\n" +
+                "              schema:\n" +
+                "                $ref: '#/components/schemas/BaseDTO'\n" +
+                "  /item/genericparam:\n" +
+                "    post:\n" +
+                "      operationId: genericParam\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          '*/*':\n" +
+                "            schema:\n" +
+                "              $ref: '#/components/schemas/ItemWithChildren'\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*':\n" +
+                "              schema:\n" +
+                "                $ref: '#/components/schemas/BaseDTO'\n" +
+                "components:\n" +
+                "  schemas:\n" +
+                "    ItemWithChildren:\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        name:\n" +
+                "          type: string\n" +
+                "        names:\n" +
+                "          type: string\n" +
+                "    BaseDTO:\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        name:\n" +
+                "          type: string";
+        SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
+    }
+
+    @Test(description = "overridden generic resource interface default methods")
+    public void testTicket3149() {
+        Reader reader = new Reader(new OpenAPI());
+
+        OpenAPI openAPI = reader.read(MainResource.class);
+        String yaml = "openapi: 3.0.1\n" +
+                "paths:\n" +
+                "  /test:\n" +
+                "    post:\n" +
+                "      tags:\n" +
+                "      - Test inheritance on default implementation in interfaces\n" +
+                "      operationId: firstEndpoint\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          '*/*':\n" +
+                "            schema:\n" +
+                "              $ref: '#/components/schemas/SampleDTO'\n" +
+                "      responses:\n" +
+                "        \"201\":\n" +
+                "          description: Created\n" +
+                "        \"400\":\n" +
+                "          description: Bad Request\n" +
+                "        \"403\":\n" +
+                "          description: Forbidden\n" +
+                "        \"404\":\n" +
+                "          description: Not Found\n" +
+                "  /test/{id}:\n" +
+                "    get:\n" +
+                "      tags:\n" +
+                "      - Test inheritance on default implementation in interfaces\n" +
+                "      operationId: secondEnpoint\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          '*/*':\n" +
+                "            schema:\n" +
+                "              $ref: '#/components/schemas/SampleOtherDTO'\n" +
+                "      responses:\n" +
+                "        \"200\":\n" +
+                "          description: OK\n" +
+                "        \"400\":\n" +
+                "          description: Bad Request\n" +
+                "        \"403\":\n" +
+                "          description: Forbidden\n" +
+                "        \"404\":\n" +
+                "          description: Not Found\n" +
+                "  /test/original/{id}:\n" +
+                "    get:\n" +
+                "      tags:\n" +
+                "      - Test inheritance on default implementation in interfaces\n" +
+                "      operationId: originalEndpoint\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          '*/*':\n" +
+                "            schema:\n" +
+                "              $ref: '#/components/schemas/SampleOtherDTO'\n" +
+                "      responses:\n" +
+                "        \"200\":\n" +
+                "          description: OK\n" +
+                "        \"400\":\n" +
+                "          description: Bad Request\n" +
+                "        \"403\":\n" +
+                "          description: Forbidden\n" +
+                "        \"404\":\n" +
+                "          description: Not Found\n" +
+                "components:\n" +
+                "  schemas:\n" +
+                "    SampleDTO:\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        name:\n" +
+                "          type: string\n" +
+                "    SampleOtherDTO:\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        label:\n" +
+                "          type: string";
+        SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
+    }
+
+    @Test(description = "overridden generic resource methods operationId")
+    public void testTicket3426() {
+        Reader reader = new Reader(new OpenAPI());
+
+        OpenAPI openAPI = reader.read(Ticket3426Resource.class);
+        String yaml = "openapi: 3.0.1\n" +
+                "paths:\n" +
+                "  /inheritExample/{input}:\n" +
+                "    get:\n" +
+                "      operationId: get\n" +
+                "      parameters:\n" +
+                "      - name: input\n" +
+                "        in: path\n" +
+                "        required: true\n" +
+                "        schema:\n" +
+                "          type: string\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*':\n" +
+                "              schema:\n" +
+                "                type: string";
+        SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
+    }
+
+    @Test(description = "Constraints annotations in models")
+    public void testTicket3731() {
+        Reader reader = new Reader(new OpenAPI());
+
+        OpenAPI openAPI = reader.read(Ticket3731Resource.class);
+        String yaml = "openapi: 3.0.1\n" +
+                "paths:\n" +
+                "  /test/cart:\n" +
+                "    get:\n" +
+                "      summary: Get cart items\n" +
+                "      description: Paging follows RFC 5005.\n" +
+                "      operationId: getCart\n" +
+                "      parameters:\n" +
+                "      - name: pageSize\n" +
+                "        in: query\n" +
+                "        description: \"Number of items per page. Range[1, 200]\"\n" +
+                "        schema:\n" +
+                "          maximum: 200\n" +
+                "          minimum: 1\n" +
+                "          type: integer\n" +
+                "          format: int32\n" +
+                "          default: 50\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*':\n" +
+                "              schema:\n" +
+                "                type: array\n" +
+                "                items:\n" +
+                "                  type: string\n";
+        SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
+
+        reader = new Reader(new OpenAPI());
+        openAPI = reader.read(Ticket3731BisResource.class);
+        SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
+    }
 }

@@ -28,11 +28,13 @@ public class EmailSchema extends Schema<String> {
         super("string", "email");
     }
 
+    @Override
     public EmailSchema type(String type) {
         super.setType(type);
         return this;
     }
 
+    @Override
     public EmailSchema format(String format) {
         super.setFormat(format);
         return this;

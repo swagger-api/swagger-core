@@ -359,7 +359,7 @@ public class PathItem {
 
     public PathItem addServersItem(Server serversItem) {
         if (this.servers == null) {
-            this.servers = new ArrayList<Server>();
+            this.servers = new ArrayList<>();
         }
         this.servers.add(serversItem);
         return this;
@@ -386,7 +386,7 @@ public class PathItem {
 
     public PathItem addParametersItem(Parameter parametersItem) {
         if (this.parameters == null) {
-            this.parameters = new ArrayList<Parameter>();
+            this.parameters = new ArrayList<>();
         }
         this.parameters.add(parametersItem);
         return this;

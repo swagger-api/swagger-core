@@ -20,7 +20,6 @@ import io.swagger.v3.oas.models.examples.Example;
 import io.swagger.v3.oas.models.media.Content;
 import io.swagger.v3.oas.models.media.Schema;
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -297,7 +296,7 @@ public class Header {
     }
 
     public void set$ref(String $ref) {
-        if ($ref != null && ($ref.indexOf(".") == -1 && $ref.indexOf("/") == -1)) {
+        if ($ref != null && ($ref.indexOf('.') == -1 && $ref.indexOf('/') == -1)) {
             $ref = "#/components/headers/" + $ref;
         }
         this.$ref = $ref;

@@ -1,5 +1,6 @@
 package io.swagger.v3.oas.integration.api;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.core.converter.ModelConverter;
 import io.swagger.v3.oas.integration.OpenApiConfigurationException;
 import io.swagger.v3.oas.models.OpenAPI;
@@ -37,5 +38,27 @@ public interface OpenApiContext {
      * @since 2.0.6
      */
     void setModelConverters(Set<ModelConverter> modelConverters);
+
+
+    /**
+     * @since 2.1.6
+     */
+    ObjectMapper getOutputJsonMapper();
+
+    /**
+     * @since 2.1.6
+     */
+    ObjectMapper getOutputYamlMapper();
+
+
+    /**
+     * @since 2.1.6
+     */
+    void setOutputJsonMapper(ObjectMapper outputJsonMapper);
+
+    /**
+     * @since 2.1.6
+     */
+    void setOutputYamlMapper(ObjectMapper outputYamlMapper);
 
 }

@@ -1,7 +1,6 @@
 package io.swagger.v3.core.jackson;
 
 import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
@@ -29,7 +28,7 @@ public class SchemaSerializer extends JsonSerializer<Schema> implements Resolvab
     @Override
     public void serialize(
             Schema value, JsonGenerator jgen, SerializerProvider provider)
-            throws IOException, JsonProcessingException {
+            throws IOException {
 
         // handle ref schema serialization skipping all other props
         if (StringUtils.isBlank(value.get$ref())) {

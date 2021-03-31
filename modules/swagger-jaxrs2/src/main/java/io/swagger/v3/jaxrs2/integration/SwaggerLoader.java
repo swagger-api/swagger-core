@@ -1,5 +1,6 @@
 package io.swagger.v3.jaxrs2.integration;
 
+import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import io.swagger.v3.core.filter.OpenAPISpecFilter;
 import io.swagger.v3.core.filter.SpecFilter;
 import io.swagger.v3.core.util.Json;
@@ -7,6 +8,7 @@ import io.swagger.v3.core.util.Yaml;
 import io.swagger.v3.oas.integration.GenericOpenApiContextBuilder;
 import io.swagger.v3.oas.integration.OpenApiConfigurationException;
 import io.swagger.v3.oas.integration.SwaggerConfiguration;
+import io.swagger.v3.oas.integration.api.OpenApiContext;
 import io.swagger.v3.oas.models.OpenAPI;
 import org.apache.commons.lang3.StringUtils;
 
@@ -35,6 +37,8 @@ public class SwaggerLoader {
 
     private String objectMapperProcessorClass;
     private String modelConverterClasses;
+
+    private Boolean sortOutput = false;
 
     /**
      * @since 2.0.6
@@ -159,6 +163,20 @@ public class SwaggerLoader {
         this.openapiAsString = openapiAsString;
     }
 
+    /**
+     * @since 2.1.6
+     */
+    public Boolean getSortOutput() {
+        return sortOutput;
+    }
+
+    /**
+     * @since 2.1.6
+     */
+    public void setSortOutput(Boolean sortOutput) {
+        this.sortOutput = sortOutput;
+    }
+
 
     public Map<String, String> resolve() throws Exception{
 
@@ -204,7 +222,8 @@ public class SwaggerLoader {
                 .resourceClasses(resourceClassesSet)
                 .resourcePackages(resourcePackagesSet)
                 .objectMapperProcessorClass(objectMapperProcessorClass)
-                .modelConverterClasses(modelConverterSet);
+                .modelConverterClasses(modelConverterSet)
+                .sortOutput(sortOutput);
         try {
             GenericOpenApiContextBuilder builder = new JaxrsOpenApiContextBuilder()
                     .openApiConfiguration(config);
@@ -212,9 +231,8 @@ public class SwaggerLoader {
                 builder.ctxId(contextId);
             }
 
-            OpenAPI openAPI = builder
-                .buildContext(true)
-                .read();
+            OpenApiContext context = builder.buildContext(true);
+            OpenAPI openAPI = context.read();
             if (StringUtils.isNotBlank(filterClass)) {
                 try {
                     OpenAPISpecFilter filterImpl = (OpenAPISpecFilter) this.getClass().getClassLoader().loadClass(filterClass).newInstance();
@@ -229,21 +247,20 @@ public class SwaggerLoader {
             String openapiJson = null;
             String openapiYaml = null;
             if ("JSON".equals(outputFormat) || "JSONANDYAML".equals(outputFormat)) {
-                if (prettyPrint) {
-                    openapiJson = Json.pretty(openAPI);
+                if (prettyPrint != null && prettyPrint) {
+                    openapiJson = context.getOutputJsonMapper().writer(new DefaultPrettyPrinter()).writeValueAsString(openAPI);
                 } else {
-                    openapiJson = Json.mapper().writeValueAsString(openAPI);
+                    openapiJson = context.getOutputJsonMapper().writeValueAsString(openAPI);
                 }
             }
             if ("YAML".equals(outputFormat) || "JSONANDYAML".equals(outputFormat)) {
-                if (prettyPrint) {
-                    openapiYaml = Yaml.pretty(openAPI);
+                if (prettyPrint != null && prettyPrint) {
+                    openapiYaml = context.getOutputYamlMapper().writer(new DefaultPrettyPrinter()).writeValueAsString(openAPI);
                 } else {
-                    openapiYaml = Yaml.mapper().writeValueAsString(openAPI);
+                    openapiYaml = context.getOutputYamlMapper().writeValueAsString(openAPI);
                 }
-
             }
-            HashMap<String, String> map = new HashMap();
+            Map<String, String> map = new HashMap<>();
             map.put("JSON", openapiJson);
             map.put("YAML", openapiYaml);
             return map;

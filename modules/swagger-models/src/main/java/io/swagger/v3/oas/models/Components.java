@@ -26,7 +26,6 @@ import io.swagger.v3.oas.models.parameters.RequestBody;
 import io.swagger.v3.oas.models.responses.ApiResponse;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -38,6 +37,11 @@ import java.util.Objects;
  */
 
 public class Components {
+
+    /**
+     * @since 2.1.6
+     */
+    public static final String COMPONENTS_SCHEMAS_REF = "#/components/schemas/";
     private Map<String, Schema> schemas = null;
     private Map<String, ApiResponse> responses = null;
     private Map<String, Parameter> parameters = null;
