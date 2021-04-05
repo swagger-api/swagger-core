@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -14,7 +15,9 @@ import io.swagger.v3.core.converter.ModelConverters;
 import io.swagger.v3.core.jackson.ModelResolver;
 import io.swagger.v3.core.jackson.PathsSerializer;
 import io.swagger.v3.core.util.Json;
+import io.swagger.v3.core.util.Json31;
 import io.swagger.v3.core.util.Yaml;
+import io.swagger.v3.core.util.Yaml31;
 import io.swagger.v3.oas.integration.api.ObjectMapperProcessor;
 import io.swagger.v3.oas.integration.api.OpenAPIConfiguration;
 import io.swagger.v3.oas.integration.api.OpenApiConfigurationLoader;
@@ -30,6 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -64,6 +68,8 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
     // 0 doesn't cache
     // -1 perpetual
     private long cacheTTL = -1;
+
+    private Boolean openAPI31;
 
     public long getCacheTTL() {
         return cacheTTL;
@@ -272,6 +278,28 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
         return (T) this;
     }
 
+    /**
+     * @since 2.1.8
+     */
+    public Boolean isOpenAPI31() {
+        return openAPI31;
+    }
+
+    /**
+     * @since 2.1.8
+     */
+    public void setOpenAPI31(Boolean v) {
+        this.openAPI31 = openAPI31;
+    }
+
+    /**
+     * @since 2.1.8
+     */
+    public T openAPI31(Boolean openAPI31) {
+        this.openAPI31 = openAPI31;
+        return (T) this;
+    }
+
 
     protected void register() {
         OpenApiContextLocator.getInstance().putOpenApiContext(id, this);
@@ -408,6 +436,7 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
         if (openApiConfiguration == null) {
             openApiConfiguration = new SwaggerConfiguration().resourcePackages(resourcePackages).resourceClasses(resourceClasses);
             ((SwaggerConfiguration) openApiConfiguration).setId(id);
+            ((SwaggerConfiguration) openApiConfiguration).setOpenAPI31(openAPI31);
         }
 
         openApiConfiguration = mergeParentConfiguration(openApiConfiguration, parent);
@@ -426,20 +455,35 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
                 modelConverters = buildModelConverters(ContextUtils.deepCopy(openApiConfiguration));
             }
             if (outputJsonMapper == null) {
-                outputJsonMapper = Json.mapper().copy();
+                if (Boolean.TRUE.equals(openApiConfiguration.isOpenAPI31())) {
+                    outputJsonMapper = Json31.mapper().copy();
+                } else {
+                    outputJsonMapper = Json.mapper().copy();
+                }
             }
             if (outputYamlMapper == null) {
-                outputYamlMapper = Yaml.mapper().copy();
+                if (Boolean.TRUE.equals(openApiConfiguration.isOpenAPI31())) {
+                    outputYamlMapper = Yaml31.mapper().copy();
+                } else {
+                    outputYamlMapper = Yaml.mapper().copy();
+                }
             }
             if (openApiConfiguration.isSortOutput() != null && openApiConfiguration.isSortOutput()) {
                 outputJsonMapper.configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, true);
                 outputJsonMapper.configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY, true);
                 outputYamlMapper.configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, true);
                 outputYamlMapper.configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY, true);
-                outputJsonMapper.addMixIn(OpenAPI.class, SortedOpenAPIMixin.class);
-                outputJsonMapper.addMixIn(Schema.class, SortedSchemaMixin.class);
-                outputYamlMapper.addMixIn(OpenAPI.class, SortedOpenAPIMixin.class);
-                outputYamlMapper.addMixIn(Schema.class, SortedSchemaMixin.class);
+                if (Boolean.TRUE.equals(openApiConfiguration.isOpenAPI31())) {
+                    outputJsonMapper.addMixIn(OpenAPI.class, SortedOpenAPIMixin31.class);
+                    outputJsonMapper.addMixIn(Schema.class, SortedSchemaMixin31.class);
+                    outputYamlMapper.addMixIn(OpenAPI.class, SortedOpenAPIMixin31.class);
+                    outputYamlMapper.addMixIn(Schema.class, SortedSchemaMixin31.class);
+                } else {
+                    outputJsonMapper.addMixIn(OpenAPI.class, SortedOpenAPIMixin.class);
+                    outputJsonMapper.addMixIn(Schema.class, SortedSchemaMixin.class);
+                    outputYamlMapper.addMixIn(OpenAPI.class, SortedOpenAPIMixin.class);
+                    outputYamlMapper.addMixIn(Schema.class, SortedSchemaMixin.class);
+                }
             }
         } catch (Exception e) {
             LOGGER.error("error initializing context: " + e.getMessage(), e);
@@ -539,6 +583,9 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
         if (merged.getModelConverterClasses() == null) {
             merged.setModelConverterClassess(parentConfig.getModelConverterClasses());
         }
+        if (merged.isOpenAPI31() == null) {
+            merged.setOpenAPI31(parentConfig.isOpenAPI31());
+        }
 
         return merged;
     }
@@ -610,6 +657,62 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
 
         @JsonInclude(JsonInclude.Include.CUSTOM)
         public abstract Object getExample();
+
+        @JsonIgnore
+        public abstract Map<String, Object> getJsonSchema();
+
+        @JsonIgnore
+        public abstract BigDecimal getExclusiveMinimumValue();
+
+        @JsonIgnore
+        public abstract BigDecimal getExclusiveMaximumValue();
+
+        @JsonIgnore
+        public abstract Map<String, Schema> getPatternProperties();
+
+    }
+
+    @JsonPropertyOrder(value = {"openapi", "info", "externalDocs", "servers", "security", "tags", "paths", "components", "webhooks"}, alphabetic = true)
+    static abstract class SortedOpenAPIMixin31 {
+
+        @JsonAnyGetter
+        @JsonPropertyOrder(alphabetic = true)
+        public abstract Map<String, Object> getExtensions();
+
+        @JsonAnySetter
+        public abstract void addExtension(String name, Object value);
+
+        @JsonSerialize(using = PathsSerializer.class)
+        public abstract Paths getPaths();
+    }
+
+    @JsonPropertyOrder(value = {"type", "format"}, alphabetic = true)
+    static abstract class SortedSchemaMixin31 {
+
+        @JsonAnyGetter
+        @JsonPropertyOrder(alphabetic = true)
+        public abstract Map<String, Object> getExtensions();
+
+        @JsonAnySetter
+        public abstract void addExtension(String name, Object value);
+
+        @JsonIgnore
+        public abstract boolean getExampleSetFlag();
+
+        @JsonInclude(JsonInclude.Include.CUSTOM)
+        public abstract Object getExample();
+
+        @JsonValue
+        public abstract Map<String, Object> getJsonSchema();
+
+        @JsonIgnore
+        public abstract Boolean getNullable();
+
+        @JsonIgnore
+        public abstract Boolean getExclusiveMinimum();
+
+        @JsonIgnore
+        public abstract Boolean getExclusiveMaximum();
 
     }
 

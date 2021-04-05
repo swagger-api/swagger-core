@@ -27,6 +27,7 @@ import org.testng.annotations.Test;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Application;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Map;
@@ -117,6 +118,18 @@ public class SortedOutputTest {
 
         @JsonInclude(JsonInclude.Include.CUSTOM)
         public abstract Object getExample();
+
+        @JsonIgnore
+        public abstract Map<String, Object> getJsonSchema();
+
+        @JsonIgnore
+        public abstract BigDecimal getExclusiveMinimumValue();
+
+        @JsonIgnore
+        public abstract BigDecimal getExclusiveMaximumValue();
+
+        @JsonIgnore
+        public abstract Map<String, Schema> getPatternProperties();
 
     }
 

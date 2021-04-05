@@ -48,7 +48,11 @@ public class SecuritySchemeDeserializer extends JsonDeserializer<SecurityScheme>
                 result
                         .type(SecurityScheme.Type.OAUTH2)
                         .flows(Json.mapper().convertValue(node.get("flows"), OAuthFlows.class));
+            } else if ("mutualTLS".equals(type)) {
+                result
+                        .type(SecurityScheme.Type.MUTUALTLS);
             }
+
         }
 
         return result;
