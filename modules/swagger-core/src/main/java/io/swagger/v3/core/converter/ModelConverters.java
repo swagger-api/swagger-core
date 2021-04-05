@@ -97,14 +97,7 @@ public class ModelConverters {
     }
     public ResolvedSchema readAllAsResolvedSchema(AnnotatedType type) {
         if (shouldProcess(type.getType())) {
-            ModelConverterContextImpl context = new ModelConverterContextImpl(
-                    converters);
-
-            ResolvedSchema resolvedSchema = new ResolvedSchema();
-            resolvedSchema.schema = context.resolve(type);
-            resolvedSchema.referencedSchemas = context.getDefinedModels();
-
-            return resolvedSchema;
+            return resolveAsResolvedSchema(type);
         }
         return null;
     }

@@ -8,4 +8,8 @@ public class IntegrationObjectMapperFactory extends ObjectMapperFactory {
     public static ObjectMapper createJson() {
         return ObjectMapperFactory.createJson();
     }
+
+    public static ObjectMapper createJson31() {
+        return ObjectMapperFactory.createJson31();
+    }
 }

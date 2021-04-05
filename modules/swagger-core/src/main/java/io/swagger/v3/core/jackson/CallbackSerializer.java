@@ -18,16 +18,19 @@ public class CallbackSerializer extends JsonSerializer<Callback> {
             Callback value, JsonGenerator jgen, SerializerProvider provider)
             throws IOException {
 
+        // has extensions
         if (value != null && value.getExtensions() != null && !value.getExtensions().isEmpty()) {
             jgen.writeStartObject();
 
+            // not a ref
             if (StringUtils.isBlank(value.get$ref())) {
                 if (!value.isEmpty()) {
+                    // write map
                     for (Entry<String, PathItem> entry: value.entrySet()) {
                         jgen.writeObjectField(entry.getKey() , entry.getValue());
                     }
                 }
-            } else { // handle ref schema serialization skipping all other props
+            } else { // handle ref schema serialization skipping all other props ...
                 jgen.writeStringField("$ref", value.get$ref());
             }
             for (String ext: value.getExtensions().keySet()) {

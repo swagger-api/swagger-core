@@ -17,6 +17,8 @@
 package io.swagger.v3.oas.models.media;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.swagger.v3.oas.OpenAPI30;
+import io.swagger.v3.oas.OpenAPI31;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.ExternalDocumentation;
 
@@ -41,9 +43,15 @@ public class Schema<T> {
     private String title = null;
     private BigDecimal multipleOf = null;
     private BigDecimal maximum = null;
+    @OpenAPI30
     private Boolean exclusiveMaximum = null;
+    @OpenAPI31
+    private BigDecimal exclusiveMaximumValue = null;
     private BigDecimal minimum = null;
+    @OpenAPI30
     private Boolean exclusiveMinimum = null;
+    @OpenAPI31
+    private BigDecimal exclusiveMinimumValue = null;
     private Integer maxLength = null;
     private Integer minLength = null;
     private String pattern = null;
@@ -56,10 +64,13 @@ public class Schema<T> {
     private String type = null;
     private Schema not = null;
     private Map<String, Schema> properties = null;
+    @OpenAPI31
+    private Map<String, Schema> patternProperties = null;
     private Object additionalProperties = null;
     private String description = null;
     private String format = null;
     private String $ref = null;
+    @OpenAPI30
     private Boolean nullable = null;
     private Boolean readOnly = null;
     private Boolean writeOnly = null;
@@ -72,6 +83,25 @@ public class Schema<T> {
     private Discriminator discriminator = null;
 
     private boolean exampleSetFlag;
+
+    @OpenAPI31
+    protected Map<String, Object> jsonSchema = null;
+
+    @OpenAPI31
+    public Map<String, Object> getJsonSchema() {
+        return jsonSchema;
+    }
+
+    @OpenAPI31
+    public void setJsonSchema(Map<String, Object> jsonSchema) {
+        this.jsonSchema = jsonSchema;
+    }
+
+    @OpenAPI31
+    public Schema jsonSchema(Map<String, Object> jsonSchema) {
+        this.jsonSchema = jsonSchema;
+        return this;
+    }
 
     public Schema() {
     }
@@ -213,21 +243,46 @@ public class Schema<T> {
     }
 
     /**
-     * returns the exclusiveMaximum property from a Schema instance.
+     * returns the exclusiveMaximum property from a Schema instance for OpenAPI 3.0.x
      *
      * @return Boolean exclusiveMaximum
      **/
-
+    @OpenAPI30
     public Boolean getExclusiveMaximum() {
         return exclusiveMaximum;
     }
 
+    @OpenAPI30
     public void setExclusiveMaximum(Boolean exclusiveMaximum) {
         this.exclusiveMaximum = exclusiveMaximum;
     }
 
+    @OpenAPI30
     public Schema exclusiveMaximum(Boolean exclusiveMaximum) {
         this.exclusiveMaximum = exclusiveMaximum;
+        return this;
+    }
+
+    /**
+     * returns the exclusiveMaximumValue property from a Schema instance for OpenAPI 3.1.x
+     *
+     * @since 2.1.8
+     * @return BigDecimal exclusiveMaximumValue
+     *
+     **/
+    @OpenAPI31
+    public BigDecimal getExclusiveMaximumValue() {
+        return exclusiveMaximumValue;
+    }
+
+    @OpenAPI31
+    public void setExclusiveMaximumValue(BigDecimal exclusiveMaximumValue) {
+        this.exclusiveMaximumValue = exclusiveMaximumValue;
+    }
+
+    @OpenAPI31
+    public Schema exclusiveMaximumValue(BigDecimal exclusiveMaximumValue) {
+        this.exclusiveMaximumValue = exclusiveMaximumValue;
         return this;
     }
 
@@ -251,7 +306,7 @@ public class Schema<T> {
     }
 
     /**
-     * returns the exclusiveMinimum property from a Schema instance.
+     * returns the exclusiveMinimum property from a Schema instance for OpenAPI 3.0.x
      *
      * @return Boolean exclusiveMinimum
      **/
@@ -266,6 +321,27 @@ public class Schema<T> {
 
     public Schema exclusiveMinimum(Boolean exclusiveMinimum) {
         this.exclusiveMinimum = exclusiveMinimum;
+        return this;
+    }
+
+    /**
+     * returns the exclusiveMinimumValue property from a Schema instance for OpenAPI 3.1.x
+     *
+     * @since 2.1.8
+     * @return BigDecimal exclusiveMinimumValue
+     *
+     **/
+    @OpenAPI31
+    public BigDecimal getExclusiveMinimumValue() {
+        return exclusiveMinimumValue;
+    }
+    @OpenAPI31
+    public void setExclusiveMinimumValue(BigDecimal exclusiveMinimumValue) {
+        this.exclusiveMinimumValue = exclusiveMinimumValue;
+    }
+    @OpenAPI31
+    public Schema exclusiveMinimumValue(BigDecimal exclusiveMinimumValue) {
+        this.exclusiveMinimumValue = exclusiveMinimumValue;
         return this;
     }
 
@@ -539,6 +615,34 @@ public class Schema<T> {
     }
 
     /**
+     * returns the patternProperties property from a Schema instance.
+     *
+     * @since 2.1.8
+     * @return Map&lt;String, Schema&gt; patternProperties
+     **/
+
+    public Map<String, Schema> getPatternProperties() {
+        return patternProperties;
+    }
+
+    public void setPatternProperties(Map<String, Schema> patternProperties) {
+        this.patternProperties = patternProperties;
+    }
+
+    public Schema patternProperties(Map<String, Schema> patternProperties) {
+        this.patternProperties = patternProperties;
+        return this;
+    }
+
+    public Schema addPatternProperty(String key, Schema patternPropertiesItem) {
+        if (this.patternProperties == null) {
+            this.patternProperties = new LinkedHashMap<>();
+        }
+        this.patternProperties.put(key, patternPropertiesItem);
+        return this;
+    }
+
+    /**
      * returns the additionalProperties property from a Schema instance. Can be either a Boolean or a Schema
      *
      * @return Object additionalProperties
@@ -625,15 +729,17 @@ public class Schema<T> {
      *
      * @return Boolean nullable
      **/
-
+    @OpenAPI30
     public Boolean getNullable() {
         return nullable;
     }
 
+    @OpenAPI30
     public void setNullable(Boolean nullable) {
         this.nullable = nullable;
     }
 
+    @OpenAPI30
     public Schema nullable(Boolean nullable) {
         this.nullable = nullable;
         return this;
@@ -784,8 +890,10 @@ public class Schema<T> {
                 Objects.equals(this.multipleOf, schema.multipleOf) &&
                 Objects.equals(this.maximum, schema.maximum) &&
                 Objects.equals(this.exclusiveMaximum, schema.exclusiveMaximum) &&
+                Objects.equals(this.exclusiveMaximumValue, schema.exclusiveMaximumValue) &&
                 Objects.equals(this.minimum, schema.minimum) &&
                 Objects.equals(this.exclusiveMinimum, schema.exclusiveMinimum) &&
+                Objects.equals(this.exclusiveMinimumValue, schema.exclusiveMinimumValue) &&
                 Objects.equals(this.maxLength, schema.maxLength) &&
                 Objects.equals(this.minLength, schema.minLength) &&
                 Objects.equals(this.pattern, schema.pattern) &&
@@ -817,9 +925,11 @@ public class Schema<T> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(title, multipleOf, maximum, exclusiveMaximum, minimum, exclusiveMinimum, maxLength, minLength, pattern, maxItems,
-                minItems, uniqueItems, maxProperties, minProperties, required, type, not, properties, additionalProperties, description, format, $ref,
-                nullable, readOnly, writeOnly, example, externalDocs, deprecated, xml, extensions, discriminator, _enum, _default);
+        return Objects.hash(title, multipleOf, maximum, exclusiveMaximum, exclusiveMaximumValue, minimum,
+                exclusiveMinimum, exclusiveMinimumValue, maxLength, minLength, pattern, maxItems, minItems, uniqueItems,
+                maxProperties, minProperties, required, type, not, properties, additionalProperties, description,
+                format, $ref, nullable, readOnly, writeOnly, example, externalDocs, deprecated, xml, extensions,
+                discriminator, _enum, _default);
     }
 
     public java.util.Map<String, Object> getExtensions() {
@@ -857,8 +967,10 @@ public class Schema<T> {
         sb.append("    multipleOf: ").append(toIndentedString(multipleOf)).append("\n");
         sb.append("    maximum: ").append(toIndentedString(maximum)).append("\n");
         sb.append("    exclusiveMaximum: ").append(toIndentedString(exclusiveMaximum)).append("\n");
+        sb.append("    exclusiveMaximumValue: ").append(toIndentedString(exclusiveMaximumValue)).append("\n");
         sb.append("    minimum: ").append(toIndentedString(minimum)).append("\n");
         sb.append("    exclusiveMinimum: ").append(toIndentedString(exclusiveMinimum)).append("\n");
+        sb.append("    exclusiveMinimumValue: ").append(toIndentedString(exclusiveMinimumValue)).append("\n");
         sb.append("    maxLength: ").append(toIndentedString(maxLength)).append("\n");
         sb.append("    minLength: ").append(toIndentedString(minLength)).append("\n");
         sb.append("    pattern: ").append(toIndentedString(pattern)).append("\n");
