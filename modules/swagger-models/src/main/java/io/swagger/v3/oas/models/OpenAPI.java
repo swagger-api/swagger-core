@@ -24,7 +24,9 @@ import io.swagger.v3.oas.models.servers.Server;
 import io.swagger.v3.oas.models.tags.Tag;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -43,6 +45,11 @@ public class OpenAPI {
     private Paths paths = null;
     private Components components = null;
     private java.util.Map<String, Object> extensions = null;
+
+    /**
+     * @since 2.1.8 (OpenAPI 3.1.0)
+     */
+    private java.util.Map<String, PathItem> webhooks = null;
 
     /**
      * returns the openapi property from a OpenAPI instance.
@@ -249,6 +256,35 @@ public class OpenAPI {
         return this;
     }
 
+    /**
+     * returns the webhooks property from a OpenAPI instance.
+     *
+     * @since 2.1.8 (OpenAPI 3.1.0)
+     * @return Map&lt;String, PathItem&gt; webhooks
+     **/
+
+    public Map<String, PathItem> getWebhooks() {
+        return webhooks;
+    }
+
+    public void setWebhooks(Map<String, PathItem> webhooks) {
+        this.webhooks = webhooks;
+    }
+
+    public OpenAPI webhooks(Map<String, PathItem> webhooks) {
+        this.webhooks = webhooks;
+        return this;
+    }
+
+    public OpenAPI addWebhooks(String key, PathItem pathItem) {
+        if (this.webhooks == null) {
+            this.webhooks = new LinkedHashMap<>();
+        }
+        this.webhooks.put(key, pathItem);
+        return this;
+    }
+
+
     @Override
     public boolean equals(java.lang.Object o) {
         if (this == o) {
@@ -266,12 +302,13 @@ public class OpenAPI {
                 Objects.equals(this.tags, openAPI.tags) &&
                 Objects.equals(this.paths, openAPI.paths) &&
                 Objects.equals(this.components, openAPI.components) &&
+                Objects.equals(this.webhooks, openAPI.webhooks) &&
                 Objects.equals(this.extensions, openAPI.extensions);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(openapi, info, externalDocs, servers, security, tags, paths, components, extensions);
+        return Objects.hash(openapi, info, externalDocs, servers, security, tags, paths, components, webhooks, extensions);
     }
 
     public java.util.Map<String, Object> getExtensions() {
@@ -310,6 +347,7 @@ public class OpenAPI {
         sb.append("    tags: ").append(toIndentedString(tags)).append("\n");
         sb.append("    paths: ").append(toIndentedString(paths)).append("\n");
         sb.append("    components: ").append(toIndentedString(components)).append("\n");
+        sb.append("    webhooks: ").append(toIndentedString(webhooks)).append("\n");
         sb.append("}");
         return sb.toString();
     }
