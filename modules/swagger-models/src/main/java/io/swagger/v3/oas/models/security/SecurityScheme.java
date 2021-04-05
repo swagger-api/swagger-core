@@ -30,7 +30,8 @@ public class SecurityScheme {
         APIKEY("apiKey"),
         HTTP("http"),
         OAUTH2("oauth2"),
-        OPENIDCONNECT("openIdConnect");
+        OPENIDCONNECT("openIdConnect"),
+        MUTUALTLS("mutualTLS");
 
         private String value;
 

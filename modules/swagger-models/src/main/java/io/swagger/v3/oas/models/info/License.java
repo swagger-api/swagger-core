@@ -16,17 +16,26 @@
 
 package io.swagger.v3.oas.models.info;
 
+import io.swagger.v3.oas.OpenAPI31;
+
 import java.util.Objects;
 
 /**
  * License
  *
  * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.0.1/versions/3.0.1.md#licenseObject"
+ * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.1.0/versions/3.1.0.md#licenseObject"
  */
 
 public class License {
     private String name = null;
     private String url = null;
+
+    /**
+     * @since 2.1.8
+     */
+    @OpenAPI31
+    private String identifier = null;
     private java.util.Map<String, Object> extensions = null;
 
     /**
@@ -67,8 +76,28 @@ public class License {
         return this;
     }
 
+    /**
+     * returns the identifier property from a License instance.
+     *
+     * @since 2.1.8
+     * @return String identifier
+     **/
+    @OpenAPI31
+    public String getIdentifier() {
+        return identifier;
+    }
+    @OpenAPI31
+    public void setIdentifier(String identifier) {
+        this.identifier = identifier;
+    }
+    @OpenAPI31
+    public License identifier(String identifier) {
+        this.identifier = identifier;
+        return this;
+    }
+
     @Override
-    public boolean equals(java.lang.Object o) {
+    public boolean equals(Object o) {
         if (this == o) {
             return true;
         }
@@ -78,12 +107,13 @@ public class License {
         License license = (License) o;
         return Objects.equals(this.name, license.name) &&
                 Objects.equals(this.url, license.url) &&
+                Objects.equals(this.identifier, license.identifier) &&
                 Objects.equals(this.extensions, license.extensions);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, url, extensions);
+        return Objects.hash(name, url, identifier, extensions);
     }
 
     public java.util.Map<String, Object> getExtensions() {
@@ -116,6 +146,7 @@ public class License {
 
         sb.append("    name: ").append(toIndentedString(name)).append("\n");
         sb.append("    url: ").append(toIndentedString(url)).append("\n");
+        sb.append("    identifier: ").append(toIndentedString(identifier)).append("\n");
         sb.append("}");
         return sb.toString();
     }

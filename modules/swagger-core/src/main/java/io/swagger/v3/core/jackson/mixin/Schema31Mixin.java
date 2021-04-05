@@ -4,12 +4,23 @@ import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import io.swagger.v3.oas.models.media.Schema;
+import com.fasterxml.jackson.annotation.JsonValue;
 
-import java.math.BigDecimal;
 import java.util.Map;
 
-public abstract class SchemaMixin {
+public abstract class Schema31Mixin {
+
+    @JsonValue
+    public abstract Map<String, Object> getJsonSchema();
+
+    @JsonIgnore
+    public abstract Boolean getNullable();
+
+    @JsonIgnore
+    public abstract Boolean getExclusiveMinimum();
+
+    @JsonIgnore
+    public abstract Boolean getExclusiveMaximum();
 
     @JsonAnyGetter
     public abstract Map<String, Object> getExtensions();
@@ -20,18 +31,7 @@ public abstract class SchemaMixin {
     @JsonIgnore
     public abstract boolean getExampleSetFlag();
 
-    @JsonInclude(value = JsonInclude.Include.NON_NULL, content = JsonInclude.Include.ALWAYS)
+    @JsonInclude(JsonInclude.Include.CUSTOM)
     public abstract Object getExample();
 
-    @JsonIgnore
-    public abstract Map<String, Object> getJsonSchema();
-
-    @JsonIgnore
-    public abstract BigDecimal getExclusiveMinimumValue();
-
-    @JsonIgnore
-    public abstract BigDecimal getExclusiveMaximumValue();
-
-    @JsonIgnore
-    public abstract Map<String, Schema> getPatternProperties();
 }
