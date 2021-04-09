@@ -865,6 +865,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         }
 
         resolveDiscriminatorProperty(type, context, model);
+        model = resolveWrapping(type, context, model);
 
         return model;
     }
@@ -1807,6 +1808,32 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 }
             }
         }
+    }
+
+    /*
+     TODO partial implementation supporting WRAPPER_OBJECT with JsonTypeInfo.Id.CLASS and JsonTypeInfo.Id.NAME
+
+     Also note that JsonTypeInfo on interfaces are not considered as multiple interfaces might have conflicting
+     annotations, although Jackson seems to apply them if present on an interface
+     */
+    protected Schema resolveWrapping(JavaType type, ModelConverterContext context, Schema model) {
+        // add JsonTypeInfo.property if not member of bean
+        JsonTypeInfo typeInfo = type.getRawClass().getDeclaredAnnotation(JsonTypeInfo.class);
+        if (typeInfo != null) {
+            JsonTypeInfo.Id id = typeInfo.use();
+            JsonTypeInfo.As as = typeInfo.include();
+            if (JsonTypeInfo.As.WRAPPER_OBJECT.equals(as)) {
+                String name = model.getName();
+                if (JsonTypeInfo.Id.CLASS.equals(id)) {
+                    name = type.getRawClass().getName();
+                }
+                Schema wrapperSchema = new ObjectSchema();
+                wrapperSchema.name(model.getName());
+                wrapperSchema.addProperties(name, model);
+                return wrapperSchema;
+            }
+        }
+        return model;
     }
 
     protected Discriminator resolveDiscriminator(JavaType type, ModelConverterContext context) {
