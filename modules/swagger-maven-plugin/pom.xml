@@ -273,7 +273,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.version>3.6.3</maven.version>
         <junit.version>4.13.1</junit.version>
-        <wiremock-jetty-version>9.4.35.v20201120</wiremock-jetty-version>
+        <wiremock-jetty-version>9.4.39.v20210325</wiremock-jetty-version>
         <commons-compress-version>1.20</commons-compress-version>
     </properties>
 </project>
