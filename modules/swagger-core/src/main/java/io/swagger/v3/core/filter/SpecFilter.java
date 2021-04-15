@@ -74,8 +74,9 @@ public class SpecFilter {
 
                     Map<PathItem.HttpMethod, Operation> ops = filteredPathItem.readOperationsMap();
 
-                    for (PathItem.HttpMethod key : ops.keySet()) {
-                        Operation op = ops.get(key);
+                    for (Map.Entry<PathItem.HttpMethod, Operation> entry : ops.entrySet()) {
+                        PathItem.HttpMethod key = entry.getKey();
+                        Operation op = entry.getValue();
                         List<String> opTagsBeforeFilter = null;
                         if (op.getTags() != null) {
                             opTagsBeforeFilter = new ArrayList<>(op.getTags());
@@ -157,6 +158,19 @@ public class SpecFilter {
             if (filteredOperation.isPresent()) {
                 List<Parameter> filteredParameters = new ArrayList<>();
                 Operation filteredOperationGet = filteredOperation.get();
+
+                Operation clone = new Operation();
+                clone.setCallbacks(filteredOperationGet.getCallbacks());
+                clone.setDeprecated(filteredOperationGet.getDeprecated());
+                clone.setDescription(filteredOperationGet.getDescription());
+                clone.setExtensions(filteredOperationGet.getExtensions());
+                clone.setExternalDocs(filteredOperationGet.getExternalDocs());
+                clone.setOperationId(filteredOperationGet.getOperationId());
+                clone.setSecurity(filteredOperationGet.getSecurity());
+                clone.setServers(filteredOperationGet.getServers());
+                clone.setSummary(filteredOperationGet.getSummary());
+                clone.setTags(filteredOperationGet.getTags());
+
                 List<Parameter> parameters = filteredOperationGet.getParameters();
                 if (parameters != null) {
                     for (Parameter parameter : parameters) {
@@ -165,13 +179,13 @@ public class SpecFilter {
                             filteredParameters.add(filteredParameter);
                         }
                     }
+                    clone.setParameters(filteredParameters);
                 }
-                filteredOperationGet.setParameters(filteredParameters);
 
                 RequestBody requestBody = filteredOperation.get().getRequestBody();
                 if (requestBody != null) {
                     RequestBody filteredRequestBody = filterRequestBody(filter, operation, requestBody, resourcePath, key, params, cookies, headers);
-                    filteredOperationGet.setRequestBody(filteredRequestBody);
+                    clone.setRequestBody(filteredRequestBody);
 
                 }
 
@@ -184,10 +198,10 @@ public class SpecFilter {
                             clonedResponses.addApiResponse(responseKey, filteredResponse);
                         }
                     });
-                    filteredOperationGet.setResponses(clonedResponses);
+                    clone.setResponses(clonedResponses);
                 }
 
-                return filteredOperationGet;
+                return clone;
             }
         }
         return null;
@@ -244,16 +258,15 @@ public class SpecFilter {
         }
         Map<String, Schema> clonedComponentsSchema = new LinkedHashMap<>();
 
-        for (String key : schemasMap.keySet()) {
-            Schema definition = schemasMap.get(key);
+        for (Map.Entry<String, Schema> entry : schemasMap.entrySet()) {
+            String key = entry.getKey();
+            Schema definition = entry.getValue();
             Optional<Schema> filteredDefinition = filter.filterSchema(definition, params, cookies, headers);
-            if (!filteredDefinition.isPresent()) {
-                continue;
-            } else {
+            if (filteredDefinition.isPresent()) {
                 Map<String, Schema> clonedProperties = new LinkedHashMap<>();
                 if (filteredDefinition.get().getProperties() != null) {
                     for (Object propName : filteredDefinition.get().getProperties().keySet()) {
-                        Schema property = (Schema) filteredDefinition.get().getProperties().get((String) propName);
+                        Schema property = (Schema) filteredDefinition.get().getProperties().get(propName);
                         if (property != null) {
                             Optional<Schema> filteredProperty = filter.filterSchemaProperty(property, definition, (String) propName, params, cookies, headers);
                             if (filteredProperty.isPresent()) {
@@ -275,7 +288,6 @@ public class SpecFilter {
                     clonedComponentsSchema.put(key, clonedModel);
 
                 } catch (IOException e) {
-                    continue;
                 }
             }
         }
@@ -299,12 +311,12 @@ public class SpecFilter {
 
         if (schema.getProperties() != null) {
             for (Object propName : schema.getProperties().keySet()) {
-                Schema property = (Schema) schema.getProperties().get((String) propName);
+                Schema property = (Schema) schema.getProperties().get(propName);
                 addSchemaRef(property, referencedDefinitions);
             }
         }
 
-        if (schema.getAdditionalProperties() != null && (schema.getAdditionalProperties() instanceof Schema)) {
+        if (schema.getAdditionalProperties() instanceof Schema) {
             addSchemaRef((Schema)schema.getAdditionalProperties(), referencedDefinitions);
         }
 
@@ -333,8 +345,7 @@ public class SpecFilter {
 
     private void addContentSchemaRef(Content content, Set<String> referencedDefinitions) {
         if (content != null) {
-            for (String keyBodyContent : content.keySet()) {
-                MediaType mediaType = content.get(keyBodyContent);
+            for (MediaType mediaType : content.values()) {
                 addSchemaRef(mediaType.getSchema(), referencedDefinitions);
             }
         }
@@ -348,8 +359,7 @@ public class SpecFilter {
             }
         }
         Map<PathItem.HttpMethod, Operation> ops = pathItem.readOperationsMap();
-        for (PathItem.HttpMethod key : ops.keySet()) {
-            Operation op = ops.get(key);
+        for (Operation op : ops.values()) {
             if (op.getRequestBody() != null) {
                 addContentSchemaRef(op.getRequestBody().getContent(), referencedDefinitions);
             }
@@ -375,8 +385,7 @@ public class SpecFilter {
             if (op.getCallbacks() != null) {
                 for (String keyCallback : op.getCallbacks().keySet()) {
                     Callback callback = op.getCallbacks().get(keyCallback);
-                    for (String keyCallbackPathItem : callback.keySet()) {
-                        PathItem callbackPathItem = callback.get(keyCallbackPathItem);
+                    for (PathItem callbackPathItem : callback.values()) {
                         addPathItemSchemaRef(callbackPathItem, referencedDefinitions);
                     }
                 }

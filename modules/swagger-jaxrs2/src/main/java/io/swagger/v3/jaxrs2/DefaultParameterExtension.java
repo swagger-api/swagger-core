@@ -5,19 +5,21 @@ import com.fasterxml.jackson.databind.BeanDescription;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.introspect.AnnotatedField;
 import com.fasterxml.jackson.databind.introspect.AnnotatedMethod;
+import com.fasterxml.jackson.databind.introspect.AnnotationMap;
 import com.fasterxml.jackson.databind.introspect.BeanPropertyDefinition;
+
 import io.swagger.v3.core.util.Json;
 import io.swagger.v3.core.util.ParameterProcessor;
 import io.swagger.v3.jaxrs2.ext.AbstractOpenAPIExtension;
 import io.swagger.v3.jaxrs2.ext.OpenAPIExtension;
 import io.swagger.v3.jaxrs2.ext.OpenAPIExtensions;
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.parameters.Parameter;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.CookieParam;
-import javax.ws.rs.FormParam;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
@@ -30,11 +32,10 @@ import java.util.List;
 import java.util.Set;
 
 public class DefaultParameterExtension extends AbstractOpenAPIExtension {
-    private static String QUERY_PARAM = "query";
-    private static String HEADER_PARAM = "header";
-    private static String COOKIE_PARAM = "cookie";
-    private static String PATH_PARAM = "path";
-    private static String FORM_PARAM = "form";
+    private static final String QUERY_PARAM = "query";
+    private static final String HEADER_PARAM = "header";
+    private static final String COOKIE_PARAM = "cookie";
+    private static final String PATH_PARAM = "path";
 
     final ObjectMapper mapper = Json.mapper();
 
@@ -169,17 +170,19 @@ public class DefaultParameterExtension extends AbstractOpenAPIExtension {
                 final AnnotatedField field = propDef.getField();
                 final AnnotatedMethod setter = propDef.getSetter();
                 final AnnotatedMethod getter = propDef.getGetter();
-                final List<Annotation> paramAnnotations = new ArrayList<Annotation>();
+                final List<Annotation> paramAnnotations = new ArrayList<>();
                 final Iterator<OpenAPIExtension> extensions = OpenAPIExtensions.chain();
                 Type paramType = null;
 
                 // Gather the field's details
                 if (field != null) {
                     paramType = field.getType();
-
-                    for (final Annotation fieldAnnotation : field.annotations()) {
-                        if (!paramAnnotations.contains(fieldAnnotation)) {
-                            paramAnnotations.add(fieldAnnotation);
+                    AnnotationMap annotationMap = field.getAllAnnotations();
+                    if (annotationMap != null) {
+                        for (final Annotation fieldAnnotation : annotationMap.annotations()) {
+                            if (!paramAnnotations.contains(fieldAnnotation)) {
+                                paramAnnotations.add(fieldAnnotation);
+                            }
                         }
                     }
                 }
@@ -191,10 +194,12 @@ public class DefaultParameterExtension extends AbstractOpenAPIExtension {
                         // paramType will stay null if there is no parameter
                         paramType = setter.getParameterType(0);
                     }
-
-                    for (final Annotation fieldAnnotation : setter.annotations()) {
-                        if (!paramAnnotations.contains(fieldAnnotation)) {
-                            paramAnnotations.add(fieldAnnotation);
+                    AnnotationMap annotationMap = setter.getAllAnnotations();
+                    if (annotationMap != null) {
+                        for (final Annotation fieldAnnotation : annotationMap.annotations()) {
+                            if (!paramAnnotations.contains(fieldAnnotation)) {
+                                paramAnnotations.add(fieldAnnotation);
+                            }
                         }
                     }
                 }
@@ -205,10 +210,12 @@ public class DefaultParameterExtension extends AbstractOpenAPIExtension {
                     if (paramType == null) {
                         paramType = getter.getType();
                     }
-
-                    for (final Annotation fieldAnnotation : getter.annotations()) {
-                        if (!paramAnnotations.contains(fieldAnnotation)) {
-                            paramAnnotations.add(fieldAnnotation);
+                    AnnotationMap annotationMap = getter.getAllAnnotations();
+                    if (annotationMap != null) {
+                        for (final Annotation fieldAnnotation : annotationMap.annotations()) {
+                            if (!paramAnnotations.contains(fieldAnnotation)) {
+                                paramAnnotations.add(fieldAnnotation);
+                            }
                         }
                     }
                 }
@@ -217,6 +224,22 @@ public class DefaultParameterExtension extends AbstractOpenAPIExtension {
                     continue;
                 }
 
+                // skip hidden properties
+                boolean hidden  = false;
+                for (Annotation a : paramAnnotations) {
+                    if (a instanceof io.swagger.v3.oas.annotations.media.Schema) {
+                        if (((io.swagger.v3.oas.annotations.media.Schema) a).hidden()) {
+                            hidden = true;
+                            break;
+                        };
+                    } else if (a instanceof Hidden) {
+                        hidden = true;
+                        break;
+                    }
+                }
+                if (hidden) {
+                    continue;
+                }
                 // Re-process all Bean fields and let the default swagger-jaxrs/swagger-jersey-jaxrs processors do their thing
                 ResolvedParameter resolvedParameter = extensions.next().extractParameters(
                         paramAnnotations,

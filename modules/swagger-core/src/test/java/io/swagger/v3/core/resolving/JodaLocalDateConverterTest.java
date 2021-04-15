@@ -2,11 +2,13 @@ package io.swagger.v3.core.resolving;
 
 import io.swagger.v3.core.converter.ModelConverters;
 import io.swagger.v3.oas.models.media.DateSchema;
+import io.swagger.v3.oas.models.media.DateTimeSchema;
 import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.media.StringSchema;
 import org.joda.time.LocalDate;
 import org.testng.annotations.Test;
 
+import java.time.Instant;
 import java.util.Map;
 
 import static org.testng.Assert.assertEquals;
@@ -37,5 +39,21 @@ public class JodaLocalDateConverterTest {
 
         @io.swagger.v3.oas.annotations.media.Schema(description = "creation localDate", required = true)
         public LocalDate createdAt;
+    }
+
+    @Test
+    public void testJavaTimeInstant() {
+        final Map<String, Schema> models = ModelConverters.getInstance().read(ModelWithJavaTimeInstant.class);
+        assertEquals(models.size(), 1);
+        final Schema model = models.get("ModelWithJavaTimeInstant");
+
+        final Schema dateTimeProperty = (Schema) model.getProperties().get("createdAt");
+        assertTrue(dateTimeProperty instanceof DateTimeSchema);
+    }
+
+    class ModelWithJavaTimeInstant {
+        @io.swagger.v3.oas.annotations.media.Schema(description = "name of the model")
+        public String name;
+        public Instant createdAt;
     }
 }

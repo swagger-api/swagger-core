@@ -10,7 +10,6 @@ import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.parameters.Parameter;
 import org.apache.commons.lang3.StringUtils;
 
-import javax.ws.rs.DELETE;
 import javax.ws.rs.HttpMethod;
 import javax.ws.rs.core.Context;
 import java.lang.annotation.Annotation;
@@ -61,7 +60,7 @@ public class ReaderUtils {
             final Annotation[][] annotations = constructor.getParameterAnnotations();
 
             int paramsCount = 0;
-            final List<Parameter> parameters = new ArrayList<Parameter>();
+            final List<Parameter> parameters = new ArrayList<>();
             for (int i = 0; i < genericParameterTypes.length; i++) {
                 final List<Annotation> tmpAnnotations = Arrays.asList(annotations[i]);
                 if (isContext(tmpAnnotations)) {
@@ -69,7 +68,7 @@ public class ReaderUtils {
                 } else {
                     final Type genericParameterType = genericParameterTypes[i];
                     final List<Parameter> tmpParameters = collectParameters(genericParameterType, tmpAnnotations, components, classConsumes, jsonViewAnnotation);
-                    if (tmpParameters.size() >= 1) {
+                    if (! tmpParameters.isEmpty()) {
                         for (Parameter tmpParameter : tmpParameters) {
                             Parameter processedParameter = ParameterProcessor.applyAnnotations(
                                     tmpParameter,
@@ -105,7 +104,7 @@ public class ReaderUtils {
      * @return the collection of supported parameters
      */
     public static List<Parameter> collectFieldParameters(Class<?> cls, Components components, javax.ws.rs.Consumes classConsumes, JsonView jsonViewAnnotation) {
-        final List<Parameter> parameters = new ArrayList<Parameter>();
+        final List<Parameter> parameters = new ArrayList<>();
         for (Field field : ReflectionUtils.getDeclaredFields(cls)) {
             final List<Annotation> annotations = Arrays.asList(field.getAnnotations());
             final Type genericType = field.getGenericType();
@@ -212,8 +211,6 @@ public class ReaderUtils {
             return OPTIONS_METHOD;
         } else if (method.getAnnotation(javax.ws.rs.HEAD.class) != null) {
             return HEAD_METHOD;
-        } else if (method.getAnnotation(DELETE.class) != null) {
-            return DELETE_METHOD;
         } else if (method.getAnnotation(HttpMethod.class) != null) {
             HttpMethod httpMethod = method.getAnnotation(HttpMethod.class);
             return httpMethod.value().toLowerCase();

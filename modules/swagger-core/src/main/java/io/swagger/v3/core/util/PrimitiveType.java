@@ -28,6 +28,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public enum PrimitiveType {
     STRING(String.class, "string") {
+        @Override
         public Schema createProperty() {
             return new StringSchema();
         }
@@ -157,27 +158,34 @@ public enum PrimitiveType {
 
     /**
      * Allows to exclude specific classes from KEY_CLASSES mappings to primitive
-     * Joda lib.
+     *
      */
-    private static Set<String> customExcludedClasses = new ConcurrentHashMap<String, String>().newKeySet();
+    private static Set<String> customExcludedClasses = ConcurrentHashMap.newKeySet();
+
+    /**
+     * Allows to exclude specific classes from EXTERNAL_CLASSES mappings to primitive
+     *
+     */
+    private static Set<String> customExcludedExternalClasses = ConcurrentHashMap.newKeySet();
+
 
     /**
      * Adds support for custom mapping of classes to primitive types
      */
-    private static Map<String, PrimitiveType> customClasses = new ConcurrentHashMap<String, PrimitiveType>();
+    private static Map<String, PrimitiveType> customClasses = new ConcurrentHashMap<>();
 
     /**
      * class qualified names prefixes to be considered as "system" types
      */
-    private static Set<String> systemPrefixes = new ConcurrentHashMap<String, Boolean>().newKeySet();
+    private static Set<String> systemPrefixes = ConcurrentHashMap.newKeySet();
     /**
      * class qualified names NOT to be considered as "system" types
      */
-    private static Set<String> nonSystemTypes = new ConcurrentHashMap<String, Boolean>().newKeySet();
+    private static Set<String> nonSystemTypes = ConcurrentHashMap.newKeySet();
     /**
      * package names NOT to be considered as "system" types
      */
-    private static Set<String> nonSystemTypePackages = new ConcurrentHashMap<String, Boolean>().newKeySet();
+    private static Set<String> nonSystemTypePackages = ConcurrentHashMap.newKeySet();
 
     /**
      * Alternative names for primitive types that have to be supported for
@@ -216,7 +224,7 @@ public enum PrimitiveType {
         dms.put("object_", "object");
         datatypeMappings = Collections.unmodifiableMap(dms);
 
-        final Map<Class<?>, PrimitiveType> keyClasses = new HashMap<Class<?>, PrimitiveType>();
+        final Map<Class<?>, PrimitiveType> keyClasses = new HashMap<>();
         addKeys(keyClasses, BOOLEAN, Boolean.class, Boolean.TYPE);
         addKeys(keyClasses, STRING, String.class, Character.class, Character.TYPE);
         addKeys(keyClasses, BYTE, Byte.class, Byte.TYPE);
@@ -236,19 +244,24 @@ public enum PrimitiveType {
         addKeys(keyClasses, OBJECT, Object.class);
         KEY_CLASSES = Collections.unmodifiableMap(keyClasses);
 
-        final Map<Class<?>, PrimitiveType> baseClasses = new HashMap<Class<?>, PrimitiveType>();
+        final Map<Class<?>, PrimitiveType> baseClasses = new HashMap<>();
         addKeys(baseClasses, DATE_TIME, java.util.Date.class, java.util.Calendar.class);
         BASE_CLASSES = Collections.unmodifiableMap(baseClasses);
 
-        final Map<String, PrimitiveType> externalClasses = new HashMap<String, PrimitiveType>();
+        final Map<String, PrimitiveType> externalClasses = new HashMap<>();
         addKeys(externalClasses, DATE, "org.joda.time.LocalDate", "java.time.LocalDate");
-        addKeys(externalClasses, DATE_TIME, "java.time.LocalDateTime", "java.time.ZonedDateTime",
-                "java.time.OffsetDateTime", "javax.xml.datatype.XMLGregorianCalendar", "org.joda.time.LocalDateTime",
-                "org.joda.time.ReadableDateTime", "org.joda.time.DateTime");
-        addKeys(externalClasses, LONG, "java.time.Instant");
+        addKeys(externalClasses, DATE_TIME,
+                "java.time.LocalDateTime",
+                "java.time.ZonedDateTime",
+                "java.time.OffsetDateTime",
+                "javax.xml.datatype.XMLGregorianCalendar",
+                "org.joda.time.LocalDateTime",
+                "org.joda.time.ReadableDateTime",
+                "org.joda.time.DateTime",
+                "java.time.Instant");
         EXTERNAL_CLASSES = Collections.unmodifiableMap(externalClasses);
 
-        final Map<String, PrimitiveType> names = new TreeMap<String, PrimitiveType>(String.CASE_INSENSITIVE_ORDER);
+        final Map<String, PrimitiveType> names = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
         for (PrimitiveType item : values()) {
             final String name = item.getCommonName();
             if (name != null) {
@@ -278,6 +291,16 @@ public enum PrimitiveType {
      */
     public static Set<String> customExcludedClasses() {
         return customExcludedClasses;
+    }
+
+    /**
+     * Adds support for custom mapping of classes to primitive types
+     *
+     * @return Map of custom classes to primitive type
+     * @since 2.1.2
+     */
+    public static Set<String> customExcludedExternalClasses() {
+        return customExcludedExternalClasses;
     }
 
     /**
@@ -336,7 +359,10 @@ public enum PrimitiveType {
 
         final PrimitiveType external = EXTERNAL_CLASSES.get(raw.getName());
         if (external != null) {
-            return external;
+            if (!customExcludedExternalClasses().contains(raw.getName())) {
+                return external;
+            }
+
         }
 
         for (Map.Entry<Class<?>, PrimitiveType> entry : BASE_CLASSES.entrySet()) {
@@ -353,7 +379,9 @@ public enum PrimitiveType {
         }
         PrimitiveType fromName = NAMES.get(name);
         if (fromName == null) {
-            fromName = EXTERNAL_CLASSES.get(name);
+            if (!customExcludedExternalClasses().contains(name)) {
+                fromName = EXTERNAL_CLASSES.get(name);
+            }
         }
         return fromName;
     }

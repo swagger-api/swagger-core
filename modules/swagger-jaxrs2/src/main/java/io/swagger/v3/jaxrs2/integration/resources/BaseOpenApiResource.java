@@ -1,9 +1,8 @@
 package io.swagger.v3.jaxrs2.integration.resources;
 
+import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import io.swagger.v3.core.filter.OpenAPISpecFilter;
 import io.swagger.v3.core.filter.SpecFilter;
-import io.swagger.v3.core.util.Json;
-import io.swagger.v3.core.util.Yaml;
 import io.swagger.v3.jaxrs2.integration.JaxrsOpenApiContextBuilder;
 import io.swagger.v3.oas.integration.api.OpenAPIConfiguration;
 import io.swagger.v3.oas.integration.api.OpenApiContext;
@@ -14,7 +13,6 @@ import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletConfig;
 import javax.ws.rs.core.Application;
-import javax.ws.rs.core.Cookie;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
@@ -31,13 +29,17 @@ public abstract class BaseOpenApiResource {
 
     private static Logger LOGGER = LoggerFactory.getLogger(BaseOpenApiResource.class);
 
+    protected String getContextId(ServletConfig config) {
+        return getContextIdFromServletConfig(config);
+    }
+
     protected Response getOpenApi(HttpHeaders headers,
                                   ServletConfig config,
                                   Application app,
                                   UriInfo uriInfo,
                                   String type) throws Exception {
 
-        String ctxId = getContextIdFromServletConfig(config);
+        String ctxId = getContextId(config);
         OpenApiContext ctx = new JaxrsOpenApiContextBuilder()
                 .servletConfig(config)
                 .application(app)
@@ -71,46 +73,41 @@ public abstract class BaseOpenApiResource {
 
         if (StringUtils.isNotBlank(type) && type.trim().equalsIgnoreCase("yaml")) {
             return Response.status(Response.Status.OK)
-                    .entity(pretty ? Yaml.pretty(oas) : Yaml.mapper().writeValueAsString(oas))
+                    .entity(pretty ?
+                            ctx.getOutputYamlMapper().writer(new DefaultPrettyPrinter()).writeValueAsString(oas) :
+                            ctx.getOutputYamlMapper().writeValueAsString(oas))
                     .type("application/yaml")
                     .build();
         } else {
             return Response.status(Response.Status.OK)
-                    .entity(pretty ? Json.pretty(oas) : Json.mapper().writeValueAsString(oas))
+                    .entity(pretty ?
+                            ctx.getOutputJsonMapper().writer(new DefaultPrettyPrinter()).writeValueAsString(oas) :
+                            ctx.getOutputJsonMapper().writeValueAsString(oas))
                     .type(MediaType.APPLICATION_JSON_TYPE)
                     .build();
         }
     }
 
     private static Map<String, List<String>> getQueryParams(MultivaluedMap<String, String> params) {
-        Map<String, List<String>> output = new HashMap<String, List<String>>();
+        Map<String, List<String>> output = new HashMap<>();
         if (params != null) {
-            for (String key : params.keySet()) {
-                List<String> values = params.get(key);
-                output.put(key, values);
-            }
+            params.forEach(output::put);
         }
         return output;
     }
 
     private static Map<String, String> getCookies(HttpHeaders headers) {
-        Map<String, String> output = new HashMap<String, String>();
+        Map<String, String> output = new HashMap<>();
         if (headers != null) {
-            for (String key : headers.getCookies().keySet()) {
-                Cookie cookie = headers.getCookies().get(key);
-                output.put(key, cookie.getValue());
-            }
+            headers.getCookies().forEach((k, v) -> output.put(k, v.getValue()));
         }
         return output;
     }
 
     private static Map<String, List<String>> getHeaders(HttpHeaders headers) {
-        Map<String, List<String>> output = new HashMap<String, List<String>>();
+        Map<String, List<String>> output = new HashMap<>();
         if (headers != null) {
-            for (String key : headers.getRequestHeaders().keySet()) {
-                List<String> values = headers.getRequestHeaders().get(key);
-                output.put(key, values);
-            }
+            headers.getRequestHeaders().forEach(output::put);
         }
         return output;
     }

@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Type;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -22,8 +23,8 @@ public class ModelConverters {
     private static final ModelConverters SINGLETON = new ModelConverters();
     static Logger LOGGER = LoggerFactory.getLogger(ModelConverters.class);
     private final List<ModelConverter> converters;
-    private final Set<String> skippedPackages = new HashSet<String>();
-    private final Set<String> skippedClasses = new HashSet<String>();
+    private final Set<String> skippedPackages = new HashSet<>();
+    private final Set<String> skippedClasses = new HashSet<>();
 
     public ModelConverters() {
         converters = new CopyOnWriteArrayList<>();
@@ -42,12 +43,16 @@ public class ModelConverters {
         converters.remove(converter);
     }
 
+    public List<ModelConverter> getConverters() {
+        return Collections.unmodifiableList(converters);
+    }
+
     public void addPackageToSkip(String pkg) {
         this.skippedPackages.add(pkg);
     }
 
     public void addClassToSkip(String cls) {
-        LOGGER.warn("skipping class " + cls);
+        LOGGER.warn("skipping class {}", cls);
         this.skippedClasses.add(cls);
     }
 
@@ -56,7 +61,7 @@ public class ModelConverters {
     }
 
     public Map<String, Schema> read(AnnotatedType type) {
-        Map<String, Schema> modelMap = new HashMap<String, Schema>();
+        Map<String, Schema> modelMap = new HashMap<>();
         if (shouldProcess(type.getType())) {
             ModelConverterContextImpl context = new ModelConverterContextImpl(
                     converters);
@@ -80,11 +85,11 @@ public class ModelConverters {
             ModelConverterContextImpl context = new ModelConverterContextImpl(
                     converters);
 
-            LOGGER.debug("ModelConverters readAll from " + type);
+            LOGGER.debug("ModelConverters readAll from {}", type);
             context.resolve(type);
             return context.getDefinedModels();
         }
-        return new HashMap<String, Schema>();
+        return new HashMap<>();
     }
 
     public ResolvedSchema readAllAsResolvedSchema(Type type) {
@@ -141,10 +146,10 @@ public class ModelConverters {
         while (itr.hasNext()) {
             ModelConverter ext = itr.next();
             if (ext == null) {
-                LOGGER.error("failed to load extension " + ext);
+                LOGGER.error("failed to load extension {}", ext);
             } else {
                 SINGLETON.addConverter(ext);
-                LOGGER.debug("adding ModelConverter: " + ext);
+                LOGGER.debug("adding ModelConverter: {}", ext);
             }
         }
     }

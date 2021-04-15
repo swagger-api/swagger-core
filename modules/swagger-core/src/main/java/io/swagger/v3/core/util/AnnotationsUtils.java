@@ -53,7 +53,7 @@ import java.util.Set;
 public abstract class AnnotationsUtils {
 
     private static Logger LOGGER = LoggerFactory.getLogger(AnnotationsUtils.class);
-    public static final String COMPONENTS_REF = "#/components/schemas/";
+    public static final String COMPONENTS_REF = Components.COMPONENTS_SCHEMAS_REF;
 
     public static boolean hasSchemaAnnotation(io.swagger.v3.oas.annotations.media.Schema schema) {
         if (schema == null) {
@@ -292,7 +292,7 @@ public abstract class AnnotationsUtils {
         if (array == null) {
             return false;
         }
-        if (array.uniqueItems() == false
+        if (!array.uniqueItems()
                 && array.maxItems() == Integer.MIN_VALUE
                 && array.minItems() == Integer.MAX_VALUE
                 && !hasSchemaAnnotation(array.schema())
@@ -362,9 +362,7 @@ public abstract class AnnotationsUtils {
             isEmpty = false;
             Map<String, Object> extensions = AnnotationsUtils.getExtensions(example.extensions());
             if (extensions != null) {
-                for (String ext : extensions.keySet()) {
-                    exampleObject.addExtension(ext, extensions.get(ext));
-                }
+                extensions.forEach(exampleObject::addExtension);
             }
         }
         return !isEmpty;
@@ -391,17 +389,13 @@ public abstract class AnnotationsUtils {
         if (arraySchema.extensions().length > 0) {
             Map<String, Object> extensions = AnnotationsUtils.getExtensions(arraySchema.extensions());
             if (extensions != null) {
-                for (String ext : extensions.keySet()) {
-                    arraySchemaObject.addExtension(ext, extensions.get(ext));
-                }
+                extensions.forEach(arraySchemaObject::addExtension);
             }
         }
 
         if (arraySchema.schema() != null) {
             if (arraySchema.schema().implementation().equals(Void.class)) {
-                getSchemaFromAnnotation(arraySchema.schema(), components, jsonViewAnnotation).ifPresent(schema -> {
-                    arraySchemaObject.setItems(schema);
-                });
+                getSchemaFromAnnotation(arraySchema.schema(), components, jsonViewAnnotation).ifPresent(arraySchemaObject::setItems);
             } // if present, schema implementation handled upstream
         }
 
@@ -473,14 +467,14 @@ public abstract class AnnotationsUtils {
             schemaObject.setMinLength(schema.minLength());
         }
         if (schema.multipleOf() != 0) {
-            schemaObject.setMultipleOf(new BigDecimal(schema.multipleOf()));
+            schemaObject.setMultipleOf(BigDecimal.valueOf(schema.multipleOf()));
         }
-        if (NumberUtils.isNumber(schema.maximum())) {
-            String filteredMaximum = schema.maximum().replaceAll(Constants.COMMA, StringUtils.EMPTY);
+        if (NumberUtils.isCreatable(schema.maximum())) {
+            String filteredMaximum = schema.maximum().replace(Constants.COMMA, StringUtils.EMPTY);
             schemaObject.setMaximum(new BigDecimal(filteredMaximum));
         }
-        if (NumberUtils.isNumber(schema.minimum())) {
-            String filteredMinimum = schema.minimum().replaceAll(Constants.COMMA, StringUtils.EMPTY);
+        if (NumberUtils.isCreatable(schema.minimum())) {
+            String filteredMinimum = schema.minimum().replace(Constants.COMMA, StringUtils.EMPTY);
             schemaObject.setMinimum(new BigDecimal(filteredMinimum));
         }
         if (schema.nullable()) {
@@ -513,9 +507,7 @@ public abstract class AnnotationsUtils {
         if (schema.extensions().length > 0) {
             Map<String, Object> extensions = AnnotationsUtils.getExtensions(schema.extensions());
             if (extensions != null) {
-                for (String ext : extensions.keySet()) {
-                    schemaObject.addExtension(ext, extensions.get(ext));
-                }
+                extensions.forEach(schemaObject::addExtension);
             }
         }
 
@@ -553,20 +545,30 @@ public abstract class AnnotationsUtils {
     }
 
     public static Schema resolveSchemaFromType(Class<?> schemaImplementation, Components components, JsonView jsonViewAnnotation) {
-        Schema schemaObject = new Schema();
-        if (schemaImplementation.getName().startsWith("java.lang")) {
-            schemaObject.setType(schemaImplementation.getSimpleName().toLowerCase());
+        Schema schemaObject;
+        PrimitiveType primitiveType = PrimitiveType.fromType(schemaImplementation);
+        if (primitiveType != null) {
+            schemaObject = primitiveType.createProperty();
         } else {
+            schemaObject = new Schema();
             ResolvedSchema resolvedSchema = ModelConverters.getInstance().readAllAsResolvedSchema(new AnnotatedType().type(schemaImplementation).jsonViewAnnotation(jsonViewAnnotation));
             Map<String, Schema> schemaMap;
             if (resolvedSchema != null) {
                 schemaMap = resolvedSchema.referencedSchemas;
-                schemaMap.forEach((key, referencedSchema) -> {
-                    if (components != null) {
-                        components.addSchemas(key, referencedSchema);
+                if (schemaMap != null) {
+                    schemaMap.forEach((key, referencedSchema) -> {
+                        if (components != null) {
+                            components.addSchemas(key, referencedSchema);
+                        }
+                    });
+                }
+                if (resolvedSchema.schema != null) {
+                    if (StringUtils.isNotBlank(resolvedSchema.schema.getName())) {
+                        schemaObject.set$ref(COMPONENTS_REF + resolvedSchema.schema.getName());
+                    } else {
+                        schemaObject = resolvedSchema.schema;
                     }
-                });
-                schemaObject.set$ref(COMPONENTS_REF + resolvedSchema.schema.getName());
+                }
             }
         }
         if (StringUtils.isBlank(schemaObject.get$ref()) && StringUtils.isBlank(schemaObject.getType())) {
@@ -600,9 +602,7 @@ public abstract class AnnotationsUtils {
             if (tag.extensions().length > 0) {
                 Map<String, Object> extensions = AnnotationsUtils.getExtensions(tag.extensions());
                 if (extensions != null) {
-                    for (String ext : extensions.keySet()) {
-                        tagObject.addExtension(ext, extensions.get(ext));
-                    }
+                    extensions.forEach(tagObject::addExtension);
                 }
             }
             tagsList.add(tagObject);
@@ -621,7 +621,7 @@ public abstract class AnnotationsUtils {
         for (io.swagger.v3.oas.annotations.servers.Server server : servers) {
             getServer(server).ifPresent(serverObjects::add);
         }
-        if (serverObjects.size() == 0) {
+        if (serverObjects.isEmpty()) {
             return Optional.empty();
         }
         return Optional.of(serverObjects);
@@ -645,9 +645,7 @@ public abstract class AnnotationsUtils {
         if (server.extensions().length > 0) {
             Map<String, Object> extensions = AnnotationsUtils.getExtensions(server.extensions());
             if (extensions != null) {
-                for (String ext : extensions.keySet()) {
-                    serverObject.addExtension(ext, extensions.get(ext));
-                }
+                extensions.forEach(serverObject::addExtension);
             }
             isEmpty = false;
         }
@@ -672,9 +670,7 @@ public abstract class AnnotationsUtils {
             if (serverVariable.extensions() != null && serverVariable.extensions().length > 0) {
                 Map<String, Object> extensions = AnnotationsUtils.getExtensions(serverVariable.extensions());
                 if (extensions != null) {
-                    for (String ext : extensions.keySet()) {
-                        serverVariableObject.addExtension(ext, extensions.get(ext));
-                    }
+                    extensions.forEach(serverVariableObject::addExtension);
                 }
             }
             serverVariablesObject.addServerVariable(serverVariable.name(), serverVariableObject);
@@ -701,9 +697,7 @@ public abstract class AnnotationsUtils {
         if (externalDocumentation.extensions() != null && externalDocumentation.extensions().length > 0) {
             Map<String, Object> extensions = AnnotationsUtils.getExtensions(externalDocumentation.extensions());
             if (extensions != null) {
-                for (String ext : extensions.keySet()) {
-                    external.addExtension(ext, extensions.get(ext));
-                }
+                extensions.forEach(external::addExtension);
                 isEmpty = false;
             }
         }
@@ -739,9 +733,7 @@ public abstract class AnnotationsUtils {
         if (info.extensions() != null && info.extensions().length > 0) {
             Map<String, Object> extensions = AnnotationsUtils.getExtensions(info.extensions());
             if (extensions != null) {
-                for (String ext : extensions.keySet()) {
-                    infoObject.addExtension(ext, extensions.get(ext));
-                }
+                extensions.forEach(infoObject::addExtension);
                 isEmpty = false;
             }
         }
@@ -775,9 +767,7 @@ public abstract class AnnotationsUtils {
         if (contact.extensions() != null && contact.extensions().length > 0) {
             Map<String, Object> extensions = AnnotationsUtils.getExtensions(contact.extensions());
             if (extensions != null) {
-                for (String ext : extensions.keySet()) {
-                    contactObject.addExtension(ext, extensions.get(ext));
-                }
+                extensions.forEach(contactObject::addExtension);
                 isEmpty = false;
             }
         }
@@ -805,9 +795,7 @@ public abstract class AnnotationsUtils {
         if (license.extensions() != null && license.extensions().length > 0) {
             Map<String, Object> extensions = AnnotationsUtils.getExtensions(license.extensions());
             if (extensions != null) {
-                for (String ext : extensions.keySet()) {
-                    licenseObject.addExtension(ext, extensions.get(ext));
-                }
+                extensions.forEach(licenseObject::addExtension);
                 isEmpty = false;
             }
         }
@@ -857,9 +845,7 @@ public abstract class AnnotationsUtils {
         if (link.extensions() != null && link.extensions().length > 0) {
             Map<String, Object> extensions = AnnotationsUtils.getExtensions(link.extensions());
             if (extensions != null) {
-                for (String ext : extensions.keySet()) {
-                    linkObject.addExtension(ext, extensions.get(ext));
-                }
+                extensions.forEach(linkObject::addExtension);
                 isEmpty = false;
             }
         }
@@ -945,11 +931,11 @@ public abstract class AnnotationsUtils {
 
         if (header.schema() != null) {
             if (header.schema().implementation().equals(Void.class)) {
-                AnnotationsUtils.getSchemaFromAnnotation(header.schema(), jsonViewAnnotation).ifPresent(schema -> {
-                    headerObject.setSchema(schema);
+                AnnotationsUtils.getSchemaFromAnnotation(header.schema(), jsonViewAnnotation).ifPresent(
+                    headerObject::setSchema
                     //schema inline no need to add to components
                     //components.addSchemas(schema.getType(), schema);
-                });
+                );
             }
         }
 
@@ -987,9 +973,7 @@ public abstract class AnnotationsUtils {
             if (encoding.extensions() != null && encoding.extensions().length > 0) {
                 Map<String, Object> extensions = AnnotationsUtils.getExtensions(encoding.extensions());
                 if (extensions != null) {
-                    for (String ext : extensions.keySet()) {
-                        encodingObject.addExtension(ext, extensions.get(ext));
-                    }
+                    extensions.forEach(encodingObject::addExtension);
                 }
             }
 
@@ -1075,9 +1059,7 @@ public abstract class AnnotationsUtils {
             if (annotationContent.extensions() != null && annotationContent.extensions().length > 0) {
                 Map<String, Object> extensions = AnnotationsUtils.getExtensions(annotationContent.extensions());
                 if (extensions != null) {
-                    for (String ext : extensions.keySet()) {
-                        mediaType.addExtension(ext, extensions.get(ext));
-                    }
+                    extensions.forEach(mediaType::addExtension);
                 }
             }
 
@@ -1116,28 +1098,10 @@ public abstract class AnnotationsUtils {
                                                        Class<?> schemaImplementation,
                                                        Components components,
                                                        JsonView jsonViewAnnotation) {
-        Map<String, Schema> schemaMap;
         if (schemaImplementation != Void.class) {
-            Schema schemaObject = new Schema();
-            if (schemaImplementation.getName().startsWith("java.lang")) {
-                schemaObject.setType(schemaImplementation.getSimpleName().toLowerCase());
-            } else {
-                ResolvedSchema resolvedSchema = ModelConverters.getInstance().readAllAsResolvedSchema(new AnnotatedType().type(schemaImplementation).jsonViewAnnotation(jsonViewAnnotation));
-                if (resolvedSchema != null) {
-                    schemaMap = resolvedSchema.referencedSchemas;
-                    schemaMap.forEach((key, schema) -> {
-                        components.addSchemas(key, schema);
-                    });
-                    if (resolvedSchema.schema != null && StringUtils.isNotBlank(resolvedSchema.schema.getName())) {
-                        schemaObject.set$ref(COMPONENTS_REF + resolvedSchema.schema.getName());
-                    } else if (resolvedSchema.schema != null){
-                        schemaObject = resolvedSchema.schema;
-                    }
-                }
-            }
-            if (StringUtils.isBlank(schemaObject.get$ref()) && StringUtils.isBlank(schemaObject.getType())) {
-                // default to string
-                schemaObject.setType("string");
+            Schema schemaObject = resolveSchemaFromType(schemaImplementation, components, jsonViewAnnotation);
+            if (StringUtils.isNotBlank(schemaAnnotation.format())) {
+               schemaObject.setFormat(schemaAnnotation.format());
             }
             if (isArray) {
                 Optional<ArraySchema> arraySchema = AnnotationsUtils.getArraySchema(arrayAnnotation, components, jsonViewAnnotation);
@@ -1266,7 +1230,7 @@ public abstract class AnnotationsUtils {
                         }
                     } else {
                         Object value = map.get(key);
-                        if (value == null || !(value instanceof Map)) {
+                        if (!(value instanceof Map)) {
                             value = new HashMap<String, Object>();
                             map.put(key, value);
                         }
@@ -1822,10 +1786,10 @@ public abstract class AnnotationsUtils {
 
             @Override
             public int minItems() {
-                if (master.maxItems() != 0 || patch.maxItems() == 0) {
-                    return master.maxItems();
+                if (master.minItems() != 0 || patch.minItems() == 0) {
+                    return master.minItems();
                 }
-                return patch.maxItems();
+                return patch.minItems();
             }
 
             @Override

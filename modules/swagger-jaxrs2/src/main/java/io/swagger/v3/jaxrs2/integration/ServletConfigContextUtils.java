@@ -27,6 +27,11 @@ public class ServletConfigContextUtils {
     public static final String OPENAPI_CONFIGURATION_CACHE_TTL_KEY = "openApi.configuration.cacheTTL";
 
     /**
+     * @since 2.1.6
+     */
+    public static final String OPENAPI_CONFIGURATION_SORTOUTPUT_KEY = "openApi.configuration.sortOutput";
+
+    /**
      * @since 2.0.6
      */
     public static final String OPENAPI_CONFIGURATION_OBJECT_MAPPER_PROCESSOR_KEY = "openApi.configuration.objectMapperProcessorClass";
@@ -103,9 +108,7 @@ public class ServletConfigContextUtils {
         if (!isServletConfigAvailable(sc)) {
             return null;
         }
-        return sc.getInitParameter(paramKey) == null ?
-                sc.getInitParameter(paramKey) :
-                sc.getInitParameter(paramKey);
+        return sc.getInitParameter(paramKey);
     }
 
     public static Boolean getBooleanInitParam(ServletConfig sc, String paramKey) {

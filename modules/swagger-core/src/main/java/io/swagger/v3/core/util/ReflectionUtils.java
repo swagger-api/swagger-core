@@ -9,14 +9,17 @@ import org.slf4j.LoggerFactory;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 public class ReflectionUtils {
@@ -58,10 +61,12 @@ public class ReflectionUtils {
      * @return true if the method is overridden method
      */
     public static boolean isOverriddenMethod(Method methodToFind, Class<?> cls) {
-        Set<Class<?>> superClasses = new HashSet<>();
-        for (Class c : cls.getInterfaces()) {
-            superClasses.add(c);
+
+        if (!hasOverriddenMethods(methodToFind, cls)) {
+            return false;
         }
+        Set<Class<?>> superClasses = new HashSet<>();
+        Collections.addAll(superClasses, cls.getInterfaces());
 
         if (cls.getSuperclass() != null) {
             superClasses.add(cls.getSuperclass());
@@ -69,14 +74,60 @@ public class ReflectionUtils {
 
         for (Class<?> superClass : superClasses) {
             if (superClass != null && !(superClass.equals(Object.class))) {
-                for (Method method : superClass.getMethods()) {
-                    if (method.getName().equals(methodToFind.getName()) && method.getReturnType().isAssignableFrom(methodToFind.getReturnType())
-                            && Arrays.equals(method.getParameterTypes(), methodToFind.getParameterTypes()) && !Arrays.equals(method.getGenericParameterTypes(), methodToFind.getGenericParameterTypes())) {
-                        return true;
+                try {
+                    Method found = superClass.getMethod(methodToFind.getName(), methodToFind.getParameterTypes());
+                    if (found.getReturnType().equals(methodToFind.getReturnType())) {
+                        if (!methodToFind.getDeclaringClass().equals(superClass)){
+                            return true;
+                        } else {
+                            if (getOverriddenMethod(found) == null) {
+                                return true;
+                            }
+                        }
+
                     }
+                } catch (NoSuchMethodException e) {
+                    // expected
                 }
                 if (isOverriddenMethod(methodToFind, superClass)) {
                     return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public static boolean hasOverriddenMethods(Method methodToFind, Class<?> cls) {
+        if (cls == null || methodToFind == null) {
+            return false;
+        }
+        boolean found = false;
+        for (Method method: cls.getMethods()) {
+            boolean equalsMethodName = method.getName().equals(methodToFind.getName());
+            boolean superClassReturnAssignable = method.getReturnType().isAssignableFrom(methodToFind.getReturnType());
+            boolean classReturnAssignable = methodToFind.getReturnType().isAssignableFrom(method.getReturnType());
+            boolean equalsParamCount = method.getParameterCount() == methodToFind.getParameterCount();
+
+            if (equalsMethodName && equalsParamCount && (superClassReturnAssignable || classReturnAssignable)){
+
+                Class[] paramsToFind = methodToFind.getParameterTypes();
+                if (paramsToFind == null || paramsToFind.length == 0) {
+                    continue;
+                }
+                boolean assignableParams = true;
+                for (int i = 0; i < paramsToFind.length; i++) {
+                    boolean superClassParamAssignable = method.getParameterTypes()[i].isAssignableFrom(paramsToFind[i]);
+                    boolean classParamAssignable = paramsToFind[i].isAssignableFrom(method.getParameterTypes()[i]);
+                    if (!superClassParamAssignable &&  !classParamAssignable) {
+                        assignableParams = false;
+                    }
+                }
+                if (assignableParams) {
+                    if (!found) {
+                        found = true;
+                    } else {
+                        return true;
+                    }
                 }
             }
 
@@ -173,6 +224,9 @@ public class ReflectionUtils {
      * excluding <code>Object</code> class. If the field from child class hides the field from superclass,
      * the field from superclass won't be added to the result list.
      *
+     * The list is sorted by name to make the output of this method deterministic.
+     * See https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html#getFields--
+     *
      * @param cls is the processing class
      * @return list of Fields
      */
@@ -180,8 +234,8 @@ public class ReflectionUtils {
         if (cls == null || Object.class.equals(cls)) {
             return Collections.emptyList();
         }
-        final List<Field> fields = new ArrayList<Field>();
-        final Set<String> fieldNames = new HashSet<String>();
+        final List<Field> fields = new ArrayList<>();
+        final Set<String> fieldNames = new HashSet<>();
         for (Field field : cls.getDeclaredFields()) {
             fields.add(field);
             fieldNames.add(field.getName());
@@ -191,6 +245,10 @@ public class ReflectionUtils {
                 fields.add(field);
             }
         }
+
+        // Make sure the order is deterministic
+        fields.sort(Comparator.comparing(Field::getName));
+
         return fields;
     }
 
@@ -227,7 +285,6 @@ public class ReflectionUtils {
                 if (annotation != null) {
                     return annotation;
                 }
-                ;
             }
             Class<?> superClass = cls.getSuperclass();
             if (superClass != null && !(superClass.equals(Object.class))) {
@@ -241,7 +298,6 @@ public class ReflectionUtils {
                     if (annotation != null) {
                         return annotation;
                     }
-                    ;
                 }
                 annotation = getAnnotation(anInterface, annotationClass);
                 if (annotation != null) {
@@ -368,9 +424,15 @@ public class ReflectionUtils {
                 }
             }
         }
-        if (type.isArrayType()) {
-            return true;
+        return type.isArrayType();
+    }
+
+    public static Optional<Object> safeInvoke(Method method, Object obj, Object... args) {
+        try {
+            return Optional.ofNullable(method.invoke(obj, args));
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            return Optional.empty();
         }
-        return false;
+
     }
 }

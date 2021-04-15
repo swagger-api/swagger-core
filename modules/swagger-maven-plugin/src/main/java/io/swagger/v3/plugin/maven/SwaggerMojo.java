@@ -1,5 +1,6 @@
 package io.swagger.v3.plugin.maven;
 
+import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import io.swagger.v3.core.filter.OpenAPISpecFilter;
 import io.swagger.v3.core.filter.SpecFilter;
 import io.swagger.v3.core.util.Json;
@@ -8,6 +9,7 @@ import io.swagger.v3.jaxrs2.integration.JaxrsOpenApiContextBuilder;
 import io.swagger.v3.oas.integration.GenericOpenApiContextBuilder;
 import io.swagger.v3.oas.integration.OpenApiConfigurationException;
 import io.swagger.v3.oas.integration.SwaggerConfiguration;
+import io.swagger.v3.oas.integration.api.OpenApiContext;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.PathItem;
 
@@ -81,13 +83,12 @@ public class SwaggerMojo extends AbstractMojo {
             if (StringUtils.isNotBlank(contextId)) {
                 builder.ctxId(contextId);
             }
-            OpenAPI openAPI = builder
-                    .buildContext(true)
-                    .read();
+            OpenApiContext context = builder.buildContext(true);
+            OpenAPI openAPI = context.read();
 
-            if (StringUtils.isNotBlank(filterClass)) {
+            if (StringUtils.isNotBlank(config.getFilterClass())) {
                 try {
-                    OpenAPISpecFilter filterImpl = (OpenAPISpecFilter) this.getClass().getClassLoader().loadClass(filterClass).newInstance();
+                    OpenAPISpecFilter filterImpl = (OpenAPISpecFilter) this.getClass().getClassLoader().loadClass(config.getFilterClass()).newInstance();
                     SpecFilter f = new SpecFilter();
                     openAPI = f.filter(openAPI, filterImpl, new HashMap<>(), new HashMap<>(),
                             new HashMap<>());
@@ -110,20 +111,18 @@ public class SwaggerMojo extends AbstractMojo {
             String openapiJson = null;
             String openapiYaml = null;
             if (Format.JSON.equals(outputFormat) || Format.JSONANDYAML.equals(outputFormat)) {
-                if (prettyPrint) {
-                    openapiJson = Json.pretty(openAPI);
+                if (config.isPrettyPrint() != null && config.isPrettyPrint()) {
+                    openapiJson = context.getOutputJsonMapper().writer(new DefaultPrettyPrinter()).writeValueAsString(openAPI);
                 } else {
-                    openapiJson = Json.mapper().writeValueAsString(openAPI);
+                    openapiJson = context.getOutputJsonMapper().writeValueAsString(openAPI);
                 }
-
             }
             if (Format.YAML.equals(outputFormat) || Format.JSONANDYAML.equals(outputFormat)) {
-                if (prettyPrint) {
-                    openapiYaml = Yaml.pretty(openAPI);
+                if (config.isPrettyPrint() != null && config.isPrettyPrint()) {
+                    openapiYaml = context.getOutputYamlMapper().writer(new DefaultPrettyPrinter()).writeValueAsString(openAPI);
                 } else {
-                    openapiYaml = Yaml.mapper().writeValueAsString(openAPI);
+                    openapiYaml = context.getOutputYamlMapper().writeValueAsString(openAPI);
                 }
-
             }
             Path path = Paths.get(outputPath, "temp");
             final File parentFile = path.toFile().getParentFile();
@@ -134,10 +133,12 @@ public class SwaggerMojo extends AbstractMojo {
             if (openapiJson != null) {
                 path = Paths.get(outputPath, outputFileName + ".json");
                 Files.write(path, openapiJson.getBytes(Charset.forName(encoding)));
+                getLog().info( "JSON output: " + path.toFile().getCanonicalPath());
             }
             if (openapiYaml != null) {
                 path = Paths.get(outputPath, outputFileName + ".yaml");
                 Files.write(path, openapiYaml.getBytes(Charset.forName(encoding)));
+                getLog().info( "YAML output: " + path.toFile().getCanonicalPath());
             }
             
             //if plugin is invoke more times 
@@ -163,11 +164,17 @@ public class SwaggerMojo extends AbstractMojo {
         if (readAllResources == null) {
             readAllResources = Boolean.TRUE;
         }
+        if (sortOutput == null) {
+            sortOutput = Boolean.FALSE;
+        }
         if (config.isPrettyPrint() == null) {
             config.prettyPrint(prettyPrint);
         }
         if (config.isReadAllResources() == null) {
             config.readAllResources(readAllResources);
+        }
+        if (config.isSortOutput() == null) {
+            config.sortOutput(sortOutput);
         }
     }
 
@@ -289,6 +296,9 @@ public class SwaggerMojo extends AbstractMojo {
         if (prettyPrint != null) {
             config.prettyPrint(prettyPrint);
         }
+        if (sortOutput != null) {
+            config.sortOutput(sortOutput);
+        }
         if (readAllResources != null) {
             config.readAllResources(readAllResources);
         }
@@ -376,6 +386,12 @@ public class SwaggerMojo extends AbstractMojo {
 
     @Parameter( property = "resolve.encoding" )
     private String encoding;
+
+    /**
+     * @since 2.1.6
+     */
+    @Parameter(property = "resolve.sortOutput")
+    private Boolean sortOutput;
 
     private String projectEncoding = "UTF-8";
     private SwaggerConfiguration config;

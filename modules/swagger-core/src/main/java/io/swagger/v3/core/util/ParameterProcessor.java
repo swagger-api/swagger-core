@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonView;
 import io.swagger.v3.core.converter.AnnotatedType;
 import io.swagger.v3.core.converter.ModelConverters;
 import io.swagger.v3.core.converter.ResolvedSchema;
+import io.swagger.v3.core.jackson.ModelResolver;
 import io.swagger.v3.oas.annotations.enums.Explode;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.models.Components;
@@ -20,7 +21,7 @@ import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -64,7 +65,32 @@ public class ParameterProcessor {
         if (resolvedSchema.schema != null) {
             parameter.setSchema(resolvedSchema.schema);
         }
-        resolvedSchema.referencedSchemas.forEach((key, schema) -> components.addSchemas(key, schema));
+        resolvedSchema.referencedSchemas.forEach(components::addSchemas);
+
+        // handle first FormParam as it affects Explode resolving
+        for (Annotation annotation : annotations) {
+            if (annotation.annotationType().getName().equals("javax.ws.rs.FormParam")) {
+                try {
+                    String name = (String) annotation.annotationType().getMethod("value").invoke(annotation);
+                    if (StringUtils.isNotBlank(name)) {
+                        parameter.setName(name);
+                    }
+                } catch (Exception e) {
+                }
+                // set temporarily to "form" to inform caller that we need to further process along other form parameters
+                parameter.setIn("form");
+            } else if (annotation.annotationType().getName().endsWith("FormDataParam")) {
+                try {
+                    String name = (String) annotation.annotationType().getMethod("value").invoke(annotation);
+                    if (StringUtils.isNotBlank(name)) {
+                        parameter.setName(name);
+                    }
+                } catch (Exception e) {
+                }
+                // set temporarily to "form" to inform caller that we need to further process along other form parameters
+                parameter.setIn("form");
+            }
+        }
 
         for (Annotation annotation : annotations) {
             if (annotation instanceof io.swagger.v3.oas.annotations.Parameter) {
@@ -106,8 +132,7 @@ public class ParameterProcessor {
                     parameter.setAllowReserved(p.allowReserved());
                 }
 
-                Map<String, Example> exampleMap = new HashMap<>();
-                final Object exampleValue;
+                Map<String, Example> exampleMap = new LinkedHashMap<>();
                 if (p.examples().length == 1 && StringUtils.isBlank(p.examples()[0].name())) {
                     Optional<Example> exampleOptional = AnnotationsUtils.getExample(p.examples()[0], true);
                     if (exampleOptional.isPresent()) {
@@ -124,10 +149,8 @@ public class ParameterProcessor {
 
                 if (p.extensions().length > 0) {
                     Map<String, Object> extensionMap = AnnotationsUtils.getExtensions(p.extensions());
-                    if (extensionMap != null && extensionMap.size() > 0) {
-                        for (String ext : extensionMap.keySet()) {
-                            parameter.addExtension(ext, extensionMap.get(ext));
-                        }
+                    if (extensionMap != null && ! extensionMap.isEmpty()) {
+                        extensionMap.forEach(parameter::addExtension);
                     }
                 }
 
@@ -167,39 +190,15 @@ public class ParameterProcessor {
                 } catch (Exception e) {
                     LOGGER.error("failed on " + annotation.annotationType().getName(), e);
                 }
-            } else if (
-                        annotation.annotationType().getName().equals("javax.validation.constraints.NotNull") ||
-                        annotation.annotationType().getName().equals("javax.validation.constraints.NotBlank") ||
-                        annotation.annotationType().getName().equals("javax.validation.constraints.NotEmpty")
-                    ) {
+            } else if (ModelResolver.NOT_NULL_ANNOTATIONS.contains(annotation.annotationType().getSimpleName())) {
                 parameter.setRequired(true);
-            } else if (annotation.annotationType().getName().equals("javax.ws.rs.FormParam")) {
-                try {
-                    String name = (String) annotation.annotationType().getMethod("value").invoke(annotation);
-                    if (StringUtils.isNotBlank(name)) {
-                        parameter.setName(name);
-                    }
-                } catch (Exception e) {
-                }
-                // set temporarely to "form" to inform caller that we need to further process along other form parameters
-                parameter.setIn("form");
-            } else if (annotation.annotationType().getName().endsWith("FormDataParam")) {
-                try {
-                    String name = (String) annotation.annotationType().getMethod("value").invoke(annotation);
-                    if (StringUtils.isNotBlank(name)) {
-                        parameter.setName(name);
-                    }
-                } catch (Exception e) {
-                }
-                // set temporarely to "form" to inform caller that we need to further process along other form parameters
-                parameter.setIn("form");
             }
         }
         final String defaultValue = helper.getDefaultValue();
 
         Schema paramSchema = parameter.getSchema();
         if (paramSchema == null) {
-            if (parameter.getContent() != null && parameter.getContent().values().size() > 0) {
+            if (parameter.getContent() != null && !parameter.getContent().values().isEmpty()) {
                 paramSchema = parameter.getContent().values().iterator().next().getSchema();
             }
         }
@@ -219,7 +218,7 @@ public class ParameterProcessor {
     }
 
     public static void setParameterExplode(Parameter parameter, io.swagger.v3.oas.annotations.Parameter p) {
-        if (isExplodable(p)) {
+        if (isExplodable(p, parameter)) {
             if (Explode.TRUE.equals(p.explode())) {
                 parameter.setExplode(Boolean.TRUE);
             } else if (Explode.FALSE.equals(p.explode())) {
@@ -228,9 +227,12 @@ public class ParameterProcessor {
         }
     }
 
-    private static boolean isExplodable(io.swagger.v3.oas.annotations.Parameter p) {
+    private static boolean isExplodable(io.swagger.v3.oas.annotations.Parameter p, Parameter parameter) {
         io.swagger.v3.oas.annotations.media.Schema schema = p.schema();
         boolean explode = true;
+        if ("form".equals(parameter.getIn())){
+            return true;
+        }
         if (schema != null) {
             Class implementation = schema.implementation();
             if (implementation == Void.class) {
