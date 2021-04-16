@@ -1411,7 +1411,15 @@ public class Reader implements OpenApiReader {
         this.application = application;
     }
 
+    /* Since 2.1.8 does nothing, as previous implementation maintained for ref in
+        `ignoreOperationPathStrict` was ignoring resources which would be ignored
+        due to other checks in Reader class.
+     */
     protected boolean ignoreOperationPath(String path, String parentPath) {
+        return false;
+    }
+
+    protected boolean ignoreOperationPathStrict(String path, String parentPath) {
 
         if (StringUtils.isBlank(path) && StringUtils.isBlank(parentPath)) {
             return true;
