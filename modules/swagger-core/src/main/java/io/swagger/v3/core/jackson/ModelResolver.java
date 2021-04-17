@@ -376,6 +376,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                     .resolveAsRef(annotatedType.isResolveAsRef())
                     .jsonViewAnnotation(annotatedType.getJsonViewAnnotation())
                     .propertyName(annotatedType.getPropertyName())
+                    .ctxAnnotations(annotatedType.getCtxAnnotations())
                     .skipOverride(true);
             return context.resolve(aType);
         }

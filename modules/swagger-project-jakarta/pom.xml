@@ -569,7 +569,7 @@
         <guava-version>30.1-jre</guava-version>
         <ant-version>1.10.9</ant-version>
         <commons-lang-version>3.7</commons-lang-version>
-        <commons-io-version>2.6</commons-io-version>
+        <commons-io-version>2.7</commons-io-version>
         <slf4j-version>1.7.25</slf4j-version>
         <jetty-version>9.4.39.v20210325</jetty-version>
         <testng-version>7.3.0</testng-version>
