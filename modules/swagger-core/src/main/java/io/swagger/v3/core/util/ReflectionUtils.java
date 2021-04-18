@@ -18,6 +18,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -317,23 +318,28 @@ public class ReflectionUtils {
      * @return List of repeatable annotations if it is found
      */
     public static <A extends Annotation> List<A> getRepeatableAnnotations(Method method, Class<A> annotationClass) {
+        Set<A> annotationsSet = new LinkedHashSet<>();
         A[] annotations = method.getAnnotationsByType(annotationClass);
-        if (annotations == null || annotations.length == 0) {
-            for (Annotation metaAnnotation : method.getAnnotations()) {
-                annotations = metaAnnotation.annotationType().getAnnotationsByType(annotationClass);
-                if (annotations != null && annotations.length > 0) {
-                    return Arrays.asList(annotations);
-                }
-            }
-            Method superclassMethod = getOverriddenMethod(method);
-            if (superclassMethod != null) {
-                return getRepeatableAnnotations(superclassMethod, annotationClass);
+        if (annotations != null) {
+            annotationsSet.addAll(Arrays.asList(annotations));
+        }
+        for (Annotation metaAnnotation : method.getAnnotations()) {
+            annotations = metaAnnotation.annotationType().getAnnotationsByType(annotationClass);
+            if (annotations != null && annotations.length > 0) {
+                annotationsSet.addAll(Arrays.asList(annotations));
             }
         }
-        if (annotations == null) {
+        Method superclassMethod = getOverriddenMethod(method);
+        if (superclassMethod != null) {
+            List<A> superAnnotations = getRepeatableAnnotations(superclassMethod, annotationClass);
+            if (superAnnotations != null) {
+                annotationsSet.addAll(superAnnotations);
+            }
+        }
+        if (annotationsSet.isEmpty()) {
             return null;
         }
-        return Arrays.asList(annotations);
+        return new ArrayList<>(annotationsSet);
     }
 
     public static <A extends Annotation> List<A> getRepeatableAnnotations(Class<?> cls, Class<A> annotationClass) {
