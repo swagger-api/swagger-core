@@ -124,6 +124,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
         boolean isPrimitive = false;
         Schema model = null;
+        List<String> requiredProps = new ArrayList<>();
 
         if (annotatedType == null) {
             return null;
@@ -376,6 +377,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                     .resolveAsRef(annotatedType.isResolveAsRef())
                     .jsonViewAnnotation(annotatedType.getJsonViewAnnotation())
                     .propertyName(annotatedType.getPropertyName())
+                    .ctxAnnotations(annotatedType.getCtxAnnotations())
                     .skipOverride(true);
             return context.resolve(aType);
         }
@@ -643,7 +645,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                             .ctxAnnotations(null)
                             .jsonUnwrappedHandler(null)
                             .resolveAsRef(false);
-                        handleUnwrapped(props, context.resolve(t), uw.prefix(), uw.suffix());
+                        handleUnwrapped(props, context.resolve(t), uw.prefix(), uw.suffix(), requiredProps);
                         return null;
                     } else {
                         return new Schema();
@@ -708,6 +710,9 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         }
         if (modelProps.size() > 0) {
             model.setProperties(modelProps);
+            for(String propName : requiredProps) {
+                addRequiredItem(model, propName);
+            }
         }
 
         /**
@@ -1020,10 +1025,14 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         return false;
     }
 
-    private void handleUnwrapped(List<Schema> props, Schema innerModel, String prefix, String suffix) {
+    private void handleUnwrapped(List<Schema> props, Schema innerModel, String prefix, String suffix, List<String> requiredProps) {
         if (StringUtils.isBlank(suffix) && StringUtils.isBlank(prefix)) {
             if (innerModel.getProperties() != null) {
                 props.addAll(innerModel.getProperties().values());
+                if(innerModel.getRequired() != null) {
+                    requiredProps.addAll(innerModel.getRequired());
+                }
+
             }
         } else {
             if (prefix == null) {
