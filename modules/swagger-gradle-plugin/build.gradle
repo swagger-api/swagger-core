@@ -25,7 +25,15 @@ dependencies {
     implementation 'org.apache.commons:commons-lang3:3.7'
 
     testImplementation gradleTestKit()
-    testImplementation 'com.github.tomakehurst:wiremock:2.27.2'
+    testImplementation('com.github.tomakehurst:wiremock:2.27.2') {
+        exclude group: 'com.jayway.jsonpath', module: 'json-path'
+        exclude group: 'org.eclipse.jetty', module: 'jetty-server'
+        exclude group: 'org.eclipse.jetty', module: 'jetty-servlet'
+        exclude group: 'org.eclipse.jetty', module: 'jetty-servlets'
+        exclude group: 'org.eclipse.jetty', module: 'jetty-webapp'
+        exclude group: 'org.eclipse.jetty', module: 'jetty-proxy'
+        exclude group: 'commons-codec', module: 'commons-codec'
+    }
     testImplementation 'javax.servlet:javax.servlet-api:3.1.0'
     testImplementation 'com.google.guava:guava:30.1-jre'
     testImplementation 'javax.ws.rs:javax.ws.rs-api:2.1'
@@ -38,16 +46,8 @@ dependencies {
     testImplementation "org.eclipse.jetty:jetty-proxy:${project.jettyVersion}"
     testImplementation "org.apache.httpcomponents:httpclient:4.5.13"
     testImplementation "commons-codec:commons-codec:1.15"
+    testImplementation "commons-io:commons-io:2.7"
     testImplementation "org.apache.commons:commons-compress:1.20"
-
-    testImplementation('com.github.tomakehurst:wiremock:2.27.2') {
-        exclude group: 'org.eclipse.jetty', module: 'jetty-server'
-        exclude group: 'org.eclipse.jetty', module: 'jetty-servlet'
-        exclude group: 'org.eclipse.jetty', module: 'jetty-servlets'
-        exclude group: 'org.eclipse.jetty', module: 'jetty-webapp'
-        exclude group: 'org.eclipse.jetty', module: 'jetty-proxy'
-        exclude group: 'commons-codec', module: 'commons-codec'
-    }
 }
 
 // * * * * * * * * * * * *

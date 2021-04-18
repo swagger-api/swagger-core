@@ -6,7 +6,7 @@ export SC_VERSION=`./mvnw -q -Dexec.executable="echo" -Dexec.args='${parsedVersi
 export SC_NEXT_VERSION=`./mvnw -q -Dexec.executable="echo" -Dexec.args='${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.${parsedVersion.nextIncrementalVersion}' --non-recursive build-helper:parse-version org.codehaus.mojo:exec-maven-plugin:1.3.1:exec`
 SC_QUALIFIER=`./mvnw -q -Dexec.executable="echo" -Dexec.args='${parsedVersion.qualifier}' --non-recursive build-helper:parse-version org.codehaus.mojo:exec-maven-plugin:1.3.1:exec`
 #SC_LAST_RELEASE=`./mvnw -q -Dexec.executable="echo" -Dexec.args='${releasedVersion.version}' --non-recursive org.codehaus.mojo:build-helper-maven-plugin:3.2.0:released-version org.codehaus.mojo:exec-maven-plugin:1.3.1:exec`
-SC_LAST_RELEASE=`$CUR/CI/lastRelease.py`
+SC_LAST_RELEASE=`python $CUR/CI/lastRelease.py`
 
 
 
@@ -17,7 +17,7 @@ SC_RELEASE_TAG="v$SC_VERSION"
 #####################
 ### draft release Notes with next release after last release, with tag
 #####################
-$CUR/CI/releaseNotes.py "$SC_LAST_RELEASE" "$SC_RELEASE_TITLE" "$SC_RELEASE_TAG"
+python $CUR/CI/releaseNotes.py "$SC_LAST_RELEASE" "$SC_RELEASE_TITLE" "$SC_RELEASE_TAG"
 
 #####################
 ### update the version to release in maven project with set version
@@ -27,6 +27,7 @@ $CUR/CI/releaseNotes.py "$SC_LAST_RELEASE" "$SC_RELEASE_TITLE" "$SC_RELEASE_TAG"
 
 cd modules/swagger-project-jakarta
 ../../mvnw versions:set -DnewVersion=$SC_VERSION
+../../mvnw versions:commit
 cd ../..
 
 
@@ -67,6 +68,10 @@ sed -i -e "s/$sc_find/$sc_replace/g" $CUR/modules/swagger-gradle-plugin/src/main
 sc_find="name: 'swagger-jaxrs2', version:'$SC_VERSION-SNAPSHOT"
 sc_replace="name: 'swagger-jaxrs2', version:'$SC_VERSION"
 sed -i -e "s/$sc_find/$sc_replace/g" $CUR/modules/swagger-gradle-plugin/src/test/java/io/swagger/v3/plugins/gradle/SwaggerResolveTest.java
+
+sc_find="<version>$SC_LAST_RELEASE<\/version>"
+sc_replace="<version>$SC_VERSION<\/version>"
+sed -i -e "s/$sc_find/$sc_replace/g" $CUR/modules/swagger-maven-plugin/README.md
 
 #####################
 ### build and test maven ###

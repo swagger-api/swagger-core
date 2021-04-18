@@ -15,7 +15,7 @@ cd ../..
 #####################
 ### publish pre-prepared release (tag is created)
 #####################
-$CUR/CI/publishRelease.py "$SC_RELEASE_TAG"
+python $CUR/CI/publishRelease.py "$SC_RELEASE_TAG"
 
 #####################
 ### update the version to next snapshot in maven project with set version
@@ -25,6 +25,7 @@ $CUR/CI/publishRelease.py "$SC_RELEASE_TAG"
 
 cd modules/swagger-project-jakarta
 ../../mvnw versions:set -DnewVersion="${SC_NEXT_VERSION}-SNAPSHOT"
+../../mvnw versions:commit
 cd ../..
 
 #####################

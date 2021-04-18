@@ -304,7 +304,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 if (jsonIdentityReference == null) {
                     jsonIdentityReference = type.getRawClass().getAnnotation(JsonIdentityReference.class);
                 }
-                model = GeneratorWrapper.processJsonIdentity(annotatedType, context, _mapper, jsonIdentityInfo, jsonIdentityReference);
+                model = new GeneratorWrapper().processJsonIdentity(annotatedType, context, _mapper, jsonIdentityInfo, jsonIdentityReference);
                 if (model != null) {
                     return model;
                 }
@@ -377,6 +377,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                     .resolveAsRef(annotatedType.isResolveAsRef())
                     .jsonViewAnnotation(annotatedType.getJsonViewAnnotation())
                     .propertyName(annotatedType.getPropertyName())
+                    .ctxAnnotations(annotatedType.getCtxAnnotations())
                     .skipOverride(true);
             return context.resolve(aType);
         }
@@ -869,6 +870,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         }
 
         resolveDiscriminatorProperty(type, context, model);
+        model = resolveWrapping(type, context, model);
 
         return model;
     }
@@ -1054,8 +1056,18 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         }
     }
 
-    private enum GeneratorWrapper {
-        PROPERTY(ObjectIdGenerators.PropertyGenerator.class) {
+
+    private class GeneratorWrapper {
+
+        private final List<Base> wrappers = new ArrayList();
+
+
+        private final class PropertyGeneratorWrapper extends GeneratorWrapper.Base<ObjectIdGenerators.PropertyGenerator> {
+
+            public PropertyGeneratorWrapper(Class<? extends ObjectIdGenerator> generator) {
+                super(generator);
+            }
+
             @Override
             protected Schema processAsProperty(String propertyName, AnnotatedType type,
                                                ModelConverterContext context, ObjectMapper mapper) {
@@ -1072,7 +1084,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                                          ModelConverterContext context, ObjectMapper mapper) {
                 final JavaType javaType;
                 if (type.getType() instanceof JavaType) {
-                    javaType = (JavaType)type.getType();
+                    javaType = (JavaType) type.getType();
                 } else {
                     javaType = mapper.constructType(type.getType());
                 }
@@ -1106,8 +1118,14 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 }
                 return null;
             }
-        },
-        INT(ObjectIdGenerators.IntSequenceGenerator.class) {
+        }
+
+        private final class IntGeneratorWrapper extends GeneratorWrapper.Base<ObjectIdGenerators.IntSequenceGenerator> {
+
+            public IntGeneratorWrapper(Class<? extends ObjectIdGenerator> generator) {
+                super(generator);
+            }
+
             @Override
             protected Schema processAsProperty(String propertyName, AnnotatedType type,
                                                ModelConverterContext context, ObjectMapper mapper) {
@@ -1120,8 +1138,14 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                                          ModelConverterContext context, ObjectMapper mapper) {
                 return new IntegerSchema();
             }
-        },
-        UUID(ObjectIdGenerators.UUIDGenerator.class) {
+
+        }
+
+        private final class UUIDGeneratorWrapper extends GeneratorWrapper.Base<ObjectIdGenerators.UUIDGenerator> {
+
+            public UUIDGeneratorWrapper(Class<? extends ObjectIdGenerator> generator) {
+                super(generator);
+            }
             @Override
             protected Schema processAsProperty(String propertyName, AnnotatedType type,
                                                ModelConverterContext context, ObjectMapper mapper) {
@@ -1134,8 +1158,15 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                                          ModelConverterContext context, ObjectMapper mapper) {
                 return new UUIDSchema();
             }
-        },
-        NONE(ObjectIdGenerators.None.class) {
+
+        }
+
+        private final class NoneGeneratorWrapper extends GeneratorWrapper.Base<ObjectIdGenerators.None> {
+
+            public NoneGeneratorWrapper(Class<? extends ObjectIdGenerator> generator) {
+                super(generator);
+            }
+
             // When generator = ObjectIdGenerators.None.class property should be processed as normal property.
             @Override
             protected Schema processAsProperty(String propertyName, AnnotatedType type,
@@ -1148,24 +1179,27 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                                          ModelConverterContext context, ObjectMapper mapper) {
                 return null;
             }
-        };
-
-        private final Class<? extends ObjectIdGenerator> generator;
-
-        GeneratorWrapper(Class<? extends ObjectIdGenerator> generator) {
-            this.generator = generator;
         }
 
-        protected abstract Schema processAsProperty(String propertyName, AnnotatedType type,
-                                                    ModelConverterContext context, ObjectMapper mapper);
+        private abstract class Base<T> {
 
-        protected abstract Schema processAsId(String propertyName, AnnotatedType type,
-                                              ModelConverterContext context, ObjectMapper mapper);
+            private final Class<? extends ObjectIdGenerator> generator;
 
-        public static Schema processJsonIdentity(AnnotatedType type, ModelConverterContext context,
+            Base(Class<? extends ObjectIdGenerator> generator) {
+                this.generator = generator;
+            }
+
+            protected abstract Schema processAsProperty(String propertyName, AnnotatedType type,
+                                                        ModelConverterContext context, ObjectMapper mapper);
+
+            protected abstract Schema processAsId(String propertyName, AnnotatedType type,
+                                                  ModelConverterContext context, ObjectMapper mapper);
+        }
+
+        public Schema processJsonIdentity(AnnotatedType type, ModelConverterContext context,
                                                  ObjectMapper mapper, JsonIdentityInfo identityInfo,
                                                  JsonIdentityReference identityReference) {
-            final GeneratorWrapper wrapper = identityInfo != null ? getWrapper(identityInfo.generator()) : null;
+            final GeneratorWrapper.Base wrapper = identityInfo != null ? getWrapper(identityInfo.generator()) : null;
             if (wrapper == null) {
                 return null;
             }
@@ -1176,25 +1210,32 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             }
         }
 
-        private static GeneratorWrapper getWrapper(Class<?> generator) {
-            for (GeneratorWrapper value : GeneratorWrapper.values()) {
-                if (value.generator.isAssignableFrom(generator)) {
-                    return value;
-                }
+        private GeneratorWrapper.Base getWrapper(Class<? extends ObjectIdGenerator> generator) {
+            if(ObjectIdGenerators.PropertyGenerator.class.isAssignableFrom(generator)) {
+                return new PropertyGeneratorWrapper(generator);
+            } else if(ObjectIdGenerators.IntSequenceGenerator.class.isAssignableFrom(generator)) {
+                return new IntGeneratorWrapper(generator);
+            } else if(ObjectIdGenerators.UUIDGenerator.class.isAssignableFrom(generator)) {
+                return new UUIDGeneratorWrapper(generator);
+            } else if(ObjectIdGenerators.None.class.isAssignableFrom(generator)) {
+                return new NoneGeneratorWrapper(generator);
             }
             return null;
         }
 
-        private static Schema process(Schema id, String propertyName, AnnotatedType type,
+        protected Schema process(Schema id, String propertyName, AnnotatedType type,
                                       ModelConverterContext context) {
 
-            Schema model = context.resolve(removeJsonIdentityAnnotations(type));
-            Schema mi = model;
-            mi.addProperties(propertyName, id);
-            return new Schema().$ref(StringUtils.isNotEmpty(mi.get$ref())
-                    ? mi.get$ref() : mi.getName());
+            type = removeJsonIdentityAnnotations(type);
+            Schema model = context.resolve(type);
+            if(model == null){
+                model = resolve(type,context, null);
+            }
+            model.addProperties(propertyName, id);
+            return new Schema().$ref(StringUtils.isNotEmpty(model.get$ref())
+                    ? model.get$ref() : model.getName());
         }
-        private static AnnotatedType removeJsonIdentityAnnotations(AnnotatedType type) {
+        private AnnotatedType removeJsonIdentityAnnotations(AnnotatedType type) {
             return new AnnotatedType()
                     .jsonUnwrappedHandler(type.getJsonUnwrappedHandler())
                     .jsonViewAnnotation(type.getJsonViewAnnotation())
@@ -1776,6 +1817,32 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 }
             }
         }
+    }
+
+    /*
+     TODO partial implementation supporting WRAPPER_OBJECT with JsonTypeInfo.Id.CLASS and JsonTypeInfo.Id.NAME
+
+     Also note that JsonTypeInfo on interfaces are not considered as multiple interfaces might have conflicting
+     annotations, although Jackson seems to apply them if present on an interface
+     */
+    protected Schema resolveWrapping(JavaType type, ModelConverterContext context, Schema model) {
+        // add JsonTypeInfo.property if not member of bean
+        JsonTypeInfo typeInfo = type.getRawClass().getDeclaredAnnotation(JsonTypeInfo.class);
+        if (typeInfo != null) {
+            JsonTypeInfo.Id id = typeInfo.use();
+            JsonTypeInfo.As as = typeInfo.include();
+            if (JsonTypeInfo.As.WRAPPER_OBJECT.equals(as)) {
+                String name = model.getName();
+                if (JsonTypeInfo.Id.CLASS.equals(id)) {
+                    name = type.getRawClass().getName();
+                }
+                Schema wrapperSchema = new ObjectSchema();
+                wrapperSchema.name(model.getName());
+                wrapperSchema.addProperties(name, model);
+                return wrapperSchema;
+            }
+        }
+        return model;
     }
 
     protected Discriminator resolveDiscriminator(JavaType type, ModelConverterContext context) {
