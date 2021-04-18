@@ -46,6 +46,7 @@ dependencies {
     testImplementation "org.eclipse.jetty:jetty-proxy:${project.jettyVersion}"
     testImplementation "org.apache.httpcomponents:httpclient:4.5.13"
     testImplementation "commons-codec:commons-codec:1.15"
+    testImplementation "commons-io:commons-io:2.7"
     testImplementation "org.apache.commons:commons-compress:1.20"
 }
 
