@@ -22,7 +22,7 @@ Both `javax` and `jakarta` examples are provided below
             <plugin>
                 <groupId>io.swagger.core.v3</groupId>
                 <artifactId>swagger-maven-plugin</artifactId>
-                <version>2.1.8</version>
+                <version>2.1.9</version>
                 <configuration>
                     <outputFileName>openapi</outputFileName>
                     <outputPath>${project.build.directory}/generatedtest</outputPath>
@@ -47,7 +47,7 @@ Both `javax` and `jakarta` examples are provided below
         <dependency>
             <groupId>io.swagger.core.v3</groupId>
             <artifactId>swagger-jaxrs2</artifactId>
-            <version>2.1.8</version>
+            <version>2.1.9</version>
         </dependency>
 
         <dependency>
@@ -73,7 +73,7 @@ Both `javax` and `jakarta` examples are provided below
             <plugin>
                 <groupId>io.swagger.core.v3</groupId>
                 <artifactId>swagger-maven-plugin-jakarta</artifactId>
-                <version>2.1.8</version>
+                <version>2.1.9</version>
                 <configuration>
                     <outputFileName>openapi</outputFileName>
                     <outputPath>${project.build.directory}/generatedtest</outputPath>
@@ -98,7 +98,7 @@ Both `javax` and `jakarta` examples are provided below
         <dependency>
             <groupId>io.swagger.core.v3</groupId>
             <artifactId>swagger-jaxrs2-jakarta</artifactId>
-            <version>2.1.8</version>
+            <version>2.1.9</version>
         </dependency>
 
         <dependency>
@@ -126,7 +126,7 @@ Both `javax` and `jakarta` examples are provided below
             <plugin>
                 <groupId>io.swagger.core.v3</groupId>
                 <artifactId>swagger-maven-plugin</artifactId>
-                <version>2.1.8</version>
+                <version>2.1.9</version>
                 <configuration>
                     <outputFileName>openapi</outputFileName>
                     <outputPath>${project.build.directory}/generatedtest</outputPath>
@@ -155,7 +155,7 @@ Both `javax` and `jakarta` examples are provided below
             <plugin>
                 <groupId>io.swagger.core.v3</groupId>
                 <artifactId>swagger-maven-plugin-jakarta</artifactId>
-                <version>2.1.8</version>
+                <version>2.1.9</version>
                 <configuration>
                     <outputFileName>openapi</outputFileName>
                     <outputPath>${project.build.directory}/generatedtest</outputPath>
@@ -187,6 +187,7 @@ Parameter | Description | Required | Default
 `resourceClasses`|see [configuration property](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)|false|
 `prettyPrint`|see [configuration property](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)|false|`TRUE`
 `sortOutput`|see [configuration property](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)|false|`FALSE`
+`alwaysResolveAppPath`|see [configuration property](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)|false|`FALSE`
 `openapiFilePath`|path to openapi file to be merged with resolved specification, see [config](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)|false|
 `configurationFilePath`|path to swagger config file to be merged with resolved specification, see [config](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration)|false|
 `filterClass`|see [configuration property](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)|false|
@@ -204,3 +205,4 @@ Since version 2.0.8, `configurationFilePath` parameter is available, allowing to
 
 Since version 2.1.6, `sortOutput` parameter is available, allowing to sort object properties and map keys alphabetically.
 Since version 2.1.6, `objectMapperProcessorClass` allows to configure also the ObjectMapper instance used to serialize the resolved OpenAPI
+Since version 2.1.9, `alwaysResolveAppPath` parameter is available, allowing to trigger resolving of Application Path from annotaion also not in runtime (e.g. using servlet in separate application, or in maven plugin at build time, etc)
