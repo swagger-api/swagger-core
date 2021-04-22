@@ -32,6 +32,8 @@ public class SwaggerConfiguration implements OpenAPIConfiguration {
 
     private Boolean sortOutput;
 
+    private Boolean alwaysResolveAppPath;
+
     public Long getCacheTTL() {
         return cacheTTL;
     }
@@ -254,6 +256,29 @@ public class SwaggerConfiguration implements OpenAPIConfiguration {
      */
     public SwaggerConfiguration sortOutput(Boolean sortOutput) {
         setSortOutput(sortOutput);
+        return this;
+    }
+
+    /**
+     * @since 2.1.9
+     */
+    @Override
+    public Boolean isAlwaysResolveAppPath() {
+        return alwaysResolveAppPath;
+    }
+
+    /**
+     * @since 2.1.9
+     */
+    public void setAlwaysResolveAppPath(Boolean alwaysResolveAppPath) {
+        this.alwaysResolveAppPath = alwaysResolveAppPath;
+    }
+
+    /**
+     * @since 2.1.9
+     */
+    public SwaggerConfiguration alwaysResolveAppPath(Boolean alwaysResolveAppPath) {
+        setAlwaysResolveAppPath(alwaysResolveAppPath);
         return this;
     }
 }

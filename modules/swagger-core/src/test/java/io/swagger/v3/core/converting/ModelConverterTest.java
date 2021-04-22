@@ -134,7 +134,7 @@ public class ModelConverterTest {
     public void serializeParameterizedType() {
         final Map<String, Schema> schemas = readAll(Employee.class);
 
-        final Schema employee = (Schema) schemas.get("employee");
+        final Schema employee = (Schema) schemas.get("employee").getProperties().get("employee");
         final Map<String, Schema> props = employee.getProperties();
         final Iterator<String> et = props.keySet().iterator();
 

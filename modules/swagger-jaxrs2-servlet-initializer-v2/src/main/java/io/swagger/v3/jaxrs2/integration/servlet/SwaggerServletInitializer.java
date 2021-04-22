@@ -10,6 +10,7 @@ import javax.servlet.ServletContainerInitializer;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.HandlesTypes;
+import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.Path;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -20,7 +21,7 @@ import java.util.stream.Collectors;
  *
  * @since 2.1.2
  */
-@HandlesTypes({Path.class, OpenAPIDefinition.class})
+@HandlesTypes({Path.class, OpenAPIDefinition.class, ApplicationPath.class})
 public class SwaggerServletInitializer implements ServletContainerInitializer {
 
     static final Set<String> ignored = new HashSet();
