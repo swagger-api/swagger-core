@@ -132,6 +132,7 @@ public class Reader implements OpenApiReader {
      * @return the generated OpenAPI definition
      */
     public OpenAPI read(Set<Class<?>> classes) {
+
         Set<Class<?>> sortedClasses = new TreeSet<>((class1, class2) -> {
             if (class1.equals(class2)) {
                 return 0;
@@ -146,12 +147,22 @@ public class Reader implements OpenApiReader {
 
         Map<Class<?>, ReaderListener> listeners = new HashMap<>();
 
+        String appPath = "";
+
         for (Class<?> cls : sortedClasses) {
             if (ReaderListener.class.isAssignableFrom(cls) && !listeners.containsKey(cls)) {
                 try {
                     listeners.put(cls, (ReaderListener) cls.newInstance());
                 } catch (Exception e) {
                     LOGGER.error("Failed to create ReaderListener", e);
+                }
+            }
+            if (config != null && Boolean.TRUE.equals(config.isAlwaysResolveAppPath())) {
+                if (Application.class.isAssignableFrom(cls)) {
+                    ApplicationPath appPathAnnotation = ReflectionUtils.getAnnotation(cls, ApplicationPath.class);
+                    if (appPathAnnotation != null) {
+                        appPath = appPathAnnotation.value();
+                    }
                 }
             }
         }
@@ -163,9 +174,13 @@ public class Reader implements OpenApiReader {
                 LOGGER.error("Unexpected error invoking beforeScan listener [" + listener.getClass().getName() + "]", e);
             }
         }
+        String appPathRuntime = resolveApplicationPath();
+        if (StringUtils.isNotBlank(appPathRuntime)) {
+            appPath = appPathRuntime;
+        }
 
         for (Class<?> cls : sortedClasses) {
-            read(cls, resolveApplicationPath(), null, false, null, null, new LinkedHashSet<String>(), new ArrayList<Parameter>(), new HashSet<Class<?>>());
+            read(cls, appPath, null, false, null, null, new LinkedHashSet<String>(), new ArrayList<Parameter>(), new HashSet<Class<?>>());
         }
 
         for (ReaderListener listener : listeners.values()) {
@@ -1411,7 +1426,15 @@ public class Reader implements OpenApiReader {
         this.application = application;
     }
 
+    /* Since 2.1.8 does nothing, as previous implementation maintained for ref in
+        `ignoreOperationPathStrict` was ignoring resources which would be ignored
+        due to other checks in Reader class.
+     */
     protected boolean ignoreOperationPath(String path, String parentPath) {
+        return false;
+    }
+
+    protected boolean ignoreOperationPathStrict(String path, String parentPath) {
 
         if (StringUtils.isBlank(path) && StringUtils.isBlank(parentPath)) {
             return true;

@@ -5,12 +5,11 @@
     <parent>
         <artifactId>swagger-project</artifactId>
         <groupId>io.swagger.core.v3</groupId>
-        <version>2.1.7-SNAPSHOT</version>
+        <version>2.1.10-SNAPSHOT</version>
         <relativePath>../../</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>swagger-jaxrs2-servlet-initializer-v2</artifactId>
-    <packaging>bundle</packaging>
     <name>swagger-jaxrs2-servlet-initializer-v2</name>
     <description>swagger-servlet-initializer-v2</description>
     <build>
@@ -23,22 +22,20 @@
         </testResources>
         <plugins>
             <plugin>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-bundle-plugin</artifactId>
-                <version>${felix-version}</version>
-                <extensions>true</extensions>
+                <groupId>biz.aQute.bnd</groupId>
+                <artifactId>bnd-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
                 <configuration>
-                    <instructions>
-                        <Export-Package>
-                            io.swagger.v3.jaxrs2.integration.servlet
-                        </Export-Package>
-                        <Import-Package>
-                            javax.ws.rs*;version="2.0",
-                            *
-                        </Import-Package>
-                        <Automatic-Module-Name>io.swagger.v3.jaxrs2.integration.servlet</Automatic-Module-Name>
-                    </instructions>
-                </configuration>
+                    <archive>
+                        <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
+                        <manifestEntries>
+                            <Automatic-Module-Name>io.swagger.v3.jaxrs2.integration.servlet</Automatic-Module-Name>
+                        </manifestEntries>
+                    </archive>
+            </configuration>
             </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
@@ -113,6 +110,25 @@
                         <goals>
                             <goal>stop</goal>
                         </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>io.swagger.core.v3</groupId>
+                <artifactId>swagger-eclipse-transformer-maven-plugin</artifactId>
+                <version>${project.version}</version>
+                <configuration>
+                    <attach>false</attach>
+                    <classifier>jakarta</classifier>
+                    <outputDirectory>${project.basedir}/../swagger-project-jakarta/modules/${project.artifactId}-jakarta/transformed</outputDirectory>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>transform-jakarta</id>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <phase>package</phase>
                     </execution>
                 </executions>
             </plugin>

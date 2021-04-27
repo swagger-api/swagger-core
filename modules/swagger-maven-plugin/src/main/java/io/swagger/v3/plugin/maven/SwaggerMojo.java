@@ -83,9 +83,9 @@ public class SwaggerMojo extends AbstractMojo {
             OpenApiContext context = builder.buildContext(true);
             OpenAPI openAPI = context.read();
 
-            if (StringUtils.isNotBlank(filterClass)) {
+            if (StringUtils.isNotBlank(config.getFilterClass())) {
                 try {
-                    OpenAPISpecFilter filterImpl = (OpenAPISpecFilter) this.getClass().getClassLoader().loadClass(filterClass).newInstance();
+                    OpenAPISpecFilter filterImpl = (OpenAPISpecFilter) this.getClass().getClassLoader().loadClass(config.getFilterClass()).newInstance();
                     SpecFilter f = new SpecFilter();
                     openAPI = f.filter(openAPI, filterImpl, new HashMap<>(), new HashMap<>(),
                             new HashMap<>());
@@ -98,14 +98,14 @@ public class SwaggerMojo extends AbstractMojo {
             String openapiJson = null;
             String openapiYaml = null;
             if (Format.JSON.equals(outputFormat) || Format.JSONANDYAML.equals(outputFormat)) {
-                if (prettyPrint != null && prettyPrint) {
+                if (config.isPrettyPrint() != null && config.isPrettyPrint()) {
                     openapiJson = context.getOutputJsonMapper().writer(new DefaultPrettyPrinter()).writeValueAsString(openAPI);
                 } else {
                     openapiJson = context.getOutputJsonMapper().writeValueAsString(openAPI);
                 }
             }
             if (Format.YAML.equals(outputFormat) || Format.JSONANDYAML.equals(outputFormat)) {
-                if (prettyPrint != null && prettyPrint) {
+                if (config.isPrettyPrint() != null && config.isPrettyPrint()) {
                     openapiYaml = context.getOutputYamlMapper().writer(new DefaultPrettyPrinter()).writeValueAsString(openAPI);
                 } else {
                     openapiYaml = context.getOutputYamlMapper().writeValueAsString(openAPI);
@@ -151,6 +151,9 @@ public class SwaggerMojo extends AbstractMojo {
         if (sortOutput == null) {
             sortOutput = Boolean.FALSE;
         }
+        if (alwaysResolveAppPath == null) {
+            alwaysResolveAppPath = Boolean.FALSE;
+        }
         if (config.isPrettyPrint() == null) {
             config.prettyPrint(prettyPrint);
         }
@@ -159,6 +162,9 @@ public class SwaggerMojo extends AbstractMojo {
         }
         if (config.isSortOutput() == null) {
             config.sortOutput(sortOutput);
+        }
+        if (config.isAlwaysResolveAppPath() == null) {
+            config.alwaysResolveAppPath(alwaysResolveAppPath);
         }
     }
 
@@ -283,6 +289,9 @@ public class SwaggerMojo extends AbstractMojo {
         if (sortOutput != null) {
             config.sortOutput(sortOutput);
         }
+        if (alwaysResolveAppPath != null) {
+            config.alwaysResolveAppPath(alwaysResolveAppPath);
+        }
         if (readAllResources != null) {
             config.readAllResources(readAllResources);
         }
@@ -376,6 +385,13 @@ public class SwaggerMojo extends AbstractMojo {
      */
     @Parameter(property = "resolve.sortOutput")
     private Boolean sortOutput;
+
+    /**
+     * @since 2.1.9
+     */
+    @Parameter(property = "resolve.alwaysResolveAppPath")
+    private Boolean alwaysResolveAppPath;
+
 
     private String projectEncoding = "UTF-8";
     private SwaggerConfiguration config;
