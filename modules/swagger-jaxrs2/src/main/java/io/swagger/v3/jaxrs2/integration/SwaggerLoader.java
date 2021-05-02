@@ -40,6 +40,8 @@ public class SwaggerLoader {
 
     private Boolean sortOutput = false;
 
+    private Boolean alwaysResolveAppPath = false;
+
     /**
      * @since 2.0.6
      */
@@ -177,6 +179,19 @@ public class SwaggerLoader {
         this.sortOutput = sortOutput;
     }
 
+    /**
+     * @since 2.1.9
+     */
+    public Boolean getAlwaysResolveAppPath() {
+        return alwaysResolveAppPath;
+    }
+
+    /**
+     * @since 2.1.9
+     */
+    public void setAlwaysResolveAppPath(Boolean alwaysResolveAppPath) {
+        this.alwaysResolveAppPath = alwaysResolveAppPath;
+    }
 
     public Map<String, String> resolve() throws Exception{
 
@@ -223,7 +238,8 @@ public class SwaggerLoader {
                 .resourcePackages(resourcePackagesSet)
                 .objectMapperProcessorClass(objectMapperProcessorClass)
                 .modelConverterClasses(modelConverterSet)
-                .sortOutput(sortOutput);
+                .sortOutput(sortOutput)
+                .alwaysResolveAppPath(alwaysResolveAppPath);
         try {
             GenericOpenApiContextBuilder builder = new JaxrsOpenApiContextBuilder()
                     .openApiConfiguration(config);
