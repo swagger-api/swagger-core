@@ -309,10 +309,20 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             isPrimitive = true;
         }
         if (model == null) {
-            PrimitiveType primitiveType = PrimitiveType.fromType(type);
-            if (primitiveType != null) {
-                model = PrimitiveType.fromType(type).createProperty();
-                isPrimitive = true;
+            if (resolvedSchemaAnnotation != null && StringUtils.isEmpty(resolvedSchemaAnnotation.type())) {
+                PrimitiveType primitiveType = PrimitiveType.fromTypeAndFormat(type, resolvedSchemaAnnotation.format());
+                if (primitiveType != null) {
+                    model = primitiveType.createProperty();
+                    isPrimitive = true;
+                }
+            } 
+
+            if (model == null) {
+                PrimitiveType primitiveType = PrimitiveType.fromType(type);
+                if (primitiveType != null) {
+                    model = primitiveType.createProperty();
+                    isPrimitive = true;
+                }
             }
         }
 
@@ -629,7 +639,8 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                         propType = ((AnnotatedMethod)member).getParameterType(0);
                     }
 
-                }
+                } 
+                
                 String propSchemaName = null;
                 io.swagger.v3.oas.annotations.media.Schema ctxSchema = AnnotationsUtils.getSchemaAnnotation(annotations);
                 if (AnnotationsUtils.hasSchemaAnnotation(ctxSchema)) {
