@@ -32,6 +32,7 @@ import io.swagger.v3.oas.models.PathItem;
 import io.swagger.v3.oas.models.Paths;
 import io.swagger.v3.oas.models.callbacks.Callback;
 import io.swagger.v3.oas.models.media.Content;
+import io.swagger.v3.oas.models.media.Encoding;
 import io.swagger.v3.oas.models.media.MediaType;
 import io.swagger.v3.oas.models.media.ObjectSchema;
 import io.swagger.v3.oas.models.media.Schema;
@@ -57,6 +58,7 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -67,6 +69,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 public class Reader implements OpenApiReader {
     private static final Logger LOGGER = LoggerFactory.getLogger(Reader.class);
@@ -129,6 +132,7 @@ public class Reader implements OpenApiReader {
      * @return the generated OpenAPI definition
      */
     public OpenAPI read(Set<Class<?>> classes) {
+
         Set<Class<?>> sortedClasses = new TreeSet<>((class1, class2) -> {
             if (class1.equals(class2)) {
                 return 0;
@@ -143,12 +147,22 @@ public class Reader implements OpenApiReader {
 
         Map<Class<?>, ReaderListener> listeners = new HashMap<>();
 
+        String appPath = "";
+
         for (Class<?> cls : sortedClasses) {
             if (ReaderListener.class.isAssignableFrom(cls) && !listeners.containsKey(cls)) {
                 try {
                     listeners.put(cls, (ReaderListener) cls.newInstance());
                 } catch (Exception e) {
                     LOGGER.error("Failed to create ReaderListener", e);
+                }
+            }
+            if (config != null && Boolean.TRUE.equals(config.isAlwaysResolveAppPath())) {
+                if (Application.class.isAssignableFrom(cls)) {
+                    ApplicationPath appPathAnnotation = ReflectionUtils.getAnnotation(cls, ApplicationPath.class);
+                    if (appPathAnnotation != null) {
+                        appPath = appPathAnnotation.value();
+                    }
                 }
             }
         }
@@ -160,9 +174,13 @@ public class Reader implements OpenApiReader {
                 LOGGER.error("Unexpected error invoking beforeScan listener [" + listener.getClass().getName() + "]", e);
             }
         }
+        String appPathRuntime = resolveApplicationPath();
+        if (StringUtils.isNotBlank(appPathRuntime)) {
+            appPath = appPathRuntime;
+        }
 
         for (Class<?> cls : sortedClasses) {
-            read(cls, resolveApplicationPath(), null, false, null, null, new LinkedHashSet<String>(), new ArrayList<Parameter>(), new HashSet<Class<?>>());
+            read(cls, appPath, null, false, null, null, new LinkedHashSet<String>(), new ArrayList<Parameter>(), new HashSet<Class<?>>());
         }
 
         for (ReaderListener listener : listeners.values()) {
@@ -372,8 +390,13 @@ public class Reader implements OpenApiReader {
         // look for field-level annotated properties
         globalParameters.addAll(ReaderUtils.collectFieldParameters(cls, components, classConsumes, null));
 
+        // Make sure that the class methods are sorted for deterministic order
+        // See https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html#getMethods--
+        final List<Method> methods = Arrays.stream(cls.getMethods())
+                .sorted(new MethodComparator())
+                .collect(Collectors.toList());
+
         // iterate class methods
-        Method[] methods = cls.getMethods();
         for (Method method : methods) {
             if (isOperationHidden(method)) {
                 continue;
@@ -500,7 +523,8 @@ public class Reader implements OpenApiReader {
                                         operationParameters,
                                         paramAnnotations[i],
                                         type,
-                                        jsonViewAnnotationForRequestBody);
+                                        jsonViewAnnotationForRequestBody,
+                                        null);
                             }
                         }
                     } else {
@@ -529,15 +553,32 @@ public class Reader implements OpenApiReader {
                                         operationParameters,
                                         paramAnnotations[i],
                                         type,
-                                        jsonViewAnnotationForRequestBody);
+                                        jsonViewAnnotationForRequestBody,
+                                        null);
                             }
                         }
                     }
                     // if we have form parameters, need to merge them into single schema and use as request body..
                     if (!formParameters.isEmpty()) {
                         Schema mergedSchema = new ObjectSchema();
+                        Map<String, Encoding> encoding = new LinkedHashMap<>();
                         for (Parameter formParam: formParameters) {
+                            if (formParam.getExplode() != null || (formParam.getStyle() != null) && Encoding.StyleEnum.fromString(formParam.getStyle().toString()) != null) {
+                                Encoding e = new Encoding();
+                                if (formParam.getExplode() != null) {
+                                    e.explode(formParam.getExplode());
+                                }
+                                if (formParam.getStyle() != null  && Encoding.StyleEnum.fromString(formParam.getStyle().toString()) != null) {
+                                    e.style(Encoding.StyleEnum.fromString(formParam.getStyle().toString()));
+                                }
+                                encoding.put(formParam.getName(), e);
+                            }
                             mergedSchema.addProperties(formParam.getName(), formParam.getSchema());
+                            if (formParam.getSchema() != null &&
+                                    StringUtils.isNotBlank(formParam.getDescription()) &&
+                                    StringUtils.isBlank(formParam.getSchema().getDescription())) {
+                                formParam.getSchema().description(formParam.getDescription());
+                            }
                             if (null != formParam.getRequired() && formParam.getRequired()) {
                                 mergedSchema.addRequiredItem(formParam.getName());
                             }
@@ -551,7 +592,8 @@ public class Reader implements OpenApiReader {
                                 operationParameters,
                                 new Annotation[0],
                                 null,
-                                jsonViewAnnotationForRequestBody);
+                                jsonViewAnnotationForRequestBody,
+                                encoding);
 
                     }
                     if (!operationParameters.isEmpty()) {
@@ -659,7 +701,8 @@ public class Reader implements OpenApiReader {
                                       Consumes methodConsumes, Consumes classConsumes,
                                       List<Parameter> operationParameters,
                                       Annotation[] paramAnnotations, Type type,
-                                      JsonView jsonViewAnnotation) {
+                                      JsonView jsonViewAnnotation,
+                                      Map<String, Encoding> encoding) {
 
         io.swagger.v3.oas.annotations.parameters.RequestBody requestBodyAnnotation = getRequestBody(Arrays.asList(paramAnnotations));
         if (requestBodyAnnotation != null) {
@@ -717,6 +760,18 @@ public class Reader implements OpenApiReader {
                 if (!isRequestBodyEmpty) {
                     //requestBody.setExtensions(extensions);
                     operation.setRequestBody(requestBody);
+                }
+            }
+        }
+        if (operation.getRequestBody() != null &&
+                operation.getRequestBody().getContent() != null &&
+                encoding != null && !encoding.isEmpty()) {
+            Content content = operation.getRequestBody().getContent();
+            for (String mediaKey: content.keySet()) {
+                if (mediaKey.equals(javax.ws.rs.core.MediaType.APPLICATION_FORM_URLENCODED) ||
+                        mediaKey.equals(javax.ws.rs.core.MediaType.MULTIPART_FORM_DATA)) {
+                    MediaType m = content.get(mediaKey);
+                    m.encoding(encoding);
                 }
             }
         }
@@ -1371,7 +1426,15 @@ public class Reader implements OpenApiReader {
         this.application = application;
     }
 
+    /* Since 2.1.8 does nothing, as previous implementation maintained for ref in
+        `ignoreOperationPathStrict` was ignoring resources which would be ignored
+        due to other checks in Reader class.
+     */
     protected boolean ignoreOperationPath(String path, String parentPath) {
+        return false;
+    }
+
+    protected boolean ignoreOperationPathStrict(String path, String parentPath) {
 
         if (StringUtils.isBlank(path) && StringUtils.isBlank(parentPath)) {
             return true;
@@ -1436,6 +1499,38 @@ public class Reader implements OpenApiReader {
         } else {
             LOGGER.error("Unknown class definition: {}", cls);
             return null;
+        }
+    }
+
+    /**
+     * Comparator for uniquely sorting a collection of Method objects.
+     * Supports overloaded methods (with the same name).
+     *
+     * @see Method
+     */
+    private static class MethodComparator implements Comparator<Method> {
+
+        @Override
+        public int compare(Method m1, Method m2) {
+            // First compare the names of the method
+            int val = m1.getName().compareTo(m2.getName());
+
+            // If the names are equal, compare each argument type
+            if (val == 0) {
+                val = m1.getParameterTypes().length - m2.getParameterTypes().length;
+                if (val == 0) {
+                    Class<?>[] types1 = m1.getParameterTypes();
+                    Class<?>[] types2 = m2.getParameterTypes();
+                    for (int i = 0; i < types1.length; i++) {
+                        val = types1[i].getName().compareTo(types2[i].getName());
+
+                        if (val != 0) {
+                            break;
+                        }
+                    }
+                }
+            }
+            return val;
         }
     }
 }

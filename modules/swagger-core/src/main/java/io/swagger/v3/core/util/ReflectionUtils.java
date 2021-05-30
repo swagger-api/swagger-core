@@ -16,7 +16,9 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -60,6 +62,10 @@ public class ReflectionUtils {
      * @return true if the method is overridden method
      */
     public static boolean isOverriddenMethod(Method methodToFind, Class<?> cls) {
+
+        if (!hasOverriddenMethods(methodToFind, cls)) {
+            return false;
+        }
         Set<Class<?>> superClasses = new HashSet<>();
         Collections.addAll(superClasses, cls.getInterfaces());
 
@@ -69,14 +75,60 @@ public class ReflectionUtils {
 
         for (Class<?> superClass : superClasses) {
             if (superClass != null && !(superClass.equals(Object.class))) {
-                for (Method method : superClass.getMethods()) {
-                    if (method.getName().equals(methodToFind.getName()) && method.getReturnType().isAssignableFrom(methodToFind.getReturnType())
-                            && Arrays.equals(method.getParameterTypes(), methodToFind.getParameterTypes()) && !Arrays.equals(method.getGenericParameterTypes(), methodToFind.getGenericParameterTypes())) {
-                        return true;
+                try {
+                    Method found = superClass.getMethod(methodToFind.getName(), methodToFind.getParameterTypes());
+                    if (found.getReturnType().equals(methodToFind.getReturnType())) {
+                        if (!methodToFind.getDeclaringClass().equals(superClass)){
+                            return true;
+                        } else {
+                            if (getOverriddenMethod(found) == null) {
+                                return true;
+                            }
+                        }
+
                     }
+                } catch (NoSuchMethodException e) {
+                    // expected
                 }
                 if (isOverriddenMethod(methodToFind, superClass)) {
                     return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public static boolean hasOverriddenMethods(Method methodToFind, Class<?> cls) {
+        if (cls == null || methodToFind == null) {
+            return false;
+        }
+        boolean found = false;
+        for (Method method: cls.getMethods()) {
+            boolean equalsMethodName = method.getName().equals(methodToFind.getName());
+            boolean superClassReturnAssignable = method.getReturnType().isAssignableFrom(methodToFind.getReturnType());
+            boolean classReturnAssignable = methodToFind.getReturnType().isAssignableFrom(method.getReturnType());
+            boolean equalsParamCount = method.getParameterCount() == methodToFind.getParameterCount();
+
+            if (equalsMethodName && equalsParamCount && (superClassReturnAssignable || classReturnAssignable)){
+
+                Class[] paramsToFind = methodToFind.getParameterTypes();
+                if (paramsToFind == null || paramsToFind.length == 0) {
+                    continue;
+                }
+                boolean assignableParams = true;
+                for (int i = 0; i < paramsToFind.length; i++) {
+                    boolean superClassParamAssignable = method.getParameterTypes()[i].isAssignableFrom(paramsToFind[i]);
+                    boolean classParamAssignable = paramsToFind[i].isAssignableFrom(method.getParameterTypes()[i]);
+                    if (!superClassParamAssignable &&  !classParamAssignable) {
+                        assignableParams = false;
+                    }
+                }
+                if (assignableParams) {
+                    if (!found) {
+                        found = true;
+                    } else {
+                        return true;
+                    }
                 }
             }
 
@@ -173,6 +225,9 @@ public class ReflectionUtils {
      * excluding <code>Object</code> class. If the field from child class hides the field from superclass,
      * the field from superclass won't be added to the result list.
      *
+     * The list is sorted by name to make the output of this method deterministic.
+     * See https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html#getFields--
+     *
      * @param cls is the processing class
      * @return list of Fields
      */
@@ -191,6 +246,10 @@ public class ReflectionUtils {
                 fields.add(field);
             }
         }
+
+        // Make sure the order is deterministic
+        fields.sort(Comparator.comparing(Field::getName));
+
         return fields;
     }
 
@@ -259,23 +318,28 @@ public class ReflectionUtils {
      * @return List of repeatable annotations if it is found
      */
     public static <A extends Annotation> List<A> getRepeatableAnnotations(Method method, Class<A> annotationClass) {
+        Set<A> annotationsSet = new LinkedHashSet<>();
         A[] annotations = method.getAnnotationsByType(annotationClass);
-        if (annotations == null || annotations.length == 0) {
-            for (Annotation metaAnnotation : method.getAnnotations()) {
-                annotations = metaAnnotation.annotationType().getAnnotationsByType(annotationClass);
-                if (annotations != null && annotations.length > 0) {
-                    return Arrays.asList(annotations);
-                }
-            }
-            Method superclassMethod = getOverriddenMethod(method);
-            if (superclassMethod != null) {
-                return getRepeatableAnnotations(superclassMethod, annotationClass);
+        if (annotations != null) {
+            annotationsSet.addAll(Arrays.asList(annotations));
+        }
+        for (Annotation metaAnnotation : method.getAnnotations()) {
+            annotations = metaAnnotation.annotationType().getAnnotationsByType(annotationClass);
+            if (annotations != null && annotations.length > 0) {
+                annotationsSet.addAll(Arrays.asList(annotations));
             }
         }
-        if (annotations == null) {
+        Method superclassMethod = getOverriddenMethod(method);
+        if (superclassMethod != null) {
+            List<A> superAnnotations = getRepeatableAnnotations(superclassMethod, annotationClass);
+            if (superAnnotations != null) {
+                annotationsSet.addAll(superAnnotations);
+            }
+        }
+        if (annotationsSet.isEmpty()) {
             return null;
         }
-        return Arrays.asList(annotations);
+        return new ArrayList<>(annotationsSet);
     }
 
     public static <A extends Annotation> List<A> getRepeatableAnnotations(Class<?> cls, Class<A> annotationClass) {

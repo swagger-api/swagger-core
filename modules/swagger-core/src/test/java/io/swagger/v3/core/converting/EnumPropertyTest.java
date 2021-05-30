@@ -5,6 +5,7 @@ import io.swagger.v3.core.converter.AnnotatedType;
 import io.swagger.v3.core.converter.ModelConverterContextImpl;
 import io.swagger.v3.core.converter.ModelConverters;
 import io.swagger.v3.core.jackson.ModelResolver;
+import io.swagger.v3.core.jackson.TypeNameResolver;
 import io.swagger.v3.core.matchers.SerializationMatchers;
 import io.swagger.v3.core.oas.models.Model1979;
 import io.swagger.v3.core.oas.models.ModelWithEnumField;
@@ -120,6 +121,47 @@ public class EnumPropertyTest {
                 "  - A_SYSTEM\n" +
                 "  - A_INVITE_ONLY\n";
         SerializationMatchers.assertEqualsToYaml(models, yaml);
+
+    }
+
+    @Test(description = "it should read a model with an enum property as a reference with fqn TypeNameResolver")
+    public void testEnumRefPropertyWithFQNTypeNameResolver() {
+        TypeNameResolver.std.setUseFqn(true);
+        Schema schema = context.resolve(new AnnotatedType(ModelWithEnumRefProperty.class));
+        final Map<String, Schema> models = context.getDefinedModels();
+        final String yaml = "io.swagger.v3.core.oas.models.ModelWithEnumRefProperty:\n" +
+                "  type: object\n" +
+                "  properties:\n" +
+                "    a:\n" +
+                "      $ref: '#/components/schemas/io.swagger.v3.core.oas.models.TestEnum'\n" +
+                "    b:\n" +
+                "      $ref: '#/components/schemas/io.swagger.v3.core.oas.models.TestEnum'\n" +
+                "    c:\n" +
+                "      $ref: '#/components/schemas/io.swagger.v3.core.oas.models.TestSecondEnum'\n" +
+                "    d:\n" +
+                "      type: string\n" +
+                "      enum:\n" +
+                "      - A_PRIVATE\n" +
+                "      - A_PUBLIC\n" +
+                "      - A_SYSTEM\n" +
+                "      - A_INVITE_ONLY\n" +
+                "io.swagger.v3.core.oas.models.TestEnum:\n" +
+                "  type: string\n" +
+                "  enum:\n" +
+                "  - PRIVATE\n" +
+                "  - PUBLIC\n" +
+                "  - SYSTEM\n" +
+                "  - INVITE_ONLY\n" +
+                "io.swagger.v3.core.oas.models.TestSecondEnum:\n" +
+                "  type: string\n" +
+                "  enum:\n" +
+                "  - A_PRIVATE\n" +
+                "  - A_PUBLIC\n" +
+                "  - A_SYSTEM\n" +
+                "  - A_INVITE_ONLY\n";
+        TypeNameResolver.std.setUseFqn(false);
+        SerializationMatchers.assertEqualsToYaml(models, yaml);
+
     }
 
     @Test(description = "it should read a model with an enum property as a reference, set via static var or sys prop")
