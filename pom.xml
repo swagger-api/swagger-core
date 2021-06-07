@@ -394,6 +394,7 @@
         <module>modules/swagger-jaxrs2-servlet-initializer-v2</module>
         <module>modules/swagger-maven-plugin</module>
         <module>modules/swagger-project-jakarta</module>
+        <module>modules/swagger-annotator-maven-plugin</module>
 
     </modules>
     <reporting>
