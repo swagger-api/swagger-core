@@ -259,7 +259,7 @@ public class OpenAPI {
     /**
      * returns the webhooks property from a OpenAPI instance.
      *
-     * @since 2.1.8 (OpenAPI 3.1.0)
+     * @since 2.1.10 (OpenAPI 3.1.0)
      * @return Map&lt;String, PathItem&gt; webhooks
      **/
 
