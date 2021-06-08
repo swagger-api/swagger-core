@@ -1,11 +1,5 @@
 package io.swagger.v3.plugin.annotator.swagger3;
 
-import io.swagger.v3.plugin.annotator.IncludeProjectDependenciesComponentConfigurator;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-
 import org.apache.maven.DefaultMaven;
 import org.apache.maven.Maven;
 import org.apache.maven.execution.DefaultMavenExecutionRequest;
@@ -22,6 +16,10 @@ import org.apache.maven.project.ProjectBuildingRequest;
 import org.eclipse.aether.DefaultRepositorySystemSession;
 import org.eclipse.aether.internal.impl.SimpleLocalRepositoryManagerFactory;
 import org.eclipse.aether.repository.LocalRepository;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
 
 /*
  * Copied from https://github.com/ahgittin/license-audit-maven-plugin
@@ -97,7 +95,6 @@ public abstract class BetterAbstractMojoTestCase extends AbstractMojoTestCase {
     protected Mojo lookupConfiguredMojo(File pom, String goal) throws Exception {
         assertNotNull(pom);
         assertTrue(pom.exists());
-        this.getContainer().addComponent(new IncludeProjectDependenciesComponentConfigurator(), org.codehaus.plexus.component.configurator.ComponentConfigurator.class, "include-project-dependencies");
         ProjectBuildingRequest buildingRequest = newMavenSession().getProjectBuildingRequest();
         ProjectBuilder projectBuilder = lookup(ProjectBuilder.class);
         MavenProject project = projectBuilder.build(pom, buildingRequest).getProject();

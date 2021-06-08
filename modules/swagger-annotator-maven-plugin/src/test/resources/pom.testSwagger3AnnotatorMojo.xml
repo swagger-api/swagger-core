@@ -60,6 +60,26 @@
 				<groupId>io.swagger.core.v3</groupId>
 				<artifactId>swagger-annotator-maven-plugin</artifactId>
 				<version>${project.version}</version>
+				<dependencies>
+					<dependency>
+						<groupId>io.swagger.core.v3</groupId>
+						<artifactId>swagger-annotator-maven-plugin-test</artifactId>
+						<version>1.0-SNAPSHOT</version>
+					</dependency>
+				</dependencies>
+				<configuration>
+					<sourceDirectory>${project.basedir}/../java</sourceDirectory>
+					<outputDirectory>${project.basedir}/../../../target/test-classes</outputDirectory>
+				</configuration>
+				<executions>
+					<execution>
+						<id>compile</id>
+						<phase>compile</phase>
+						<goals>
+							<goal>swagger3-annotator</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>

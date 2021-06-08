@@ -3,18 +3,11 @@ package io.swagger.v3.plugin.annotator.annotator.impl;
 import io.swagger.v3.plugin.annotator.annotator.AbstractAnnotator;
 import io.swagger.v3.plugin.annotator.annotator.Annotator;
 import io.swagger.v3.plugin.annotator.model.JavadocMapping;
-import java.lang.annotation.ElementType;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import net.bytebuddy.asm.MemberAttributeExtension;
 import net.bytebuddy.description.annotation.AnnotationDescription;
 import net.bytebuddy.dynamic.DynamicType;
 import net.bytebuddy.matcher.ElementMatchers;
-import org.codehaus.plexus.logging.Logger;
+import org.apache.maven.plugin.logging.Log;
 import org.jboss.forge.roaster.model.JavaDocTag;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.jboss.forge.roaster.model.source.JavaDocSource;
@@ -22,11 +15,19 @@ import org.jboss.forge.roaster.model.source.MethodSource;
 import org.jboss.forge.roaster.model.source.ParameterSource;
 import org.springframework.util.CollectionUtils;
 
+import java.lang.annotation.ElementType;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 public class ParameterAnnotator implements Annotator {
 
-    private static Logger log;
+    private static Log log;
 
-    public ParameterAnnotator(Logger log) {
+    public ParameterAnnotator(Log log) {
         ParameterAnnotator.log = log;
     }
 

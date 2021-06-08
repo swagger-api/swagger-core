@@ -11,6 +11,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>swagger-annotator-maven-plugin</artifactId>
+    <packaging>maven-plugin</packaging>
 
     <properties>
         <maven.version>3.6.3</maven.version>
@@ -82,22 +83,25 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>net.bytebuddy</groupId>
+            <artifactId>byte-buddy-agent</artifactId>
+            <version>${bytebuddy.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>org.jboss.forge.roaster</groupId>
             <artifactId>roaster-api</artifactId>
             <version>${roaster.version}</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.jboss.forge.roaster</groupId>
             <artifactId>roaster-jdt</artifactId>
             <version>${roaster.version}</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
             <version>${fastjson.version}</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>

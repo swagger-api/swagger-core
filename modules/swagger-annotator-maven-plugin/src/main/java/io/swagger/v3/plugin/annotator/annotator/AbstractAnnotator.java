@@ -1,30 +1,25 @@
 package io.swagger.v3.plugin.annotator.annotator;
 
 import io.swagger.v3.plugin.annotator.model.JavadocMapping;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.stream.Collectors;
 import net.bytebuddy.description.annotation.AnnotationDescription;
 import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.dynamic.DynamicType;
-import org.codehaus.plexus.logging.Logger;
+import org.apache.maven.plugin.logging.Log;
 import org.jboss.forge.roaster.model.source.AnnotationTargetSource;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.util.CollectionUtils;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
+import java.util.*;
+import java.util.stream.Collectors;
+
 public abstract class AbstractAnnotator implements Annotator {
 
-    protected static Logger log;
+    protected static Log log;
 
-    public AbstractAnnotator(Logger log) {
+    public AbstractAnnotator(Log log) {
         AbstractAnnotator.log = log;
     }
 
@@ -54,55 +49,56 @@ public abstract class AbstractAnnotator implements Annotator {
     }
 
     public static Set<JavadocMapping> buildNeedToTag(AnnotationTargetSource<JavaClassSource, ?> source, Set<JavadocMapping> needToTag) {
-        Set<Class<? extends Annotation>> declared = source.getAnnotations().stream()
-                .map(annotation -> {
-                    try {
-                        return (Class<? extends Annotation>) Class.forName(annotation.getQualifiedName());
-                    } catch (Exception e) {
-                        return null;
-                    }
-                }).filter(Objects::nonNull)
-                .collect(Collectors.toSet());
-        return needToTag.stream()
-                //only need to tag if the conditions are met
-                .filter(mapping -> {
-                    Set<Class<? extends Annotation>> conditions = mapping.getConditions()
-                            .stream().map(condition -> {
-                                try {
-                                    return (Class<? extends Annotation>) Class.forName(condition);
-                                } catch (Exception e) {
-                                    return null;
-                                }
-                            }).filter(Objects::nonNull)
-                            .collect(Collectors.toSet());
-                    if (CollectionUtils.isEmpty(conditions)) {
-                        return true;
-                    }
-                    for (Class<? extends Annotation> annotation : declared) {
-                        for (Class<? extends Annotation> condition : conditions) {
-                            if (annotation.equals(condition) ||
-                                    AnnotationUtils.isAnnotationMetaPresent(annotation, condition)) {
-                                return true;
-                            }
+        try {
+            Set<Class<? extends Annotation>> declared = new LinkedHashSet<>();
+            Annotation[] declaredAnnotations = Class.forName(source.getOrigin().getQualifiedName()).getDeclaredAnnotations();
+            for (Annotation declaredAnnotation : declaredAnnotations) {
+                declared.add(declaredAnnotation.getClass());
+            }
+            return needToTag.stream()
+                    //only need to tag if the conditions are met
+                    .filter(mapping -> {
+                        Set<Class<? extends Annotation>> conditions = mapping.getConditions()
+                                .stream().map(condition -> {
+                                    try {
+                                        return (Class<? extends Annotation>) Class.forName(condition);
+                                    } catch (Exception e) {
+                                        return null;
+                                    }
+                                }).filter(Objects::nonNull)
+                                .collect(Collectors.toSet());
+                        if (CollectionUtils.isEmpty(conditions)) {
+                            return true;
                         }
-                    }
-                    return false;
-                })
-                //You don’t need to tag annotation that has already been tagged
-                .filter(mapping -> {
-                    try {
-                        Class<? extends Annotation> tagType = (Class<? extends Annotation>) Class.forName(mapping.getAnnotationClassName());
                         for (Class<? extends Annotation> annotation : declared) {
-                            if (annotation.equals(tagType) ||
-                                    AnnotationUtils.isAnnotationMetaPresent(annotation, tagType)) {
-                                return false;
+                            for (Class<? extends Annotation> condition : conditions) {
+                                if (annotation.equals(condition) ||
+                                        AnnotationUtils.isAnnotationMetaPresent(annotation, condition)) {
+                                    return true;
+                                }
                             }
                         }
-                    } catch (Exception ignored) {
-                    }
-                    return true;
-                })
-                .collect(Collectors.toSet());
+                        return false;
+                    })
+                    //You don’t need to tag annotation that has already been tagged
+                    .filter(mapping -> {
+                        try {
+                            Class<? extends Annotation> tagType = (Class<? extends Annotation>) Class.forName(mapping.getAnnotationClassName());
+                            for (Class<? extends Annotation> annotation : declared) {
+                                if (annotation.equals(tagType) ||
+                                        AnnotationUtils.isAnnotationMetaPresent(annotation, tagType)) {
+                                    return false;
+                                }
+                            }
+                        } catch (Exception ignored) {
+                        }
+                        return true;
+                    })
+                    .collect(Collectors.toSet());
+        } catch (Exception e) {
+            log.error("buildNeedToTag failed !", e);
+            return new LinkedHashSet<>();
+        }
     }
 
     protected abstract Map<String, Set<JavadocMapping>> needToTag(Set<JavadocMapping> needToTag, JavaClassSource source);
