@@ -103,6 +103,25 @@ public class Schema<T> {
         return this;
     }
 
+    @OpenAPI31
+    protected transient Object jsonSchemaImpl = null;
+
+    @OpenAPI31
+    public Object getJsonSchemaImpl() {
+        return jsonSchemaImpl;
+    }
+
+    @OpenAPI31
+    public void setJsonSchemaImpl(Object jsonSchemaImpl) {
+        this.jsonSchemaImpl = jsonSchemaImpl;
+    }
+
+    @OpenAPI31
+    public Schema jsonSchemaImpl(Object jsonSchemaImpl) {
+        setJsonSchemaImpl(jsonSchemaImpl);
+        return this;
+    }
+
     public Schema() {
     }
 
