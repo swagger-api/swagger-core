@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * 类上的描述2-swagger3
+ * Description on the class
  *
  * @author zhangzicheng
  * @version 1.0.0
@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @see Exception
  * @since 1.0.0
  */
-@Api(tags = {"类上的描述2-swagger3"}, protocols = "http,https")
+@Api(tags = {"Description on the class"}, protocols = "http,https")
 @RestController
 public class TargetController implements BeanNameAware {
 
@@ -32,15 +32,15 @@ public class TargetController implements BeanNameAware {
     private String name;
 
     /**
-     * 方法上的描述2
+     * Methodological description 2
      *
-     * @param param2 参数2
-     * @return 返回值2
+     * @param param2 parameter2
+     * @return return value2
      */
-    @Operation(summary = "方法上的描述2")
-    @ApiResponse(description = "返回值2")
+    @Operation(summary = "Methodological description2")
+    @ApiResponse(description = "return value2")
     @RequestMapping(value = "/test2", method = RequestMethod.GET)
-    public String test(@Parameter(name = "param2", description = "参数2") @RequestParam String param2) {
+    public String test(@Parameter(name = "param2", description = "parameter2") @RequestParam String param2) {
         return name + " say hello, " + param2;
     }
 

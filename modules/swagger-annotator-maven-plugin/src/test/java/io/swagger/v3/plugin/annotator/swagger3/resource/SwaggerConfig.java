@@ -12,10 +12,6 @@ import springfox.documentation.service.ApiInfo;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 
-/**
- * @author zhangzicheng
- * @date 2021/03/01
- */
 @Configuration
 @EnableOpenApi
 public class SwaggerConfig implements WebMvcConfigurer {

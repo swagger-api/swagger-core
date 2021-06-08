@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * 类上的描述-swagger3
+ * Description on the class
  *
  * @author zhangzicheng
  * @version 1.0.0
@@ -27,12 +27,12 @@ public class TestController implements BeanNameAware {
     private String name;
 
     /**
-     * 方法上的描述
+     * methodological description
      *
-     * @param param 参数
-     * @return 返回值
+     * @param param parameter
+     * @return return value
      */
-    @RequestMapping(value = "/test",method = RequestMethod.GET)
+    @RequestMapping(value = "/test", method = RequestMethod.GET)
     public String test(@RequestParam String param) {
         return name + " say hello, " + param;
     }
