@@ -33,4 +33,7 @@ public abstract class SchemaConverterMixin {
     @JsonInclude(JsonInclude.Include.CUSTOM)
     public abstract Object getExample();
 
+    @JsonIgnore
+    public abstract Object getJsonSchemaImpl();
+
 }

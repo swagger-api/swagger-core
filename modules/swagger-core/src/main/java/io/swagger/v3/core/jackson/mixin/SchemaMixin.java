@@ -39,4 +39,7 @@ public abstract class SchemaMixin {
 
     @JsonIgnore
     public abstract Map<String, Schema> getPatternProperties();
+
+    @JsonIgnore
+    public abstract Object getJsonSchemaImpl();
 }
