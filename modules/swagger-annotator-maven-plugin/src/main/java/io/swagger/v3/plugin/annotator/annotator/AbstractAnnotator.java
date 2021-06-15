@@ -50,11 +50,15 @@ public abstract class AbstractAnnotator implements Annotator {
 
     public static Set<JavadocMapping> buildNeedToTag(AnnotationTargetSource<JavaClassSource, ?> source, Set<JavadocMapping> needToTag) {
         try {
-            Set<Class<? extends Annotation>> declared = new LinkedHashSet<>();
-            Annotation[] declaredAnnotations = Class.forName(source.getOrigin().getQualifiedName()).getDeclaredAnnotations();
-            for (Annotation declaredAnnotation : declaredAnnotations) {
-                declared.add(declaredAnnotation.getClass());
-            }
+            Set<Class<? extends Annotation>> declared = source.getAnnotations().stream()
+                    .map(annotation -> {
+                        try {
+                            return (Class<? extends Annotation>) Class.forName(annotation.getQualifiedName());
+                        } catch (Exception e) {
+                            return null;
+                        }
+                    }).filter(Objects::nonNull)
+                    .collect(Collectors.toSet());
             return needToTag.stream()
                     //only need to tag if the conditions are met
                     .filter(mapping -> {

@@ -15,6 +15,10 @@ public class SwaggerAnnotatorResolveTest extends BaseSwaggerMavenIntegrationTest
 
     protected static Logger LOGGER = LoggerFactory.getLogger(SwaggerAnnotatorResolveTest.class);
 
+    /**
+     * Do not run this test case directly,
+     * just use the "mvn clean install" command
+     */
     public void testResolve() throws Exception {
         File pom = getTestFile("src/test/resources/pom.testSwagger3AnnotatorMojo.xml");
         runTest(pom);

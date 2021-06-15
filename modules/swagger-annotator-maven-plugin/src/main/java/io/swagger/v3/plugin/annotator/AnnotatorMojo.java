@@ -12,7 +12,6 @@ import io.swagger.v3.plugin.annotator.model.JavadocMapping;
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.agent.ByteBuddyAgent;
 import net.bytebuddy.dynamic.DynamicType;
-import net.bytebuddy.dynamic.loading.ClassLoadingStrategy;
 import net.bytebuddy.dynamic.loading.ClassReloadingStrategy;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.plugin.AbstractMojo;
@@ -27,7 +26,6 @@ import org.springframework.util.CollectionUtils;
 
 import java.io.File;
 import java.lang.annotation.ElementType;
-import java.lang.instrument.Instrumentation;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
