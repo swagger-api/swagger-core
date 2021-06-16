@@ -612,6 +612,11 @@
                 <version>3.0.7</version>
                 <scope>test</scope>
             </dependency>
+            <dependency>
+                <groupId>com.github.jknack</groupId>
+                <artifactId>handlebars</artifactId>
+                <version>4.7.7</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
     <properties>
