@@ -19,6 +19,7 @@ package io.swagger.v3.oas.models.media;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * BooleanSchema
@@ -35,6 +36,13 @@ public class BooleanSchema extends Schema<Boolean> {
         super.setType(type);
         return this;
     }
+
+    @Override
+    public BooleanSchema types(Set<String> types) {
+        super.setTypes(types);
+        return this;
+    }
+
 
     public BooleanSchema _default(Boolean _default) {
         super.setDefault(_default);

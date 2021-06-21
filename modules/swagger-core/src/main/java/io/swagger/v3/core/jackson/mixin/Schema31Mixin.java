@@ -4,13 +4,22 @@ import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.JsonSerializer;
+import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
+import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.Map;
+import java.util.Set;
 
 public abstract class Schema31Mixin {
 
-    @JsonValue
+    //@JsonValue
+    @JsonIgnore
     public abstract Map<String, Object> getJsonSchema();
 
     @JsonIgnore
@@ -21,6 +30,19 @@ public abstract class Schema31Mixin {
 
     @JsonIgnore
     public abstract Boolean getExclusiveMaximum();
+
+    @JsonProperty("exclusiveMinimum")
+    public abstract BigDecimal getExclusiveMinimumValue();
+
+    @JsonProperty("exclusiveMaximum")
+    public abstract BigDecimal getExclusiveMaximumValue();
+
+    @JsonIgnore
+    public abstract String getType();
+
+    @JsonProperty("type")
+    @JsonSerialize(using = TypeSerializer.class)
+    public abstract Set<String> getTypes();
 
     @JsonAnyGetter
     public abstract Map<String, Object> getExtensions();
@@ -36,5 +58,21 @@ public abstract class Schema31Mixin {
 
     @JsonIgnore
     public abstract Object getJsonSchemaImpl();
+
+    public static class TypeSerializer extends JsonSerializer<Set<String>> {
+
+        @Override
+        public void serialize(Set<String> types, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException {
+            if (types != null && types.size() == 1) {
+                jsonGenerator.writeString((String)types.toArray()[0]);
+            } else if (types != null && types.size() > 1){
+                jsonGenerator.writeStartArray();
+                for (String t: types) {
+                    jsonGenerator.writeString(t);
+                }
+                jsonGenerator.writeEndArray();
+            }
+        }
+    }
 
 }

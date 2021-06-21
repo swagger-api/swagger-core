@@ -12,6 +12,7 @@ public abstract class SchemaConverterMixin {
     @JsonIgnore
     public abstract Map<String, Object> getJsonSchema();
 
+/*
     @JsonIgnore
     public abstract Boolean getNullable();
 
@@ -20,6 +21,7 @@ public abstract class SchemaConverterMixin {
 
     @JsonIgnore
     public abstract Boolean getExclusiveMaximum();
+*/
 
     @JsonAnyGetter
     public abstract Map<String, Object> getExtensions();

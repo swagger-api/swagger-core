@@ -8,6 +8,7 @@ import io.swagger.v3.oas.models.media.Schema;
 
 import java.math.BigDecimal;
 import java.util.Map;
+import java.util.Set;
 
 /*
  TODO: this handles deserialization, but not serialization of "explicit" null value (as we are serializing non null fields)
@@ -36,6 +37,17 @@ public abstract class SchemaMixin {
 
     @JsonIgnore
     public abstract BigDecimal getExclusiveMaximumValue();
+
+    @JsonIgnore
+    public abstract Schema getContains();
+    @JsonIgnore
+    public abstract String get$id();
+    @JsonIgnore
+    public abstract String get$anchor();
+    @JsonIgnore
+    public abstract String get$schema();
+    @JsonIgnore
+    public abstract Set<String> getTypes();
 
     @JsonIgnore
     public abstract Map<String, Schema> getPatternProperties();
