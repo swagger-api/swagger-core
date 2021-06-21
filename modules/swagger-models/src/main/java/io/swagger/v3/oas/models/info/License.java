@@ -16,7 +16,7 @@
 
 package io.swagger.v3.oas.models.info;
 
-import io.swagger.v3.oas.OpenAPI31;
+import io.swagger.v3.oas.annotations.OpenAPI31;
 
 import java.util.Objects;
 

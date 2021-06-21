@@ -1,4 +1,4 @@
-openapi: 3.0
+openapi: 3.0.0
 servers:
 - url: http://petstore.swagger.io/api
 - url: https://development.gigantic-server.com/api
@@ -49,7 +49,6 @@ info:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
     x-license: license extension
-  version: 1.0.1
 tags:
 - name: pet
   description: Everything about your Pets
@@ -1087,31 +1086,6 @@ components:
         format: int32
       additionalProperties:
         type: integer
-      properties:
-        id:
-          type: integer
-          format: int64
-        petId:
-          type: integer
-          format: int64
-        quantity:
-          type: integer
-          format: int32
-        shipDate:
-          type: string
-          format: date-time
-        status:
-          type: string
-          description: Order Status
-          enum:
-          - placed
-          - approved
-          - delivered
-        complete:
-          type: boolean
-          default: false
-      xml:
-        name: Order
       properties:
         id:
           type: integer

@@ -24,6 +24,16 @@ public class OpenAPI3_1DeserializationTest {
     }
 
     @Test
+    public void deserializePetstore3_1More() throws IOException {
+
+        final String jsonString = ResourceUtils.loadClassResource(getClass(), "specFiles/3.1.0/petstore-3.1_more.yaml");
+        final OpenAPI swagger = Yaml31.mapper().readValue(jsonString, OpenAPI.class);
+        assertNotNull(swagger);
+        assertEquals(swagger.getInfo().getLicense().getIdentifier(), "test");
+    }
+
+
+    @Test
     public void deserializePetstore3_0() throws IOException {
 
         final String jsonString = ResourceUtils.loadClassResource(getClass(), "specFiles/petstore-3.0.yaml");

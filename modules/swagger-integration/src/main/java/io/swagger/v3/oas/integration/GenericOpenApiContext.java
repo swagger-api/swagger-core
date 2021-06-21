@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.databind.MapperFeature;
@@ -670,6 +671,21 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
         @JsonIgnore
         public abstract Map<String, Schema> getPatternProperties();
 
+        @JsonIgnore
+        public abstract Schema getContains();
+        @JsonIgnore
+        public abstract String get$id();
+        @JsonIgnore
+        public abstract String get$anchor();
+        @JsonIgnore
+        public abstract String get$schema();
+        @JsonIgnore
+        public abstract Set<String> getTypes();
+
+        @JsonIgnore
+        public abstract Object getJsonSchemaImpl();
+
+
     }
 
     @JsonPropertyOrder(value = {"openapi", "info", "externalDocs", "servers", "security", "tags", "paths", "components", "webhooks"}, alphabetic = true)
@@ -693,16 +709,8 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
         @JsonPropertyOrder(alphabetic = true)
         public abstract Map<String, Object> getExtensions();
 
-        @JsonAnySetter
-        public abstract void addExtension(String name, Object value);
-
+        //@JsonValue
         @JsonIgnore
-        public abstract boolean getExampleSetFlag();
-
-        @JsonInclude(JsonInclude.Include.CUSTOM)
-        public abstract Object getExample();
-
-        @JsonValue
         public abstract Map<String, Object> getJsonSchema();
 
         @JsonIgnore
@@ -713,6 +721,30 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
 
         @JsonIgnore
         public abstract Boolean getExclusiveMaximum();
+
+        @JsonProperty("exclusiveMinimum")
+        public abstract BigDecimal getExclusiveMinimumValue();
+
+        @JsonProperty("exclusiveMaximum")
+        public abstract BigDecimal getExclusiveMaximumValue();
+
+        @JsonIgnore
+        public abstract String getType();
+
+        @JsonProperty("type")
+        public abstract Set<String> getTypes();
+
+        @JsonAnySetter
+        public abstract void addExtension(String name, Object value);
+
+        @JsonIgnore
+        public abstract boolean getExampleSetFlag();
+
+        @JsonInclude(JsonInclude.Include.CUSTOM)
+        public abstract Object getExample();
+
+        @JsonIgnore
+        public abstract Object getJsonSchemaImpl();
 
     }
 

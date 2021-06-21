@@ -50,7 +50,7 @@ public interface OpenAPIConfiguration {
     Boolean isAlwaysResolveAppPath();
 
     /**
-     * @since 2.1.9
+     * @since 3.0.0
      */
     Boolean isOpenAPI31();
 }
