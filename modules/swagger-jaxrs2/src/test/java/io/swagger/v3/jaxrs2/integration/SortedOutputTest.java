@@ -131,6 +131,21 @@ public class SortedOutputTest {
         @JsonIgnore
         public abstract Map<String, Schema> getPatternProperties();
 
+        @JsonIgnore
+        public abstract Schema getContains();
+        @JsonIgnore
+        public abstract String get$id();
+        @JsonIgnore
+        public abstract String get$anchor();
+        @JsonIgnore
+        public abstract String get$schema();
+        @JsonIgnore
+        public abstract Set<String> getTypes();
+
+        @JsonIgnore
+        public abstract Object getJsonSchemaImpl();
+
+
     }
 
     public static class SortedProcessor implements ObjectMapperProcessor {

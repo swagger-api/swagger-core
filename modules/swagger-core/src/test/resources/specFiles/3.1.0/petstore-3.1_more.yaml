@@ -111,9 +111,13 @@ components:
         tag:
           type: string
     Pets:
+      $id: test
+      $anchor: test
       type: array
       items:
         $ref: "#/components/schemas/Pet"
+        description: desc
+        format: int32
     Error:
       required:
         - code

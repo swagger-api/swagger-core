@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.swagger.v3.oas;
+package io.swagger.v3.oas.annotations;
 
 import java.lang.annotation.Inherited;
 

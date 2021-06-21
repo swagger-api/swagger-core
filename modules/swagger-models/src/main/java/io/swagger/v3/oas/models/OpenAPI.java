@@ -16,6 +16,8 @@
 
 package io.swagger.v3.oas.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.swagger.v3.oas.annotations.OpenAPI31;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
@@ -46,9 +48,28 @@ public class OpenAPI {
     private Components components = null;
     private java.util.Map<String, Object> extensions = null;
 
+    public OpenAPI() {}
+    public OpenAPI(SpecVersion specVersion) { this.specVersion = specVersion;}
+    private SpecVersion specVersion = SpecVersion.V30;
+
+    @JsonIgnore
+    public SpecVersion getSpecVersion() {
+        return this.specVersion;
+    }
+
+    public void setSpecVersion(SpecVersion specVersion) {
+        this.specVersion = specVersion;
+    }
+
+    public OpenAPI specVersion(SpecVersion specVersion) {
+        this.setSpecVersion(specVersion);
+        return this;
+    }
+
     /**
      * @since 2.1.8 (OpenAPI 3.1.0)
      */
+    @OpenAPI31
     private java.util.Map<String, PathItem> webhooks = null;
 
     /**
@@ -263,19 +284,23 @@ public class OpenAPI {
      * @return Map&lt;String, PathItem&gt; webhooks
      **/
 
+    @OpenAPI31
     public Map<String, PathItem> getWebhooks() {
         return webhooks;
     }
 
+    @OpenAPI31
     public void setWebhooks(Map<String, PathItem> webhooks) {
         this.webhooks = webhooks;
     }
 
+    @OpenAPI31
     public OpenAPI webhooks(Map<String, PathItem> webhooks) {
         this.webhooks = webhooks;
         return this;
     }
 
+    @OpenAPI31
     public OpenAPI addWebhooks(String key, PathItem pathItem) {
         if (this.webhooks == null) {
             this.webhooks = new LinkedHashMap<>();
@@ -347,7 +372,7 @@ public class OpenAPI {
         sb.append("    tags: ").append(toIndentedString(tags)).append("\n");
         sb.append("    paths: ").append(toIndentedString(paths)).append("\n");
         sb.append("    components: ").append(toIndentedString(components)).append("\n");
-        sb.append("    webhooks: ").append(toIndentedString(webhooks)).append("\n");
+        if (specVersion == SpecVersion.V31) sb.append("    webhooks: ").append(toIndentedString(webhooks)).append("\n");
         sb.append("}");
         return sb.toString();
     }

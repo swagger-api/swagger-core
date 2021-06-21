@@ -181,6 +181,7 @@ public class ObjectMapperFactory {
             sourceMixins.put(DateSchema.class, DateSchemaMixin.class);
         } else {
             sourceMixins.put(Schema.class, Schema31Mixin.class);
+            sourceMixins.put(DateSchema.class, DateSchemaMixin.class);
         }
         mapper.setMixIns(sourceMixins);
         mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
