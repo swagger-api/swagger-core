@@ -14,21 +14,10 @@
  * limitations under the License.
  */
 
-package io.swagger.v3.oas.models.media;
+package io.swagger.v3.oas.annotations;
 
-/**
- * ComposedSchema
- */
+import java.lang.annotation.Inherited;
 
-public class ComposedSchema extends Schema<Object> {
-
-
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("class ComposedSchema {\n");
-        sb.append("    ").append(toIndentedString(super.toString())).append("\n");
-        sb.append("}");
-        return sb.toString();
-    }
+@Inherited
+public @interface OpenAPI30 {
 }
