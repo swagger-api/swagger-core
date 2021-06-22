@@ -17,8 +17,10 @@ import io.swagger.v3.oas.models.responses.ApiResponse;
 import io.swagger.v3.oas.models.responses.ApiResponses;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
+import org.apache.commons.io.FileUtils;
 import org.testng.annotations.Test;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
@@ -407,6 +409,22 @@ public class JsonDeserializationTest {
         assertNull(oas.getComponents().getSchemas().get("UserStatus").getExample());
         assertFalse(oas.getComponents().getSchemas().get("UserStatus").getExampleSetFlag());
         Yaml.prettyPrint(oas);
+    }
+
+    @Test
+    public void testExampleDeserializationOnMediaType() throws Exception {
+        String content = FileUtils.readFileToString(new File("src/test/resources/specFiles/media-type-null-example.yaml"), "UTF-8");
+        OpenAPI openAPI = Yaml.mapper().readValue(content, OpenAPI.class);
+
+        assertNull(openAPI.getPaths().get("/pets/{petId}").getGet().getResponses().get("200").getContent().get("application/json").getExample());
+        assertTrue(openAPI.getPaths().get("/pets/{petId}").getGet().getResponses().get("200").getContent().get("application/json").getExampleSetFlag());
+
+        assertNull(openAPI.getPaths().get("/pet").getPost().getResponses().get("200").getContent().get("application/json").getExample());
+        assertFalse(openAPI.getPaths().get("/pet").getPost().getResponses().get("200").getContent().get("application/json").getExampleSetFlag());
+
+        assertNotNull(openAPI.getPaths().get("/pet").getPost().getRequestBody().getContent().get("application/json").getExample());
+
+        assertTrue(openAPI.getPaths().get("/pet").getPost().getRequestBody().getContent().get("application/json").getExampleSetFlag());
     }
 
 }
