@@ -135,4 +135,23 @@ public class ModelImplTest extends PowerMockTestCase {
         assertEquals(instance.getProperties().get(key), property,
                 "Must be able to retrieve the set value from the map");
     }
+
+    @Test
+    public void testAddRequiredOnNonExistingProperty() {
+        // given
+        String badPropertyName = "missingProperty";
+        String key = "key";
+        Property property = new ArrayProperty();
+        instance.property(key, property);
+        instance.addRequired(key);
+        assertEquals(1, instance.getRequired().size());
+        assertEquals(1, instance.getSpecSpecifiedRequired().size());
+
+        // when
+        instance.addRequired(badPropertyName);
+
+        // then
+        assertEquals(1, instance.getRequired().size());
+        assertEquals(2, instance.getSpecSpecifiedRequired().size());
+    }
 }

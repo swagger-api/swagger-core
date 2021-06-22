@@ -2,10 +2,7 @@ package io.swagger.models;
 
 import io.swagger.models.properties.Property;
 
-import java.util.Map;
-
 public class ArrayModel extends AbstractModel {
-    private Map<String, Property> properties;
     private String type;
     private String description;
     private Property items;
@@ -76,14 +73,6 @@ public class ArrayModel extends AbstractModel {
 
     }
 
-    public Map<String, Property> getProperties() {
-        return properties;
-    }
-
-    public void setProperties(Map<String, Property> properties) {
-        this.properties = properties;
-    }
-
     public Object getExample() {
         return example;
     }
@@ -150,7 +139,7 @@ public class ArrayModel extends AbstractModel {
     @Override
     public int hashCode() {
         int result = super.hashCode();
-        result = 31 * result + (properties != null ? properties.hashCode() : 0);
+        
         result = 31 * result + (type != null ? type.hashCode() : 0);
         result = 31 * result + (description != null ? description.hashCode() : 0);
         result = 31 * result + (items != null ? items.hashCode() : 0);
@@ -165,7 +154,6 @@ public class ArrayModel extends AbstractModel {
         ArrayModel cloned = new ArrayModel();
         super.cloneTo(cloned);
 
-        cloned.properties = this.properties;
         cloned.type = this.type;
         cloned.description = this.description;
         cloned.items = this.items;
