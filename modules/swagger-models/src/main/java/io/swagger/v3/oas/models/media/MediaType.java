@@ -94,8 +94,15 @@ public class MediaType {
     }
 
     public void setExample(Object example) {
-        this.example = example;
-        exampleSetFlag = true;
+        if (this.schema == null) {
+            this.example = example;
+            this.exampleSetFlag = true;
+            return;
+        }
+        this.example = this.schema.cast(example);
+        if (!(example != null && this.example == null)) {
+            this.exampleSetFlag = true;
+        }
     }
 
     public MediaType example(Object example) {
