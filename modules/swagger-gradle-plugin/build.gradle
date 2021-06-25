@@ -33,6 +33,8 @@ dependencies {
         exclude group: 'org.eclipse.jetty', module: 'jetty-webapp'
         exclude group: 'org.eclipse.jetty', module: 'jetty-proxy'
         exclude group: 'commons-codec', module: 'commons-codec'
+        exclude group: 'com.github.jknack', module: 'handlebars'
+        exclude group: 'com.github.jknack', module: 'handlebars-helpers'
     }
     testImplementation 'javax.servlet:javax.servlet-api:3.1.0'
     testImplementation 'com.google.guava:guava:30.1-jre'
@@ -48,6 +50,8 @@ dependencies {
     testImplementation "commons-codec:commons-codec:1.15"
     testImplementation "commons-io:commons-io:2.7"
     testImplementation "org.apache.commons:commons-compress:1.20"
+    testImplementation "com.github.jknack:handlebars:4.1.2"
+    testImplementation "com.github.jknack:handlebars-helpers:4.1.2"
 }
 
 // * * * * * * * * * * * *

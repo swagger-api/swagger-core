@@ -85,7 +85,7 @@ public class SwaggerResolveTest {
                 "    compile group: 'io.swagger.core.v3', name: 'swagger-jaxrs2', version:'2.1.10-SNAPSHOT'\n" +
                 "    compile group: 'javax.ws.rs', name: 'javax.ws.rs-api', version:'2.1'\n" +
                 "    compile group: 'javax.servlet', name: 'javax.servlet-api', version:'3.1.0'\n" +
-                "    testCompile group: 'com.github.tomakehurst', name: 'wiremock', version:'2.14.0'\n" +
+                "    testCompile group: 'com.github.tomakehurst', name: 'wiremock', version:'2.27.2'\n" +
                 "    testCompile 'junit:junit:4+'\n" +
                 "\n" +
                 "\n" +
