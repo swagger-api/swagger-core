@@ -5,6 +5,7 @@ import io.swagger.v3.jaxrs2.resources.model.Pet;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.Schema.Empty;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
 import javax.ws.rs.GET;
@@ -27,7 +28,7 @@ public class ComplexResponseResource {
                             @Schema(name = "Default Pet", description = "Default Pet",
                             required = true, example = "New Pet")))
             })
-    @ApiResponse(responseCode = "404", description = "Couldn't find pet")
+    @ApiResponse(responseCode = "404", description = "Couldn't find pet", content = @Content(schema = @Schema(implementation = Empty.class)))
     public Pet getPets() throws NotFoundException {
         return new Pet();
     }

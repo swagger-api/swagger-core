@@ -1104,6 +1104,38 @@ public class Reader implements OpenApiReader {
                         }
                     }
                 }
+                operation.getResponses().forEach((k, value) -> {
+                    if (value.getContent() == null) { // no content annotation -> DEFAULT CONTENT/SCHEMA
+                        value.setContent(content);
+                    } else if (!"default".equals(k)) {
+                        Set<String> contentsToRemove = new HashSet<>();
+                        value.getContent().forEach((mediaStr, mediaObj) -> {
+                            if (mediaObj.isEmpty()) { // content annotation empty or only mediaType field defined -> DEFAULT CONTENT/SCHEMA
+                                if (value.getContent().size() == 1) {
+                                    value.setContent(new Content().addMediaType(mediaStr, mediaType));
+                                } else {
+                                    mediaObj.setSchema(returnTypeSchema);
+                                }
+                            } else {
+                                Schema schemaObj = mediaObj.getSchema();
+                                if (schemaObj == null || schemaObj.isEmpty()) {
+                                    mediaObj.setSchema(returnTypeSchema);
+                                } else if (schemaObj.isNoContent()) {
+                                    mediaObj.setSchema(null);
+                                    if (mediaObj.isEmpty()) {
+                                        contentsToRemove.add(mediaStr);
+                                    }
+                                }
+                            }
+                        });
+                        
+                        contentsToRemove.stream().forEach(s -> value.getContent().remove(s));
+                        if (value.getContent().isEmpty()) {
+                            value.setContent(null);
+                        }
+                    }
+                });
+
                 Map<String, Schema> schemaMap = resolvedSchema.referencedSchemas;
                 if (schemaMap != null) {
                     schemaMap.forEach((key, schema) -> components.addSchemas(key, schema));
@@ -1123,7 +1155,7 @@ public class Reader implements OpenApiReader {
 
         return operation;
     }
-
+    
     private boolean shouldIgnoreClass(String className) {
         if (StringUtils.isBlank(className)) {
             return true;

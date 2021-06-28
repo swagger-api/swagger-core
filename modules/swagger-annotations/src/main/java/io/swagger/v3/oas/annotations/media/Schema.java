@@ -23,7 +23,6 @@ import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import java.nio.file.AccessMode;
 
 import static java.lang.annotation.ElementType.ANNOTATION_TYPE;
 import static java.lang.annotation.ElementType.TYPE;
@@ -334,5 +333,15 @@ public @interface Schema {
         READ_ONLY,
         WRITE_ONLY,
         READ_WRITE;
+    }
+    
+    /**
+     * Marker class to use on the {@link Schema} implementation field to set that a
+     * response has no content.
+     * 
+     * @author Ariel Carrera
+     *
+     */
+    public static class Empty {
     }
 }

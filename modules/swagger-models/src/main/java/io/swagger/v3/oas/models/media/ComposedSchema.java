@@ -141,4 +141,13 @@ public class ComposedSchema extends Schema<Object> {
         sb.append("}");
         return sb.toString();
     }
+
+    @Override
+    public boolean isEmpty() {
+        return (allOf == null || allOf.isEmpty()) &&
+                (anyOf == null || anyOf.isEmpty()) &&
+                (oneOf == null || oneOf.isEmpty()) &&
+                super.isEmpty();
+    }
+
 }
