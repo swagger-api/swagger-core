@@ -35,4 +35,8 @@ public class Json {
             e.printStackTrace();
         }
     }
+    
+    public static void setMapper(ObjectMapper mapper) {
+        Json.mapper = mapper;
+    }
 }
