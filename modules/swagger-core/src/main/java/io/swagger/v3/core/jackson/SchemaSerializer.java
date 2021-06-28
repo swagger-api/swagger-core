@@ -9,6 +9,8 @@ import io.swagger.v3.oas.models.media.Schema;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
+import java.util.Map;
+import java.util.Set;
 
 public class SchemaSerializer extends JsonSerializer<Schema> implements ResolvableSerializer {
 
@@ -17,7 +19,7 @@ public class SchemaSerializer extends JsonSerializer<Schema> implements Resolvab
     public SchemaSerializer(JsonSerializer<Object> serializer) {
         defaultSerializer = serializer;
     }
-
+    
     @Override
     public void resolve(SerializerProvider serializerProvider) throws JsonMappingException {
         if (defaultSerializer instanceof ResolvableSerializer) {
@@ -36,7 +38,24 @@ public class SchemaSerializer extends JsonSerializer<Schema> implements Resolvab
         } else {
             jgen.writeStartObject();
             jgen.writeStringField("$ref", value.get$ref());
+            copyExtensions(value, jgen);
             jgen.writeEndObject();
+        }
+    }
+
+    protected void copyExtensions(Schema value, JsonGenerator jgen) throws IOException {
+        Map<String, Object> extensions = value.getExtensions();
+        if(extensions!=null) {
+            Set<String> extensionsKeySet = extensions.keySet();
+            for (String extensionKey : extensionsKeySet) {
+                Object extensionValue = extensions.get(extensionKey);
+                if(extensionValue!=null) {
+                   jgen.writeObjectField(extensionKey, extensionValue);
+                } else {
+                    jgen.writeNullField(extensionKey);
+                }
+            }
+
         }
     }
 }
