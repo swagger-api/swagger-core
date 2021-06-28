@@ -174,6 +174,12 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             beanDesc = recurBeanDesc;
         }
 
+        final Boolean deprecated;
+        if (beanDesc.getClassAnnotations().has(Deprecated.class)) {
+            deprecated = beanDesc.getClassAnnotations().has(io.swagger.v3.oas.annotations.media.Schema.class) ? null : true;
+        } else {
+            deprecated = null;
+        }
 
         String name = annotatedType.getName();
         if (StringUtils.isBlank(name)) {
@@ -191,12 +197,13 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         // if we have a ref we don't consider anything else
         if (resolvedSchemaAnnotation != null &&
                 StringUtils.isNotEmpty(resolvedSchemaAnnotation.ref())) {
+            Schema schema = new Schema().$ref(resolvedSchemaAnnotation.ref()).name(name).deprecated(deprecated);
             if (resolvedArrayAnnotation == null) {
-                return new Schema().$ref(resolvedSchemaAnnotation.ref()).name(name);
+                return schema;
             } else {
-                ArraySchema schema = new ArraySchema();
-                resolveArraySchema(annotatedType, schema, resolvedArrayAnnotation);
-                return schema.items(new Schema().$ref(resolvedSchemaAnnotation.ref()).name(name));
+                ArraySchema arraySchema = new ArraySchema();
+                resolveArraySchema(annotatedType, arraySchema, resolvedArrayAnnotation);
+                return arraySchema.items(schema);
             }
         }
 
@@ -289,7 +296,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         if (model == null) {
             PrimitiveType primitiveType = PrimitiveType.fromType(type);
             if (primitiveType != null) {
-                model = PrimitiveType.fromType(type).createProperty();
+                model = primitiveType.createProperty();
                 isPrimitive = true;
             }
         }
@@ -319,7 +326,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         }
 
         if ("Object".equals(name)) {
-            return new Schema();
+            return new Schema().deprecated(deprecated);
         }
 
         if (isPrimitive) {
@@ -342,12 +349,12 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 // Store off the ref and add the enum as a top-level model
                 context.defineModel(name, model, annotatedType, null);
                 // Return the model as a ref only property
-                model = new Schema().$ref(Components.COMPONENTS_SCHEMAS_REF + name);
+                model = new Schema().$ref(Components.COMPONENTS_SCHEMAS_REF + name).deprecated(deprecated);
             }
             return model;
         }
 
-        /**
+        /*
          * --Preventing parent/child hierarchy creation loops - Comment 1--
          * Creating a parent model will result in the creation of child models. Creating a child model will result in
          * the creation of a parent model, as per the second If statement following this comment.
@@ -362,6 +369,9 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         Schema resolvedModel = context.resolve(annotatedType);
         if (resolvedModel != null) {
             if (name != null && name.equals(resolvedModel.getName())) {
+                if (resolvedModel.getDeprecated() == null) {
+                    resolvedModel.setDeprecated(deprecated);
+                }
                 return resolvedModel;
             }
         }
@@ -379,7 +389,11 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                     .propertyName(annotatedType.getPropertyName())
                     .ctxAnnotations(annotatedType.getCtxAnnotations())
                     .skipOverride(true);
-            return context.resolve(aType);
+            Schema schema = context.resolve(aType);
+            if (schema.getDeprecated() == null) {
+                schema.setDeprecated(deprecated);
+            }
+            return schema;
         }
 
         List<Class<?>> composedSchemaReferencedClasses = getComposedSchemaReferencedClasses(type.getRawClass(), annotatedType.getCtxAnnotations(), resolvedSchemaAnnotation);
@@ -490,16 +504,21 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         } else if (isComposedSchema) {
             model = new ComposedSchema()
                     .type("object")
-                    .name(name);
+                    .name(name)
+                    .deprecated(deprecated);
         } else {
             AnnotatedType aType = OptionalUtils.unwrapOptional(annotatedType);
             if (aType != null) {
                 model = context.resolve(aType);
+                if (model.getDeprecated() == null) {
+                    model.setDeprecated(deprecated);
+                }
                 return model;
             } else {
                 model = new Schema()
                         .type("object")
-                        .name(name);
+                        .name(name)
+                        .deprecated(deprecated);
             }
         }
 
@@ -648,7 +667,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                         handleUnwrapped(props, context.resolve(t), uw.prefix(), uw.suffix(), requiredProps);
                         return null;
                     } else {
-                        return new Schema();
+                        return new Schema().deprecated(deprecated);
                         //t.jsonUnwrappedHandler(null);
                         //return context.resolve(t);
                     }
@@ -715,7 +734,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             }
         }
 
-        /**
+        /*
          * --Preventing parent/child hierarchy creation loops - Comment 2--
          * Creating a parent model will result in the creation of child models, as per the first If statement following
          * this comment. Creating a child model will result in the creation of a parent model, as per the second If
@@ -734,10 +753,10 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             context.defineModel(name, model, annotatedType, null);
         }
 
-        /**
+        /*
          * This must be done after model.setProperties so that the model's set
          * of properties is available to filter from any subtypes
-         **/
+         */
         if (!resolveSubtypes(model, beanDesc, context)) {
             model.setDiscriminator(null);
         }
@@ -871,6 +890,10 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
         resolveDiscriminatorProperty(type, context, model);
         model = resolveWrapping(type, context, model);
+
+        if (model.getDeprecated() == null) {
+            model.setDeprecated(deprecated);
+        }
 
         return model;
     }
@@ -1776,6 +1799,13 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
     protected Boolean resolveDeprecated(Annotated a, Annotation[] annotations, io.swagger.v3.oas.annotations.media.Schema schema) {
         if (schema != null && schema.deprecated()) {
             return schema.deprecated();
+        }
+        if (annotations != null) {
+            for (Annotation annotation : annotations) {
+                if (Deprecated.class.equals(annotation.annotationType())) {
+                    return true;
+                }
+            }
         }
         return null;
     }
