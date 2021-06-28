@@ -16,6 +16,8 @@
 
 package io.swagger.v3.oas.models.security;
 
+import com.fasterxml.jackson.annotation.JsonGetter;
+
 /**
  * SecurityScheme
  *
@@ -135,6 +137,14 @@ public class SecurityScheme {
         return this;
     }
 
+    @JsonGetter("name")
+    public String jsonName() {
+        if (Type.APIKEY.equals(type)) {
+            return name;
+        }
+        return null;
+    }
+
     /**
      * returns the in property from a SecurityScheme instance.
      *
@@ -152,6 +162,14 @@ public class SecurityScheme {
     public SecurityScheme in(In in) {
         this.in = in;
         return this;
+    }
+
+    @JsonGetter("in")
+    public In jsonIn() {
+        if (Type.APIKEY.equals(type)) {
+            return in;
+        }
+        return null;
     }
 
     /**
@@ -173,6 +191,14 @@ public class SecurityScheme {
         return this;
     }
 
+    @JsonGetter("scheme")
+    public String jsonScheme() {
+        if (Type.HTTP.equals(type)) {
+            return scheme;
+        }
+        return null;
+    }
+
     /**
      * returns the bearerFormat property from a SecurityScheme instance.
      *
@@ -190,6 +216,14 @@ public class SecurityScheme {
     public SecurityScheme bearerFormat(String bearerFormat) {
         this.bearerFormat = bearerFormat;
         return this;
+    }
+
+    @JsonGetter("bearerFormat")
+    public String jsonBearerFormat() {
+        if (Type.HTTP.equals(type)) {
+            return bearerFormat;
+        }
+        return null;
     }
 
     /**
@@ -211,6 +245,14 @@ public class SecurityScheme {
         return this;
     }
 
+    @JsonGetter("flows")
+    public OAuthFlows jsonFlows() {
+        if (Type.OAUTH2.equals(type)) {
+            return flows;
+        }
+        return null;
+    }
+
     /**
      * returns the openIdConnectUrl property from a SecurityScheme instance.
      *
@@ -228,6 +270,14 @@ public class SecurityScheme {
     public SecurityScheme openIdConnectUrl(String openIdConnectUrl) {
         this.openIdConnectUrl = openIdConnectUrl;
         return this;
+    }
+
+    @JsonGetter("openIdConnectUrl")
+    public String jsonOpenIdConnectUrl() {
+        if (Type.OPENIDCONNECT.equals(type)) {
+            return openIdConnectUrl;
+        }
+        return null;
     }
 
     public java.util.Map<String, Object> getExtensions() {

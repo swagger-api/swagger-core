@@ -104,7 +104,6 @@ import javax.ws.rs.core.Response;
 )
 @SecurityScheme(name = "myOauth2Security",
         type = SecuritySchemeType.OAUTH2,
-        in = SecuritySchemeIn.HEADER,
         description = "myOauthSecurity Description",
         flows = @OAuthFlows(
                 implicit = @OAuthFlow(
@@ -596,7 +595,6 @@ public class ExtensionsResource {
                     "    myOauth2Security:\n" +
                     "      type: oauth2\n" +
                     "      description: myOauthSecurity Description\n" +
-                    "      in: header\n" +
                     "      flows:\n" +
                     "        implicit:\n" +
                     "          authorizationUrl: http://x.com\n" +

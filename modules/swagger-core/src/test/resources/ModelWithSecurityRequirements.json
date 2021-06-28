@@ -115,6 +115,7 @@
     },
     "securitySchemes": {
       "githubAccessCode": {
+        "type": "oauth2",
         "flows": {
           "authorizationCode": {
             "scopes": {

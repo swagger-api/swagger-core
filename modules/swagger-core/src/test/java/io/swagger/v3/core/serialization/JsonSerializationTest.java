@@ -7,6 +7,8 @@ import io.swagger.v3.oas.models.PathItem;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.responses.ApiResponse;
 import io.swagger.v3.oas.models.responses.ApiResponses;
+import io.swagger.v3.oas.models.security.OAuthFlows;
+import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.servers.Server;
 import org.testng.annotations.Test;
 
@@ -66,5 +68,59 @@ public class JsonSerializationTest {
 
         assertEquals(rebuilt.getPaths().get("/health").getGet().getResponses().get("200"), expectedResponse);
 
+    }
+
+    @Test(description = "only serialize appropriate fields for SecurityScheme of type APIKEY")
+    public void testSerializeSecuritySchemeApiKey() {
+        SecurityScheme scheme = makeSecurityScheme(SecurityScheme.Type.APIKEY);
+        assertEquals("{\n" +
+                "  \"type\" : \"apiKey\",\n" +
+                "  \"description\" : \"description\",\n" +
+                "  \"name\" : \"name\",\n" +
+                "  \"in\" : \"header\"\n" +
+                "}", Json.pretty(scheme));
+    }
+
+    @Test(description = "only serialize appropriate fields for SecurityScheme of type HTTP")
+    public void testSerializeSecuritySchemeHttp() {
+        SecurityScheme scheme = makeSecurityScheme(SecurityScheme.Type.HTTP);
+        assertEquals("{\n" +
+                "  \"type\" : \"http\",\n" +
+                "  \"description\" : \"description\",\n" +
+                "  \"scheme\" : \"scheme\",\n" +
+                "  \"bearerFormat\" : \"bearerFormat\"\n" +
+                "}", Json.pretty(scheme));
+    }
+
+    @Test(description = "only serialize appropriate fields for SecurityScheme of type OAUTH2")
+    public void testSerializeSecuritySchemeOAuth2() {
+        SecurityScheme scheme = makeSecurityScheme(SecurityScheme.Type.OAUTH2);
+        assertEquals("{\n" +
+                "  \"type\" : \"oauth2\",\n" +
+                "  \"description\" : \"description\",\n" +
+                "  \"flows\" : { }\n" +
+                "}", Json.pretty(scheme));
+    }
+
+    @Test(description = "only serialize appropriate fields for SecurityScheme of type OPENIDCONNECT")
+    public void testSerializeSecuritySchemeOpenIdConnect() {
+        SecurityScheme scheme = makeSecurityScheme(SecurityScheme.Type.OPENIDCONNECT);
+        assertEquals("{\n" +
+                "  \"type\" : \"openIdConnect\",\n" +
+                "  \"description\" : \"description\",\n" +
+                "  \"openIdConnectUrl\" : \"openIdConnectUrl\"\n" +
+                "}", Json.pretty(scheme));
+    }
+
+    private SecurityScheme makeSecurityScheme(SecurityScheme.Type type) {
+        return new SecurityScheme()
+                .type(type)
+                .description("description")
+                .name("name")
+                .in(SecurityScheme.In.HEADER)
+                .scheme("scheme")
+                .bearerFormat("bearerFormat")
+                .flows(new OAuthFlows())
+                .openIdConnectUrl("openIdConnectUrl");
     }
 }
