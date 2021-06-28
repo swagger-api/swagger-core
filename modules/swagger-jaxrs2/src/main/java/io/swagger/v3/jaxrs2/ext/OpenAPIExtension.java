@@ -27,4 +27,14 @@ public interface OpenAPIExtension {
      * @param chain     the chain with swagger extensions to process
      */
     void decorateOperation(Operation operation, Method method, Iterator<OpenAPIExtension> chain);
+
+    /**
+     * Decorates operation with additional vendor based extensions.
+     *
+     * @param clazz     the declaring class information
+     * @param operation the operation, build from swagger definition
+     * @param method    the method for additional scan
+     * @param chain     the chain with swagger extensions to process
+     */
+    void decorateOperation(Class<?> clazz, Operation operation, Method method, Iterator<OpenAPIExtension> chain);
 }
