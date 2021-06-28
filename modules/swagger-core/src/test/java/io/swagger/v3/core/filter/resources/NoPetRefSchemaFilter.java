@@ -12,7 +12,7 @@ public class NoPetRefSchemaFilter extends AbstractSpecFilter {
     private static final String MODEL = "Pet";
 
     @Override
-    public Optional<Schema> filterSchema(Schema schema, Map<String, List<String>> params, Map<String, String> cookies, Map<String, List<String>> headers) {
+    public Optional<Schema> filterSchema(Schema schema, Map<String, List<String>> params, Map<String, List<String>> cookies, Map<String, List<String>> headers) {
         if (schema == null || StringUtils.isBlank(schema.getXml().getName())) {
             return Optional.of(schema);
         }

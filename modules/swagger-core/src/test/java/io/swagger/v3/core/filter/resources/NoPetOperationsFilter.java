@@ -16,7 +16,7 @@ public class NoPetOperationsFilter extends AbstractSpecFilter {
     public static final String PET_RESOURCE = "/pet";
 
     @Override
-    public Optional<Operation> filterOperation(Operation operation, ApiDescription api, Map<String, List<String>> params, Map<String, String> cookies, Map<String, List<String>> headers) {
+    public Optional<Operation> filterOperation(Operation operation, ApiDescription api, Map<String, List<String>> params, Map<String, List<String>> cookies, Map<String, List<String>> headers) {
         if (api.getPath().startsWith(PET_RESOURCE)) {
             return Optional.empty();
         }

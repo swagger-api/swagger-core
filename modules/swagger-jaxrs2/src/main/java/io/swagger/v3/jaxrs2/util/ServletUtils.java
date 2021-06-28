@@ -1,6 +1,5 @@
 package io.swagger.v3.jaxrs2.util;
 
-import io.swagger.v3.jaxrs2.integration.OpenApiServlet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,7 +10,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -41,11 +39,11 @@ public class ServletUtils {
         return queryParameters;
     }
 
-    public static Map<String, String> getCookies(Cookie[] cookies) {
-        Map<String, String> mapOfCookies = new HashMap<>();
+    public static MultivaluedHashMap<String, String> getCookies(Cookie[] cookies) {
+        MultivaluedHashMap<String, String> mapOfCookies = new MultivaluedHashMap<>();
         if (cookies != null) {
             for (Cookie cookie : cookies) {
-                mapOfCookies.put(cookie.getName(), cookie.getValue());
+                mapOfCookies.add(cookie.getName(), cookie.getValue());
             }
         }
         return mapOfCookies;
