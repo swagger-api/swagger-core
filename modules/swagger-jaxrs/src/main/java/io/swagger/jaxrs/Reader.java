@@ -855,7 +855,7 @@ public class Reader {
         if (apiOperation != null && StringUtils.isNotEmpty(apiOperation.responseReference())) {
             Response response = new Response().description(SUCCESSFUL_OPERATION);
             response.schema(new RefProperty(apiOperation.responseReference()));
-            operation.addResponseObject(String.valueOf(apiOperation.code()), response);
+            operation.addResponse(String.valueOf(apiOperation.code()), response);
         } else if (responseType == null) {
             // pick out response from method declaration
             LOGGER.debug("picking up response class from method {}", method);

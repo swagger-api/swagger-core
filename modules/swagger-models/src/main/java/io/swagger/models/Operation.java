@@ -3,6 +3,8 @@ package io.swagger.models;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import io.swagger.models.parameters.Parameter;
+import io.swagger.models.properties.Property;
+import io.swagger.models.utils.PropertyModelConverter;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -81,13 +83,12 @@ public class Operation {
         return this;
     }
     public Operation response(int key, Response response) {
-        this.addResponseObject(String.valueOf(key),response);
+        this.addResponse(String.valueOf(key),response);
         return this;
     }
 
-
     public Operation defaultResponse(Response response) {
-        this.addResponseObject("default",response);
+        this.addResponse("default",response);
         return this;
     }
 
@@ -213,23 +214,20 @@ public class Operation {
     }
 
     public Map<String, Response> getResponses() {
-        if (this.responsesObject == null && responses != null) {
-            this.responsesObject = new Responses();
-
-            for (String key : responses.keySet()) {
-                this.responsesObject.put(key, responses.get(key));
-            }
+        if (this.responses == null && responsesObject != null) {
+            responses = new Responses();
+            responses.putAll(responsesObject);
+            return responses;
         }
         return responses;
     }
 
-    public Responses getResponsesObject() {
-        if (responses == null && responsesObject != null) {
-            responses = new LinkedHashMap<String, Response>();
 
-            for (String key : this.responsesObject.keySet()) {
-                responses.put(key, responsesObject.get(key));
-            }
+    public Responses getResponsesObject() {
+        if (responsesObject == null && responses != null) {
+            responsesObject = new Responses();
+            responsesObject.putAll(responses);
+            return responsesObject;
         }
         return responsesObject;
     }
@@ -240,29 +238,17 @@ public class Operation {
 
     public void setResponsesObject(Responses responsesObject) {
         this.responsesObject = responsesObject;
-
     }
     
     public void addResponse(String key, Response response) {
         if (responses == null) {
-            responses = new LinkedHashMap<String, Response>();
+            responses = new LinkedHashMap<>();
         }
         responses.put(key, response);
         if (responsesObject == null) {
             responsesObject = new Responses();
         }
         responsesObject.put(key, response);
-    }
-
-    public void addResponseObject(String key, Response response) {
-        if (this.responsesObject == null) {
-            this.responsesObject = new Responses();
-        }
-        this.responsesObject.put(key, response);
-        if (this.responses == null) {
-            this.responses = new LinkedHashMap<String, Response>();
-        }
-        this.responses.put(key, response);
     }
 
     public List<Map<String, List<String>>> getSecurity() {
@@ -275,11 +261,11 @@ public class Operation {
 
     public void addSecurity(String name, List<String> scopes) {
         if (this.security == null) {
-            this.security = new ArrayList<Map<String, List<String>>>();
+            this.security = new ArrayList<>();
         }
-        Map<String, List<String>> req = new LinkedHashMap<String, List<String>>();
+        Map<String, List<String>> req = new LinkedHashMap<>();
         if (scopes == null) {
-            scopes = new ArrayList<String>();
+            scopes = new ArrayList<>();
         }
         req.put(name, scopes);
         this.security.add(req);
