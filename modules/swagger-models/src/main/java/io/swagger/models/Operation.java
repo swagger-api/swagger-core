@@ -218,9 +218,11 @@ public class Operation {
             responses = new Responses();
             responses.putAll(responsesObject);
         }
-        return responsesObject;
+        if (responsesObject != null) {
+            responses.putAll(responsesObject);
+        }
+        return responses;
     }
-
 
     public Responses getResponsesObject() {
         if (responsesObject == null && responses != null) {
