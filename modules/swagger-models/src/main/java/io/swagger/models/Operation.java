@@ -217,9 +217,8 @@ public class Operation {
         if (this.responses == null && responsesObject != null) {
             responses = new Responses();
             responses.putAll(responsesObject);
-            return responses;
         }
-        return responses;
+        return responsesObject;
     }
 
 
@@ -227,7 +226,6 @@ public class Operation {
         if (responsesObject == null && responses != null) {
             responsesObject = new Responses();
             responsesObject.putAll(responses);
-            return responsesObject;
         }
         return responsesObject;
     }
@@ -241,10 +239,6 @@ public class Operation {
     }
     
     public void addResponse(String key, Response response) {
-        if (responses == null) {
-            responses = new LinkedHashMap<>();
-        }
-        responses.put(key, response);
         if (responsesObject == null) {
             responsesObject = new Responses();
         }
