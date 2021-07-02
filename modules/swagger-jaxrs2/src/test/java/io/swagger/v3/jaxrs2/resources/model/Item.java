@@ -5,8 +5,9 @@ import io.swagger.v3.oas.annotations.media.Schema;
 public class Item {
     private String name;
     private String value;
+    @Schema(example = "Ynl0ZQ==")
     private byte[] bytes;
-    @Schema(format = "binary")
+    @Schema(format = "binary", example = "YmluYXJ5")
     private byte[] binary;
     
     public Item() {
