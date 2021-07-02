@@ -40,7 +40,7 @@ public class PropertyModelConverterTest {
                 "            format: uuid\n";
 
         Operation operation = Yaml.mapper().readValue(yaml, Operation.class);
-        Response response = operation.getResponses().get("200");
+        Response response = operation.getResponsesObject().get("200");
         Assert.assertNotNull(response);
         Property property = response.getSchema();
 
@@ -63,7 +63,7 @@ public class PropertyModelConverterTest {
                 "            format: email\n";
 
         Operation operation = Yaml.mapper().readValue(yaml, Operation.class);
-        Response response = operation.getResponses().get("200");
+        Response response = operation.getResponsesObject().get("200");
         Assert.assertNotNull(response);
         Property property = response.getSchema();
 
@@ -85,7 +85,7 @@ public class PropertyModelConverterTest {
                 "            type: boolean\n";
 
         Operation operation = Yaml.mapper().readValue(yaml, Operation.class);
-        Response response = operation.getResponses().get("200");
+        Response response = operation.getResponsesObject().get("200");
         Assert.assertNotNull(response);
         Property property = response.getSchema();
 
@@ -107,7 +107,7 @@ public class PropertyModelConverterTest {
                 "            format: date\n";
 
         Operation operation = Yaml.mapper().readValue(yaml, Operation.class);
-        Response response = operation.getResponses().get("200");
+        Response response = operation.getResponsesObject().get("200");
         Assert.assertNotNull(response);
         Property property = response.getSchema();
 
@@ -130,7 +130,7 @@ public class PropertyModelConverterTest {
                 "            format: date-time\n";
 
         Operation operation = Yaml.mapper().readValue(yaml, Operation.class);
-        Response response = operation.getResponses().get("200");
+        Response response = operation.getResponsesObject().get("200");
         Assert.assertNotNull(response);
         Property property = response.getSchema();
 
@@ -153,7 +153,7 @@ public class PropertyModelConverterTest {
                 "            format: password\n";
 
         Operation operation = Yaml.mapper().readValue(yaml, Operation.class);
-        Response response = operation.getResponses().get("200");
+        Response response = operation.getResponsesObject().get("200");
         Assert.assertNotNull(response);
         Property property = response.getSchema();
 
@@ -178,7 +178,7 @@ public class PropertyModelConverterTest {
                 "              - b\n";
 
         Operation operation = Yaml.mapper().readValue(yaml, Operation.class);
-        Response response = operation.getResponses().get("200");
+        Response response = operation.getResponsesObject().get("200");
         Assert.assertNotNull(response);
         Property property = response.getSchema();
 
@@ -202,7 +202,7 @@ public class PropertyModelConverterTest {
                 "            pattern: Pattern\n";
 
         Operation operation = Yaml.mapper().readValue(yaml, Operation.class);
-        Response response = operation.getResponses().get("200");
+        Response response = operation.getResponsesObject().get("200");
         Assert.assertNotNull(response);
         Property property = response.getSchema();
 
@@ -226,7 +226,7 @@ public class PropertyModelConverterTest {
                 "            format: binary\n";
 
         Operation operation = Yaml.mapper().readValue(yaml, Operation.class);
-        Response response = operation.getResponses().get("200");
+        Response response = operation.getResponsesObject().get("200");
         Assert.assertNotNull(response);
         Property property = response.getSchema();
 
@@ -249,7 +249,7 @@ public class PropertyModelConverterTest {
                 "            format: double\n";
 
         Operation operation = Yaml.mapper().readValue(yaml, Operation.class);
-        Response response = operation.getResponses().get("200");
+        Response response = operation.getResponsesObject().get("200");
         Assert.assertNotNull(response);
         Property property = response.getSchema();
 
@@ -274,7 +274,7 @@ public class PropertyModelConverterTest {
                 "            format: double\n";
 
         Operation operation = Yaml.mapper().readValue(yaml, Operation.class);
-        Response response = operation.getResponses().get("200");
+        Response response = operation.getResponsesObject().get("200");
         Assert.assertNotNull(response);
         Property property = response.getSchema();
 
@@ -299,7 +299,7 @@ public class PropertyModelConverterTest {
                 "            format: byte\n";
 
         Operation operation = Yaml.mapper().readValue(yaml, Operation.class);
-        Response response = operation.getResponses().get("200");
+        Response response = operation.getResponsesObject().get("200");
         Assert.assertNotNull(response);
         Property property = response.getSchema();
 
@@ -322,7 +322,7 @@ public class PropertyModelConverterTest {
                 "            format: int64\n";
 
         Operation operation = Yaml.mapper().readValue(yaml, Operation.class);
-        Response response = operation.getResponses().get("200");
+        Response response = operation.getResponsesObject().get("200");
         Assert.assertNotNull(response);
         Property property = response.getSchema();
 
@@ -345,7 +345,7 @@ public class PropertyModelConverterTest {
                 "            format: int32\n";
 
         Operation operation = Yaml.mapper().readValue(yaml, Operation.class);
-        Response response = operation.getResponses().get("200");
+        Response response = operation.getResponsesObject().get("200");
         Assert.assertNotNull(response);
         Property property = response.getSchema();
 
@@ -371,7 +371,7 @@ public class PropertyModelConverterTest {
                 "              example: 1985-04-12T23:20:50.52Z";
 
         Operation operation = Yaml.mapper().readValue(yaml, Operation.class);
-        Response response = operation.getResponses().get("200");
+        Response response = operation.getResponsesObject().get("200");
         Assert.assertNotNull(response);
         Property property = response.getSchema();
 
@@ -596,7 +596,7 @@ public class PropertyModelConverterTest {
 
         Path string  = swagger.getPaths().get("/string");
         Operation operation = string.getOperations().get(0);
-        Response response = operation.getResponses().get("200");
+        Response response = operation.getResponsesObject().get("200");
         Property property = response.getSchema();
 
         PropertyModelConverter converter = new PropertyModelConverter();
@@ -619,7 +619,7 @@ public class PropertyModelConverterTest {
 
         Path string  = swagger.getPaths().get("/stringenum");
         Operation operation = string.getOperations().get(0);
-        Response response = operation.getResponses().get("200");
+        Response response = operation.getResponsesObject().get("200");
         Property property = response.getSchema();
 
         Assert.assertEquals(((StringProperty)property).getEnum().size(),2);
@@ -645,7 +645,7 @@ public class PropertyModelConverterTest {
 
         Path string  = swagger.getPaths().get("/stringRef");
         Operation operation = string.getOperations().get(0);
-        Response response = operation.getResponses().get("200");
+        Response response = operation.getResponsesObject().get("200");
         Property property = response.getSchema();
 
         PropertyModelConverter converter = new PropertyModelConverter();
@@ -667,7 +667,7 @@ public class PropertyModelConverterTest {
 
         Path string  = swagger.getPaths().get("/boolean");
         Operation operation = string.getOperations().get(0);
-        Response response = operation.getResponses().get("200");
+        Response response = operation.getResponsesObject().get("200");
         Property property = response.getSchema();
 
         PropertyModelConverter converter = new PropertyModelConverter();
@@ -690,7 +690,7 @@ public class PropertyModelConverterTest {
 
         Path string  = swagger.getPaths().get("/number");
         Operation operation = string.getOperations().get(0);
-        Response response = operation.getResponses().get("200");
+        Response response = operation.getResponsesObject().get("200");
         Property property = response.getSchema();
 
         PropertyModelConverter converter = new PropertyModelConverter();
@@ -713,7 +713,7 @@ public class PropertyModelConverterTest {
 
         Path string  = swagger.getPaths().get("/arrayOfInt");
         Operation operation = string.getOperations().get(0);
-        Response response = operation.getResponses().get("200");
+        Response response = operation.getResponsesObject().get("200");
         Property property = response.getSchema();
 
         PropertyModelConverter converter = new PropertyModelConverter();
@@ -736,7 +736,7 @@ public class PropertyModelConverterTest {
 
         Path string  = swagger.getPaths().get("/arrayOfRef");
         Operation operation = string.getOperations().get(0);
-        Response response = operation.getResponses().get("200");
+        Response response = operation.getResponsesObject().get("200");
         Property property = response.getSchema();
 
         PropertyModelConverter converter = new PropertyModelConverter();
@@ -761,7 +761,7 @@ public class PropertyModelConverterTest {
 
         Path string  = swagger.getPaths().get("/arrayRef");
         Operation operation = string.getOperations().get(0);
-        Response response = operation.getResponses().get("200");
+        Response response = operation.getResponsesObject().get("200");
         Property property = response.getSchema();
 
         PropertyModelConverter converter = new PropertyModelConverter();
@@ -783,7 +783,7 @@ public class PropertyModelConverterTest {
 
         Path string  = swagger.getPaths().get("/object");
         Operation operation = string.getOperations().get(0);
-        Response response = operation.getResponses().get("200");
+        Response response = operation.getResponsesObject().get("200");
         Property property = response.getSchema();
 
         PropertyModelConverter converter = new PropertyModelConverter();

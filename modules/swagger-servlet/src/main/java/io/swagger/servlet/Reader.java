@@ -106,7 +106,7 @@ public class Reader {
             }
 
             if (httpMethod != null) {
-                if (operation.getResponses() == null) {
+                if (operation.getResponsesObject() == null) {
                     operation.defaultResponse(new Response().description("successful operation"));
                 }
 

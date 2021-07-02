@@ -3,6 +3,8 @@ package io.swagger.models;
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import io.swagger.models.parameters.Parameter;
+import io.swagger.models.properties.Property;
+import io.swagger.models.utils.PropertyModelConverter;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -20,9 +22,11 @@ public class Operation {
     private List<String> produces;
     private List<Parameter> parameters = new ArrayList<Parameter>();
     private Map<String, Response> responses;
+    private Responses responsesObject;
     private List<Map<String, List<String>>> security;
     private ExternalDocs externalDocs;
     private Boolean deprecated;
+
 
     public Operation summary(String summary) {
         this.setSummary(summary);
@@ -78,14 +82,13 @@ public class Operation {
         this.addParameter(parameter);
         return this;
     }
-
     public Operation response(int key, Response response) {
-        this.addResponse(String.valueOf(key), response);
+        this.addResponse(String.valueOf(key),response);
         return this;
     }
 
     public Operation defaultResponse(Response response) {
-        this.addResponse("default", response);
+        this.addResponse("default",response);
         return this;
     }
 
@@ -211,18 +214,35 @@ public class Operation {
     }
 
     public Map<String, Response> getResponses() {
-        return responses;
+        if (this.responses == null && responsesObject != null) {
+            responses = new Responses();
+            responses.putAll(responsesObject);
+        }
+        return responsesObject;
+    }
+
+
+    public Responses getResponsesObject() {
+        if (responsesObject == null && responses != null) {
+            responsesObject = new Responses();
+            responsesObject.putAll(responses);
+        }
+        return responsesObject;
     }
 
     public void setResponses(Map<String, Response> responses) {
         this.responses = responses;
     }
 
+    public void setResponsesObject(Responses responsesObject) {
+        this.responsesObject = responsesObject;
+    }
+    
     public void addResponse(String key, Response response) {
-        if (this.responses == null) {
-            this.responses = new LinkedHashMap<String, Response>();
+        if (responsesObject == null) {
+            responsesObject = new Responses();
         }
-        this.responses.put(key, response);
+        responsesObject.put(key, response);
     }
 
     public List<Map<String, List<String>>> getSecurity() {
@@ -235,11 +255,11 @@ public class Operation {
 
     public void addSecurity(String name, List<String> scopes) {
         if (this.security == null) {
-            this.security = new ArrayList<Map<String, List<String>>>();
+            this.security = new ArrayList<>();
         }
-        Map<String, List<String>> req = new LinkedHashMap<String, List<String>>();
+        Map<String, List<String>> req = new LinkedHashMap<>();
         if (scopes == null) {
-            scopes = new ArrayList<String>();
+            scopes = new ArrayList<>();
         }
         req.put(name, scopes);
         this.security.add(req);
@@ -294,6 +314,7 @@ public class Operation {
                 + ((parameters == null) ? 0 : parameters.hashCode());
         result = prime * result + ((produces == null) ? 0 : produces.hashCode());
         result = prime * result + ((responses == null) ? 0 : responses.hashCode());
+        result = prime * result + ((responsesObject == null) ? 0 : responsesObject.hashCode());
         result = prime * result + ((schemes == null) ? 0 : schemes.hashCode());
         result = prime * result + ((security == null) ? 0 : security.hashCode());
         result = prime * result + ((summary == null) ? 0 : summary.hashCode());
@@ -369,6 +390,13 @@ public class Operation {
                 return false;
             }
         } else if (!responses.equals(other.responses)) {
+            return false;
+        }
+        if (responsesObject == null) {
+            if (other.responsesObject != null) {
+                return false;
+            }
+        } else if (!responsesObject.equals(other.responsesObject)) {
             return false;
         }
         if (schemes == null) {

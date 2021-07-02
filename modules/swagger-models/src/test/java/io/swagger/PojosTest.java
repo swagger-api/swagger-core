@@ -10,8 +10,11 @@ import com.openpojo.validation.test.impl.SetterTester;
 import io.swagger.models.ComposedModel;
 import io.swagger.models.ModelImpl;
 import io.swagger.models.Operation;
+
 import io.swagger.models.RefModel;
 import io.swagger.models.RefResponse;
+
+import io.swagger.models.Responses;
 import io.swagger.models.Swagger;
 import io.swagger.models.auth.ApiKeyAuthDefinition;
 import io.swagger.models.auth.In;
@@ -33,6 +36,7 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.testng.PowerMockTestCase;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -97,10 +101,11 @@ public class PojosTest extends PowerMockTestCase {
         classesExclusions.put(RefModel.class, new HashSet<String>(Arrays.asList("title")));
         classesExclusions.put(RefResponse.class,
                 new HashSet<String>(Arrays.asList("headers", "schema")));
+        
 
         Set<Class<?>> classesUsingInheritedFields = new HashSet<Class<?>>(Arrays.asList(ApiKeyAuthDefinition.class,
                 BodyParameter.class, ArrayProperty.class, BaseIntegerProperty.class, CookieParameter.class));
-        Set<Class<?>> excludedClasses = new HashSet<Class<?>>(Arrays.asList(PropertyBuilder.class));
+        Set<Class<?>> excludedClasses = new HashSet<Class<?>>(Arrays.asList(PropertyBuilder.class,Responses.class));
         for (PojoClass clazz : pojoClasses) {
             if (excludedClasses.contains(clazz.getClazz()))
                 continue;
@@ -113,13 +118,19 @@ public class PojosTest extends PowerMockTestCase {
     public void testBuildersAndCommonMethods() throws Exception {
         Map<Class<?>, Set<String>> classesExclusions = new HashMap<Class<?>, Set<String>>();
 
+        ArrayList<Class<?>> excludeMock = new ArrayList<>();
+        excludeMock.add(Responses.class);
         classesExclusions.put(Operation.class, new HashSet<String>(Arrays.asList("deprecated", "vendorExtensions")));
         classesExclusions.put(Swagger.class, new HashSet<String>(Arrays.asList("vendorExtensions")));
 
         for (PojoClass clazz : pojoClasses) {
             Set<String> exclusions = classesExclusions.get(clazz.getClazz());
-            TestUtils.testBuilders(clazz.getClazz(), exclusions);
-            TestUtils.testCommonMethods(clazz.getClazz(), exclusions);
+            Class<?> pojoClass = clazz.getClazz();
+            if (!excludeMock.contains(pojoClass)) {
+                TestUtils.testBuilders(clazz.getClazz(), exclusions);
+                TestUtils.testCommonMethods(clazz.getClazz(), exclusions);
+
+            }
         }
     }
 }

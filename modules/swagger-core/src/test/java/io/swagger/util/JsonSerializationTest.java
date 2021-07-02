@@ -43,7 +43,7 @@ public class JsonSerializationTest {
         String swaggerJson = Json.mapper().writeValueAsString(swagger);
         Swagger rebuilt = Json.mapper().readValue(swaggerJson, Swagger.class);
 
-        assertEquals(rebuilt.getPath("/health").getGet().getResponses().get("200"), expectedResponse);
+        assertEquals(rebuilt.getPath("/health").getGet().getResponsesObject().get("200"), expectedResponse);
 
     }
 

@@ -911,7 +911,7 @@ public class Reader {
         // merge class level @ApiResponse
         for (ApiResponse apiResponse : classApiResponses) {
             String key = (apiResponse.code() == 0) ? "default" : String.valueOf(apiResponse.code());
-            if (operation.getResponses() != null && operation.getResponses().containsKey(key)) {
+            if (operation.getResponsesObject() != null && operation.getResponsesObject().containsKey(key)) {
                 continue;
             }
             addResponse(operation, apiResponse, jsonViewAnnotation);
@@ -949,7 +949,7 @@ public class Reader {
             }
         }
 
-        if (operation.getResponses() == null) {
+        if (operation.getResponsesObject() == null) {
             Response response = new Response().description(SUCCESSFUL_OPERATION);
             operation.defaultResponse(response);
         }

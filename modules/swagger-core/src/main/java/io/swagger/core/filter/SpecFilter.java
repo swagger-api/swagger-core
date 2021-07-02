@@ -150,8 +150,8 @@ public class SpecFilter {
                 }
                 if (path.getOperations() != null) {
                     for (Operation op: path.getOperations()) {
-                        if (op.getResponses() != null) {
-                            for (Response response: op.getResponses().values()) {
+                        if (op.getResponsesObject() != null) {
+                            for (Response response: op.getResponsesObject().values()) {
                                 Set<String> modelRef = getModelRef(response.getResponseSchema());
                                 if (modelRef != null) {
                                     referencedDefinitions.addAll(modelRef);
@@ -280,7 +280,7 @@ public class SpecFilter {
         }
         clonedOperation.setParameters(clonedParams);
         clonedOperation.setSecurity(op.getSecurity());
-        clonedOperation.setResponses(op.getResponses());
+        clonedOperation.setResponsesObject(op.getResponsesObject());
 
         return clonedOperation;
     }

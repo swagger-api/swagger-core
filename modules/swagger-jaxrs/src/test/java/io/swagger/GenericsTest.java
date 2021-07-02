@@ -204,7 +204,7 @@ public class GenericsTest {
     @Test(description = "check generic result")
     public void checkGenericResult() {
         Operation op = swagger.getPath("/generics/testGenericResult").getGet();
-        Model schema = op.getResponses().get("200").getResponseSchema();
+        Model schema = op.getResponsesObject().get("200").getResponseSchema();
         assertEquals(schema.getClass().getName(), RefModel.class.getName());
         assertEquals(((RefModel) schema).getSimpleRef(), "GenericListWrapperTag");
 

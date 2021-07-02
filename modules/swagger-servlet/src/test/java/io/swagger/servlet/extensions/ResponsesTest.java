@@ -32,9 +32,9 @@ public class ResponsesTest extends BaseServletReaderExtensionTest {
         extension.applyResponses(context, operation, findMethod(context, methodName));
 
         if (expected == null) {
-            Assert.assertNull(operation.getResponses());
+            Assert.assertNull(operation.getResponsesObject());
         } else {
-            final Response response = operation.getResponses().get("200");
+            final Response response = operation.getResponsesObject().get("200");
             Assert.assertEquals(response.getDescription(), expected.getDescription());
         }
     }
@@ -44,7 +44,7 @@ public class ResponsesTest extends BaseServletReaderExtensionTest {
         final Operation operation = new Operation();
         final ReaderContext context = createDefaultContext();
         extension.applyResponses(context, operation, findMethod(context, "testMethod3"));
-        final Map<String, Response> responses = operation.getResponses();
+        final Map<String, Response> responses = operation.getResponsesObject();
 
         Assert.assertEquals(responses.size(), 7);
         for (Map.Entry<String, String> entry : ResponsesTest.responses.entrySet()) {
