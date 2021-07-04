@@ -32,7 +32,9 @@ components:
         bytes:
           type: string
           format: byte
+          example: Ynl0ZQ==
         binary:
           type: string
           format: binary
+          example: YmluYXJ5
           
