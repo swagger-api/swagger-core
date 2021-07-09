@@ -69,9 +69,11 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlElementRefs;
+import javax.xml.bind.annotation.XmlEnumValue;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
@@ -938,6 +940,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         final boolean useToString = _mapper.isEnabled(SerializationFeature.WRITE_ENUMS_USING_TO_STRING);
 
 
+        // Annotation precedence: @JsonValue > @JsonProperty > @XmlEnumValue
         Optional<Method> jsonValueMethod = Arrays.stream(propClass.getMethods())
                 .filter(m -> m.isAnnotationPresent(JsonValue.class))
                 .filter(m -> m.getAnnotation(JsonValue.class).value())
@@ -948,6 +951,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
         Enum<?>[] enumConstants = enumClass.getEnumConstants();
         String[] enumValues = _intr.findEnumValues(propClass, enumConstants, new String[enumConstants.length]);
+        enumValues = findEnumValuesForXmlEnumValueAnnotation(enumClass, enumConstants, enumValues);
 
         for (Enum<?> en : enumConstants) {
             String n;
@@ -972,6 +976,24 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             }
         }
     }
+
+    private String[] findEnumValuesForXmlEnumValueAnnotation(Class<Enum<?>> enumClass, Enum<?>[] enumValues, String[] names) {
+        try {
+            String[] returnNames = Arrays.copyOf(names, names.length);
+            for (Enum<?> enumValue : enumValues) {
+                if (names[enumValue.ordinal()] != null) {
+                    continue;
+                }
+                Field field = enumClass.getField(enumValue.name());
+                XmlEnumValue annotation = field.getAnnotation(XmlEnumValue.class);
+                returnNames[enumValue.ordinal()] = annotation != null ? annotation.value() : null;
+            }
+            return returnNames;
+        } catch (NoSuchFieldException e) {
+            return names;
+        }
+    }
+
 
     protected boolean ignore(final Annotated member, final XmlAccessorType xmlAccessorTypeAnnotation, final String propName, final Set<String> propertiesToIgnore) {
         return ignore (member, xmlAccessorTypeAnnotation, propName, propertiesToIgnore, null);
