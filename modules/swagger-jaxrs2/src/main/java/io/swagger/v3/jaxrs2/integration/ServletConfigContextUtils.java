@@ -32,6 +32,11 @@ public class ServletConfigContextUtils {
     public static final String OPENAPI_CONFIGURATION_SORTOUTPUT_KEY = "openApi.configuration.sortOutput";
 
     /**
+     * @since 2.1.9
+     */
+    public static final String OPENAPI_CONFIGURATION_ALWAYSRESOLVEAPPPATH_KEY = "openApi.configuration.alwaysResolveAppPath";
+
+    /**
      * @since 2.0.6
      */
     public static final String OPENAPI_CONFIGURATION_OBJECT_MAPPER_PROCESSOR_KEY = "openApi.configuration.objectMapperProcessorClass";
