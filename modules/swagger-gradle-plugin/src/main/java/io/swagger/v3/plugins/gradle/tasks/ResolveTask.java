@@ -67,6 +67,8 @@ public class ResolveTask extends DefaultTask {
     private String objectMapperProcessorClass;
 
     private Boolean sortOutput = Boolean.FALSE;
+    private Boolean alwaysResolveAppPath = Boolean.FALSE;
+
 
     private String contextId;
 
@@ -306,6 +308,15 @@ public class ResolveTask extends DefaultTask {
         this.sortOutput = sortOutput;
     }
 
+    @Input
+    @Optional
+    public Boolean getAlwaysResolveAppPath() {
+        return alwaysResolveAppPath;
+    }
+
+    public void setAlwaysResolveAppPath(Boolean alwaysResolveAppPath) {
+        this.alwaysResolveAppPath = alwaysResolveAppPath;
+    }
 
     @TaskAction
     public void resolve() throws GradleException {
@@ -405,6 +416,9 @@ public class ResolveTask extends DefaultTask {
 
             method=swaggerLoaderClass.getDeclaredMethod("setSortOutput", Boolean.class);
             method.invoke(swaggerLoader, sortOutput);
+
+            method=swaggerLoaderClass.getDeclaredMethod("setAlwaysResolveAppPath", Boolean.class);
+            method.invoke(swaggerLoader, alwaysResolveAppPath);
 
             method=swaggerLoaderClass.getDeclaredMethod("setReadAllResources", Boolean.class);
             method.invoke(swaggerLoader, readAllResources);

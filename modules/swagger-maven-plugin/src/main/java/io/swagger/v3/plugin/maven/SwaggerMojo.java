@@ -167,6 +167,9 @@ public class SwaggerMojo extends AbstractMojo {
         if (sortOutput == null) {
             sortOutput = Boolean.FALSE;
         }
+        if (alwaysResolveAppPath == null) {
+            alwaysResolveAppPath = Boolean.FALSE;
+        }
         if (config.isPrettyPrint() == null) {
             config.prettyPrint(prettyPrint);
         }
@@ -175,6 +178,9 @@ public class SwaggerMojo extends AbstractMojo {
         }
         if (config.isSortOutput() == null) {
             config.sortOutput(sortOutput);
+        }
+        if (config.isAlwaysResolveAppPath() == null) {
+            config.alwaysResolveAppPath(alwaysResolveAppPath);
         }
     }
 
@@ -299,6 +305,9 @@ public class SwaggerMojo extends AbstractMojo {
         if (sortOutput != null) {
             config.sortOutput(sortOutput);
         }
+        if (alwaysResolveAppPath != null) {
+            config.alwaysResolveAppPath(alwaysResolveAppPath);
+        }
         if (readAllResources != null) {
             config.readAllResources(readAllResources);
         }
@@ -392,6 +401,13 @@ public class SwaggerMojo extends AbstractMojo {
      */
     @Parameter(property = "resolve.sortOutput")
     private Boolean sortOutput;
+
+    /**
+     * @since 2.1.9
+     */
+    @Parameter(property = "resolve.alwaysResolveAppPath")
+    private Boolean alwaysResolveAppPath;
+
 
     private String projectEncoding = "UTF-8";
     private SwaggerConfiguration config;
