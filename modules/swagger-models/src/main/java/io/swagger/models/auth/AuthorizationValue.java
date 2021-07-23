@@ -1,15 +1,29 @@
 package io.swagger.models.auth;
 
+import java.net.URL;
+import java.util.Objects;
+
 public class AuthorizationValue {
     private String value, type, keyName;
+    private UrlMatcher urlMatcher;
 
     public AuthorizationValue() {
     }
 
-    public AuthorizationValue(String keyName, String value, String type) {
+    public AuthorizationValue(String keyName, String value, String type, UrlMatcher urlMatcher) {
         this.setKeyName(keyName);
         this.setValue(value);
         this.setType(type);
+        this.setUrlMatcher(urlMatcher);
+    }
+
+    public AuthorizationValue(String keyName, String value, String type) {
+        this(keyName, value, type, new UrlMatcher() {
+            @Override
+            public boolean test(URL url) {
+                return true;
+            }
+        });
     }
 
     public AuthorizationValue value(String value) {
@@ -24,6 +38,11 @@ public class AuthorizationValue {
 
     public AuthorizationValue keyName(String keyName) {
         this.keyName = keyName;
+        return this;
+    }
+
+    public AuthorizationValue urlMatcher(UrlMatcher urlMatcher) {
+        setUrlMatcher(urlMatcher);
         return this;
     }
 
@@ -51,6 +70,13 @@ public class AuthorizationValue {
         this.keyName = keyName;
     }
 
+    public UrlMatcher getUrlMatcher() {
+        return urlMatcher;
+    }
+    public void setUrlMatcher(UrlMatcher urlMatcher) {
+        this.urlMatcher = Objects.requireNonNull(urlMatcher);
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -58,6 +84,7 @@ public class AuthorizationValue {
         result = prime * result + ((keyName == null) ? 0 : keyName.hashCode());
         result = prime * result + ((type == null) ? 0 : type.hashCode());
         result = prime * result + ((value == null) ? 0 : value.hashCode());
+        result = prime * result + ((urlMatcher == null) ? 0 : urlMatcher.hashCode());
         return result;
     }
 
@@ -93,6 +120,15 @@ public class AuthorizationValue {
             }
         } else if (!value.equals(other.value)) {
             return false;
+        }
+        if (urlMatcher == null) {
+            if (other.urlMatcher != null) {
+                return false;
+            }
+        } else if (!urlMatcher.equals(other.urlMatcher)) {
+            if (!urlMatcher.equals(other.urlMatcher)) {
+                return false;
+            }
         }
         return true;
     }
