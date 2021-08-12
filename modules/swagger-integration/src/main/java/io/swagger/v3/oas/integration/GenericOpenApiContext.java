@@ -1,9 +1,20 @@
 package io.swagger.v3.oas.integration;
 
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import io.swagger.v3.core.converter.ModelConverter;
 import io.swagger.v3.core.converter.ModelConverters;
 import io.swagger.v3.core.jackson.ModelResolver;
+import io.swagger.v3.core.jackson.PathsSerializer;
+import io.swagger.v3.core.util.Json;
+import io.swagger.v3.core.util.Yaml;
 import io.swagger.v3.oas.integration.api.ObjectMapperProcessor;
 import io.swagger.v3.oas.integration.api.OpenAPIConfiguration;
 import io.swagger.v3.oas.integration.api.OpenApiConfigurationLoader;
@@ -11,6 +22,8 @@ import io.swagger.v3.oas.integration.api.OpenApiContext;
 import io.swagger.v3.oas.integration.api.OpenApiReader;
 import io.swagger.v3.oas.integration.api.OpenApiScanner;
 import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.Paths;
+import io.swagger.v3.oas.models.media.Schema;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.slf4j.Logger;
@@ -42,6 +55,9 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
 
     private ObjectMapperProcessor objectMapperProcessor;
     private Set<ModelConverter> modelConverters;
+
+    private ObjectMapper outputJsonMapper;
+    private ObjectMapper outputYamlMapper;
 
     private ConcurrentHashMap<String, Cache> cache = new ConcurrentHashMap<>();
 
@@ -210,6 +226,52 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
         return (T) this;
     }
 
+    /**
+     * @since 2.1.6
+     */
+    public ObjectMapper getOutputJsonMapper() {
+        return outputJsonMapper;
+    }
+
+    /**
+     * @since 2.1.6
+     */
+    @Override
+    public void setOutputJsonMapper(ObjectMapper outputJsonMapper) {
+        this.outputJsonMapper = outputJsonMapper;
+    }
+
+    /**
+     * @since 2.1.6
+     */
+    public final T outputJsonMapper(ObjectMapper outputJsonMapper) {
+        this.outputJsonMapper = outputJsonMapper;
+        return (T) this;
+    }
+
+    /**
+     * @since 2.1.6
+     */
+    public ObjectMapper getOutputYamlMapper() {
+        return outputYamlMapper;
+    }
+
+    /**
+     * @since 2.1.6
+     */
+    @Override
+    public void setOutputYamlMapper(ObjectMapper outputYamlMapper) {
+        this.outputYamlMapper = outputYamlMapper;
+    }
+
+    /**
+     * @since 2.1.6
+     */
+    public final T outputYamlMapper(ObjectMapper outputYamlMapper) {
+        this.outputYamlMapper = outputYamlMapper;
+        return (T) this;
+    }
+
 
     protected void register() {
         OpenApiContextLocator.getInstance().putOpenApiContext(id, this);
@@ -363,16 +425,36 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
             if (modelConverters == null || modelConverters.isEmpty()) {
                 modelConverters = buildModelConverters(ContextUtils.deepCopy(openApiConfiguration));
             }
+            if (outputJsonMapper == null) {
+                outputJsonMapper = Json.mapper().copy();
+            }
+            if (outputYamlMapper == null) {
+                outputYamlMapper = Yaml.mapper().copy();
+            }
+            if (openApiConfiguration.isSortOutput() != null && openApiConfiguration.isSortOutput()) {
+                outputJsonMapper.configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, true);
+                outputJsonMapper.configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY, true);
+                outputYamlMapper.configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, true);
+                outputYamlMapper.configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY, true);
+                outputJsonMapper.addMixIn(OpenAPI.class, SortedOpenAPIMixin.class);
+                outputJsonMapper.addMixIn(Schema.class, SortedSchemaMixin.class);
+                outputYamlMapper.addMixIn(OpenAPI.class, SortedOpenAPIMixin.class);
+                outputYamlMapper.addMixIn(Schema.class, SortedSchemaMixin.class);
+            }
         } catch (Exception e) {
             LOGGER.error("error initializing context: " + e.getMessage(), e);
             throw new OpenApiConfigurationException("error initializing context: " + e.getMessage(), e);
         }
+
 
         try {
             if (objectMapperProcessor != null) {
                 ObjectMapper mapper = IntegrationObjectMapperFactory.createJson();
                 objectMapperProcessor.processJsonObjectMapper(mapper);
                 ModelConverters.getInstance().addConverter(new ModelResolver(mapper));
+
+                objectMapperProcessor.processOutputJsonObjectMapper(outputJsonMapper);
+                objectMapperProcessor.processOutputYamlObjectMapper(outputYamlMapper);
             }
         } catch (Exception e) {
             LOGGER.error("error configuring objectMapper: " + e.getMessage(), e);
@@ -442,6 +524,12 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
         if (merged.isPrettyPrint() == null) {
             merged.setPrettyPrint(parentConfig.isPrettyPrint());
         }
+        if (merged.isSortOutput() == null) {
+            merged.setSortOutput(parentConfig.isSortOutput());
+        }
+        if (merged.isAlwaysResolveAppPath() == null) {
+            merged.setAlwaysResolveAppPath(parentConfig.isAlwaysResolveAppPath());
+        }
         if (merged.isReadAllResources() == null) {
             merged.setReadAllResources(parentConfig.isReadAllResources());
         }
@@ -491,6 +579,38 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
         boolean isStale(long cacheTTL) {
             return (cacheTTL > 0 && System.currentTimeMillis() - createdAt > cacheTTL);
         }
+    }
+
+    @JsonPropertyOrder(value = {"openapi", "info", "externalDocs", "servers", "security", "tags", "paths", "components"}, alphabetic = true)
+    static abstract class SortedOpenAPIMixin {
+
+        @JsonAnyGetter
+        @JsonPropertyOrder(alphabetic = true)
+        public abstract Map<String, Object> getExtensions();
+
+        @JsonAnySetter
+        public abstract void addExtension(String name, Object value);
+
+        @JsonSerialize(using = PathsSerializer.class)
+        public abstract Paths getPaths();
+    }
+
+    @JsonPropertyOrder(value = {"type", "format"}, alphabetic = true)
+    static abstract class SortedSchemaMixin {
+
+        @JsonAnyGetter
+        @JsonPropertyOrder(alphabetic = true)
+        public abstract Map<String, Object> getExtensions();
+
+        @JsonAnySetter
+        public abstract void addExtension(String name, Object value);
+
+        @JsonIgnore
+        public abstract boolean getExampleSetFlag();
+
+        @JsonInclude(JsonInclude.Include.CUSTOM)
+        public abstract Object getExample();
+
     }
 
 }

@@ -39,4 +39,14 @@ public interface OpenAPIConfiguration {
      */
     public Set<String> getModelConverterClasses();
 
+    /**
+     * @since 2.1.6
+     */
+    Boolean isSortOutput();
+
+    /**
+     * @since 2.1.9
+     */
+    Boolean isAlwaysResolveAppPath();
+
 }

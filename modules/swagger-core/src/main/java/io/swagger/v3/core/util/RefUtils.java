@@ -1,5 +1,6 @@
 package io.swagger.v3.core.util;
 
+import io.swagger.v3.oas.models.Components;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -7,7 +8,7 @@ import org.apache.commons.lang3.tuple.Pair;
 public class RefUtils {
 
     public static String constructRef(String simpleRef) {
-        return "#/components/schemas/" + simpleRef;
+        return Components.COMPONENTS_SCHEMAS_REF + simpleRef;
     }
 
     public static String constructRef(String simpleRef, String prefix) {

@@ -1,5 +1,6 @@
 package io.swagger.v3.plugins.gradle.tasks;
 
+import java.util.stream.Stream;
 import org.apache.commons.lang3.StringUtils;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.GradleException;
@@ -8,7 +9,6 @@ import org.gradle.api.tasks.CacheableTask;
 import org.gradle.api.tasks.Classpath;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.InputFile;
-import org.gradle.api.tasks.Internal;
 import org.gradle.api.tasks.Optional;
 import org.gradle.api.tasks.OutputDirectory;
 import org.gradle.api.tasks.PathSensitive;
@@ -66,6 +66,10 @@ public class ResolveTask extends DefaultTask {
     private LinkedHashSet<String> modelConverterClasses;
     private String objectMapperProcessorClass;
 
+    private Boolean sortOutput = Boolean.FALSE;
+    private Boolean alwaysResolveAppPath = Boolean.FALSE;
+
+
     private String contextId;
 
     @Input
@@ -111,8 +115,9 @@ public class ResolveTask extends DefaultTask {
     /**
      * @deprecated Use {@linkplain #getOutputDir()} instead.
      */
-    @Internal
     @Deprecated
+    @Input
+    @Optional
     public String getOutputPath() {
         return outputPath;
     }
@@ -120,7 +125,6 @@ public class ResolveTask extends DefaultTask {
     /**
      * @deprecated Use {@linkplain #setOutputDir(File)} instead.
      */
-    @Internal
     @Deprecated
     public void setOutputPath(String outputPath) {
         this.outputPath = outputPath;
@@ -294,6 +298,26 @@ public class ResolveTask extends DefaultTask {
         this.encoding = encoding;
     }
 
+    @Input
+    @Optional
+    public Boolean getSortOutput() {
+        return sortOutput;
+    }
+
+    public void setSortOutput(Boolean sortOutput) {
+        this.sortOutput = sortOutput;
+    }
+
+    @Input
+    @Optional
+    public Boolean getAlwaysResolveAppPath() {
+        return alwaysResolveAppPath;
+    }
+
+    public void setAlwaysResolveAppPath(Boolean alwaysResolveAppPath) {
+        this.alwaysResolveAppPath = alwaysResolveAppPath;
+    }
+
     @TaskAction
     public void resolve() throws GradleException {
         if (skip) {
@@ -302,30 +326,30 @@ public class ResolveTask extends DefaultTask {
         }
         LOGGER.info( "Resolving OpenAPI specification.." );
 
-        Set<URL> urls = StreamSupport.stream(getClasspath().spliterator(), false).map(f -> {
+        Stream<URL> classpathStream = StreamSupport.stream(getClasspath().spliterator(), false).map(f -> {
             try {
                 return f.toURI().toURL();
-            }
-            catch (MalformedURLException e) {
+            } catch (MalformedURLException e) {
                 throw new GradleException(
-                        String.format("Could not create classpath for annotations task %s.", getName()), e);
+                    String.format("Could not create classpath for annotations task %s.", getName()), e);
             }
-        }).collect(Collectors.toSet());
+        });
 
-        Set<URL> buildUrls = StreamSupport.stream(getBuildClasspath().spliterator(), false).map(f -> {
+        Stream<URL> buildClasspathStream = StreamSupport.stream(getBuildClasspath().spliterator(), false).map(f -> {
             try {
                 return f.toURI().toURL();
-            }
-            catch (MalformedURLException e) {
+            } catch (MalformedURLException e) {
                 throw new GradleException(
-                        String.format("Could not create classpath for annotations task %s.", getName()), e);
+                    String.format("Could not create classpath for annotations task %s.", getName()), e);
             }
-        }).collect(Collectors.toSet());
+        });
 
-        urls.addAll(buildUrls);
+        URL[] urls = Stream.concat(classpathStream, buildClasspathStream)
+            .distinct()
+            .toArray(URL[]::new);
 
         //ClassLoader classLoader = new URLClassLoader(urls.toArray(new URL[urls.size()]), Thread.currentThread().getContextClassLoader());
-        ClassLoader classLoader = new URLClassLoader(urls.toArray(new URL[urls.size()]));
+        ClassLoader classLoader = new URLClassLoader(urls);
 
         try {
             Class swaggerLoaderClass = classLoader.loadClass("io.swagger.v3.jaxrs2.integration.SwaggerLoader");
@@ -389,6 +413,12 @@ public class ResolveTask extends DefaultTask {
 
             method=swaggerLoaderClass.getDeclaredMethod("setPrettyPrint", Boolean.class);
             method.invoke(swaggerLoader, prettyPrint);
+
+            method=swaggerLoaderClass.getDeclaredMethod("setSortOutput", Boolean.class);
+            method.invoke(swaggerLoader, sortOutput);
+
+            method=swaggerLoaderClass.getDeclaredMethod("setAlwaysResolveAppPath", Boolean.class);
+            method.invoke(swaggerLoader, alwaysResolveAppPath);
 
             method=swaggerLoaderClass.getDeclaredMethod("setReadAllResources", Boolean.class);
             method.invoke(swaggerLoader, readAllResources);

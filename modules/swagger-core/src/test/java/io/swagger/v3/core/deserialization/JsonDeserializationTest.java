@@ -17,15 +17,19 @@ import io.swagger.v3.oas.models.responses.ApiResponse;
 import io.swagger.v3.oas.models.responses.ApiResponses;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
+import org.apache.commons.io.FileUtils;
 import org.testng.annotations.Test;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
 
 public class JsonDeserializationTest {
@@ -368,6 +372,59 @@ public class JsonDeserializationTest {
         oas = Yaml.mapper().readValue(yaml, OpenAPI.class);
 
         assertEquals(oas.getComponents().getSchemas().get("UserStatus").getEnum(), Arrays.asList("1", "2", null));
+    }
+
+    @Test
+    public void testNullExampleDeserialization() throws Exception {
+        String yamlNull = "openapi: 3.0.1\n" +
+                "paths:\n" +
+                "  /:\n" +
+                "    get:\n" +
+                "      description: Operation Description\n" +
+                "      operationId: operationId\n" +
+                "components:\n" +
+                "  schemas:\n" +
+                "    UserStatus:\n" +
+                "      type: string\n" +
+                "      example: null\n";
+
+        String yamlMissing = "openapi: 3.0.1\n" +
+                "paths:\n" +
+                "  /:\n" +
+                "    get:\n" +
+                "      description: Operation Description\n" +
+                "      operationId: operationId\n" +
+                "components:\n" +
+                "  schemas:\n" +
+                "    UserStatus:\n" +
+                "      type: string\n";
+
+        OpenAPI oas = Yaml.mapper().readValue(yamlNull, OpenAPI.class);
+        Yaml.prettyPrint(oas);
+        assertNull(oas.getComponents().getSchemas().get("UserStatus").getExample());
+        assertTrue(oas.getComponents().getSchemas().get("UserStatus").getExampleSetFlag());
+
+        oas = Yaml.mapper().readValue(yamlMissing, OpenAPI.class);
+        Yaml.prettyPrint(oas);
+        assertNull(oas.getComponents().getSchemas().get("UserStatus").getExample());
+        assertFalse(oas.getComponents().getSchemas().get("UserStatus").getExampleSetFlag());
+        Yaml.prettyPrint(oas);
+    }
+
+    @Test
+    public void testExampleDeserializationOnMediaType() throws Exception {
+        String content = FileUtils.readFileToString(new File("src/test/resources/specFiles/media-type-null-example.yaml"), "UTF-8");
+        OpenAPI openAPI = Yaml.mapper().readValue(content, OpenAPI.class);
+
+        assertNull(openAPI.getPaths().get("/pets/{petId}").getGet().getResponses().get("200").getContent().get("application/json").getExample());
+        assertTrue(openAPI.getPaths().get("/pets/{petId}").getGet().getResponses().get("200").getContent().get("application/json").getExampleSetFlag());
+
+        assertNull(openAPI.getPaths().get("/pet").getPost().getResponses().get("200").getContent().get("application/json").getExample());
+        assertFalse(openAPI.getPaths().get("/pet").getPost().getResponses().get("200").getContent().get("application/json").getExampleSetFlag());
+
+        assertNotNull(openAPI.getPaths().get("/pet").getPost().getRequestBody().getContent().get("application/json").getExample());
+
+        assertTrue(openAPI.getPaths().get("/pet").getPost().getRequestBody().getContent().get("application/json").getExampleSetFlag());
     }
 
 }

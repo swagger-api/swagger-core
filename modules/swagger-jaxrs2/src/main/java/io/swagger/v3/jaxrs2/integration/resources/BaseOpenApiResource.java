@@ -1,9 +1,8 @@
 package io.swagger.v3.jaxrs2.integration.resources;
 
+import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import io.swagger.v3.core.filter.OpenAPISpecFilter;
 import io.swagger.v3.core.filter.SpecFilter;
-import io.swagger.v3.core.util.Json;
-import io.swagger.v3.core.util.Yaml;
 import io.swagger.v3.jaxrs2.integration.JaxrsOpenApiContextBuilder;
 import io.swagger.v3.oas.integration.api.OpenAPIConfiguration;
 import io.swagger.v3.oas.integration.api.OpenApiContext;
@@ -30,13 +29,17 @@ public abstract class BaseOpenApiResource {
 
     private static Logger LOGGER = LoggerFactory.getLogger(BaseOpenApiResource.class);
 
+    protected String getContextId(ServletConfig config) {
+        return getContextIdFromServletConfig(config);
+    }
+
     protected Response getOpenApi(HttpHeaders headers,
                                   ServletConfig config,
                                   Application app,
                                   UriInfo uriInfo,
                                   String type) throws Exception {
 
-        String ctxId = getContextIdFromServletConfig(config);
+        String ctxId = getContextId(config);
         OpenApiContext ctx = new JaxrsOpenApiContextBuilder()
                 .servletConfig(config)
                 .application(app)
@@ -70,12 +73,16 @@ public abstract class BaseOpenApiResource {
 
         if (StringUtils.isNotBlank(type) && type.trim().equalsIgnoreCase("yaml")) {
             return Response.status(Response.Status.OK)
-                    .entity(pretty ? Yaml.pretty(oas) : Yaml.mapper().writeValueAsString(oas))
+                    .entity(pretty ?
+                            ctx.getOutputYamlMapper().writer(new DefaultPrettyPrinter()).writeValueAsString(oas) :
+                            ctx.getOutputYamlMapper().writeValueAsString(oas))
                     .type("application/yaml")
                     .build();
         } else {
             return Response.status(Response.Status.OK)
-                    .entity(pretty ? Json.pretty(oas) : Json.mapper().writeValueAsString(oas))
+                    .entity(pretty ?
+                            ctx.getOutputJsonMapper().writer(new DefaultPrettyPrinter()).writeValueAsString(oas) :
+                            ctx.getOutputJsonMapper().writeValueAsString(oas))
                     .type(MediaType.APPLICATION_JSON_TYPE)
                     .build();
         }

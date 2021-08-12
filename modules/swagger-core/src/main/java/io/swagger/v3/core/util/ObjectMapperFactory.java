@@ -17,9 +17,12 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.swagger.v3.core.jackson.SchemaSerializer;
 import io.swagger.v3.core.jackson.mixin.ComponentsMixin;
 import io.swagger.v3.core.jackson.mixin.DateSchemaMixin;
+import io.swagger.v3.core.jackson.mixin.ExampleMixin;
 import io.swagger.v3.core.jackson.mixin.ExtensionsMixin;
+import io.swagger.v3.core.jackson.mixin.MediaTypeMixin;
 import io.swagger.v3.core.jackson.mixin.OpenAPIMixin;
 import io.swagger.v3.core.jackson.mixin.OperationMixin;
+import io.swagger.v3.core.jackson.mixin.SchemaMixin;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.ExternalDocumentation;
 import io.swagger.v3.oas.models.OpenAPI;
@@ -34,7 +37,8 @@ import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
 import io.swagger.v3.oas.models.links.Link;
 import io.swagger.v3.oas.models.links.LinkParameter;
-import io.swagger.v3.oas.models.media.DateSchema;import io.swagger.v3.oas.models.media.Encoding;
+import io.swagger.v3.oas.models.media.DateSchema;
+import io.swagger.v3.oas.models.media.Encoding;
 import io.swagger.v3.oas.models.media.EncodingProperty;
 import io.swagger.v3.oas.models.media.MediaType;
 import io.swagger.v3.oas.models.media.Schema;
@@ -105,14 +109,14 @@ public class ObjectMapperFactory {
         sourceMixins.put(Contact.class, ExtensionsMixin.class);
         sourceMixins.put(Encoding.class, ExtensionsMixin.class);
         sourceMixins.put(EncodingProperty.class, ExtensionsMixin.class);
-        sourceMixins.put(Example.class, ExtensionsMixin.class);
+        sourceMixins.put(Example.class, ExampleMixin.class);
         sourceMixins.put(ExternalDocumentation.class, ExtensionsMixin.class);
         sourceMixins.put(Header.class, ExtensionsMixin.class);
         sourceMixins.put(Info.class, ExtensionsMixin.class);
         sourceMixins.put(License.class, ExtensionsMixin.class);
         sourceMixins.put(Link.class, ExtensionsMixin.class);
         sourceMixins.put(LinkParameter.class, ExtensionsMixin.class);
-        sourceMixins.put(MediaType.class, ExtensionsMixin.class);
+        sourceMixins.put(MediaType.class, MediaTypeMixin.class);
         sourceMixins.put(OAuthFlow.class, ExtensionsMixin.class);
         sourceMixins.put(OAuthFlows.class, ExtensionsMixin.class);
         sourceMixins.put(OpenAPI.class, OpenAPIMixin.class);
@@ -128,7 +132,7 @@ public class ObjectMapperFactory {
         sourceMixins.put(ServerVariables.class, ExtensionsMixin.class);
         sourceMixins.put(Tag.class, ExtensionsMixin.class);
         sourceMixins.put(XML.class, ExtensionsMixin.class);
-        sourceMixins.put(Schema.class, ExtensionsMixin.class);
+        sourceMixins.put(Schema.class, SchemaMixin.class);
         sourceMixins.put(DateSchema.class, DateSchemaMixin.class);
 
         mapper.setMixIns(sourceMixins);
@@ -137,6 +141,7 @@ public class ObjectMapperFactory {
         mapper.configure(SerializationFeature.WRITE_ENUMS_USING_TO_STRING, true);
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         mapper.configure(SerializationFeature.WRITE_NULL_MAP_VALUES, false);
+        mapper.configure(SerializationFeature.WRITE_BIGDECIMAL_AS_PLAIN, true);
         mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
 
         return mapper;

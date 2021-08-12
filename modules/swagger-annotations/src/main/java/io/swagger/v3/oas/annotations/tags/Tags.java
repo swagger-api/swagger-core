@@ -37,7 +37,7 @@ public @interface Tags {
     /**
      * An array of Tag annotation objects which hold metadata for the API
      *
-     * @return rray of Tags
+     * @return array of Tags
      */
     Tag[] value() default {};
 

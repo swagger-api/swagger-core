@@ -17,6 +17,7 @@
 package io.swagger.v3.oas.models.media;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.ExternalDocumentation;
 
 import java.math.BigDecimal;
@@ -69,6 +70,8 @@ public class Schema<T> {
     private java.util.Map<String, Object> extensions = null;
     protected List<T> _enum = null;
     private Discriminator discriminator = null;
+
+    private boolean exampleSetFlag;
 
     public Schema() {
     }
@@ -606,7 +609,7 @@ public class Schema<T> {
 
     public void set$ref(String $ref) {
         if ($ref != null && ($ref.indexOf('.') == -1 && $ref.indexOf('/') == -1)) {
-            $ref = "#/components/schemas/" + $ref;
+            $ref = Components.COMPONENTS_SCHEMAS_REF + $ref;
         }
         this.$ref = $ref;
     }
@@ -686,6 +689,9 @@ public class Schema<T> {
 
     public void setExample(Object example) {
         this.example = cast(example);
+        if (!(example != null && this.example == null)) {
+            exampleSetFlag = true;
+        }
     }
 
     public Schema example(Object example) {
@@ -748,6 +754,21 @@ public class Schema<T> {
     public Schema xml(XML xml) {
         this.xml = xml;
         return this;
+    }
+
+    /**
+     * returns true if example setter has been invoked
+     * Used to flag explicit setting to null of example (vs missing field) while deserializing from json/yaml string
+     *
+     * @return boolean exampleSetFlag
+     **/
+
+    public boolean getExampleSetFlag() {
+        return exampleSetFlag;
+    }
+
+    public void setExampleSetFlag(boolean exampleSetFlag) {
+        this.exampleSetFlag = exampleSetFlag;
     }
 
     @Override

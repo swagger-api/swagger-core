@@ -2,7 +2,6 @@
 // Plugins
 // * * * * * * * * * * * *
 plugins {
-    id 'groovy'
     id 'java-gradle-plugin'
     id 'net.researchgate.release' version '2.6.0'
     // Publishing publicly
@@ -22,15 +21,37 @@ repositories {
 }
 
 dependencies {
-    compile gradleApi()
-    compile 'org.apache.commons:commons-lang3:3.7'
+    implementation gradleApi()
+    implementation 'org.apache.commons:commons-lang3:3.7'
 
-    testCompile gradleTestKit()
-    testCompile 'com.github.tomakehurst:wiremock:2.14.0'
-    testCompile 'javax.servlet:javax.servlet-api:3.1.0'
-    testCompile 'javax.ws.rs:javax.ws.rs-api:2.1'
-    testCompile "io.swagger.core.v3:swagger-jaxrs2:${project.version}"
-    testCompile 'junit:junit:4+'
+    testImplementation gradleTestKit()
+    testImplementation('com.github.tomakehurst:wiremock:2.27.2') {
+        exclude group: 'com.jayway.jsonpath', module: 'json-path'
+        exclude group: 'org.eclipse.jetty', module: 'jetty-server'
+        exclude group: 'org.eclipse.jetty', module: 'jetty-servlet'
+        exclude group: 'org.eclipse.jetty', module: 'jetty-servlets'
+        exclude group: 'org.eclipse.jetty', module: 'jetty-webapp'
+        exclude group: 'org.eclipse.jetty', module: 'jetty-proxy'
+        exclude group: 'commons-codec', module: 'commons-codec'
+        exclude group: 'com.github.jknack', module: 'handlebars'
+        exclude group: 'com.github.jknack', module: 'handlebars-helpers'
+    }
+    testImplementation 'javax.servlet:javax.servlet-api:3.1.0'
+    testImplementation 'com.google.guava:guava:30.1-jre'
+    testImplementation 'javax.ws.rs:javax.ws.rs-api:2.1'
+    testImplementation "io.swagger.core.v3:swagger-jaxrs2:${project.version}"
+    testImplementation 'junit:junit:4+'
+    testImplementation "org.eclipse.jetty:jetty-server:${project.jettyVersion}"
+    testImplementation "org.eclipse.jetty:jetty-servlet:${project.jettyVersion}"
+    testImplementation "org.eclipse.jetty:jetty-servlets:${project.jettyVersion}"
+    testImplementation "org.eclipse.jetty:jetty-webapp:${project.jettyVersion}"
+    testImplementation "org.eclipse.jetty:jetty-proxy:${project.jettyVersion}"
+    testImplementation "org.apache.httpcomponents:httpclient:4.5.13"
+    testImplementation "commons-codec:commons-codec:1.15"
+    testImplementation "commons-io:commons-io:2.7"
+    testImplementation "org.apache.commons:commons-compress:1.20"
+    testImplementation "com.github.jknack:handlebars:4.1.2"
+    testImplementation "com.github.jknack:handlebars-helpers:4.1.2"
 }
 
 // * * * * * * * * * * * *
