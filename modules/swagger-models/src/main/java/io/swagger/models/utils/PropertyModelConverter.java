@@ -88,6 +88,7 @@ public class PropertyModelConverter {
             property.setDescription(m.getDescription());
             property.setTitle(m.getTitle());
             property.setUniqueItems(m.getUniqueItems());
+            property.setXml(m.getXml());
             return property;
 
         } else if(model instanceof RefModel) {
