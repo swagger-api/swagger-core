@@ -385,7 +385,7 @@ public class ReflectionUtils {
         Annotation[][] methodAnnotations = method.getParameterAnnotations();
         Method overriddenmethod = getOverriddenMethod(method);
 
-        if (overriddenmethod != null) {
+        while (overriddenmethod != null) {
             Annotation[][] overriddenAnnotations = overriddenmethod
                     .getParameterAnnotations();
 
@@ -404,6 +404,8 @@ public class ReflectionUtils {
                 }
 
             }
+
+            overriddenmethod = getOverriddenMethod(overriddenmethod);
         }
         return methodAnnotations;
     }

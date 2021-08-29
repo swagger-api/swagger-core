@@ -12,6 +12,11 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import javax.ws.rs.Path;
+
+import java.lang.annotation.Annotation;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
@@ -21,6 +26,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.testng.Assert.assertNull;
+
+import static java.lang.annotation.ElementType.PARAMETER;
 
 public class ReflectionUtilsTest {
 
@@ -161,8 +168,54 @@ public class ReflectionUtilsTest {
         Assert.assertEquals("inherited tag", annotations[0].name());
     }
 
+    @Test
+    public void getParameterAnnotationsTest() throws NoSuchMethodException {
+        Method method = SecondLevelSubClass.class.getMethod("method", String.class);
+        Annotation[][] parameterAnnotations = ReflectionUtils.getParameterAnnotations(method);
+        Assert.assertEquals(1, parameterAnnotations.length);
+        Assert.assertEquals(1, parameterAnnotations[0].length);
+        Assert.assertTrue(parameterAnnotations[0][0] instanceof AnnotationInterface);
+        Assert.assertEquals("level1", ((AnnotationInterface)parameterAnnotations[0][0]).value());
+    }
+
+    @Test
+    public void getParameterAnnotationsForOverriddenAnnotationTest() throws NoSuchMethodException {
+        Method method = ThirdLevelSubClass.class.getMethod("method", String.class);
+        Annotation[][] parameterAnnotations = ReflectionUtils.getParameterAnnotations(method);
+        Assert.assertEquals(1, parameterAnnotations.length);
+        Assert.assertEquals(1, parameterAnnotations[0].length);
+        Assert.assertTrue(parameterAnnotations[0][0] instanceof AnnotationInterface);
+        Assert.assertEquals("level4", ((AnnotationInterface)parameterAnnotations[0][0]).value());
+    }
+
     @Tag(name = "inherited tag")
     private interface AnnotatedInterface {}
 
     private class InheritingClass implements AnnotatedInterface {}
+
+    @Target({PARAMETER})
+    @Retention(RetentionPolicy.RUNTIME)
+    private @interface AnnotationInterface {
+        String value();
+    }
+
+    private static class BaseClass {
+        public void method(@AnnotationInterface("level1") String example) {}
+    }
+
+    private static class FirstLevelSubClass extends BaseClass {
+        @Override
+        public void method(String example){}
+    }
+
+    private static class SecondLevelSubClass extends FirstLevelSubClass {
+        @Override
+        public void method(String example){}
+    }
+
+    private static class ThirdLevelSubClass extends SecondLevelSubClass {
+        @Override
+        public void method(@AnnotationInterface("level4") String example){}
+    }
+
 }
