@@ -27,6 +27,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -266,6 +267,14 @@ public class Schema<T> {
     @OpenAPI31
     public void setTypes(Set<String> types) {
         this.types = types;
+    }
+
+    @OpenAPI31
+    public boolean addType(String type) {
+        if (types == null) {
+            types = new LinkedHashSet<>();
+        }
+        return types.add(type);
     }
 
     @OpenAPI31

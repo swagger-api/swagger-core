@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
@@ -29,7 +28,6 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 public class ModelDeserializer extends JsonDeserializer<Schema> {
@@ -41,15 +39,6 @@ public class ModelDeserializer extends JsonDeserializer<Schema> {
         JsonNode node = jp.getCodec().readTree(jp);
 
         Schema schema = null;
-
-/*
-        final ObjectMapper mapper;
-        if (openapi31) {
-            mapper = Json31.mapper();
-        } else {
-            mapper = Json.mapper();
-        }
-*/
 
         if (openapi31) {
             schema = deserializeJsonSchema(node);
@@ -106,9 +95,6 @@ public class ModelDeserializer extends JsonDeserializer<Schema> {
     }
 
     private Schema deserializeObjectSchema(JsonNode node) {
-        Map<String, Object> jsonSchema = Json31.mapper().convertValue(node, Map.class);
-
-
         JsonNode additionalProperties = node.get("additionalProperties");
         Schema schema = null;
         if (additionalProperties != null) {
@@ -133,7 +119,7 @@ public class ModelDeserializer extends JsonDeserializer<Schema> {
             schema = Json.mapper().convertValue(node, ObjectSchema.class);
         }
         if (schema != null) {
-            schema.jsonSchema(jsonSchema);
+            schema.jsonSchema(Json31.jsonSchemaAsMap(node));
         }
         return schema;
     }

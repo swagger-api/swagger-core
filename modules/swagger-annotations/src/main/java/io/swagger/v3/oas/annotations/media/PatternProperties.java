@@ -16,8 +16,6 @@
 
 package io.swagger.v3.oas.annotations.media;
 
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-
 import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
