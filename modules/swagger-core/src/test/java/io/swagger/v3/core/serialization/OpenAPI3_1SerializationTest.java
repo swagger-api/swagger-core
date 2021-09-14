@@ -2,8 +2,10 @@ package io.swagger.v3.core.serialization;
 
 import io.swagger.v3.core.matchers.SerializationMatchers;
 import io.swagger.v3.core.util.Json;
+import io.swagger.v3.core.util.Json31;
 import io.swagger.v3.core.util.ResourceUtils;
 import io.swagger.v3.core.util.Yaml;
+import io.swagger.v3.core.util.Yaml31;
 import io.swagger.v3.oas.models.OpenAPI;
 import org.testng.annotations.Test;
 
@@ -18,13 +20,10 @@ public class OpenAPI3_1SerializationTest {
     public void testSerializePetstore() throws Exception {
 
         final String jsonString = ResourceUtils.loadClassResource(getClass(), "specFiles/3.1.0/petstore-3.1.yaml");
-        final OpenAPI swagger = Yaml.mapper().readValue(jsonString, OpenAPI.class);
+        final OpenAPI swagger = Yaml31.mapper().readValue(jsonString, OpenAPI.class);
         assertNotNull(swagger);
         assertEquals(swagger.getInfo().getLicense().getIdentifier(), "test");
-        Yaml.prettyPrint(swagger);
-        Json.prettyPrint(swagger);
-
-        SerializationMatchers.assertEqualsToYaml(swagger, "openapi: 3.1.0\n" +
+        SerializationMatchers.assertEqualsToYaml31(swagger, "openapi: 3.1.0\n" +
                 "info:\n" +
                 "  title: Swagger Petstore\n" +
                 "  license:\n" +
@@ -112,13 +111,14 @@ public class OpenAPI3_1SerializationTest {
                 "      required:\n" +
                 "      - id\n" +
                 "      - name\n" +
-                "      type: object\n" +
                 "      properties:\n" +
                 "        id:\n" +
                 "          type: integer\n" +
                 "          format: int64\n" +
                 "        name:\n" +
-                "          type: string\n" +
+                "          type:\n" +
+                "          - string\n" +
+                "          - integer\n" +
                 "        tag:\n" +
                 "          type: string\n" +
                 "    Pets:\n" +
@@ -129,7 +129,6 @@ public class OpenAPI3_1SerializationTest {
                 "      required:\n" +
                 "      - code\n" +
                 "      - message\n" +
-                "      type: object\n" +
                 "      properties:\n" +
                 "        code:\n" +
                 "          type: integer\n" +
@@ -149,7 +148,7 @@ public class OpenAPI3_1SerializationTest {
                 "        \"200\":\n" +
                 "          description: Return a 200 status to indicate that the data was received\n" +
                 "            successfully");
-        SerializationMatchers.assertEqualsToJson(swagger, "{\n" +
+        SerializationMatchers.assertEqualsToJson31(swagger, "{\n" +
                 "  \"openapi\" : \"3.1.0\",\n" +
                 "  \"info\" : {\n" +
                 "    \"title\" : \"Swagger Petstore\",\n" +
@@ -273,14 +272,13 @@ public class OpenAPI3_1SerializationTest {
                 "    \"schemas\" : {\n" +
                 "      \"Pet\" : {\n" +
                 "        \"required\" : [ \"id\", \"name\" ],\n" +
-                "        \"type\" : \"object\",\n" +
                 "        \"properties\" : {\n" +
                 "          \"id\" : {\n" +
                 "            \"type\" : \"integer\",\n" +
                 "            \"format\" : \"int64\"\n" +
                 "          },\n" +
                 "          \"name\" : {\n" +
-                "            \"type\" : \"string\"\n" +
+                "            \"type\" : [\"string\", \"integer\"]\n" +
                 "          },\n" +
                 "          \"tag\" : {\n" +
                 "            \"type\" : \"string\"\n" +
@@ -295,7 +293,6 @@ public class OpenAPI3_1SerializationTest {
                 "      },\n" +
                 "      \"Error\" : {\n" +
                 "        \"required\" : [ \"code\", \"message\" ],\n" +
-                "        \"type\" : \"object\",\n" +
                 "        \"properties\" : {\n" +
                 "          \"code\" : {\n" +
                 "            \"type\" : \"integer\",\n" +

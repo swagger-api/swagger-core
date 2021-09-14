@@ -12,7 +12,6 @@ import io.swagger.v3.oas.models.parameters.HeaderParameter;
 import io.swagger.v3.oas.models.parameters.Parameter;
 import io.swagger.v3.oas.models.parameters.PathParameter;
 import io.swagger.v3.oas.models.parameters.QueryParameter;
-import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
 
@@ -32,7 +31,7 @@ public class ParameterDeserializer extends JsonDeserializer<Parameter> {
 
         if (sub != null) {
             result = new Parameter().$ref(sub.asText());
-            if (desc != null) {
+            if (desc != null && openapi31) {
                 result.description(desc.asText());
             }
 

@@ -2,6 +2,7 @@ package io.swagger.v3.core.util;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import io.swagger.v3.oas.models.media.Schema;
@@ -62,6 +63,15 @@ public class Json31 {
     }
 
     public static Map<String, Object> jsonSchemaAsMap(Schema schema) {
+        try {
+            return mapper().readValue(mapper().writeValueAsString(schema), Map.class);
+        } catch (JsonProcessingException e) {
+            LOGGER.error("Exception converting jsonSchema to Map", e);
+            return null;
+        }
+    }
+
+    public static Map<String, Object> jsonSchemaAsMap(JsonNode schema) {
         try {
             return mapper().readValue(mapper().writeValueAsString(schema), Map.class);
         } catch (JsonProcessingException e) {
