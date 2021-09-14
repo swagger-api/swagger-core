@@ -16,7 +16,6 @@
 
 package io.swagger.v3.oas.annotations.media;
 
-import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
 import java.lang.annotation.Repeatable;
 import java.lang.annotation.Retention;

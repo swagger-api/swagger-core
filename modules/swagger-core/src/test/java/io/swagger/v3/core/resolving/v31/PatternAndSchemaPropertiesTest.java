@@ -7,6 +7,7 @@ import io.swagger.v3.core.matchers.SerializationMatchers;
 import io.swagger.v3.core.resolving.SwaggerTestBase;
 import io.swagger.v3.core.resolving.v31.model.AnnotatedPet;
 import io.swagger.v3.core.resolving.v31.model.AnnotatedPetSinglePatternProperty;
+import io.swagger.v3.core.util.OpenAPISchema2JsonSchema;
 import io.swagger.v3.oas.models.media.Schema;
 import org.testng.annotations.Test;
 
@@ -92,6 +93,8 @@ public class PatternAndSchemaPropertiesTest extends SwaggerTestBase {
                 "      type: string\n" +
                 "  xml:\n" +
                 "    name: Tag");
+        context.getDefinedModels().values().forEach(s -> new OpenAPISchema2JsonSchema().process(s));
+
         SerializationMatchers.assertEqualsToYaml31(context.getDefinedModels(), "AnnotatedPet:\n" +
                 "  type:\n" +
                 "  - object\n" +

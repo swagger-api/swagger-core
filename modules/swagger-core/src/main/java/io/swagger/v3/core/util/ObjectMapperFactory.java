@@ -149,14 +149,14 @@ public class ObjectMapperFactory {
         sourceMixins.put(Contact.class, ExtensionsMixin.class);
         sourceMixins.put(Encoding.class, ExtensionsMixin.class);
         sourceMixins.put(EncodingProperty.class, ExtensionsMixin.class);
-        sourceMixins.put(Example.class, ExtensionsMixin.class);
+        sourceMixins.put(Example.class, ExampleMixin.class);
         sourceMixins.put(ExternalDocumentation.class, ExtensionsMixin.class);
         sourceMixins.put(Header.class, ExtensionsMixin.class);
         sourceMixins.put(Info.class, ExtensionsMixin.class);
         sourceMixins.put(License.class, ExtensionsMixin.class);
         sourceMixins.put(Link.class, ExtensionsMixin.class);
         sourceMixins.put(LinkParameter.class, ExtensionsMixin.class);
-        sourceMixins.put(MediaType.class, ExtensionsMixin.class);
+        sourceMixins.put(MediaType.class, MediaTypeMixin.class);
         sourceMixins.put(OAuthFlow.class, ExtensionsMixin.class);
         sourceMixins.put(OAuthFlows.class, ExtensionsMixin.class);
         sourceMixins.put(OpenAPI.class, OpenAPIMixin.class);
