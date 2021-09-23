@@ -16,6 +16,8 @@
 
 package io.swagger.v3.oas.models.info;
 
+import io.swagger.v3.oas.annotations.OpenAPI31;
+
 import java.util.Objects;
 
 /**
@@ -30,6 +32,12 @@ public class Info {
     private License license = null;
     private String version = null;
     private java.util.Map<String, Object> extensions = null;
+
+    /**
+     * @since 2.1.11 (OpenAPI 3.1.0)
+     */
+    @OpenAPI31
+    private String summary = null;
 
     /**
      * returns the title property from a Info instance.
@@ -145,6 +153,28 @@ public class Info {
         return this;
     }
 
+    /**
+     * returns the summary property from a Info instance.
+     *
+     * @since 2.1.11 (OpenAPI 3.1.0)
+     * @return String
+     **/
+    @OpenAPI31
+    public String getSummary() {
+        return summary;
+    }
+
+    @OpenAPI31
+    public void setSummary(String summary) {
+        this.summary = summary;
+    }
+
+    @OpenAPI31
+    public Info summary(String summary) {
+        this.summary = summary;
+        return this;
+    }
+
     @Override
     public boolean equals(java.lang.Object o) {
         if (this == o) {
@@ -160,12 +190,13 @@ public class Info {
                 Objects.equals(this.contact, info.contact) &&
                 Objects.equals(this.license, info.license) &&
                 Objects.equals(this.version, info.version) &&
-                Objects.equals(this.extensions, info.extensions);
+                Objects.equals(this.extensions, info.extensions) &&
+                Objects.equals(this.summary, info.summary);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(title, description, termsOfService, contact, license, version, extensions);
+        return Objects.hash(title, description, termsOfService, contact, license, version, extensions, summary);
     }
 
     public java.util.Map<String, Object> getExtensions() {
@@ -198,6 +229,7 @@ public class Info {
 
         sb.append("    title: ").append(toIndentedString(title)).append("\n");
         sb.append("    description: ").append(toIndentedString(description)).append("\n");
+        sb.append("    summary: ").append(toIndentedString(summary)).append("\n");
         sb.append("    termsOfService: ").append(toIndentedString(termsOfService)).append("\n");
         sb.append("    contact: ").append(toIndentedString(contact)).append("\n");
         sb.append("    license: ").append(toIndentedString(license)).append("\n");
