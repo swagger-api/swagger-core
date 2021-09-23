@@ -16,6 +16,7 @@
 
 package io.swagger.v3.oas.models;
 
+import io.swagger.v3.oas.annotations.OpenAPI31;
 import io.swagger.v3.oas.models.callbacks.Callback;
 import io.swagger.v3.oas.models.examples.Example;
 import io.swagger.v3.oas.models.headers.Header;
@@ -52,6 +53,12 @@ public class Components {
     private Map<String, Link> links = null;
     private Map<String, Callback> callbacks = null;
     private java.util.Map<String, Object> extensions = null;
+
+    /**
+     * @since 2.1.11 (OpenAPI 3.1.0)
+     */
+    @OpenAPI31
+    private Map<String, PathItem> pathItems;
 
     /**
      * returns the schemas property from a Components instance.
@@ -296,6 +303,37 @@ public class Components {
         return this;
     }
 
+    /**
+     * returns the path items property from a Components instance.
+     *
+     * @since 2.1.11 (OpenAPI 3.1.0)
+     * @return Map&lt;String, PathItem&gt; pathItems
+     **/
+    @OpenAPI31
+    public Map<String, PathItem> getPathItems() {
+        return pathItems;
+    }
+
+    @OpenAPI31
+    public void setPathItems(Map<String, PathItem> pathItems) {
+        this.pathItems = pathItems;
+    }
+
+    @OpenAPI31
+    public Components pathItems(Map<String, PathItem> pathItems) {
+        this.pathItems = pathItems;
+        return this;
+    }
+
+    @OpenAPI31
+    public Components addPathItems(String key, PathItem pathItem) {
+        if (this.pathItems == null) {
+            this.pathItems = new LinkedHashMap<>();
+        }
+        this.pathItems.put(key, pathItem);
+        return this;
+    }
+
     @Override
     public boolean equals(java.lang.Object o) {
         if (this == o) {
@@ -314,12 +352,13 @@ public class Components {
                 Objects.equals(this.securitySchemes, components.securitySchemes) &&
                 Objects.equals(this.links, components.links) &&
                 Objects.equals(this.callbacks, components.callbacks) &&
-                Objects.equals(this.extensions, components.extensions);
+                Objects.equals(this.extensions, components.extensions) &&
+                Objects.equals(this.pathItems, components.pathItems);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(schemas, responses, parameters, examples, requestBodies, headers, securitySchemes, links, callbacks, extensions);
+        return Objects.hash(schemas, responses, parameters, examples, requestBodies, headers, securitySchemes, links, callbacks, extensions, pathItems);
     }
 
     public java.util.Map<String, Object> getExtensions() {
@@ -367,6 +406,7 @@ public class Components {
         sb.append("    securitySchemes: ").append(toIndentedString(securitySchemes)).append("\n");
         sb.append("    links: ").append(toIndentedString(links)).append("\n");
         sb.append("    callbacks: ").append(toIndentedString(callbacks)).append("\n");
+        sb.append("    pathItems: ").append(toIndentedString(pathItems)).append("\n");
         sb.append("}");
         return sb.toString();
     }
