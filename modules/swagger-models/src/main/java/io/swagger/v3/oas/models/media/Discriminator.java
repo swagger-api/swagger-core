@@ -1,11 +1,20 @@
 package io.swagger.v3.oas.models.media;
 
+import io.swagger.v3.oas.annotations.OpenAPI31;
+
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class Discriminator {
     private String propertyName;
     private Map<String, String> mapping;
+
+    /**
+     * @since 2.1.11 (OpenAPI 3.1.0)
+     */
+    @OpenAPI31
+    private Map<String, Object> extensions;
 
     public Discriminator propertyName(String propertyName) {
         this.propertyName = propertyName;
@@ -41,6 +50,36 @@ public class Discriminator {
         this.mapping = mapping;
     }
 
+    /**
+     * returns the specific extensions from a Discriminator instance.
+     *
+     * @since 2.1.11 (OpenAPI 3.1.0)
+     * @return Map&lt;String, Object&gt; extensions
+     **/
+    @OpenAPI31
+    public Map<String, Object> getExtensions() {
+        return extensions;
+    }
+
+    @OpenAPI31
+    public void setExtensions(Map<String, Object> extensions) {
+        this.extensions = extensions;
+    }
+
+    @OpenAPI31
+    public void addExtension(String name, Object value) {
+        if (name == null || name.isEmpty() || !name.startsWith("x-")) {
+            return;
+        }
+        if (name.startsWith("x-oas-") || name.startsWith("x-oai-")) {
+            return;
+        }
+        if (this.extensions == null) {
+            this.extensions = new java.util.LinkedHashMap<>();
+        }
+        this.extensions.put(name, value);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -61,9 +100,7 @@ public class Discriminator {
 
     @Override
     public int hashCode() {
-        int result = propertyName != null ? propertyName.hashCode() : 0;
-        result = 31 * result + (mapping != null ? mapping.hashCode() : 0);
-        return result;
+        return Objects.hash(propertyName, mapping, extensions);
     }
 
     @Override
@@ -71,6 +108,7 @@ public class Discriminator {
         return "Discriminator{" +
                 "propertyName='" + propertyName + '\'' +
                 ", mapping=" + mapping +
+                ", extensions=" + extensions +
                 '}';
     }
 }
