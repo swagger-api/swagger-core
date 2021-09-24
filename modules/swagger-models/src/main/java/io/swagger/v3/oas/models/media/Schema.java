@@ -130,6 +130,8 @@ public class Schema<T> {
     private String $schema;
     @OpenAPI31
     private String $anchor;
+    @OpenAPI31
+    private String jsonSchemaDialect;
 
     @OpenAPI31
     public Schema getContains() {
@@ -334,6 +336,22 @@ public class Schema<T> {
     @OpenAPI31
     public Schema jsonSchemaImpl(Object jsonSchemaImpl) {
         setJsonSchemaImpl(jsonSchemaImpl);
+        return this;
+    }
+
+    @OpenAPI31
+    public String getJsonSchemaDialect() {
+        return jsonSchemaDialect;
+    }
+
+    @OpenAPI31
+    public void setJsonSchemaDialect(String jsonSchemaDialect) {
+        this.jsonSchemaDialect = jsonSchemaDialect;
+    }
+
+    @OpenAPI31
+    public Schema jsonSchemaDialect(String jsonSchemaDialect) {
+        this.jsonSchemaDialect = jsonSchemaDialect;
         return this;
     }
 
@@ -1215,7 +1233,8 @@ public class Schema<T> {
                 Objects.equals(this.anyOf, schema.anyOf) &&
                 Objects.equals(this.oneOf, schema.oneOf) &&
                 Objects.equals(this._const, schema._const) &&
-                Objects.equals(this._default, schema._default);
+                Objects.equals(this._default, schema._default) &&
+                Objects.equals(this.jsonSchemaDialect, schema.jsonSchemaDialect);
     }
 
     @Override
@@ -1224,7 +1243,8 @@ public class Schema<T> {
                 exclusiveMinimum, exclusiveMinimumValue, maxLength, minLength, pattern, maxItems, minItems, uniqueItems,
                 maxProperties, minProperties, required, type, not, properties, additionalProperties, description,
                 format, $ref, nullable, readOnly, writeOnly, example, externalDocs, deprecated, xml, extensions,
-                discriminator, _enum, _default, patternProperties, $id, $anchor, $schema, types, allOf, anyOf, oneOf, _const);
+                discriminator, _enum, _default, patternProperties, $id, $anchor, $schema, types, allOf, anyOf, oneOf, _const,
+                jsonSchemaDialect);
     }
 
     public java.util.Map<String, Object> getExtensions() {
@@ -1302,6 +1322,7 @@ public class Schema<T> {
             sb.append("    $anchor: ").append(toIndentedString($anchor)).append("\n");
             sb.append("    $schema: ").append(toIndentedString($schema)).append("\n");
             sb.append("    const: ").append(toIndentedString(_const)).append("\n");
+            sb.append("    jsonSchemaDialect: ").append(toIndentedString(jsonSchemaDialect)).append("\n");
         }
         sb.append("}");
         return sb.toString();
