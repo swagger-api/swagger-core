@@ -16,6 +16,11 @@
 
 package io.swagger.v3.oas.models.security;
 
+import io.swagger.v3.oas.annotations.OpenAPI31;
+
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * SecurityScheme
  *
@@ -78,6 +83,11 @@ public class SecurityScheme {
     private OAuthFlows flows = null;
     private String openIdConnectUrl = null;
     private java.util.Map<String, Object> extensions = null;
+    /**
+     * @since 2.1.11 (OpenAPI 3.1.0)
+     */
+    @OpenAPI31
+    private Set<String> roles = null;
 
     /**
      * returns the type property from a SecurityScheme instance.
@@ -275,6 +285,34 @@ public class SecurityScheme {
         return this;
     }
 
+    /**
+     * returns a list of roles from a non "oauth2" nor "openIdConnect" SecuritySchema instance.
+     *
+     * @since 2.1.11 (OpenAPI 3.1.0)
+     * @return Set&lt;String&gt; roles
+     **/
+    @OpenAPI31
+    public Set<String> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Set<String> roles) {
+        this.roles = roles;
+    }
+
+    public SecurityScheme roles(Set<String> roles) {
+        this.roles = roles;
+        return this;
+    }
+
+    public SecurityScheme addRoles(String role) {
+        if (this.roles == null) {
+            this.roles = new HashSet<>();
+        }
+        roles.add(role);
+        return this;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -313,6 +351,9 @@ public class SecurityScheme {
         if (openIdConnectUrl != null ? !openIdConnectUrl.equals(that.openIdConnectUrl) : that.openIdConnectUrl != null) {
             return false;
         }
+        if (roles != null ? !roles.equals(that.roles) : that.roles != null) {
+            return false;
+        }
         return extensions != null ? extensions.equals(that.extensions) : that.extensions == null;
     }
 
@@ -328,6 +369,7 @@ public class SecurityScheme {
         result = 31 * result + (flows != null ? flows.hashCode() : 0);
         result = 31 * result + (openIdConnectUrl != null ? openIdConnectUrl.hashCode() : 0);
         result = 31 * result + (extensions != null ? extensions.hashCode() : 0);
+        result = 31 * result + (roles != null ? roles.hashCode() : 0);
         return result;
     }
 
@@ -345,6 +387,7 @@ public class SecurityScheme {
         sb.append("    flows: ").append(toIndentedString(flows)).append("\n");
         sb.append("    openIdConnectUrl: ").append(toIndentedString(openIdConnectUrl)).append("\n");
         sb.append("    $ref: ").append(toIndentedString($ref)).append("\n");
+        sb.append("    roles: ").append(toIndentedString(roles)).append("\n");
         sb.append("}");
         return sb.toString();
     }
