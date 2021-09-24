@@ -61,6 +61,8 @@ import java.util.Map;
 
 public class ObjectMapperFactory {
 
+    private static SchemaSerializerFactory schemaSerializerFactory;
+
     protected static ObjectMapper createJson() {
         return create(null);
     }
@@ -88,7 +90,7 @@ public class ObjectMapperFactory {
                     public JsonSerializer<?> modifySerializer(
                             SerializationConfig config, BeanDescription desc, JsonSerializer<?> serializer) {
                         if (Schema.class.isAssignableFrom(desc.getBeanClass())) {
-                            return new SchemaSerializer((JsonSerializer<Object>) serializer);
+                            return schemaSerializerFactory==null?new SchemaSerializer((JsonSerializer<Object>) serializer):schemaSerializerFactory.create(serializer);
                         }
                         return serializer;
                     }
@@ -161,6 +163,10 @@ public class ObjectMapperFactory {
         }
         mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         return mapper;
+    }
+    
+    public static void setSchemaSerializerFactory(SchemaSerializerFactory schemaSerializerFactory) {
+        ObjectMapperFactory.schemaSerializerFactory = schemaSerializerFactory;
     }
 
 }
