@@ -69,6 +69,14 @@ public class ApiResponses extends LinkedHashMap<String, ApiResponse> {
         this.extensions.put(name, value);
     }
 
+    public void addExtension31(String name, Object value) {
+        // TODO silently fail?
+        if (name != null && (name.startsWith("x-oas-") || name.startsWith("x-oai-"))) {
+            return;
+        }
+        addExtension(name, value);
+    }
+
     public void setExtensions(java.util.Map<String, Object> extensions) {
         this.extensions = extensions;
     }
