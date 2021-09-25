@@ -68,10 +68,7 @@ public class Discriminator {
 
     @OpenAPI31
     public void addExtension(String name, Object value) {
-        if (name == null || name.isEmpty() || !name.startsWith("x-")) {
-            return;
-        }
-        if (name.startsWith("x-oas-") || name.startsWith("x-oai-")) {
+        if (name == null || name.isEmpty() || name.startsWith("x-oas-") || name.startsWith("x-oai-")) {
             return;
         }
         if (this.extensions == null) {

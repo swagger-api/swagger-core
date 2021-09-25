@@ -122,21 +122,28 @@ public class ServerVariable {
     }
 
     public void addExtension(String name, Object value) {
-        if (name == null || name.isEmpty() || !name.startsWith("x-")) {
-            return;
+        addExtension(name, value, false);
+    }
+
+    public void addExtension31(String name, Object value) {
+        addExtension(name, value, true);
+    }
+
+    private void addExtension(String name, Object value, boolean isOAS31) {
+        if (isOAS31) {
+            // Todo: should it fail when x-oas- and x-oai- prefixes are present in OAS 3.1?
+            if (name == null || name.isEmpty() || name.startsWith("x-oas-") || name.startsWith("x-oai-")) {
+                return;
+            }
+        } else {
+            if (name == null || name.isEmpty() || !name.startsWith("x-")) {
+                return;
+            }
         }
         if (this.extensions == null) {
             this.extensions = new java.util.LinkedHashMap<>();
         }
         this.extensions.put(name, value);
-    }
-
-    public void addExtension31(String name, Object value) {
-        // TODO silently fail?
-        if (name != null && (name.startsWith("x-oas-") || name.startsWith("x-oai-"))) {
-            return;
-        }
-        addExtension(name, value);
     }
 
     public void setExtensions(java.util.Map<String, Object> extensions) {
