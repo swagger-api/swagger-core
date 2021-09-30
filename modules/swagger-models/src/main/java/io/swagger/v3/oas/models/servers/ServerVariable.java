@@ -16,6 +16,8 @@
 
 package io.swagger.v3.oas.models.servers;
 
+import io.swagger.v3.oas.annotations.OpenAPI31;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -131,8 +133,8 @@ public class ServerVariable {
         this.extensions.put(name, value);
     }
 
+    @OpenAPI31
     public void addExtension31(String name, Object value) {
-        // TODO silently fail?
         if (name != null && (name.startsWith("x-oas-") || name.startsWith("x-oai-"))) {
             return;
         }
