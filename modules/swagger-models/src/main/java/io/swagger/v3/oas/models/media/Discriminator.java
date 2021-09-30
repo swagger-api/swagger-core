@@ -94,6 +94,9 @@ public class Discriminator {
         if (propertyName != null ? !propertyName.equals(that.propertyName) : that.propertyName != null) {
             return false;
         }
+        if (extensions != null ? !extensions.equals(that.extensions) : that.extensions != null) {
+            return false;
+        }
         return mapping != null ? mapping.equals(that.mapping) : that.mapping == null;
 
     }
