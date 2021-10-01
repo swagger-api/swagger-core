@@ -114,11 +114,16 @@ public class ApiResponse {
         return links;
     }
 
-    public void setLinks(java.util.Map<String, Link> links) {
+    public void setLinks(Map<String, Link> links) {
         this.links = links;
     }
 
-    public ApiResponse link(String name, Link link) {
+    public ApiResponse link(Map<String, Link> links) {
+        this.links = links;
+        return this;
+    }
+
+    public ApiResponse addLink(String name, Link link) {
         if (this.links == null) {
             this.links = new LinkedHashMap<>();
         }
