@@ -16,6 +16,7 @@
 
 package io.swagger.v3.oas.models.parameters;
 
+import io.swagger.v3.oas.annotations.OpenAPI31;
 import io.swagger.v3.oas.models.media.Content;
 
 /**
@@ -102,8 +103,8 @@ public class RequestBody {
         this.extensions.put(name, value);
     }
 
+    @OpenAPI31
     public void addExtension31(String name, Object value) {
-        // TODO silently fail?
         if (name != null && (name.startsWith("x-oas-") || name.startsWith("x-oai-"))) {
             return;
         }

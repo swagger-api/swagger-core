@@ -48,6 +48,9 @@ public class OpenAPI {
     private Components components = null;
     private java.util.Map<String, Object> extensions = null;
 
+    @OpenAPI31
+    private String jsonSchemaDialect;
+
     public OpenAPI() {}
     public OpenAPI(SpecVersion specVersion) { this.specVersion = specVersion;}
     private SpecVersion specVersion = SpecVersion.V30;
@@ -309,6 +312,22 @@ public class OpenAPI {
         return this;
     }
 
+    @OpenAPI31
+    public String getJsonSchemaDialect() {
+        return jsonSchemaDialect;
+    }
+
+    @OpenAPI31
+    public void setJsonSchemaDialect(String jsonSchemaDialect) {
+        this.jsonSchemaDialect = jsonSchemaDialect;
+    }
+
+    @OpenAPI31
+    public OpenAPI jsonSchemaDialect(String jsonSchemaDialect) {
+        this.jsonSchemaDialect = jsonSchemaDialect;
+        return this;
+    }
+
 
     @Override
     public boolean equals(java.lang.Object o) {
@@ -328,12 +347,13 @@ public class OpenAPI {
                 Objects.equals(this.paths, openAPI.paths) &&
                 Objects.equals(this.components, openAPI.components) &&
                 Objects.equals(this.webhooks, openAPI.webhooks) &&
-                Objects.equals(this.extensions, openAPI.extensions);
+                Objects.equals(this.extensions, openAPI.extensions) &&
+                Objects.equals(this.jsonSchemaDialect, openAPI.jsonSchemaDialect);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(openapi, info, externalDocs, servers, security, tags, paths, components, webhooks, extensions);
+        return Objects.hash(openapi, info, externalDocs, servers, security, tags, paths, components, webhooks, extensions, jsonSchemaDialect);
     }
 
     public java.util.Map<String, Object> getExtensions() {
@@ -350,8 +370,8 @@ public class OpenAPI {
         this.extensions.put(name, value);
     }
 
+    @OpenAPI31
     public void addExtension31(String name, Object value) {
-        // TODO silently fail?
         if (name != null && (name.startsWith("x-oas-") || name.startsWith("x-oai-"))) {
             return;
         }
@@ -381,6 +401,7 @@ public class OpenAPI {
         sb.append("    paths: ").append(toIndentedString(paths)).append("\n");
         sb.append("    components: ").append(toIndentedString(components)).append("\n");
         if (specVersion == SpecVersion.V31) sb.append("    webhooks: ").append(toIndentedString(webhooks)).append("\n");
+        sb.append("    jsonSchemaDialect: ").append(toIndentedString(jsonSchemaDialect)).append("\n");
         sb.append("}");
         return sb.toString();
     }
