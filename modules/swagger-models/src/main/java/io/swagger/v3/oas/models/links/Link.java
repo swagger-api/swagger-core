@@ -123,12 +123,16 @@ public class Link {
         this.parameters = parameters;
     }
 
-    public Link parameters(String name, String parameter) {
+    public Link parameters(Map<String, String> parameters) {
+        this.parameters = parameters;
+        return this;
+    }
+
+    public Link addParameters(String name, String parameter) {
         if (this.parameters == null) {
             this.parameters = new LinkedHashMap<>();
         }
         this.parameters.put(name, parameter);
-
         return this;
     }
 

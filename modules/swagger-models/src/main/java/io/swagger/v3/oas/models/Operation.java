@@ -24,6 +24,7 @@ import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.servers.Server;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -233,6 +234,14 @@ public class Operation {
 
     public Operation callbacks(Map<String, Callback> callbacks) {
         this.callbacks = callbacks;
+        return this;
+    }
+
+    public Operation addCallbacks(String key, Callback callback) {
+        if (this.callbacks == null) {
+            this.callbacks = new LinkedHashMap<>();
+        }
+        this.callbacks.put(key, callback);
         return this;
     }
 

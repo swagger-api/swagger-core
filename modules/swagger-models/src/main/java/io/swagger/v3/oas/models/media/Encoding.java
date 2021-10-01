@@ -18,6 +18,7 @@ package io.swagger.v3.oas.models.media;
 
 import io.swagger.v3.oas.models.headers.Header;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -89,6 +90,14 @@ public class Encoding {
 
     public void setHeaders(Map<String, Header> headers) {
         this.headers = headers;
+    }
+
+    public Encoding addHeader(String name, Header header) {
+        if (this.headers == null) {
+            this.headers = new LinkedHashMap<>();
+        }
+        this.headers.put(name, header);
+        return this;
     }
 
     public Encoding style(StyleEnum style) {
