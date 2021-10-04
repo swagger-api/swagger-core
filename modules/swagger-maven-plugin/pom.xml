@@ -279,13 +279,13 @@
             <groupId>com.github.jknack</groupId>
             <artifactId>handlebars-helpers</artifactId>
             <scope>test</scope>
-            <version>4.1.2</version>
+            <version>4.2.1</version>
         </dependency>
         <dependency>
             <groupId>com.github.jknack</groupId>
             <artifactId>handlebars</artifactId>
             <scope>test</scope>
-            <version>4.1.2</version>
+            <version>4.2.1</version>
         </dependency>
     </dependencies>
     <properties>
