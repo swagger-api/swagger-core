@@ -110,7 +110,7 @@ public class ApiResponse {
      * @return Link links
      **/
 
-    public java.util.Map<String, Link> getLinks() {
+    public Map<String, Link> getLinks() {
         return links;
     }
 
@@ -118,7 +118,7 @@ public class ApiResponse {
         this.links = links;
     }
 
-    public ApiResponse link(Map<String, Link> links) {
+    public ApiResponse links(Map<String, Link> links) {
         this.links = links;
         return this;
     }
