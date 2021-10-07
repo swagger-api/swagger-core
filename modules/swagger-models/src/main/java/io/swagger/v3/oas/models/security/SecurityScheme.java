@@ -82,6 +82,7 @@ public class SecurityScheme {
     private String bearerFormat = null;
     private OAuthFlows flows = null;
     private String openIdConnectUrl = null;
+    private String mutualTLS = null;
     private java.util.Map<String, Object> extensions = null;
 
     /**
@@ -236,6 +237,16 @@ public class SecurityScheme {
         return this;
     }
 
+    @OpenAPI31
+    public String getMutualTLS() {
+        return mutualTLS;
+    }
+
+    @OpenAPI31
+    public void setMutualTLS(String mutualTLS) {
+        this.mutualTLS = mutualTLS;
+    }
+
     public java.util.Map<String, Object> getExtensions() {
         return extensions;
     }
@@ -326,6 +337,9 @@ public class SecurityScheme {
         if (openIdConnectUrl != null ? !openIdConnectUrl.equals(that.openIdConnectUrl) : that.openIdConnectUrl != null) {
             return false;
         }
+        if (mutualTLS != null ? !mutualTLS.equals(that.mutualTLS) : that.mutualTLS != null) {
+            return false;
+        }
         return extensions != null ? extensions.equals(that.extensions) : that.extensions == null;
     }
 
@@ -340,6 +354,7 @@ public class SecurityScheme {
         result = 31 * result + (bearerFormat != null ? bearerFormat.hashCode() : 0);
         result = 31 * result + (flows != null ? flows.hashCode() : 0);
         result = 31 * result + (openIdConnectUrl != null ? openIdConnectUrl.hashCode() : 0);
+        result = 31 * result + (mutualTLS != null ? mutualTLS.hashCode() : 0);
         result = 31 * result + (extensions != null ? extensions.hashCode() : 0);
         return result;
     }
@@ -357,6 +372,7 @@ public class SecurityScheme {
         sb.append("    bearerFormat: ").append(toIndentedString(bearerFormat)).append("\n");
         sb.append("    flows: ").append(toIndentedString(flows)).append("\n");
         sb.append("    openIdConnectUrl: ").append(toIndentedString(openIdConnectUrl)).append("\n");
+        sb.append("    mutualTLS: ").append(toIndentedString(mutualTLS)).append("\n");
         sb.append("    $ref: ").append(toIndentedString($ref)).append("\n");
         sb.append("}");
         return sb.toString();
