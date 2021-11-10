@@ -228,4 +228,30 @@ public class MapPropertyDeserializerTest {
         assertTrue(example instanceof String);
         assertEquals(example, "ok");
     }
+
+    @Test(description = "date example format should be yyyy-MM-dd")
+    public void testDateFormatStringExample() throws Exception {
+        Operation operation = Yaml.mapper().readValue(
+                "      responses:\n" +
+                        "        \"200\":\n" +
+                        "          content:\n" +
+                        "            '*/*':\n" +
+                        "              description: OK\n" +
+                        "              schema:\n" +
+                        "                type: object\n" +
+                        "                properties:\n" +
+                        "                  date:\n" +
+                        "                    type: string\n" +
+                        "                    format: date\n" +
+                        "                    example: 2020-03-03\n",
+                        Operation.class);
+
+        ApiResponse response = operation.getResponses().get("200");
+        assertNotNull(response);
+        Schema schema = (Schema)response.getContent().get("*/*").getSchema().getProperties().get("date");
+        Object example = schema.getExample();
+        assertNotNull(example);
+        assertTrue(example instanceof String);
+        assertEquals(example, "2020-03-03");
+    }
 }
