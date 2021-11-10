@@ -91,5 +91,11 @@ public class DateSchema extends Schema<Date> {
         sb.append("}");
         return sb.toString();
     }
+
+    @Override
+    public Object getExample() {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        return sdf.format(this.example);
+    }
 }
 
