@@ -16,6 +16,8 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
+import java.time.OffsetDateTime;
+
 public class MapPropertyDeserializerTest {
     private static final String json = "{\n" +
             "  \"tags\": [\n" +
@@ -253,5 +255,31 @@ public class MapPropertyDeserializerTest {
         assertNotNull(example);
         assertTrue(example instanceof String);
         assertEquals(example, "2020-03-03");
+    }
+
+    @Test(description = "date-time example format should be such as 2021-11-13T20:20:39Z, 2021-11-13T20:20:39+09:00")
+    public void testDateTimeFormatStringExample() throws Exception {
+        Operation operation = Yaml.mapper().readValue(
+                "      responses:\n" +
+                        "        \"200\":\n" +
+                        "          content:\n" +
+                        "            '*/*':\n" +
+                        "              description: OK\n" +
+                        "              schema:\n" +
+                        "                type: object\n" +
+                        "                properties:\n" +
+                        "                  date:\n" +
+                        "                    type: string\n" +
+                        "                    format: date-time\n" +
+                        "                    example: 2021-11-13T20:20:39+09:00\n",
+                        Operation.class);
+
+        ApiResponse response = operation.getResponses().get("200");
+        assertNotNull(response);
+        Schema schema = (Schema)response.getContent().get("*/*").getSchema().getProperties().get("date");
+        Object example = schema.getExample();
+        assertNotNull(example);
+        assertTrue(example instanceof OffsetDateTime);
+        assertEquals(example.toString(), "2021-11-13T20:20:39+09:00");
     }
 }
