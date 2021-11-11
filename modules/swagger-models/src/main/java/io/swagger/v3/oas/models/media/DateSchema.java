@@ -94,8 +94,11 @@ public class DateSchema extends Schema<Date> {
 
     @Override
     public Object getExample() {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        return sdf.format(this.example);
+        if (this.example != null) {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            return sdf.format(this.example);
+        }
+        return "";
     }
 }
 
