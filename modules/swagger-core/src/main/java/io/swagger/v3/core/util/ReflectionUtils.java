@@ -435,10 +435,33 @@ public class ReflectionUtils {
         return type.isArrayType();
     }
 
+    /**
+     * A utility method to get an optional containing result from method or empty optional if unable to access
+     *
+     * @param method from reflect, a method of a class or interface
+     * @param obj the class object in which the method exists
+     * @param args varags of the parameters passed to the method
+     * @return the result of the method, or empty conditional
+     */
     public static Optional<Object> safeInvoke(Method method, Object obj, Object... args) {
         try {
             return Optional.ofNullable(method.invoke(obj, args));
         } catch (IllegalAccessException | InvocationTargetException e) {
+            return Optional.empty();
+        }
+    }
+
+    /**
+     * A utility method to get an optional containing value of field or empty optional if unable to access
+     *
+     * @param field from reflect, a field of a class or interface
+     * @param obj the class object in which the field exists
+     * @return optional containing the value of the field on the specified object, or empty optional
+     */
+    public static Optional<Object> safeGet(Field field, Object obj) {
+        try {
+            return Optional.ofNullable(field.get(obj));
+        } catch (IllegalAccessException e) {
             return Optional.empty();
         }
 
