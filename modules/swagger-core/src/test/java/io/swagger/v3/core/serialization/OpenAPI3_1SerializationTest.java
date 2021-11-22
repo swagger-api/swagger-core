@@ -6,10 +6,18 @@ import io.swagger.v3.core.util.Json31;
 import io.swagger.v3.core.util.ResourceUtils;
 import io.swagger.v3.core.util.Yaml;
 import io.swagger.v3.core.util.Yaml31;
+import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.Operation;
+import io.swagger.v3.oas.models.PathItem;
+import io.swagger.v3.oas.models.info.Contact;
+import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.info.License;
+import io.swagger.v3.oas.models.media.Schema;
+import io.swagger.v3.oas.models.media.StringSchema;
+import io.swagger.v3.oas.models.responses.ApiResponse;
+import io.swagger.v3.oas.models.responses.ApiResponses;
 import org.testng.annotations.Test;
-
-import java.util.Map;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
@@ -328,5 +336,209 @@ public class OpenAPI3_1SerializationTest {
                 "  }\n" +
                 "}");
 
+    }
+
+    @Test
+    public void testInfoSerialization() {
+        OpenAPI openAPI = new OpenAPI()
+                .openapi("3.1.0")
+                .info(new Info()
+                        .title("Title test")
+                        .description("This is a description for test")
+                        .summary("Test Summary")
+                        .version("1.0.0")
+                        .termsOfService("https://test.term.of.services")
+                        .contact(new Contact()
+                                .name("Test Contact")
+                                .url("https://test.contact.url")
+                                .email("test@email.com"))
+                        .license(new License()
+                                .name("test license")
+                                .url("https://test.license.com")
+                                .identifier("swagger")));
+        SerializationMatchers.assertEqualsToYaml31(openAPI, "openapi: 3.1.0\n" +
+                "info:\n" +
+                "  title: Title test\n" +
+                "  description: This is a description for test\n" +
+                "  summary: Test Summary\n" +
+                "  termsOfService: https://test.term.of.services\n" +
+                "  contact:\n" +
+                "    name: Test Contact\n" +
+                "    url: https://test.contact.url\n" +
+                "    email: test@email.com\n" +
+                "  license:\n" +
+                "    name: test license\n" +
+                "    url: https://test.license.com\n" +
+                "    identifier: swagger\n" +
+                "  version: 1.0.0");
+
+        SerializationMatchers.assertEqualsToJson31(openAPI, "{\n" +
+                "  \"openapi\" : \"3.1.0\",\n" +
+                "  \"info\" : {\n" +
+                "    \"title\" : \"Title test\",\n" +
+                "    \"description\" : \"This is a description for test\",\n" +
+                "    \"summary\" : \"Test Summary\",\n" +
+                "    \"termsOfService\" : \"https://test.term.of.services\",\n" +
+                "    \"contact\" : {\n" +
+                "      \"name\" : \"Test Contact\",\n" +
+                "      \"url\" : \"https://test.contact.url\",\n" +
+                "      \"email\" : \"test@email.com\"\n" +
+                "    },\n" +
+                "    \"license\" : {\n" +
+                "      \"name\" : \"test license\",\n" +
+                "      \"url\" : \"https://test.license.com\",\n" +
+                "      \"identifier\" : \"swagger\"\n" +
+                "    },\n" +
+                "    \"version\" : \"1.0.0\"\n" +
+                "  }\n" +
+                "}");
+
+        openAPI.setOpenapi("3.0.3");
+        SerializationMatchers.assertEqualsToYaml(openAPI, "openapi: 3.0.3\n" +
+                "info:\n" +
+                "  title: Title test\n" +
+                "  description: This is a description for test\n" +
+                "  termsOfService: https://test.term.of.services\n" +
+                "  contact:\n" +
+                "    name: Test Contact\n" +
+                "    url: https://test.contact.url\n" +
+                "    email: test@email.com\n" +
+                "  license:\n" +
+                "    name: test license\n" +
+                "    url: https://test.license.com\n" +
+                "  version: 1.0.0");
+
+        SerializationMatchers.assertEqualsToJson(openAPI, "{\n" +
+                "  \"openapi\" : \"3.0.3\",\n" +
+                "  \"info\" : {\n" +
+                "    \"title\" : \"Title test\",\n" +
+                "    \"description\" : \"This is a description for test\",\n" +
+                "    \"termsOfService\" : \"https://test.term.of.services\",\n" +
+                "    \"contact\" : {\n" +
+                "      \"name\" : \"Test Contact\",\n" +
+                "      \"url\" : \"https://test.contact.url\",\n" +
+                "      \"email\" : \"test@email.com\"\n" +
+                "    },\n" +
+                "    \"license\" : {\n" +
+                "      \"name\" : \"test license\",\n" +
+                "      \"url\" : \"https://test.license.com\"\n" +
+                "    },\n" +
+                "    \"version\" : \"1.0.0\"\n" +
+                "  }\n" +
+                "}");
+    }
+
+    @Test
+    public void testOWebHooksSerialization() {
+        OpenAPI openAPI = new OpenAPI()
+                .openapi("3.1.0")
+                .addWebhooks("hook", new PathItem()
+                        .description("test path hook")
+                        .get(new Operation()
+                                .operationId("testHookOperation")
+                                .responses(new ApiResponses()
+                                        .addApiResponse("200", new ApiResponse().description("test response description")))));
+
+        SerializationMatchers.assertEqualsToYaml31(openAPI, "openapi: 3.1.0\n" +
+                "webhooks:\n" +
+                "  hook:\n" +
+                "    description: test path hook\n" +
+                "    get:\n" +
+                "      operationId: testHookOperation\n" +
+                "      responses:\n" +
+                "        \"200\":\n" +
+                "          description: test response description");
+
+        SerializationMatchers.assertEqualsToJson31(openAPI, "{\n" +
+                "  \"openapi\" : \"3.1.0\",\n" +
+                "  \"webhooks\" : {\n" +
+                "    \"hook\" : {\n" +
+                "      \"description\" : \"test path hook\",\n" +
+                "      \"get\" : {\n" +
+                "        \"operationId\" : \"testHookOperation\",\n" +
+                "        \"responses\" : {\n" +
+                "          \"200\" : {\n" +
+                "            \"description\" : \"test response description\"\n" +
+                "          }\n" +
+                "        }\n" +
+                "      }\n" +
+                "    }\n" +
+                "  }\n" +
+                "}");
+        openAPI.setOpenapi("3.0.3");
+        SerializationMatchers.assertEqualsToYaml(openAPI, "openapi: 3.0.3");
+        SerializationMatchers.assertEqualsToJson(openAPI, "{\n" +
+                "  \"openapi\" : \"3.0.3\"\n}");
+
+    }
+
+    @Test
+    public void testComponentPathItemsSerialization() {
+        Schema schema = new StringSchema();
+        schema.addType(schema.getType());
+        OpenAPI openAPI = new OpenAPI().openapi("3.1.0").components(new Components()
+                .addSchemas("stringTest", schema)
+                .addPathItems("/pathTest", new PathItem()
+                        .description("test path item")
+                        .get(new Operation()
+                                .operationId("testPathItem")
+                                .responses(new ApiResponses()
+                                        .addApiResponse("200", new ApiResponse().description("response description"))))));
+
+        SerializationMatchers.assertEqualsToYaml31(openAPI, "openapi: 3.1.0\n" +
+                "components:\n" +
+                "  schemas:\n" +
+                "    stringTest:\n" +
+                "      type: string\n" +
+                "  pathItems:\n" +
+                "    /pathTest:\n" +
+                "      description: test path item\n" +
+                "      get:\n" +
+                "        operationId: testPathItem\n" +
+                "        responses:\n" +
+                "          \"200\":\n" +
+                "            description: response description");
+
+        SerializationMatchers.assertEqualsToJson31(openAPI, "{\n" +
+                "  \"openapi\" : \"3.1.0\",\n" +
+                "  \"components\" : {\n" +
+                "    \"schemas\" : {\n" +
+                "      \"stringTest\" : {" +
+                "        \"type\" : \"string\"" +
+                "       }\n" +
+                "    },\n" +
+                "    \"pathItems\" : {\n" +
+                "      \"/pathTest\" : {\n" +
+                "        \"description\" : \"test path item\",\n" +
+                "        \"get\" : {\n" +
+                "          \"operationId\" : \"testPathItem\",\n" +
+                "          \"responses\" : {\n" +
+                "            \"200\" : {\n" +
+                "              \"description\" : \"response description\"\n" +
+                "            }\n" +
+                "          }\n" +
+                "        }\n" +
+                "      }\n" +
+                "    }\n" +
+                "  }\n" +
+                "}");
+
+        openAPI.openapi("3.0.3");
+        SerializationMatchers.assertEqualsToYaml(openAPI, "openapi: 3.0.3\n" +
+                "components:\n" +
+                "  schemas:\n" +
+                "    stringTest:\n" +
+                "      type: string\n");
+
+        SerializationMatchers.assertEqualsToJson(openAPI, "{\n" +
+                "  \"openapi\" : \"3.0.3\",\n" +
+                "  \"components\" : {\n" +
+                "    \"schemas\" : {\n" +
+                "      \"stringTest\" : {" +
+                "        \"type\" : \"string\"" +
+                "       }\n" +
+                "    }\n" +
+                "  }\n" +
+                "}");
     }
 }
