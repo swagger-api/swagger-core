@@ -21,6 +21,8 @@ import io.swagger.v3.core.jackson.mixin.ComponentsMixin;
 import io.swagger.v3.core.jackson.mixin.DateSchemaMixin;
 import io.swagger.v3.core.jackson.mixin.ExampleMixin;
 import io.swagger.v3.core.jackson.mixin.ExtensionsMixin;
+import io.swagger.v3.core.jackson.mixin.InfoMixin;
+import io.swagger.v3.core.jackson.mixin.LicenseMixin;
 import io.swagger.v3.core.jackson.mixin.MediaTypeMixin;
 import io.swagger.v3.core.jackson.mixin.OpenAPIMixin;
 import io.swagger.v3.core.jackson.mixin.OperationMixin;
@@ -148,7 +150,6 @@ public class ObjectMapperFactory {
         sourceMixins.put(ApiResponses.class, ExtensionsMixin.class);
         sourceMixins.put(ApiResponse.class, ExtensionsMixin.class);
         sourceMixins.put(Callback.class, ExtensionsMixin.class);
-        sourceMixins.put(Components.class, ComponentsMixin.class);
         sourceMixins.put(Contact.class, ExtensionsMixin.class);
         sourceMixins.put(Encoding.class, ExtensionsMixin.class);
         sourceMixins.put(EncodingProperty.class, ExtensionsMixin.class);
@@ -162,7 +163,6 @@ public class ObjectMapperFactory {
         sourceMixins.put(MediaType.class, MediaTypeMixin.class);
         sourceMixins.put(OAuthFlow.class, ExtensionsMixin.class);
         sourceMixins.put(OAuthFlows.class, ExtensionsMixin.class);
-        sourceMixins.put(OpenAPI.class, OpenAPIMixin.class);
         sourceMixins.put(Operation.class, OperationMixin.class);
         sourceMixins.put(Parameter.class, ExtensionsMixin.class);
         sourceMixins.put(PathItem.class, ExtensionsMixin.class);
@@ -179,6 +179,10 @@ public class ObjectMapperFactory {
         if (!openapi31) {
             sourceMixins.put(Schema.class, SchemaMixin.class);
             sourceMixins.put(DateSchema.class, DateSchemaMixin.class);
+            sourceMixins.put(Components.class, ComponentsMixin.class);
+            sourceMixins.put(Info.class, InfoMixin.class);
+            sourceMixins.put(License.class, LicenseMixin.class);
+            sourceMixins.put(OpenAPI.class, OpenAPIMixin.class);
         } else {
             sourceMixins.put(Schema.class, Schema31Mixin.class);
             sourceMixins.put(DateSchema.class, DateSchemaMixin.class);
