@@ -13,6 +13,8 @@ import io.swagger.v3.oas.models.PathItem;
 import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
+import io.swagger.v3.oas.models.media.Discriminator;
+import io.swagger.v3.oas.models.media.ObjectSchema;
 import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.media.StringSchema;
 import io.swagger.v3.oas.models.responses.ApiResponse;
@@ -537,6 +539,101 @@ public class OpenAPI3_1SerializationTest {
                 "      \"stringTest\" : {" +
                 "        \"type\" : \"string\"" +
                 "       }\n" +
+                "    }\n" +
+                "  }\n" +
+                "}");
+    }
+
+    @Test
+    public void testDiscriminatorSerialization() {
+        Schema<String> propertySchema1 = new StringSchema();
+        propertySchema1.addType(propertySchema1.getType());
+
+        Schema<String> propertySchema2 = new StringSchema();
+        propertySchema2.addType(propertySchema2.getType());
+
+        Discriminator discriminator = new Discriminator().propertyName("type");
+        discriminator.addExtension("x-otherName", "discriminationType");
+
+        Schema schema = new ObjectSchema()
+                .addProperties("name", propertySchema1)
+                .addProperties("type", propertySchema1)
+                .discriminator(discriminator);
+
+        schema.addType(schema.getType());
+        OpenAPI openAPI = new OpenAPI().openapi("3.1.0").components(new Components()
+                .addSchemas("pet", schema));
+
+        SerializationMatchers.assertEqualsToYaml31(openAPI, "openapi: 3.1.0\n" +
+                "components:\n" +
+                "  schemas:\n" +
+                "    pet:\n" +
+                "      properties:\n" +
+                "        name:\n" +
+                "          type: string\n" +
+                "        type:\n" +
+                "          type: string\n" +
+                "      discriminator:\n" +
+                "        propertyName: type\n" +
+                "        x-otherName: discriminationType\n" +
+                "      type: object");
+
+        SerializationMatchers.assertEqualsToJson31(openAPI, "{\n" +
+                "  \"openapi\" : \"3.1.0\",\n" +
+                "  \"components\" : {\n" +
+                "    \"schemas\" : {\n" +
+                "      \"pet\" : {\n" +
+                "        \"properties\" : {\n" +
+                "          \"name\" : {\n" +
+                "            \"type\" : \"string\"\n" +
+                "          },\n" +
+                "          \"type\" : {\n" +
+                "            \"type\" : \"string\"\n" +
+                "          }\n" +
+                "        },\n" +
+                "        \"discriminator\" : {\n" +
+                "          \"propertyName\" : \"type\",\n" +
+                "          \"x-otherName\" : \"discriminationType\"\n" +
+                "        },\n" +
+                "        \"type\" : \"object\"\n" +
+                "      }\n" +
+                "    }\n" +
+                "  }\n" +
+                "}");
+
+        openAPI.openapi("3.0.3");
+
+        SerializationMatchers.assertEqualsToYaml(openAPI, "openapi: 3.0.3\n" +
+                "components:\n" +
+                "  schemas:\n" +
+                "    pet:\n" +
+                "      properties:\n" +
+                "        name:\n" +
+                "          type: string\n" +
+                "        type:\n" +
+                "          type: string\n" +
+                "      discriminator:\n" +
+                "        propertyName: type\n" +
+                "      type: object");
+
+        SerializationMatchers.assertEqualsToJson(openAPI, "{\n" +
+                "  \"openapi\" : \"3.0.3\",\n" +
+                "  \"components\" : {\n" +
+                "    \"schemas\" : {\n" +
+                "      \"pet\" : {\n" +
+                "        \"properties\" : {\n" +
+                "          \"name\" : {\n" +
+                "            \"type\" : \"string\"\n" +
+                "          },\n" +
+                "          \"type\" : {\n" +
+                "            \"type\" : \"string\"\n" +
+                "          }\n" +
+                "        },\n" +
+                "        \"discriminator\" : {\n" +
+                "          \"propertyName\" : \"type\"\n" +
+                "        },\n" +
+                "        \"type\" : \"object\"\n" +
+                "      }\n" +
                 "    }\n" +
                 "  }\n" +
                 "}");
