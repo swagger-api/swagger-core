@@ -20,7 +20,7 @@ import io.swagger.v3.core.jackson.mixin.ComponentsMixin;
 import io.swagger.v3.core.jackson.mixin.DateSchemaMixin;
 import io.swagger.v3.core.jackson.mixin.ExampleMixin;
 import io.swagger.v3.core.jackson.mixin.ExtensionsMixin;
-import io.swagger.v3.core.jackson.mixin.InfoMixin;
+import io.swagger.v3.core.jackson.mixin.Info31Mixin;
 import io.swagger.v3.core.jackson.mixin.LicenseMixin;
 import io.swagger.v3.core.jackson.mixin.MediaTypeMixin;
 import io.swagger.v3.core.jackson.mixin.OpenAPIMixin;
@@ -177,7 +177,7 @@ public class ObjectMapperFactory {
             sourceMixins.put(Schema.class, SchemaMixin.class);
             sourceMixins.put(DateSchema.class, DateSchemaMixin.class);
             sourceMixins.put(Components.class, ComponentsMixin.class);
-            sourceMixins.put(Info.class, InfoMixin.class);
+            sourceMixins.put(Info.class, Info31Mixin.class);
             sourceMixins.put(License.class, LicenseMixin.class);
             sourceMixins.put(OpenAPI.class, OpenAPIMixin.class);
         } else {
