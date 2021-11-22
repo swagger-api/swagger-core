@@ -18,6 +18,8 @@ import io.swagger.v3.core.jackson.Schema31Serializer;
 import io.swagger.v3.core.jackson.SchemaSerializer;
 import io.swagger.v3.core.jackson.mixin.ComponentsMixin;
 import io.swagger.v3.core.jackson.mixin.DateSchemaMixin;
+import io.swagger.v3.core.jackson.mixin.Discriminator31Mixin;
+import io.swagger.v3.core.jackson.mixin.DiscriminatorMixin;
 import io.swagger.v3.core.jackson.mixin.ExampleMixin;
 import io.swagger.v3.core.jackson.mixin.ExtensionsMixin;
 import io.swagger.v3.core.jackson.mixin.Info31Mixin;
@@ -43,6 +45,7 @@ import io.swagger.v3.oas.models.info.License;
 import io.swagger.v3.oas.models.links.Link;
 import io.swagger.v3.oas.models.links.LinkParameter;
 import io.swagger.v3.oas.models.media.DateSchema;
+import io.swagger.v3.oas.models.media.Discriminator;
 import io.swagger.v3.oas.models.media.Encoding;
 import io.swagger.v3.oas.models.media.EncodingProperty;
 import io.swagger.v3.oas.models.media.MediaType;
@@ -180,9 +183,11 @@ public class ObjectMapperFactory {
             sourceMixins.put(Info.class, Info31Mixin.class);
             sourceMixins.put(License.class, LicenseMixin.class);
             sourceMixins.put(OpenAPI.class, OpenAPIMixin.class);
+            sourceMixins.put(Discriminator.class, DiscriminatorMixin.class);
         } else {
             sourceMixins.put(Schema.class, Schema31Mixin.class);
             sourceMixins.put(DateSchema.class, DateSchemaMixin.class);
+            sourceMixins.put(Discriminator.class, Discriminator31Mixin.class);
         }
         mapper.setMixIns(sourceMixins);
         mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
