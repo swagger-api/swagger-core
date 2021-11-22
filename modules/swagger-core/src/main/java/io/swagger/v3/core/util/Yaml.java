@@ -14,6 +14,15 @@ public class Yaml {
         return mapper;
     }
 
+    /**
+     * Cause Yaml.mapper() to be recreated. If {@link ObjectMapperFactory} state has been updated then the new mapper
+     * will reflect those changes.
+     * @since 2.1.12
+     */
+    public static void recreateMapper() {
+        mapper = ObjectMapperFactory.createYaml();
+    }
+
     public static ObjectWriter pretty() {
         return mapper().writer(new DefaultPrettyPrinter());
     }
