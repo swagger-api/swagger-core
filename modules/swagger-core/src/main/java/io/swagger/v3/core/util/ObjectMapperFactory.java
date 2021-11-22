@@ -1,7 +1,6 @@
 package io.swagger.v3.core.util;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.databind.BeanDescription;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonSerializer;
@@ -9,10 +8,13 @@ import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationConfig;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.cfg.MapperBuilder;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.ser.BeanSerializerModifier;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
+import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.swagger.v3.core.jackson.SchemaSerializer;
 import io.swagger.v3.core.jackson.mixin.ComponentsMixin;
@@ -56,30 +58,59 @@ import io.swagger.v3.oas.models.servers.ServerVariable;
 import io.swagger.v3.oas.models.servers.ServerVariables;
 import io.swagger.v3.oas.models.tags.Tag;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class ObjectMapperFactory {
 
+    private static AtomicReference<JsonMapper.Builder> jsonMapperBuilderReference =
+            new AtomicReference<>(createDefaultJsonMapperBuilder());
+    private static AtomicReference<YAMLMapper.Builder> yamlMapperBuilderReference =
+            new AtomicReference<>(createDefaultYAMLMapperBuilder());
+
     protected static ObjectMapper createJson() {
-        return create(null);
+        return jsonMapperBuilderReference.get().build();
     }
 
     protected static ObjectMapper createYaml() {
+        return yamlMapperBuilderReference.get().build();
+    }
+
+    public static ObjectMapper buildStrictGenericObjectMapper() {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+        mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+        mapper.configure(SerializationFeature.WRITE_ENUMS_USING_TO_STRING, true);
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        mapper.configure(SerializationFeature.WRITE_NULL_MAP_VALUES, false);
+        try {
+            mapper.configure(DeserializationFeature.valueOf("FAIL_ON_TRAILING_TOKENS"), true);
+        } catch (Throwable e) {
+            // add only if supported by Jackson version 2.9+
+        }
+        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        return mapper;
+    }
+
+    private static JsonMapper.Builder createDefaultJsonMapperBuilder() {
+        JsonMapper.Builder builder = JsonMapper.builder();
+        addDefaultSetupToMapperBuilder(builder);
+        return builder;
+    }
+
+    private static YAMLMapper.Builder createDefaultYAMLMapperBuilder() {
         YAMLFactory factory = new YAMLFactory();
         factory.disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER);
         factory.enable(YAMLGenerator.Feature.MINIMIZE_QUOTES);
         factory.enable(YAMLGenerator.Feature.SPLIT_LINES);
         factory.enable(YAMLGenerator.Feature.ALWAYS_QUOTE_NUMBERS_AS_STRINGS);
-
-        return create(factory);
+        YAMLMapper.Builder builder = YAMLMapper.builder(factory);
+        addDefaultSetupToMapperBuilder(builder);
+        return builder;
     }
 
-    private static ObjectMapper create(JsonFactory jsonFactory) {
-        ObjectMapper mapper = jsonFactory == null ? new ObjectMapper() : new ObjectMapper(jsonFactory);
-
+    private static void addDefaultSetupToMapperBuilder(MapperBuilder<?, ?> builder) {
         // handle ref schema serialization skipping all other props
-        mapper.registerModule(new SimpleModule() {
+        builder.addModule(new SimpleModule() {
             @Override
             public void setupModule(SetupContext context) {
                 super.setupModule(context);
@@ -97,70 +128,49 @@ public class ObjectMapperFactory {
         });
 
         Module deserializerModule = new DeserializationModule();
-        mapper.registerModule(deserializerModule);
-        mapper.registerModule(new JavaTimeModule());
+        builder.addModule(deserializerModule);
+        builder.addModule(new JavaTimeModule());
 
-        Map<Class<?>, Class<?>> sourceMixins = new LinkedHashMap<>();
+        builder.addMixIn(ApiResponses.class, ExtensionsMixin.class);
+        builder.addMixIn(ApiResponse.class, ExtensionsMixin.class);
+        builder.addMixIn(Callback.class, ExtensionsMixin.class);
+        builder.addMixIn(Components.class, ComponentsMixin.class);
+        builder.addMixIn(Contact.class, ExtensionsMixin.class);
+        builder.addMixIn(Encoding.class, ExtensionsMixin.class);
+        builder.addMixIn(EncodingProperty.class, ExtensionsMixin.class);
+        builder.addMixIn(Example.class, ExampleMixin.class);
+        builder.addMixIn(ExternalDocumentation.class, ExtensionsMixin.class);
+        builder.addMixIn(Header.class, ExtensionsMixin.class);
+        builder.addMixIn(Info.class, ExtensionsMixin.class);
+        builder.addMixIn(License.class, ExtensionsMixin.class);
+        builder.addMixIn(Link.class, ExtensionsMixin.class);
+        builder.addMixIn(LinkParameter.class, ExtensionsMixin.class);
+        builder.addMixIn(MediaType.class, MediaTypeMixin.class);
+        builder.addMixIn(OAuthFlow.class, ExtensionsMixin.class);
+        builder.addMixIn(OAuthFlows.class, ExtensionsMixin.class);
+        builder.addMixIn(OpenAPI.class, OpenAPIMixin.class);
+        builder.addMixIn(Operation.class, OperationMixin.class);
+        builder.addMixIn(Parameter.class, ExtensionsMixin.class);
+        builder.addMixIn(PathItem.class, ExtensionsMixin.class);
+        builder.addMixIn(Paths.class, ExtensionsMixin.class);
+        builder.addMixIn(RequestBody.class, ExtensionsMixin.class);
+        builder.addMixIn(Scopes.class, ExtensionsMixin.class);
+        builder.addMixIn(SecurityScheme.class, ExtensionsMixin.class);
+        builder.addMixIn(Server.class, ExtensionsMixin.class);
+        builder.addMixIn(ServerVariable.class, ExtensionsMixin.class);
+        builder.addMixIn(ServerVariables.class, ExtensionsMixin.class);
+        builder.addMixIn(Tag.class, ExtensionsMixin.class);
+        builder.addMixIn(XML.class, ExtensionsMixin.class);
+        builder.addMixIn(Schema.class, SchemaMixin.class);
+        builder.addMixIn(DateSchema.class, DateSchemaMixin.class);
 
-        sourceMixins.put(ApiResponses.class, ExtensionsMixin.class);
-        sourceMixins.put(ApiResponse.class, ExtensionsMixin.class);
-        sourceMixins.put(Callback.class, ExtensionsMixin.class);
-        sourceMixins.put(Components.class, ComponentsMixin.class);
-        sourceMixins.put(Contact.class, ExtensionsMixin.class);
-        sourceMixins.put(Encoding.class, ExtensionsMixin.class);
-        sourceMixins.put(EncodingProperty.class, ExtensionsMixin.class);
-        sourceMixins.put(Example.class, ExampleMixin.class);
-        sourceMixins.put(ExternalDocumentation.class, ExtensionsMixin.class);
-        sourceMixins.put(Header.class, ExtensionsMixin.class);
-        sourceMixins.put(Info.class, ExtensionsMixin.class);
-        sourceMixins.put(License.class, ExtensionsMixin.class);
-        sourceMixins.put(Link.class, ExtensionsMixin.class);
-        sourceMixins.put(LinkParameter.class, ExtensionsMixin.class);
-        sourceMixins.put(MediaType.class, MediaTypeMixin.class);
-        sourceMixins.put(OAuthFlow.class, ExtensionsMixin.class);
-        sourceMixins.put(OAuthFlows.class, ExtensionsMixin.class);
-        sourceMixins.put(OpenAPI.class, OpenAPIMixin.class);
-        sourceMixins.put(Operation.class, OperationMixin.class);
-        sourceMixins.put(Parameter.class, ExtensionsMixin.class);
-        sourceMixins.put(PathItem.class, ExtensionsMixin.class);
-        sourceMixins.put(Paths.class, ExtensionsMixin.class);
-        sourceMixins.put(RequestBody.class, ExtensionsMixin.class);
-        sourceMixins.put(Scopes.class, ExtensionsMixin.class);
-        sourceMixins.put(SecurityScheme.class, ExtensionsMixin.class);
-        sourceMixins.put(Server.class, ExtensionsMixin.class);
-        sourceMixins.put(ServerVariable.class, ExtensionsMixin.class);
-        sourceMixins.put(ServerVariables.class, ExtensionsMixin.class);
-        sourceMixins.put(Tag.class, ExtensionsMixin.class);
-        sourceMixins.put(XML.class, ExtensionsMixin.class);
-        sourceMixins.put(Schema.class, SchemaMixin.class);
-        sourceMixins.put(DateSchema.class, DateSchemaMixin.class);
-
-        mapper.setMixIns(sourceMixins);
-        mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-        mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-        mapper.configure(SerializationFeature.WRITE_ENUMS_USING_TO_STRING, true);
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        mapper.configure(SerializationFeature.WRITE_NULL_MAP_VALUES, false);
-        mapper.configure(SerializationFeature.WRITE_BIGDECIMAL_AS_PLAIN, true);
-        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-
-        return mapper;
-    }
-
-    public static ObjectMapper buildStrictGenericObjectMapper() {
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-        mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-        mapper.configure(SerializationFeature.WRITE_ENUMS_USING_TO_STRING, true);
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        mapper.configure(SerializationFeature.WRITE_NULL_MAP_VALUES, false);
-        try {
-            mapper.configure(DeserializationFeature.valueOf("FAIL_ON_TRAILING_TOKENS"), true);
-        } catch (Throwable e) {
-            // add only if supported by Jackson version 2.9+
-        }
-        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-        return mapper;
+        builder.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+        builder.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+        builder.configure(SerializationFeature.WRITE_ENUMS_USING_TO_STRING, true);
+        builder.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        builder.configure(SerializationFeature.WRITE_NULL_MAP_VALUES, false);
+        builder.configure(SerializationFeature.WRITE_BIGDECIMAL_AS_PLAIN, true);
+        builder.defaultPropertyInclusion(JsonInclude.Value.construct(JsonInclude.Include.NON_NULL, JsonInclude.Include.NON_NULL));
     }
 
 }
