@@ -59,6 +59,7 @@ import io.swagger.v3.oas.models.servers.ServerVariables;
 import io.swagger.v3.oas.models.tags.Tag;
 
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Function;
 
 public class ObjectMapperFactory {
 
@@ -73,6 +74,26 @@ public class ObjectMapperFactory {
 
     protected static ObjectMapper createYaml() {
         return yamlMapperBuilderReference.get().build();
+    }
+
+    public static void modifyJsonMapperBuilder(Function<JsonMapper.Builder, JsonMapper.Builder> function) {
+        jsonMapperBuilderReference.set(
+            function.apply(jsonMapperBuilderReference.get())
+        );
+    }
+
+    public static void resetJsonMapperBuilder() {
+        jsonMapperBuilderReference.set(createDefaultJsonMapperBuilder());
+    }
+
+    public static void modifyYamlMapperBuilder(Function<YAMLMapper.Builder, YAMLMapper.Builder> function) {
+        yamlMapperBuilderReference.set(
+                function.apply(yamlMapperBuilderReference.get())
+        );
+    }
+
+    public static void resetYamlMapperBuilder() {
+        yamlMapperBuilderReference.set(createDefaultYAMLMapperBuilder());
     }
 
     public static ObjectMapper buildStrictGenericObjectMapper() {
