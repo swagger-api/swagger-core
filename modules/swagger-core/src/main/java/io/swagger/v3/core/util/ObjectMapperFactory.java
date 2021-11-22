@@ -76,22 +76,40 @@ public class ObjectMapperFactory {
         return yamlMapperBuilderReference.get().build();
     }
 
+    /**
+     * Modify the Jackson JSON Mapper.Builder (used to create JSON ObjectMappers).
+     * @param function a function that maps the existing JsonMapper.Builder and updates it (preferred) or replaces it
+     * @since 2.1.12
+     */
     public static void modifyJsonMapperBuilder(Function<JsonMapper.Builder, JsonMapper.Builder> function) {
         jsonMapperBuilderReference.set(
             function.apply(jsonMapperBuilderReference.get())
         );
     }
 
+    /**
+     * Reset the Jackson JSON Mapper.Builder to its default state (including pre-loaded config needed by Swagger).
+     * @since 2.1.12
+     */
     public static void resetJsonMapperBuilder() {
         jsonMapperBuilderReference.set(createDefaultJsonMapperBuilder());
     }
 
+    /**
+     * Modify the Jackson YAML Mapper.Builder (used to create YAML ObjectMappers).
+     * @param function a function that maps the existing YAMLMapper.Builder and updates it (preferred) or replaces it
+     * @since 2.1.12
+     */
     public static void modifyYamlMapperBuilder(Function<YAMLMapper.Builder, YAMLMapper.Builder> function) {
         yamlMapperBuilderReference.set(
                 function.apply(yamlMapperBuilderReference.get())
         );
     }
 
+    /**
+     * Reset the Jackson YAML Mapper.Builder to its default state (including pre-loaded config needed by Swagger).
+     * @since 2.1.12
+     */
     public static void resetYamlMapperBuilder() {
         yamlMapperBuilderReference.set(createDefaultYAMLMapperBuilder());
     }
