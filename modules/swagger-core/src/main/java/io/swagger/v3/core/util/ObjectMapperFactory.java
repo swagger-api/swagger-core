@@ -159,7 +159,6 @@ public class ObjectMapperFactory {
         sourceMixins.put(Example.class, ExampleMixin.class);
         sourceMixins.put(ExternalDocumentation.class, ExtensionsMixin.class);
         sourceMixins.put(Header.class, ExtensionsMixin.class);
-        sourceMixins.put(Info.class, ExtensionsMixin.class);
         sourceMixins.put(License.class, ExtensionsMixin.class);
         sourceMixins.put(Link.class, ExtensionsMixin.class);
         sourceMixins.put(LinkParameter.class, ExtensionsMixin.class);
@@ -188,6 +187,7 @@ public class ObjectMapperFactory {
             sourceMixins.put(OpenAPI.class, OpenAPIMixin.class);
             sourceMixins.put(Discriminator.class, DiscriminatorMixin.class);
         } else {
+            sourceMixins.put(Info.class, ExtensionsMixin.class);
             sourceMixins.put(Schema.class, Schema31Mixin.class);
             sourceMixins.put(DateSchema.class, DateSchemaMixin.class);
             sourceMixins.put(Discriminator.class, Discriminator31Mixin.class);
