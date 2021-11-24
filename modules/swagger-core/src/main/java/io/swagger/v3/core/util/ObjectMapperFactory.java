@@ -156,7 +156,6 @@ public class ObjectMapperFactory {
         sourceMixins.put(Example.class, ExampleMixin.class);
         sourceMixins.put(ExternalDocumentation.class, ExtensionsMixin.class);
         sourceMixins.put(Header.class, ExtensionsMixin.class);
-        sourceMixins.put(License.class, ExtensionsMixin.class);
         sourceMixins.put(Link.class, ExtensionsMixin.class);
         sourceMixins.put(LinkParameter.class, ExtensionsMixin.class);
         sourceMixins.put(MediaType.class, MediaTypeMixin.class);
