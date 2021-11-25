@@ -947,28 +947,32 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         Class<Enum<?>> enumClass = (Class<Enum<?>>) propClass;
 
         Enum<?>[] enumConstants = enumClass.getEnumConstants();
-        String[] enumValues = _intr.findEnumValues(propClass, enumConstants, new String[enumConstants.length]);
+        if (enumConstants != null) {
+            String[] enumValues = _intr.findEnumValues(propClass, enumConstants,
+                new String[enumConstants.length]);
 
-        for (Enum<?> en : enumConstants) {
-            String n;
+            for (Enum<?> en : enumConstants) {
+                String n;
 
-            String enumValue = enumValues[en.ordinal()];
-            String s = jsonValueMethod.flatMap(m -> ReflectionUtils.safeInvoke(m, en)).map(Object::toString).orElse(null);
+                String enumValue = enumValues[en.ordinal()];
+                String s = jsonValueMethod.flatMap(m -> ReflectionUtils.safeInvoke(m, en))
+                    .map(Object::toString).orElse(null);
 
-            if (s != null) {
-                n = s;
-            } else if (enumValue != null) {
-                n = enumValue;
-            } else if (useIndex) {
-                n = String.valueOf(en.ordinal());
-            } else if (useToString) {
-                n = en.toString();
-            } else {
-                n = _intr.findEnumValue(en);
-            }
-            if (property instanceof StringSchema) {
-                StringSchema sp = (StringSchema) property;
-                sp.addEnumItem(n);
+                if (s != null) {
+                    n = s;
+                } else if (enumValue != null) {
+                    n = enumValue;
+                } else if (useIndex) {
+                    n = String.valueOf(en.ordinal());
+                } else if (useToString) {
+                    n = en.toString();
+                } else {
+                    n = _intr.findEnumValue(en);
+                }
+                if (property instanceof StringSchema) {
+                    StringSchema sp = (StringSchema) property;
+                    sp.addEnumItem(n);
+                }
             }
         }
     }
