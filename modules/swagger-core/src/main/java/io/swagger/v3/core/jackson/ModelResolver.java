@@ -907,7 +907,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             property = Json.mapper().readValue(Json.pretty(property), Schema.class);
             property.setName(cloneName);
         } catch (IOException e) {
-            LOGGER.error("Could not clone property, e");
+            LOGGER.error("Could not clone property", e);
         }
         return property;
     }
