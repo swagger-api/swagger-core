@@ -15,13 +15,12 @@ import java.util.Collection;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
 
 public class EnumTest extends SwaggerTestBase {
 
     @Test
-    public void testEnum() throws Exception {
+    public void testEnum() {
         final ModelResolver modelResolver = new ModelResolver(mapper());
         final ModelConverterContextImpl context = new ModelConverterContextImpl(modelResolver);
 
@@ -41,11 +40,37 @@ public class EnumTest extends SwaggerTestBase {
         final StringSchema strProperty = (StringSchema) property;
         assertNotNull(strProperty.getEnum());
         final Collection<String> values =
-                new ArrayList<String>(Collections2.transform(Arrays.asList(Currency.values()), Functions.toStringFunction()));
+                new ArrayList<>(Collections2.transform(Arrays.asList(Currency.values()), Functions.toStringFunction()));
         assertEquals(strProperty.getEnum(), values);
+    }
+
+    @Test
+    public void testEnumGenerics() {
+        final ModelResolver modelResolver = new ModelResolver(mapper());
+        final ModelConverterContextImpl context = new ModelConverterContextImpl(modelResolver);
+
+        final Schema model = context.resolve((new AnnotatedType().type(Contract.class)));
+        assertNotNull(model);
+        assertEquals(model.getName(), "Contract");
+        assertTrue(model.getProperties().containsKey("type"));
+        assertNotNull(model.getProperties().get("type"));
     }
 
     public enum Currency {
         USA, CANADA
+    }
+
+    public static class Contract {
+
+        private Enum<?> type;
+
+        public Enum<?> getType() {
+            return type;
+        }
+
+        public Contract setType(Enum<?> type) {
+            this.type = type;
+            return this;
+        }
     }
 }

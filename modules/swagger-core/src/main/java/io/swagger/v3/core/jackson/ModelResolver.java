@@ -908,7 +908,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             property = Json.mapper().readValue(Json.pretty(property), Schema.class);
             property.setName(cloneName);
         } catch (IOException e) {
-            LOGGER.error("Could not clone property, e");
+            LOGGER.error("Could not clone property", e);
         }
         return property;
     }
@@ -960,31 +960,34 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         Class<Enum<?>> enumClass = (Class<Enum<?>>) propClass;
 
         Enum<?>[] enumConstants = enumClass.getEnumConstants();
-        String[] enumValues = _intr.findEnumValues(propClass, enumConstants, new String[enumConstants.length]);
+        if (enumConstants != null) {
+            String[] enumValues = _intr.findEnumValues(propClass, enumConstants,
+                new String[enumConstants.length]);
+          
+            for (Enum<?> en : enumConstants) {
+                String n;
 
-        for (Enum<?> en : enumConstants) {
-            String n;
+                String enumValue = enumValues[en.ordinal()];
+                String methodValue = jsonValueMethod.flatMap(m -> ReflectionUtils.safeInvoke(m, en)).map(Object::toString).orElse(null);
+                String fieldValue = jsonValueField.flatMap(f -> ReflectionUtils.safeGet(f, en)).map(Object::toString).orElse(null);
 
-            String enumValue = enumValues[en.ordinal()];
-            String methodValue = jsonValueMethod.flatMap(m -> ReflectionUtils.safeInvoke(m, en)).map(Object::toString).orElse(null);
-            String fieldValue = jsonValueField.flatMap(f -> ReflectionUtils.safeGet(f, en)).map(Object::toString).orElse(null);
-
-            if (methodValue != null) {
-                n = methodValue;
-            } else if (fieldValue != null) {
-                n = fieldValue;
-            } else if (enumValue != null) {
-                n = enumValue;
-            } else if (useIndex) {
-                n = String.valueOf(en.ordinal());
-            } else if (useToString) {
-                n = en.toString();
-            } else {
-                n = _intr.findEnumValue(en);
-            }
-            if (property instanceof StringSchema) {
-                StringSchema sp = (StringSchema) property;
-                sp.addEnumItem(n);
+                if (methodValue != null) {
+                    n = methodValue;
+                } else if (fieldValue != null) {
+                    n = fieldValue;
+                } else if (enumValue != null) {
+                    n = enumValue;
+                } else if (useIndex) {
+                    n = String.valueOf(en.ordinal());
+                } else if (useToString) {
+                    n = en.toString();
+                } else {
+                    n = _intr.findEnumValue(en);
+                }
+                if (property instanceof StringSchema) {
+                    StringSchema sp = (StringSchema) property;
+                    sp.addEnumItem(n);
+                }
             }
         }
     }
