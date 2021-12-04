@@ -1563,8 +1563,7 @@ public class Schema<T> {
                 discriminator, _enum, _default, patternProperties, $id, $anchor, $schema, types, allOf, anyOf, oneOf, _const,
                 contentEncoding, contentMediaType, contentSchema, propertyNames, unevaluatedProperties, maxContains,
                 minContains, additionalItems, unevaluatedItems, _if, _else, then, dependentRequired, dependentSchemas,
-                $comment, examples, defaultSchema
-                );
+                $comment, examples, defaultSchema);
     }
 
     public java.util.Map<String, Object> getExtensions() {
