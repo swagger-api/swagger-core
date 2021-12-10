@@ -20,6 +20,7 @@ import io.swagger.v3.oas.annotations.OpenAPI31;
 import io.swagger.v3.oas.models.examples.Example;
 import io.swagger.v3.oas.models.media.Content;
 import io.swagger.v3.oas.models.media.Schema;
+import io.swagger.v3.oas.models.responses.ApiResponse;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -35,6 +36,10 @@ public class Parameter {
     private String name = null;
     private String in = null;
     private String description = null;
+
+    @OpenAPI31
+    private String summary = null;
+
     private Boolean required = null;
     private Boolean deprecated = null;
     private Boolean allowEmptyValue = null;
@@ -130,6 +135,22 @@ public class Parameter {
 
     public Parameter description(String description) {
         this.description = description;
+        return this;
+    }
+
+    @OpenAPI31
+    public String getSummary() {
+        return summary;
+    }
+
+    @OpenAPI31
+    public void setSummary(String summary) {
+        this.summary = summary;
+    }
+
+    @OpenAPI31
+    public Parameter summary(String summary) {
+        this.summary = summary;
         return this;
     }
 
@@ -370,12 +391,13 @@ public class Parameter {
                 Objects.equals(this.example, parameter.example) &&
                 Objects.equals(this.content, parameter.content) &&
                 Objects.equals(this.$ref, parameter.$ref) &&
-                Objects.equals(this.extensions, parameter.extensions);
+                Objects.equals(this.extensions, parameter.extensions) &&
+                Objects.equals(this.summary, parameter.summary);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, in, description, required, deprecated, allowEmptyValue, style, explode, allowReserved, schema, examples, example, content, $ref, extensions);
+        return Objects.hash(name, in, description, required, deprecated, allowEmptyValue, style, explode, allowReserved, schema, examples, example, content, $ref, extensions, summary);
     }
 
     public java.util.Map<String, Object> getExtensions() {
@@ -417,6 +439,7 @@ public class Parameter {
         sb.append("    name: ").append(toIndentedString(name)).append("\n");
         sb.append("    in: ").append(toIndentedString(in)).append("\n");
         sb.append("    description: ").append(toIndentedString(description)).append("\n");
+        sb.append("    summary: ").append(toIndentedString(summary)).append("\n");
         sb.append("    required: ").append(toIndentedString(required)).append("\n");
         sb.append("    deprecated: ").append(toIndentedString(deprecated)).append("\n");
         sb.append("    allowEmptyValue: ").append(toIndentedString(allowEmptyValue)).append("\n");

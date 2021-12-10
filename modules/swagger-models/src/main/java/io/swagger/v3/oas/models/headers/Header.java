@@ -16,9 +16,11 @@
 
 package io.swagger.v3.oas.models.headers;
 
+import io.swagger.v3.oas.annotations.OpenAPI31;
 import io.swagger.v3.oas.models.examples.Example;
 import io.swagger.v3.oas.models.media.Content;
 import io.swagger.v3.oas.models.media.Schema;
+import io.swagger.v3.oas.models.parameters.RequestBody;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -32,6 +34,10 @@ import java.util.Objects;
 
 public class Header {
     private String description = null;
+
+    @OpenAPI31
+    private String summary = null;
+
     private String $ref = null;
     private Boolean required = null;
     private Boolean deprecated = null;
@@ -78,6 +84,22 @@ public class Header {
 
     public Header description(String description) {
         this.description = description;
+        return this;
+    }
+
+    @OpenAPI31
+    public String getSummary() {
+        return summary;
+    }
+
+    @OpenAPI31
+    public void setSummary(String summary) {
+        this.summary = summary;
+    }
+
+    @OpenAPI31
+    public Header summary(String summary) {
+        this.summary = summary;
         return this;
     }
 
@@ -260,12 +282,13 @@ public class Header {
                 Objects.equals(this.example, header.example) &&
                 Objects.equals(this.content, header.content) &&
                 Objects.equals(this.extensions, header.extensions) &&
-                Objects.equals(this.$ref, header.$ref);
+                Objects.equals(this.$ref, header.$ref) &&
+                Objects.equals(this.summary, header.summary);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(description, required, deprecated, style, explode, schema, examples, example, content, extensions, $ref);
+        return Objects.hash(description, required, deprecated, style, explode, schema, examples, example, content, extensions, $ref, summary);
     }
 
     public java.util.Map<String, Object> getExtensions() {
@@ -312,6 +335,7 @@ public class Header {
         StringBuilder sb = new StringBuilder();
         sb.append("class Header {\n");
         sb.append("    description: ").append(toIndentedString(description)).append("\n");
+        sb.append("    summary: ").append(toIndentedString(summary)).append("\n");
         sb.append("    required: ").append(toIndentedString(required)).append("\n");
         sb.append("    deprecated: ").append(toIndentedString(deprecated)).append("\n");
         sb.append("    style: ").append(toIndentedString(style)).append("\n");
