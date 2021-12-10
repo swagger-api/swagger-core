@@ -482,6 +482,65 @@ public class PojoTest {
 
     }
 
+    /**
+     * Test schema with json object defaultValue and example.
+     */
+    @Test(description = "Shows how to provide model examples as json")
+    public void testModelPropertyExampleDefaultJson() {
+
+        String json = "{\"ExampleJsonExtended\": {" +
+                            "\"type\":\"object\"," +
+                            "\"properties\":{" +
+                                "\"id\":{" +
+                                    "\"type\":\"integer\"," +
+                                    "\"format\":\"int32\"" +
+                                "}," +
+                                "\"idType\":{" +
+                                    "\"type\":\"string\"" +
+                                "}," +
+                                "\"isActive\":{" +
+                                    "\"type\":\"boolean\"" +
+                                "}" +
+                            "}," +
+                            "\"example\":{" +
+                                "\"id\":19877734," +
+                                "\"idType\":\"employee code\"," +
+                                "\"isActive\":false" +
+                            "}," +
+                            "\"default\":{" +
+                                "\"id\":19877734," +
+                                "\"idType\":\"employee code\"," +
+                                "\"isActive\":false" +
+                            "}" +
+                        "}," +
+                        "\"modelWithPropertyExampleDefaultJson\":{" +
+                            "\"type\":\"object\"," +
+                            "\"properties\":{" +
+                                "\"exampleJsonExtended\":{" +
+                                    "\"$ref\":\"#/components/schemas/ExampleJsonExtended\"" +
+                                "}" +
+                            "}" +
+                        "}" +
+                    "}";
+        SerializationMatchers.assertEqualsToJson(readAll(modelWithPropertyExampleDefaultJson.class), json);
+    }
+
+    static class modelWithPropertyExampleDefaultJson {
+        final String SAMPLE = "{\"id\": 19877734, \"idType\":\"employee code\", \"isActive\":false}";
+        ExampleJsonExtended tester = new ExampleJsonExtended();
+
+        @Schema( example = SAMPLE, defaultValue = SAMPLE)
+        private ExampleJsonExtended exampleJsonExtended;
+
+        public ExampleJsonExtended getExampleJsonExtended() {
+            return exampleJsonExtended;
+        }
+
+        public void setExampleJsonExtended(ExampleJsonExtended exampleJsonExtended) {
+            this.exampleJsonExtended = exampleJsonExtended;
+        }
+    }
+
     @Test(description = "Shows how to provide model examples as json")
     public void testModelPropertyStringExampleJson() {
 
@@ -520,6 +579,37 @@ public class PojoTest {
 
         public void setId(String id) {
             this.id = id;
+        }
+
+    }
+
+    static class ExampleJsonExtended {
+        private int id;
+        private String idType;
+        private boolean isActive;
+
+        public int getId() {
+            return id;
+        }
+
+        public void setId(int id) {
+            this.id = id;
+        }
+
+        public String getIdType() {
+            return idType;
+        }
+
+        public void setIdType(String idType) {
+            this.idType = idType;
+        }
+
+        public boolean getIsActive() {
+            return isActive;
+        }
+
+        public void setIsActive(boolean isActive) {
+            this.isActive = isActive;
         }
 
     }
