@@ -1520,10 +1520,15 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         return null;
     }
 
-    protected String resolveDefaultValue(Annotated a, Annotation[] annotations, io.swagger.v3.oas.annotations.media.Schema schema) {
+    protected Object resolveDefaultValue(Annotated a, Annotation[] annotations, io.swagger.v3.oas.annotations.media.Schema schema) {
         if (schema != null) {
             if (!schema.defaultValue().isEmpty()) {
-                return schema.defaultValue();
+                try {
+                    ObjectMapper mapper = ObjectMapperFactory.buildStrictGenericObjectMapper();
+                    return mapper.readTree(schema.defaultValue());
+                } catch (IOException e) {
+                    return schema.defaultValue();
+                }
             }
         }
         if (a == null) {
@@ -2005,8 +2010,8 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         if (StringUtils.isNotBlank(format) && StringUtils.isBlank(schema.getFormat())) {
             schema.format(format);
         }
-        String defaultValue = resolveDefaultValue(a, annotations, schemaAnnotation);
-        if (StringUtils.isNotBlank(defaultValue)) {
+        Object defaultValue = resolveDefaultValue(a, annotations, schemaAnnotation);
+        if (defaultValue != null) {
             schema.setDefault(defaultValue);
         }
         Object example = resolveExample(a, annotations, schemaAnnotation);
