@@ -33,6 +33,10 @@ import java.util.Objects;
 
 public class ApiResponse {
     private String description = null;
+
+    @OpenAPI31
+    private String summary = null;
+
     private Map<String, Header> headers = null;
     private Content content = null;
     private java.util.Map<String, Link> links = null;
@@ -55,6 +59,22 @@ public class ApiResponse {
 
     public ApiResponse description(String description) {
         this.description = description;
+        return this;
+    }
+
+    @OpenAPI31
+    public String getSummary() {
+        return summary;
+    }
+
+    @OpenAPI31
+    public void setSummary(String summary) {
+        this.summary = summary;
+    }
+
+    @OpenAPI31
+    public ApiResponse summary(String summary) {
+        this.summary = summary;
         return this;
     }
 
@@ -166,12 +186,13 @@ public class ApiResponse {
                 Objects.equals(this.content, apiResponse.content) &&
                 Objects.equals(this.links, apiResponse.links) &&
                 Objects.equals(this.extensions, apiResponse.extensions) &&
-                Objects.equals(this.$ref, apiResponse.$ref);
+                Objects.equals(this.$ref, apiResponse.$ref) &&
+                Objects.equals(this.summary, apiResponse.summary);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(description, headers, content, links, extensions, $ref);
+        return Objects.hash(description, headers, content, links, extensions, $ref, summary);
     }
 
     public java.util.Map<String, Object> getExtensions() {
@@ -211,6 +232,7 @@ public class ApiResponse {
         sb.append("class ApiResponse {\n");
 
         sb.append("    description: ").append(toIndentedString(description)).append("\n");
+        sb.append("    summary: ").append(toIndentedString(summary)).append("\n");
         sb.append("    headers: ").append(toIndentedString(headers)).append("\n");
         sb.append("    content: ").append(toIndentedString(content)).append("\n");
         sb.append("    links: ").append(toIndentedString(links)).append("\n");

@@ -10,15 +10,25 @@ import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Operation;
 import io.swagger.v3.oas.models.PathItem;
+import io.swagger.v3.oas.models.callbacks.Callback;
+import io.swagger.v3.oas.models.examples.Example;
+import io.swagger.v3.oas.models.headers.Header;
 import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
+import io.swagger.v3.oas.models.links.Link;
+import io.swagger.v3.oas.models.media.Content;
 import io.swagger.v3.oas.models.media.Discriminator;
+import io.swagger.v3.oas.models.media.MediaType;
 import io.swagger.v3.oas.models.media.ObjectSchema;
 import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.media.StringSchema;
+import io.swagger.v3.oas.models.parameters.Parameter;
+import io.swagger.v3.oas.models.parameters.RequestBody;
 import io.swagger.v3.oas.models.responses.ApiResponse;
 import io.swagger.v3.oas.models.responses.ApiResponses;
+import io.swagger.v3.oas.models.security.SecurityScheme;
+import org.checkerframework.checker.units.qual.C;
 import org.testng.annotations.Test;
 
 import static org.testng.Assert.assertEquals;
@@ -638,4 +648,526 @@ public class OpenAPI3_1SerializationTest {
                 "  }\n" +
                 "}");
     }
+
+    @Test
+    public void testPathItemsRefSerialization() {
+        OpenAPI openAPI = new OpenAPI().openapi("3.1.0")
+                .path("/pathTest", new PathItem()
+                        .$ref("#/components/pathItems/pathTest")
+                        .description("This is a ref path item")
+                        .summary("ref path item")
+                )
+                .components(new Components()
+                        .addPathItems("pathTest", new PathItem()
+                                .description("test path item")
+                                .get(new Operation()
+                                        .operationId("testPathItem")
+                                        .responses(new ApiResponses()
+                                                .addApiResponse("200", new ApiResponse().description("response description"))))));
+
+        SerializationMatchers.assertEqualsToYaml31(openAPI, "openapi: 3.1.0\n" +
+                "paths:\n" +
+                "  /pathTest:\n" +
+                "    $ref: '#/components/pathItems/pathTest'\n" +
+                "    description: This is a ref path item\n" +
+                "    summary: ref path item\n" +
+                "components:\n" +
+                "  pathItems:\n" +
+                "    pathTest:\n" +
+                "      description: test path item\n" +
+                "      get:\n" +
+                "        operationId: testPathItem\n" +
+                "        responses:\n" +
+                "          \"200\":\n" +
+                "            description: response description");
+
+        SerializationMatchers.assertEqualsToJson31(openAPI, "{\n" +
+                "  \"openapi\" : \"3.1.0\",\n" +
+                "  \"paths\" : {\n" +
+                "    \"/pathTest\" : {\n" +
+                "      \"summary\" : \"ref path item\",\n" +
+                "      \"description\" : \"This is a ref path item\",\n" +
+                "      \"$ref\" : \"#/components/pathItems/pathTest\"\n" +
+                "    }\n" +
+                "  },\n" +
+                "  \"components\" : {\n" +
+                "    \"pathItems\" : {\n" +
+                "      \"pathTest\" : {\n" +
+                "        \"description\" : \"test path item\",\n" +
+                "        \"get\" : {\n" +
+                "          \"operationId\" : \"testPathItem\",\n" +
+                "          \"responses\" : {\n" +
+                "            \"200\" : {\n" +
+                "              \"description\" : \"response description\"\n" +
+                "            }\n" +
+                "          }\n" +
+                "        }\n" +
+                "      }\n" +
+                "    }\n" +
+                "  }\n" +
+                "}");
+    }
+
+    @Test
+    public void testResponseRefSerialization() {
+        OpenAPI openAPI = new OpenAPI()
+                .openapi("3.1.0")
+                .path("/test", new PathItem()
+                        .description("test path item")
+                        .get(new Operation()
+                                .operationId("testPathItem")
+                                .responses(new ApiResponses()
+                                        .addApiResponse("200"   , new ApiResponse()
+                                                .description("point to a $ref response")
+                                                .summary("point to a $ref response")
+                                                .$ref("#/components/responses/okResponse")))))
+                .components(new Components()
+                        .addResponses("okResponse", new ApiResponse().description("everything is good")));
+        SerializationMatchers.assertEqualsToYaml31(openAPI, "openapi: 3.1.0\n" +
+                "paths:\n" +
+                "  /test:\n" +
+                "    description: test path item\n" +
+                "    get:\n" +
+                "      operationId: testPathItem\n" +
+                "      responses:\n" +
+                "        \"200\":\n" +
+                "          description: point to a $ref response\n" +
+                "          summary: point to a $ref response\n" +
+                "          $ref: '#/components/responses/okResponse'\n" +
+                "components:\n" +
+                "  responses:\n" +
+                "    okResponse:\n" +
+                "      description: everything is good");
+
+        SerializationMatchers.assertEqualsToJson31(openAPI, "{\n" +
+                "  \"openapi\" : \"3.1.0\",\n" +
+                "  \"paths\" : {\n" +
+                "    \"/test\" : {\n" +
+                "      \"description\" : \"test path item\",\n" +
+                "      \"get\" : {\n" +
+                "        \"operationId\" : \"testPathItem\",\n" +
+                "        \"responses\" : {\n" +
+                "          \"200\" : {\n" +
+                "            \"description\" : \"point to a $ref response\",\n" +
+                "            \"summary\" : \"point to a $ref response\",\n" +
+                "            \"$ref\" : \"#/components/responses/okResponse\"\n" +
+                "          }\n" +
+                "        }\n" +
+                "      }\n" +
+                "    }\n" +
+                "  },\n" +
+                "  \"components\" : {\n" +
+                "    \"responses\" : {\n" +
+                "      \"okResponse\" : {\n" +
+                "        \"description\" : \"everything is good\"\n" +
+                "      }\n" +
+                "    }\n" +
+                "  }\n" +
+                "}");
+    }
+
+    @Test
+    public void testParameterRefSerialization() {
+        OpenAPI openAPI = new OpenAPI()
+                .openapi("3.1.0")
+                .components(new Components()
+                        .addParameters("testParameter", new Parameter()
+                                .in("query")))
+                .path("/test", new PathItem()
+                        .description("test path item")
+                        .get(new Operation()
+                                .operationId("testPathItem")
+                                .addParametersItem(new Parameter()
+                                        .$ref("#/components/parameters/testParameter")
+                                        .description("test parameter")
+                                        .summary("test param"))));
+
+        SerializationMatchers.assertEqualsToYaml31(openAPI, "openapi: 3.1.0\n" +
+                "paths:\n" +
+                "  /test:\n" +
+                "    description: test path item\n" +
+                "    get:\n" +
+                "      operationId: testPathItem\n" +
+                "      parameters:\n" +
+                "      - description: test parameter\n" +
+                "        summary: test param\n" +
+                "        $ref: '#/components/parameters/testParameter'\n" +
+                "components:\n" +
+                "  parameters:\n" +
+                "    testParameter:\n" +
+                "      in: query");
+
+        SerializationMatchers.assertEqualsToJson31(openAPI, "{\n" +
+                "  \"openapi\" : \"3.1.0\",\n" +
+                "  \"paths\" : {\n" +
+                "    \"/test\" : {\n" +
+                "      \"description\" : \"test path item\",\n" +
+                "      \"get\" : {\n" +
+                "        \"operationId\" : \"testPathItem\",\n" +
+                "        \"parameters\" : [ {\n" +
+                "          \"description\" : \"test parameter\",\n" +
+                "          \"summary\" : \"test param\",\n" +
+                "          \"$ref\" : \"#/components/parameters/testParameter\"\n" +
+                "        } ]\n" +
+                "      }\n" +
+                "    }\n" +
+                "  },\n" +
+                "  \"components\" : {\n" +
+                "    \"parameters\" : {\n" +
+                "      \"testParameter\" : {\n" +
+                "        \"in\" : \"query\"\n" +
+                "      }\n" +
+                "    }\n" +
+                "  }\n" +
+                "}");
+    }
+
+    @Test
+    public void testExampleRefSerialization() {
+        OpenAPI openAPI = new OpenAPI()
+                .openapi("3.1.0")
+                .components(new Components()
+                        .addExamples("testExample", new Example()
+                                .value("Example on test")
+                                .description("this is a example desc")
+                                .summary("this is a summary test"))
+                        .addSchemas("schema", new Schema().example(new Example()
+                                .$ref("#/components/examples/testExample")
+                                .description("ref description")
+                                .summary("ref summary"))));
+
+        SerializationMatchers.assertEqualsToYaml31(openAPI, "openapi: 3.1.0\n" +
+                "components:\n" +
+                "  schemas:\n" +
+                "    schema:\n" +
+                "      example:\n" +
+                "        summary: ref summary\n" +
+                "        description: ref description\n" +
+                "        $ref: '#/components/examples/testExample'\n" +
+                "  examples:\n" +
+                "    testExample:\n" +
+                "      summary: this is a summary test\n" +
+                "      description: this is a example desc\n" +
+                "      value: Example on test");
+        SerializationMatchers.assertEqualsToJson31(openAPI, "{\n" +
+                "  \"openapi\" : \"3.1.0\",\n" +
+                "  \"components\" : {\n" +
+                "    \"schemas\" : {\n" +
+                "      \"schema\" : {\n" +
+                "        \"example\" : {\n" +
+                "          \"summary\" : \"ref summary\",\n" +
+                "          \"description\" : \"ref description\",\n" +
+                "          \"$ref\" : \"#/components/examples/testExample\"\n" +
+                "        }\n" +
+                "      }\n" +
+                "    },\n" +
+                "    \"examples\" : {\n" +
+                "      \"testExample\" : {\n" +
+                "        \"summary\" : \"this is a summary test\",\n" +
+                "        \"description\" : \"this is a example desc\",\n" +
+                "        \"value\" : \"Example on test\"\n" +
+                "      }\n" +
+                "    }\n" +
+                "  }\n" +
+                "}");
+    }
+    @Test
+    public void testRequestBodyRefSerialization() {
+        OpenAPI openAPI = new OpenAPI()
+                .openapi("3.1.0")
+                .path("/test", new PathItem()
+                        .description("test path item")
+                        .post(new Operation()
+                                .operationId("testPathItem")
+                                .requestBody(new RequestBody()
+                                        .$ref("#/components/requestBodies/body")
+                                        .description("ref request body")
+                                        .summary("ref req body"))))
+                .components(new Components()
+                        .addRequestBodies("body", new RequestBody()
+                                .content(new Content()
+                                        .addMediaType("application/json", new MediaType()
+                                                .schema(new ObjectSchema())))))
+                ;
+        SerializationMatchers.assertEqualsToYaml31(openAPI, "openapi: 3.1.0\n" +
+                "paths:\n" +
+                "  /test:\n" +
+                "    description: test path item\n" +
+                "    post:\n" +
+                "      operationId: testPathItem\n" +
+                "      requestBody:\n" +
+                "        description: ref request body\n" +
+                "        summary: ref req body\n" +
+                "        $ref: '#/components/requestBodies/body'\n" +
+                "components:\n" +
+                "  requestBodies:\n" +
+                "    body:\n" +
+                "      content:\n" +
+                "        application/json:\n" +
+                "          schema: {}");
+        SerializationMatchers.assertEqualsToJson31(openAPI, "{\n" +
+                "  \"openapi\" : \"3.1.0\",\n" +
+                "  \"paths\" : {\n" +
+                "    \"/test\" : {\n" +
+                "      \"description\" : \"test path item\",\n" +
+                "      \"post\" : {\n" +
+                "        \"operationId\" : \"testPathItem\",\n" +
+                "        \"requestBody\" : {\n" +
+                "          \"description\" : \"ref request body\",\n" +
+                "          \"summary\" : \"ref req body\",\n" +
+                "          \"$ref\" : \"#/components/requestBodies/body\"\n" +
+                "        }\n" +
+                "      }\n" +
+                "    }\n" +
+                "  },\n" +
+                "  \"components\" : {\n" +
+                "    \"requestBodies\" : {\n" +
+                "      \"body\" : {\n" +
+                "        \"content\" : {\n" +
+                "          \"application/json\" : {\n" +
+                "            \"schema\" : { }\n" +
+                "          }\n" +
+                "        }\n" +
+                "      }\n" +
+                "    }\n" +
+                "  }\n" +
+                "}");
+    }
+
+    @Test
+    public void testHeaderRefSerialization() {
+        OpenAPI openAPI = new OpenAPI()
+                .openapi("3.1.0")
+                .path("/test", new PathItem()
+                        .description("test path item")
+                        .post(new Operation()
+                                .operationId("testPathItem")
+                                .responses(new ApiResponses()
+                                        .addApiResponse("default", new ApiResponse()
+                                                .description("default response")
+                                                .addHeaderObject("header", new Header()
+                                                        .$ref("#/components/responses/okResponse")
+                                                        .description("ref header description")
+                                                        .summary("ref header summary"))))
+                        ))
+                .components(new Components()
+                        .addHeaders("test-head", new Header()
+                                .description("test header description")
+                                .summary("test header summary")));
+
+        SerializationMatchers.assertEqualsToYaml31(openAPI, "openapi: 3.1.0\n" +
+                "paths:\n" +
+                "  /test:\n" +
+                "    description: test path item\n" +
+                "    post:\n" +
+                "      operationId: testPathItem\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          headers:\n" +
+                "            header:\n" +
+                "              description: ref header description\n" +
+                "              summary: ref header summary\n" +
+                "              $ref: '#/components/responses/okResponse'\n" +
+                "components:\n" +
+                "  headers:\n" +
+                "    test-head:\n" +
+                "      description: test header description\n" +
+                "      summary: test header summary");
+        SerializationMatchers.assertEqualsToJson31(openAPI, "{\n" +
+                "  \"openapi\" : \"3.1.0\",\n" +
+                "  \"paths\" : {\n" +
+                "    \"/test\" : {\n" +
+                "      \"description\" : \"test path item\",\n" +
+                "      \"post\" : {\n" +
+                "        \"operationId\" : \"testPathItem\",\n" +
+                "        \"responses\" : {\n" +
+                "          \"default\" : {\n" +
+                "            \"description\" : \"default response\",\n" +
+                "            \"headers\" : {\n" +
+                "              \"header\" : {\n" +
+                "                \"description\" : \"ref header description\",\n" +
+                "                \"summary\" : \"ref header summary\",\n" +
+                "                \"$ref\" : \"#/components/responses/okResponse\"\n" +
+                "              }\n" +
+                "            }\n" +
+                "          }\n" +
+                "        }\n" +
+                "      }\n" +
+                "    }\n" +
+                "  },\n" +
+                "  \"components\" : {\n" +
+                "    \"headers\" : {\n" +
+                "      \"test-head\" : {\n" +
+                "        \"description\" : \"test header description\",\n" +
+                "        \"summary\" : \"test header summary\"\n" +
+                "      }\n" +
+                "    }\n" +
+                "  }\n" +
+                "}");
+    }
+
+    @Test
+    public void testSecuritySchemeRefSerialization() {
+        OpenAPI openAPI = new OpenAPI()
+                .openapi("3.1.0")
+                .components(new Components().addSecuritySchemes("basic", new SecurityScheme()
+                        .$ref("https://external.site.com/#components/securitySchemes/basic")
+                        .description("ref security description")
+                        .summary("ref security summary")));
+
+        SerializationMatchers.assertEqualsToYaml31(openAPI, "openapi: 3.1.0\n" +
+                "components:\n" +
+                "  securitySchemes:\n" +
+                "    basic:\n" +
+                "      description: ref security description\n" +
+                "      summary: ref security summary\n" +
+                "      $ref: https://external.site.com/#components/securitySchemes/basic");
+        SerializationMatchers.assertEqualsToJson31(openAPI, "{\n" +
+                "  \"openapi\" : \"3.1.0\",\n" +
+                "  \"components\" : {\n" +
+                "    \"securitySchemes\" : {\n" +
+                "      \"basic\" : {\n" +
+                "        \"description\" : \"ref security description\",\n" +
+                "        \"summary\" : \"ref security summary\",\n" +
+                "        \"$ref\" : \"https://external.site.com/#components/securitySchemes/basic\"\n" +
+                "      }\n" +
+                "    }\n" +
+                "  }\n" +
+                "}");
+    }
+
+    @Test
+    public void testLinkRefSerialization() {
+        OpenAPI openAPI = new OpenAPI()
+                .openapi("3.1.0")
+                .path("/test", new PathItem()
+                        .description("test path item")
+                        .post(new Operation()
+                                .operationId("testPathItem")
+                                .responses(new ApiResponses()
+                                        .addApiResponse("default", new ApiResponse()
+                                                .description("default response")
+                                                .addLink("link", new Link()
+                                                        .$ref("#/components/links/Link")
+                                                        .description("ref link description")
+                                                        .summary("ref link summary"))))))
+                .components(new Components().addLinks("Link", new Link()
+                        .operationRef("#/paths/~12.0~1repositories~1{username}/get")));
+
+        SerializationMatchers.assertEqualsToYaml31(openAPI, "openapi: 3.1.0\n" +
+                "paths:\n" +
+                "  /test:\n" +
+                "    description: test path item\n" +
+                "    post:\n" +
+                "      operationId: testPathItem\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          links:\n" +
+                "            link:\n" +
+                "              description: ref link description\n" +
+                "              summary: ref link summary\n" +
+                "              $ref: '#/components/links/Link'\n" +
+                "components:\n" +
+                "  links:\n" +
+                "    Link:\n" +
+                "      operationRef: \"#/paths/~12.0~1repositories~1{username}/get\"");
+        SerializationMatchers.assertEqualsToJson31(openAPI, "{\n" +
+                "  \"openapi\" : \"3.1.0\",\n" +
+                "  \"paths\" : {\n" +
+                "    \"/test\" : {\n" +
+                "      \"description\" : \"test path item\",\n" +
+                "      \"post\" : {\n" +
+                "        \"operationId\" : \"testPathItem\",\n" +
+                "        \"responses\" : {\n" +
+                "          \"default\" : {\n" +
+                "            \"description\" : \"default response\",\n" +
+                "            \"links\" : {\n" +
+                "              \"link\" : {\n" +
+                "                \"description\" : \"ref link description\",\n" +
+                "                \"summary\" : \"ref link summary\",\n" +
+                "                \"$ref\" : \"#/components/links/Link\"\n" +
+                "              }\n" +
+                "            }\n" +
+                "          }\n" +
+                "        }\n" +
+                "      }\n" +
+                "    }\n" +
+                "  },\n" +
+                "  \"components\" : {\n" +
+                "    \"links\" : {\n" +
+                "      \"Link\" : {\n" +
+                "        \"operationRef\" : \"#/paths/~12.0~1repositories~1{username}/get\"\n" +
+                "      }\n" +
+                "    }\n" +
+                "  }\n" +
+                "}");
+    }
+
+    @Test
+    public void testCallRefSerialization() {
+        OpenAPI openAPI = new OpenAPI()
+                .openapi("3.1.0")
+                .path("/test", new PathItem()
+                        .description("test path item")
+                        .post(new Operation()
+                                .operationId("testPathItem")
+                                .addCallbacks("callbackSample", new Callback()
+                                        .$ref("#/components/callbacks/TestCallback")
+                                        .description("ref callback description")
+                                        .summary("ref callback summary"))))
+                .components(new Components().addCallbacks("TestCallback", new Callback().addPathItem("{$request.query.queryUrl}", new PathItem()
+                        .description("test path item")
+                        .post(new Operation()
+                                .operationId("testPathItem")))));
+
+        SerializationMatchers.assertEqualsToYaml31(openAPI, "openapi: 3.1.0\n" +
+                "paths:\n" +
+                "  /test:\n" +
+                "    description: test path item\n" +
+                "    post:\n" +
+                "      operationId: testPathItem\n" +
+                "      callbacks:\n" +
+                "        callbackSample:\n" +
+                "          $ref: '#/components/callbacks/TestCallback'\n" +
+                "components:\n" +
+                "  callbacks:\n" +
+                "    TestCallback:\n" +
+                "      '{$request.query.queryUrl}':\n" +
+                "        description: test path item\n" +
+                "        post:\n" +
+                "          operationId: testPathItem");
+
+        SerializationMatchers.assertEqualsToJson31(openAPI, "{\n" +
+                "  \"openapi\" : \"3.1.0\",\n" +
+                "  \"paths\" : {\n" +
+                "    \"/test\" : {\n" +
+                "      \"description\" : \"test path item\",\n" +
+                "      \"post\" : {\n" +
+                "        \"operationId\" : \"testPathItem\",\n" +
+                "        \"callbacks\" : {\n" +
+                "          \"callbackSample\" : {\n" +
+                "            \"$ref\" : \"#/components/callbacks/TestCallback\"\n" +
+                "          }\n" +
+                "        }\n" +
+                "      }\n" +
+                "    }\n" +
+                "  },\n" +
+                "  \"components\" : {\n" +
+                "    \"callbacks\" : {\n" +
+                "      \"TestCallback\" : {\n" +
+                "        \"{$request.query.queryUrl}\" : {\n" +
+                "          \"description\" : \"test path item\",\n" +
+                "          \"post\" : {\n" +
+                "            \"operationId\" : \"testPathItem\"\n" +
+                "          }\n" +
+                "        }\n" +
+                "      }\n" +
+                "    }\n" +
+                "  }\n" +
+                "}");
+    }
+
+
 }
