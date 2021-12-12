@@ -84,7 +84,8 @@ public class Schema<T> {
     private Discriminator discriminator = null;
 
     private boolean exampleSetFlag;
-
+    @OpenAPI31
+    private List<Schema> prefixItems = null;
     private List<Schema> allOf = null;
     private List<Schema> anyOf = null;
     private List<Schema> oneOf = null;
@@ -1216,6 +1217,22 @@ public class Schema<T> {
     }
 
     @OpenAPI31
+    public List<Schema> getPrefixItems() {
+        return prefixItems;
+    }
+
+    @OpenAPI31
+    public void setPrefixItems(List<Schema> prefixItems) {
+        this.prefixItems = prefixItems;
+    }
+
+    @OpenAPI31
+    public Schema prefixItems(List<Schema> prefixItems) {
+        this.prefixItems = prefixItems;
+        return this;
+    }
+
+    @OpenAPI31
     public String getContentEncoding() {
         return contentEncoding;
     }
@@ -1549,7 +1566,8 @@ public class Schema<T> {
                 Objects.equals(this.dependentRequired, schema.dependentRequired) &&
                 Objects.equals(this.dependentSchemas, schema.dependentSchemas) &&
                 Objects.equals(this.$comment, schema.$comment) &&
-                Objects.equals(this.examples, schema.examples)
+                Objects.equals(this.examples, schema.examples) &&
+                Objects.equals(this.prefixItems, schema.prefixItems)
 
                 ;
     }
@@ -1563,7 +1581,7 @@ public class Schema<T> {
                 discriminator, _enum, _default, patternProperties, $id, $anchor, $schema, types, allOf, anyOf, oneOf, _const,
                 contentEncoding, contentMediaType, contentSchema, propertyNames, unevaluatedProperties, maxContains,
                 minContains, additionalItems, unevaluatedItems, _if, _else, then, dependentRequired, dependentSchemas,
-                $comment, examples, defaultSchema);
+                $comment, examples, defaultSchema, prefixItems);
     }
 
     public java.util.Map<String, Object> getExtensions() {
@@ -1648,6 +1666,7 @@ public class Schema<T> {
             sb.append("    dependentRequired: ").append(toIndentedString(dependentRequired)).append("\n");
             sb.append("    dependentSchemas: ").append(toIndentedString(dependentSchemas)).append("\n");
             sb.append("    $comment: ").append(toIndentedString($comment)).append("\n");
+            sb.append("    prefixItems: ").append(toIndentedString(prefixItems)).append("\n");
         }
         sb.append("}");
         return sb.toString();
@@ -1691,7 +1710,5 @@ public class Schema<T> {
         this._const = cast(_const);
         return this;
     }
-
-
 }
 
