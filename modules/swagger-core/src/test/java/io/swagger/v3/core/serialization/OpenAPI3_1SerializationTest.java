@@ -1131,6 +1131,8 @@ public class OpenAPI3_1SerializationTest {
                 "      callbacks:\n" +
                 "        callbackSample:\n" +
                 "          $ref: '#/components/callbacks/TestCallback'\n" +
+                "          description: ref callback description\n" +
+                "          summary: ref callback summary\n" +
                 "components:\n" +
                 "  callbacks:\n" +
                 "    TestCallback:\n" +
@@ -1148,7 +1150,9 @@ public class OpenAPI3_1SerializationTest {
                 "        \"operationId\" : \"testPathItem\",\n" +
                 "        \"callbacks\" : {\n" +
                 "          \"callbackSample\" : {\n" +
-                "            \"$ref\" : \"#/components/callbacks/TestCallback\"\n" +
+                "            \"$ref\" : \"#/components/callbacks/TestCallback\",\n" +
+                "            \"description\" : \"ref callback description\",\n" +
+                "            \"summary\" : \"ref callback summary\"\n" +
                 "          }\n" +
                 "        }\n" +
                 "      }\n" +
