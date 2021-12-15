@@ -95,4 +95,44 @@ public class OpenAPI3_1DeserializationTest {
         assertNull(openAPI.getComponents().getSchemas().get("Pet").getDiscriminator().getExtensions());
 
     }
+
+    @Test
+    public void testRefDeserializationOnOAS31() throws IOException {
+        final String jsonString = ResourceUtils.loadClassResource(getClass(), "specFiles/3.1.0/petstore-3.1_refs_siblings.yaml");
+        OpenAPI openAPI = Yaml31.mapper().readValue(jsonString, OpenAPI.class);
+
+
+        assertEquals(openAPI.getPaths().get("/ref_pet").get$ref(), "#/components/pathItems/pet");
+        assertEquals(openAPI.getPaths().get("/ref_pet").getDescription(), "ref pathItem description");
+        assertEquals(openAPI.getPaths().get("/ref_pet").getSummary(), "ref pathItem summary");
+
+        assertEquals(openAPI.getPaths().get("/pets").getPost().getParameters().get(0).get$ref(), "#/components/parameters/testParameter");
+        assertEquals(openAPI.getPaths().get("/pets").getPost().getParameters().get(0).getDescription(), "ref parameter description");
+        assertEquals(openAPI.getPaths().get("/pets").getPost().getParameters().get(0).getSummary(), "ref parameter summary");
+
+        assertEquals(openAPI.getPaths().get("/pets").getPost().getParameters().get(1).getName(), "randomParam");
+        assertEquals(openAPI.getPaths().get("/pets").getPost().getParameters().get(1).getIn(), "query");
+        assertEquals(openAPI.getPaths().get("/pets").getPost().getParameters().get(1).getExamples().get("refExample").get$ref(), "#/components/examples/testExample");
+        assertEquals(openAPI.getPaths().get("/pets").getPost().getParameters().get(1).getExamples().get("refExample").getDescription(), "ref example description");
+        assertEquals(openAPI.getPaths().get("/pets").getPost().getParameters().get(1).getExamples().get("refExample").getSummary(), "ref example summary");
+
+        assertEquals(openAPI.getPaths().get("/pets").getPost().getCallbacks().get("callIt").get$ref(), "#/components/callbacks/TestCallback");
+        assertEquals(openAPI.getPaths().get("/pets").getPost().getCallbacks().get("callIt").getDescription(), "ref call back description");
+        assertEquals(openAPI.getPaths().get("/pets").getPost().getCallbacks().get("callIt").getSummary(), "ref call back summary");
+
+        assertEquals(openAPI.getPaths().get("/pets").getPost().getRequestBody().get$ref(), "#/components/requestBodies/body");
+        assertEquals(openAPI.getPaths().get("/pets").getPost().getRequestBody().getDescription(), "ref request body description");
+        assertEquals(openAPI.getPaths().get("/pets").getPost().getRequestBody().getSummary(), "ref request body summary");
+
+        assertEquals(openAPI.getPaths().get("/pets").getPost().getResponses().get("201").get$ref(), "#/components/responses/okResponse");
+        assertEquals(openAPI.getPaths().get("/pets").getPost().getResponses().get("201").getDescription(), "ref response description");
+        assertEquals(openAPI.getPaths().get("/pets").getPost().getResponses().get("201").getSummary(), "ref response summary");
+
+        assertEquals(openAPI.getPaths().get("/pets").getPost().getResponses().get("default").getHeaders().get("head").get$ref(), "#/components/headers/head");
+        assertEquals(openAPI.getPaths().get("/pets").getPost().getResponses().get("default").getHeaders().get("head").getDescription(), "ref header description");
+        assertEquals(openAPI.getPaths().get("/pets").getPost().getResponses().get("default").getHeaders().get("head").getSummary(), "ref header summary");
+
+
+
+    }
 }
