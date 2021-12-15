@@ -14,6 +14,9 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class CallbackDeserializer extends JsonDeserializer<Callback> {
+
+    protected boolean openapi31;
+
     @Override
     public Callback deserialize(JsonParser jp, DeserializationContext ctxt)
             throws IOException {
@@ -29,6 +32,10 @@ public class CallbackDeserializer extends JsonDeserializer<Callback> {
                 extensions.put(childName, Json.mapper().convertValue(child, Object.class));
             } else if (childName.equals("$ref")) {
                 result.$ref(child.asText());
+            } else if (childName.equals("description") && openapi31) {
+                result.description(child.asText());
+            } else if (childName.equals("summary") && openapi31) {
+                result.summary(child.asText());
             } else {
                 result.put(childName, Json.mapper().convertValue(child, PathItem.class));
             }
