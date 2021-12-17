@@ -40,7 +40,11 @@ import java.util.Set;
  */
 
 public class Schema<T> {
+    @OpenAPI30
     protected T _default;
+
+    @OpenAPI31
+    protected Schema defaultSchema;
 
     private String name;
     private String title = null;
@@ -80,7 +84,8 @@ public class Schema<T> {
     private Discriminator discriminator = null;
 
     private boolean exampleSetFlag;
-
+    @OpenAPI31
+    private List<Schema> prefixItems = null;
     private List<Schema> allOf = null;
     private List<Schema> anyOf = null;
     private List<Schema> oneOf = null;
@@ -130,6 +135,39 @@ public class Schema<T> {
     private String $schema;
     @OpenAPI31
     private String $anchor;
+
+    @OpenAPI31
+    private String contentEncoding;
+    @OpenAPI31
+    private String contentMediaType;
+    @OpenAPI31
+    private Schema contentSchema;
+    @OpenAPI31
+    private Schema propertyNames;
+    @OpenAPI31
+    private Schema unevaluatedProperties;
+    @OpenAPI31
+    private Integer maxContains;
+    @OpenAPI31
+    private Integer minContains;
+    @OpenAPI31
+    private Schema additionalItems;
+    @OpenAPI31
+    private Schema unevaluatedItems;
+    @OpenAPI31
+    private Schema _if;
+    @OpenAPI31
+    private Schema _else;
+    @OpenAPI31
+    private Schema then;
+    @OpenAPI31
+    private Map<String, Schema> dependentSchemas;
+    @OpenAPI31
+    private Map<String, List<String>> dependentRequired;
+    @OpenAPI31
+    private String $comment;
+    @OpenAPI31
+    private List<T> examples;
 
     @OpenAPI31
     public Schema getContains() {
@@ -1162,6 +1200,302 @@ public class Schema<T> {
         this.exampleSetFlag = exampleSetFlag;
     }
 
+    @OpenAPI31
+    public Schema getDefaultSchema() {
+        return defaultSchema;
+    }
+
+    @OpenAPI31
+    public void setDefaultSchema(Schema defaultSchema) {
+        this.defaultSchema = defaultSchema;
+    }
+
+    @OpenAPI31
+    public Schema defaultSchema(Schema defaultSchema) {
+        this.defaultSchema = defaultSchema;
+        return this;
+    }
+
+    @OpenAPI31
+    public List<Schema> getPrefixItems() {
+        return prefixItems;
+    }
+
+    @OpenAPI31
+    public void setPrefixItems(List<Schema> prefixItems) {
+        this.prefixItems = prefixItems;
+    }
+
+    @OpenAPI31
+    public Schema prefixItems(List<Schema> prefixItems) {
+        this.prefixItems = prefixItems;
+        return this;
+    }
+
+    @OpenAPI31
+    public String getContentEncoding() {
+        return contentEncoding;
+    }
+
+    @OpenAPI31
+    public void setContentEncoding(String contentEncoding) {
+        this.contentEncoding = contentEncoding;
+    }
+
+    @OpenAPI31
+    public Schema contentEncoding(String contentEncoding) {
+        this.contentEncoding = contentEncoding;
+        return this;
+    }
+
+    @OpenAPI31
+    public String getContentMediaType() {
+        return contentMediaType;
+    }
+
+    @OpenAPI31
+    public void setContentMediaType(String contentMediaType) {
+        this.contentMediaType = contentMediaType;
+    }
+
+    @OpenAPI31
+    public Schema contentMediaType(String contentMediaType) {
+        this.contentMediaType = contentMediaType;
+        return this;
+    }
+
+    @OpenAPI31
+    public Schema getContentSchema() {
+        return contentSchema;
+    }
+
+    @OpenAPI31
+    public void setContentSchema(Schema contentSchema) {
+        this.contentSchema = contentSchema;
+    }
+
+    @OpenAPI31
+    public Schema contentSchema(Schema contentSchema) {
+        this.contentSchema = contentSchema;
+        return this;
+    }
+
+    @OpenAPI31
+    public Schema getPropertyNames() {
+        return propertyNames;
+    }
+
+    @OpenAPI31
+    public void setPropertyNames(Schema propertyNames) {
+        this.propertyNames = propertyNames;
+    }
+
+    @OpenAPI31
+    public Schema propertyNames(Schema propertyNames) {
+        this.propertyNames = propertyNames;
+        return this;
+    }
+
+    @OpenAPI31
+    public Schema getUnevaluatedProperties() {
+        return unevaluatedProperties;
+    }
+
+    @OpenAPI31
+    public void setUnevaluatedProperties(Schema unevaluatedProperties) {
+        this.unevaluatedProperties = unevaluatedProperties;
+    }
+
+    @OpenAPI31
+    public Schema unevaluatedProperties(Schema unevaluatedProperties) {
+        this.unevaluatedProperties = unevaluatedProperties;
+        return this;
+    }
+
+    @OpenAPI31
+    public Integer getMaxContains() {
+        return maxContains;
+    }
+
+    @OpenAPI31
+    public void setMaxContains(Integer maxContains) {
+        this.maxContains = maxContains;
+    }
+
+    @OpenAPI31
+    public Schema maxContains(Integer maxContains) {
+        this.maxContains = maxContains;
+        return this;
+    }
+
+    @OpenAPI31
+    public Integer getMinContains() {
+        return minContains;
+    }
+
+    @OpenAPI31
+    public void setMinContains(Integer minContains) {
+        this.minContains = minContains;
+    }
+
+    @OpenAPI31
+    public Schema minContains(Integer minContains) {
+        this.minContains = minContains;
+        return this;
+    }
+
+    @OpenAPI31
+    public Schema getAdditionalItems() {
+        return additionalItems;
+    }
+
+    @OpenAPI31
+    public void setAdditionalItems(Schema additionalItems) {
+        this.additionalItems = additionalItems;
+    }
+
+    @OpenAPI31
+    public Schema additionalItems(Schema additionalItems) {
+        this.additionalItems = additionalItems;
+        return this;
+    }
+
+    @OpenAPI31
+    public Schema getUnevaluatedItems() {
+        return unevaluatedItems;
+    }
+
+    @OpenAPI31
+    public void setUnevaluatedItems(Schema unevaluatedItems) {
+        this.unevaluatedItems = unevaluatedItems;
+    }
+
+    @OpenAPI31
+    public Schema unevaluatedItems(Schema unevaluatedItems) {
+        this.unevaluatedItems = unevaluatedItems;
+        return this;
+    }
+
+    @OpenAPI31
+    public Schema getIf() {
+        return _if;
+    }
+
+    @OpenAPI31
+    public void setIf(Schema _if) {
+        this._if = _if;
+    }
+
+    @OpenAPI31
+    public Schema _if(Schema _if) {
+        this._if = _if;
+        return this;
+    }
+
+    @OpenAPI31
+    public Schema getElse() {
+        return _else;
+    }
+
+    @OpenAPI31
+    public void setElse(Schema _else) {
+        this._else = _else;
+    }
+
+    @OpenAPI31
+    public Schema _else(Schema _else) {
+        this._else = _else;
+        return this;
+    }
+
+    @OpenAPI31
+    public Schema getThen() {
+        return then;
+    }
+
+    @OpenAPI31
+    public void setThen(Schema then) {
+        this.then = then;
+    }
+
+    @OpenAPI31
+    public Schema then(Schema then) {
+        this.then = then;
+        return this;
+    }
+
+    @OpenAPI31
+    public Map<String, Schema> getDependentSchemas() {
+        return dependentSchemas;
+    }
+
+    @OpenAPI31
+    public void setDependentSchemas(Map<String, Schema> dependentSchemas) {
+        this.dependentSchemas = dependentSchemas;
+    }
+
+    @OpenAPI31
+    public Schema dependentSchemas(Map<String, Schema> dependentSchemas) {
+        this.dependentSchemas = dependentSchemas;
+        return this;
+    }
+
+    @OpenAPI31
+    public Map<String, List<String>> getDependentRequired() {
+        return dependentRequired;
+    }
+
+    @OpenAPI31
+    public void setDependentRequired(Map<String, List<String>> dependentRequired) {
+        this.dependentRequired = dependentRequired;
+    }
+
+    @OpenAPI31
+    public Schema dependentRequired(Map<String, List<String>> dependentRequired) {
+        this.dependentRequired = dependentRequired;
+        return this;
+    }
+
+    @OpenAPI31
+    public String get$comment() {
+        return $comment;
+    }
+
+    @OpenAPI31
+    public void set$comment(String $comment) {
+        this.$comment = $comment;
+    }
+
+    @OpenAPI31
+    public Schema $comment(String $comment) {
+        this.$comment = $comment;
+        return this;
+    }
+
+    @OpenAPI31
+    public List<T> getExamples() {
+        return examples;
+    }
+
+    @OpenAPI31
+    public void setExamples(List<T> examples) {
+        this.examples = examples;
+    }
+
+    @OpenAPI31
+    public Schema<T> examples(List<T> examples) {
+        this.examples = examples;
+        return this;
+    }
+
+    @OpenAPI31
+    public void addExample(T example) {
+        if (this.examples == null) {
+            this.examples = new ArrayList<>();
+        }
+        this.examples.add(example);
+    }
+
     @Override
     public boolean equals(java.lang.Object o) {
         if (this == o) {
@@ -1215,7 +1549,27 @@ public class Schema<T> {
                 Objects.equals(this.anyOf, schema.anyOf) &&
                 Objects.equals(this.oneOf, schema.oneOf) &&
                 Objects.equals(this._const, schema._const) &&
-                Objects.equals(this._default, schema._default);
+                Objects.equals(this._default, schema._default) &&
+                Objects.equals(this.defaultSchema, schema.defaultSchema) &&
+                Objects.equals(this.contentEncoding, schema.contentEncoding) &&
+                Objects.equals(this.contentMediaType, schema.contentMediaType) &&
+                Objects.equals(this.contentSchema, schema.contentSchema) &&
+                Objects.equals(this.propertyNames, schema.propertyNames) &&
+                Objects.equals(this.unevaluatedProperties, schema.unevaluatedProperties) &&
+                Objects.equals(this.maxContains, schema.maxContains) &&
+                Objects.equals(this.minContains, schema.minContains) &&
+                Objects.equals(this.additionalItems, schema.additionalItems) &&
+                Objects.equals(this.unevaluatedItems, schema.unevaluatedItems) &&
+                Objects.equals(this._if, schema._if) &&
+                Objects.equals(this._else, schema._else) &&
+                Objects.equals(this.then, schema.then) &&
+                Objects.equals(this.dependentRequired, schema.dependentRequired) &&
+                Objects.equals(this.dependentSchemas, schema.dependentSchemas) &&
+                Objects.equals(this.$comment, schema.$comment) &&
+                Objects.equals(this.examples, schema.examples) &&
+                Objects.equals(this.prefixItems, schema.prefixItems)
+
+                ;
     }
 
     @Override
@@ -1224,7 +1578,10 @@ public class Schema<T> {
                 exclusiveMinimum, exclusiveMinimumValue, maxLength, minLength, pattern, maxItems, minItems, uniqueItems,
                 maxProperties, minProperties, required, type, not, properties, additionalProperties, description,
                 format, $ref, nullable, readOnly, writeOnly, example, externalDocs, deprecated, xml, extensions,
-                discriminator, _enum, _default, patternProperties, $id, $anchor, $schema, types, allOf, anyOf, oneOf, _const);
+                discriminator, _enum, _default, patternProperties, $id, $anchor, $schema, types, allOf, anyOf, oneOf, _const,
+                contentEncoding, contentMediaType, contentSchema, propertyNames, unevaluatedProperties, maxContains,
+                minContains, additionalItems, unevaluatedItems, _if, _else, then, dependentRequired, dependentSchemas,
+                $comment, examples, defaultSchema, prefixItems);
     }
 
     public java.util.Map<String, Object> getExtensions() {
@@ -1232,7 +1589,7 @@ public class Schema<T> {
     }
 
     public void addExtension(String name, Object value) {
-        if (name == null || name.isEmpty() || !name.startsWith("x-")) {
+        if (name == null || name.isEmpty() || (specVersion == SpecVersion.V30 && !name.startsWith("x-"))) {
             return;
         }
         if (this.extensions == null) {
@@ -1294,6 +1651,22 @@ public class Schema<T> {
             sb.append("    $anchor: ").append(toIndentedString($anchor)).append("\n");
             sb.append("    $schema: ").append(toIndentedString($schema)).append("\n");
             sb.append("    const: ").append(toIndentedString(_const)).append("\n");
+            sb.append("    contentEncoding: ").append(toIndentedString(contentEncoding)).append("\n");
+            sb.append("    contentMediaType: ").append(toIndentedString(contentMediaType)).append("\n");
+            sb.append("    contentSchema: ").append(toIndentedString(contentSchema)).append("\n");
+            sb.append("    propertyNames: ").append(toIndentedString(propertyNames)).append("\n");
+            sb.append("    unevaluatedProperties: ").append(toIndentedString(unevaluatedProperties)).append("\n");
+            sb.append("    maxContains: ").append(toIndentedString(maxContains)).append("\n");
+            sb.append("    minContains: ").append(toIndentedString(minContains)).append("\n");
+            sb.append("    additionalItems: ").append(toIndentedString(additionalItems)).append("\n");
+            sb.append("    unevaluatedItems: ").append(toIndentedString(unevaluatedItems)).append("\n");
+            sb.append("    _if: ").append(toIndentedString(_if)).append("\n");
+            sb.append("    _else: ").append(toIndentedString(_else)).append("\n");
+            sb.append("    then: ").append(toIndentedString(then)).append("\n");
+            sb.append("    dependentRequired: ").append(toIndentedString(dependentRequired)).append("\n");
+            sb.append("    dependentSchemas: ").append(toIndentedString(dependentSchemas)).append("\n");
+            sb.append("    $comment: ").append(toIndentedString($comment)).append("\n");
+            sb.append("    prefixItems: ").append(toIndentedString(prefixItems)).append("\n");
         }
         sb.append("}");
         return sb.toString();
@@ -1337,7 +1710,5 @@ public class Schema<T> {
         this._const = cast(_const);
         return this;
     }
-
-
 }
 
