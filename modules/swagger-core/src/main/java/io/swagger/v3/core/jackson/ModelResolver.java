@@ -907,7 +907,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             property = Json.mapper().readValue(Json.pretty(property), Schema.class);
             property.setName(cloneName);
         } catch (IOException e) {
-            LOGGER.error("Could not clone property, e");
+            LOGGER.error("Could not clone property", e);
         }
         return property;
     }
@@ -947,28 +947,32 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         Class<Enum<?>> enumClass = (Class<Enum<?>>) propClass;
 
         Enum<?>[] enumConstants = enumClass.getEnumConstants();
-        String[] enumValues = _intr.findEnumValues(propClass, enumConstants, new String[enumConstants.length]);
+        if (enumConstants != null) {
+            String[] enumValues = _intr.findEnumValues(propClass, enumConstants,
+                new String[enumConstants.length]);
 
-        for (Enum<?> en : enumConstants) {
-            String n;
+            for (Enum<?> en : enumConstants) {
+                String n;
 
-            String enumValue = enumValues[en.ordinal()];
-            String s = jsonValueMethod.flatMap(m -> ReflectionUtils.safeInvoke(m, en)).map(Object::toString).orElse(null);
+                String enumValue = enumValues[en.ordinal()];
+                String s = jsonValueMethod.flatMap(m -> ReflectionUtils.safeInvoke(m, en))
+                    .map(Object::toString).orElse(null);
 
-            if (s != null) {
-                n = s;
-            } else if (enumValue != null) {
-                n = enumValue;
-            } else if (useIndex) {
-                n = String.valueOf(en.ordinal());
-            } else if (useToString) {
-                n = en.toString();
-            } else {
-                n = _intr.findEnumValue(en);
-            }
-            if (property instanceof StringSchema) {
-                StringSchema sp = (StringSchema) property;
-                sp.addEnumItem(n);
+                if (s != null) {
+                    n = s;
+                } else if (enumValue != null) {
+                    n = enumValue;
+                } else if (useIndex) {
+                    n = String.valueOf(en.ordinal());
+                } else if (useToString) {
+                    n = en.toString();
+                } else {
+                    n = _intr.findEnumValue(en);
+                }
+                if (property instanceof StringSchema) {
+                    StringSchema sp = (StringSchema) property;
+                    sp.addEnumItem(n);
+                }
             }
         }
     }
@@ -1516,10 +1520,15 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         return null;
     }
 
-    protected String resolveDefaultValue(Annotated a, Annotation[] annotations, io.swagger.v3.oas.annotations.media.Schema schema) {
+    protected Object resolveDefaultValue(Annotated a, Annotation[] annotations, io.swagger.v3.oas.annotations.media.Schema schema) {
         if (schema != null) {
             if (!schema.defaultValue().isEmpty()) {
-                return schema.defaultValue();
+                try {
+                    ObjectMapper mapper = ObjectMapperFactory.buildStrictGenericObjectMapper();
+                    return mapper.readTree(schema.defaultValue());
+                } catch (IOException e) {
+                    return schema.defaultValue();
+                }
             }
         }
         if (a == null) {
@@ -2001,8 +2010,8 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         if (StringUtils.isNotBlank(format) && StringUtils.isBlank(schema.getFormat())) {
             schema.format(format);
         }
-        String defaultValue = resolveDefaultValue(a, annotations, schemaAnnotation);
-        if (StringUtils.isNotBlank(defaultValue)) {
+        Object defaultValue = resolveDefaultValue(a, annotations, schemaAnnotation);
+        if (defaultValue != null) {
             schema.setDefault(defaultValue);
         }
         Object example = resolveExample(a, annotations, schemaAnnotation);
