@@ -31,6 +31,9 @@ import io.swagger.v3.oas.models.security.SecurityScheme;
 import org.checkerframework.checker.units.qual.C;
 import org.testng.annotations.Test;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
@@ -441,7 +444,7 @@ public class OpenAPI3_1SerializationTest {
     }
 
     @Test
-    public void testOWebHooksSerialization() {
+    public void testWebHooksSerialization() {
         OpenAPI openAPI = new OpenAPI()
                 .openapi("3.1.0")
                 .addWebhooks("hook", new PathItem()
@@ -495,13 +498,85 @@ public class OpenAPI3_1SerializationTest {
                         .get(new Operation()
                                 .operationId("testPathItem")
                                 .responses(new ApiResponses()
-                                        .addApiResponse("200", new ApiResponse().description("response description"))))));
+                                        .addApiResponse("200", new ApiResponse().description("response description")))))
+                .addResponses("201", new ApiResponse()
+                        .description("api response description")
+                        .summary("api response summary"))
+                .addParameters("param", new Parameter()
+                        .in("query")
+                        .description("parameter description")
+                        .summary("parameter summary")
+                        .schema(schema))
+                .addExamples("example", new Example()
+                        .summary("example summary")
+                        .value("This is an example/")
+                        .description("example description"))
+                .addRequestBodies("body", new RequestBody()
+                        .content(new Content()
+                                .addMediaType("application/json", new MediaType()
+                                        .schema(new ObjectSchema()))))
+                .addHeaders("test-head", new Header()
+                        .description("test header description")
+                        .summary("test header summary"))
+                .addSecuritySchemes("basic", new SecurityScheme()
+                        .in(SecurityScheme.In.HEADER)
+                        .scheme("http")
+                        .description("ref security description")
+                        .summary("ref security summary"))
+                .addLinks("Link", new Link()
+                        .operationRef("#/paths/~12.0~1repositories~1{username}/get"))
+                .addCallbacks("TestCallback", new Callback().addPathItem("{$request.query.queryUrl}", new PathItem()
+                        .description("test path item")
+                        .post(new Operation()
+                                .operationId("testPathItem")))));
+
+        Yaml31.prettyPrint(openAPI);
 
         SerializationMatchers.assertEqualsToYaml31(openAPI, "openapi: 3.1.0\n" +
                 "components:\n" +
                 "  schemas:\n" +
                 "    stringTest:\n" +
                 "      type: string\n" +
+                "  responses:\n" +
+                "    \"201\":\n" +
+                "      description: api response description\n" +
+                "      summary: api response summary\n" +
+                "  parameters:\n" +
+                "    param:\n" +
+                "      in: query\n" +
+                "      description: parameter description\n" +
+                "      summary: parameter summary\n" +
+                "      schema:\n" +
+                "        type: string\n" +
+                "  examples:\n" +
+                "    example:\n" +
+                "      summary: example summary\n" +
+                "      description: example description\n" +
+                "      value: This is an example/\n" +
+                "  requestBodies:\n" +
+                "    body:\n" +
+                "      content:\n" +
+                "        application/json:\n" +
+                "          schema: {}\n" +
+                "  headers:\n" +
+                "    test-head:\n" +
+                "      description: test header description\n" +
+                "      summary: test header summary\n" +
+                "  securitySchemes:\n" +
+                "    basic:\n" +
+                "      description: ref security description\n" +
+                "      summary: ref security summary\n" +
+                "      in: header\n" +
+                "      scheme: http\n" +
+                "  links:\n" +
+                "    Link:\n" +
+                "      operationRef: \"#/paths/~12.0~1repositories~1{username}/get\"\n" +
+                "  callbacks:\n" +
+                "    TestCallback:\n" +
+                "      '{$request.query.queryUrl}':\n" +
+                "        description: test path item\n" +
+                "        post:\n" +
+                "          operationId: testPathItem\n" +
                 "  pathItems:\n" +
                 "    /pathTest:\n" +
                 "      description: test path item\n" +
@@ -515,9 +590,70 @@ public class OpenAPI3_1SerializationTest {
                 "  \"openapi\" : \"3.1.0\",\n" +
                 "  \"components\" : {\n" +
                 "    \"schemas\" : {\n" +
-                "      \"stringTest\" : {" +
-                "        \"type\" : \"string\"" +
-                "       }\n" +
+                "      \"stringTest\" : {\n" +
+                "        \"type\" : \"string\"\n" +
+                "      }\n" +
+                "    },\n" +
+                "    \"responses\" : {\n" +
+                "      \"201\" : {\n" +
+                "        \"description\" : \"api response description\",\n" +
+                "        \"summary\" : \"api response summary\"\n" +
+                "      }\n" +
+                "    },\n" +
+                "    \"parameters\" : {\n" +
+                "      \"param\" : {\n" +
+                "        \"in\" : \"query\",\n" +
+                "        \"description\" : \"parameter description\",\n" +
+                "        \"summary\" : \"parameter summary\",\n" +
+                "        \"schema\" : {\n" +
+                "          \"type\" : \"string\"\n" +
+                "        }\n" +
+                "      }\n" +
+                "    },\n" +
+                "    \"examples\" : {\n" +
+                "      \"example\" : {\n" +
+                "        \"summary\" : \"example summary\",\n" +
+                "        \"description\" : \"example description\",\n" +
+                "        \"value\" : \"This is an example/\"\n" +
+                "      }\n" +
+                "    },\n" +
+                "    \"requestBodies\" : {\n" +
+                "      \"body\" : {\n" +
+                "        \"content\" : {\n" +
+                "          \"application/json\" : {\n" +
+                "            \"schema\" : { }\n" +
+                "          }\n" +
+                "        }\n" +
+                "      }\n" +
+                "    },\n" +
+                "    \"headers\" : {\n" +
+                "      \"test-head\" : {\n" +
+                "        \"description\" : \"test header description\",\n" +
+                "        \"summary\" : \"test header summary\"\n" +
+                "      }\n" +
+                "    },\n" +
+                "    \"securitySchemes\" : {\n" +
+                "      \"basic\" : {\n" +
+                "        \"description\" : \"ref security description\",\n" +
+                "        \"summary\" : \"ref security summary\",\n" +
+                "        \"in\" : \"header\",\n" +
+                "        \"scheme\" : \"http\"\n" +
+                "      }\n" +
+                "    },\n" +
+                "    \"links\" : {\n" +
+                "      \"Link\" : {\n" +
+                "        \"operationRef\" : \"#/paths/~12.0~1repositories~1{username}/get\"\n" +
+                "      }\n" +
+                "    },\n" +
+                "    \"callbacks\" : {\n" +
+                "      \"TestCallback\" : {\n" +
+                "        \"{$request.query.queryUrl}\" : {\n" +
+                "          \"description\" : \"test path item\",\n" +
+                "          \"post\" : {\n" +
+                "            \"operationId\" : \"testPathItem\"\n" +
+                "          }\n" +
+                "        }\n" +
+                "      }\n" +
                 "    },\n" +
                 "    \"pathItems\" : {\n" +
                 "      \"/pathTest\" : {\n" +
@@ -540,15 +676,111 @@ public class OpenAPI3_1SerializationTest {
                 "components:\n" +
                 "  schemas:\n" +
                 "    stringTest:\n" +
-                "      type: string\n");
+                "      type: string\n" +
+                "  responses:\n" +
+                "    \"201\":\n" +
+                "      description: api response description\n" +
+                "  parameters:\n" +
+                "    param:\n" +
+                "      in: query\n" +
+                "      description: parameter description\n" +
+                "      schema:\n" +
+                "        type: string\n" +
+                "  examples:\n" +
+                "    example:\n" +
+                "      summary: example summary\n" +
+                "      description: example description\n" +
+                "      value: This is an example/\n" +
+                "  requestBodies:\n" +
+                "    body:\n" +
+                "      content:\n" +
+                "        application/json:\n" +
+                "          schema:\n" +
+                "            type: object\n" +
+                "  headers:\n" +
+                "    test-head:\n" +
+                "      description: test header description\n" +
+                "  securitySchemes:\n" +
+                "    basic:\n" +
+                "      description: ref security description\n" +
+                "      in: header\n" +
+                "      scheme: http\n" +
+                "  links:\n" +
+                "    Link:\n" +
+                "      operationRef: \"#/paths/~12.0~1repositories~1{username}/get\"\n" +
+                "  callbacks:\n" +
+                "    TestCallback:\n" +
+                "      '{$request.query.queryUrl}':\n" +
+                "        description: test path item\n" +
+                "        post:\n" +
+                "          operationId: testPathItem");
 
         SerializationMatchers.assertEqualsToJson(openAPI, "{\n" +
                 "  \"openapi\" : \"3.0.3\",\n" +
                 "  \"components\" : {\n" +
                 "    \"schemas\" : {\n" +
-                "      \"stringTest\" : {" +
-                "        \"type\" : \"string\"" +
-                "       }\n" +
+                "      \"stringTest\" : {\n" +
+                "        \"type\" : \"string\"\n" +
+                "      }\n" +
+                "    },\n" +
+                "    \"responses\" : {\n" +
+                "      \"201\" : {\n" +
+                "        \"description\" : \"api response description\"\n" +
+                "      }\n" +
+                "    },\n" +
+                "    \"parameters\" : {\n" +
+                "      \"param\" : {\n" +
+                "        \"in\" : \"query\",\n" +
+                "        \"description\" : \"parameter description\",\n" +
+                "        \"schema\" : {\n" +
+                "          \"type\" : \"string\"\n" +
+                "        }\n" +
+                "      }\n" +
+                "    },\n" +
+                "    \"examples\" : {\n" +
+                "      \"example\" : {\n" +
+                "        \"summary\" : \"example summary\",\n" +
+                "        \"description\" : \"example description\",\n" +
+                "        \"value\" : \"This is an example/\"\n" +
+                "      }\n" +
+                "    },\n" +
+                "    \"requestBodies\" : {\n" +
+                "      \"body\" : {\n" +
+                "        \"content\" : {\n" +
+                "          \"application/json\" : {\n" +
+                "            \"schema\" : {\n" +
+                "              \"type\" : \"object\"\n" +
+                "            }\n" +
+                "          }\n" +
+                "        }\n" +
+                "      }\n" +
+                "    },\n" +
+                "    \"headers\" : {\n" +
+                "      \"test-head\" : {\n" +
+                "        \"description\" : \"test header description\"\n" +
+                "      }\n" +
+                "    },\n" +
+                "    \"securitySchemes\" : {\n" +
+                "      \"basic\" : {\n" +
+                "        \"description\" : \"ref security description\",\n" +
+                "        \"in\" : \"header\",\n" +
+                "        \"scheme\" : \"http\"\n" +
+                "      }\n" +
+                "    },\n" +
+                "    \"links\" : {\n" +
+                "      \"Link\" : {\n" +
+                "        \"operationRef\" : \"#/paths/~12.0~1repositories~1{username}/get\"\n" +
+                "      }\n" +
+                "    },\n" +
+                "    \"callbacks\" : {\n" +
+                "      \"TestCallback\" : {\n" +
+                "        \"{$request.query.queryUrl}\" : {\n" +
+                "          \"description\" : \"test path item\",\n" +
+                "          \"post\" : {\n" +
+                "            \"operationId\" : \"testPathItem\"\n" +
+                "          }\n" +
+                "        }\n" +
+                "      }\n" +
                 "    }\n" +
                 "  }\n" +
                 "}");
