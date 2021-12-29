@@ -131,6 +131,46 @@ components:
           format: int32
         message:
           type: string
+  responses:
+    "201":
+      description: api response description
+      summary: api response summary
+  parameters:
+    param:
+      in: query
+      name: param0
+      description: parameter description
+      summary: parameter summary
+      schema:
+        type: string
+  examples:
+    example:
+      summary: example summary
+      description: example description
+      value: This is an example
+  requestBodies:
+    body:
+      content:
+        application/json:
+          schema: { }
+  headers:
+    test-head:
+      description: test header description
+      summary: test header summary
+  securitySchemes:
+    basic:
+      description: security description
+      summary: security summary
+      type: http
+  links:
+    Link:
+      operationRef: "#/paths/~12.0~1repositories~1{username}/get"
+  callbacks:
+    TestCallback:
+      '{$request.query.queryUrl}':
+        description: test path item
+        post:
+          operationId: testPathItem
   pathItems:
     /pet:
       description: get a pet

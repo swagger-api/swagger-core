@@ -12,6 +12,9 @@ import java.io.IOException;
 import java.util.Arrays;
 
 public class SecuritySchemeDeserializer extends JsonDeserializer<SecurityScheme> {
+
+    protected boolean openapi31;
+
     @Override
     public SecurityScheme deserialize(JsonParser jp, DeserializationContext ctxt)
             throws IOException {
@@ -51,6 +54,11 @@ public class SecuritySchemeDeserializer extends JsonDeserializer<SecurityScheme>
             } else if ("mutualTLS".equals(type)) {
                 result
                         .type(SecurityScheme.Type.MUTUALTLS);
+            }
+
+            JsonNode summaryNode = node.get("summary");
+            if (summaryNode != null && openapi31) {
+                result.setSummary(summaryNode.asText());
             }
 
         }
