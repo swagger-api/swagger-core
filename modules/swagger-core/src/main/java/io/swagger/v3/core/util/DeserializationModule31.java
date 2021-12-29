@@ -21,7 +21,7 @@ public class DeserializationModule31 extends SimpleModule {
         this.addDeserializer(Encoding.StyleEnum.class, new EncodingStyleEnumDeserializer());
         this.addDeserializer(EncodingProperty.StyleEnum.class, new EncodingPropertyStyleEnumDeserializer());
 
-        this.addDeserializer(SecurityScheme.class, new SecuritySchemeDeserializer());
+        this.addDeserializer(SecurityScheme.class, new SecurityScheme31Deserializer());
 
         this.addDeserializer(ApiResponses.class, new ApiResponses31Deserializer());
         this.addDeserializer(Paths.class, new Paths31Deserializer());
