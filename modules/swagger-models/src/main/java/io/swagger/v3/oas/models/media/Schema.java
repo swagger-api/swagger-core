@@ -145,7 +145,7 @@ public class Schema<T> {
     @OpenAPI31
     private Schema propertyNames;
     @OpenAPI31
-    private Schema unevaluatedProperties;
+    private Object unevaluatedProperties;
     @OpenAPI31
     private Integer maxContains;
     @OpenAPI31
@@ -1297,17 +1297,17 @@ public class Schema<T> {
     }
 
     @OpenAPI31
-    public Schema getUnevaluatedProperties() {
+    public Object getUnevaluatedProperties() {
         return unevaluatedProperties;
     }
 
     @OpenAPI31
-    public void setUnevaluatedProperties(Schema unevaluatedProperties) {
+    public void setUnevaluatedProperties(Object unevaluatedProperties) {
         this.unevaluatedProperties = unevaluatedProperties;
     }
 
     @OpenAPI31
-    public Schema unevaluatedProperties(Schema unevaluatedProperties) {
+    public Schema unevaluatedProperties(Object unevaluatedProperties) {
         this.unevaluatedProperties = unevaluatedProperties;
         return this;
     }
