@@ -88,6 +88,15 @@ components:
           format: int32
         message:
           type: string
+    AnotherPet:
+      title: Another Pet
+      description: Another Pet for petstore referencing Pet schema
+      $ref: "#/components/schemas/Pet"
+      properties:
+        category:
+          type: string
+        photoUrl:
+          type: string
   pathItems:
     pet:
       description: get a pet
