@@ -18,7 +18,7 @@ public class Json {
     /**
      * Cause Json.mapper() to be recreated. If {@link ObjectMapperFactory} state has been updated then the new mapper
      * will reflect those changes.
-     * @since 2.1.12
+     * @since 2.1.13
      */
     public static void recreateMapper() {
         mapper = ObjectMapperFactory.createJson();
