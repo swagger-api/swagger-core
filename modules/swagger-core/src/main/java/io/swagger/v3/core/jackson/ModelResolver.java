@@ -992,7 +992,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         if (propertiesToIgnore.contains(propName)) {
             return true;
         }
-        if (member.hasAnnotation(JsonIgnore.class)) {
+        if (member.hasAnnotation(JsonIgnore.class) && !member.getAnnotation( JsonIgnore.class ).value() == false ) {
             return true;
         }
         if (hasHiddenAnnotation(member)) {
