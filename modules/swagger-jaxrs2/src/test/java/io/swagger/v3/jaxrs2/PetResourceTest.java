@@ -122,7 +122,7 @@ public class PetResourceTest extends AbstractAnnotationTest {
     }
 
     @Test(description = "Test RequestBody resource)")
-    public void tetRequestBodyResource() {
+    public void testRequestBodyResource() {
         compare(RequestBodyResource.class, REQUEST_BODIES_SOURCE);
         compare(RequestBodyParameterPriorityResource.class, REQUEST_BODIES_SOURCE);
         compare(RequestBodyMethodPriorityResource.class, REQUEST_BODIES_SOURCE);
