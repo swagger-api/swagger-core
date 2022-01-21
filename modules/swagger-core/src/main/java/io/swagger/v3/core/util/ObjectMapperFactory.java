@@ -68,12 +68,12 @@ public class ObjectMapperFactory {
     private static AtomicReference<YAMLMapper.Builder> yamlMapperBuilderReference =
             new AtomicReference<>(createDefaultYAMLMapperBuilder());
 
-    protected static ObjectMapper createJson() {
-        return createDefaultJsonMapperBuilder().build();
+    protected static synchronized ObjectMapper createJson() {
+        return jsonMapperBuilderReference.get().build();
     }
 
-    protected static ObjectMapper createYaml() {
-        return createDefaultYAMLMapperBuilder().build();
+    protected static synchronized ObjectMapper createYaml() {
+        return yamlMapperBuilderReference.get().build();
     }
 
     /**

@@ -12,7 +12,7 @@ public class ObjectMapperFactoryTest {
         assertFalse(ObjectMapperFactory.createJson().isEnabled(JsonParser.Feature.ALLOW_COMMENTS));
         try {
             ObjectMapperFactory.modifyJsonMapperBuilder(builder -> builder.enable(JsonParser.Feature.ALLOW_COMMENTS));
-            //assertTrue(ObjectMapperFactory.createJson().isEnabled(JsonParser.Feature.ALLOW_COMMENTS));
+            assertTrue(ObjectMapperFactory.createJson().isEnabled(JsonParser.Feature.ALLOW_COMMENTS));
         } finally {
             ObjectMapperFactory.resetJsonMapperBuilder();
             assertFalse(ObjectMapperFactory.createJson().isEnabled(JsonParser.Feature.ALLOW_COMMENTS));
@@ -24,7 +24,7 @@ public class ObjectMapperFactoryTest {
         assertFalse(ObjectMapperFactory.createYaml().isEnabled(JsonParser.Feature.ALLOW_COMMENTS));
         try {
             ObjectMapperFactory.modifyYamlMapperBuilder(builder -> builder.enable(JsonParser.Feature.ALLOW_COMMENTS));
-            //assertTrue(ObjectMapperFactory.createYaml().isEnabled(JsonParser.Feature.ALLOW_COMMENTS));
+            assertTrue(ObjectMapperFactory.createYaml().isEnabled(JsonParser.Feature.ALLOW_COMMENTS));
         } finally {
             ObjectMapperFactory.resetYamlMapperBuilder();
             assertFalse(ObjectMapperFactory.createYaml().isEnabled(JsonParser.Feature.ALLOW_COMMENTS));
