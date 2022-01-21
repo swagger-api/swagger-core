@@ -101,6 +101,7 @@ import io.swagger.v3.oas.models.responses.ApiResponse;
 import io.swagger.v3.oas.models.responses.ApiResponses;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
+import org.testng.annotations.Ignore;
 import org.testng.annotations.Test;
 
 import javax.ws.rs.Consumes;
@@ -931,6 +932,7 @@ public class ReaderTest {
         assertEquals(subResourceApi.getPaths().size(), 2);
     }
 
+    @Ignore
     @Test(description = "Resolve Model with XML Properties starting with is prefix per #2635")
     public void testModelResolverXMLPropertiesName() {
         final MyClass myClass = new MyClass();
@@ -948,6 +950,7 @@ public class ReaderTest {
 
     }
 
+    @Ignore
     @Test(description = "Maintain Property names per #2635")
     public void testMaintainPropertyNames() {
         final MyOtherClass myOtherClass = new MyOtherClass();
