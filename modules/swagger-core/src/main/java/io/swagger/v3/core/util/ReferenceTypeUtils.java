@@ -7,23 +7,22 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 
-public abstract class OptionalUtils {
+public abstract class ReferenceTypeUtils {
 
-    private static Logger LOGGER = LoggerFactory.getLogger(OptionalUtils.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(ReferenceTypeUtils.class);
 
-    public static boolean _isOptionalType(JavaType jtype) {
+    public static boolean _isReferenceType(JavaType jtype) {
 
-        return Arrays.asList("com.google.common.base.Optional", "java.util.Optional")
+        return Arrays.asList("com.google.common.base.Optional", "java.util.Optional", "java.util.concurrent.atomic.AtomicReference")
                 .contains(jtype.getRawClass().getCanonicalName());
     }
 
     /**
-     * check if type is an Optional type, returns the unwrapped type in case, otherwise null
+     * check if type is a reference type, returns the unwrapped type in case, otherwise null
      *
      * @param type
-     *
      */
-    public static AnnotatedType unwrapOptional(AnnotatedType type) {
+    public static AnnotatedType unwrapReference(AnnotatedType type) {
 
         if (type == null) {
             return type;
@@ -36,7 +35,7 @@ public abstract class OptionalUtils {
                 jtype = Json.mapper().constructType(type.getType());
             }
 
-            if (_isOptionalType(jtype)) {
+            if (_isReferenceType(jtype)) {
                 AnnotatedType aType = new AnnotatedType()
                         .type(jtype.containedType(0))
                         .name(type.getName())
