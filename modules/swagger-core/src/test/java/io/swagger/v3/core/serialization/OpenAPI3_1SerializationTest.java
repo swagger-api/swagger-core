@@ -1039,6 +1039,7 @@ public class OpenAPI3_1SerializationTest {
                                         .addApiResponse("200"   , new ApiResponse()
                                                 .description("point to a $ref response")
                                                 .summary("point to a $ref response")
+                                                .addHeaderObject("header", new Header().description("header")) // should be ignored
                                                 .$ref("#/components/responses/okResponse")))))
                 .components(new Components()
                         .addResponses("okResponse", new ApiResponse().description("everything is good")));
