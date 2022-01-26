@@ -70,6 +70,7 @@ public class Schema<T> {
     private java.util.Map<String, Object> extensions = null;
     protected List<T> _enum = null;
     private Discriminator discriminator = null;
+    private Schema<?> items = null;
 
     private boolean exampleSetFlag;
 
@@ -79,6 +80,25 @@ public class Schema<T> {
     protected Schema(String type, String format) {
         this.type = type;
         this.format = format;
+    }
+
+    /**
+     * returns the items property from a Schema instance.
+     *
+     * @return Schema items
+     **/
+
+    public Schema<?> getItems() {
+        return items;
+    }
+
+    public void setItems(Schema<?> items) {
+        this.items = items;
+    }
+
+    public Schema items(Schema<?> items) {
+        this.items = items;
+        return this;
     }
 
     /**
@@ -812,14 +832,15 @@ public class Schema<T> {
                 Objects.equals(this.extensions, schema.extensions) &&
                 Objects.equals(this.discriminator, schema.discriminator) &&
                 Objects.equals(this._enum, schema._enum) &&
-                Objects.equals(this._default, schema._default);
+                Objects.equals(this._default, schema._default)&&
+                Objects.equals(this.items, schema.items);
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(title, multipleOf, maximum, exclusiveMaximum, minimum, exclusiveMinimum, maxLength, minLength, pattern, maxItems,
                 minItems, uniqueItems, maxProperties, minProperties, required, type, not, properties, additionalProperties, description, format, $ref,
-                nullable, readOnly, writeOnly, example, externalDocs, deprecated, xml, extensions, discriminator, _enum, _default);
+                nullable, readOnly, writeOnly, example, externalDocs, deprecated, xml, extensions, discriminator, _enum, _default, items);
     }
 
     public java.util.Map<String, Object> getExtensions() {
@@ -879,6 +900,7 @@ public class Schema<T> {
         sb.append("    deprecated: ").append(toIndentedString(deprecated)).append("\n");
         sb.append("    discriminator: ").append(toIndentedString(discriminator)).append("\n");
         sb.append("    xml: ").append(toIndentedString(xml)).append("\n");
+        sb.append("    items: ").append(toIndentedString(items)).append("\n");
         sb.append("}");
         return sb.toString();
     }
