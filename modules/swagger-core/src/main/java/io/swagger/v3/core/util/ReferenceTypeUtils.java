@@ -13,8 +13,8 @@ public abstract class ReferenceTypeUtils {
 
     public static boolean _isReferenceType(JavaType jtype) {
 
-        return Arrays.asList("com.google.common.base.Optional", "java.util.Optional", "java.util.concurrent.atomic.AtomicReference")
-                .contains(jtype.getRawClass().getCanonicalName());
+        return Arrays.asList("com.google.common.base.Optional", "java.util.Optional")
+                .contains(jtype.getRawClass().getCanonicalName()) || jtype.isReferenceType();
     }
 
     /**
