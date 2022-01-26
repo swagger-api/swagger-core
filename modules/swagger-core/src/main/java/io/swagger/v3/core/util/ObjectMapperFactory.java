@@ -18,6 +18,7 @@ import io.swagger.v3.core.jackson.Schema31Serializer;
 import io.swagger.v3.core.jackson.SchemaSerializer;
 import io.swagger.v3.core.jackson.mixin.ApiResponseMixin;
 import io.swagger.v3.core.jackson.mixin.CallbackMixin;
+import io.swagger.v3.core.jackson.mixin.Components31Mixin;
 import io.swagger.v3.core.jackson.mixin.ComponentsMixin;
 import io.swagger.v3.core.jackson.mixin.DateSchemaMixin;
 import io.swagger.v3.core.jackson.mixin.Discriminator31Mixin;
@@ -29,7 +30,9 @@ import io.swagger.v3.core.jackson.mixin.Info31Mixin;
 import io.swagger.v3.core.jackson.mixin.LicenseMixin;
 import io.swagger.v3.core.jackson.mixin.LinkMixin;
 import io.swagger.v3.core.jackson.mixin.MediaTypeMixin;
+import io.swagger.v3.core.jackson.mixin.OpenAPI31Mixin;
 import io.swagger.v3.core.jackson.mixin.OpenAPIMixin;
+import io.swagger.v3.core.jackson.mixin.Operation31Mixin;
 import io.swagger.v3.core.jackson.mixin.OperationMixin;
 import io.swagger.v3.core.jackson.mixin.ParameterMixin;
 import io.swagger.v3.core.jackson.mixin.RequestBodyMixin;
@@ -70,7 +73,6 @@ import io.swagger.v3.oas.models.servers.Server;
 import io.swagger.v3.oas.models.servers.ServerVariable;
 import io.swagger.v3.oas.models.servers.ServerVariables;
 import io.swagger.v3.oas.models.tags.Tag;
-import jdk.nashorn.internal.codegen.CompilerConstants;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -166,7 +168,7 @@ public class ObjectMapperFactory {
         sourceMixins.put(MediaType.class, MediaTypeMixin.class);
         sourceMixins.put(OAuthFlow.class, ExtensionsMixin.class);
         sourceMixins.put(OAuthFlows.class, ExtensionsMixin.class);
-        sourceMixins.put(Operation.class, OperationMixin.class);
+
         sourceMixins.put(PathItem.class, ExtensionsMixin.class);
         sourceMixins.put(Paths.class, ExtensionsMixin.class);
         sourceMixins.put(Scopes.class, ExtensionsMixin.class);
@@ -191,9 +193,11 @@ public class ObjectMapperFactory {
             sourceMixins.put(SecurityScheme.class, SecuritySchemeMixin.class);
             sourceMixins.put(Link.class, LinkMixin.class);
             sourceMixins.put(Callback.class, CallbackMixin.class);
+            sourceMixins.put(Operation.class, OperationMixin.class);
         } else {
             sourceMixins.put(Info.class, ExtensionsMixin.class);
             sourceMixins.put(Schema.class, Schema31Mixin.class);
+            sourceMixins.put(Components.class, Components31Mixin.class);
             sourceMixins.put(DateSchema.class, DateSchemaMixin.class);
             sourceMixins.put(Discriminator.class, Discriminator31Mixin.class);
             sourceMixins.put(ApiResponse.class, ExtensionsMixin.class);
@@ -203,6 +207,8 @@ public class ObjectMapperFactory {
             sourceMixins.put(SecurityScheme.class, ExtensionsMixin.class);
             sourceMixins.put(Link.class, ExtensionsMixin.class);
             sourceMixins.put(Callback.class, ExtensionsMixin.class);
+            sourceMixins.put(OpenAPI.class, OpenAPI31Mixin.class);
+            sourceMixins.put(Operation.class, Operation31Mixin.class);
         }
         mapper.setMixIns(sourceMixins);
         mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);

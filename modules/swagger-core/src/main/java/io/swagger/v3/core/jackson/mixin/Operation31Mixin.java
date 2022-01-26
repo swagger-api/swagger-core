@@ -10,7 +10,7 @@ import io.swagger.v3.oas.models.responses.ApiResponses;
 
 import java.util.Map;
 
-public abstract class OperationMixin {
+public abstract class Operation31Mixin {
 
     @JsonAnyGetter
     public abstract Map<String, Object> getExtensions();

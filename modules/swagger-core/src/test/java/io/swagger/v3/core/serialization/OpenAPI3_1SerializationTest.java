@@ -888,6 +888,7 @@ public class OpenAPI3_1SerializationTest {
                         .$ref("#/components/pathItems/pathTest")
                         .description("This is a ref path item")
                         .summary("ref path item")
+                        .addParametersItem(new Parameter().in("query").schema(new Schema().type("string"))) //should be ignored
                 )
                 .components(new Components()
                         .addPathItems("pathTest", new PathItem()
@@ -933,6 +934,92 @@ public class OpenAPI3_1SerializationTest {
                 "              \"description\" : \"response description\"\n" +
                 "            }\n" +
                 "          }\n" +
+                "        }\n" +
+                "      }\n" +
+                "    }\n" +
+                "  }\n" +
+                "}");
+    }
+
+    @Test
+    public void testPathItemsInCallbackRefSerialization() {
+        OpenAPI openAPI = new OpenAPI().openapi("3.1.0")
+                .components(new Components()
+                        .addCallbacks("aCallback", new Callback()
+                                .description("a callback description")
+                                .summary("a callback summary")
+                                .addPathItem("'{$request.query.queryUrl}'", new PathItem()
+                                        .$ref("#/components/pathItems/pathTest")
+                                        .description("path item in callback description")
+                                        .summary("path item in callback summary")
+                                        .addParametersItem(new Parameter().in("query").schema(new Schema().type("string"))) //should be ignored
+                                ))
+                        .addPathItems("pathTest", new PathItem()
+                                .description("test path item")
+                                .get(new Operation()
+                                        .operationId("testPathItem")
+                                        .responses(new ApiResponses()
+                                                .addApiResponse("200", new ApiResponse().description("response description"))))));
+
+        SerializationMatchers.assertEqualsToYaml31(openAPI, "openapi: 3.1.0\n" +
+                "components:\n" +
+                "  callbacks:\n" +
+                "    aCallback:\n" +
+                "      '''{$request.query.queryUrl}''':\n" +
+                "        $ref: '#/components/pathItems/pathTest'\n" +
+                "        description: path item in callback description\n" +
+                "        summary: path item in callback summary\n" +
+                "  pathItems:\n" +
+                "    pathTest:\n" +
+                "      description: test path item\n" +
+                "      get:\n" +
+                "        operationId: testPathItem\n" +
+                "        responses:\n" +
+                "          \"200\":\n" +
+                "            description: response description");
+
+        SerializationMatchers.assertEqualsToJson31(openAPI, "{\n" +
+                "  \"openapi\" : \"3.1.0\",\n" +
+                "  \"components\" : {\n" +
+                "    \"callbacks\" : {\n" +
+                "      \"aCallback\" : {\n" +
+                "        \"'{$request.query.queryUrl}'\" : {\n" +
+                "          \"$ref\" : \"#/components/pathItems/pathTest\",\n" +
+                "          \"description\" : \"path item in callback description\",\n" +
+                "          \"summary\" : \"path item in callback summary\"\n" +
+                "        }\n" +
+                "      }\n" +
+                "    },\n" +
+                "    \"pathItems\" : {\n" +
+                "      \"pathTest\" : {\n" +
+                "        \"description\" : \"test path item\",\n" +
+                "        \"get\" : {\n" +
+                "          \"operationId\" : \"testPathItem\",\n" +
+                "          \"responses\" : {\n" +
+                "            \"200\" : {\n" +
+                "              \"description\" : \"response description\"\n" +
+                "            }\n" +
+                "          }\n" +
+                "        }\n" +
+                "      }\n" +
+                "    }\n" +
+                "  }\n" +
+                "}");
+
+        openAPI.openapi("3.0.0");
+        SerializationMatchers.assertEqualsToYaml(openAPI, "openapi: 3.0.0\n" +
+                "components:\n" +
+                "  callbacks:\n" +
+                "    aCallback:\n" +
+                "      '''{$request.query.queryUrl}''':\n" +
+                "        $ref: '#/components/pathItems/pathTest'");
+        SerializationMatchers.assertEqualsToJson(openAPI, "{\n" +
+                "  \"openapi\" : \"3.0.0\",\n" +
+                "  \"components\" : {\n" +
+                "    \"callbacks\" : {\n" +
+                "      \"aCallback\" : {\n" +
+                "        \"'{$request.query.queryUrl}'\" : {\n" +
+                "          \"$ref\" : \"#/components/pathItems/pathTest\"\n" +
                 "        }\n" +
                 "      }\n" +
                 "    }\n" +

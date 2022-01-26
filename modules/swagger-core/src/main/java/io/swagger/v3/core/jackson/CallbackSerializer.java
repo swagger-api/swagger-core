@@ -13,44 +13,65 @@ import java.util.Map.Entry;
 
 public class CallbackSerializer extends JsonSerializer<Callback> {
 
+    protected boolean openapi31;
+
     @Override
     public void serialize(
             Callback value, JsonGenerator jgen, SerializerProvider provider)
             throws IOException {
-
-        // has extensions
-        if (value != null && value.getExtensions() != null && !value.getExtensions().isEmpty()) {
+        if (value == null) {
+            provider.defaultSerializeValue(value, jgen);
+            return;
+        }
+        if (StringUtils.isNotBlank(value.get$ref())) {
             jgen.writeStartObject();
-
-            // not a ref
-            if (StringUtils.isBlank(value.get$ref())) {
-                if (!value.isEmpty()) {
-                    // write map
-                    for (Entry<String, PathItem> entry: value.entrySet()) {
-                        jgen.writeObjectField(entry.getKey() , entry.getValue());
-                    }
-                }
-            } else { // handle ref schema serialization skipping all other props ...
-                jgen.writeStringField("$ref", value.get$ref());
-            }
-            for (String ext: value.getExtensions().keySet()) {
-                jgen.writeObjectField(ext , value.getExtensions().get(ext));
-            }
-            jgen.writeEndObject();
-        } else {
-            if (value == null || StringUtils.isBlank(value.get$ref())) {
-                provider.defaultSerializeValue(value, jgen);
-            } else { // handle ref schema serialization skipping all other props
-                jgen.writeStartObject();
-                jgen.writeStringField("$ref", value.get$ref());
-                if (StringUtils.isNotEmpty(value.getDescription())) {
+            jgen.writeStringField("$ref", value.get$ref());
+            if (openapi31) {
+                if (StringUtils.isNotBlank(value.getDescription())) {
                     jgen.writeStringField("description", value.getDescription());
                 }
-                if (StringUtils.isNotEmpty(value.getSummary())) {
+                if (StringUtils.isNotBlank(value.getSummary())) {
                     jgen.writeStringField("summary", value.getSummary());
                 }
-                jgen.writeEndObject();
             }
+            jgen.writeEndObject();
+            return;
         }
+        if (!value.isEmpty()) {
+            jgen.writeStartObject();
+            for (Entry<String, PathItem> entry: value.entrySet()) {
+                if (StringUtils.isBlank(entry.getValue().get$ref())) {
+                    jgen.writeObjectField(entry.getKey(), entry.getValue());
+                } else {
+                    PathItem pathItem = entry.getValue();
+
+                    jgen.writeObjectFieldStart(entry.getKey());
+                    jgen.writeStringField("$ref", pathItem.get$ref());
+                    if (openapi31) {
+                        if (StringUtils.isNotBlank(pathItem.getDescription())) {
+                            jgen.writeStringField("description", pathItem.getDescription());
+                        }
+                        if (StringUtils.isNotBlank(pathItem.getSummary())) {
+                            jgen.writeStringField("summary", pathItem.getSummary());
+                        }
+                    }
+                    jgen.writeEndObject();
+                }
+            }
+            if (value.getExtensions() != null && !value.getExtensions().isEmpty()) {
+                for (String ext : value.getExtensions().keySet()) {
+                    jgen.writeObjectField(ext, value.getExtensions().get(ext));
+                }
+            }
+            jgen.writeEndObject();
+            return;
+        }
+        if (value.getExtensions() != null && !value.getExtensions().isEmpty()) {
+            for (String ext : value.getExtensions().keySet()) {
+                jgen.writeObjectField(ext, value.getExtensions().get(ext));
+            }
+            return;
+        }
+        provider.defaultSerializeValue(value, jgen);
     }
 }
