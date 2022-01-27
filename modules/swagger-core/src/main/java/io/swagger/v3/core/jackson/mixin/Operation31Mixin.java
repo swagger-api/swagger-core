@@ -6,8 +6,10 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import io.swagger.v3.core.jackson.ApiResponses31Serializer;
 import io.swagger.v3.core.jackson.Callback31Serializer;
 import io.swagger.v3.core.jackson.Parameter31Serializer;
+import io.swagger.v3.core.jackson.RequestBody31Serializer;
 import io.swagger.v3.oas.models.callbacks.Callback;
 import io.swagger.v3.oas.models.parameters.Parameter;
+import io.swagger.v3.oas.models.parameters.RequestBody;
 import io.swagger.v3.oas.models.responses.ApiResponses;
 
 import java.util.List;
@@ -29,5 +31,8 @@ public abstract class Operation31Mixin {
 
     @JsonSerialize(contentUsing = Parameter31Serializer.class)
     public abstract List<Parameter> getParameters();
+
+    @JsonSerialize(using = RequestBody31Serializer.class)
+    public abstract RequestBody getRequestBody();
 
 }

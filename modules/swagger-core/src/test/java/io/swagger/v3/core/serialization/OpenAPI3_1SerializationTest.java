@@ -1272,6 +1272,7 @@ public class OpenAPI3_1SerializationTest {
                                 .operationId("testPathItem")
                                 .requestBody(new RequestBody()
                                         .$ref("#/components/requestBodies/body")
+                                        .required(true) //it should be ignored
                                         .description("ref request body")
                                         .summary("ref req body"))))
                 .components(new Components()
