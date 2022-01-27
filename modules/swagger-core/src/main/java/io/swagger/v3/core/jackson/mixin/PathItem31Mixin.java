@@ -13,19 +13,13 @@ import io.swagger.v3.oas.models.responses.ApiResponses;
 import java.util.List;
 import java.util.Map;
 
-public abstract class Operation31Mixin {
+public abstract class PathItem31Mixin {
 
     @JsonAnyGetter
     public abstract Map<String, Object> getExtensions();
 
     @JsonAnySetter
     public abstract void addExtension(String name, Object value);
-
-    @JsonSerialize(contentUsing = Callback31Serializer.class)
-    public abstract Map<String, Callback> getCallbacks();
-
-    @JsonSerialize(using = ApiResponses31Serializer.class)
-    public abstract ApiResponses getResponses();
 
     @JsonSerialize(contentUsing = Parameter31Serializer.class)
     public abstract List<Parameter> getParameters();

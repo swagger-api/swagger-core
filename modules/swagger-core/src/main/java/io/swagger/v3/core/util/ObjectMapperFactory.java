@@ -35,6 +35,7 @@ import io.swagger.v3.core.jackson.mixin.OpenAPIMixin;
 import io.swagger.v3.core.jackson.mixin.Operation31Mixin;
 import io.swagger.v3.core.jackson.mixin.OperationMixin;
 import io.swagger.v3.core.jackson.mixin.ParameterMixin;
+import io.swagger.v3.core.jackson.mixin.PathItem31Mixin;
 import io.swagger.v3.core.jackson.mixin.RequestBodyMixin;
 import io.swagger.v3.core.jackson.mixin.Schema31Mixin;
 import io.swagger.v3.core.jackson.mixin.SchemaConverterMixin;
@@ -168,8 +169,6 @@ public class ObjectMapperFactory {
         sourceMixins.put(MediaType.class, MediaTypeMixin.class);
         sourceMixins.put(OAuthFlow.class, ExtensionsMixin.class);
         sourceMixins.put(OAuthFlows.class, ExtensionsMixin.class);
-
-        sourceMixins.put(PathItem.class, ExtensionsMixin.class);
         sourceMixins.put(Paths.class, ExtensionsMixin.class);
         sourceMixins.put(Scopes.class, ExtensionsMixin.class);
         sourceMixins.put(Server.class, ExtensionsMixin.class);
@@ -194,6 +193,7 @@ public class ObjectMapperFactory {
             sourceMixins.put(Link.class, LinkMixin.class);
             sourceMixins.put(Callback.class, CallbackMixin.class);
             sourceMixins.put(Operation.class, OperationMixin.class);
+            sourceMixins.put(PathItem.class, ExtensionsMixin.class);
         } else {
             sourceMixins.put(Info.class, ExtensionsMixin.class);
             sourceMixins.put(Schema.class, Schema31Mixin.class);
@@ -209,6 +209,7 @@ public class ObjectMapperFactory {
             sourceMixins.put(Callback.class, ExtensionsMixin.class);
             sourceMixins.put(OpenAPI.class, OpenAPI31Mixin.class);
             sourceMixins.put(Operation.class, Operation31Mixin.class);
+            sourceMixins.put(PathItem.class, PathItem31Mixin.class);
         }
         mapper.setMixIns(sourceMixins);
         mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);

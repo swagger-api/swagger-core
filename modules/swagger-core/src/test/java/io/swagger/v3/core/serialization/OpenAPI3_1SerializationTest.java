@@ -1092,15 +1092,42 @@ public class OpenAPI3_1SerializationTest {
                 .openapi("3.1.0")
                 .components(new Components()
                         .addParameters("testParameter", new Parameter()
-                                .in("query")))
-                .path("/test", new PathItem()
+                                .in("query")
+                                .name("param0")
+                                .schema(new Schema().type("string")))
+                        .addParameters("testParameter2", new Parameter()
+                                .in("query")
+                                .name("param2")
+                                .schema(new Schema().type("string")))
+                )
+                .path("/test", new
+                        PathItem()
                         .description("test path item")
+                        .addParametersItem(new Parameter()
+                                .name("globalParam")
+                                .in("query")
+                                .description("global parameter")
+                                .summary("test param")
+                                .schema(new Schema().type("string")))
+                        .addParametersItem(new Parameter()
+                                .description("global parameter")
+                                .summary("test param")
+                                .name("ignoredName") // should be ignored
+                                .$ref("#/components/parameters/testParameter2"))
                         .get(new Operation()
                                 .operationId("testPathItem")
                                 .addParametersItem(new Parameter()
                                         .$ref("#/components/parameters/testParameter")
+                                        .name("testParam") // should be ignored
                                         .description("test parameter")
-                                        .summary("test param"))));
+                                        .summary("test param"))
+                                .addParametersItem(new Parameter()
+                                        .name("testParam") // should be ignored
+                                        .in("query")
+                                        .description("test parameter")
+                                        .summary("test param")
+                                        .schema(new Schema().type("string")))));
+        Json31.prettyPrint(openAPI);
 
         SerializationMatchers.assertEqualsToYaml31(openAPI, "openapi: 3.1.0\n" +
                 "paths:\n" +
@@ -1109,13 +1136,33 @@ public class OpenAPI3_1SerializationTest {
                 "    get:\n" +
                 "      operationId: testPathItem\n" +
                 "      parameters:\n" +
-                "      - description: test parameter\n" +
+                "      - $ref: '#/components/parameters/testParameter'\n" +
+                "        description: test parameter\n" +
                 "        summary: test param\n" +
-                "        $ref: '#/components/parameters/testParameter'\n" +
+                "      - name: testParam\n" +
+                "        in: query\n" +
+                "        description: test parameter\n" +
+                "        summary: test param\n" +
+                "        schema: {}\n" +
+                "    parameters:\n" +
+                "    - name: globalParam\n" +
+                "      in: query\n" +
+                "      description: global parameter\n" +
+                "      summary: test param\n" +
+                "      schema: {}\n" +
+                "    - $ref: '#/components/parameters/testParameter2'\n" +
+                "      description: global parameter\n" +
+                "      summary: test param\n" +
                 "components:\n" +
                 "  parameters:\n" +
                 "    testParameter:\n" +
-                "      in: query");
+                "      name: param0\n" +
+                "      in: query\n" +
+                "      schema: {}\n" +
+                "    testParameter2:\n" +
+                "      name: param2\n" +
+                "      in: query\n" +
+                "      schema: {}");
 
         SerializationMatchers.assertEqualsToJson31(openAPI, "{\n" +
                 "  \"openapi\" : \"3.1.0\",\n" +
@@ -1125,17 +1172,41 @@ public class OpenAPI3_1SerializationTest {
                 "      \"get\" : {\n" +
                 "        \"operationId\" : \"testPathItem\",\n" +
                 "        \"parameters\" : [ {\n" +
+                "          \"$ref\" : \"#/components/parameters/testParameter\",\n" +
+                "          \"description\" : \"test parameter\",\n" +
+                "          \"summary\" : \"test param\"\n" +
+                "        }, {\n" +
+                "          \"name\" : \"testParam\",\n" +
+                "          \"in\" : \"query\",\n" +
                 "          \"description\" : \"test parameter\",\n" +
                 "          \"summary\" : \"test param\",\n" +
-                "          \"$ref\" : \"#/components/parameters/testParameter\"\n" +
+                "          \"schema\" : { }\n" +
                 "        } ]\n" +
-                "      }\n" +
+                "      },\n" +
+                "      \"parameters\" : [ {\n" +
+                "        \"name\" : \"globalParam\",\n" +
+                "        \"in\" : \"query\",\n" +
+                "        \"description\" : \"global parameter\",\n" +
+                "        \"summary\" : \"test param\",\n" +
+                "        \"schema\" : { }\n" +
+                "      }, {\n" +
+                "        \"$ref\" : \"#/components/parameters/testParameter2\",\n" +
+                "        \"description\" : \"global parameter\",\n" +
+                "        \"summary\" : \"test param\"\n" +
+                "      } ]\n" +
                 "    }\n" +
                 "  },\n" +
                 "  \"components\" : {\n" +
                 "    \"parameters\" : {\n" +
                 "      \"testParameter\" : {\n" +
-                "        \"in\" : \"query\"\n" +
+                "        \"name\" : \"param0\",\n" +
+                "        \"in\" : \"query\",\n" +
+                "        \"schema\" : { }\n" +
+                "      },\n" +
+                "      \"testParameter2\" : {\n" +
+                "        \"name\" : \"param2\",\n" +
+                "        \"in\" : \"query\",\n" +
+                "        \"schema\" : { }\n" +
                 "      }\n" +
                 "    }\n" +
                 "  }\n" +
