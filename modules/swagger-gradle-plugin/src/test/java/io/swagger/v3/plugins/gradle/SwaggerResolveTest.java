@@ -77,7 +77,6 @@ public class SwaggerResolveTest {
                 "    }\n" +
                 "}\n" +
                 "repositories {\n" +
-                "    jcenter()\n" +
                 "    mavenLocal()\n" +
                 "    mavenCentral()\n" +
                 "}\n" +
@@ -108,6 +107,7 @@ public class SwaggerResolveTest {
                 "        maven {\n" +
                 "            url mavenLocal().url\n" +
                 "        }\n" +
+                "        mavenCentral()\n" +
                 "        gradlePluginPortal()\n" +
                 "    }\n" +
                 "}\n" +
