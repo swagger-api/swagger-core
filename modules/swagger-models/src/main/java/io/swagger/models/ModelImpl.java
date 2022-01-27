@@ -23,12 +23,26 @@ public class ModelImpl extends AbstractModel {
     private String description;
     private Object example;
     private Property additionalProperties;
+    private Property items;
     private String discriminator;
     @JsonProperty("default")
     private String defaultValue;
     private List<String> _enum;
     private BigDecimal minimum;
     private BigDecimal maximum;
+
+    public ModelImpl items(Property items) {
+        this.setItems(items);
+        return this;
+    }
+
+    public Property getItems() {
+        return items;
+    }
+
+    public void setItems(Property items) {
+        this.items = items;
+    }
 
     public ModelImpl _enum(List<String> value) {
         this._enum = value;
@@ -297,6 +311,9 @@ public class ModelImpl extends AbstractModel {
         if (additionalProperties != null ? !additionalProperties.equals(model.additionalProperties) : model.additionalProperties != null) {
             return false;
         }
+        if (items != null ? !items.equals(model.items) : model.items != null) {
+            return false;
+        }
         if (discriminator != null ? !discriminator.equals(model.discriminator) : model.discriminator != null) {
             return false;
         }
@@ -330,6 +347,7 @@ public class ModelImpl extends AbstractModel {
         result = 31 * result + (_enum != null ? _enum.hashCode() : 0);
         result = 31 * result + (minimum != null ? minimum.hashCode() : 0);
         result = 31 * result + (maximum != null ? maximum.hashCode() : 0);
+        result = 31 * result + (items != null ? items.hashCode() : 0);
         return result;
     }
 
@@ -351,6 +369,7 @@ public class ModelImpl extends AbstractModel {
         cloned.defaultValue = this.defaultValue;
         cloned.minimum = this.minimum;
         cloned.maximum = this.maximum;
+        cloned.items = this.items;
 
         return cloned;
     }
