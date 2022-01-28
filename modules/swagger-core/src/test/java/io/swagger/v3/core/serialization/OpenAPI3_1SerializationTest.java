@@ -28,6 +28,7 @@ import io.swagger.v3.oas.models.parameters.RequestBody;
 import io.swagger.v3.oas.models.responses.ApiResponse;
 import io.swagger.v3.oas.models.responses.ApiResponses;
 import io.swagger.v3.oas.models.security.SecurityScheme;
+import io.swagger.v3.oas.models.servers.Server;
 import org.checkerframework.checker.units.qual.C;
 import org.testng.annotations.Test;
 
@@ -1597,6 +1598,163 @@ public class OpenAPI3_1SerializationTest {
                 "    }\n" +
                 "  }\n" +
                 "}");
+    }
+
+    @Test
+    public void testRefInComponenetSerialization() {
+        OpenAPI openAPI = new OpenAPI()
+                .openapi("3.1.0")
+                .components(new Components()
+                        .addResponses("aResponse", new ApiResponse()
+                                .$ref("#/some/response")
+                                .description("a response description")
+                                .addLink("aLink", new Link()) // the one that is ignored
+                                .summary("a response summary"))
+                        .addParameters("aParameter", new Parameter()
+                                .$ref("#/some/parameter")
+                                .name("param0") // the one that is ignored
+                                .description("a parameter description")
+                                .summary("a parameter summary"))
+                        .addRequestBodies("aRequestBody", new RequestBody()
+                                .$ref("#/some/requestBody")
+                                .required(true) // should be ignored
+                                .description("a request body description")
+                                .summary("a request body summary"))
+                        .addHeaders("aHeader", new Header()
+                                .$ref("#/some/response")
+                                .required(true) // should be ignored
+                                .description("a header description")
+                                .summary("a header summary"))
+                        .addSecuritySchemes("aSecurityScheme", new SecurityScheme()
+                                .$ref("#/some/security/scheme")
+                                .in(SecurityScheme.In.HEADER) // should be ignored
+                                .description("a security scheme description")
+                                .summary("a security scheme summary"))
+                        .addCallbacks("aCallback", new Callback()
+                                .$ref("#/some/callback")
+                                .addPathItem("aPathItem", new PathItem()) // should be ignored
+                                .description("a callback description")
+                                .summary("a callback summary"))
+                        .addPathItems("aPathItem", new PathItem()
+                                .$ref("#/some/pathItem")
+                                .addServersItem(new Server()) // should be ignored
+                                .description("a path item description")
+                                .summary("a path item summary"))
+                        .addLinks("aLink", new Link()
+                                .$ref("#/some/link")
+                                .operationId("operationLinkId") // should be ignored
+                                .description("a link description")
+                                .summary("a link summary"))
+
+                        );
+
+        Yaml31.prettyPrint(openAPI);
+
+        SerializationMatchers.assertEqualsToYaml31(openAPI, "openapi: 3.1.0\n" +
+                "components:\n" +
+                "  responses:\n" +
+                "    aResponse:\n" +
+                "      $ref: '#/some/response'\n" +
+                "      description: a response description\n" +
+                "      summary: a response summary\n" +
+                "  parameters:\n" +
+                "    aParameter:\n" +
+                "      $ref: '#/some/parameter'\n" +
+                "      description: a parameter description\n" +
+                "      summary: a parameter summary\n" +
+                "  requestBodies:\n" +
+                "    aRequestBody:\n" +
+                "      $ref: '#/some/requestBody'\n" +
+                "      description: a request body description\n" +
+                "      summary: a request body summary\n" +
+                "  headers:\n" +
+                "    aHeader:\n" +
+                "      $ref: '#/some/response'\n" +
+                "      description: a header description\n" +
+                "      summary: a header summary\n" +
+                "  securitySchemes:\n" +
+                "    aSecurityScheme:\n" +
+                "      $ref: '#/some/security/scheme'\n" +
+                "      description: a security scheme description\n" +
+                "      summary: a security scheme summary\n" +
+                "  links:\n" +
+                "    aLink:\n" +
+                "      $ref: '#/some/link'\n" +
+                "      description: a link description\n" +
+                "      summary: a link summary\n" +
+                "  callbacks:\n" +
+                "    aCallback:\n" +
+                "      $ref: '#/some/callback'\n" +
+                "      description: a callback description\n" +
+                "      summary: a callback summary\n" +
+                "  pathItems:\n" +
+                "    aPathItem:\n" +
+                "      $ref: '#/some/pathItem'\n" +
+                "      description: a path item description\n" +
+                "      summary: a path item summary");
+
+        SerializationMatchers.assertEqualsToJson31(openAPI, "{\n" +
+                "  \"openapi\" : \"3.1.0\",\n" +
+                "  \"components\" : {\n" +
+                "    \"responses\" : {\n" +
+                "      \"aResponse\" : {\n" +
+                "        \"$ref\" : \"#/some/response\",\n" +
+                "        \"description\" : \"a response description\",\n" +
+                "        \"summary\" : \"a response summary\"\n" +
+                "      }\n" +
+                "    },\n" +
+                "    \"parameters\" : {\n" +
+                "      \"aParameter\" : {\n" +
+                "        \"$ref\" : \"#/some/parameter\",\n" +
+                "        \"description\" : \"a parameter description\",\n" +
+                "        \"summary\" : \"a parameter summary\"\n" +
+                "      }\n" +
+                "    },\n" +
+                "    \"requestBodies\" : {\n" +
+                "      \"aRequestBody\" : {\n" +
+                "        \"$ref\" : \"#/some/requestBody\",\n" +
+                "        \"description\" : \"a request body description\",\n" +
+                "        \"summary\" : \"a request body summary\"\n" +
+                "      }\n" +
+                "    },\n" +
+                "    \"headers\" : {\n" +
+                "      \"aHeader\" : {\n" +
+                "        \"$ref\" : \"#/some/response\",\n" +
+                "        \"description\" : \"a header description\",\n" +
+                "        \"summary\" : \"a header summary\"\n" +
+                "      }\n" +
+                "    },\n" +
+                "    \"securitySchemes\" : {\n" +
+                "      \"aSecurityScheme\" : {\n" +
+                "        \"$ref\" : \"#/some/security/scheme\",\n" +
+                "        \"description\" : \"a security scheme description\",\n" +
+                "        \"summary\" : \"a security scheme summary\"\n" +
+                "      }\n" +
+                "    },\n" +
+                "    \"links\" : {\n" +
+                "      \"aLink\" : {\n" +
+                "        \"$ref\" : \"#/some/link\",\n" +
+                "        \"description\" : \"a link description\",\n" +
+                "        \"summary\" : \"a link summary\"\n" +
+                "      }\n" +
+                "    },\n" +
+                "    \"callbacks\" : {\n" +
+                "      \"aCallback\" : {\n" +
+                "        \"$ref\" : \"#/some/callback\",\n" +
+                "        \"description\" : \"a callback description\",\n" +
+                "        \"summary\" : \"a callback summary\"\n" +
+                "      }\n" +
+                "    },\n" +
+                "    \"pathItems\" : {\n" +
+                "      \"aPathItem\" : {\n" +
+                "        \"$ref\" : \"#/some/pathItem\",\n" +
+                "        \"description\" : \"a path item description\",\n" +
+                "        \"summary\" : \"a path item summary\"\n" +
+                "      }\n" +
+                "    }\n" +
+                "  }\n" +
+                "}");
+
     }
 
 
