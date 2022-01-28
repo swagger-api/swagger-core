@@ -51,8 +51,9 @@ public class ModelDeserializer extends JsonDeserializer<Model> {
             return model;
         } else {
             sub = node.get("type");
+            JsonNode items = node.get("items");
             Model model = null;
-            if (sub != null && "array".equals(((TextNode) sub).textValue())) {
+            if ((sub != null && "array".equals(((TextNode) sub).textValue())) || (items != null)){
                 model = Json.mapper().convertValue(node, ArrayModel.class);
             } else {
                 model = Json.mapper().convertValue(node, ModelImpl.class);
