@@ -1645,11 +1645,7 @@ public class OpenAPI3_1SerializationTest {
                                 .$ref("#/some/link")
                                 .operationId("operationLinkId") // should be ignored
                                 .description("a link description")
-                                .summary("a link summary"))
-
-                        );
-
-        Yaml31.prettyPrint(openAPI);
+                                .summary("a link summary")));
 
         SerializationMatchers.assertEqualsToYaml31(openAPI, "openapi: 3.1.0\n" +
                 "components:\n" +
@@ -1758,5 +1754,102 @@ public class OpenAPI3_1SerializationTest {
 
     }
 
+    @Test
+    public void testExamplesRefSerialization() {
+        OpenAPI openAPI = new OpenAPI()
+                .openapi("3.1.0")
+                .components(new Components()
+                        .addHeaders("aHeader", new Header()
+                                .addExample("headerExample", new Example()
+                                        .$ref("#/some/header/example")
+                                        .value("this value must be ignored")
+                                        .externalValue("this value must be also ignored")
+                                        .description("header example description")
+                                        .summary("header example summary")))
+                        .addParameters("aParameter", new Parameter()
+                                .addExample("parameterExample", new Example()
+                                        .$ref("#/some/parameter/example")
+                                        .value("this value must be ignored")
+                                        .externalValue("this value must be also ignored")
+                                        .description("parameter example description")
+                                        .summary("parameter example summary")))
+                        .addRequestBodies("aRequestBody", new RequestBody().content(new Content()
+                                .addMediaType("application/json", new MediaType()
+                                        .addExamples("mediaTypeExample", new Example()
+                                                .$ref("#/some/parameter/example")
+                                                .value("this value must be ignored")
+                                                .externalValue("this value must be also ignored")
+                                                .description("media type example description")
+                                                .summary("media type example summary"))))));
+        
+        SerializationMatchers.assertEqualsToYaml31(openAPI, "openapi: 3.1.0\n" +
+                "components:\n" +
+                "  parameters:\n" +
+                "    aParameter:\n" +
+                "      examples:\n" +
+                "        parameterExample:\n" +
+                "          $ref: '#/some/parameter/example'\n" +
+                "          description: parameter example description\n" +
+                "          summary: parameter example summary\n" +
+                "  requestBodies:\n" +
+                "    aRequestBody:\n" +
+                "      content:\n" +
+                "        application/json:\n" +
+                "          examples:\n" +
+                "            mediaTypeExample:\n" +
+                "              $ref: '#/some/parameter/example'\n" +
+                "              description: media type example description\n" +
+                "              summary: media type example summary\n" +
+                "  headers:\n" +
+                "    aHeader:\n" +
+                "      examples:\n" +
+                "        headerExample:\n" +
+                "          $ref: '#/some/header/example'\n" +
+                "          description: header example description\n" +
+                "          summary: header example summary");
+
+        SerializationMatchers.assertEqualsToJson31(openAPI, "{\n" +
+                "  \"openapi\" : \"3.1.0\",\n" +
+                "  \"components\" : {\n" +
+                "    \"parameters\" : {\n" +
+                "      \"aParameter\" : {\n" +
+                "        \"examples\" : {\n" +
+                "          \"parameterExample\" : {\n" +
+                "            \"$ref\" : \"#/some/parameter/example\",\n" +
+                "            \"description\" : \"parameter example description\",\n" +
+                "            \"summary\" : \"parameter example summary\"\n" +
+                "          }\n" +
+                "        }\n" +
+                "      }\n" +
+                "    },\n" +
+                "    \"requestBodies\" : {\n" +
+                "      \"aRequestBody\" : {\n" +
+                "        \"content\" : {\n" +
+                "          \"application/json\" : {\n" +
+                "            \"examples\" : {\n" +
+                "              \"mediaTypeExample\" : {\n" +
+                "                \"$ref\" : \"#/some/parameter/example\",\n" +
+                "                \"description\" : \"media type example description\",\n" +
+                "                \"summary\" : \"media type example summary\"\n" +
+                "              }\n" +
+                "            }\n" +
+                "          }\n" +
+                "        }\n" +
+                "      }\n" +
+                "    },\n" +
+                "    \"headers\" : {\n" +
+                "      \"aHeader\" : {\n" +
+                "        \"examples\" : {\n" +
+                "          \"headerExample\" : {\n" +
+                "            \"$ref\" : \"#/some/header/example\",\n" +
+                "            \"description\" : \"header example description\",\n" +
+                "            \"summary\" : \"header example summary\"\n" +
+                "          }\n" +
+                "        }\n" +
+                "      }\n" +
+                "    }\n" +
+                "  }\n" +
+                "}");
+    }
 
 }
