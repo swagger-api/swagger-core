@@ -1477,6 +1477,7 @@ public class OpenAPI3_1SerializationTest {
                                                 .description("default response")
                                                 .addLink("link", new Link()
                                                         .$ref("#/components/links/Link")
+                                                        .operationId("operationIdInLink") // should be ignored
                                                         .description("ref link description")
                                                         .summary("ref link summary"))))))
                 .components(new Components().addLinks("Link", new Link()
