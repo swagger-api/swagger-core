@@ -1336,16 +1336,25 @@ public class OpenAPI3_1SerializationTest {
                                 .operationId("testPathItem")
                                 .responses(new ApiResponses()
                                         .addApiResponse("default", new ApiResponse()
+                                                .addLink("responseLink", new Link().addHeaderObject("link-header", new Header()
+                                                        .$ref("#/components/responses/okResponse")
+                                                        .content(new Content().addMediaType("application/json", new MediaType())) // should be ignored
+                                                        .description("ref header description")
+                                                        .summary("ref header summary")))
                                                 .description("default response")
                                                 .addHeaderObject("header", new Header()
-                                                        .$ref("#/components/responses/okResponse")
+                                                        .$ref("#/components/responses/response-header")
+                                                        .content(new Content().addMediaType("application/json", new MediaType())) // should be ignored
                                                         .description("ref header description")
                                                         .summary("ref header summary"))))
                         ))
                 .components(new Components()
-                        .addHeaders("test-head", new Header()
-                                .description("test header description")
-                                .summary("test header summary")));
+                        .addHeaders("response-header", new Header()
+                                .content(new Content().addMediaType("application/json", new MediaType()))
+                                .schema(new Schema().type("string"))
+                                .description("test response header description")
+                                .summary("test response header summary")));
+        Json31.prettyPrint(openAPI);
 
         SerializationMatchers.assertEqualsToYaml31(openAPI, "openapi: 3.1.0\n" +
                 "paths:\n" +
@@ -1358,14 +1367,24 @@ public class OpenAPI3_1SerializationTest {
                 "          description: default response\n" +
                 "          headers:\n" +
                 "            header:\n" +
+                "              $ref: '#/components/responses/response-header'\n" +
                 "              description: ref header description\n" +
                 "              summary: ref header summary\n" +
-                "              $ref: '#/components/responses/okResponse'\n" +
+                "          links:\n" +
+                "            responseLink:\n" +
+                "              headers:\n" +
+                "                link-header:\n" +
+                "                  $ref: '#/components/responses/okResponse'\n" +
+                "                  description: ref header description\n" +
+                "                  summary: ref header summary\n" +
                 "components:\n" +
                 "  headers:\n" +
-                "    test-head:\n" +
-                "      description: test header description\n" +
-                "      summary: test header summary");
+                "    response-header:\n" +
+                "      description: test response header description\n" +
+                "      summary: test response header summary\n" +
+                "      schema: {}\n" +
+                "      content:\n" +
+                "        application/json: {}");
         SerializationMatchers.assertEqualsToJson31(openAPI, "{\n" +
                 "  \"openapi\" : \"3.1.0\",\n" +
                 "  \"paths\" : {\n" +
@@ -1378,9 +1397,20 @@ public class OpenAPI3_1SerializationTest {
                 "            \"description\" : \"default response\",\n" +
                 "            \"headers\" : {\n" +
                 "              \"header\" : {\n" +
+                "                \"$ref\" : \"#/components/responses/response-header\",\n" +
                 "                \"description\" : \"ref header description\",\n" +
-                "                \"summary\" : \"ref header summary\",\n" +
-                "                \"$ref\" : \"#/components/responses/okResponse\"\n" +
+                "                \"summary\" : \"ref header summary\"\n" +
+                "              }\n" +
+                "            },\n" +
+                "            \"links\" : {\n" +
+                "              \"responseLink\" : {\n" +
+                "                \"headers\" : {\n" +
+                "                  \"link-header\" : {\n" +
+                "                    \"$ref\" : \"#/components/responses/okResponse\",\n" +
+                "                    \"description\" : \"ref header description\",\n" +
+                "                    \"summary\" : \"ref header summary\"\n" +
+                "                  }\n" +
+                "                }\n" +
                 "              }\n" +
                 "            }\n" +
                 "          }\n" +
@@ -1390,9 +1420,13 @@ public class OpenAPI3_1SerializationTest {
                 "  },\n" +
                 "  \"components\" : {\n" +
                 "    \"headers\" : {\n" +
-                "      \"test-head\" : {\n" +
-                "        \"description\" : \"test header description\",\n" +
-                "        \"summary\" : \"test header summary\"\n" +
+                "      \"response-header\" : {\n" +
+                "        \"description\" : \"test response header description\",\n" +
+                "        \"summary\" : \"test response header summary\",\n" +
+                "        \"schema\" : { },\n" +
+                "        \"content\" : {\n" +
+                "          \"application/json\" : { }\n" +
+                "        }\n" +
                 "      }\n" +
                 "    }\n" +
                 "  }\n" +
