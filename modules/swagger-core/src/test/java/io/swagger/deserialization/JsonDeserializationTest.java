@@ -2,7 +2,10 @@ package io.swagger.deserialization;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
+import static org.testng.AssertJUnit.assertNotNull;
 
+import io.swagger.models.ArrayModel;
+import io.swagger.models.Model;
 import io.swagger.models.Swagger;
 import io.swagger.models.properties.ObjectProperty;
 import io.swagger.models.properties.MapProperty;
@@ -12,6 +15,7 @@ import io.swagger.util.Json;
 import io.swagger.util.ResourceUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.util.Yaml;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
@@ -116,5 +120,20 @@ public class JsonDeserializationTest {
         final Property additionalProperties = ((MapProperty) result).getAdditionalProperties();
         assertTrue(additionalProperties instanceof UntypedProperty);
         assertEquals(additionalProperties.getDescription(), "map value");
+    }
+
+    @Test(description = "it should deserialize an array untyped")
+    public void testArrayUntypedModel() throws IOException {
+        final String json = "{\n" +
+                "   \"description\":\"top level object\",\n" +
+                "   \"items\":{}" +
+                "}";
+        final Model result = m.readValue(json, Model.class);
+        assertTrue(result instanceof ArrayModel);
+
+        final ArrayModel array = (ArrayModel) result;
+        assertEquals(array.getType(),"array");
+        assertEquals(array.getDescription(), "top level object");
+        assertNotNull(array.getItems());
     }
 }
