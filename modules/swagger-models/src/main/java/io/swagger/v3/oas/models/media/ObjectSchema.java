@@ -38,6 +38,8 @@ public class ObjectSchema extends Schema<Object> {
     public ObjectSchema example(Object example) {
         if (example != null) {
             super.setExample(example.toString());
+        } else {
+            super.setExample(example);
         }
         return this;
     }

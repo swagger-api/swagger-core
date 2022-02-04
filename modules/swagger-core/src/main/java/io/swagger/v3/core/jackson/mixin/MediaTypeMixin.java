@@ -18,6 +18,6 @@ public abstract class MediaTypeMixin {
     @JsonIgnore
     public abstract boolean getExampleSetFlag();
 
-    @JsonInclude(JsonInclude.Include.CUSTOM)
+    @JsonInclude(value = JsonInclude.Include.NON_NULL, content = JsonInclude.Include.ALWAYS)
     public abstract Object getExample();
 }
