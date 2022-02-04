@@ -1,6 +1,9 @@
 package io.swagger.v3.core.serialization;
 
+import io.swagger.v3.core.matchers.SerializationMatchers;
 import io.swagger.v3.core.util.Json;
+import io.swagger.v3.core.util.ResourceUtils;
+import io.swagger.v3.core.util.Yaml;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Operation;
 import io.swagger.v3.oas.models.PathItem;
@@ -65,6 +68,22 @@ public class JsonSerializationTest {
         OpenAPI rebuilt = Json.mapper().readValue(swaggerJson, OpenAPI.class);
 
         assertEquals(rebuilt.getPaths().get("/health").getGet().getResponses().get("200"), expectedResponse);
+
+    }
+
+    @Test
+    public void testSerializeNullExample() throws Exception {
+        final String yaml = ResourceUtils.loadClassResource(getClass(), "specFiles/null-example.yaml");
+        OpenAPI deser = Yaml.mapper().readValue(yaml, OpenAPI.class);
+        SerializationMatchers.assertEqualsToYaml(deser, yaml);
+
+    }
+
+    @Test
+    public void testSerializeNullInSchemaExample() throws Exception {
+        final String yaml = ResourceUtils.loadClassResource(getClass(), "specFiles/null-in-schema-example.yaml");
+        OpenAPI deser = Yaml.mapper().readValue(yaml, OpenAPI.class);
+        SerializationMatchers.assertEqualsToYaml(deser, yaml);
 
     }
 }

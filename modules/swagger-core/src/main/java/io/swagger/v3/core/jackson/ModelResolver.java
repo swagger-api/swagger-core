@@ -1372,7 +1372,6 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                         .additionalProperties(subtypeModel.getAdditionalProperties())
                         .description(subtypeModel.getDescription())
                         .discriminator(subtypeModel.getDiscriminator())
-                        .example(subtypeModel.getExample())
                         .exclusiveMaximum(subtypeModel.getExclusiveMaximum())
                         .exclusiveMinimum(subtypeModel.getExclusiveMinimum())
                         .externalDocs(subtypeModel.getExternalDocs())
@@ -1398,6 +1397,9 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                         .xml(subtypeModel.getXml())
                         .extensions(subtypeModel.getExtensions());
 
+                if (subtypeModel.getExample() != null || subtypeModel.getExampleSetFlag()) {
+                    composedSchema.example(subtypeModel.getExample());
+                }
                 composedSchema.setEnum(subtypeModel.getEnum());
             } else {
                 composedSchema = (ComposedSchema) subtypeModel;

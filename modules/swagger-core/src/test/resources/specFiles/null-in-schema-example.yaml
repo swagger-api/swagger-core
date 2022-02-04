@@ -1,0 +1,26 @@
+openapi: 3.0.2
+info:
+  title: VirtServer support for null examples
+  version: 1.0.0
+paths:
+
+  /object-with-null-in-schema-example:
+    get:
+      description: 'Response should be `{..., "d": null}`'
+      responses:
+        '200':
+          description: 'Should be `{..., "d": null}`'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ObjectWithNullInSchemaExample'
+
+components:
+  schemas:
+    ObjectWithNullInSchemaExample:
+      type: object
+      example:
+        a: 5
+        b: test
+        c: true
+        d: null
