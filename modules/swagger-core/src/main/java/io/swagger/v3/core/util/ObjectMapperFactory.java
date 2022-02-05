@@ -14,6 +14,7 @@ import com.fasterxml.jackson.databind.ser.BeanSerializerModifier;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import io.swagger.v3.core.jackson.MediaTypeSerializer;
 import io.swagger.v3.core.jackson.SchemaSerializer;
 import io.swagger.v3.core.jackson.mixin.ComponentsMixin;
 import io.swagger.v3.core.jackson.mixin.DateSchemaMixin;
@@ -89,6 +90,8 @@ public class ObjectMapperFactory {
                             SerializationConfig config, BeanDescription desc, JsonSerializer<?> serializer) {
                         if (Schema.class.isAssignableFrom(desc.getBeanClass())) {
                             return new SchemaSerializer((JsonSerializer<Object>) serializer);
+                        } else if (MediaType.class.isAssignableFrom(desc.getBeanClass())) {
+                            return new MediaTypeSerializer((JsonSerializer<Object>) serializer);
                         }
                         return serializer;
                     }

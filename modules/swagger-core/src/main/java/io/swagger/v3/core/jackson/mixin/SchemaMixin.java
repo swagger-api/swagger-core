@@ -7,11 +7,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 
 import java.util.Map;
 
-/*
- TODO: this handles deserialization, but not serialization of "explicit" null value (as we are serializing non null fields)
- to handle it, a custom schema serializer / JsonFilter / BeanSerializerModifier must be added, using non null for all fields except example where the flag would
- be checked to serialize or skip null example field.
- */
 public abstract class SchemaMixin {
 
     @JsonAnyGetter
@@ -23,6 +18,6 @@ public abstract class SchemaMixin {
     @JsonIgnore
     public abstract boolean getExampleSetFlag();
 
-    @JsonInclude(JsonInclude.Include.CUSTOM)
+    @JsonInclude(value = JsonInclude.Include.NON_NULL, content = JsonInclude.Include.ALWAYS)
     public abstract Object getExample();
 }
