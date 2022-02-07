@@ -31,8 +31,8 @@ For 2.X see [getting started with swagger 2.X](https://github.com/frantuma/swagg
 ## Compatibility
 The OpenAPI Specification has undergone several revisions since initial creation in 2010.  The Swagger Core project has the following compatibilities with the OpenAPI Specification:
 
-Swagger core Version      | Release Date | OpenAPI Spec compatibility | Notes | Status
-------------------------- | ------------ | -------------------------- | ----- | ----
+Swagger core Version      | Release Date | OpenAPI Spec compatibility | Notes                                                                                                             | Status
+------------------------- |--------------| -------------------------- |-------------------------------------------------------------------------------------------------------------------| ----
 2.1.12 (**current stable**)| 2021-12-23   | 3.0           | [tag v2.1.12](https://github.com/swagger-api/swagger-core/tree/v2.1.12)                                           | Supported
 2.1.11                     | 2021-09-29   | 3.0           | [tag v2.1.11](https://github.com/swagger-api/swagger-core/tree/v2.1.11)                                           | Supported
 2.1.10                     | 2021-06-28   | 3.0           | [tag v2.1.10](https://github.com/swagger-api/swagger-core/tree/v2.1.10)                                           | Supported
@@ -54,7 +54,8 @@ Swagger core Version      | Release Date | OpenAPI Spec compatibility | Notes | 
 2.0.5                     | 2018-09-19   | 3.0           | [tag v2.0.5](https://github.com/swagger-api/swagger-core/tree/v2.0.5)                                             | Supported
 2.0.4                     | 2018-09-05   | 3.0           | [tag v2.0.4](https://github.com/swagger-api/swagger-core/tree/v2.0.4)                                             | Supported
 2.0.3                     | 2018-08-09   | 3.0           | [tag v2.0.3](https://github.com/swagger-api/swagger-core/tree/v2.0.3)                                             | Supported
-1.6.4 (**current stable**)| 2021-12-23   | 2.0           | [tag v1.6.4](https://github.com/swagger-api/swagger-core/tree/v1.6.4)                                             | Supported
+1.6.5 (**current stable**)| 2022-02-07   | 2.0           | [tag v1.6.5](https://github.com/swagger-api/swagger-core/tree/v1.6.5)                                             | Supported
+1.6.4                     | 2021-12-23   | 2.0           | [tag v1.6.4](https://github.com/swagger-api/swagger-core/tree/v1.6.4)                                             | Supported
 1.6.3                     | 2021-09-29   | 2.0           | [tag v1.6.3](https://github.com/swagger-api/swagger-core/tree/v1.6.3)                                             | Supported
 1.6.2                     | 2020-07-01   | 2.0           | [tag v1.6.2](https://github.com/swagger-api/swagger-core/tree/v1.6.2)                                             | Supported
 1.6.1                     | 2020-04-01   | 2.0           | [tag v1.6.1](https://github.com/swagger-api/swagger-core/tree/v1.6.1)                                             | Supported
@@ -101,7 +102,7 @@ You need the following installed and available in your $PATH:
 * Apache maven 3.0.4 or greater (http://maven.apache.org/)
 
 
-### To build from source (currently 1.6.5-SNAPSHOT)
+### To build from source (currently 1.6.6-SNAPSHOT)
 ```
 # first time building locally
 mvn -N
