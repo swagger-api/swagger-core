@@ -1,10 +1,7 @@
 package io.swagger.v3.core.serialization;
 
 import io.swagger.v3.core.matchers.SerializationMatchers;
-import io.swagger.v3.core.util.Json;
-import io.swagger.v3.core.util.Json31;
 import io.swagger.v3.core.util.ResourceUtils;
-import io.swagger.v3.core.util.Yaml;
 import io.swagger.v3.core.util.Yaml31;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
@@ -28,11 +25,7 @@ import io.swagger.v3.oas.models.parameters.RequestBody;
 import io.swagger.v3.oas.models.responses.ApiResponse;
 import io.swagger.v3.oas.models.responses.ApiResponses;
 import io.swagger.v3.oas.models.security.SecurityScheme;
-import org.checkerframework.checker.units.qual.C;
 import org.testng.annotations.Test;
-
-import java.util.HashMap;
-import java.util.Map;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
@@ -493,19 +486,17 @@ public class OpenAPI3_1SerializationTest {
         schema.addType(schema.getType());
         OpenAPI openAPI = new OpenAPI().openapi("3.1.0").components(new Components()
                 .addSchemas("stringTest", schema)
-                .addPathItems("/pathTest", new PathItem()
+                .addPathItem("/pathTest", new PathItem()
                         .description("test path item")
                         .get(new Operation()
                                 .operationId("testPathItem")
                                 .responses(new ApiResponses()
                                         .addApiResponse("200", new ApiResponse().description("response description")))))
                 .addResponses("201", new ApiResponse()
-                        .description("api response description")
-                        .summary("api response summary"))
+                        .description("api response description"))
                 .addParameters("param", new Parameter()
                         .in("query")
                         .description("parameter description")
-                        .summary("parameter summary")
                         .schema(schema))
                 .addExamples("example", new Example()
                         .summary("example summary")
@@ -516,21 +507,17 @@ public class OpenAPI3_1SerializationTest {
                                 .addMediaType("application/json", new MediaType()
                                         .schema(new ObjectSchema()))))
                 .addHeaders("test-head", new Header()
-                        .description("test header description")
-                        .summary("test header summary"))
+                        .description("test header description"))
                 .addSecuritySchemes("basic", new SecurityScheme()
                         .in(SecurityScheme.In.HEADER)
                         .scheme("http")
-                        .description("ref security description")
-                        .summary("ref security summary"))
+                        .description("ref security description"))
                 .addLinks("Link", new Link()
                         .operationRef("#/paths/~12.0~1repositories~1{username}/get"))
                 .addCallbacks("TestCallback", new Callback().addPathItem("{$request.query.queryUrl}", new PathItem()
                         .description("test path item")
                         .post(new Operation()
                                 .operationId("testPathItem")))));
-
-        Yaml31.prettyPrint(openAPI);
 
         SerializationMatchers.assertEqualsToYaml31(openAPI, "openapi: 3.1.0\n" +
                 "components:\n" +
@@ -540,12 +527,10 @@ public class OpenAPI3_1SerializationTest {
                 "  responses:\n" +
                 "    \"201\":\n" +
                 "      description: api response description\n" +
-                "      summary: api response summary\n" +
                 "  parameters:\n" +
                 "    param:\n" +
                 "      in: query\n" +
                 "      description: parameter description\n" +
-                "      summary: parameter summary\n" +
                 "      schema:\n" +
                 "        type: string\n" +
                 "  examples:\n" +
@@ -561,11 +546,9 @@ public class OpenAPI3_1SerializationTest {
                 "  headers:\n" +
                 "    test-head:\n" +
                 "      description: test header description\n" +
-                "      summary: test header summary\n" +
                 "  securitySchemes:\n" +
                 "    basic:\n" +
                 "      description: ref security description\n" +
-                "      summary: ref security summary\n" +
                 "      in: header\n" +
                 "      scheme: http\n" +
                 "  links:\n" +
@@ -596,15 +579,13 @@ public class OpenAPI3_1SerializationTest {
                 "    },\n" +
                 "    \"responses\" : {\n" +
                 "      \"201\" : {\n" +
-                "        \"description\" : \"api response description\",\n" +
-                "        \"summary\" : \"api response summary\"\n" +
+                "        \"description\" : \"api response description\"\n" +
                 "      }\n" +
                 "    },\n" +
                 "    \"parameters\" : {\n" +
                 "      \"param\" : {\n" +
                 "        \"in\" : \"query\",\n" +
                 "        \"description\" : \"parameter description\",\n" +
-                "        \"summary\" : \"parameter summary\",\n" +
                 "        \"schema\" : {\n" +
                 "          \"type\" : \"string\"\n" +
                 "        }\n" +
@@ -628,14 +609,12 @@ public class OpenAPI3_1SerializationTest {
                 "    },\n" +
                 "    \"headers\" : {\n" +
                 "      \"test-head\" : {\n" +
-                "        \"description\" : \"test header description\",\n" +
-                "        \"summary\" : \"test header summary\"\n" +
+                "        \"description\" : \"test header description\"\n" +
                 "      }\n" +
                 "    },\n" +
                 "    \"securitySchemes\" : {\n" +
                 "      \"basic\" : {\n" +
                 "        \"description\" : \"ref security description\",\n" +
-                "        \"summary\" : \"ref security summary\",\n" +
                 "        \"in\" : \"header\",\n" +
                 "        \"scheme\" : \"http\"\n" +
                 "      }\n" +
@@ -890,7 +869,7 @@ public class OpenAPI3_1SerializationTest {
                         .summary("ref path item")
                 )
                 .components(new Components()
-                        .addPathItems("pathTest", new PathItem()
+                        .addPathItem("pathTest", new PathItem()
                                 .description("test path item")
                                 .get(new Operation()
                                         .operationId("testPathItem")
@@ -951,7 +930,6 @@ public class OpenAPI3_1SerializationTest {
                                 .responses(new ApiResponses()
                                         .addApiResponse("200"   , new ApiResponse()
                                                 .description("point to a $ref response")
-                                                .summary("point to a $ref response")
                                                 .$ref("#/components/responses/okResponse")))))
                 .components(new Components()
                         .addResponses("okResponse", new ApiResponse().description("everything is good")));
@@ -964,7 +942,6 @@ public class OpenAPI3_1SerializationTest {
                 "      responses:\n" +
                 "        \"200\":\n" +
                 "          description: point to a $ref response\n" +
-                "          summary: point to a $ref response\n" +
                 "          $ref: '#/components/responses/okResponse'\n" +
                 "components:\n" +
                 "  responses:\n" +
@@ -981,7 +958,6 @@ public class OpenAPI3_1SerializationTest {
                 "        \"responses\" : {\n" +
                 "          \"200\" : {\n" +
                 "            \"description\" : \"point to a $ref response\",\n" +
-                "            \"summary\" : \"point to a $ref response\",\n" +
                 "            \"$ref\" : \"#/components/responses/okResponse\"\n" +
                 "          }\n" +
                 "        }\n" +
@@ -1011,8 +987,7 @@ public class OpenAPI3_1SerializationTest {
                                 .operationId("testPathItem")
                                 .addParametersItem(new Parameter()
                                         .$ref("#/components/parameters/testParameter")
-                                        .description("test parameter")
-                                        .summary("test param"))));
+                                        .description("test parameter"))));
 
         SerializationMatchers.assertEqualsToYaml31(openAPI, "openapi: 3.1.0\n" +
                 "paths:\n" +
@@ -1022,7 +997,6 @@ public class OpenAPI3_1SerializationTest {
                 "      operationId: testPathItem\n" +
                 "      parameters:\n" +
                 "      - description: test parameter\n" +
-                "        summary: test param\n" +
                 "        $ref: '#/components/parameters/testParameter'\n" +
                 "components:\n" +
                 "  parameters:\n" +
@@ -1038,7 +1012,6 @@ public class OpenAPI3_1SerializationTest {
                 "        \"operationId\" : \"testPathItem\",\n" +
                 "        \"parameters\" : [ {\n" +
                 "          \"description\" : \"test parameter\",\n" +
-                "          \"summary\" : \"test param\",\n" +
                 "          \"$ref\" : \"#/components/parameters/testParameter\"\n" +
                 "        } ]\n" +
                 "      }\n" +
@@ -1113,8 +1086,7 @@ public class OpenAPI3_1SerializationTest {
                                 .operationId("testPathItem")
                                 .requestBody(new RequestBody()
                                         .$ref("#/components/requestBodies/body")
-                                        .description("ref request body")
-                                        .summary("ref req body"))))
+                                        .description("ref request body"))))
                 .components(new Components()
                         .addRequestBodies("body", new RequestBody()
                                 .content(new Content()
@@ -1129,7 +1101,6 @@ public class OpenAPI3_1SerializationTest {
                 "      operationId: testPathItem\n" +
                 "      requestBody:\n" +
                 "        description: ref request body\n" +
-                "        summary: ref req body\n" +
                 "        $ref: '#/components/requestBodies/body'\n" +
                 "components:\n" +
                 "  requestBodies:\n" +
@@ -1146,7 +1117,6 @@ public class OpenAPI3_1SerializationTest {
                 "        \"operationId\" : \"testPathItem\",\n" +
                 "        \"requestBody\" : {\n" +
                 "          \"description\" : \"ref request body\",\n" +
-                "          \"summary\" : \"ref req body\",\n" +
                 "          \"$ref\" : \"#/components/requestBodies/body\"\n" +
                 "        }\n" +
                 "      }\n" +
@@ -1179,13 +1149,11 @@ public class OpenAPI3_1SerializationTest {
                                                 .description("default response")
                                                 .addHeaderObject("header", new Header()
                                                         .$ref("#/components/responses/okResponse")
-                                                        .description("ref header description")
-                                                        .summary("ref header summary"))))
+                                                        .description("ref header description"))))
                         ))
                 .components(new Components()
                         .addHeaders("test-head", new Header()
-                                .description("test header description")
-                                .summary("test header summary")));
+                                .description("test header description")));
 
         SerializationMatchers.assertEqualsToYaml31(openAPI, "openapi: 3.1.0\n" +
                 "paths:\n" +
@@ -1199,13 +1167,11 @@ public class OpenAPI3_1SerializationTest {
                 "          headers:\n" +
                 "            header:\n" +
                 "              description: ref header description\n" +
-                "              summary: ref header summary\n" +
                 "              $ref: '#/components/responses/okResponse'\n" +
                 "components:\n" +
                 "  headers:\n" +
                 "    test-head:\n" +
-                "      description: test header description\n" +
-                "      summary: test header summary");
+                "      description: test header description");
         SerializationMatchers.assertEqualsToJson31(openAPI, "{\n" +
                 "  \"openapi\" : \"3.1.0\",\n" +
                 "  \"paths\" : {\n" +
@@ -1219,7 +1185,6 @@ public class OpenAPI3_1SerializationTest {
                 "            \"headers\" : {\n" +
                 "              \"header\" : {\n" +
                 "                \"description\" : \"ref header description\",\n" +
-                "                \"summary\" : \"ref header summary\",\n" +
                 "                \"$ref\" : \"#/components/responses/okResponse\"\n" +
                 "              }\n" +
                 "            }\n" +
@@ -1231,8 +1196,7 @@ public class OpenAPI3_1SerializationTest {
                 "  \"components\" : {\n" +
                 "    \"headers\" : {\n" +
                 "      \"test-head\" : {\n" +
-                "        \"description\" : \"test header description\",\n" +
-                "        \"summary\" : \"test header summary\"\n" +
+                "        \"description\" : \"test header description\"\n" +
                 "      }\n" +
                 "    }\n" +
                 "  }\n" +
@@ -1245,15 +1209,13 @@ public class OpenAPI3_1SerializationTest {
                 .openapi("3.1.0")
                 .components(new Components().addSecuritySchemes("basic", new SecurityScheme()
                         .$ref("https://external.site.com/#components/securitySchemes/basic")
-                        .description("ref security description")
-                        .summary("ref security summary")));
+                        .description("ref security description")));
 
         SerializationMatchers.assertEqualsToYaml31(openAPI, "openapi: 3.1.0\n" +
                 "components:\n" +
                 "  securitySchemes:\n" +
                 "    basic:\n" +
                 "      description: ref security description\n" +
-                "      summary: ref security summary\n" +
                 "      $ref: https://external.site.com/#components/securitySchemes/basic");
         SerializationMatchers.assertEqualsToJson31(openAPI, "{\n" +
                 "  \"openapi\" : \"3.1.0\",\n" +
@@ -1261,7 +1223,6 @@ public class OpenAPI3_1SerializationTest {
                 "    \"securitySchemes\" : {\n" +
                 "      \"basic\" : {\n" +
                 "        \"description\" : \"ref security description\",\n" +
-                "        \"summary\" : \"ref security summary\",\n" +
                 "        \"$ref\" : \"https://external.site.com/#components/securitySchemes/basic\"\n" +
                 "      }\n" +
                 "    }\n" +
@@ -1282,8 +1243,7 @@ public class OpenAPI3_1SerializationTest {
                                                 .description("default response")
                                                 .addLink("link", new Link()
                                                         .$ref("#/components/links/Link")
-                                                        .description("ref link description")
-                                                        .summary("ref link summary"))))))
+                                                        .description("ref link description"))))))
                 .components(new Components().addLinks("Link", new Link()
                         .operationRef("#/paths/~12.0~1repositories~1{username}/get")));
 
@@ -1299,7 +1259,6 @@ public class OpenAPI3_1SerializationTest {
                 "          links:\n" +
                 "            link:\n" +
                 "              description: ref link description\n" +
-                "              summary: ref link summary\n" +
                 "              $ref: '#/components/links/Link'\n" +
                 "components:\n" +
                 "  links:\n" +
@@ -1318,7 +1277,6 @@ public class OpenAPI3_1SerializationTest {
                 "            \"links\" : {\n" +
                 "              \"link\" : {\n" +
                 "                \"description\" : \"ref link description\",\n" +
-                "                \"summary\" : \"ref link summary\",\n" +
                 "                \"$ref\" : \"#/components/links/Link\"\n" +
                 "              }\n" +
                 "            }\n" +
@@ -1345,10 +1303,8 @@ public class OpenAPI3_1SerializationTest {
                         .description("test path item")
                         .post(new Operation()
                                 .operationId("testPathItem")
-                                .addCallbacks("callbackSample", new Callback()
-                                        .$ref("#/components/callbacks/TestCallback")
-                                        .description("ref callback description")
-                                        .summary("ref callback summary"))))
+                                .addCallback("callbackSample", new Callback()
+                                        .$ref("#/components/callbacks/TestCallback"))))
                 .components(new Components().addCallbacks("TestCallback", new Callback().addPathItem("{$request.query.queryUrl}", new PathItem()
                         .description("test path item")
                         .post(new Operation()
@@ -1363,8 +1319,6 @@ public class OpenAPI3_1SerializationTest {
                 "      callbacks:\n" +
                 "        callbackSample:\n" +
                 "          $ref: '#/components/callbacks/TestCallback'\n" +
-                "          description: ref callback description\n" +
-                "          summary: ref callback summary\n" +
                 "components:\n" +
                 "  callbacks:\n" +
                 "    TestCallback:\n" +
@@ -1382,9 +1336,7 @@ public class OpenAPI3_1SerializationTest {
                 "        \"operationId\" : \"testPathItem\",\n" +
                 "        \"callbacks\" : {\n" +
                 "          \"callbackSample\" : {\n" +
-                "            \"$ref\" : \"#/components/callbacks/TestCallback\",\n" +
-                "            \"description\" : \"ref callback description\",\n" +
-                "            \"summary\" : \"ref callback summary\"\n" +
+                "            \"$ref\" : \"#/components/callbacks/TestCallback\"\n" +
                 "          }\n" +
                 "        }\n" +
                 "      }\n" +

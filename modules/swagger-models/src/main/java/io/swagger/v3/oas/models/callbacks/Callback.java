@@ -36,12 +36,6 @@ public class Callback extends LinkedHashMap<String, PathItem> {
 
     private String $ref = null;
 
-    @OpenAPI31
-    private String description;
-
-    @OpenAPI31
-    private String summary;
-
     /**
      * @since 2.0.3
      */
@@ -57,38 +51,6 @@ public class Callback extends LinkedHashMap<String, PathItem> {
             $ref = "#/components/callbacks/" + $ref;
         }
         this.$ref = $ref;
-    }
-
-    @OpenAPI31
-    public String getDescription() {
-        return description;
-    }
-
-    @OpenAPI31
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    @OpenAPI31
-    public Callback description(String description) {
-        this.description = description;
-        return this;
-    }
-
-    @OpenAPI31
-    public String getSummary() {
-        return summary;
-    }
-
-    @OpenAPI31
-    public void setSummary(String summary) {
-        this.summary = summary;
-    }
-
-    @OpenAPI31
-    public Callback summary(String summary) {
-        this.summary = summary;
-        return this;
     }
 
     /**
@@ -116,19 +78,13 @@ public class Callback extends LinkedHashMap<String, PathItem> {
         if ($ref != null ? !$ref.equals(callback.$ref) : callback.$ref != null) {
             return false;
         }
-        if (description != null ? !description.equals(callback.description) : callback.description != null) {
-            return false;
-        }
-        if (summary != null ? !summary.equals(callback.summary) : callback.summary != null) {
-            return false;
-        }
         return Objects.equals(this.extensions, callback.extensions) &&
                 super.equals(o);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(extensions, $ref, description, summary, super.hashCode());
+        return Objects.hash(extensions, $ref, super.hashCode());
     }
 
     public java.util.Map<String, Object> getExtensions() {
@@ -166,10 +122,7 @@ public class Callback extends LinkedHashMap<String, PathItem> {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("class Callback {\n");
-
         sb.append("    $ref: ").append(toIndentedString($ref)).append("\n");
-        sb.append("    description: ").append(toIndentedString(description)).append("\n");
-        sb.append("    summary: ").append(toIndentedString(summary)).append("\n");
         sb.append("    ").append(toIndentedString(super.toString())).append("\n");
         sb.append("}");
         return sb.toString();

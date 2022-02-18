@@ -27,10 +27,6 @@ import io.swagger.v3.oas.models.media.Content;
 
 public class RequestBody {
     private String description = null;
-
-    @OpenAPI31
-    private String summary = null;
-
     private Content content = null;
     private Boolean required = null;
     private java.util.Map<String, Object> extensions = null;
@@ -52,22 +48,6 @@ public class RequestBody {
 
     public RequestBody description(String description) {
         this.description = description;
-        return this;
-    }
-
-    @OpenAPI31
-    public String getSummary() {
-        return summary;
-    }
-
-    @OpenAPI31
-    public void setSummary(String summary) {
-        this.summary = summary;
-    }
-
-    @OpenAPI31
-    public RequestBody summary(String summary) {
-        this.summary = summary;
         return this;
     }
 
@@ -179,9 +159,6 @@ public class RequestBody {
         if (extensions != null ? !extensions.equals(that.extensions) : that.extensions != null) {
             return false;
         }
-        if (summary != null ? !summary.equals(that.summary) : that.summary != null) {
-            return false;
-        }
         return $ref != null ? $ref.equals(that.$ref) : that.$ref == null;
 
     }
@@ -193,7 +170,6 @@ public class RequestBody {
         result = 31 * result + (required != null ? required.hashCode() : 0);
         result = 31 * result + (extensions != null ? extensions.hashCode() : 0);
         result = 31 * result + ($ref != null ? $ref.hashCode() : 0);
-        result = 31 * result + (summary != null ? summary.hashCode() : 0);
         return result;
     }
 
@@ -203,7 +179,6 @@ public class RequestBody {
         sb.append("class RequestBody {\n");
 
         sb.append("    description: ").append(toIndentedString(description)).append("\n");
-        sb.append("    summary: ").append(toIndentedString(summary)).append("\n");
         sb.append("    content: ").append(toIndentedString(content)).append("\n");
         sb.append("    required: ").append(toIndentedString(required)).append("\n");
         sb.append("}");

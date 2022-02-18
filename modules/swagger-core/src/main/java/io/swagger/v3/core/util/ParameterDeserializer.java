@@ -31,14 +31,8 @@ public class ParameterDeserializer extends JsonDeserializer<Parameter> {
 
         if (sub != null) {
             result = new Parameter().$ref(sub.asText());
-            if (openapi31) {
-                if (desc != null) {
-                    result.description(desc.asText());
-                }
-                JsonNode summary = node.get("summary");
-                if (summary != null) {
-                    result.setSummary(summary.asText());
-                }
+            if (desc != null && openapi31) {
+                result.description(desc.asText());
             }
 
         } else if (inNode != null) {

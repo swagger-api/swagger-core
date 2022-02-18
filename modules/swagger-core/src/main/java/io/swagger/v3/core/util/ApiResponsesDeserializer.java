@@ -30,12 +30,12 @@ public class ApiResponsesDeserializer extends JsonDeserializer<ApiResponses> {
         }
         ApiResponses result = new ApiResponses();
         JsonNode node = jp.getCodec().readTree(jp);
-        ObjectNode objectNode = (ObjectNode)node;
+        ObjectNode objectNode = (ObjectNode) node;
         Map<String, Object> extensions = new LinkedHashMap<>();
         for (Iterator<String> it = objectNode.fieldNames(); it.hasNext(); ) {
             String childName = it.next();
             JsonNode child = objectNode.get(childName);
-            // if name start with `x-` consider it an extesion
+            // if name start with `x-` consider it an extension
             if (childName.startsWith("x-")) {
                 extensions.put(childName, mapper.convertValue(child, Object.class));
             } else {

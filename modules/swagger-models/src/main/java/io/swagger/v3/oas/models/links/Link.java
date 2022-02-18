@@ -36,10 +36,6 @@ public class Link {
     private Object requestBody = null;
     private Map<String, Header> headers = null;
     private String description = null;
-
-    @OpenAPI31
-    private String summary = null;
-
     private String $ref = null;
     private java.util.Map<String, Object> extensions = null;
     private Server server;
@@ -128,12 +124,12 @@ public class Link {
         this.parameters = parameters;
     }
 
-    public Link parameters(Map<String, String> parameters) {
-        this.parameters = parameters;
-        return this;
+    @Deprecated
+    public Link parameters(String name, String parameter) {
+        return this.addParameter(name, parameter);
     }
 
-    public Link addParameters(String name, String parameter) {
+    public Link addParameter(String name, String parameter) {
         if (this.parameters == null) {
             this.parameters = new LinkedHashMap<>();
         }
@@ -187,19 +183,6 @@ public class Link {
         return this;
     }
 
-    public String getSummary() {
-        return summary;
-    }
-
-    public void setSummary(String summary) {
-        this.summary = summary;
-    }
-
-    public Link summary(String summary) {
-        this.summary = summary;
-        return this;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -235,9 +218,6 @@ public class Link {
         if (extensions != null ? !extensions.equals(link.extensions) : link.extensions != null) {
             return false;
         }
-        if (summary != null ? !summary.equals(link.summary) : link.summary != null) {
-            return false;
-        }
         return server != null ? server.equals(link.server) : link.server == null;
 
     }
@@ -253,7 +233,6 @@ public class Link {
         result = 31 * result + ($ref != null ? $ref.hashCode() : 0);
         result = 31 * result + (extensions != null ? extensions.hashCode() : 0);
         result = 31 * result + (server != null ? server.hashCode() : 0);
-        result = 31 * result + (summary != null ? summary.hashCode() : 0);
         return result;
     }
 
@@ -315,7 +294,6 @@ public class Link {
         sb.append("    requestBody: ").append(toIndentedString(requestBody)).append("\n");
         sb.append("    headers: ").append(toIndentedString(headers)).append("\n");
         sb.append("    description: ").append(toIndentedString(description)).append("\n");
-        sb.append("    summary: ").append(toIndentedString(summary)).append("\n");
         sb.append("    $ref: ").append(toIndentedString($ref)).append("\n");
         sb.append("}");
         return sb.toString();

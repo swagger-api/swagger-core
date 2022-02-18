@@ -2,11 +2,13 @@ package io.swagger.v3.core.jackson.mixin;
 
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import io.swagger.v3.core.jackson.PathsSerializer;
+import io.swagger.v3.oas.models.Paths;
 
 import java.util.Map;
 
-public abstract class ParameterMixin {
+public abstract class OpenAPI31Mixin {
 
     @JsonAnyGetter
     public abstract Map<String, Object> getExtensions();
@@ -14,6 +16,7 @@ public abstract class ParameterMixin {
     @JsonAnySetter
     public abstract void addExtension(String name, Object value);
 
-    @JsonIgnore
-    public abstract String getSummary();
+    @JsonSerialize(using = PathsSerializer.class)
+    public abstract Paths getPaths();
+
 }
