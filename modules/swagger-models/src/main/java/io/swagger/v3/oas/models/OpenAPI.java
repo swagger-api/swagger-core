@@ -401,7 +401,7 @@ public class OpenAPI {
         sb.append("    paths: ").append(toIndentedString(paths)).append("\n");
         sb.append("    components: ").append(toIndentedString(components)).append("\n");
         if (specVersion == SpecVersion.V31) sb.append("    webhooks: ").append(toIndentedString(webhooks)).append("\n");
-        sb.append("    jsonSchemaDialect: ").append(toIndentedString(jsonSchemaDialect)).append("\n");
+        if (specVersion == SpecVersion.V31) sb.append("    jsonSchemaDialect: ").append(toIndentedString(jsonSchemaDialect)).append("\n");
         sb.append("}");
         return sb.toString();
     }

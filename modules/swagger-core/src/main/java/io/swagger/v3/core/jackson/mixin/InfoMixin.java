@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.util.Map;
 
-public abstract class LinkMixin {
+public abstract class InfoMixin {
 
     @JsonAnyGetter
     public abstract Map<String, Object> getExtensions();

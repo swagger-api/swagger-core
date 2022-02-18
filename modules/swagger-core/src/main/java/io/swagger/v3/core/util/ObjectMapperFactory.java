@@ -17,27 +17,22 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.swagger.v3.core.jackson.Schema31Serializer;
 import io.swagger.v3.core.jackson.MediaTypeSerializer;
 import io.swagger.v3.core.jackson.SchemaSerializer;
-import io.swagger.v3.core.jackson.mixin.ApiResponseMixin;
-import io.swagger.v3.core.jackson.mixin.CallbackMixin;
+import io.swagger.v3.core.jackson.mixin.Components31Mixin;
 import io.swagger.v3.core.jackson.mixin.ComponentsMixin;
 import io.swagger.v3.core.jackson.mixin.DateSchemaMixin;
 import io.swagger.v3.core.jackson.mixin.Discriminator31Mixin;
 import io.swagger.v3.core.jackson.mixin.DiscriminatorMixin;
 import io.swagger.v3.core.jackson.mixin.ExampleMixin;
 import io.swagger.v3.core.jackson.mixin.ExtensionsMixin;
-import io.swagger.v3.core.jackson.mixin.HeaderMixin;
-import io.swagger.v3.core.jackson.mixin.Info31Mixin;
+import io.swagger.v3.core.jackson.mixin.InfoMixin;
 import io.swagger.v3.core.jackson.mixin.LicenseMixin;
-import io.swagger.v3.core.jackson.mixin.LinkMixin;
 import io.swagger.v3.core.jackson.mixin.MediaTypeMixin;
+import io.swagger.v3.core.jackson.mixin.OpenAPI31Mixin;
 import io.swagger.v3.core.jackson.mixin.OpenAPIMixin;
 import io.swagger.v3.core.jackson.mixin.OperationMixin;
-import io.swagger.v3.core.jackson.mixin.ParameterMixin;
-import io.swagger.v3.core.jackson.mixin.RequestBodyMixin;
 import io.swagger.v3.core.jackson.mixin.Schema31Mixin;
 import io.swagger.v3.core.jackson.mixin.SchemaConverterMixin;
 import io.swagger.v3.core.jackson.mixin.SchemaMixin;
-import io.swagger.v3.core.jackson.mixin.SecuritySchemeMixin;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.ExternalDocumentation;
 import io.swagger.v3.oas.models.OpenAPI;
@@ -71,7 +66,6 @@ import io.swagger.v3.oas.models.servers.Server;
 import io.swagger.v3.oas.models.servers.ServerVariable;
 import io.swagger.v3.oas.models.servers.ServerVariables;
 import io.swagger.v3.oas.models.tags.Tag;
-import jdk.nashorn.internal.codegen.CompilerConstants;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -120,6 +114,8 @@ public class ObjectMapperFactory {
                                 SerializationConfig config, BeanDescription desc, JsonSerializer<?> serializer) {
                             if (Schema.class.isAssignableFrom(desc.getBeanClass())) {
                                 return new SchemaSerializer((JsonSerializer<Object>) serializer);
+                            } else if (MediaType.class.isAssignableFrom(desc.getBeanClass())) {
+                                return new MediaTypeSerializer((JsonSerializer<Object>) serializer);
                             }
                             return serializer;
                         }
@@ -178,34 +174,29 @@ public class ObjectMapperFactory {
         sourceMixins.put(ServerVariables.class, ExtensionsMixin.class);
         sourceMixins.put(Tag.class, ExtensionsMixin.class);
         sourceMixins.put(XML.class, ExtensionsMixin.class);
+        sourceMixins.put(ApiResponse.class, ExtensionsMixin.class);
+        sourceMixins.put(Parameter.class, ExtensionsMixin.class);
+        sourceMixins.put(RequestBody.class, ExtensionsMixin.class);
+        sourceMixins.put(Header.class, ExtensionsMixin.class);
+        sourceMixins.put(SecurityScheme.class, ExtensionsMixin.class);
+        sourceMixins.put(Callback.class, ExtensionsMixin.class);
+
 
         if (!openapi31) {
             sourceMixins.put(Schema.class, SchemaMixin.class);
             sourceMixins.put(DateSchema.class, DateSchemaMixin.class);
             sourceMixins.put(Components.class, ComponentsMixin.class);
-            sourceMixins.put(Info.class, Info31Mixin.class);
+            sourceMixins.put(Info.class, InfoMixin.class);
             sourceMixins.put(License.class, LicenseMixin.class);
             sourceMixins.put(OpenAPI.class, OpenAPIMixin.class);
             sourceMixins.put(Discriminator.class, DiscriminatorMixin.class);
-            sourceMixins.put(ApiResponse.class, ApiResponseMixin.class);
-            sourceMixins.put(Parameter.class, ParameterMixin.class);
-            sourceMixins.put(RequestBody.class, RequestBodyMixin.class);
-            sourceMixins.put(Header.class, HeaderMixin.class);
-            sourceMixins.put(SecurityScheme.class, SecuritySchemeMixin.class);
-            sourceMixins.put(Link.class, LinkMixin.class);
-            sourceMixins.put(Callback.class, CallbackMixin.class);
         } else {
             sourceMixins.put(Info.class, ExtensionsMixin.class);
             sourceMixins.put(Schema.class, Schema31Mixin.class);
+            sourceMixins.put(Components.class, Components31Mixin.class);
+            sourceMixins.put(OpenAPI.class, OpenAPI31Mixin.class);
             sourceMixins.put(DateSchema.class, DateSchemaMixin.class);
             sourceMixins.put(Discriminator.class, Discriminator31Mixin.class);
-            sourceMixins.put(ApiResponse.class, ExtensionsMixin.class);
-            sourceMixins.put(Parameter.class, ExtensionsMixin.class);
-            sourceMixins.put(RequestBody.class, ExtensionsMixin.class);
-            sourceMixins.put(Header.class, ExtensionsMixin.class);
-            sourceMixins.put(SecurityScheme.class, ExtensionsMixin.class);
-            sourceMixins.put(Link.class, ExtensionsMixin.class);
-            sourceMixins.put(Callback.class, ExtensionsMixin.class);
         }
         mapper.setMixIns(sourceMixins);
         mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);

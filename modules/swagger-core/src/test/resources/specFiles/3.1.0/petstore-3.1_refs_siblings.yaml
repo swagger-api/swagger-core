@@ -35,8 +35,6 @@ paths:
       callbacks:
         callIt:
           $ref: '#/components/callbacks/TestCallback'
-          description: "ref call back description"
-          summary: "ref call back summary"
       requestBody:
         $ref: '#/components/requestBodies/body'
         description: "ref request body description"

@@ -43,12 +43,6 @@ public class CallbackSerializer extends JsonSerializer<Callback> {
             } else { // handle ref schema serialization skipping all other props
                 jgen.writeStartObject();
                 jgen.writeStringField("$ref", value.get$ref());
-                if (StringUtils.isNotEmpty(value.getDescription())) {
-                    jgen.writeStringField("description", value.getDescription());
-                }
-                if (StringUtils.isNotEmpty(value.getSummary())) {
-                    jgen.writeStringField("summary", value.getSummary());
-                }
                 jgen.writeEndObject();
             }
         }

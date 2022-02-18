@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.models.security.OAuthFlows;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 
@@ -18,6 +19,12 @@ public class SecuritySchemeDeserializer extends JsonDeserializer<SecurityScheme>
     @Override
     public SecurityScheme deserialize(JsonParser jp, DeserializationContext ctxt)
             throws IOException {
+        ObjectMapper mapper = null;
+        if (openapi31) {
+            mapper = Json31.mapper();
+        } else {
+            mapper = Json.mapper();
+        }
         SecurityScheme result = null;
 
         JsonNode node = jp.getCodec().readTree(jp);
@@ -50,17 +57,11 @@ public class SecuritySchemeDeserializer extends JsonDeserializer<SecurityScheme>
             } else if ("oauth2".equals(type)) {
                 result
                         .type(SecurityScheme.Type.OAUTH2)
-                        .flows(Json.mapper().convertValue(node.get("flows"), OAuthFlows.class));
+                        .flows(mapper.convertValue(node.get("flows"), OAuthFlows.class));
             } else if ("mutualTLS".equals(type)) {
                 result
                         .type(SecurityScheme.Type.MUTUALTLS);
             }
-
-            JsonNode summaryNode = node.get("summary");
-            if (summaryNode != null && openapi31) {
-                result.setSummary(summaryNode.asText());
-            }
-
         }
 
         return result;

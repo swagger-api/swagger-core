@@ -326,7 +326,7 @@ public class Components {
     }
 
     @OpenAPI31
-    public Components addPathItems(String key, PathItem pathItem) {
+    public Components addPathItem(String key, PathItem pathItem) {
         if (this.pathItems == null) {
             this.pathItems = new LinkedHashMap<>();
         }

@@ -238,7 +238,7 @@ public class Operation {
         return this;
     }
 
-    public Operation addCallbacks(String key, Callback callback) {
+    public Operation addCallback(String key, Callback callback) {
         if (this.callbacks == null) {
             this.callbacks = new LinkedHashMap<>();
         }
