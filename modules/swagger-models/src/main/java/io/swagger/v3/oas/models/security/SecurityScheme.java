@@ -18,9 +18,6 @@ package io.swagger.v3.oas.models.security;
 
 import io.swagger.v3.oas.annotations.OpenAPI31;
 
-import java.util.HashSet;
-import java.util.Set;
-
 /**
  * SecurityScheme
  *
@@ -52,10 +49,6 @@ public class SecurityScheme {
 
     private Type type = null;
     private String description = null;
-
-    @OpenAPI31
-    private String summary = null;
-
     private String name = null;
     private String $ref = null;
 
@@ -123,22 +116,6 @@ public class SecurityScheme {
 
     public SecurityScheme description(String description) {
         this.description = description;
-        return this;
-    }
-
-    @OpenAPI31
-    public String getSummary() {
-        return summary;
-    }
-
-    @OpenAPI31
-    public void setSummary(String summary) {
-        this.summary = summary;
-    }
-
-    @OpenAPI31
-    public SecurityScheme summary(String summary) {
-        this.summary = summary;
         return this;
     }
 
@@ -346,9 +323,6 @@ public class SecurityScheme {
         if (openIdConnectUrl != null ? !openIdConnectUrl.equals(that.openIdConnectUrl) : that.openIdConnectUrl != null) {
             return false;
         }
-        if (summary != null ? !summary.equals(that.summary) : that.summary != null) {
-            return false;
-        }
         return extensions != null ? extensions.equals(that.extensions) : that.extensions == null;
     }
 
@@ -364,7 +338,6 @@ public class SecurityScheme {
         result = 31 * result + (flows != null ? flows.hashCode() : 0);
         result = 31 * result + (openIdConnectUrl != null ? openIdConnectUrl.hashCode() : 0);
         result = 31 * result + (extensions != null ? extensions.hashCode() : 0);
-        result = 31 * result + (summary != null ? summary.hashCode() : 0);
         return result;
     }
 
@@ -375,7 +348,6 @@ public class SecurityScheme {
 
         sb.append("    type: ").append(toIndentedString(type)).append("\n");
         sb.append("    description: ").append(toIndentedString(description)).append("\n");
-        sb.append("    summary: ").append(toIndentedString(summary)).append("\n");
         sb.append("    name: ").append(toIndentedString(name)).append("\n");
         sb.append("    in: ").append(toIndentedString(in)).append("\n");
         sb.append("    scheme: ").append(toIndentedString(scheme)).append("\n");

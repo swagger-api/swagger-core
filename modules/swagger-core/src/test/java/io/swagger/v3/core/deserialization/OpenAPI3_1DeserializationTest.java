@@ -88,14 +88,12 @@ public class OpenAPI3_1DeserializationTest {
         assertNotNull(openAPI.getComponents().getResponses());
         assertNotNull(openAPI.getComponents().getResponses().get("201"));
         assertEquals(openAPI.getComponents().getResponses().get("201").getDescription(), "api response description");
-        assertEquals(openAPI.getComponents().getResponses().get("201").getSummary(), "api response summary");
 
         assertNotNull(openAPI.getComponents().getParameters());
         assertNotNull(openAPI.getComponents().getParameters().get("param"));
         assertEquals(openAPI.getComponents().getParameters().get("param").getIn(), "query");
         assertEquals(openAPI.getComponents().getParameters().get("param").getName(), "param0");
         assertEquals(openAPI.getComponents().getParameters().get("param").getDescription(), "parameter description");
-        assertEquals(openAPI.getComponents().getParameters().get("param").getSummary(), "parameter summary");
 
         assertNotNull(openAPI.getComponents().getExamples());
         assertNotNull(openAPI.getComponents().getExamples().get("example"));
@@ -109,12 +107,10 @@ public class OpenAPI3_1DeserializationTest {
         assertNotNull(openAPI.getComponents().getHeaders());
         assertNotNull(openAPI.getComponents().getHeaders().get("test-head"));
         assertEquals(openAPI.getComponents().getHeaders().get("test-head").getDescription(), "test header description");
-        assertEquals(openAPI.getComponents().getHeaders().get("test-head").getSummary(), "test header summary");
 
         assertNotNull(openAPI.getComponents().getSecuritySchemes());
         assertNotNull(openAPI.getComponents().getSecuritySchemes().get("basic"));
         assertEquals(openAPI.getComponents().getSecuritySchemes().get("basic").getDescription(), "security description");
-        assertEquals(openAPI.getComponents().getSecuritySchemes().get("basic").getSummary(), "security summary");
         assertEquals(openAPI.getComponents().getSecuritySchemes().get("basic").getType().toString(), "http");
 
         assertNotNull(openAPI.getComponents().getLinks());
@@ -159,14 +155,12 @@ public class OpenAPI3_1DeserializationTest {
         assertNotNull(openAPI.getComponents().getResponses());
         assertNotNull(openAPI.getComponents().getResponses().get("201"));
         assertEquals(openAPI.getComponents().getResponses().get("201").getDescription(), "api response description");
-        assertNull(openAPI.getComponents().getResponses().get("201").getSummary());
 
         assertNotNull(openAPI.getComponents().getParameters());
         assertNotNull(openAPI.getComponents().getParameters().get("param"));
         assertEquals(openAPI.getComponents().getParameters().get("param").getIn(), "query");
         assertEquals(openAPI.getComponents().getParameters().get("param").getName(), "param0");
         assertEquals(openAPI.getComponents().getParameters().get("param").getDescription(), "parameter description");
-        assertNull(openAPI.getComponents().getParameters().get("param").getSummary());
 
         assertNotNull(openAPI.getComponents().getExamples());
         assertNotNull(openAPI.getComponents().getExamples().get("example"));
@@ -180,12 +174,10 @@ public class OpenAPI3_1DeserializationTest {
         assertNotNull(openAPI.getComponents().getHeaders());
         assertNotNull(openAPI.getComponents().getHeaders().get("test-head"));
         assertEquals(openAPI.getComponents().getHeaders().get("test-head").getDescription(), "test header description");
-        assertNull(openAPI.getComponents().getHeaders().get("test-head").getSummary());
 
         assertNotNull(openAPI.getComponents().getSecuritySchemes());
         assertNotNull(openAPI.getComponents().getSecuritySchemes().get("basic"));
         assertEquals(openAPI.getComponents().getSecuritySchemes().get("basic").getDescription(), "security description");
-        assertNull(openAPI.getComponents().getSecuritySchemes().get("basic").getSummary());
         assertEquals(openAPI.getComponents().getSecuritySchemes().get("basic").getType().toString(), "http");
 
         assertNotNull(openAPI.getComponents().getLinks());
@@ -211,7 +203,6 @@ public class OpenAPI3_1DeserializationTest {
 
         assertEquals(openAPI.getPaths().get("/pets").getPost().getParameters().get(0).get$ref(), "#/components/parameters/testParameter");
         assertEquals(openAPI.getPaths().get("/pets").getPost().getParameters().get(0).getDescription(), "ref parameter description");
-        assertEquals(openAPI.getPaths().get("/pets").getPost().getParameters().get(0).getSummary(), "ref parameter summary");
 
         assertEquals(openAPI.getPaths().get("/pets").getPost().getParameters().get(1).getName(), "randomParam");
         assertEquals(openAPI.getPaths().get("/pets").getPost().getParameters().get(1).getIn(), "query");
@@ -220,22 +211,15 @@ public class OpenAPI3_1DeserializationTest {
         assertEquals(openAPI.getPaths().get("/pets").getPost().getParameters().get(1).getExamples().get("refExample").getSummary(), "ref example summary");
 
         assertEquals(openAPI.getPaths().get("/pets").getPost().getCallbacks().get("callIt").get$ref(), "#/components/callbacks/TestCallback");
-        assertEquals(openAPI.getPaths().get("/pets").getPost().getCallbacks().get("callIt").getDescription(), "ref call back description");
-        assertEquals(openAPI.getPaths().get("/pets").getPost().getCallbacks().get("callIt").getSummary(), "ref call back summary");
 
         assertEquals(openAPI.getPaths().get("/pets").getPost().getRequestBody().get$ref(), "#/components/requestBodies/body");
         assertEquals(openAPI.getPaths().get("/pets").getPost().getRequestBody().getDescription(), "ref request body description");
-        assertEquals(openAPI.getPaths().get("/pets").getPost().getRequestBody().getSummary(), "ref request body summary");
 
         assertEquals(openAPI.getPaths().get("/pets").getPost().getResponses().get("201").get$ref(), "#/components/responses/okResponse");
         assertEquals(openAPI.getPaths().get("/pets").getPost().getResponses().get("201").getDescription(), "ref response description");
-        assertEquals(openAPI.getPaths().get("/pets").getPost().getResponses().get("201").getSummary(), "ref response summary");
 
         assertEquals(openAPI.getPaths().get("/pets").getPost().getResponses().get("default").getHeaders().get("head").get$ref(), "#/components/headers/head");
         assertEquals(openAPI.getPaths().get("/pets").getPost().getResponses().get("default").getHeaders().get("head").getDescription(), "ref header description");
-        assertEquals(openAPI.getPaths().get("/pets").getPost().getResponses().get("default").getHeaders().get("head").getSummary(), "ref header summary");
-
-
 
     }
 }

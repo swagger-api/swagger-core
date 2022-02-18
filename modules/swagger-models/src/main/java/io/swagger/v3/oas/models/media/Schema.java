@@ -37,14 +37,12 @@ import java.util.Set;
  * Schema
  *
  * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.0.1/versions/3.0.1.md#schemaObject"
+ * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.1.0/versions/3.1.0.md#schemaObject"
  */
 
 public class Schema<T> {
-    @OpenAPI30
-    protected T _default;
 
-    @OpenAPI31
-    protected Schema defaultSchema;
+    protected T _default;
 
     private String name;
     private String title = null;
@@ -562,7 +560,7 @@ public class Schema<T> {
     }
 
     /**
-     * returns the _default property from a StringSchema instance.
+     * returns the _default property from a Schema instance.
      *
      * @return String _default
      **/
@@ -1201,22 +1199,6 @@ public class Schema<T> {
     }
 
     @OpenAPI31
-    public Schema getDefaultSchema() {
-        return defaultSchema;
-    }
-
-    @OpenAPI31
-    public void setDefaultSchema(Schema defaultSchema) {
-        this.defaultSchema = defaultSchema;
-    }
-
-    @OpenAPI31
-    public Schema defaultSchema(Schema defaultSchema) {
-        this.defaultSchema = defaultSchema;
-        return this;
-    }
-
-    @OpenAPI31
     public List<Schema> getPrefixItems() {
         return prefixItems;
     }
@@ -1550,7 +1532,6 @@ public class Schema<T> {
                 Objects.equals(this.oneOf, schema.oneOf) &&
                 Objects.equals(this._const, schema._const) &&
                 Objects.equals(this._default, schema._default) &&
-                Objects.equals(this.defaultSchema, schema.defaultSchema) &&
                 Objects.equals(this.contentEncoding, schema.contentEncoding) &&
                 Objects.equals(this.contentMediaType, schema.contentMediaType) &&
                 Objects.equals(this.contentSchema, schema.contentSchema) &&
@@ -1581,7 +1562,7 @@ public class Schema<T> {
                 discriminator, _enum, _default, patternProperties, $id, $anchor, $schema, types, allOf, anyOf, oneOf, _const,
                 contentEncoding, contentMediaType, contentSchema, propertyNames, unevaluatedProperties, maxContains,
                 minContains, additionalItems, unevaluatedItems, _if, _else, then, dependentRequired, dependentSchemas,
-                $comment, examples, defaultSchema, prefixItems);
+                $comment, examples, prefixItems);
     }
 
     public java.util.Map<String, Object> getExtensions() {

@@ -105,7 +105,7 @@ public class SwaggerSerializerTest {
                 .addLink("myLink", new Link()
                         .description("a link")
                         .operationId("theLinkedOperationId")
-                        .addParameters("userId", "gah")
+                        .addParameter("userId", "gah")
                 )
                 .content(new Content()
                         .addMediaType("application/json", new MediaType()
