@@ -80,7 +80,7 @@ You need the following installed and available in your $PATH:
 * Jackson 2.4.5 or greater
 
 
-### To build from source (currently 2.1.14-SNAPSHOT)
+### To build from source (currently 2.2.0-SNAPSHOT)
 ```
 # first time building locally
 mvn -N
