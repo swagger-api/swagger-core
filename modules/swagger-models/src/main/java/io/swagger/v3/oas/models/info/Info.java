@@ -34,7 +34,7 @@ public class Info {
     private java.util.Map<String, Object> extensions = null;
 
     /**
-     * @since 2.1.11 (OpenAPI 3.1.0)
+     * @since 2.2.0 (OpenAPI 3.1.0)
      */
     @OpenAPI31
     private String summary = null;
@@ -156,7 +156,7 @@ public class Info {
     /**
      * returns the summary property from a Info instance.
      *
-     * @since 2.1.11 (OpenAPI 3.1.0)
+     * @since 2.2.0 (OpenAPI 3.1.0)
      * @return String
      **/
     @OpenAPI31

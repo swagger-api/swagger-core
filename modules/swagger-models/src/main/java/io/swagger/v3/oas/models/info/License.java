@@ -32,7 +32,7 @@ public class License {
     private String url = null;
 
     /**
-     * @since 2.1.8
+     * @since 2.2.0 (OpenAPI 3.1.0)
      */
     @OpenAPI31
     private String identifier = null;
@@ -79,7 +79,7 @@ public class License {
     /**
      * returns the identifier property from a License instance.
      *
-     * @since 2.1.8
+     * @since 2.2.0 (OpenAPI 3.1.0)
      * @return String identifier
      **/
     @OpenAPI31

@@ -70,7 +70,7 @@ public class OpenAPI {
     }
 
     /**
-     * @since 2.1.8 (OpenAPI 3.1.0)
+     * @since 2.2.0 (OpenAPI 3.1.0)
      */
     @OpenAPI31
     private java.util.Map<String, PathItem> webhooks = null;
@@ -283,7 +283,7 @@ public class OpenAPI {
     /**
      * returns the webhooks property from a OpenAPI instance.
      *
-     * @since 2.1.10 (OpenAPI 3.1.0)
+     * @since 2.2.0 (OpenAPI 3.1.0)
      * @return Map&lt;String, PathItem&gt; webhooks
      **/
 
