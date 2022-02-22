@@ -55,7 +55,7 @@ public class Components {
     private java.util.Map<String, Object> extensions = null;
 
     /**
-     * @since 2.1.11 (OpenAPI 3.1.0)
+     * @since 2.2.0 (OpenAPI 3.1.0)
      */
     @OpenAPI31
     private Map<String, PathItem> pathItems;
@@ -306,7 +306,7 @@ public class Components {
     /**
      * returns the path items property from a Components instance.
      *
-     * @since 2.1.11 (OpenAPI 3.1.0)
+     * @since 2.2.0 (OpenAPI 3.1.0)
      * @return Map&lt;String, PathItem&gt; pathItems
      **/
     @OpenAPI31

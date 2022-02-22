@@ -23,7 +23,6 @@ import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import java.nio.file.AccessMode;
 
 import static java.lang.annotation.ElementType.ANNOTATION_TYPE;
 import static java.lang.annotation.ElementType.TYPE;
@@ -329,10 +328,29 @@ public @interface Schema {
      */
     Extension[] extensions() default {};
 
+    /**
+     * Allows to specify the additionalProperties value
+     *
+     * AdditionalPropertiesValue.TRUE: set to TRUE
+     * AdditionalPropertiesValue.FALSE: set to FALSE
+     * AdditionalPropertiesValue.USE_ADDITIONAL_PROPERTIES_ANNOTATION: resolve from @Content.additionalPropertiesSchema
+     *
+     * @since 2.2.0
+     * @return the accessMode for this schema (property)
+     *
+     */
+    AdditionalPropertiesValue additionalProperties() default AdditionalPropertiesValue.USE_ADDITIONAL_PROPERTIES_ANNOTATION;
+
     enum AccessMode {
         AUTO,
         READ_ONLY,
         WRITE_ONLY,
         READ_WRITE;
+    }
+
+    enum AdditionalPropertiesValue {
+        TRUE,
+        FALSE,
+        USE_ADDITIONAL_PROPERTIES_ANNOTATION;
     }
 }
