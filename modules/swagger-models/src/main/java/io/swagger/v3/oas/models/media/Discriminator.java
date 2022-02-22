@@ -11,7 +11,7 @@ public class Discriminator {
     private Map<String, String> mapping;
 
     /**
-     * @since 2.1.11 (OpenAPI 3.1.0)
+     * @since 2.2.0 (OpenAPI 3.1.0)
      */
     @OpenAPI31
     private Map<String, Object> extensions;
@@ -53,7 +53,7 @@ public class Discriminator {
     /**
      * returns the specific extensions from a Discriminator instance.
      *
-     * @since 2.1.11 (OpenAPI 3.1.0)
+     * @since 2.2.0 (OpenAPI 3.1.0)
      * @return Map&lt;String, Object&gt; extensions
      **/
     @OpenAPI31

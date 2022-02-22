@@ -63,6 +63,22 @@ public @interface Content {
     Schema schema() default @Schema();
 
     /**
+     * The schema properties defined for schema provided in @Schema
+     *
+     * @since 2.2.0
+     * @return the schema properties
+     */
+    SchemaProperty[] schemaProperties() default {};
+
+    /**
+     * The schema properties defined for schema provided in @Schema
+     *
+     * @since 2.2.0
+     * @return the schema properties
+     */
+    Schema additionalPropertiesSchema() default @Schema();
+
+    /**
      * The schema of the array that defines the type used for the content.
      *
      * @return the schema of the array

@@ -167,41 +167,73 @@ public class Schema<T> {
     @OpenAPI31
     private List<T> examples;
 
+    /**
+     *
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
     @OpenAPI31
     public Schema getContains() {
         return contains;
     }
 
+    /**
+     *
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
     @OpenAPI31
     public void setContains(Schema contains) {
         this.contains = contains;
     }
 
+    /**
+     *
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
     @OpenAPI31
     public String get$id() {
         return $id;
     }
 
+    /**
+     *
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
     @OpenAPI31
     public void set$id(String $id) {
         this.$id = $id;
     }
 
+    /**
+     *
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
     @OpenAPI31
     public String get$schema() {
         return $schema;
     }
 
+    /**
+     *
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
     @OpenAPI31
     public void set$schema(String $schema) {
         this.$schema = $schema;
     }
 
+    /**
+     *
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
     @OpenAPI31
     public String get$anchor() {
         return $anchor;
     }
 
+    /**
+     *
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
     @OpenAPI31
     public void set$anchor(String $anchor) {
         this.$anchor = $anchor;
@@ -210,7 +242,7 @@ public class Schema<T> {
     /**
      * returns the exclusiveMaximumValue property from a Schema instance for OpenAPI 3.1.x
      *
-     * @since 2.1.8
+     * @since 2.2.0 (OpenAPI 3.1.0)
      * @return BigDecimal exclusiveMaximumValue
      *
      **/
@@ -219,11 +251,19 @@ public class Schema<T> {
         return exclusiveMaximumValue;
     }
 
+    /**
+     *
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
     @OpenAPI31
     public void setExclusiveMaximumValue(BigDecimal exclusiveMaximumValue) {
         this.exclusiveMaximumValue = exclusiveMaximumValue;
     }
 
+    /**
+     *
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
     @OpenAPI31
     public Schema exclusiveMaximumValue(BigDecimal exclusiveMaximumValue) {
         this.exclusiveMaximumValue = exclusiveMaximumValue;
@@ -233,7 +273,7 @@ public class Schema<T> {
     /**
      * returns the exclusiveMinimumValue property from a Schema instance for OpenAPI 3.1.x
      *
-     * @since 2.1.8
+     * @since 2.2.0 (OpenAPI 3.1.0)
      * @return BigDecimal exclusiveMinimumValue
      *
      **/
@@ -241,10 +281,20 @@ public class Schema<T> {
     public BigDecimal getExclusiveMinimumValue() {
         return exclusiveMinimumValue;
     }
+
+    /**
+     *
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
     @OpenAPI31
     public void setExclusiveMinimumValue(BigDecimal exclusiveMinimumValue) {
         this.exclusiveMinimumValue = exclusiveMinimumValue;
     }
+
+    /**
+     *
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
     @OpenAPI31
     public Schema exclusiveMinimumValue(BigDecimal exclusiveMinimumValue) {
         this.exclusiveMinimumValue = exclusiveMinimumValue;
@@ -254,25 +304,37 @@ public class Schema<T> {
     /**
      * returns the patternProperties property from a Schema instance.
      *
-     * @since 2.1.8
+     * @since 2.2.0 (OpenAPI 3.1.0)
      * @return Map&lt;String, Schema&gt; patternProperties
      **/
-
     @OpenAPI31
     public Map<String, Schema> getPatternProperties() {
         return patternProperties;
     }
 
+    /**
+     *
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
+    @OpenAPI31
     public void setPatternProperties(Map<String, Schema> patternProperties) {
         this.patternProperties = patternProperties;
     }
 
+    /**
+     *
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
     @OpenAPI31
     public Schema patternProperties(Map<String, Schema> patternProperties) {
         this.patternProperties = patternProperties;
         return this;
     }
 
+    /**
+     *
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
     @OpenAPI31
     public Schema addPatternProperty(String key, Schema patternPropertiesItem) {
         if (this.patternProperties == null) {
@@ -282,29 +344,48 @@ public class Schema<T> {
         return this;
     }
 
-
+    /**
+     *
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
     @OpenAPI31
     public Schema contains(Schema contains) {
         this.contains = contains;
         return this;
     }
 
+    /**
+     *
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
     @OpenAPI31
     public Schema $id(String $id) {
         this.$id = $id;
         return this;
     }
 
+    /**
+     *
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
     @OpenAPI31
     public Set<String> getTypes() {
         return types;
     }
 
+    /**
+     *
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
     @OpenAPI31
     public void setTypes(Set<String> types) {
         this.types = types;
     }
 
+    /**
+     *
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
     @OpenAPI31
     public boolean addType(String type) {
         if (types == null) {
@@ -313,18 +394,30 @@ public class Schema<T> {
         return types.add(type);
     }
 
+    /**
+     *
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
     @OpenAPI31
     public Schema $schema(String $schema) {
         this.$schema = $schema;
         return this;
     }
 
+    /**
+     *
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
     @OpenAPI31
     public Schema $anchor(String $anchor) {
         this.$anchor = $anchor;
         return this;
     }
 
+    /**
+     *
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
     @OpenAPI31
     public Schema types(Set<String> types) {
         this.types = types;
@@ -955,11 +1048,20 @@ public class Schema<T> {
         return this;
     }
 
-    public Schema addProperties(String key, Schema propertiesItem) {
+    @Deprecated
+    public Schema addProperties(String key, Schema property) {
+        return addProperty(key, property);
+    }
+
+    /**
+     *
+     * @since 2.2.0
+     */
+    public Schema addProperty(String key, Schema property) {
         if (this.properties == null) {
             this.properties = new LinkedHashMap<>();
         }
-        this.properties.put(key, propertiesItem);
+        this.properties.put(key, property);
         return this;
     }
 
@@ -1198,278 +1300,486 @@ public class Schema<T> {
         this.exampleSetFlag = exampleSetFlag;
     }
 
+    /**
+     *
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
     @OpenAPI31
     public List<Schema> getPrefixItems() {
         return prefixItems;
     }
 
+    /**
+     *
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
     @OpenAPI31
     public void setPrefixItems(List<Schema> prefixItems) {
         this.prefixItems = prefixItems;
     }
 
+    /**
+     *
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
     @OpenAPI31
     public Schema prefixItems(List<Schema> prefixItems) {
         this.prefixItems = prefixItems;
         return this;
     }
 
+    /**
+     *
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
     @OpenAPI31
     public String getContentEncoding() {
         return contentEncoding;
     }
 
+    /**
+     *
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
     @OpenAPI31
     public void setContentEncoding(String contentEncoding) {
         this.contentEncoding = contentEncoding;
     }
 
+    /**
+     *
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
     @OpenAPI31
     public Schema contentEncoding(String contentEncoding) {
         this.contentEncoding = contentEncoding;
         return this;
     }
 
+    /**
+     *
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
     @OpenAPI31
     public String getContentMediaType() {
         return contentMediaType;
     }
 
+    /**
+     *
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
     @OpenAPI31
     public void setContentMediaType(String contentMediaType) {
         this.contentMediaType = contentMediaType;
     }
 
+    /**
+     *
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
     @OpenAPI31
     public Schema contentMediaType(String contentMediaType) {
         this.contentMediaType = contentMediaType;
         return this;
     }
 
+    /**
+     *
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
     @OpenAPI31
     public Schema getContentSchema() {
         return contentSchema;
     }
 
+    /**
+     *
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
     @OpenAPI31
     public void setContentSchema(Schema contentSchema) {
         this.contentSchema = contentSchema;
     }
 
+    /**
+     *
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
     @OpenAPI31
     public Schema contentSchema(Schema contentSchema) {
         this.contentSchema = contentSchema;
         return this;
     }
 
+    /**
+     *
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
     @OpenAPI31
     public Schema getPropertyNames() {
         return propertyNames;
     }
 
+    /**
+     *
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
     @OpenAPI31
     public void setPropertyNames(Schema propertyNames) {
         this.propertyNames = propertyNames;
     }
 
+    /**
+     *
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
     @OpenAPI31
     public Schema propertyNames(Schema propertyNames) {
         this.propertyNames = propertyNames;
         return this;
     }
 
+    /**
+     *
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
     @OpenAPI31
     public Object getUnevaluatedProperties() {
         return unevaluatedProperties;
     }
 
+    /**
+     *
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
     @OpenAPI31
     public void setUnevaluatedProperties(Object unevaluatedProperties) {
         this.unevaluatedProperties = unevaluatedProperties;
     }
 
+    /**
+     *
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
     @OpenAPI31
     public Schema unevaluatedProperties(Object unevaluatedProperties) {
         this.unevaluatedProperties = unevaluatedProperties;
         return this;
     }
 
+    /**
+     *
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
     @OpenAPI31
     public Integer getMaxContains() {
         return maxContains;
     }
 
+    /**
+     *
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
     @OpenAPI31
     public void setMaxContains(Integer maxContains) {
         this.maxContains = maxContains;
     }
 
+    /**
+     *
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
     @OpenAPI31
     public Schema maxContains(Integer maxContains) {
         this.maxContains = maxContains;
         return this;
     }
 
+    /**
+     *
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
     @OpenAPI31
     public Integer getMinContains() {
         return minContains;
     }
 
+    /**
+     *
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
     @OpenAPI31
     public void setMinContains(Integer minContains) {
         this.minContains = minContains;
     }
 
+    /**
+     *
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
     @OpenAPI31
     public Schema minContains(Integer minContains) {
         this.minContains = minContains;
         return this;
     }
 
+    /**
+     *
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
     @OpenAPI31
     public Schema getAdditionalItems() {
         return additionalItems;
     }
 
+    /**
+     *
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
     @OpenAPI31
     public void setAdditionalItems(Schema additionalItems) {
         this.additionalItems = additionalItems;
     }
 
+    /**
+     *
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
     @OpenAPI31
     public Schema additionalItems(Schema additionalItems) {
         this.additionalItems = additionalItems;
         return this;
     }
 
+    /**
+     *
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
     @OpenAPI31
     public Schema getUnevaluatedItems() {
         return unevaluatedItems;
     }
 
+    /**
+     *
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
     @OpenAPI31
     public void setUnevaluatedItems(Schema unevaluatedItems) {
         this.unevaluatedItems = unevaluatedItems;
     }
 
+    /**
+     *
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
     @OpenAPI31
     public Schema unevaluatedItems(Schema unevaluatedItems) {
         this.unevaluatedItems = unevaluatedItems;
         return this;
     }
 
+    /**
+     *
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
     @OpenAPI31
     public Schema getIf() {
         return _if;
     }
 
+    /**
+     *
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
     @OpenAPI31
     public void setIf(Schema _if) {
         this._if = _if;
     }
 
+    /**
+     *
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
     @OpenAPI31
     public Schema _if(Schema _if) {
         this._if = _if;
         return this;
     }
 
+    /**
+     *
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
     @OpenAPI31
     public Schema getElse() {
         return _else;
     }
 
+    /**
+     *
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
     @OpenAPI31
     public void setElse(Schema _else) {
         this._else = _else;
     }
 
+    /**
+     *
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
     @OpenAPI31
     public Schema _else(Schema _else) {
         this._else = _else;
         return this;
     }
 
+    /**
+     *
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
     @OpenAPI31
     public Schema getThen() {
         return then;
     }
 
+    /**
+     *
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
     @OpenAPI31
     public void setThen(Schema then) {
         this.then = then;
     }
 
+    /**
+     *
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
     @OpenAPI31
     public Schema then(Schema then) {
         this.then = then;
         return this;
     }
 
+    /**
+     *
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
     @OpenAPI31
     public Map<String, Schema> getDependentSchemas() {
         return dependentSchemas;
     }
 
+    /**
+     *
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
     @OpenAPI31
     public void setDependentSchemas(Map<String, Schema> dependentSchemas) {
         this.dependentSchemas = dependentSchemas;
     }
 
+    /**
+     *
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
     @OpenAPI31
     public Schema dependentSchemas(Map<String, Schema> dependentSchemas) {
         this.dependentSchemas = dependentSchemas;
         return this;
     }
 
+    /**
+     *
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
     @OpenAPI31
     public Map<String, List<String>> getDependentRequired() {
         return dependentRequired;
     }
 
+    /**
+     *
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
     @OpenAPI31
     public void setDependentRequired(Map<String, List<String>> dependentRequired) {
         this.dependentRequired = dependentRequired;
     }
 
+    /**
+     *
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
     @OpenAPI31
     public Schema dependentRequired(Map<String, List<String>> dependentRequired) {
         this.dependentRequired = dependentRequired;
         return this;
     }
 
+    /**
+     *
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
     @OpenAPI31
     public String get$comment() {
         return $comment;
     }
 
+    /**
+     *
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
     @OpenAPI31
     public void set$comment(String $comment) {
         this.$comment = $comment;
     }
 
+    /**
+     *
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
     @OpenAPI31
     public Schema $comment(String $comment) {
         this.$comment = $comment;
         return this;
     }
 
+    /**
+     *
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
     @OpenAPI31
     public List<T> getExamples() {
         return examples;
     }
 
+    /**
+     *
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
     @OpenAPI31
     public void setExamples(List<T> examples) {
         this.examples = examples;
     }
 
+    /**
+     *
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
     @OpenAPI31
     public Schema<T> examples(List<T> examples) {
         this.examples = examples;
         return this;
     }
 
+    /**
+     *
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
     @OpenAPI31
     public void addExample(T example) {
         if (this.examples == null) {
@@ -1679,14 +1989,26 @@ public class Schema<T> {
         return this;
     }
 
+    /**
+     *
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
     public T getConst() {
         return _const;
     }
 
+    /**
+     *
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
     public void setConst(Object _const) {
         this._const = cast(_const);
     }
 
+    /**
+     *
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
     public Schema _const(Object _const) {
         this._const = cast(_const);
         return this;

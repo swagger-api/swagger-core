@@ -13,6 +13,7 @@ import io.swagger.v3.core.jackson.ModelResolver;
 import io.swagger.v3.core.model.ApiDescription;
 import io.swagger.v3.core.util.PrimitiveType;
 import io.swagger.v3.jaxrs2.matchers.SerializationMatchers;
+import io.swagger.v3.jaxrs2.resources.SchemaPropertiesResource;
 import io.swagger.v3.jaxrs2.resources.SingleExampleResource;
 import io.swagger.v3.jaxrs2.resources.BasicFieldsResource;
 import io.swagger.v3.jaxrs2.resources.BookStoreTicket2646;
@@ -2809,6 +2810,156 @@ public class ReaderTest {
 
         reader = new Reader(new OpenAPI());
         openAPI = reader.read(Ticket3731BisResource.class);
+        SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
+    }
+
+    @Test(description = "Test SchemaProperties and additionalProperties annotations")
+    public void testSchemaProperties() {
+        Reader reader = new Reader(new OpenAPI());
+
+        OpenAPI openAPI = reader.read(SchemaPropertiesResource.class);
+        String yaml = "openapi: 3.0.1\n" +
+                "paths:\n" +
+                "  /:\n" +
+                "    get:\n" +
+                "      summary: Simple get operation\n" +
+                "      description: Defines a simple get operation with no inputs and a complex output\n" +
+                "        object\n" +
+                "      operationId: getWithPayloadResponse\n" +
+                "      responses:\n" +
+                "        \"200\":\n" +
+                "          description: voila!\n" +
+                "          content:\n" +
+                "            application/json:\n" +
+                "              schema:\n" +
+                "                type: object\n" +
+                "                properties:\n" +
+                "                  foo:\n" +
+                "                    maximum: 1\n" +
+                "                    type: integer\n" +
+                "        default:\n" +
+                "          description: boo\n" +
+                "          content:\n" +
+                "            application/json:\n" +
+                "              schema:\n" +
+                "                maxProperties: 3\n" +
+                "                type: object\n" +
+                "                properties:\n" +
+                "                  foo:\n" +
+                "                    maximum: 1\n" +
+                "                    type: integer\n" +
+                "                description: various properties\n" +
+                "        \"400\":\n" +
+                "          description: additionalProperties schema\n" +
+                "          content:\n" +
+                "            application/json:\n" +
+                "              schema:\n" +
+                "                maxProperties: 2\n" +
+                "                type: object\n" +
+                "                additionalProperties:\n" +
+                "                  type: string\n" +
+                "        \"401\":\n" +
+                "          description: additionalProperties boolean\n" +
+                "          content:\n" +
+                "            application/json:\n" +
+                "              schema:\n" +
+                "                maxProperties: 2\n" +
+                "                type: object\n" +
+                "                additionalProperties: false\n" +
+                "      deprecated: true\n" +
+                "  /one:\n" +
+                "    get:\n" +
+                "      operationId: requestBodySchemaPropertyNoSchema\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          application/yaml:\n" +
+                "            schema:\n" +
+                "              type: object\n" +
+                "              properties:\n" +
+                "                foo:\n" +
+                "                  type: string\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            application/json:\n" +
+                "              schema:\n" +
+                "                $ref: '#/components/schemas/MultipleBaseBean'\n" +
+                "  /two:\n" +
+                "    get:\n" +
+                "      operationId: requestBodySchemaPropertySchema\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          application/yaml:\n" +
+                "            schema:\n" +
+                "              required:\n" +
+                "              - foo\n" +
+                "              type: object\n" +
+                "              properties:\n" +
+                "                foo:\n" +
+                "                  type: string\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            application/json:\n" +
+                "              schema:\n" +
+                "                $ref: '#/components/schemas/MultipleBaseBean'\n" +
+                "  /three:\n" +
+                "    get:\n" +
+                "      operationId: requestBodySchemaPropertySchemaArray\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          application/yaml:\n" +
+                "            schema:\n" +
+                "              type: array\n" +
+                "              items:\n" +
+                "                required:\n" +
+                "                - foo\n" +
+                "                type: object\n" +
+                "                properties:\n" +
+                "                  foo:\n" +
+                "                    type: string\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            application/json:\n" +
+                "              schema:\n" +
+                "                $ref: '#/components/schemas/MultipleBaseBean'\n" +
+                "components:\n" +
+                "  schemas:\n" +
+                "    MultipleBaseBean:\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        beanType:\n" +
+                "          type: string\n" +
+                "        a:\n" +
+                "          type: integer\n" +
+                "          format: int32\n" +
+                "        b:\n" +
+                "          type: string\n" +
+                "      description: MultipleBaseBean\n" +
+                "    MultipleSub1Bean:\n" +
+                "      type: object\n" +
+                "      description: MultipleSub1Bean\n" +
+                "      allOf:\n" +
+                "      - $ref: '#/components/schemas/MultipleBaseBean'\n" +
+                "      - type: object\n" +
+                "        properties:\n" +
+                "          c:\n" +
+                "            type: integer\n" +
+                "            format: int32\n" +
+                "    MultipleSub2Bean:\n" +
+                "      type: object\n" +
+                "      description: MultipleSub2Bean\n" +
+                "      allOf:\n" +
+                "      - $ref: '#/components/schemas/MultipleBaseBean'\n" +
+                "      - type: object\n" +
+                "        properties:\n" +
+                "          d:\n" +
+                "            type: integer\n" +
+                "            format: int32\n";
         SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
     }
 }
