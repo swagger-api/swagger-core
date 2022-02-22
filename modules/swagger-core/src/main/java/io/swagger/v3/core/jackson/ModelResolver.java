@@ -2288,10 +2288,8 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             return false;
 
         Class<?>[] filters = jsonView.value();
-        boolean containsJsonViewAnnotation = false;
         for (Annotation ant : annotations) {
             if (ant instanceof JsonView) {
-                containsJsonViewAnnotation = true;
                 Class<?>[] views = ((JsonView) ant).value();
                 for (Class<?> f : filters) {
                     for (Class<?> v : views) {
@@ -2302,7 +2300,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 }
             }
         }
-        return containsJsonViewAnnotation;
+        return true;
     }
 
     private void resolveArraySchema(AnnotatedType annotatedType, ArraySchema schema, io.swagger.v3.oas.annotations.media.ArraySchema resolvedArrayAnnotation) {
