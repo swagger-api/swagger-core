@@ -1076,10 +1076,11 @@ public class Reader implements OpenApiReader {
         }
 
         final Class<?> subResource = getSubResourceWithJaxRsSubresourceLocatorSpecs(method);
+        Schema returnTypeSchema = null;
         if (!shouldIgnoreClass(returnType.getTypeName()) && !method.getGenericReturnType().equals(subResource)) {
             ResolvedSchema resolvedSchema = ModelConverters.getInstance().resolveAsResolvedSchema(new AnnotatedType(returnType).resolveAsRef(true).jsonViewAnnotation(jsonViewAnnotation));
             if (resolvedSchema.schema != null) {
-                Schema returnTypeSchema = resolvedSchema.schema;
+                returnTypeSchema = resolvedSchema.schema;
                 Content content = new Content();
                 MediaType mediaType = new MediaType().schema(returnTypeSchema);
                 AnnotationsUtils.applyTypes(classProduces == null ? new String[0] : classProduces.value(),
@@ -1112,16 +1113,60 @@ public class Reader implements OpenApiReader {
             }
         }
         if (operation.getResponses() == null || operation.getResponses().isEmpty()) {
-            Content content = new Content();
-            MediaType mediaType = new MediaType();
-            AnnotationsUtils.applyTypes(classProduces == null ? new String[0] : classProduces.value(),
-                    methodProduces == null ? new String[0] : methodProduces.value(), content, mediaType);
+            Content content = resolveEmptyContent(classProduces, methodProduces);
 
             ApiResponse apiResponseObject = new ApiResponse().description(DEFAULT_DESCRIPTION).content(content);
             operation.setResponses(new ApiResponses()._default(apiResponseObject));
         }
+        if (returnTypeSchema != null) {
+            resolveResponseSchemaFromReturnType(operation, classResponses, returnTypeSchema, classProduces, methodProduces);
+            if (apiResponses != null) {
+                resolveResponseSchemaFromReturnType(
+                        operation,
+                        apiResponses.stream().toArray(io.swagger.v3.oas.annotations.responses.ApiResponse[]::new),
+                        returnTypeSchema,
+                        classProduces,
+                        methodProduces);
+            }
+        }
+
 
         return operation;
+    }
+
+    protected Content resolveEmptyContent(Produces classProduces, Produces methodProduces) {
+        Content content = new Content();
+        MediaType mediaType = new MediaType();
+        AnnotationsUtils.applyTypes(classProduces == null ? new String[0] : classProduces.value(),
+                methodProduces == null ? new String[0] : methodProduces.value(), content, mediaType);
+        return content;
+    }
+
+    protected void resolveResponseSchemaFromReturnType(
+            Operation operation,
+            io.swagger.v3.oas.annotations.responses.ApiResponse[] responses,
+            Schema schema,
+            Produces classProduces, Produces methodProduces) {
+        if (responses != null) {
+            for (io.swagger.v3.oas.annotations.responses.ApiResponse response: responses) {
+                if (response.useReturnTypeSchema()) {
+                    ApiResponse opResponse = operation.getResponses().get(response.responseCode());
+                    if (opResponse != null) {
+                        if (opResponse.getContent() != null) {
+                            for (MediaType mediaType : opResponse.getContent().values()) {
+                                mediaType.schema(schema);
+                            }
+                        } else {
+                            Content content = resolveEmptyContent(classProduces, methodProduces);
+                            for (MediaType mediaType : content.values()) {
+                                mediaType.schema(schema);
+                            }
+                            opResponse.content(content);
+                        }
+                    }
+                }
+            }
+        }
     }
 
     private boolean shouldIgnoreClass(String className) {

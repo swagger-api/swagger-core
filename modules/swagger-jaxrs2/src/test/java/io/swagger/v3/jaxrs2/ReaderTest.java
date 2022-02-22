@@ -13,6 +13,7 @@ import io.swagger.v3.core.jackson.ModelResolver;
 import io.swagger.v3.core.model.ApiDescription;
 import io.swagger.v3.core.util.PrimitiveType;
 import io.swagger.v3.jaxrs2.matchers.SerializationMatchers;
+import io.swagger.v3.jaxrs2.resources.ResponseReturnTypeResource;
 import io.swagger.v3.jaxrs2.resources.SchemaPropertiesResource;
 import io.swagger.v3.jaxrs2.resources.SingleExampleResource;
 import io.swagger.v3.jaxrs2.resources.BasicFieldsResource;
@@ -2960,6 +2961,73 @@ public class ReaderTest {
                 "          d:\n" +
                 "            type: integer\n" +
                 "            format: int32\n";
+        SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
+    }
+
+    @Test(description = "Responses schema resolved from return type")
+    public void testResponseReturnType() {
+        Reader reader = new Reader(new OpenAPI());
+
+        OpenAPI openAPI = reader.read(ResponseReturnTypeResource.class);
+        String yaml = "openapi: 3.0.1\n" +
+                "paths:\n" +
+                "  /sample/{id}:\n" +
+                "    get:\n" +
+                "      summary: Find by id\n" +
+                "      description: Find by id operation\n" +
+                "      operationId: find\n" +
+                "      parameters:\n" +
+                "      - name: id\n" +
+                "        in: path\n" +
+                "        description: ID\n" +
+                "        required: true\n" +
+                "        schema:\n" +
+                "          type: integer\n" +
+                "          format: int32\n" +
+                "      responses:\n" +
+                "        \"200\":\n" +
+                "          description: Ok\n" +
+                "          content:\n" +
+                "            application/json:\n" +
+                "              schema:\n" +
+                "                $ref: '#/components/schemas/TestDTO'\n" +
+                "        \"201\":\n" +
+                "          description: \"201\"\n" +
+                "          content:\n" +
+                "            application/json:\n" +
+                "              schema:\n" +
+                "                $ref: '#/components/schemas/TestDTO'\n" +
+                "        \"204\":\n" +
+                "          description: No Content\n" +
+                "          content:\n" +
+                "            application/json: {}\n" +
+                "  /sample/{id}/default:\n" +
+                "    get:\n" +
+                "      summary: Find by id (default)\n" +
+                "      description: Find by id operation (default)\n" +
+                "      operationId: findDefault\n" +
+                "      parameters:\n" +
+                "      - name: id\n" +
+                "        in: path\n" +
+                "        description: ID\n" +
+                "        required: true\n" +
+                "        schema:\n" +
+                "          type: integer\n" +
+                "          format: int32\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            application/json:\n" +
+                "              schema:\n" +
+                "                $ref: '#/components/schemas/TestDTO'\n" +
+                "components:\n" +
+                "  schemas:\n" +
+                "    TestDTO:\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        foo:\n" +
+                "          type: string";
         SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
     }
 }
