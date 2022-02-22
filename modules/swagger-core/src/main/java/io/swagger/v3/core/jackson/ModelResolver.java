@@ -15,6 +15,7 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.fasterxml.jackson.databind.AnnotationIntrospector;
 import com.fasterxml.jackson.databind.BeanDescription;
 import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyMetadata;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -2359,7 +2360,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 }
             }
         }
-        return containsJsonViewAnnotation;
+        return containsJsonViewAnnotation || !_mapper.isEnabled(MapperFeature.DEFAULT_VIEW_INCLUSION);
     }
 
     private void resolveArraySchema(AnnotatedType annotatedType, ArraySchema schema, io.swagger.v3.oas.annotations.media.ArraySchema resolvedArrayAnnotation) {
