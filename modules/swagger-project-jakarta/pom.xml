@@ -589,7 +589,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <sonatypeOssDistMgmtSnapshotsUrl>https://oss.sonatype.org/content/repositories/snapshots/</sonatypeOssDistMgmtSnapshotsUrl>
 
-        <maven.version>3.6.3</maven.version>
+        <maven.version>3.8.4</maven.version>
         <commons-compress-version>1.21</commons-compress-version>
     </properties>
 </project>
