@@ -7,6 +7,9 @@ import io.swagger.v3.core.converter.ModelConverters;
 import io.swagger.v3.core.matchers.SerializationMatchers;
 import io.swagger.v3.core.oas.models.Cat;
 import io.swagger.v3.core.oas.models.ClientOptInput;
+import io.swagger.v3.core.oas.models.DeprecatedModel;
+import io.swagger.v3.core.oas.models.DeprecatedSchemaModel;
+import io.swagger.v3.core.oas.models.DeprecatedWithoutDeprecatedSchemaModel;
 import io.swagger.v3.core.oas.models.Employee;
 import io.swagger.v3.core.oas.models.EmptyModel;
 import io.swagger.v3.core.oas.models.JacksonReadonlyModel;
@@ -15,6 +18,7 @@ import io.swagger.v3.core.oas.models.Model1155;
 import io.swagger.v3.core.oas.models.ModelPropertyName;
 import io.swagger.v3.core.oas.models.ModelWithAltPropertyName;
 import io.swagger.v3.core.oas.models.ModelWithApiModel;
+import io.swagger.v3.core.oas.models.ModelWithDeprecation;
 import io.swagger.v3.core.oas.models.ModelWithEnumArray;
 import io.swagger.v3.core.oas.models.ModelWithFormattedStrings;
 import io.swagger.v3.core.oas.models.ModelWithNumbers;
@@ -410,5 +414,49 @@ public class ModelConverterTest {
     abstract class AnnotatedBaseClass {
         @JsonProperty
         public abstract String field();
+    }
+
+    @Test(description = "it should honor the @Deprecated annotation on fields and getters")
+    public void honorApiModelWithDeprecatedFields() {
+        final Map<String, Schema> schemas = readAll(ModelWithDeprecation.class);
+        assertEquals(schemas.size(), 1);
+        Schema schema = schemas.values().iterator().next();
+        Map<String, Schema> properties = schema.getProperties();
+        assertEquals(properties.size(), 4);
+        assertNull(properties.get("fullName").getDeprecated());
+        assertNotNull(properties.get("lastName").getDeprecated());
+        assertTrue(properties.get("lastName").getDeprecated());
+        assertNotNull(properties.get("firstName").getDeprecated());
+        assertTrue(properties.get("firstName").getDeprecated());
+        assertNotNull(properties.get("middleName").getDeprecated());
+        assertTrue(properties.get("middleName").getDeprecated());
+    }
+
+    @Test(description = "it should honor the @Deprecated annotation on model classes")
+    public void honorApiModelWithDeprecatedAnnotation() {
+        @SuppressWarnings("deprecation")
+        final Map<String, Schema> schemas = readAll(DeprecatedModel.class);
+        assertEquals(schemas.size(), 1);
+        Schema schema = schemas.values().iterator().next();
+        assertNotNull(schema.getDeprecated());
+        assertTrue(schema.getDeprecated());
+    }
+
+    @Test(description = "it should honor the @Schema annotation on model classes")
+    public void honorApiModelWithSchemaDeprecatedAnnotation() {
+        final Map<String, Schema> schemas = readAll(DeprecatedSchemaModel.class);
+        assertEquals(schemas.size(), 1);
+        Schema schema = schemas.values().iterator().next();
+        assertNotNull(schema.getDeprecated());
+        assertTrue(schema.getDeprecated());
+    }
+
+    @Test(description = "it should prioritize the @Schema annotation on model classes before @Deprecated")
+    public void honorDeprecatedApiModelWithoutSchemaDeprecatedAnnotation() {
+        @SuppressWarnings("deprecation")
+        final Map<String, Schema> schemas = readAll(DeprecatedWithoutDeprecatedSchemaModel.class);
+        assertEquals(schemas.size(), 1);
+        Schema schema = schemas.values().iterator().next();
+        assertNull(schema.getDeprecated());
     }
 }
