@@ -52,6 +52,8 @@ public class ByteArraySchema extends Schema<byte[]> {
             try {
                 if (value instanceof byte[]) {
                     return (byte[]) value;
+                } else {
+                    return value.toString().getBytes();
                 }
             } catch (Exception e) {
             }
