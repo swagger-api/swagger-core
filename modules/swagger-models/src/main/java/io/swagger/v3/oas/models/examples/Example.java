@@ -20,6 +20,9 @@ import io.swagger.v3.oas.annotations.OpenAPI31;
 
 /**
  * Example
+ *
+ * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.0.1/versions/3.0.1.md#exampleObject"
+ * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.1.0/versions/3.1.0.md#exampleObject"
  */
 
 public class Example {

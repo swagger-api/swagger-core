@@ -22,6 +22,7 @@ import io.swagger.v3.oas.annotations.OpenAPI31;
  * SecurityScheme
  *
  * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.0.1/versions/3.0.1.md#securitySchemeObject"
+ * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.1.0/versions/3.1.0.md#securitySchemeObject"
  */
 
 public class SecurityScheme {
