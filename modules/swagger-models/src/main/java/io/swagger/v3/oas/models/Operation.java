@@ -34,6 +34,7 @@ import java.util.Objects;
  * Operation
  *
  * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.0.1/versions/3.0.1.md#operationObject"
+ * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.1.0/versions/3.1.0.md#operationObject"
  */
 
 public class Operation {

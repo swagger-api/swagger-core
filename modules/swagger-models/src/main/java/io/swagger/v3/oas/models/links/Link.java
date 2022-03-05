@@ -27,6 +27,7 @@ import java.util.Map;
  * Link
  *
  * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.0.1/versions/3.0.1.md#linkObject"
+ * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.1.0/versions/3.1.0.md#linkObject"
  */
 
 public class Link {
