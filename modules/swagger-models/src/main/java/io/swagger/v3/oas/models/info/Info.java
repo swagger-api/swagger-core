@@ -164,11 +164,17 @@ public class Info {
         return summary;
     }
 
+    /**
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
     @OpenAPI31
     public void setSummary(String summary) {
         this.summary = summary;
     }
 
+    /**
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
     @OpenAPI31
     public Info summary(String summary) {
         this.summary = summary;

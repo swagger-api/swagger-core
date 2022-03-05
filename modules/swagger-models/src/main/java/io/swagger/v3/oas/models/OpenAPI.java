@@ -48,6 +48,9 @@ public class OpenAPI {
     private Components components = null;
     private java.util.Map<String, Object> extensions = null;
 
+    /**
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
     @OpenAPI31
     private String jsonSchemaDialect;
 
@@ -312,11 +315,17 @@ public class OpenAPI {
         return this;
     }
 
+    /**
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
     @OpenAPI31
     public String getJsonSchemaDialect() {
         return jsonSchemaDialect;
     }
 
+    /**
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
     @OpenAPI31
     public void setJsonSchemaDialect(String jsonSchemaDialect) {
         this.jsonSchemaDialect = jsonSchemaDialect;
