@@ -218,9 +218,7 @@ public class InheritedBeanTest extends SwaggerTestBase {
 
     @JsonTypeInfo(include = JsonTypeInfo.As.PROPERTY, use = JsonTypeInfo.Id.NAME, property = "type", visible = true)
     @JsonSubTypes({@JsonSubTypes.Type(value = Sub2Bean.class, name = "sub2")})
-    @io.swagger.v3.oas.annotations.media.Schema(description = "BaseBean2"
-//            , discriminator = "type", subTypes = {Sub1Bean.class}
-    )
+    @io.swagger.v3.oas.annotations.media.Schema(description = "BaseBean2")
     static class BaseBean2 {
         public String type;
         public int a;
@@ -377,9 +375,7 @@ public class InheritedBeanTest extends SwaggerTestBase {
             @JsonSubTypes.Type(value = MultipleSub1Bean.class, name = "multipleSub1"),
             @JsonSubTypes.Type(value = MultipleSub2Bean.class, name = "multipleSub2")
     })
-    @io.swagger.v3.oas.annotations.media.Schema(description = "MultipleBaseBean"
-//            , discriminator = "type", subTypes = {MultipleSub1Bean.class, MultipleSub2Bean.class}
-    )
+    @io.swagger.v3.oas.annotations.media.Schema(description = "MultipleBaseBean")
     static class MultipleBaseBean {
         public String type;
         public int a;

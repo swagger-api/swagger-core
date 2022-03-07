@@ -159,8 +159,6 @@ public class SwaggerSerializerTest {
         final OpenAPI swagger = new OpenAPI()
                 .info(info)
                 .addServersItem(new Server().url("http://petstore.swagger.io"))
-                //.consumes("application/json")
-                //.produces("application/json")
                 .schema("Person", personModel);
 
         final QueryParameter parameter = (QueryParameter) new QueryParameter()
@@ -169,10 +167,8 @@ public class SwaggerSerializerTest {
                 .schema(new IntegerSchema());
 
         final Operation get = new Operation()
-                //.produces("application/json")
                 .summary("finds pets in the system")
                 .description("a longer description")
-                //.tag("Pet Operations")
                 .operationId("get pet by id")
                 .addParametersItem(new Parameter().$ref("#/parameters/Foo"));
 
