@@ -53,9 +53,7 @@ public class Employee {
 
     @XmlElement
     @JsonProperty
-    @Schema(
-//            access = "public",
-            description = "Note, this is server generated.", title = "Read-only")
+    @Schema(description = "Note, this is server generated.", title = "Read-only")
     public int getId() {
         return id;
     }
@@ -66,9 +64,7 @@ public class Employee {
 
     @XmlElement
     @JsonProperty
-    @Schema(
-//            access = "public",
-            required = true)
+    @Schema(required = true)
     public String getFirstName() {
         return firstName;
     }

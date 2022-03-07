@@ -774,7 +774,6 @@ public class Reader implements OpenApiReader {
                     isRequestBodyEmpty = false;
                 }
                 if (!isRequestBodyEmpty) {
-                    //requestBody.setExtensions(extensions);
                     operation.setRequestBody(requestBody);
                 }
             }

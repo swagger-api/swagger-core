@@ -16,7 +16,6 @@
 
 package io.swagger.v3.jaxrs2.util;
 
-import io.swagger.v3.jaxrs2.integration.OpenApiServlet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -33,7 +33,6 @@ import java.util.Set;
 
 public abstract class Schema31Mixin {
 
-    //@JsonValue
     @JsonIgnore
     public abstract Map<String, Object> getJsonSchema();
 

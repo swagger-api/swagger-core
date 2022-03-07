@@ -47,7 +47,6 @@ public class Ticket2340Resource {
             @JsonSubTypes.Type(value = Cat.class, name = "cat")
     })
     public static class Animal {
-        //public String type;
     }
 
     @JsonTypeName("dog")

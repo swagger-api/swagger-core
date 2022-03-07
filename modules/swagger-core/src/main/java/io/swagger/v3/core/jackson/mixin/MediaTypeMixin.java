@@ -1,7 +1,3 @@
-
-
-package io.swagger.v3.core.jackson.mixin;
-
 /**
  * Copyright 2021 SmartBear Software
  * <p>
@@ -16,7 +12,11 @@ package io.swagger.v3.core.jackson.mixin;
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */import com.fasterxml.jackson.annotation.JsonAnyGetter;
+ */
+
+package io.swagger.v3.core.jackson.mixin;
+
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;

@@ -17,12 +17,9 @@
 package io.swagger.v3.jaxrs2.resources;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.extensions.Extension;
-import io.swagger.v3.oas.annotations.info.Info;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Operation(tags = {"test"})
