@@ -19,7 +19,6 @@ import java.util.Set;
 @JsonPropertyOrder(value = {"type", "format", "if", "then", "else"}, alphabetic = true)
 public abstract class Schema31Mixin {
 
-    //@JsonValue
     @JsonIgnore
     public abstract Map<String, Object> getJsonSchema();
 

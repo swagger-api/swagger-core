@@ -28,8 +28,6 @@ public class IntegrationTest {
 
         OpenApiContext ctx = new GenericOpenApiContext()
                 .openApiConfiguration(config)
-                //.openApiReader()
-                //.openApiReader()
                 .init();
         OpenAPI openApi = ctx.read();
 

@@ -3,7 +3,6 @@ package io.swagger.v3.core.resolving;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.core.converter.ModelConverters;
-import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.models.media.IntegerSchema;
 import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.media.StringSchema;
