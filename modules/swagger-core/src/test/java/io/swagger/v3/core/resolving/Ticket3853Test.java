@@ -16,7 +16,6 @@ import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-@Ignore
 public class Ticket3853Test extends SwaggerTestBase {
 
     private ModelResolver modelResolver;
@@ -24,8 +23,7 @@ public class Ticket3853Test extends SwaggerTestBase {
 
     @BeforeTest
     public void setup() {
-        TypeNameResolver.std.setUseFqn(true);
-        modelResolver = new ModelResolver(new ObjectMapper());
+        modelResolver = new ModelResolver(new ObjectMapper(), new FqnTypeNameResolver());
         context = new ModelConverterContextImpl(modelResolver);
     }
 
@@ -35,22 +33,21 @@ public class Ticket3853Test extends SwaggerTestBase {
     }
 
     @Test
-    @Ignore
     public void testTicket3853() {
         final Schema model = context.resolve(new AnnotatedType(BaseClass.class));
 
         assertNotNull(model);
-        String yaml = "io.swagger.v3.core.resolving.TicketXXXXTest$BaseClass:\n" +
+        String yaml = "io.swagger.v3.core.resolving.Ticket3853Test$BaseClass:\n" +
                       "  type: object\n" +
                       "  properties:\n" +
                       "    property:\n" +
                       "      type: string\n" +
                       "    type:\n" +
                       "      type: string\n" +
-                      "io.swagger.v3.core.resolving.TicketXXXXTest$SubClass:\n" +
+                      "io.swagger.v3.core.resolving.Ticket3853Test$SubClass:\n" +
                       "  type: object\n" +
                       "  allOf:\n" +
-                      "  - $ref: '#/components/schemas/io.swagger.v3.core.resolving.TicketXXXXTest$BaseClass'\n" +
+                      "  - $ref: '#/components/schemas/io.swagger.v3.core.resolving.Ticket3853Test$BaseClass'\n" +
                       "  - type: object\n" +
                       "    properties:\n" +
                       "      subClassProperty:\n" +
@@ -71,5 +68,13 @@ public class Ticket3853Test extends SwaggerTestBase {
     static class BaseClass {
         public String property;
         public String type;
+    }
+
+    static class FqnTypeNameResolver extends TypeNameResolver {
+
+        @Override
+        protected String getNameOfClass(Class<?> cls) {
+            return cls.getName();
+        }
     }
 }
