@@ -1135,8 +1135,10 @@ public class Schema<T> {
     }
 
     public void set$ref(String $ref) {
-        if ($ref != null && ($ref.indexOf('.') == -1 && $ref.indexOf('/') == -1)) {
-            $ref = Components.COMPONENTS_SCHEMAS_REF + $ref;
+        if ($ref != null) {
+            if (!$ref.contains("#/") && (!$ref.contains("http://") && !$ref.contains("https://"))) {
+                $ref = Components.COMPONENTS_SCHEMAS_REF + $ref;
+            }
         }
         this.$ref = $ref;
     }
