@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - uses: tibdex/github-app-token@v1
       id: generate-token
       with:
@@ -21,19 +21,14 @@ jobs:
       with:
         python-version: 2.x
     - name: Set up Java 8
-      uses: actions/setup-java@v1
+      uses: actions/setup-java@v3
       with:
         java-version: 8
+        distribution: 'zulu'
+        cache: 'maven'
         server-id: ossrh
         server-username: MAVEN_USERNAME
         server-password: MAVEN_PASSWORD
-    - name: Cache local Maven repository
-      uses: actions/cache@v2
-      with:
-        path: ~/.m2/repository
-        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-        restore-keys: |
-          ${{ runner.os }}-maven-
     - name: Set up Gradle credentials
       run: |
         mkdir -p ~/.gradle
@@ -75,7 +70,7 @@ jobs:
       run: |
         . ./CI/prepare-javadocs.sh
     - name: Checkout gh-pages
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       with:
         ref: "gh-pages"
         fetch-depth: 0
@@ -86,7 +81,7 @@ jobs:
         TMPDIR="$(dirname -- "${0}")"
         . $TMPDIR/publish-javadocs.sh
     - name: Checkout master
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       with:
         ref: "master"
         fetch-depth: 0
@@ -104,7 +99,7 @@ jobs:
         title: 'bump snapshot ${{ env.SC_NEXT_VERSION }}-SNAPSHOT'
         branch: bump-snap-${{ env.SC_NEXT_VERSION }}-SNAPSHOT
     - name: Checkout 1.5
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       with:
         ref: "1.5"
         fetch-depth: 0
@@ -123,7 +118,7 @@ jobs:
         title: 'update 1.5 Readme with new v2 version ${{ env.SC_VERSION }}'
         branch: update-v1-readme-${{ env.SC_VERSION }}
     - name: Checkout Wiki
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       with:
         repository: swagger-api/swagger-core.wiki
         token: ${{ steps.generate-token.outputs.token }}
@@ -138,7 +133,7 @@ jobs:
         TMPDIR="$(dirname -- "${0}")"
         . $TMPDIR/update-wiki.sh
     - name: Checkout master
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       with:
         ref: "master"
         fetch-depth: 0
