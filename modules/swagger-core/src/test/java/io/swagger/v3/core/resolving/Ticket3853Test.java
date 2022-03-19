@@ -27,11 +27,6 @@ public class Ticket3853Test extends SwaggerTestBase {
         context = new ModelConverterContextImpl(modelResolver);
     }
 
-    @AfterTest
-    public void cleanup() {
-        TypeNameResolver.std.setUseFqn(false);
-    }
-
     @Test
     public void testTicket3853() {
         final Schema model = context.resolve(new AnnotatedType(BaseClass.class));
