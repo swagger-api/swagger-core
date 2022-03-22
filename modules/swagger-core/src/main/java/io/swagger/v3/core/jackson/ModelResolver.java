@@ -1428,7 +1428,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             } else {
                 composedSchema = (ComposedSchema) subtypeModel;
             }
-            Schema refSchema = new Schema().$ref(model.getName());
+            Schema refSchema = new Schema().$ref(Components.COMPONENTS_SCHEMAS_REF + model.getName());
             // allOf could have already being added during type resolving when @Schema(allOf..) is declared
             if (composedSchema.getAllOf() == null || !composedSchema.getAllOf().contains(refSchema)) {
                 composedSchema.addAllOfItem(refSchema);
