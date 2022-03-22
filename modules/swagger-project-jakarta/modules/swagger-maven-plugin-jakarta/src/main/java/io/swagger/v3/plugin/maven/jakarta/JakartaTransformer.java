@@ -73,9 +73,8 @@ public class JakartaTransformer {
     private static final String jakartaValidationRegex = "^.*(<dependency>.*jakarta\\.validation((?!</dependency>).)*</dependency>).*$";
 
     private static final String jacksonJsonDep = "<dependency>\n" +
-            "                <groupId>com.fasterxml.jackson.jaxrs</groupId>\n" +
-            "                <artifactId>jackson-jaxrs-json-provider</artifactId>\n" +
-            "                <classifier>jakarta</classifier>\n" +
+            "                <groupId>com.fasterxml.jackson.jakarta.rs</groupId>\n" +
+            "                <artifactId>jackson-jakarta-rs-json-provider</artifactId>\n" +
             "                <version>VERSION</version>\n" +
             "                <exclusions>\n" +
             "                    <exclusion>\n" +
@@ -92,9 +91,8 @@ public class JakartaTransformer {
     private static final String jacksonJsonRegex = "^.*(<dependency>.*jackson\\-jaxrs\\-json((?!</dependency>).)*</dependency>).*$";
 
     private static final String jacksonBaseDep = "<dependency>\n" +
-            "                <groupId>com.fasterxml.jackson.jaxrs</groupId>\n" +
-            "                <artifactId>jackson-jaxrs-base</artifactId>\n" +
-            "                <classifier>jakarta</classifier>\n" +
+            "                <groupId>com.fasterxml.jackson.jakarta.rs</groupId>\n" +
+            "                <artifactId>jackson-jakarta-rs-base</artifactId>\n" +
             "                <version>VERSION</version>\n" +
             "            </dependency>";
 
@@ -102,8 +100,7 @@ public class JakartaTransformer {
 
     private static final String jacksonJaxbDep = "<dependency>\n" +
             "                <groupId>com.fasterxml.jackson.module</groupId>\n" +
-            "                <artifactId>jackson-module-jaxb-annotations</artifactId>\n" +
-            "                <classifier>jakarta</classifier>\n" +
+            "                <artifactId>jackson-module-jakarta-xmlbind-annotations</artifactId>\n" +
             "                <version>VERSION</version>\n" +
             "                <exclusions>\n" +
             "                    <exclusion>\n" +
@@ -114,6 +111,10 @@ public class JakartaTransformer {
             "                        <groupId>jakarta.xml.bind</groupId>\n" +
             "                        <artifactId>jakarta.xml.bind-api</artifactId>\n" +
             "                    </exclusion>\n" +
+            "                    <exclusion>\n" +
+            "                        <groupId>com.sun.activation</groupId>\n" +
+            "                        <artifactId>jakarta.activation</artifactId>\n" +
+            "                    </exclusion>" +
             "                </exclusions>\n" +
             "            </dependency>";
 
