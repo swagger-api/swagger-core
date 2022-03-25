@@ -16,6 +16,7 @@
 
 package io.swagger.v3.oas.models.callbacks;
 
+import io.swagger.v3.oas.annotations.OpenAPI31;
 import io.swagger.v3.oas.models.PathItem;
 
 import java.util.LinkedHashMap;
@@ -100,6 +101,14 @@ public class Callback extends LinkedHashMap<String, PathItem> {
         this.extensions.put(name, value);
     }
 
+    @OpenAPI31
+    public void addExtension31(String name, Object value) {
+        if (name != null && (name.startsWith("x-oas-") || name.startsWith("x-oai-"))) {
+            return;
+        }
+        addExtension(name, value);
+    }
+
     public void setExtensions(java.util.Map<String, Object> extensions) {
         this.extensions = extensions;
     }
@@ -113,6 +122,7 @@ public class Callback extends LinkedHashMap<String, PathItem> {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("class Callback {\n");
+        sb.append("    $ref: ").append(toIndentedString($ref)).append("\n");
         sb.append("    ").append(toIndentedString(super.toString())).append("\n");
         sb.append("}");
         return sb.toString();

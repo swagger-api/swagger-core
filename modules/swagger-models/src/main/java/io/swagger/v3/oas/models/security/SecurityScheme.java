@@ -16,6 +16,8 @@
 
 package io.swagger.v3.oas.models.security;
 
+import io.swagger.v3.oas.annotations.OpenAPI31;
+
 /**
  * SecurityScheme
  *
@@ -30,7 +32,8 @@ public class SecurityScheme {
         APIKEY("apiKey"),
         HTTP("http"),
         OAUTH2("oauth2"),
-        OPENIDCONNECT("openIdConnect");
+        OPENIDCONNECT("openIdConnect"),
+        MUTUALTLS("mutualTLS");
 
         private String value;
 
@@ -232,6 +235,14 @@ public class SecurityScheme {
 
     public java.util.Map<String, Object> getExtensions() {
         return extensions;
+    }
+
+    @OpenAPI31
+    public void addExtension31(String name, Object value) {
+        if (name != null && (name.startsWith("x-oas-") || name.startsWith("x-oai-"))) {
+            return;
+        }
+        addExtension(name, value);
     }
 
     public void addExtension(String name, Object value) {

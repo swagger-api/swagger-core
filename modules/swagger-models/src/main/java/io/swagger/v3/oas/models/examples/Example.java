@@ -16,6 +16,8 @@
 
 package io.swagger.v3.oas.models.examples;
 
+import io.swagger.v3.oas.annotations.OpenAPI31;
+
 /**
  * Example
  */
@@ -135,6 +137,14 @@ public class Example {
             this.extensions = new java.util.LinkedHashMap<>();
         }
         this.extensions.put(name, value);
+    }
+
+    @OpenAPI31
+    public void addExtension31(String name, Object value) {
+        if (name != null && (name.startsWith("x-oas-") || name.startsWith("x-oai-"))) {
+            return;
+        }
+        addExtension(name, value);
     }
 
     public void setExtensions(java.util.Map<String, Object> extensions) {

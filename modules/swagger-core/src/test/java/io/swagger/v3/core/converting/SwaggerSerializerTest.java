@@ -102,10 +102,10 @@ public class SwaggerSerializerTest {
 
         final ApiResponse errorResponse = new ApiResponse()
                 .description("error response")
-                .link("myLink", new Link()
+                .addLink("myLink", new Link()
                         .description("a link")
                         .operationId("theLinkedOperationId")
-                        .parameters("userId", "gah")
+                        .addParameter("userId", "gah")
                 )
                 .content(new Content()
                         .addMediaType("application/json", new MediaType()

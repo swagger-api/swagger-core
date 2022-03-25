@@ -37,7 +37,6 @@ security:
   - tokenAuth: []
 info:
   description: 'This is a sample server Petstore'
-  version: 1.0.0
   title: Sample Pet Store App
   termsOfService: http://swagger.io/terms/
   x-info: info extension

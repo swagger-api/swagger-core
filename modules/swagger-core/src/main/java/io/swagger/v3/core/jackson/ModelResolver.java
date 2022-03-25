@@ -39,6 +39,10 @@ import io.swagger.v3.core.util.PrimitiveType;
 import io.swagger.v3.core.util.ReflectionUtils;
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.media.DiscriminatorMapping;
+import io.swagger.v3.oas.annotations.media.PatternProperties;
+import io.swagger.v3.oas.annotations.media.PatternProperty;
+import io.swagger.v3.oas.annotations.media.SchemaProperties;
+import io.swagger.v3.oas.annotations.media.SchemaProperty;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.ExternalDocumentation;
 import io.swagger.v3.oas.models.media.ArraySchema;
@@ -95,6 +99,7 @@ import static io.swagger.v3.core.jackson.JAXBAnnotationsHelper.JAXB_DEFAULT;
 import static io.swagger.v3.core.util.RefUtils.constructRef;
 
 public class ModelResolver extends AbstractModelConverter implements ModelConverter {
+
     Logger LOGGER = LoggerFactory.getLogger(ModelResolver.class);
     public static List<String> NOT_NULL_ANNOTATIONS = Arrays.asList("NotNull", "NonNull", "NotBlank", "NotEmpty");
 
@@ -766,6 +771,25 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             }
         }
 
+        Map<String, Schema> patternProperties = resolvePatternProperties(type, annotatedType.getCtxAnnotations(), context);
+        if (model != null && patternProperties != null && !patternProperties.isEmpty()) {
+            if (model.getPatternProperties() == null) {
+                model.patternProperties(patternProperties);
+            } else {
+                model.getPatternProperties().putAll(patternProperties);
+            }
+        }
+
+
+        Map<String, Schema> schemaProperties = resolveSchemaProperties(type, annotatedType.getCtxAnnotations(), context);
+        if (model != null && schemaProperties != null && !schemaProperties.isEmpty()) {
+            if (model.getProperties() == null) {
+                model.properties(schemaProperties);
+            } else {
+                model.getProperties().putAll(schemaProperties);
+            }
+        }
+
         if (isComposedSchema) {
 
             ComposedSchema composedSchema = (ComposedSchema) model;
@@ -1404,7 +1428,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             } else {
                 composedSchema = (ComposedSchema) subtypeModel;
             }
-            Schema refSchema = new Schema().$ref(model.getName());
+            Schema refSchema = new Schema().$ref(Components.COMPONENTS_SCHEMAS_REF + model.getName());
             // allOf could have already being added during type resolving when @Schema(allOf..) is declared
             if (composedSchema.getAllOf() == null || !composedSchema.getAllOf().contains(refSchema)) {
                 composedSchema.addAllOfItem(refSchema);
@@ -1520,6 +1544,104 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             return schema.format();
         }
         return null;
+    }
+
+    protected Map<String, Schema> resolvePatternProperties(JavaType a, Annotation[] annotations, ModelConverterContext context) {
+
+        final Map<String, PatternProperty> propList = new LinkedHashMap<>();
+
+        PatternProperties props = a.getRawClass().getAnnotation(PatternProperties.class);
+        if (props != null && props.value().length > 0) {
+            for (PatternProperty prop: props.value()) {
+                propList.put(prop.regex(), prop);
+            }
+        }
+        PatternProperty singleProp = a.getRawClass().getAnnotation(PatternProperty.class);
+        if (singleProp != null) {
+            propList.put(singleProp.regex(), singleProp);
+        }
+        props = AnnotationsUtils.getAnnotation(PatternProperties.class, annotations);
+        if (props != null && props.value().length > 0) {
+            for (PatternProperty prop: props.value()) {
+                propList.put(prop.regex(), prop);
+            }
+        }
+        singleProp = AnnotationsUtils.getAnnotation(PatternProperty.class, annotations);
+        if (singleProp != null) {
+            propList.put(singleProp.regex(), singleProp);
+        }
+
+        if (propList.isEmpty()) {
+            return null;
+        }
+
+        Map<String, Schema> patternProperties = new LinkedHashMap<>();
+
+        for (PatternProperty prop: propList.values()) {
+            String key = prop.regex();
+            if (StringUtils.isBlank(key)) {
+                continue;
+            }
+            Annotation[] propAnnotations = new Annotation[]{prop.schema(), prop.array()};
+            AnnotatedType propType = new AnnotatedType()
+                    .type(String.class)
+                    .ctxAnnotations(propAnnotations)
+                    .resolveAsRef(true);
+            Schema resolvedPropSchema = context.resolve(propType);
+            if (resolvedPropSchema != null) {
+                patternProperties.put(key, resolvedPropSchema);
+            }
+        }
+        return patternProperties;
+    }
+
+    protected Map<String, Schema> resolveSchemaProperties(JavaType a, Annotation[] annotations, ModelConverterContext context) {
+
+        final Map<String, SchemaProperty> propList = new LinkedHashMap<>();
+
+        SchemaProperties props = a.getRawClass().getAnnotation(SchemaProperties.class);
+        if (props != null && props.value().length > 0) {
+            for (SchemaProperty prop: props.value()) {
+                propList.put(prop.name(), prop);
+            }
+        }
+        SchemaProperty singleProp = a.getRawClass().getAnnotation(SchemaProperty.class);
+        if (singleProp != null) {
+            propList.put(singleProp.name(), singleProp);
+        }
+        props = AnnotationsUtils.getAnnotation(SchemaProperties.class, annotations);
+        if (props != null && props.value().length > 0) {
+            for (SchemaProperty prop: props.value()) {
+                propList.put(prop.name(), prop);
+            }
+        }
+        singleProp = AnnotationsUtils.getAnnotation(SchemaProperty.class, annotations);
+        if (singleProp != null) {
+            propList.put(singleProp.name(), singleProp);
+        }
+
+        if (propList.isEmpty()) {
+            return null;
+        }
+
+        Map<String, Schema> schemaProperties = new LinkedHashMap<>();
+
+        for (SchemaProperty prop: propList.values()) {
+            String key = prop.name();
+            if (StringUtils.isBlank(key)) {
+                continue;
+            }
+            Annotation[] propAnnotations = new Annotation[]{prop.schema(), prop.array()};
+            AnnotatedType propType = new AnnotatedType()
+                    .type(String.class)
+                    .ctxAnnotations(propAnnotations)
+                    .resolveAsRef(true);
+            Schema resolvedPropSchema = context.resolve(propType);
+            if (resolvedPropSchema != null) {
+                schemaProperties.put(key, resolvedPropSchema);
+            }
+        }
+        return schemaProperties;
     }
 
     protected Object resolveDefaultValue(Annotated a, Annotation[] annotations, io.swagger.v3.oas.annotations.media.Schema schema) {

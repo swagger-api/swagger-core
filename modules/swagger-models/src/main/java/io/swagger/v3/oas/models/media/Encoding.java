@@ -16,8 +16,10 @@
 
 package io.swagger.v3.oas.models.media;
 
+import io.swagger.v3.oas.annotations.OpenAPI31;
 import io.swagger.v3.oas.models.headers.Header;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -91,6 +93,14 @@ public class Encoding {
         this.headers = headers;
     }
 
+    public Encoding addHeader(String name, Header header) {
+        if (this.headers == null) {
+            this.headers = new LinkedHashMap<>();
+        }
+        this.headers.put(name, header);
+        return this;
+    }
+
     public Encoding style(StyleEnum style) {
         this.style = style;
         return this;
@@ -142,6 +152,14 @@ public class Encoding {
             this.extensions = new java.util.LinkedHashMap<>();
         }
         this.extensions.put(name, value);
+    }
+
+    @OpenAPI31
+    public void addExtension31(String name, Object value) {
+        if (name != null && (name.startsWith("x-oas-") || name.startsWith("x-oai-"))) {
+            return;
+        }
+        addExtension(name, value);
     }
 
     public void setExtensions(java.util.Map<String, Object> extensions) {

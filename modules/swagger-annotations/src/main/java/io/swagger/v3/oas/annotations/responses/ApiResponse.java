@@ -96,4 +96,11 @@ public @interface ApiResponse {
      **/
     String ref() default "";
 
+    /**
+     * Set to true to resolve the response schema from method return type
+     *
+     * @since 2.2.0
+     **/
+    boolean useReturnTypeSchema() default false;
+
 }

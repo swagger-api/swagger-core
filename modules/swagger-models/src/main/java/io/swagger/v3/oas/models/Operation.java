@@ -16,6 +16,7 @@
 
 package io.swagger.v3.oas.models;
 
+import io.swagger.v3.oas.annotations.OpenAPI31;
 import io.swagger.v3.oas.models.callbacks.Callback;
 import io.swagger.v3.oas.models.parameters.Parameter;
 import io.swagger.v3.oas.models.parameters.RequestBody;
@@ -24,6 +25,7 @@ import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.servers.Server;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -236,6 +238,14 @@ public class Operation {
         return this;
     }
 
+    public Operation addCallback(String key, Callback callback) {
+        if (this.callbacks == null) {
+            this.callbacks = new LinkedHashMap<>();
+        }
+        this.callbacks.put(key, callback);
+        return this;
+    }
+
     /**
      * returns the deprecated property from a Operation instance.
      *
@@ -350,6 +360,14 @@ public class Operation {
             this.extensions = new java.util.LinkedHashMap<>();
         }
         this.extensions.put(name, value);
+    }
+
+    @OpenAPI31
+    public void addExtension31(String name, Object value) {
+        if (name != null && (name.startsWith("x-oas-") || name.startsWith("x-oai-"))) {
+            return;
+        }
+        addExtension(name, value);
     }
 
     public void setExtensions(java.util.Map<String, Object> extensions) {

@@ -16,6 +16,7 @@
 
 package io.swagger.v3.oas.models.responses;
 
+import io.swagger.v3.oas.annotations.OpenAPI31;
 import io.swagger.v3.oas.models.headers.Header;
 import io.swagger.v3.oas.models.links.Link;
 import io.swagger.v3.oas.models.media.Content;
@@ -109,20 +110,29 @@ public class ApiResponse {
      * @return Link links
      **/
 
-    public java.util.Map<String, Link> getLinks() {
+    public Map<String, Link> getLinks() {
         return links;
     }
 
-    public void setLinks(java.util.Map<String, Link> links) {
+    public void setLinks(Map<String, Link> links) {
         this.links = links;
     }
 
-    public ApiResponse link(String name, Link link) {
+    public ApiResponse links(Map<String, Link> links) {
+        this.links = links;
+        return this;
+    }
+
+    public ApiResponse addLink(String name, Link link) {
         if (this.links == null) {
             this.links = new LinkedHashMap<>();
         }
         this.links.put(name, link);
         return this;
+    }
+
+    public ApiResponse link(String name, Link link) {
+        return this.addLink(name, link);
     }
 
     /**
@@ -180,6 +190,14 @@ public class ApiResponse {
             this.extensions = new java.util.LinkedHashMap<>();
         }
         this.extensions.put(name, value);
+    }
+
+    @OpenAPI31
+    public void addExtension31(String name, Object value) {
+        if (name != null && (name.startsWith("x-oas-") || name.startsWith("x-oai-"))) {
+            return;
+        }
+        addExtension(name, value);
     }
 
     public void setExtensions(java.util.Map<String, Object> extensions) {
