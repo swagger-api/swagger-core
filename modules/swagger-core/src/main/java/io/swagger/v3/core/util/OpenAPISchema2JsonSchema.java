@@ -3,6 +3,7 @@ package io.swagger.v3.core.util;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.models.SpecVersion;
 import io.swagger.v3.oas.models.media.Schema;
+
 import java.util.LinkedHashSet;
 import java.util.Map;
 
@@ -27,6 +28,12 @@ public class OpenAPISchema2JsonSchema {
             schema.getTypes().add("null");
         }
 
+        if (schema.getMinimum() != null && Boolean.TRUE.equals(schema.getExclusiveMinimum())) {
+            schema.setExclusiveMinimumValue(schema.getMinimum());
+        }
+        if (schema.getMaximum() != null && Boolean.TRUE.equals(schema.getExclusiveMaximum())) {
+            schema.setExclusiveMaximumValue(schema.getMaximum());
+        }
         // TODO handle other differences
 
         schema.jsonSchema(jsonSchema);
@@ -37,6 +44,12 @@ public class OpenAPISchema2JsonSchema {
         }
         if (schema.getAllOf() != null) {
             schema.getAllOf().forEach(this::process);
+        }
+        if (schema.getAnyOf() != null) {
+            schema.getAnyOf().forEach(this::process);
+        }
+        if (schema.getOneOf() != null) {
+            schema.getOneOf().forEach(this::process);
         }
         if (schema.getProperties() != null) {
             schema.getProperties().values().forEach(this::process);
