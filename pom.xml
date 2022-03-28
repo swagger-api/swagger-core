@@ -68,7 +68,8 @@
             </resource>
             <resource>
                 <targetPath>META-INF</targetPath>
-                <directory>.</directory>
+                <directory>../..</directory>
+                <filtering>true</filtering>
                 <includes>
                     <include>NOTICE</include>
                     <include>LICENSE</include>
