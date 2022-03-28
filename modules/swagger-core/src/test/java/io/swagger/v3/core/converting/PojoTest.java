@@ -674,4 +674,50 @@ public class PojoTest {
         }
     }
 
+    @Test
+    public void testModelWithBoolean() {
+
+        String yaml = "ClassWithBoolean:\n" +
+                "  required:\n" +
+                "    - booleanObject\n" +
+                "    - booleanType\n" +
+                "  type: object\n" +
+                "  properties:\n" +
+                "    booleanObject:\n" +
+                "      type: boolean\n" +
+                "      description: my Boolean object field\n" +
+                "    booleanType:\n" +
+                "      type: boolean\n" +
+                "      description: my boolean type field\n";
+        SerializationMatchers.assertEqualsToYaml(read(ClassWithBoolean.class), yaml);
+
+    }
+
+    @Schema
+    static class ClassWithBoolean {
+
+        @Schema(required = true, description = "my Boolean object field")
+        private Boolean booleanObject;
+
+        @Schema(required = true, description = "my boolean type field")
+        private boolean booleanType;
+
+        public Boolean getBooleanObject() {
+            return booleanObject;
+        }
+
+        public void setBooleanObject(Boolean booleanObject) {
+            this.booleanObject = booleanObject;
+        }
+
+        public boolean getBooleanType() {
+            return booleanType;
+        }
+
+        public void setBooleanType(boolean booleanType) {
+            this.booleanType = booleanType;
+        }
+    }
+
+
 }
