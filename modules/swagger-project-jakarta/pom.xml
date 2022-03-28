@@ -54,6 +54,16 @@
         <defaultGoal>install</defaultGoal>
         <directory>target</directory>
         <finalName>${project.artifactId}-${project.version}</finalName>
+        <resources>
+            <resource>
+                <targetPath>META-INF</targetPath>
+                <directory>.</directory>
+                <includes>
+                    <include>NOTICE</include>
+                    <include>LICENSE</include>
+                </includes>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
