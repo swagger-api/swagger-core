@@ -1340,9 +1340,15 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         }
         if (annos.containsKey("javax.validation.constraints.Pattern")) {
             Pattern pattern = (Pattern) annos.get("javax.validation.constraints.Pattern");
+
             if (property instanceof StringSchema) {
                 property.setPattern(pattern.regexp());
             }
+
+            if(property.getItems() != null && property.getItems() instanceof StringSchema) {
+                property.getItems().setPattern(pattern.regexp());
+            }
+
         }
     }
 

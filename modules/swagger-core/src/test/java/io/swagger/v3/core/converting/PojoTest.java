@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.testng.annotations.Test;
 
+import javax.validation.constraints.Pattern;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.Date;
@@ -634,6 +635,35 @@ public class PojoTest {
 
     static class modelExampleArray {
         @ArraySchema(arraySchema = @Schema(example = "[\"abc-123\", \"zz-aa-bb\"]"))
+        private String[] ids;
+
+        public String[] getIds() {
+            return ids;
+        }
+
+        public void setIds(String[] ids) {
+            this.ids = ids;
+        }
+    }
+
+    @Test(description = "Shows how to provide an array with specific format")
+    public void testArrayWithPattern() {
+
+        String yaml =
+                "modelArrayWithPattern:\n" +
+                        "  type: object\n" +
+                        "  properties:\n" +
+                        "    ids:\n" +
+                        "      type: array\n" +
+                        "      items:\n" +
+                        "        pattern: \"[a-zA-Z]*\"\n" +
+                        "        type: string";
+        Map<String, io.swagger.v3.oas.models.media.Schema> schemaMap = readAll(modelArrayWithPattern.class);
+        SerializationMatchers.assertEqualsToYaml(schemaMap, yaml);
+    }
+
+    static class modelArrayWithPattern {
+        @Pattern(regexp="[a-zA-Z]*")
         private String[] ids;
 
         public String[] getIds() {
