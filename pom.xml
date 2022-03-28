@@ -66,6 +66,14 @@
                     <exclude>logback.xml</exclude>
                 </excludes>
             </resource>
+            <resource>
+                <targetPath>META-INF</targetPath>
+                <directory>.</directory>
+                <includes>
+                    <include>NOTICE</include>
+                    <include>LICENSE</include>
+                </includes>
+            </resource>
         </resources>
         <extensions>
             <extension>
