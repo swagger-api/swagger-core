@@ -6,6 +6,7 @@ import io.swagger.v3.oas.models.media.Schema;
 
 import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Set;
 
 public class OpenAPISchema2JsonSchema {
 
@@ -34,11 +35,11 @@ public class OpenAPISchema2JsonSchema {
         if (schema.getMaximum() != null && Boolean.TRUE.equals(schema.getExclusiveMaximum())) {
             schema.setExclusiveMaximumValue(schema.getMaximum());
         }
-        // TODO handle other differences
+
+        removeReservedExtensionsName(schema.getExtensions());
 
         schema.jsonSchema(jsonSchema);
 
-        // TODO handle all nested schemas
         if (schema.getAdditionalProperties() instanceof Schema) {
             process((Schema<?>) schema.getAdditionalProperties());
         }
@@ -56,6 +57,18 @@ public class OpenAPISchema2JsonSchema {
         }
         if (schema.getItems() != null) {
             process(schema.getItems());
+        }
+    }
+
+    private void removeReservedExtensionsName(Map<String, Object> extensions) {
+        if (extensions == null || extensions.isEmpty()) {
+            return;
+        }
+        final Set<String> keys = extensions.keySet();
+        for (String key : keys) {
+            if (key.startsWith("x-oas-") || key.startsWith("x-oai-")) {
+                extensions.remove(key);
+            }
         }
     }
 }
