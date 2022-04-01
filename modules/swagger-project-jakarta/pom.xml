@@ -575,7 +575,7 @@
         <servlet-api-version>5.0.0</servlet-api-version>
         <jersey2-version>3.0.1</jersey2-version>
         <junit-version>4.13.1</junit-version>
-        <jackson-version>2.13.2</jackson-version>
+        <jackson-version>2.13.2.1</jackson-version>
         <logback-version>1.2.9</logback-version>
         <classgraph-version>4.8.138</classgraph-version>
         <guava-version>31.0.1-jre</guava-version>
