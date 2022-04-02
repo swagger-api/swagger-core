@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.extensions.ExtensionProperty;
 import io.swagger.v3.oas.annotations.links.LinkParameter;
 import io.swagger.v3.oas.annotations.media.DiscriminatorMapping;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.media.SchemaProperty;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.ExternalDocumentation;
 import io.swagger.v3.oas.models.examples.Example;
@@ -97,6 +98,7 @@ public abstract class AnnotationsUtils {
                 && schema.extensions().length == 0
                 && !schema.hidden()
                 && !schema.enumAsRef()
+                && schema.additionalProperties().equals(io.swagger.v3.oas.annotations.media.Schema.AdditionalPropertiesValue.USE_ADDITIONAL_PROPERTIES_ANNOTATION)
                 ) {
             return false;
         }
@@ -284,6 +286,10 @@ public abstract class AnnotationsUtils {
         if (!Arrays.equals(thisSchema.extensions(), thatSchema.extensions())) {
             return false;
         }
+        if (!thisSchema.additionalProperties().equals(thatSchema.additionalProperties())) {
+            return false;
+        }
+
         return true;
     }
 
@@ -539,7 +545,11 @@ public abstract class AnnotationsUtils {
                 ((ComposedSchema) schemaObject).addAllOfItem(allOfSchemaObject);
             }
         }
-
+        if (schema.additionalProperties().equals(io.swagger.v3.oas.annotations.media.Schema.AdditionalPropertiesValue.TRUE)) {
+            schemaObject.additionalProperties(true);
+        } else if (schema.additionalProperties().equals(io.swagger.v3.oas.annotations.media.Schema.AdditionalPropertiesValue.FALSE)) {
+            schemaObject.additionalProperties(false);
+        }
 
         return Optional.of(schemaObject);
     }
@@ -932,10 +942,7 @@ public abstract class AnnotationsUtils {
         if (header.schema() != null) {
             if (header.schema().implementation().equals(Void.class)) {
                 AnnotationsUtils.getSchemaFromAnnotation(header.schema(), jsonViewAnnotation).ifPresent(
-                    headerObject::setSchema
-                    //schema inline no need to add to components
-                    //components.addSchemas(schema.getType(), schema);
-                );
+                    headerObject::setSchema);
             }
         }
 
@@ -1044,6 +1051,46 @@ public abstract class AnnotationsUtils {
             MediaType mediaType = new MediaType();
             if (components != null) {
                 getSchema(annotationContent, components, jsonViewAnnotation).ifPresent(mediaType::setSchema);
+                if (annotationContent.schemaProperties().length > 0) {
+                    if (mediaType.getSchema() == null) {
+                        mediaType.schema(new Schema<Object>().type("object"));
+                    }
+                    Schema oSchema = mediaType.getSchema();
+                    for (SchemaProperty sp: annotationContent.schemaProperties()) {
+                        Class<?> schemaImplementation = sp.schema().implementation();
+                        boolean isArray = false;
+                        if (schemaImplementation == Void.class) {
+                            schemaImplementation = sp.array().schema().implementation();
+                            if (schemaImplementation != Void.class) {
+                                isArray = true;
+                            }
+                        }
+                        getSchema(sp.schema(), sp.array(), isArray, schemaImplementation, components, jsonViewAnnotation)
+                                .ifPresent(s -> {
+                                    if ("array".equals(oSchema.getType())) {
+                                        oSchema.getItems().addProperty(sp.name(), s);
+                                    } else {
+                                        oSchema.addProperty(sp.name(), s);
+                                    }
+                                });
+
+                    }
+                }
+                if (
+                        hasSchemaAnnotation(annotationContent.additionalPropertiesSchema()) &&
+                        mediaType.getSchema() != null &&
+                        !Boolean.TRUE.equals(mediaType.getSchema().getAdditionalProperties()) &&
+                        !Boolean.FALSE.equals(mediaType.getSchema().getAdditionalProperties())) {
+                        getSchemaFromAnnotation(annotationContent.additionalPropertiesSchema(), components, jsonViewAnnotation)
+                                .ifPresent(s -> {
+                                            if ("array".equals(mediaType.getSchema().getType())) {
+                                                mediaType.getSchema().getItems().additionalProperties(s);
+                                            } else {
+                                                mediaType.getSchema().additionalProperties(s);
+                                            }
+                                        }
+                                );
+                }
             } else {
                 mediaType.setSchema(schema);
             }
@@ -1395,7 +1442,6 @@ public abstract class AnnotationsUtils {
         }
 
         else if (tS != null && cS != null) {
-            //return mergeSchemaAnnotations(cS, tS);
             return mergeSchemaAnnotations(tS, cS);
         }
 
@@ -1725,6 +1771,14 @@ public abstract class AnnotationsUtils {
             @Override
             public Class<? extends Annotation> annotationType() {
                 return io.swagger.v3.oas.annotations.media.Schema.class;
+            }
+
+            @Override
+            public AdditionalPropertiesValue additionalProperties() {
+                if (!master.additionalProperties().equals(AdditionalPropertiesValue.USE_ADDITIONAL_PROPERTIES_ANNOTATION) || patch.additionalProperties().equals(AdditionalPropertiesValue.USE_ADDITIONAL_PROPERTIES_ANNOTATION)) {
+                    return master.additionalProperties();
+                }
+                return patch.additionalProperties();
             }
         };
 

@@ -1,25 +1,12 @@
-/**
- * Copyright 2017 SmartBear Software
- * <p>
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package io.swagger.v3.oas.models.info;
+
+import io.swagger.v3.oas.annotations.OpenAPI31;
 
 import java.util.Objects;
 
 /**
  * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.0.1/versions/3.0.1.md#infoObject"
+ * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.1.0/versions/3.1.0.md#infoObject"
  */
 
 public class Info {
@@ -30,6 +17,12 @@ public class Info {
     private License license = null;
     private String version = null;
     private java.util.Map<String, Object> extensions = null;
+
+    /**
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
+    @OpenAPI31
+    private String summary = null;
 
     /**
      * returns the title property from a Info instance.
@@ -145,6 +138,34 @@ public class Info {
         return this;
     }
 
+    /**
+     * returns the summary property from a Info instance.
+     *
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     * @return String
+     **/
+    @OpenAPI31
+    public String getSummary() {
+        return summary;
+    }
+
+    /**
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
+    @OpenAPI31
+    public void setSummary(String summary) {
+        this.summary = summary;
+    }
+
+    /**
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
+    @OpenAPI31
+    public Info summary(String summary) {
+        this.summary = summary;
+        return this;
+    }
+
     @Override
     public boolean equals(java.lang.Object o) {
         if (this == o) {
@@ -160,12 +181,13 @@ public class Info {
                 Objects.equals(this.contact, info.contact) &&
                 Objects.equals(this.license, info.license) &&
                 Objects.equals(this.version, info.version) &&
-                Objects.equals(this.extensions, info.extensions);
+                Objects.equals(this.extensions, info.extensions) &&
+                Objects.equals(this.summary, info.summary);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(title, description, termsOfService, contact, license, version, extensions);
+        return Objects.hash(title, description, termsOfService, contact, license, version, extensions, summary);
     }
 
     public java.util.Map<String, Object> getExtensions() {
@@ -180,6 +202,14 @@ public class Info {
             this.extensions = new java.util.LinkedHashMap<>();
         }
         this.extensions.put(name, value);
+    }
+
+    @OpenAPI31
+    public void addExtension31(String name, Object value) {
+        if (name != null && (name.startsWith("x-oas-") || name.startsWith("x-oai-"))) {
+            return;
+        }
+        addExtension(name, value);
     }
 
     public void setExtensions(java.util.Map<String, Object> extensions) {
@@ -198,6 +228,7 @@ public class Info {
 
         sb.append("    title: ").append(toIndentedString(title)).append("\n");
         sb.append("    description: ").append(toIndentedString(description)).append("\n");
+        sb.append("    summary: ").append(toIndentedString(summary)).append("\n");
         sb.append("    termsOfService: ").append(toIndentedString(termsOfService)).append("\n");
         sb.append("    contact: ").append(toIndentedString(contact)).append("\n");
         sb.append("    license: ").append(toIndentedString(license)).append("\n");

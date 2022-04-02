@@ -3,9 +3,8 @@
 // * * * * * * * * * * * *
 plugins {
     id 'java-gradle-plugin'
-    id 'net.researchgate.release' version '2.6.0'
     // Publishing publicly
-    id 'com.gradle.plugin-publish' version '0.11.0'
+    id 'com.gradle.plugin-publish' version '0.19.0'
     // Publishing to maven
     id 'maven-publish'
 }
@@ -15,7 +14,6 @@ plugins {
 // * * * * * * * * * * * *
 
 repositories {
-    jcenter()
     mavenLocal()
     mavenCentral()
 }
@@ -50,8 +48,8 @@ dependencies {
     testImplementation "commons-codec:commons-codec:1.15"
     testImplementation "commons-io:commons-io:2.7"
     testImplementation "org.apache.commons:commons-compress:1.21"
-    testImplementation "com.github.jknack:handlebars:4.1.2"
-    testImplementation "com.github.jknack:handlebars-helpers:4.1.2"
+    testImplementation "com.github.jknack:handlebars:4.2.1"
+    testImplementation "com.github.jknack:handlebars-helpers:4.2.1"
 }
 
 // * * * * * * * * * * * *

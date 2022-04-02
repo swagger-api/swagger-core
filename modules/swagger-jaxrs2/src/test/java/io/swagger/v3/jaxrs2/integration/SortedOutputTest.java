@@ -11,10 +11,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import io.swagger.v3.core.jackson.PathsSerializer;
-import io.swagger.v3.core.util.Yaml;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.integration.GenericOpenApiContext;
 import io.swagger.v3.oas.integration.SwaggerConfiguration;
 import io.swagger.v3.oas.integration.api.ObjectMapperProcessor;
 import io.swagger.v3.oas.integration.api.OpenApiContext;
@@ -27,6 +25,7 @@ import org.testng.annotations.Test;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Application;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Map;
@@ -117,6 +116,33 @@ public class SortedOutputTest {
 
         @JsonInclude(JsonInclude.Include.CUSTOM)
         public abstract Object getExample();
+
+        @JsonIgnore
+        public abstract Map<String, Object> getJsonSchema();
+
+        @JsonIgnore
+        public abstract BigDecimal getExclusiveMinimumValue();
+
+        @JsonIgnore
+        public abstract BigDecimal getExclusiveMaximumValue();
+
+        @JsonIgnore
+        public abstract Map<String, Schema> getPatternProperties();
+
+        @JsonIgnore
+        public abstract Schema getContains();
+        @JsonIgnore
+        public abstract String get$id();
+        @JsonIgnore
+        public abstract String get$anchor();
+        @JsonIgnore
+        public abstract String get$schema();
+        @JsonIgnore
+        public abstract Set<String> getTypes();
+
+        @JsonIgnore
+        public abstract Object getJsonSchemaImpl();
+
 
     }
 

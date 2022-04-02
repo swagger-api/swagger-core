@@ -1,20 +1,6 @@
-/**
- * Copyright 2017 SmartBear Software
- * <p>
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package io.swagger.v3.oas.models.info;
+
+import io.swagger.v3.oas.annotations.OpenAPI31;
 
 import java.util.Objects;
 
@@ -22,11 +8,18 @@ import java.util.Objects;
  * License
  *
  * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.0.1/versions/3.0.1.md#licenseObject"
+ * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.1.0/versions/3.1.0.md#licenseObject"
  */
 
 public class License {
     private String name = null;
     private String url = null;
+
+    /**
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
+    @OpenAPI31
+    private String identifier = null;
     private java.util.Map<String, Object> extensions = null;
 
     /**
@@ -67,8 +60,28 @@ public class License {
         return this;
     }
 
+    /**
+     * returns the identifier property from a License instance.
+     *
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     * @return String identifier
+     **/
+    @OpenAPI31
+    public String getIdentifier() {
+        return identifier;
+    }
+    @OpenAPI31
+    public void setIdentifier(String identifier) {
+        this.identifier = identifier;
+    }
+    @OpenAPI31
+    public License identifier(String identifier) {
+        this.identifier = identifier;
+        return this;
+    }
+
     @Override
-    public boolean equals(java.lang.Object o) {
+    public boolean equals(Object o) {
         if (this == o) {
             return true;
         }
@@ -78,12 +91,13 @@ public class License {
         License license = (License) o;
         return Objects.equals(this.name, license.name) &&
                 Objects.equals(this.url, license.url) &&
+                Objects.equals(this.identifier, license.identifier) &&
                 Objects.equals(this.extensions, license.extensions);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, url, extensions);
+        return Objects.hash(name, url, identifier, extensions);
     }
 
     public java.util.Map<String, Object> getExtensions() {
@@ -98,6 +112,14 @@ public class License {
             this.extensions = new java.util.LinkedHashMap<>();
         }
         this.extensions.put(name, value);
+    }
+
+    @OpenAPI31
+    public void addExtension31(String name, Object value) {
+        if (name != null && (name.startsWith("x-oas-") || name.startsWith("x-oai-"))) {
+            return;
+        }
+        addExtension(name, value);
     }
 
     public void setExtensions(java.util.Map<String, Object> extensions) {
@@ -116,6 +138,7 @@ public class License {
 
         sb.append("    name: ").append(toIndentedString(name)).append("\n");
         sb.append("    url: ").append(toIndentedString(url)).append("\n");
+        sb.append("    identifier: ").append(toIndentedString(identifier)).append("\n");
         sb.append("}");
         return sb.toString();
     }

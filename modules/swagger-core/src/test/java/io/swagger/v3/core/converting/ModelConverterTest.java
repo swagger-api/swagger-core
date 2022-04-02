@@ -182,7 +182,6 @@ public class ModelConverterTest {
         ModelConverters.getInstance().addConverter(asPropertyConverter);
         final Map<String, Schema> asProperty = readAll(ModelWithTuple2.class);
         ModelConverters.getInstance().removeConverter(asPropertyConverter);
-        //assertEquals(asProperty.size(), 2);
         Map<String, Schema> values = asProperty.get("ModelWithTuple2").getProperties();
         Yaml.prettyPrint(values);
         for (Map.Entry<String, Schema> entry : values.entrySet()) {

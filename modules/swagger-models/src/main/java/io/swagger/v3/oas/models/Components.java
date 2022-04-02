@@ -1,21 +1,6 @@
-/**
- * Copyright 2017 SmartBear Software
- * <p>
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package io.swagger.v3.oas.models;
 
+import io.swagger.v3.oas.annotations.OpenAPI31;
 import io.swagger.v3.oas.models.callbacks.Callback;
 import io.swagger.v3.oas.models.examples.Example;
 import io.swagger.v3.oas.models.headers.Header;
@@ -34,6 +19,7 @@ import java.util.Objects;
  * Components
  *
  * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.0.1/versions/3.0.1.md#componentsObject"
+ * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.1.0/versions/3.1.0.md#componentsObject"
  */
 
 public class Components {
@@ -52,6 +38,12 @@ public class Components {
     private Map<String, Link> links = null;
     private Map<String, Callback> callbacks = null;
     private java.util.Map<String, Object> extensions = null;
+
+    /**
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
+    @OpenAPI31
+    private Map<String, PathItem> pathItems;
 
     /**
      * returns the schemas property from a Components instance.
@@ -296,6 +288,37 @@ public class Components {
         return this;
     }
 
+    /**
+     * returns the path items property from a Components instance.
+     *
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     * @return Map&lt;String, PathItem&gt; pathItems
+     **/
+    @OpenAPI31
+    public Map<String, PathItem> getPathItems() {
+        return pathItems;
+    }
+
+    @OpenAPI31
+    public void setPathItems(Map<String, PathItem> pathItems) {
+        this.pathItems = pathItems;
+    }
+
+    @OpenAPI31
+    public Components pathItems(Map<String, PathItem> pathItems) {
+        this.pathItems = pathItems;
+        return this;
+    }
+
+    @OpenAPI31
+    public Components addPathItem(String key, PathItem pathItem) {
+        if (this.pathItems == null) {
+            this.pathItems = new LinkedHashMap<>();
+        }
+        this.pathItems.put(key, pathItem);
+        return this;
+    }
+
     @Override
     public boolean equals(java.lang.Object o) {
         if (this == o) {
@@ -314,12 +337,13 @@ public class Components {
                 Objects.equals(this.securitySchemes, components.securitySchemes) &&
                 Objects.equals(this.links, components.links) &&
                 Objects.equals(this.callbacks, components.callbacks) &&
-                Objects.equals(this.extensions, components.extensions);
+                Objects.equals(this.extensions, components.extensions) &&
+                Objects.equals(this.pathItems, components.pathItems);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(schemas, responses, parameters, examples, requestBodies, headers, securitySchemes, links, callbacks, extensions);
+        return Objects.hash(schemas, responses, parameters, examples, requestBodies, headers, securitySchemes, links, callbacks, extensions, pathItems);
     }
 
     public java.util.Map<String, Object> getExtensions() {
@@ -334,6 +358,14 @@ public class Components {
             this.extensions = new java.util.LinkedHashMap<>();
         }
         this.extensions.put(name, value);
+    }
+
+    @OpenAPI31
+    public void addExtension31(String name, Object value) {
+        if (name != null && (name.startsWith("x-oas-") || name.startsWith("x-oai-"))) {
+            return;
+        }
+        addExtension(name, value);
     }
 
     public void setExtensions(java.util.Map<String, Object> extensions) {
@@ -359,6 +391,7 @@ public class Components {
         sb.append("    securitySchemes: ").append(toIndentedString(securitySchemes)).append("\n");
         sb.append("    links: ").append(toIndentedString(links)).append("\n");
         sb.append("    callbacks: ").append(toIndentedString(callbacks)).append("\n");
+        sb.append("    pathItems: ").append(toIndentedString(pathItems)).append("\n");
         sb.append("}");
         return sb.toString();
     }

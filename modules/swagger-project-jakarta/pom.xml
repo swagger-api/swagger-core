@@ -6,7 +6,7 @@
     <packaging>pom</packaging>
     <name>swagger-project-jakarta</name>
     <description>swagger-project-jakarta</description>
-    <version>2.1.11-SNAPSHOT</version>
+    <version>2.2.0-SNAPSHOT</version>
     <url>https://github.com/swagger-api/swagger-core</url>
     <scm>
         <connection>scm:git:git@github.com:swagger-api/swagger-core.git</connection>
@@ -54,6 +54,17 @@
         <defaultGoal>install</defaultGoal>
         <directory>target</directory>
         <finalName>${project.artifactId}-${project.version}</finalName>
+        <resources>
+            <resource>
+                <targetPath>META-INF</targetPath>
+                <directory>../../../..</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>NOTICE</include>
+                    <include>LICENSE</include>
+                </includes>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -506,9 +517,8 @@
                 <version>${jackson-version}</version>
             </dependency>
             <dependency>
-                <groupId>com.fasterxml.jackson.jaxrs</groupId>
-                <artifactId>jackson-jaxrs-json-provider</artifactId>
-                <classifier>jakarta</classifier>
+                <groupId>com.fasterxml.jackson.jakarta.rs</groupId>
+                <artifactId>jackson-jakarta-rs-json-provider</artifactId>
                 <version>${jackson-version}</version>
                 <exclusions>
                     <exclusion>
@@ -522,15 +532,13 @@
                 </exclusions>
             </dependency>
             <dependency>
-                <groupId>com.fasterxml.jackson.jaxrs</groupId>
-                <artifactId>jackson-jaxrs-base</artifactId>
-                <classifier>jakarta</classifier>
+                <groupId>com.fasterxml.jackson.jakarta.rs</groupId>
+                <artifactId>jackson-jakarta-rs-base</artifactId>
                 <version>${jackson-version}</version>
             </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.module</groupId>
-                <artifactId>jackson-module-jaxb-annotations</artifactId>
-                <classifier>jakarta</classifier>
+                <artifactId>jackson-module-jakarta-xmlbind-annotations</artifactId>
                 <version>${jackson-version}</version>
                 <exclusions>
                     <exclusion>
@@ -540,6 +548,10 @@
                     <exclusion>
                         <groupId>jakarta.xml.bind</groupId>
                         <artifactId>jakarta.xml.bind-api</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>com.sun.activation</groupId>
+                        <artifactId>jakarta.activation</artifactId>
                     </exclusion>
                 </exclusions>
             </dependency>
@@ -554,8 +566,8 @@
     </dependencyManagement>
     <properties>
         <joda-version>1.9.2</joda-version>
-        <joda-time-version>2.9.9</joda-time-version>
-        <snakeyaml-version>1.27</snakeyaml-version>
+        <joda-time-version>2.10.13</joda-time-version>
+        <snakeyaml-version>1.30</snakeyaml-version>
         <jakarta.ws-version>3.0.0</jakarta.ws-version>
         <jakarta.xml.bind-api-version>3.0.0</jakarta.xml.bind-api-version>
         <jakarta.activation-api-version>2.0.0</jakarta.activation-api-version>
@@ -563,14 +575,14 @@
         <servlet-api-version>5.0.0</servlet-api-version>
         <jersey2-version>3.0.1</jersey2-version>
         <junit-version>4.13.1</junit-version>
-        <jackson-version>2.12.1</jackson-version>
-        <logback-version>1.2.3</logback-version>
-        <classgraph-version>4.8.95</classgraph-version>
-        <guava-version>30.1-jre</guava-version>
+        <jackson-version>2.13.2</jackson-version>
+        <logback-version>1.2.9</logback-version>
+        <classgraph-version>4.8.138</classgraph-version>
+        <guava-version>31.0.1-jre</guava-version>
         <ant-version>1.10.11</ant-version>
-        <commons-lang-version>3.7</commons-lang-version>
-        <commons-io-version>2.7</commons-io-version>
-        <slf4j-version>1.7.25</slf4j-version>
+        <commons-lang-version>3.12.0</commons-lang-version>
+        <commons-io-version>2.11.0</commons-io-version>
+        <slf4j-version>1.7.35</slf4j-version>
         <jetty-version>9.4.43.v20210629</jetty-version>
         <testng-version>7.3.0</testng-version>
         <mockito-version>2.28.2</mockito-version>
@@ -589,7 +601,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <sonatypeOssDistMgmtSnapshotsUrl>https://oss.sonatype.org/content/repositories/snapshots/</sonatypeOssDistMgmtSnapshotsUrl>
 
-        <maven.version>3.6.3</maven.version>
+        <maven.version>3.8.4</maven.version>
         <commons-compress-version>1.21</commons-compress-version>
     </properties>
 </project>

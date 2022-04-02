@@ -1,0 +1,149 @@
+openapi: "3.1.0"
+info:
+  version: 1.0.0
+  title: Swagger Petstore
+  summary: petstore sample for OAS 3.1.0
+  license:
+    name: MIT
+    identifier: test
+servers:
+  - url: http://petstore.swagger.io/v1
+paths:
+  /ref_pet:
+    $ref: '#/components/pathItems/pet'
+    description: "ref pathItem description"
+    summary: "ref pathItem summary"
+  /pets:
+    post:
+      tags:
+        - pets
+      summary: Create a pet
+      operationId: createPets
+      parameters:
+        - $ref: '#/components/parameters/testParameter'
+          description: "ref parameter description"
+          summary: "ref parameter summary"
+        - name: randomParam
+          in: query
+          schema:
+            type: string
+          examples:
+            refExample:
+              $ref: '#/components/examples/testExample'
+              description: "ref example description"
+              summary: "ref example summary"
+      callbacks:
+        callIt:
+          $ref: '#/components/callbacks/TestCallback'
+      requestBody:
+        $ref: '#/components/requestBodies/body'
+        description: "ref request body description"
+        summary: "ref request body summary"
+      responses:
+        "201":
+          $ref: '#/components/responses/okResponse'
+          description: "ref response description"
+          summary: "ref response summary"
+        default:
+          description: 'default response'
+          headers:
+            head:
+              $ref: '#/components/headers/head'
+              description: "ref header description"
+              summary: "ref header summary"
+
+
+components:
+  schemas:
+    Pet:
+      required:
+        - id
+        - name
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        tag:
+          type: string
+      discriminator:
+        propertyName: tag
+        x-test-extension: extended
+    Pets:
+      type: array
+      items:
+        $ref: "#/components/schemas/Pet"
+        description: desc
+        format: int32
+    Error:
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+    AnotherPet:
+      title: Another Pet
+      description: Another Pet for petstore referencing Pet schema
+      $ref: "#/components/schemas/Pet"
+      properties:
+        category:
+          type: string
+        photoUrl:
+          type: string
+  pathItems:
+    pet:
+      description: get a pet
+      get:
+        operationId: getPet
+        responses:
+          "200":
+            description: pet returned
+  links:
+    address:
+      operationId: getUserAddressByUUID
+      parameters:
+        # get the `uuid` field from the `uuid` field in the response body
+        userUuid: $response.body#/uuid
+  callbacks:
+    TestCallback:
+      '{$request.query.queryUrl}':
+        description: test path item
+        post:
+          operationId: testPathItem
+          responses:
+            default:
+              description: ok
+  securitySchemes:
+    basic:
+      $ref: "#/components/securitySchemes/http"
+    http:
+      type: http
+      scheme: basic
+  headers:
+    head:
+      schema:
+        type: string
+  requestBodies:
+    body:
+      description: client model
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Pet'
+  responses:
+    okResponse:
+      description: everything is good"
+  examples:
+    testExample:
+      value: Example on test
+  parameters:
+    testParameter:
+      name: param
+      in: query
+      schema:
+        type: string
