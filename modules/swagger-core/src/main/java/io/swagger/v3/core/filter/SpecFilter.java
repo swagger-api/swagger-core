@@ -2,6 +2,7 @@ package io.swagger.v3.core.filter;
 
 import io.swagger.v3.core.model.ApiDescription;
 import io.swagger.v3.core.util.Json;
+import io.swagger.v3.core.util.Json31;
 import io.swagger.v3.core.util.RefUtils;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
@@ -278,7 +279,12 @@ public class SpecFilter {
 
                 try {
                     // TODO solve this, and generally handle clone and passing references
-                    Schema clonedModel = Json.mapper().readValue(Json.pretty(definition), Schema.class);
+                    Schema clonedModel;
+                    if (filter.isOpenAPI31Filter())  {
+                        clonedModel = Json31.mapper().readValue(Json31.pretty(filteredDefinition.get()), Schema.class);
+                    } else {
+                        clonedModel = Json.mapper().readValue(Json.pretty(definition), Schema.class);
+                    }
                     if (clonedModel.getProperties() != null) {
                         clonedModel.getProperties().clear();
                     }
