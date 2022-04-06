@@ -13,6 +13,8 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import io.swagger.v3.core.converter.ModelConverter;
 import io.swagger.v3.core.converter.ModelConverters;
+import io.swagger.v3.core.filter.OpenAPI31SpecFilter;
+import io.swagger.v3.core.filter.SpecFilter;
 import io.swagger.v3.core.jackson.ModelResolver;
 import io.swagger.v3.core.jackson.PathsSerializer;
 import io.swagger.v3.core.util.Json;
@@ -604,6 +606,9 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
             cached.createdAt = System.currentTimeMillis();
             resetReader();
             cached.openApi = getOpenApiReader().read(getOpenApiScanner().classes(), getOpenApiScanner().resources());
+            if (Boolean.TRUE.equals(openAPI31)) {
+                cached.openApi = new SpecFilter().filter(cached.openApi, new OpenAPI31SpecFilter(), null, null, null);
+            }
             cache.put("openapi", cached);
         }
         return cached.openApi;
