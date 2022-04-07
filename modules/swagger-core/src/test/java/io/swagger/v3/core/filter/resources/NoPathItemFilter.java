@@ -14,7 +14,7 @@ import java.util.Optional;
  **/
 public class NoPathItemFilter extends AbstractSpecFilter {
     @Override
-    public Optional<PathItem> filterPathItem(PathItem pathItem, ApiDescription api, Map<String, List<String>> params, Map<String, String> cookies, Map<String, List<String>> headers) {
+    public Optional<PathItem> filterPathItem(PathItem pathItem, ApiDescription api, Map<String, List<String>> params, Map<String, List<String>> cookies, Map<String, List<String>> headers) {
         if (StringUtils.isBlank(pathItem.get$ref())) {
             return Optional.empty();
         }

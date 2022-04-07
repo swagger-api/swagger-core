@@ -12,7 +12,7 @@ public class NoTagRefSchemaPropertyFilter extends AbstractSpecFilter {
     private static final String MODEL = "Tag";
 
     @Override
-    public Optional<Schema> filterSchemaProperty(Schema property, Schema schema, String propName, Map<String, List<String>> params, Map<String, String> cookies, Map<String, List<String>> headers) {
+    public Optional<Schema> filterSchemaProperty(Schema property, Schema schema, String propName, Map<String, List<String>> params, Map<String, List<String>> cookies, Map<String, List<String>> headers) {
         if (property == null || StringUtils.isBlank(property.get$ref())) {
             return Optional.of(property);
         }

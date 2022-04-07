@@ -17,7 +17,7 @@ public class ChangeGetOperationsFilter extends AbstractSpecFilter {
     private static final String CHANGED_OPERATION_DESCRIPTION = "Changing some attributes of the operation";
 
     @Override
-    public Optional<Operation> filterOperation(Operation operation, ApiDescription api, Map<String, List<String>> params, Map<String, String> cookies, Map<String, List<String>> headers) {
+    public Optional<Operation> filterOperation(Operation operation, ApiDescription api, Map<String, List<String>> params, Map<String, List<String>> cookies, Map<String, List<String>> headers) {
         if (GET.equals(api.getMethod())) {
             return Optional.of(operation.operationId(CHANGED_OPERATION_ID).description(CHANGED_OPERATION_DESCRIPTION));
         }

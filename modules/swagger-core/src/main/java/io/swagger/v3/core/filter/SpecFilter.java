@@ -37,7 +37,7 @@ import java.util.stream.Collectors;
 
 public class SpecFilter {
 
-    public OpenAPI filter(OpenAPI openAPI, OpenAPISpecFilter filter, Map<String, List<String>> params, Map<String, String> cookies, Map<String, List<String>> headers) {
+    public OpenAPI filter(OpenAPI openAPI, OpenAPISpecFilter filter, Map<String, List<String>> params, Map<String, List<String>> cookies, Map<String, List<String>> headers) {
         OpenAPI filteredOpenAPI = filterOpenAPI(filter, openAPI, params, cookies, headers);
         if (filteredOpenAPI == null) {
             return filteredOpenAPI;
@@ -141,7 +141,7 @@ public class SpecFilter {
         return clone;
     }
 
-    protected OpenAPI filterOpenAPI(OpenAPISpecFilter filter, OpenAPI openAPI, Map<String, List<String>> params, Map<String, String> cookies, Map<String, List<String>> headers) {
+    protected OpenAPI filterOpenAPI(OpenAPISpecFilter filter, OpenAPI openAPI, Map<String, List<String>> params, Map<String, List<String>> cookies, Map<String, List<String>> headers) {
         if (openAPI != null) {
             Optional<OpenAPI> filteredOpenAPI = filter.filterOpenAPI(openAPI, params, cookies, headers);
             if (filteredOpenAPI.isPresent()) {
@@ -151,7 +151,7 @@ public class SpecFilter {
         return null;
     }
 
-    protected Operation filterOperation(OpenAPISpecFilter filter, Operation operation, String resourcePath, String key, Map<String, List<String>> params, Map<String, String> cookies, Map<String, List<String>> headers) {
+    protected Operation filterOperation(OpenAPISpecFilter filter, Operation operation, String resourcePath, String key, Map<String, List<String>> params, Map<String, List<String>> cookies, Map<String, List<String>> headers) {
         if (operation != null) {
             ApiDescription description = new ApiDescription(resourcePath, key);
             Optional<Operation> filteredOperation = filter.filterOperation(operation, description, params, cookies, headers);
@@ -207,7 +207,7 @@ public class SpecFilter {
         return null;
     }
 
-    protected PathItem filterPathItem(OpenAPISpecFilter filter, PathItem pathItem, String resourcePath, Map<String, List<String>> params, Map<String, String> cookies, Map<String, List<String>> headers) {
+    protected PathItem filterPathItem(OpenAPISpecFilter filter, PathItem pathItem, String resourcePath, Map<String, List<String>> params, Map<String, List<String>> cookies, Map<String, List<String>> headers) {
         ApiDescription description = new ApiDescription(resourcePath, null);
         Optional<PathItem> filteredPathItem = filter.filterPathItem(pathItem, description, params, cookies, headers);
         if (filteredPathItem.isPresent()) {
@@ -216,7 +216,7 @@ public class SpecFilter {
         return null;
     }
 
-    protected Parameter filterParameter(OpenAPISpecFilter filter, Operation operation, Parameter parameter, String resourcePath, String key, Map<String, List<String>> params, Map<String, String> cookies, Map<String, List<String>> headers) {
+    protected Parameter filterParameter(OpenAPISpecFilter filter, Operation operation, Parameter parameter, String resourcePath, String key, Map<String, List<String>> params, Map<String, List<String>> cookies, Map<String, List<String>> headers) {
         if (parameter != null) {
             ApiDescription description = new ApiDescription(resourcePath, key);
             Optional<Parameter> filteredParameter = filter.filterParameter(parameter, operation, description, params, cookies, headers);
@@ -228,7 +228,7 @@ public class SpecFilter {
 
     }
 
-    protected RequestBody filterRequestBody(OpenAPISpecFilter filter, Operation operation, RequestBody requestBody, String resourcePath, String key, Map<String, List<String>> params, Map<String, String> cookies, Map<String, List<String>> headers) {
+    protected RequestBody filterRequestBody(OpenAPISpecFilter filter, Operation operation, RequestBody requestBody, String resourcePath, String key, Map<String, List<String>> params, Map<String, List<String>> cookies, Map<String, List<String>> headers) {
         if (requestBody != null) {
             ApiDescription description = new ApiDescription(resourcePath, key);
             Optional<RequestBody> filteredRequestBody = filter.filterRequestBody(requestBody, operation, description, params, cookies, headers);
@@ -240,7 +240,7 @@ public class SpecFilter {
 
     }
 
-    protected ApiResponse filterResponse(OpenAPISpecFilter filter, Operation operation, ApiResponse response, String resourcePath, String key, Map<String, List<String>> params, Map<String, String> cookies, Map<String, List<String>> headers) {
+    protected ApiResponse filterResponse(OpenAPISpecFilter filter, Operation operation, ApiResponse response, String resourcePath, String key, Map<String, List<String>> params, Map<String, List<String>> cookies, Map<String, List<String>> headers) {
         if (response != null) {
             ApiDescription description = new ApiDescription(resourcePath, key);
             Optional<ApiResponse> filteredResponse = filter.filterResponse(response, operation, description, params, cookies, headers);
@@ -252,7 +252,7 @@ public class SpecFilter {
 
     }
 
-    protected Map<String, Schema> filterComponentsSchema(OpenAPISpecFilter filter, Map<String, Schema> schemasMap, Map<String, List<String>> params, Map<String, String> cookies, Map<String, List<String>> headers) {
+    protected Map<String, Schema> filterComponentsSchema(OpenAPISpecFilter filter, Map<String, Schema> schemasMap, Map<String, List<String>> params, Map<String, List<String>> cookies, Map<String, List<String>> headers) {
         if (schemasMap == null) {
             return null;
         }

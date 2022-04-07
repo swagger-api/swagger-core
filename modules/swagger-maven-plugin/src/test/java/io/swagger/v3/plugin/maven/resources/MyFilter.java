@@ -18,7 +18,7 @@ public class MyFilter extends AbstractSpecFilter {
         public Optional<OpenAPI> filterOpenAPI(
                 OpenAPI openAPI,
                 Map<String, List<String>> params,
-                Map<String, String> cookies,
+                Map<String, List<String>> cookies,
                 Map<String, List<String>> headers) {
             openAPI.getInfo().setTitle("UPDATEDBYFILTER");
             return Optional.of(openAPI);
@@ -29,7 +29,7 @@ public class MyFilter extends AbstractSpecFilter {
                 Operation operation,
                 ApiDescription api,
                 Map<String, List<String>> params,
-                Map<String, String> cookies,
+                Map<String, List<String>> cookies,
                 Map<String, List<String>> headers) {
             // some processing
             return Optional.of(operation);
