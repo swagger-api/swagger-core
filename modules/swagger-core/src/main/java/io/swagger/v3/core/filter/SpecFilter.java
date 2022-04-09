@@ -281,7 +281,7 @@ public class SpecFilter {
                     // TODO solve this, and generally handle clone and passing references
                     Schema clonedModel;
                     if (filter.isOpenAPI31Filter())  {
-                        clonedModel = Json31.mapper().readValue(Json31.pretty(filteredDefinition.get()), Schema.class);
+                        clonedModel = Json31.mapper().readValue(Json31.pretty(definition), Schema.class);
                     } else {
                         clonedModel = Json.mapper().readValue(Json.pretty(definition), Schema.class);
                     }
