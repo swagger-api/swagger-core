@@ -13,13 +13,10 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.testng.annotations.Test;
 
 import javax.xml.bind.annotation.XmlRootElement;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Type;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.BiFunction;
 
 import static io.swagger.v3.core.util.RefUtils.constructRef;
 import static io.swagger.v3.core.util.RefUtils.extractSimpleName;

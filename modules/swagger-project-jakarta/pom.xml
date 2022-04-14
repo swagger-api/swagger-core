@@ -6,7 +6,7 @@
     <packaging>pom</packaging>
     <name>swagger-project-jakarta</name>
     <description>swagger-project-jakarta</description>
-    <version>2.2.0-SNAPSHOT</version>
+    <version>2.2.1-SNAPSHOT</version>
     <url>https://github.com/swagger-api/swagger-core</url>
     <scm>
         <connection>scm:git:git@github.com:swagger-api/swagger-core.git</connection>
@@ -54,6 +54,17 @@
         <defaultGoal>install</defaultGoal>
         <directory>target</directory>
         <finalName>${project.artifactId}-${project.version}</finalName>
+        <resources>
+            <resource>
+                <targetPath>META-INF</targetPath>
+                <directory>../../../..</directory>
+                <filtering>true</filtering>
+                <includes>
+                    <include>NOTICE</include>
+                    <include>LICENSE</include>
+                </includes>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -483,7 +494,7 @@
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-databind</artifactId>
-                <version>${jackson-version}</version>
+                <version>${jackson-databind-version}</version>
                 <exclusions>
                     <exclusion>
                         <groupId>jakarta.activation</groupId>
@@ -506,9 +517,8 @@
                 <version>${jackson-version}</version>
             </dependency>
             <dependency>
-                <groupId>com.fasterxml.jackson.jaxrs</groupId>
-                <artifactId>jackson-jaxrs-json-provider</artifactId>
-                <classifier>jakarta</classifier>
+                <groupId>com.fasterxml.jackson.jakarta.rs</groupId>
+                <artifactId>jackson-jakarta-rs-json-provider</artifactId>
                 <version>${jackson-version}</version>
                 <exclusions>
                     <exclusion>
@@ -522,15 +532,13 @@
                 </exclusions>
             </dependency>
             <dependency>
-                <groupId>com.fasterxml.jackson.jaxrs</groupId>
-                <artifactId>jackson-jaxrs-base</artifactId>
-                <classifier>jakarta</classifier>
+                <groupId>com.fasterxml.jackson.jakarta.rs</groupId>
+                <artifactId>jackson-jakarta-rs-base</artifactId>
                 <version>${jackson-version}</version>
             </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.module</groupId>
-                <artifactId>jackson-module-jaxb-annotations</artifactId>
-                <classifier>jakarta</classifier>
+                <artifactId>jackson-module-jakarta-xmlbind-annotations</artifactId>
                 <version>${jackson-version}</version>
                 <exclusions>
                     <exclusion>
@@ -540,6 +548,10 @@
                     <exclusion>
                         <groupId>jakarta.xml.bind</groupId>
                         <artifactId>jakarta.xml.bind-api</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>com.sun.activation</groupId>
+                        <artifactId>jakarta.activation</artifactId>
                     </exclusion>
                 </exclusions>
             </dependency>
@@ -563,7 +575,12 @@
         <servlet-api-version>5.0.0</servlet-api-version>
         <jersey2-version>3.0.1</jersey2-version>
         <junit-version>4.13.1</junit-version>
-        <jackson-version>2.12.1</jackson-version>
+        <jackson-version>2.13.2</jackson-version>
+        <!--
+          2.13.2 is still affected by CVE-2020-36518.
+          This version pin for jackson-databind can be removed when bumping jackson to 2.14
+          -->
+        <jackson-databind-version>2.13.2.2</jackson-databind-version>
         <logback-version>1.2.9</logback-version>
         <classgraph-version>4.8.138</classgraph-version>
         <guava-version>31.0.1-jre</guava-version>
@@ -589,7 +606,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <sonatypeOssDistMgmtSnapshotsUrl>https://oss.sonatype.org/content/repositories/snapshots/</sonatypeOssDistMgmtSnapshotsUrl>
 
-        <maven.version>3.6.3</maven.version>
+        <maven.version>3.8.4</maven.version>
         <commons-compress-version>1.21</commons-compress-version>
     </properties>
 </project>

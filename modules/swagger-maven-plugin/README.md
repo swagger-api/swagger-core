@@ -22,7 +22,7 @@ Both `javax` and `jakarta` examples are provided below
             <plugin>
                 <groupId>io.swagger.core.v3</groupId>
                 <artifactId>swagger-maven-plugin</artifactId>
-                <version>2.1.13</version>
+                <version>2.2.0</version>
                 <configuration>
                     <outputFileName>openapi</outputFileName>
                     <outputPath>${project.build.directory}/generatedtest</outputPath>
@@ -47,7 +47,7 @@ Both `javax` and `jakarta` examples are provided below
         <dependency>
             <groupId>io.swagger.core.v3</groupId>
             <artifactId>swagger-jaxrs2</artifactId>
-            <version>2.1.13</version>
+            <version>2.2.0</version>
         </dependency>
 
         <dependency>
@@ -73,7 +73,7 @@ Both `javax` and `jakarta` examples are provided below
             <plugin>
                 <groupId>io.swagger.core.v3</groupId>
                 <artifactId>swagger-maven-plugin-jakarta</artifactId>
-                <version>2.1.13</version>
+                <version>2.2.0</version>
                 <configuration>
                     <outputFileName>openapi</outputFileName>
                     <outputPath>${project.build.directory}/generatedtest</outputPath>
@@ -98,7 +98,7 @@ Both `javax` and `jakarta` examples are provided below
         <dependency>
             <groupId>io.swagger.core.v3</groupId>
             <artifactId>swagger-jaxrs2-jakarta</artifactId>
-            <version>2.1.13</version>
+            <version>2.2.0</version>
         </dependency>
 
         <dependency>
@@ -126,7 +126,7 @@ Both `javax` and `jakarta` examples are provided below
             <plugin>
                 <groupId>io.swagger.core.v3</groupId>
                 <artifactId>swagger-maven-plugin</artifactId>
-                <version>2.1.13</version>
+                <version>2.2.0</version>
                 <configuration>
                     <outputFileName>openapi</outputFileName>
                     <outputPath>${project.build.directory}/generatedtest</outputPath>
@@ -155,7 +155,7 @@ Both `javax` and `jakarta` examples are provided below
             <plugin>
                 <groupId>io.swagger.core.v3</groupId>
                 <artifactId>swagger-maven-plugin-jakarta</artifactId>
-                <version>2.1.13</version>
+                <version>2.2.0</version>
                 <configuration>
                     <outputFileName>openapi</outputFileName>
                     <outputPath>${project.build.directory}/generatedtest</outputPath>

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
@@ -15,9 +16,9 @@ import java.math.BigDecimal;
 import java.util.Map;
 import java.util.Set;
 
+@JsonPropertyOrder(value = {"type", "format", "if", "then", "else"}, alphabetic = true)
 public abstract class Schema31Mixin {
 
-    //@JsonValue
     @JsonIgnore
     public abstract Map<String, Object> getJsonSchema();
 

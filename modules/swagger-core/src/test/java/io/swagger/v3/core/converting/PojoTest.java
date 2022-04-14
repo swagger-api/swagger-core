@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.testng.annotations.Test;
 
+import javax.validation.constraints.Pattern;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.Date;
@@ -645,6 +646,35 @@ public class PojoTest {
         }
     }
 
+    @Test(description = "Shows how to provide an array with specific format")
+    public void testArrayWithPattern() {
+
+        String yaml =
+                "modelArrayWithPattern:\n" +
+                        "  type: object\n" +
+                        "  properties:\n" +
+                        "    ids:\n" +
+                        "      type: array\n" +
+                        "      items:\n" +
+                        "        pattern: \"[a-zA-Z]*\"\n" +
+                        "        type: string";
+        Map<String, io.swagger.v3.oas.models.media.Schema> schemaMap = readAll(modelArrayWithPattern.class);
+        SerializationMatchers.assertEqualsToYaml(schemaMap, yaml);
+    }
+
+    static class modelArrayWithPattern {
+        @Pattern(regexp="[a-zA-Z]*")
+        private String[] ids;
+
+        public String[] getIds() {
+            return ids;
+        }
+
+        public void setIds(String[] ids) {
+            this.ids = ids;
+        }
+    }
+
     @Test(description = "Show how to completely override an object example")
     public void testModelExampleOverride() {
 
@@ -673,5 +703,51 @@ public class PojoTest {
             this.id = id;
         }
     }
+
+    @Test
+    public void testModelWithBoolean() {
+
+        String yaml = "ClassWithBoolean:\n" +
+                "  required:\n" +
+                "    - booleanObject\n" +
+                "    - booleanType\n" +
+                "  type: object\n" +
+                "  properties:\n" +
+                "    booleanObject:\n" +
+                "      type: boolean\n" +
+                "      description: my Boolean object field\n" +
+                "    booleanType:\n" +
+                "      type: boolean\n" +
+                "      description: my boolean type field\n";
+        SerializationMatchers.assertEqualsToYaml(read(ClassWithBoolean.class), yaml);
+
+    }
+
+    @Schema
+    static class ClassWithBoolean {
+
+        @Schema(required = true, description = "my Boolean object field")
+        private Boolean booleanObject;
+
+        @Schema(required = true, description = "my boolean type field")
+        private boolean booleanType;
+
+        public Boolean getBooleanObject() {
+            return booleanObject;
+        }
+
+        public void setBooleanObject(Boolean booleanObject) {
+            this.booleanObject = booleanObject;
+        }
+
+        public boolean getBooleanType() {
+            return booleanType;
+        }
+
+        public void setBooleanType(boolean booleanType) {
+            this.booleanType = booleanType;
+        }
+    }
+
 
 }
