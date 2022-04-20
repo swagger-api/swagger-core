@@ -219,5 +219,20 @@ public class EnumPropertyTest {
         assertTrue(thirdEnumProperty instanceof StringSchema);
         final StringSchema thirdStringProperty = (StringSchema) thirdEnumProperty;
         assertEquals(thirdStringProperty.getEnum(), Arrays.asList("2", "4", "6"));
+
+        final Schema fourthEnumProperty = (Schema) model.getProperties().get("fourthEnumValue");
+        assertTrue(fourthEnumProperty instanceof StringSchema);
+        final StringSchema fourthStringProperty = (StringSchema) fourthEnumProperty;
+        assertEquals(fourthEnumProperty.getEnum(), Arrays.asList("one", "two", "three"));
+
+        final Schema fifthEnumProperty = (Schema) model.getProperties().get("fifthEnumValue");
+        assertTrue(fifthEnumProperty instanceof StringSchema);
+        final StringSchema fifthStringProperty = (StringSchema) fifthEnumProperty;
+        assertEquals(fifthEnumProperty.getEnum(), Arrays.asList("2", "4", "6"));
+
+        final Schema sixthEnumProperty = (Schema) model.getProperties().get("sixthEnumValue");
+        assertTrue(sixthEnumProperty instanceof StringSchema);
+        final StringSchema sixthStringProperty = (StringSchema) sixthEnumProperty;
+        assertEquals(sixthEnumProperty.getEnum(), Arrays.asList("one", "two", "three"));
     }
 }

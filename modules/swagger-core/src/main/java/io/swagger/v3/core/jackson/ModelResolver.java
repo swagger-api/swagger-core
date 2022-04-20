@@ -77,6 +77,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchema;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
@@ -955,20 +956,33 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 .contains(propType.getRawClass().getCanonicalName());
     }
 
+    /**
+     * Adds each enum property value to the model schema
+     *
+     * @param propClass the enum class for which to add properties
+     * @param property the schema to add properties to
+     */
     protected void _addEnumProps(Class<?> propClass, Schema property) {
         final boolean useIndex = _mapper.isEnabled(SerializationFeature.WRITE_ENUMS_USING_INDEX);
         final boolean useToString = _mapper.isEnabled(SerializationFeature.WRITE_ENUMS_USING_TO_STRING);
 
-
-        Optional<Method> jsonValueMethod = Arrays.stream(propClass.getMethods())
+        Optional<Method> jsonValueMethod = Arrays.stream(propClass.getDeclaredMethods())
                 .filter(m -> m.isAnnotationPresent(JsonValue.class))
                 .filter(m -> m.getAnnotation(JsonValue.class).value())
                 .findFirst();
 
+        Optional<Field> jsonValueField = Arrays.stream(propClass.getDeclaredFields())
+                .filter(f -> f.isAnnotationPresent(JsonValue.class))
+                .filter(f -> f.getAnnotation(JsonValue.class).value())
+                .findFirst();
+
+        jsonValueMethod.ifPresent(m -> m.setAccessible(true));
+        jsonValueField.ifPresent(m -> m.setAccessible(true));
         @SuppressWarnings("unchecked")
         Class<Enum<?>> enumClass = (Class<Enum<?>>) propClass;
 
         Enum<?>[] enumConstants = enumClass.getEnumConstants();
+
         if (enumConstants != null) {
             String[] enumValues = _intr.findEnumValues(propClass, enumConstants,
                 new String[enumConstants.length]);
@@ -977,11 +991,13 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 String n;
 
                 String enumValue = enumValues[en.ordinal()];
-                String s = jsonValueMethod.flatMap(m -> ReflectionUtils.safeInvoke(m, en))
-                    .map(Object::toString).orElse(null);
+                String methodValue = jsonValueMethod.flatMap(m -> ReflectionUtils.safeInvoke(m, en)).map(Object::toString).orElse(null);
+                String fieldValue = jsonValueField.flatMap(f -> ReflectionUtils.safeGet(f, en)).map(Object::toString).orElse(null);
 
-                if (s != null) {
-                    n = s;
+                if (methodValue != null) {
+                    n = methodValue;
+                } else if (fieldValue != null) {
+                    n = fieldValue;
                 } else if (enumValue != null) {
                     n = enumValue;
                 } else if (useIndex) {
