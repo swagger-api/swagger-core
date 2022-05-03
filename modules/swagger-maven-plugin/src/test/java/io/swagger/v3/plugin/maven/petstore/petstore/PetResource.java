@@ -16,16 +16,15 @@
 
 package io.swagger.v3.plugin.maven.petstore.petstore;
 
-import io.swagger.v3.plugin.maven.resources.QueryResultBean;
-import io.swagger.v3.plugin.maven.resources.data.PetData;
-import io.swagger.v3.plugin.maven.resources.exception.NotFoundException;
-import io.swagger.v3.plugin.maven.resources.model.Pet;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.plugin.maven.resources.QueryResultBean;
+import io.swagger.v3.plugin.maven.resources.data.PetData;
+import io.swagger.v3.plugin.maven.resources.exception.NotFoundException;
+import io.swagger.v3.plugin.maven.resources.model.Pet;
 
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
