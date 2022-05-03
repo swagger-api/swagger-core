@@ -404,6 +404,9 @@ public class ResolveTask extends DefaultTask {
             if (StringUtils.isNotBlank(filterClass)) {
                 method=swaggerLoaderClass.getDeclaredMethod("setFilterClass",String.class);
                 method.invoke(swaggerLoader, filterClass);
+            } else if (Boolean.TRUE.equals(openAPI31)) {
+                method=swaggerLoaderClass.getDeclaredMethod("setFilterClass",String.class);
+                method.invoke(swaggerLoader, "io.swagger.v3.core.filter.OpenAPI31SpecFilter");
             }
 
             if (StringUtils.isNotBlank(readerClass)) {

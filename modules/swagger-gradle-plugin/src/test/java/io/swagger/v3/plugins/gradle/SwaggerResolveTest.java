@@ -171,7 +171,6 @@ public class SwaggerResolveTest {
                 "    resourcePackages = ['io.swagger.v3.plugins.gradle.petstore']\n" +
                 "    outputPath = \'" + toNormalizedPath(outputDir) + "\'\n" +
                 "    openAPI31 = \'TRUE\'\n" +
-                "    filterClass = \'io.swagger.v3.plugins.gradle.resources.OpenAPI31Filter\'\n" +
                 "    openApiFile = file(\'" + toNormalizedPath(openapiInputFile.getAbsolutePath()) + "\')\n" +
                 "}";
 
@@ -203,7 +202,9 @@ public class SwaggerResolveTest {
         
         byte[] content = Files.readAllBytes(Paths.get(outputDir, "PetStoreAPI31.json"));
 
-        assertThat(new String(content, StandardCharsets.UTF_8), containsString("UPDATEDBYOAS31FILTER"));
+        String strContent = new String(content, StandardCharsets.UTF_8);
+        assertThat(strContent, containsString("\"openapi\" : \"3.1.0\""));
+        //
     }
 
     private static void writeFile(File destination, String content) throws IOException {
