@@ -1,6 +1,7 @@
 package io.swagger.v3.plugin.maven;
 
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
+import io.swagger.v3.core.filter.OpenAPI31SpecFilter;
 import io.swagger.v3.core.filter.OpenAPISpecFilter;
 import io.swagger.v3.core.filter.SpecFilter;
 import io.swagger.v3.core.util.Json;
@@ -83,14 +84,18 @@ public class SwaggerMojo extends AbstractMojo {
             OpenApiContext context = builder.buildContext(true);
             OpenAPI openAPI = context.read();
 
+            OpenAPISpecFilter filterImpl = null;
             if (StringUtils.isNotBlank(config.getFilterClass())) {
+                filterImpl = (OpenAPISpecFilter) this.getClass().getClassLoader().loadClass(config.getFilterClass()).newInstance();
+            } else if (Boolean.TRUE.equals(config.isOpenAPI31())) {
+                filterImpl = new OpenAPI31SpecFilter();
+            }
+            if (filterImpl != null) {
                 try {
-                    OpenAPISpecFilter filterImpl = (OpenAPISpecFilter) this.getClass().getClassLoader().loadClass(config.getFilterClass()).newInstance();
                     SpecFilter f = new SpecFilter();
-                    openAPI = f.filter(openAPI, filterImpl, new HashMap<>(), new HashMap<>(),
-                            new HashMap<>());
+                    openAPI = f.filter(openAPI, filterImpl, new HashMap<>(), new HashMap<>(), new HashMap<>());
                 } catch (Exception e) {
-                    getLog().error( "Error applying filter to API specification" , e);
+                    getLog().error("Error applying filter to API specification", e);
                     throw new MojoExecutionException("Error applying filter to API specification: " + e.getMessage(), e);
                 }
             }
@@ -154,6 +159,9 @@ public class SwaggerMojo extends AbstractMojo {
         if (alwaysResolveAppPath == null) {
             alwaysResolveAppPath = Boolean.FALSE;
         }
+        if (openapi31 == null) {
+            openapi31 = Boolean.FALSE;
+        }
         if (config.isPrettyPrint() == null) {
             config.prettyPrint(prettyPrint);
         }
@@ -165,6 +173,9 @@ public class SwaggerMojo extends AbstractMojo {
         }
         if (config.isAlwaysResolveAppPath() == null) {
             config.alwaysResolveAppPath(alwaysResolveAppPath);
+        }
+        if (config.isOpenAPI31() == null) {
+            config.setOpenAPI31(openapi31);
         }
     }
 
@@ -391,6 +402,12 @@ public class SwaggerMojo extends AbstractMojo {
      */
     @Parameter(property = "resolve.alwaysResolveAppPath")
     private Boolean alwaysResolveAppPath;
+
+    /**
+     * @since 2.2.0
+     */
+    @Parameter(property = "resolve.openapi31")
+    private Boolean openapi31;
 
 
     private String projectEncoding = "UTF-8";

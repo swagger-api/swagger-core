@@ -1,6 +1,5 @@
 package io.swagger.v3.plugin.maven;
 
-import io.swagger.v3.core.util.Yaml31;
 import io.swagger.v3.oas.models.media.Schema;
 
 import java.io.File;

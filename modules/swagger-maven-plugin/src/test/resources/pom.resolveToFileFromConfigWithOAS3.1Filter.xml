@@ -18,7 +18,7 @@
                     <configurationFilePath>${project.basedir}/../../../src/test/resources/configurationFile2.yaml
                     </configurationFilePath>
                     <outputFormat>JSONANDYAML</outputFormat>
-                    <filterClass>io.swagger.v3.core.filter.OpenAPI31SpecFilter</filterClass>
+                    <openapi31>true</openapi31>
                 </configuration>
             </plugin>
         </plugins>
