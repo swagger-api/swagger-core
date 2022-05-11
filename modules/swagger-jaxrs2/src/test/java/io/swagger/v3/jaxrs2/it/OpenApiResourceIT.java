@@ -657,7 +657,24 @@ public class OpenApiResourceIT extends AbstractAnnotationTest {
                 .log().all()
                 .accept("application/yaml")
                 .when()
-                .get("/openapi31")
+                .get("/oas/openapi31")
+                .then()
+                .log().all()
+                .assertThat()
+                .statusCode(200)
+                .contentType("application/yaml")
+                .extract().response().body().asString();
+
+        Assert.assertTrue(actualBody.contains("openapi: 3.1.0"));
+    }
+
+    @Test
+    public void testServletOpenAPI31() throws Exception {
+        final String actualBody = given()
+                .port(jettyPort)
+                .log().all()
+                .when()
+                .get("/oas/openapi.yaml")
                 .then()
                 .log().all()
                 .assertThat()
