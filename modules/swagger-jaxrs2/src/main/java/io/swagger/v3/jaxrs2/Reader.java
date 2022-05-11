@@ -9,6 +9,8 @@ import com.fasterxml.jackson.databind.type.TypeFactory;
 import io.swagger.v3.core.converter.AnnotatedType;
 import io.swagger.v3.core.converter.ModelConverters;
 import io.swagger.v3.core.converter.ResolvedSchema;
+import io.swagger.v3.core.filter.OpenAPI31SpecFilter;
+import io.swagger.v3.core.filter.SpecFilter;
 import io.swagger.v3.core.util.AnnotationsUtils;
 import io.swagger.v3.core.util.Json;
 import io.swagger.v3.core.util.ParameterProcessor;
@@ -674,6 +676,10 @@ public class Reader implements OpenApiReader {
                 }
             }
             openAPI.setTags(new ArrayList<>(tagsSet));
+        }
+
+        if (config != null && Boolean.TRUE.equals(config.isOpenAPI31())) {
+            this.openAPI = new SpecFilter().filter(this.openAPI, new OpenAPI31SpecFilter(), new HashMap<>(), new HashMap<>(), new HashMap<>());
         }
 
         return openAPI;

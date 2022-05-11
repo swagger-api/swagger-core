@@ -83,12 +83,15 @@ import io.swagger.v3.jaxrs2.resources.generics.ticket3694.Ticket3694ResourceSimp
 import io.swagger.v3.jaxrs2.resources.rs.ProcessTokenRestService;
 import io.swagger.v3.jaxrs2.resources.ticket3624.Service;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.integration.SwaggerConfiguration;
+import io.swagger.v3.oas.integration.api.OpenAPIConfiguration;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.ExternalDocumentation;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Operation;
 import io.swagger.v3.oas.models.PathItem;
 import io.swagger.v3.oas.models.Paths;
+import io.swagger.v3.oas.models.SpecVersion;
 import io.swagger.v3.oas.models.callbacks.Callback;
 import io.swagger.v3.oas.models.examples.Example;
 import io.swagger.v3.oas.models.headers.Header;
@@ -3029,5 +3032,26 @@ public class ReaderTest {
                 "        foo:\n" +
                 "          type: string";
         SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
+    }
+
+    @Test(description = "test open api 3.1 configuration")
+    public void testOpenAPI31Config() {
+        OpenAPIConfiguration configuration = new SwaggerConfiguration().openAPI(new OpenAPI()).openAPI31(true);
+        Reader reader = new Reader(configuration);
+        OpenAPI openAPI = reader.read(BasicFieldsResource.class);
+
+        assertEquals(openAPI.getOpenapi(), "3.1.0");
+        assertEquals(openAPI.getJsonSchemaDialect(), "https://json-schema.org/draft/2020-12/schema");
+        assertEquals(openAPI.getSpecVersion(), SpecVersion.V31);
+
+        Paths paths = openAPI.getPaths();
+        assertEquals(paths.size(), 6);
+        PathItem pathItem = paths.get(PATH_1_REF);
+        assertNotNull(pathItem);
+        assertNull(pathItem.getPost());
+        Operation operation = pathItem.getGet();
+        assertNotNull(operation);
+        assertEquals(OPERATION_SUMMARY, operation.getSummary());
+        assertEquals(OPERATION_DESCRIPTION, operation.getDescription());
     }
 }
