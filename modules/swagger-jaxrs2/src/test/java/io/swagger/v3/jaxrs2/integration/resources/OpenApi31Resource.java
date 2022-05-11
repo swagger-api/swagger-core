@@ -27,7 +27,6 @@ public class OpenApi31Resource extends BaseOpenApiResource {
     @Operation(hidden = true)
     public Response getOpenApiYaml(@Context HttpHeaders headers, @Context UriInfo uriInfo) throws Exception {
         super.setOpenApiConfiguration(new SwaggerConfiguration().openAPI31(true));
-        System.out.println("wooohooo");
         return super.getOpenApi(headers, config, app, uriInfo, "yaml");
     }
 }
