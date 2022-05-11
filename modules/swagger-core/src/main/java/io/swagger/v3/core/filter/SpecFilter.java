@@ -46,6 +46,8 @@ public class SpecFilter {
         OpenAPI clone = new OpenAPI();
         clone.info(filteredOpenAPI.getInfo());
         clone.openapi(filteredOpenAPI.getOpenapi());
+        clone.jsonSchemaDialect(filteredOpenAPI.getJsonSchemaDialect());
+        clone.setSpecVersion(filteredOpenAPI.getSpecVersion());
         clone.setExtensions(filteredOpenAPI.getExtensions());
         clone.setExternalDocs(filteredOpenAPI.getExternalDocs());
         clone.setSecurity(filteredOpenAPI.getSecurity());
