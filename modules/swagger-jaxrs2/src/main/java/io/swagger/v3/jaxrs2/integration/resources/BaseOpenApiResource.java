@@ -1,6 +1,7 @@
 package io.swagger.v3.jaxrs2.integration.resources;
 
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
+import io.swagger.v3.core.filter.OpenAPI31SpecFilter;
 import io.swagger.v3.core.filter.OpenAPISpecFilter;
 import io.swagger.v3.core.filter.SpecFilter;
 import io.swagger.v3.jaxrs2.integration.JaxrsOpenApiContextBuilder;
@@ -49,21 +50,21 @@ public abstract class BaseOpenApiResource {
                 .ctxId(ctxId)
                 .buildContext(true);
         OpenAPI oas = ctx.read();
-        boolean pretty = false;
-        if (ctx.getOpenApiConfiguration() != null && Boolean.TRUE.equals(ctx.getOpenApiConfiguration().isPrettyPrint())) {
-            pretty = true;
-        }
+        boolean pretty = ctx.getOpenApiConfiguration() != null && Boolean.TRUE.equals(ctx.getOpenApiConfiguration().isPrettyPrint());
 
-        if (oas != null) {
-            if (ctx.getOpenApiConfiguration() != null && ctx.getOpenApiConfiguration().getFilterClass() != null) {
+        if (oas != null && ctx.getOpenApiConfiguration() != null) {
+            OpenAPISpecFilter filterImpl = null;
+            if (ctx.getOpenApiConfiguration().getFilterClass() != null) {
                 try {
-                    OpenAPISpecFilter filterImpl = (OpenAPISpecFilter) Class.forName(ctx.getOpenApiConfiguration().getFilterClass()).newInstance();
-                    SpecFilter f = new SpecFilter();
-                    oas = f.filter(oas, filterImpl, getQueryParams(uriInfo.getQueryParameters()), getCookies(headers),
-                            getHeaders(headers));
+                    filterImpl = (OpenAPISpecFilter) Class.forName(ctx.getOpenApiConfiguration().getFilterClass()).newInstance();
                 } catch (Exception e) {
                     LOGGER.error("failed to load filter", e);
                 }
+            } else if (Boolean.TRUE.equals(ctx.getOpenApiConfiguration().isOpenAPI31())) {
+                filterImpl = new OpenAPI31SpecFilter();
+            }
+            if (filterImpl != null) {
+                oas = new SpecFilter().filter(oas, filterImpl, getQueryParams(uriInfo.getQueryParameters()), getCookies(headers), getHeaders(headers));
             }
         }
 
