@@ -569,7 +569,7 @@ public class OpenApiResourceIT extends AbstractAnnotationTest {
             "        id:\n" +
             "          type: string\n";
 
-    private static final int jettyPort = 8080;
+    private static final int jettyPort = System.getProperties().containsKey("jetty.port") ? Integer.parseInt(System.getProperty("jetty.port")): -1;
 
     @BeforeMethod
     public void checkJetty() {
@@ -682,6 +682,21 @@ public class OpenApiResourceIT extends AbstractAnnotationTest {
                 .contentType("application/yaml")
                 .extract().response().body().asString();
 
+        Assert.assertTrue(actualBody.contains("openapi: 3.1.0"));
+    }
+
+    @Test
+    public void testYamlOpenAPI31WithBootstrapServlet() throws Exception {
+        final String actualBody = given()
+                .port(jettyPort)
+                .log().all()
+                .when()
+                .get("/bootstrap")
+                .then()
+                .log().all()
+                .assertThat()
+                .statusCode(200)
+                .extract().response().body().asString();
         Assert.assertTrue(actualBody.contains("openapi: 3.1.0"));
     }
 

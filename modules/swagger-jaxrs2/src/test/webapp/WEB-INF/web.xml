@@ -52,6 +52,11 @@
         </init-param>
     </servlet>
 
+    <servlet>
+        <servlet-name>bootstrap</servlet-name>
+        <servlet-class>io.swagger.v3.jaxrs2.BootstrapServlet</servlet-class>
+    </servlet>
+
     <servlet-mapping>
         <servlet-name>jersey</servlet-name>
         <url-pattern>/*</url-pattern>
@@ -60,6 +65,11 @@
     <servlet-mapping>
         <servlet-name>oas</servlet-name>
         <url-pattern>/oas/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>bootstrap</servlet-name>
+        <url-pattern>/bootstrap</url-pattern>
     </servlet-mapping>
 
 </web-app>
