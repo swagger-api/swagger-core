@@ -1,6 +1,7 @@
 package io.swagger.v3.jaxrs2.integration;
 
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
+import io.swagger.v3.core.filter.OpenAPI31SpecFilter;
 import io.swagger.v3.core.filter.OpenAPISpecFilter;
 import io.swagger.v3.core.filter.SpecFilter;
 import io.swagger.v3.core.util.Json;
@@ -263,15 +264,19 @@ public class SwaggerLoader {
 
             OpenApiContext context = builder.buildContext(true);
             OpenAPI openAPI = context.read();
+            OpenAPISpecFilter filterImpl = null;
             if (StringUtils.isNotBlank(filterClass)) {
                 try {
-                    OpenAPISpecFilter filterImpl = (OpenAPISpecFilter) this.getClass().getClassLoader().loadClass(filterClass).newInstance();
-                    SpecFilter f = new SpecFilter();
-                    openAPI = f.filter(openAPI, filterImpl, new HashMap<>(), new HashMap<>(),
-                            new HashMap<>());
+                    filterImpl = (OpenAPISpecFilter) this.getClass().getClassLoader().loadClass(filterClass).newInstance();
                 } catch (Exception e) {
                     throw new Exception("Error applying filter to API specification: " + e.getMessage(), e);
                 }
+            } else if (Boolean.TRUE.equals(openAPI31)) {
+                filterImpl = new OpenAPI31SpecFilter();
+            }
+
+            if (filterImpl != null) {
+                openAPI = new SpecFilter().filter(openAPI, filterImpl, new HashMap<>(), new HashMap<>(), new HashMap<>());
             }
 
             String openapiJson = null;
