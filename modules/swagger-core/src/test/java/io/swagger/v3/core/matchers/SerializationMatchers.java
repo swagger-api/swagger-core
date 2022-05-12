@@ -45,7 +45,6 @@ public class SerializationMatchers {
         }
         if (!lhs.equals(new ObjectNodeComparator(), rhs)) {
             assertEquals(Yaml.pretty(lhs), Yaml.pretty(rhs));
-            //fail(String.format("Serialized object:\n%s\ndoes not equal to expected serialized string:\n%s", lhs, rhs));
         }
     }
 
@@ -59,7 +58,6 @@ public class SerializationMatchers {
         }
         if (!lhs.equals(new ObjectNodeComparator(), rhs)) {
             assertEquals(Yaml31.pretty(lhs), Yaml31.pretty(rhs));
-            //fail(String.format("Serialized object:\n%s\ndoes not equal to expected serialized string:\n%s", lhs, rhs));
         }
     }
 

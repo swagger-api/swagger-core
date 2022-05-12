@@ -942,10 +942,7 @@ public abstract class AnnotationsUtils {
         if (header.schema() != null) {
             if (header.schema().implementation().equals(Void.class)) {
                 AnnotationsUtils.getSchemaFromAnnotation(header.schema(), jsonViewAnnotation).ifPresent(
-                    headerObject::setSchema
-                    //schema inline no need to add to components
-                    //components.addSchemas(schema.getType(), schema);
-                );
+                    headerObject::setSchema);
             }
         }
 
@@ -1445,7 +1442,6 @@ public abstract class AnnotationsUtils {
         }
 
         else if (tS != null && cS != null) {
-            //return mergeSchemaAnnotations(cS, tS);
             return mergeSchemaAnnotations(tS, cS);
         }
 

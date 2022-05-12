@@ -1,19 +1,3 @@
-/**
- * Copyright 2017 SmartBear Software
- * <p>
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package io.swagger.v3.oas.models.media;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -82,6 +66,10 @@ public class Schema<T> {
     private Discriminator discriminator = null;
 
     private boolean exampleSetFlag;
+
+    /**
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
     @OpenAPI31
     private List<Schema> prefixItems = null;
     private List<Schema> allOf = null;
@@ -113,57 +101,147 @@ public class Schema<T> {
     @OpenAPI31 fields and accessors
     */
 
-
+    /**
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
     @OpenAPI31
     private Set<String> types;
 
+    /**
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
     @OpenAPI31
     private Map<String, Schema> patternProperties = null;
+
+    /**
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
     @OpenAPI31
     private BigDecimal exclusiveMaximumValue = null;
+
+    /**
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
     @OpenAPI31
     private BigDecimal exclusiveMinimumValue = null;
 
-
+    /**
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
     @OpenAPI31
     private Schema contains = null;
+
+    /**
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
     @OpenAPI31
     private String $id;
+
+    /**
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
     @OpenAPI31
     private String $schema;
+
+    /**
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
     @OpenAPI31
     private String $anchor;
 
+    /**
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
     @OpenAPI31
     private String contentEncoding;
+
+    /**
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
     @OpenAPI31
     private String contentMediaType;
+
+    /**
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
     @OpenAPI31
     private Schema contentSchema;
+
+    /**
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
     @OpenAPI31
     private Schema propertyNames;
+
+    /**
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
     @OpenAPI31
     private Object unevaluatedProperties;
+
+    /**
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
     @OpenAPI31
     private Integer maxContains;
+
+    /**
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
     @OpenAPI31
     private Integer minContains;
+
+    /**
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
     @OpenAPI31
     private Schema additionalItems;
+
+    /**
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
     @OpenAPI31
     private Schema unevaluatedItems;
+
+    /**
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
     @OpenAPI31
     private Schema _if;
+
+    /**
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
     @OpenAPI31
     private Schema _else;
+
+    /**
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
     @OpenAPI31
     private Schema then;
+
+    /**
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
     @OpenAPI31
     private Map<String, Schema> dependentSchemas;
+
+    /**
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
     @OpenAPI31
     private Map<String, List<String>> dependentRequired;
+
+    /**
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
     @OpenAPI31
     private String $comment;
+
+    /**
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
     @OpenAPI31
     private List<T> examples;
 
@@ -428,38 +506,62 @@ public class Schema<T> {
     INTERNAL MEMBERS @OpenAPI31
      */
 
+    /**
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
     @OpenAPI31
     protected Map<String, Object> jsonSchema = null;
 
+    /**
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
     @OpenAPI31
     public Map<String, Object> getJsonSchema() {
         return jsonSchema;
     }
 
+    /**
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
     @OpenAPI31
     public void setJsonSchema(Map<String, Object> jsonSchema) {
         this.jsonSchema = jsonSchema;
     }
 
+    /**
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
     @OpenAPI31
     public Schema jsonSchema(Map<String, Object> jsonSchema) {
         this.jsonSchema = jsonSchema;
         return this;
     }
 
+    /**
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
     @OpenAPI31
     protected transient Object jsonSchemaImpl = null;
 
+    /**
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
     @OpenAPI31
     public Object getJsonSchemaImpl() {
         return jsonSchemaImpl;
     }
 
+    /**
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
     @OpenAPI31
     public void setJsonSchemaImpl(Object jsonSchemaImpl) {
         this.jsonSchemaImpl = jsonSchemaImpl;
     }
 
+    /**
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
     @OpenAPI31
     public Schema jsonSchemaImpl(Object jsonSchemaImpl) {
         setJsonSchemaImpl(jsonSchemaImpl);
@@ -1993,6 +2095,7 @@ public class Schema<T> {
      *
      * @since 2.2.0 (OpenAPI 3.1.0)
      */
+    @OpenAPI31
     public T getConst() {
         return _const;
     }
@@ -2001,6 +2104,7 @@ public class Schema<T> {
      *
      * @since 2.2.0 (OpenAPI 3.1.0)
      */
+    @OpenAPI31
     public void setConst(Object _const) {
         this._const = cast(_const);
     }
@@ -2009,6 +2113,7 @@ public class Schema<T> {
      *
      * @since 2.2.0 (OpenAPI 3.1.0)
      */
+    @OpenAPI31
     public Schema _const(Object _const) {
         this._const = cast(_const);
         return this;

@@ -30,16 +30,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
                 @SecurityRequirement(name = "req 1", scopes = {"a", "b"}),
                 @SecurityRequirement(name = "req 2", scopes = {"b", "c"})
         }
-/*        ,
-        servers = {
-                @Server(
-                        description = "server 1",
-                        url = "http://foo",
-                        variables = {
-                                @ServerVariable(name = "var1", description = "var 1", defaultValue = "1", allowableValues = {"1", "2"}),
-                                @ServerVariable(name = "var2", description = "var 2", defaultValue = "1", allowableValues = {"1", "2"})
-                        })
-        }*/
 )
 public class OpenAPIDefinitionResource {
     public void foo() {

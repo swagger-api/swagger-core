@@ -713,7 +713,6 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
         @JsonPropertyOrder(alphabetic = true)
         public abstract Map<String, Object> getExtensions();
 
-        //@JsonValue
         @JsonIgnore
         public abstract Map<String, Object> getJsonSchema();
 

@@ -328,9 +328,6 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         }
 
         if (isPrimitive) {
-            if (annotatedType.isSchemaProperty()) {
-                //model.name(name);
-            }
             XML xml = resolveXml(beanDesc.getClassInfo(), annotatedType.getCtxAnnotations(), resolvedSchemaAnnotation);
             if (xml != null) {
                 model.xml(xml);
@@ -435,7 +432,6 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 Schema mapModel = new MapSchema().additionalProperties(addPropertiesSchema);
                 mapModel.name(name);
                 model = mapModel;
-                //return model;
             } else if (valueType != null) {
                 if (ReflectionUtils.isSystemType(type) && !annotatedType.isSchemaProperty() && !annotatedType.isResolveAsRef()) {
                     context.resolve(new AnnotatedType().type(valueType).jsonViewAnnotation(annotatedType.getJsonViewAnnotation()));
@@ -634,7 +630,6 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 AnnotatedType aType = new AnnotatedType()
                         .type(propType)
                         .ctxAnnotations(annotations)
-                        //.name(propName)
                         .parent(model)
                         .resolveAsRef(annotatedType.isResolveAsRef())
                         .jsonViewAnnotation(annotatedType.getJsonViewAnnotation())
@@ -654,8 +649,6 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                         return null;
                     } else {
                         return new Schema();
-                        //t.jsonUnwrappedHandler(null);
-                        //return context.resolve(t);
                     }
                 });
                 property = clone(context.resolve(aType));
@@ -1016,7 +1009,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         if (propertiesToIgnore.contains(propName)) {
             return true;
         }
-        if (member.hasAnnotation(JsonIgnore.class)) {
+        if (member.hasAnnotation(JsonIgnore.class) && member.getAnnotation(JsonIgnore.class).value()) {
             return true;
         }
         if (hasHiddenAnnotation(member)) {
@@ -1340,9 +1333,15 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         }
         if (annos.containsKey("javax.validation.constraints.Pattern")) {
             Pattern pattern = (Pattern) annos.get("javax.validation.constraints.Pattern");
+
             if (property instanceof StringSchema) {
                 property.setPattern(pattern.regexp());
             }
+
+            if(property.getItems() != null && property.getItems() instanceof StringSchema) {
+                property.getItems().setPattern(pattern.regexp());
+            }
+
         }
     }
 
