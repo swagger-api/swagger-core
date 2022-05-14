@@ -129,6 +129,84 @@ public class SwaggerResolveTest {
         assertThat(new String(Files.readAllBytes(Paths.get(outputDir, "PetStoreAPI.json")), StandardCharsets.UTF_8), containsString("UPDATEDBYFILTER"));
     }
 
+     @Test
+    public void testSwaggerResolveWithOAS31OptionTask() throws IOException {
+        outputDir = testProjectDir.getRoot().toString() + "/target";
+        outputFile = testProjectDir.getRoot().toString() + "/testAPI31.json";
+        //outputDir = "/tmp/a/target";
+        String resolveTask = "resolve";
+
+        String buildFileContent =
+                "plugins {\n" +
+                "    id 'java'\n" +
+                "    id 'io.swagger.core.v3.swagger-gradle-plugin'\n" +
+                "}\n" +
+                "sourceSets {\n" +
+                "    test {\n" +
+                "        java {\n" +
+                "            srcDirs('" + toNormalizedPath(new File("src/test/java").getAbsolutePath()) + "')\n" +
+                "            exclude('**/*Test.java')\n" +
+                "        }\n" +
+                "    }\n" +
+                "}\n" +
+                "repositories {\n" +
+                "    mavenLocal()\n" +
+                "    mavenCentral()\n" +
+                "}\n" +
+                "dependencies {  \n" +
+                "    compile group: 'io.swagger.core.v3', name: 'swagger-jaxrs2', version:'2.2.1-SNAPSHOT'\n" +
+                "    compile group: 'javax.ws.rs', name: 'javax.ws.rs-api', version:'2.1'\n" +
+                "    compile group: 'javax.servlet', name: 'javax.servlet-api', version:'3.1.0'\n" +
+                "    testCompile group: 'com.github.tomakehurst', name: 'wiremock', version:'2.27.2'\n" +
+                "    testCompile 'junit:junit:4+'\n" +
+                "\n" +
+                "\n" +
+                "}\n" +
+                resolveTask + " {\n" +
+                "    outputFileName = 'PetStoreAPI31'\n" +
+                "    outputFormat = 'JSON'\n" +
+                "    prettyPrint = 'TRUE'\n" +
+                //"    classpath = compileTestJava.outputs.files\n" +
+                "    classpath = sourceSets.test.runtimeClasspath\n" +
+                "    resourcePackages = ['io.swagger.v3.plugins.gradle.petstore']\n" +
+                "    outputPath = \'" + toNormalizedPath(outputDir) + "\'\n" +
+                "    openAPI31 = \'TRUE\'\n" +
+                "    openApiFile = file(\'" + toNormalizedPath(openapiInputFile.getAbsolutePath()) + "\')\n" +
+                "}";
+
+
+        String settingsFileContent = "pluginManagement {\n" +
+                "    repositories {\n" +
+                "        maven {\n" +
+                "            url mavenLocal().url\n" +
+                "        }\n" +
+                "        mavenCentral()\n" +
+                "        gradlePluginPortal()\n" +
+                "    }\n" +
+                "}\n" +
+                "rootProject.name = 'gradle-test'\n" +
+                "\n";
+        writeFile(buildFile, buildFileContent);
+        writeFile(settingsFile, settingsFileContent);
+
+        BuildResult result = GradleRunner.create()
+                .withPluginClasspath()
+                .withProjectDir(testProjectDir.getRoot())
+                .withDebug(true)
+                .withArguments(resolveTask, "--stacktrace", "--info")
+                .forwardOutput()
+                .build();
+
+        assertThat(result.taskPaths(SUCCESS), hasItem(format(":%s", resolveTask)));
+        assertThat(new File(outputDir + "/PetStoreAPI31.json").exists(), is(true));
+
+        byte[] content = Files.readAllBytes(Paths.get(outputDir, "PetStoreAPI31.json"));
+
+        String strContent = new String(content, StandardCharsets.UTF_8);
+        assertThat(strContent, containsString("\"openapi\" : \"3.1.0\""));
+        //
+    }
+
     private static void writeFile(File destination, String content) throws IOException {
         try (BufferedWriter output = new BufferedWriter(new FileWriter(destination))) {
             output.write(content);

@@ -294,7 +294,7 @@ public class SwaggerConfiguration implements OpenAPIConfiguration {
     /**
      * @since 2.1.9
      */
-    public void setOpenAPI31(Boolean v) {
+    public void setOpenAPI31(Boolean openAPI31) {
         this.openAPI31 = openAPI31;
     }
 

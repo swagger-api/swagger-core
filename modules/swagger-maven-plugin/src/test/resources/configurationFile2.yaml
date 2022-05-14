@@ -1,0 +1,28 @@
+resourcePackages:
+  - io.swagger.v3.plugin.maven.petstore.petstore
+prettyPrint: true
+openAPI31: true
+cacheTTL: 0
+openAPI:
+  openapi: 3.0.1
+  info:
+    version: 1.0.0
+    title: OpenAPI 3.0
+  servers:
+    - url: http://bar
+      description: server 1
+  paths: {}
+  components:
+    schemas:
+      Address:
+        type: object
+        properties:
+          street:
+            type: string
+            example: 437 Lytton
+          code:
+            type: integer
+            format: int32
+            minimum: 1
+            maximum: 50
+            exclusiveMaximum: true
