@@ -6,6 +6,7 @@ import io.restassured.http.ContentType;
 import io.swagger.v3.core.util.Json;
 import io.swagger.v3.core.util.Yaml;
 import io.swagger.v3.jaxrs2.annotations.AbstractAnnotationTest;
+import org.testng.Assert;
 import org.testng.SkipException;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -646,6 +647,56 @@ public class OpenApiResourceIT extends AbstractAnnotationTest {
                 .extract().response().body().asString();
 
         compareAsYaml(formatYaml(actualBody), EXPECTED_YAML);
+    }
+
+    @Test
+    public void testYamlOpenAPI31() throws Exception {
+        final String actualBody = given()
+                .port(jettyPort)
+                .log().all()
+                .accept("application/yaml")
+                .when()
+                .get("/oas/openapi31")
+                .then()
+                .log().all()
+                .assertThat()
+                .statusCode(200)
+                .contentType("application/yaml")
+                .extract().response().body().asString();
+
+        Assert.assertTrue(actualBody.contains("openapi: 3.1.0"));
+    }
+
+    @Test
+    public void testServletOpenAPI31() throws Exception {
+        final String actualBody = given()
+                .port(jettyPort)
+                .log().all()
+                .when()
+                .get("/oas/openapi.yaml")
+                .then()
+                .log().all()
+                .assertThat()
+                .statusCode(200)
+                .contentType("application/yaml")
+                .extract().response().body().asString();
+
+        Assert.assertTrue(actualBody.contains("openapi: 3.1.0"));
+    }
+
+    @Test
+    public void testYamlOpenAPI31WithBootstrapServlet() throws Exception {
+        final String actualBody = given()
+                .port(jettyPort)
+                .log().all()
+                .when()
+                .get("/bootstrap")
+                .then()
+                .log().all()
+                .assertThat()
+                .statusCode(200)
+                .extract().response().body().asString();
+        Assert.assertTrue(actualBody.contains("openapi: 3.1.0"));
     }
 
     private String formatYaml(String source) throws IOException {

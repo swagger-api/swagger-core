@@ -54,8 +54,8 @@ public class OpenApiServlet extends HttpServlet {
         OpenApiContext ctx = OpenApiContextLocator.getInstance().getOpenApiContext(ctxId);
         OpenAPI oas = ctx.read();
 
-        if (oas != null) {
-            if (ctx.getOpenApiConfiguration() != null && ctx.getOpenApiConfiguration().getFilterClass() != null) {
+        if (oas != null && ctx.getOpenApiConfiguration() != null) {
+            if (ctx.getOpenApiConfiguration().getFilterClass() != null) {
                 try {
                     OpenAPISpecFilter filterImpl = (OpenAPISpecFilter) Class.forName(ctx.getOpenApiConfiguration().getFilterClass()).newInstance();
                     SpecFilter f = new SpecFilter();
@@ -79,10 +79,7 @@ public class OpenApiServlet extends HttpServlet {
             }
         }
 
-        boolean pretty = false;
-        if (ctx.getOpenApiConfiguration() != null && Boolean.TRUE.equals(ctx.getOpenApiConfiguration().isPrettyPrint())) {
-            pretty = true;
-        }
+        boolean pretty = ctx.getOpenApiConfiguration() != null && Boolean.TRUE.equals(ctx.getOpenApiConfiguration().isPrettyPrint());
 
         resp.setStatus(200);
 

@@ -49,13 +49,10 @@ public abstract class BaseOpenApiResource {
                 .ctxId(ctxId)
                 .buildContext(true);
         OpenAPI oas = ctx.read();
-        boolean pretty = false;
-        if (ctx.getOpenApiConfiguration() != null && Boolean.TRUE.equals(ctx.getOpenApiConfiguration().isPrettyPrint())) {
-            pretty = true;
-        }
+        boolean pretty = ctx.getOpenApiConfiguration() != null && Boolean.TRUE.equals(ctx.getOpenApiConfiguration().isPrettyPrint());
 
-        if (oas != null) {
-            if (ctx.getOpenApiConfiguration() != null && ctx.getOpenApiConfiguration().getFilterClass() != null) {
+        if (oas != null && ctx.getOpenApiConfiguration() != null) {
+            if (ctx.getOpenApiConfiguration().getFilterClass() != null) {
                 try {
                     OpenAPISpecFilter filterImpl = (OpenAPISpecFilter) Class.forName(ctx.getOpenApiConfiguration().getFilterClass()).newInstance();
                     SpecFilter f = new SpecFilter();

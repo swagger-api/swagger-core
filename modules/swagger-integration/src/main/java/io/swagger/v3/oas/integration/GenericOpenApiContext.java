@@ -12,6 +12,8 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import io.swagger.v3.core.converter.ModelConverter;
 import io.swagger.v3.core.converter.ModelConverters;
+import io.swagger.v3.core.filter.OpenAPI31SpecFilter;
+import io.swagger.v3.core.filter.SpecFilter;
 import io.swagger.v3.core.jackson.ModelResolver;
 import io.swagger.v3.core.jackson.PathsSerializer;
 import io.swagger.v3.core.util.Json;
@@ -520,6 +522,11 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
         if (openApiConfiguration.getCacheTTL() != null) {
             this.cacheTTL = openApiConfiguration.getCacheTTL();
         }
+
+        // set openAPI31 if present in configuration
+        if (openApiConfiguration.isOpenAPI31() != null && this.openAPI31 == null) {
+            this.openAPI31 = openApiConfiguration.isOpenAPI31();
+        }
         register();
         return (T) this;
     }
@@ -595,7 +602,12 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
 
         if (cacheTTL == 0) {
             resetReader();
-            return getOpenApiReader().read(getOpenApiScanner().classes(), getOpenApiScanner().resources());
+            OpenAPI openAPI = getOpenApiReader().read(getOpenApiScanner().classes(), getOpenApiScanner().resources());
+            if (Boolean.TRUE.equals(openAPI31)) {
+                openAPI = new SpecFilter().filter(openAPI, new OpenAPI31SpecFilter(), null, null, null);
+            }
+            return openAPI;
+
         }
         Cache cached = cache.get("openapi");
         if (cached == null || cached.isStale(cacheTTL)) {
@@ -603,6 +615,9 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
             cached.createdAt = System.currentTimeMillis();
             resetReader();
             cached.openApi = getOpenApiReader().read(getOpenApiScanner().classes(), getOpenApiScanner().resources());
+            if (Boolean.TRUE.equals(openAPI31)) {
+                cached.openApi = new SpecFilter().filter(cached.openApi, new OpenAPI31SpecFilter(), null, null, null);
+            }
             cache.put("openapi", cached);
         }
         return cached.openApi;
