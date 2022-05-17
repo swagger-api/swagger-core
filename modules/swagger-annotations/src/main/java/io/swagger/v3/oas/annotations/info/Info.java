@@ -67,4 +67,11 @@ public @interface Info {
      */
     Extension[] extensions() default {};
 
+    /**
+     * A summary of application.
+     *
+     * @return the application's summary
+     **/
+    String summary() default "";
+
 }
