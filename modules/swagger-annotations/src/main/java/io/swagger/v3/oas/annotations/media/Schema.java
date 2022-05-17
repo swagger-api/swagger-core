@@ -313,6 +313,132 @@ public @interface Schema {
     Extension[] extensions() default {};
 
     /**
+     * List of optional items positionally defines before normal items.
+     * @return optional array of items
+     */
+    Class<?>[] prefixItems() default {};
+
+    /**
+     * List of schema types
+     * @return array of types
+     */
+    String[] types() default {};
+
+    /**
+     * Provides an exclusive maximum for a expressing exclusive range.
+     * @return an exclusive maximum.
+     */
+    int exclusiveMaximumValue() default Integer.MAX_VALUE;
+
+    /**
+     * Provides an exclusive minimum for a expressing exclusive range.
+     * @return an exclusive minimum.
+     */
+    int exclusiveMinimumValue() default 0;
+
+    /**
+     * Specifies contains constrictions expressions.
+     * @return contains expression.
+     */
+    Class<?> contains() default Void.class;
+
+    /**
+     * Provides the $id related to this schema.
+     * @return the $id of schema
+     */
+    String $id() default "";
+
+    /**
+     * Provides the $schema
+     * @return external reference related to this schema
+     */
+    String $schema() default "";
+
+    /**
+     * Provides the $anchor related to schema
+     * @return $anchor schema
+     */
+    String $anchor() default "";
+
+    /**
+     * Provides the content encoding related to this schema
+     * @return content encoding
+     */
+    String contentEncoding() default "";
+
+    /**
+     * Provides the content media type related to this schema
+     * @return content media type
+     */
+    String contentMediaType() default "";
+
+    /**
+     * Provides the content schema related to this schema
+     * @return content schema
+     */
+    Class<?> contentSchema() default Void.class;
+
+    /**
+     * Provides property names related to this schema
+     * @return property names
+     */
+    Class<?> propertyNames() default Void.class;
+
+    /**
+     * Provides max contains related to this schema
+     * @return max contains
+     */
+    int maxContains() default Integer.MAX_VALUE;
+
+    /**
+     * Provides min contains related to this schema
+     * @return min contains
+     */
+    int minContains() default 0;
+
+    /**
+     * Provides a list of additional items
+     * @return additional items
+     */
+    Class<?> additionalItems() default Void.class;
+
+    /**
+     * Provides a list of unevaluated items
+     * @return unevaluated items
+     */
+    Class<?> unevaluatedItems() default Void.class;
+
+    /**
+     * Provides the if sub schema related to this schema
+     * @return if sub schema
+     */
+    Class<?> _if() default Void.class;
+
+    /**
+     * Provides the else sub schema related to this schema
+     * @return else sub schema
+     */
+    Class<?> _else() default Void.class;
+
+    /**
+     * Provides the then sub schema related to this schema
+     * @return then sub schema
+     */
+    Class<?> then() default Void.class;
+
+    /**
+     * Provides $comment related to this schema
+     * @return $comment relaed to schema
+     */
+    String $comment() default "";
+
+    /**
+     * Provides a list of examples related to this schema
+     * @return list of examples
+     */
+    Class<?>[] examples() default {};
+
+    /**
      * Allows to specify the additionalProperties value
      *
      * AdditionalPropertiesValue.TRUE: set to TRUE

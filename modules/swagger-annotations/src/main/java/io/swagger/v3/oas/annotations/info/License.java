@@ -37,4 +37,11 @@ public @interface License {
      */
     Extension[] extensions() default {};
 
+    /**
+     * A identifier for a License instance.
+     *
+     * @return the URL of the license
+     **/
+    String identifier() default "";
+
 }
