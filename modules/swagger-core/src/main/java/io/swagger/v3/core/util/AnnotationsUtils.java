@@ -1769,6 +1769,174 @@ public abstract class AnnotationsUtils {
             }
 
             @Override
+            public Class<?>[] prefixItems() {
+                if (master.prefixItems().length > 0 || patch.prefixItems().length == 0) {
+                    return master.prefixItems();
+                }
+                return patch.prefixItems();
+            }
+
+            @Override
+            public String[] types() {
+                if (master.types().length > 0 || patch.types().length == 0) {
+                    return master.types();
+                }
+                return patch.types();
+            }
+
+            @Override
+            public int exclusiveMaximumValue() {
+                if (master.exclusiveMaximumValue() != 0 || patch.exclusiveMaximumValue() == 0) {
+                    return master.exclusiveMaximumValue();
+                }
+                return patch.exclusiveMaximumValue();
+            }
+
+            @Override
+            public int exclusiveMinimumValue() {
+                if (master.exclusiveMinimumValue() != 0 || patch.exclusiveMinimumValue() == 0) {
+                    return master.exclusiveMaximumValue();
+                }
+                return patch.exclusiveMinimumValue();
+            }
+
+            @Override
+            public Class<?> contains() {
+                if (!master.contains().equals(Void.class) || patch.contains().equals(Void.class)) {
+                    return master.contains();
+                }
+                return patch.contains();
+            }
+
+            @Override
+            public String $id() {
+                if (StringUtils.isNotBlank(master.$id()) || StringUtils.isBlank(patch.$id())) {
+                    return master.$id();
+                }
+                return patch.$id();
+            }
+
+            @Override
+            public String $schema() {
+                if (StringUtils.isNotBlank(master.$schema()) || StringUtils.isBlank(patch.$schema())) {
+                    return master.$schema();
+                }
+                return patch.$schema();
+            }
+
+            @Override
+            public String $anchor() {
+                if (StringUtils.isNotBlank(master.$anchor()) || StringUtils.isBlank(patch.$anchor())) {
+                    return master.$anchor();
+                }
+                return patch.$anchor();
+            }
+
+            @Override
+            public String contentEncoding() {
+                if (StringUtils.isNotBlank(master.contentEncoding()) || StringUtils.isBlank(patch.contentEncoding())) {
+                    return master.contentEncoding();
+                }
+                return patch.contentEncoding();
+            }
+
+            @Override
+            public String contentMediaType() {
+                if (StringUtils.isNotBlank(master.contentMediaType()) || StringUtils.isBlank(patch.contentMediaType())) {
+                    return master.contentMediaType();
+                }
+                return patch.contentMediaType();
+            }
+
+            @Override
+            public Class<?> contentSchema() {
+                if (!master.contentSchema().equals(Void.class) || patch.contentSchema().equals(Void.class)) {
+                    return master.contentSchema();
+                }
+                return patch.contentSchema();
+            }
+
+            @Override
+            public Class<?> propertyNames() {
+                if (!master.propertyNames().equals(Void.class) || patch.propertyNames().equals(Void.class)) {
+                    return master.propertyNames();
+                }
+                return patch.propertyNames();
+            }
+
+            @Override
+            public int maxContains() {
+                if (master.maxContains() != 0 || patch.maxContains() == 0) {
+                    return master.maxContains();
+                }
+                return patch.maxContains();
+            }
+
+            @Override
+            public int minContains() {
+                if (master.minContains() != 0 || patch.minContains() == 0) {
+                    return master.minContains();
+                }
+                return patch.minContains();
+            }
+
+            @Override
+            public Class<?> additionalItems() {
+                if (!master.additionalItems().equals(Void.class) || patch.additionalItems().equals(Void.class)) {
+                    return master.additionalItems();
+                }
+                return patch.additionalItems();
+            }
+
+            @Override
+            public Class<?> unevaluatedItems() {
+                if (!master.unevaluatedItems().equals(Void.class) || patch.unevaluatedItems().equals(Void.class)) {
+                    return master.unevaluatedItems();
+                }
+                return patch.unevaluatedItems();
+            }
+
+            @Override
+            public Class<?> _if() {
+                if (!master._if().equals(Void.class) || patch._if().equals(Void.class)) {
+                    return master._if();
+                }
+                return patch._if();
+            }
+
+            @Override
+            public Class<?> _else() {
+                if (!master._else().equals(Void.class) || patch._else().equals(Void.class)) {
+                    return master._else();
+                }
+                return patch._else();
+            }
+
+            @Override
+            public Class<?> then() {
+                if (!master.then().equals(Void.class) || patch.then().equals(Void.class)) {
+                    return master.then();
+                }
+                return patch.then();
+            }
+
+            @Override
+            public String $comment() {
+                if (StringUtils.isNotBlank(master.$comment()) || StringUtils.isBlank(patch.$comment())) {
+                    return master.$comment();
+                }
+                return patch.$comment();
+            }
+
+            @Override
+            public Class<?>[] examples() {
+                if (master.examples().length > 0 || patch.examples().length == 0) {
+                    return master.examples();
+                }
+                return patch.examples();
+            }
+
+            @Override
             public Class<? extends Annotation> annotationType() {
                 return io.swagger.v3.oas.annotations.media.Schema.class;
             }
