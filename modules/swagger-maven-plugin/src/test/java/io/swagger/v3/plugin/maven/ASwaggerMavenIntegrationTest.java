@@ -1,7 +1,9 @@
 package io.swagger.v3.plugin.maven;
 
 import io.swagger.v3.core.util.Json;
+import io.swagger.v3.core.util.Json31;
 import io.swagger.v3.core.util.Yaml;
+import io.swagger.v3.core.util.Yaml31;
 import io.swagger.v3.oas.models.OpenAPI;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -45,13 +47,19 @@ public abstract class ASwaggerMavenIntegrationTest extends BetterAbstractMojoTes
         if (outputFile == null) {
             outputFile = "openapi";
         }
+        boolean isOpenAPI31 = swaggerMojo.getInternalConfiguration() != null && Boolean.TRUE.equals(swaggerMojo.getInternalConfiguration().isOpenAPI31());
         String format = config.getChild("outputFormat").getValue();
         if (format.toLowerCase().equals("yaml") || format.toLowerCase().equals("jsonandyaml")) {
             Path path = Paths.get(outputPath, outputFile + ".yaml");
             File file = path.toFile();
             assertTrue(Files.isRegularFile(path));
             String content = FileUtils.readFileToString(file, "UTF-8");
-            final OpenAPI openAPI = Yaml.mapper().readValue(content, OpenAPI.class);
+            final OpenAPI openAPI;
+            if (isOpenAPI31) {
+                openAPI = Yaml31.mapper().readValue(content, OpenAPI.class);
+            } else {
+                openAPI = Yaml.mapper().readValue(content, OpenAPI.class);
+            }
             assertNotNull(openAPI);
             validator.accept(openAPI);
         }
@@ -60,7 +68,12 @@ public abstract class ASwaggerMavenIntegrationTest extends BetterAbstractMojoTes
             File file = path.toFile();
             assertTrue(Files.isRegularFile(path));
             String content = FileUtils.readFileToString(file, "UTF-8");
-            final OpenAPI openAPI = Json.mapper().readValue(content, OpenAPI.class);
+            final OpenAPI openAPI;
+            if (isOpenAPI31) {
+                openAPI = Json31.mapper().readValue(content, OpenAPI.class);
+            } else {
+                openAPI = Json.mapper().readValue(content, OpenAPI.class);
+            }
             assertNotNull(openAPI);
             validator.accept(openAPI);
         }

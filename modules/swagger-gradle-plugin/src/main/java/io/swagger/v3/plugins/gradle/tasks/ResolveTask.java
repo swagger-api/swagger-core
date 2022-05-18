@@ -72,6 +72,8 @@ public class ResolveTask extends DefaultTask {
 
     private String contextId;
 
+    private Boolean openAPI31 = false;
+
     @Input
     @Optional
     public String getOutputFileName() {
@@ -318,6 +320,19 @@ public class ResolveTask extends DefaultTask {
         this.alwaysResolveAppPath = alwaysResolveAppPath;
     }
 
+    /**
+     * @since 2.2.0
+     */
+    @Input
+    @Optional
+    public Boolean getOpenAPI31() {
+        return openAPI31;
+    }
+
+    public void setOpenAPI31(Boolean openAPI31) {
+        this.openAPI31 = openAPI31;
+    }
+
     @TaskAction
     public void resolve() throws GradleException {
         if (skip) {
@@ -422,6 +437,9 @@ public class ResolveTask extends DefaultTask {
 
             method=swaggerLoaderClass.getDeclaredMethod("setReadAllResources", Boolean.class);
             method.invoke(swaggerLoader, readAllResources);
+
+            method=swaggerLoaderClass.getDeclaredMethod("setOpenAPI31", Boolean.class);
+            method.invoke(swaggerLoader, openAPI31);
 
             method=swaggerLoaderClass.getDeclaredMethod("resolve");
             Map<String, String> specs = (Map<String, String>)method.invoke(swaggerLoader);
