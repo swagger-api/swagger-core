@@ -8,9 +8,11 @@ import com.fasterxml.jackson.databind.introspect.Annotated;
 import io.swagger.v3.core.converter.AnnotatedType;
 import io.swagger.v3.core.converter.ModelConverters;
 import io.swagger.v3.core.converter.ResolvedSchema;
+import io.swagger.v3.oas.annotations.StringToClassMapItem;
 import io.swagger.v3.oas.annotations.extensions.Extension;
 import io.swagger.v3.oas.annotations.extensions.ExtensionProperty;
 import io.swagger.v3.oas.annotations.links.LinkParameter;
+import io.swagger.v3.oas.annotations.media.DependentRequired;
 import io.swagger.v3.oas.annotations.media.DiscriminatorMapping;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.SchemaProperty;
@@ -98,6 +100,8 @@ public abstract class AnnotationsUtils {
                 && schema.extensions().length == 0
                 && !schema.hidden()
                 && !schema.enumAsRef()
+                && schema.dependentSchemas().length == 0
+                // @@ TODO ADD ALL UPDATED FIELDS
                 && schema.additionalProperties().equals(io.swagger.v3.oas.annotations.media.Schema.AdditionalPropertiesValue.USE_ADDITIONAL_PROPERTIES_ANNOTATION)
                 ) {
             return false;
@@ -1769,14 +1773,6 @@ public abstract class AnnotationsUtils {
             }
 
             @Override
-            public Class<?>[] prefixItems() {
-                if (master.prefixItems().length > 0 || patch.prefixItems().length == 0) {
-                    return master.prefixItems();
-                }
-                return patch.prefixItems();
-            }
-
-            @Override
             public String[] types() {
                 if (master.types().length > 0 || patch.types().length == 0) {
                     return master.types();
@@ -1798,14 +1794,6 @@ public abstract class AnnotationsUtils {
                     return master.exclusiveMaximumValue();
                 }
                 return patch.exclusiveMinimumValue();
-            }
-
-            @Override
-            public Class<?> contains() {
-                if (!master.contains().equals(Void.class) || patch.contains().equals(Void.class)) {
-                    return master.contains();
-                }
-                return patch.contains();
             }
 
             @Override
@@ -1865,38 +1853,6 @@ public abstract class AnnotationsUtils {
             }
 
             @Override
-            public int maxContains() {
-                if (master.maxContains() != 0 || patch.maxContains() == 0) {
-                    return master.maxContains();
-                }
-                return patch.maxContains();
-            }
-
-            @Override
-            public int minContains() {
-                if (master.minContains() != 0 || patch.minContains() == 0) {
-                    return master.minContains();
-                }
-                return patch.minContains();
-            }
-
-            @Override
-            public Class<?> additionalItems() {
-                if (!master.additionalItems().equals(Void.class) || patch.additionalItems().equals(Void.class)) {
-                    return master.additionalItems();
-                }
-                return patch.additionalItems();
-            }
-
-            @Override
-            public Class<?> unevaluatedItems() {
-                if (!master.unevaluatedItems().equals(Void.class) || patch.unevaluatedItems().equals(Void.class)) {
-                    return master.unevaluatedItems();
-                }
-                return patch.unevaluatedItems();
-            }
-
-            @Override
             public Class<?> _if() {
                 if (!master._if().equals(Void.class) || patch._if().equals(Void.class)) {
                     return master._if();
@@ -1929,7 +1885,7 @@ public abstract class AnnotationsUtils {
             }
 
             @Override
-            public Class<?>[] examples() {
+            public String[] examples() {
                 if (master.examples().length > 0 || patch.examples().length == 0) {
                     return master.examples();
                 }
@@ -1948,6 +1904,55 @@ public abstract class AnnotationsUtils {
                 }
                 return patch.additionalProperties();
             }
+
+            @Override
+            public DependentRequired[] dependentRequiredMap() {
+                if (master.dependentRequiredMap().length > 0 || patch.dependentRequiredMap().length == 0) {
+                    return master.dependentRequiredMap();
+                }
+                return patch.dependentRequiredMap();
+            }
+
+            @Override
+            public StringToClassMapItem[] dependentSchemas() {
+                if (master.dependentSchemas().length > 0 || patch.dependentSchemas().length == 0) {
+                    return master.dependentSchemas();
+                }
+                return patch.dependentSchemas();
+            }
+
+            @Override
+            public StringToClassMapItem[] patternProperties() {
+                if (master.patternProperties().length > 0 || patch.patternProperties().length == 0) {
+                    return master.patternProperties();
+                }
+                return patch.patternProperties();
+            }
+
+            @Override
+            public StringToClassMapItem[] properties() {
+                if (master.properties().length > 0 || patch.properties().length == 0) {
+                    return master.properties();
+                }
+                return patch.properties();
+            }
+
+            @Override
+            public Class<?> unevaluatedProperties() {
+                if (!master.unevaluatedProperties().equals(Void.class) || patch.unevaluatedProperties().equals(Void.class)) {
+                    return master.unevaluatedProperties();
+                }
+                return patch.unevaluatedProperties();
+            }
+
+            @Override
+            public Class<?> additionalPropertiesSchema() {
+                if (!master.additionalPropertiesSchema().equals(Void.class) || patch.additionalPropertiesSchema().equals(Void.class)) {
+                    return master.additionalPropertiesSchema();
+                }
+                return patch.additionalPropertiesSchema();
+            }
+
         };
 
         return (io.swagger.v3.oas.annotations.media.Schema)schema;
@@ -2029,6 +2034,56 @@ public abstract class AnnotationsUtils {
                 }
                 return patch.extensions();
             }
+
+            @Override
+            public io.swagger.v3.oas.annotations.media.Schema[] prefixItems() {
+                if (master.prefixItems().length > 0 || patch.prefixItems().length == 0) {
+                    return master.prefixItems();
+                }
+                return patch.prefixItems();
+            }
+
+            @Override
+            public io.swagger.v3.oas.annotations.media.Schema contains() {
+                if (!master.contains().equals(Void.class) || patch.contains().equals(Void.class)) {
+                    return master.contains();
+                }
+                return patch.contains();
+            }
+
+            @Override
+            public String maxContains() {
+                if (StringUtils.isNotBlank(master.maxContains()) || StringUtils.isBlank(patch.maxContains())) {
+                    return master.maxContains();
+                }
+                return patch.maxContains();
+            }
+
+            @Override
+            public String minContains() {
+                if (StringUtils.isNotBlank(master.minContains()) || StringUtils.isBlank(patch.minContains())) {
+                    return master.minContains();
+                }
+                return patch.minContains();
+            }
+
+            @Override
+            public io.swagger.v3.oas.annotations.media.Schema unevaluatedItems() {
+                if (!master.unevaluatedItems().equals(Void.class) || patch.unevaluatedItems().equals(Void.class)) {
+                    return master.unevaluatedItems();
+                }
+                return patch.unevaluatedItems();
+            }
+
+            @Override
+            public io.swagger.v3.oas.annotations.media.Schema[] items() {
+                if (master.items().length > 0 || patch.items().length == 0) {
+                    return master.items();
+                }
+                return patch.items();
+            }
+
+
         };
 
         return (io.swagger.v3.oas.annotations.media.ArraySchema)newArraySchema;
@@ -2048,6 +2103,11 @@ public abstract class AnnotationsUtils {
             @Override
             public Class<? extends Annotation> annotationType() {
                 return io.swagger.v3.oas.annotations.media.ArraySchema.class;
+            }
+
+            @Override
+            public io.swagger.v3.oas.annotations.media.Schema[] items() {
+                return new io.swagger.v3.oas.annotations.media.Schema[0];
             }
 
             @Override
@@ -2078,6 +2138,31 @@ public abstract class AnnotationsUtils {
             @Override
             public Extension[] extensions() {
                 return arraySchema.extensions();
+            }
+
+            @Override
+            public io.swagger.v3.oas.annotations.media.Schema contains() {
+                return arraySchema.contains();
+            }
+
+            @Override
+            public String maxContains() {
+                return arraySchema.maxContains();
+            }
+
+            @Override
+            public String minContains() {
+                return arraySchema.minContains();
+            }
+
+            @Override
+            public io.swagger.v3.oas.annotations.media.Schema unevaluatedItems() {
+                return arraySchema.unevaluatedItems();
+            }
+
+            @Override
+            public io.swagger.v3.oas.annotations.media.Schema[] prefixItems() {
+                return arraySchema.prefixItems();
             }
         };
 

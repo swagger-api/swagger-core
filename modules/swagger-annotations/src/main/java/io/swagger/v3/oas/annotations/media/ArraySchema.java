@@ -1,5 +1,6 @@
 package io.swagger.v3.oas.annotations.media;
 
+import io.swagger.v3.oas.annotations.OpenAPI31;
 import io.swagger.v3.oas.annotations.extensions.Extension;
 
 import java.lang.annotation.Inherited;
@@ -33,11 +34,20 @@ import static java.lang.annotation.ElementType.PARAMETER;
 public @interface ArraySchema {
 
     /**
+     * The schemas of the items in the array
+     *
+     * @return items
+     */
+    @OpenAPI31
+    Schema[] items() default {};
+
+    /**
      * The schema of the items in the array
      *
      * @return schema
      */
     Schema schema() default @Schema;
+
 
     /**
      * Allows to define the properties to be resolved into properties of the schema of type `array` (not the ones of the
@@ -76,4 +86,39 @@ public @interface ArraySchema {
      * @return an optional array of extensions
      */
     Extension[] extensions() default {};
+
+    /**
+     * Specifies contains constrictions expressions.
+     * @return contains expression.
+     */
+    @OpenAPI31
+    Schema contains() default @Schema;
+
+    /**
+     * Provides max contains related to this schema
+     * @return max contains
+     */
+    @OpenAPI31
+    String maxContains() default "";
+
+    /**
+     * Provides min contains related to this schema
+     * @return min contains
+     */
+    @OpenAPI31
+    String minContains() default "";
+
+    /**
+     * TODO desc
+     * @return unevaluated items
+     */
+    @OpenAPI31
+    Schema unevaluatedItems() default @Schema;
+
+    /**
+     * TODO desc
+     * @return prefixItems
+     */
+    @OpenAPI31
+    Schema[] prefixItems() default {};
 }

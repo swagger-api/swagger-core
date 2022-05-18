@@ -1,5 +1,7 @@
 package io.swagger.v3.oas.annotations.media;
 
+import io.swagger.v3.oas.annotations.OpenAPI31;
+
 import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -19,7 +21,8 @@ import static java.lang.annotation.ElementType.TYPE;
 @Target({FIELD, METHOD, PARAMETER, TYPE, ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
-public @interface DependentRequireds {
+@OpenAPI31
+public @interface DependentRequiredMap {
     /**
      * An array of DependentRequired annotations
      *
