@@ -1,6 +1,8 @@
 package io.swagger.v3.oas.annotations.media;
 
 import io.swagger.v3.oas.annotations.ExternalDocumentation;
+import io.swagger.v3.oas.annotations.OpenAPI31;
+import io.swagger.v3.oas.annotations.StringToClassMapItem;
 import io.swagger.v3.oas.annotations.extensions.Extension;
 
 import java.lang.annotation.Inherited;
@@ -338,78 +340,94 @@ public @interface Schema {
      * List of schema types
      * @return array of types
      */
+    @OpenAPI31
     String[] types() default {};
 
     /**
-     * Provides an exclusive maximum for a expressing exclusive range.
-     * @return an exclusive maximum.
-     */
+     * @since 2.2.1 / OpenAPI 3.1
+     *
+     * OAS 3.1 version of `exclusiveMaximum`, accepting a numeric value
+     *
+     * @return the exclusive maximum value for this schema
+     **/
+    @OpenAPI31
     int exclusiveMaximumValue() default Integer.MAX_VALUE;
 
     /**
      * Provides an exclusive minimum for a expressing exclusive range.
      * @return an exclusive minimum.
      */
+    @OpenAPI31
     int exclusiveMinimumValue() default 0;
 
     /**
      * Specifies contains constrictions expressions.
      * @return contains expression.
      */
+    @OpenAPI31
     Class<?> contains() default Void.class;
 
     /**
      * Provides the $id related to this schema.
      * @return the $id of schema
      */
+    @OpenAPI31
     String $id() default "";
 
     /**
      * Provides the $schema
      * @return external reference related to this schema
      */
+    @OpenAPI31
     String $schema() default "";
 
     /**
      * Provides the $anchor related to schema
      * @return $anchor schema
      */
+    @OpenAPI31
     String $anchor() default "";
 
     /**
      * Provides the content encoding related to this schema
      * @return content encoding
      */
+    @OpenAPI31
     String contentEncoding() default "";
 
     /**
      * Provides the content media type related to this schema
      * @return content media type
      */
+    @OpenAPI31
     String contentMediaType() default "";
 
     /**
      * Provides the content schema related to this schema
      * @return content schema
      */
+    @OpenAPI31
     Class<?> contentSchema() default Void.class;
 
     /**
      * Provides property names related to this schema
      * @return property names
      */
+    @OpenAPI31
     Class<?> propertyNames() default Void.class;
 
     /**
      * Provides max contains related to this schema
      * @return max contains
      */
+    @OpenAPI31
     int maxContains() default Integer.MAX_VALUE;
 
     /**
      * Provides min contains related to this schema
      * @return min contains
      */
+    @OpenAPI31
     int minContains() default 0;
 
     /**
@@ -428,24 +446,28 @@ public @interface Schema {
      * Provides the if sub schema related to this schema
      * @return if sub schema
      */
+    @OpenAPI31
     Class<?> _if() default Void.class;
 
     /**
      * Provides the else sub schema related to this schema
      * @return else sub schema
      */
+    @OpenAPI31
     Class<?> _else() default Void.class;
 
     /**
      * Provides the then sub schema related to this schema
      * @return then sub schema
      */
+    @OpenAPI31
     Class<?> then() default Void.class;
 
     /**
      * Provides $comment related to this schema
      * @return $comment relaed to schema
      */
+    @OpenAPI31
     String $comment() default "";
 
     /**
@@ -460,6 +482,7 @@ public @interface Schema {
      * AdditionalPropertiesValue.TRUE: set to TRUE
      * AdditionalPropertiesValue.FALSE: set to FALSE
      * AdditionalPropertiesValue.USE_ADDITIONAL_PROPERTIES_ANNOTATION: resolve from @Content.additionalPropertiesSchema
+     * or @Schema.additionalPropertiesSchema
      *
      * @since 2.2.0
      * @return the accessMode for this schema (property)
@@ -485,4 +508,41 @@ public @interface Schema {
         REQUIRED,
         NOT_REQUIRED;
     }
+
+    /**
+     * Allows to specify the dependentRequired value
+     **
+     * @since 2.2.1 / OpenAPI 3.1
+     * @return the list of DependentRequire annotations
+     *
+     */
+    @OpenAPI31
+    DependentRequired[] dependentRequiredMap() default {};
+
+    /**
+     * Allows to specify the dependentSchemas value providing a Class to be resolved into a Schema
+     **
+     * @since 2.2.1 / OpenAPI 3.1
+     * @return the list of dependentSchemas annotations
+     *
+     */
+    @OpenAPI31
+    StringToClassMapItem[] dependentSchemas() default {};
+
+    @OpenAPI31
+    StringToClassMapItem[] patternProperties() default {};
+
+    StringToClassMapItem[] properties() default {};
+
+    @OpenAPI31
+    Class<?> unevaluatedProperties() default Void.class;
+    Class<?> additionalPropertiesSchema() default Void.class;
+
+    /**
+     * Provides an array of examples of the schema.  When associated with a specific media type, the example string shall be parsed by the consumer to be treated as an object or an array.
+     *
+     * @return an array of examples of this schema
+     **/
+    @OpenAPI31
+    String[] examples() default {};
 }
