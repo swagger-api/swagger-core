@@ -1,5 +1,6 @@
 package io.swagger.v3.oas.annotations.media;
 
+import io.swagger.v3.oas.annotations.OpenAPI31;
 import io.swagger.v3.oas.annotations.extensions.Extension;
 
 import java.lang.annotation.ElementType;
@@ -83,5 +84,39 @@ public @interface Content {
      * @return an optional array of extensions
      */
     Extension[] extensions() default {};
+
+    /**
+     * Allows to specify the dependentSchemas value providing a Schema annotations map
+     *
+     * @since 2.2.1 / OpenAPI 3.1
+     * @return the schema properties
+     */
+    @OpenAPI31
+    DependentSchema[] dependentSchemas() default {};
+
+    /**
+     * TODO
+     *
+     */
+    @OpenAPI31
+    Schema contentSchema() default @Schema();
+
+    /**
+     * TODO
+     *
+     */
+    @OpenAPI31
+    Schema propertyNames() default @Schema();
+
+    @OpenAPI31
+    Schema _if() default @Schema();
+    @OpenAPI31
+    Schema _then() default @Schema();
+    @OpenAPI31
+    Schema _else() default @Schema();
+    Schema not() default @Schema();
+    Schema[] oneOf() default {};
+    Schema[] anyOf() default {};
+    Schema[] allOf() default {};
 
 }
