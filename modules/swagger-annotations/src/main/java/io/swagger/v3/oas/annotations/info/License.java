@@ -1,5 +1,6 @@
 package io.swagger.v3.oas.annotations.info;
 
+import io.swagger.v3.oas.annotations.OpenAPI31;
 import io.swagger.v3.oas.annotations.extensions.Extension;
 
 import java.lang.annotation.Retention;
@@ -9,7 +10,8 @@ import java.lang.annotation.Target;
 /**
  * The annotation may be used in {@link Info#license()} to define a license for the OpenAPI spec.
  *
- * @see <a target="_new" href="https://github.com/OAI/OpenAPI-Specification/blob/3.0.1/versions/3.0.1.md#licenseObject">License (OpenAPI specification)</a>
+ * @see <a target="_new" href="https://github.com/OAI/OpenAPI-Specification/blob/3.0.1/versions/3.0.1.md#licenseObject">License (OpenAPI 3.0 pecification)</a>
+ * @see <a target="_new" href="https://github.com/OAI/OpenAPI-Specification/blob/3.0.1/versions/3.1.0.md#licenseObject">License (OpenAPI 3.1 specification)</a>
  * @see io.swagger.v3.oas.annotations.OpenAPIDefinition
  * @see Info
  **/
@@ -38,10 +40,13 @@ public @interface License {
     Extension[] extensions() default {};
 
     /**
-     * A identifier for a License instance.
+     * An identifier for a License instance.
+     *
+     * @since 2.2.1 / OpenAPI 3.1
      *
      * @return the URL of the license
      **/
+    @OpenAPI31
     String identifier() default "";
 
 }
