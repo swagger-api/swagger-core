@@ -1,5 +1,6 @@
 package io.swagger.v3.oas.annotations.info;
 
+import io.swagger.v3.oas.annotations.OpenAPI31;
 import io.swagger.v3.oas.annotations.extensions.Extension;
 
 import java.lang.annotation.ElementType;
@@ -70,8 +71,10 @@ public @interface Info {
     /**
      * A summary of application.
      *
+     * @since 2.2.1 / OpenAPI 3.1
      * @return the application's summary
      **/
+    @OpenAPI31
     String summary() default "";
 
 }

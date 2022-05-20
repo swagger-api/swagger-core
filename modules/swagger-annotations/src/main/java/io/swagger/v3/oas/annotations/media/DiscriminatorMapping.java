@@ -1,5 +1,6 @@
 package io.swagger.v3.oas.annotations.media;
 
+import io.swagger.v3.oas.annotations.OpenAPI31;
 import io.swagger.v3.oas.annotations.extensions.Extension;
 
 import java.lang.annotation.Inherited;
@@ -39,8 +40,10 @@ public @interface DiscriminatorMapping {
     /**
      * The list of optional extensions
      *
+     * @since 2.2.1 / OpenAPI 3.1
      * @return an optional array of extensions
      */
+    @OpenAPI31
     Extension[] extensions() default {};
 
 }
