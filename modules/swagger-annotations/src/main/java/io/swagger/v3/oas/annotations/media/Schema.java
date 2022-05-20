@@ -316,6 +316,8 @@ public @interface Schema {
 
     /**
      * List of schema types
+     *
+     * @since 2.2.1 / OpenAPI 3.1
      * @return array of types
      */
     @OpenAPI31
@@ -333,6 +335,8 @@ public @interface Schema {
 
     /**
      * Provides an exclusive minimum for a expressing exclusive range.
+     *
+     * @since 2.2.1 / OpenAPI 3.1
      * @return an exclusive minimum.
      */
     @OpenAPI31
@@ -340,6 +344,8 @@ public @interface Schema {
 
     /**
      * Provides the $id related to this schema.
+     *
+     * @since 2.2.1 / OpenAPI 3.1
      * @return the $id of schema
      */
     @OpenAPI31
@@ -347,6 +353,8 @@ public @interface Schema {
 
     /**
      * Provides the $schema
+     *
+     * @since 2.2.1 / OpenAPI 3.1
      * @return external reference related to this schema
      */
     @OpenAPI31
@@ -354,6 +362,8 @@ public @interface Schema {
 
     /**
      * Provides the $anchor related to schema
+     *
+     * @since 2.2.1 / OpenAPI 3.1
      * @return $anchor schema
      */
     @OpenAPI31
@@ -361,6 +371,8 @@ public @interface Schema {
 
     /**
      * Provides the content encoding related to this schema
+     *
+     * @since 2.2.1 / OpenAPI 3.1
      * @return content encoding
      */
     @OpenAPI31
@@ -368,6 +380,8 @@ public @interface Schema {
 
     /**
      * Provides the content media type related to this schema
+     *
+     * @since 2.2.1 / OpenAPI 3.1
      * @return content media type
      */
     @OpenAPI31
@@ -375,6 +389,8 @@ public @interface Schema {
 
     /**
      * Provides the content schema related to this schema
+     *
+     * @since 2.2.1 / OpenAPI 3.1
      * @return content schema
      */
     @OpenAPI31
@@ -382,6 +398,8 @@ public @interface Schema {
 
     /**
      * Provides property names related to this schema
+     *
+     * @since 2.2.1 / OpenAPI 3.1
      * @return property names
      */
     @OpenAPI31
@@ -389,6 +407,8 @@ public @interface Schema {
 
     /**
      * Provides the if sub schema related to this schema
+     *
+     * @since 2.2.1 / OpenAPI 3.1
      * @return if sub schema
      */
     @OpenAPI31
@@ -396,6 +416,8 @@ public @interface Schema {
 
     /**
      * Provides the else sub schema related to this schema
+     *
+     * @since 2.2.1 / OpenAPI 3.1
      * @return else sub schema
      */
     @OpenAPI31
@@ -403,6 +425,8 @@ public @interface Schema {
 
     /**
      * Provides the then sub schema related to this schema
+     *
+     * @since 2.2.1 / OpenAPI 3.1
      * @return then sub schema
      */
     @OpenAPI31
@@ -410,6 +434,8 @@ public @interface Schema {
 
     /**
      * Provides $comment related to this schema
+     *
+     * @since 2.2.1 / OpenAPI 3.1
      * @return $comment relaed to schema
      */
     @OpenAPI31
@@ -454,7 +480,7 @@ public @interface Schema {
 
     /**
      * Allows to specify the dependentSchemas value providing a Class to be resolved into a Schema
-     **
+     *
      * @since 2.2.1 / OpenAPI 3.1
      * @return the list of dependentSchemas annotations
      *
@@ -462,11 +488,28 @@ public @interface Schema {
     @OpenAPI31
     StringToClassMapItem[] dependentSchemas() default {};
 
+    /**
+     * Provides pattern properties to this schema
+     *
+     * @since 2.2.1 / OpenAPI 3.1
+     * @return pattern properties
+     */
     @OpenAPI31
     StringToClassMapItem[] patternProperties() default {};
 
+    /**
+     * Provoes properties related to this schema
+     *
+     * @return schema properties
+     */
     StringToClassMapItem[] properties() default {};
 
+    /**
+     * Provides unevaluated properties to this schema
+     *
+     * @since 2.2.1 / OpenAPI 3.1
+     * @return unevaluated properties
+     */
     @OpenAPI31
     Class<?> unevaluatedProperties() default Void.class;
     Class<?> additionalPropertiesSchema() default Void.class;
@@ -474,6 +517,7 @@ public @interface Schema {
     /**
      * Provides an array of examples of the schema.  When associated with a specific media type, the example string shall be parsed by the consumer to be treated as an object or an array.
      *
+     * @since 2.2.1 / OpenAPI 3.1
      * @return an array of examples of this schema
      **/
     @OpenAPI31
