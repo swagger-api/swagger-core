@@ -43,7 +43,6 @@ public @interface License {
      * An identifier for a License instance.
      *
      * @since 2.2.1 / OpenAPI 3.1
-     *
      * @return the URL of the license
      **/
     @OpenAPI31
