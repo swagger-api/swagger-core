@@ -95,28 +95,76 @@ public @interface Content {
     DependentSchema[] dependentSchemas() default {};
 
     /**
-     * TODO
+     * Provides the content schema related to this schema
      *
+     * @since 2.2.1 / OpenAPI 3.1
+     * @return content schema
      */
     @OpenAPI31
     Schema contentSchema() default @Schema();
 
     /**
-     * TODO
+     * Provides property names related to this schema
      *
+     * @since 2.2.1 / OpenAPI 3.1
+     * @return content schema
      */
     @OpenAPI31
     Schema propertyNames() default @Schema();
 
+    /**
+     * Provides the if sub schema related to this schema
+     *
+     * @since 2.2.1 / OpenAPI 3.1
+     * @return content schema
+     */
     @OpenAPI31
     Schema _if() default @Schema();
+
+    /**
+     * Provides the then sub schema related to this schema
+     *
+     * @since 2.2.1 / OpenAPI 3.1
+     * @return content schema
+     */
     @OpenAPI31
     Schema _then() default @Schema();
+
+    /**
+     * Provides the else sub schema related to this schema
+     *
+     * @since 2.2.1 / OpenAPI 3.1
+     * @return content schema
+     */
     @OpenAPI31
     Schema _else() default @Schema();
+
+    /**
+     * Provides a java class to be used to disallow matching properties.
+     *
+     * @return a class with disallowed properties
+     **/
     Schema not() default @Schema();
+
+    /**
+     * Provides an array of java class implementations which can be used to describe multiple acceptable schemas.
+     *
+     * @return the list of possible classes for a single match
+     **/
     Schema[] oneOf() default {};
+
+    /**
+     * Provides an array of java class implementations which can be used to describe multiple acceptable schemas.
+     *
+     * @return the list of possible class matches
+     **/
     Schema[] anyOf() default {};
+
+    /**
+     * Provides an array of java class implementations which can be used to describe multiple acceptable schemas.
+     *
+     * @return the list of classes to match
+     **/
     Schema[] allOf() default {};
 
 }
