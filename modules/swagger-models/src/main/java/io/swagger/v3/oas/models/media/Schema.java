@@ -1237,7 +1237,7 @@ public class Schema<T> {
     }
 
     public void set$ref(String $ref) {
-        if ($ref != null && ($ref.indexOf('.') == -1 && $ref.indexOf('/') == -1)) {
+        if ($ref != null && !$ref.startsWith("#") && ($ref.indexOf('.') == -1 && $ref.indexOf('/') == -1)) {
             $ref = Components.COMPONENTS_SCHEMAS_REF + $ref;
         }
         this.$ref = $ref;
@@ -1246,6 +1246,11 @@ public class Schema<T> {
     public Schema $ref(String $ref) {
 
         set$ref($ref);
+        return this;
+    }
+
+    public Schema raw$ref(String $ref) {
+        this.$ref = $ref;
         return this;
     }
 
