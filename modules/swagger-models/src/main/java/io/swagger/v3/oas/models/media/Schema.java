@@ -1965,7 +1965,8 @@ public class Schema<T> {
                 Objects.equals(this.dependentSchemas, schema.dependentSchemas) &&
                 Objects.equals(this.$comment, schema.$comment) &&
                 Objects.equals(this.examples, schema.examples) &&
-                Objects.equals(this.prefixItems, schema.prefixItems)
+                Objects.equals(this.prefixItems, schema.prefixItems) &&
+                Objects.equals(this.items, schema.items)
 
                 ;
     }
@@ -1979,7 +1980,7 @@ public class Schema<T> {
                 discriminator, _enum, _default, patternProperties, $id, $anchor, $schema, types, allOf, anyOf, oneOf, _const,
                 contentEncoding, contentMediaType, contentSchema, propertyNames, unevaluatedProperties, maxContains,
                 minContains, additionalItems, unevaluatedItems, _if, _else, then, dependentRequired, dependentSchemas,
-                $comment, examples, prefixItems);
+                $comment, examples, prefixItems, items);
     }
 
     public java.util.Map<String, Object> getExtensions() {
