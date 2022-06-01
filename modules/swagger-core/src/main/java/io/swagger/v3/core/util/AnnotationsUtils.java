@@ -9,15 +9,18 @@ import io.swagger.v3.core.converter.AnnotatedType;
 import io.swagger.v3.core.converter.ModelConverters;
 import io.swagger.v3.core.converter.ResolvedSchema;
 import io.swagger.v3.oas.annotations.StringToClassMapItem;
+import io.swagger.v3.oas.annotations.Webhook;
 import io.swagger.v3.oas.annotations.extensions.Extension;
 import io.swagger.v3.oas.annotations.extensions.ExtensionProperty;
 import io.swagger.v3.oas.annotations.links.LinkParameter;
 import io.swagger.v3.oas.annotations.media.DependentRequired;
+import io.swagger.v3.oas.annotations.media.DependentSchema;
 import io.swagger.v3.oas.annotations.media.DiscriminatorMapping;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.SchemaProperty;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.ExternalDocumentation;
+import io.swagger.v3.oas.models.PathItem;
 import io.swagger.v3.oas.models.examples.Example;
 import io.swagger.v3.oas.models.headers.Header;
 import io.swagger.v3.oas.models.info.Contact;
@@ -47,6 +50,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -400,6 +404,22 @@ public abstract class AnnotationsUtils {
         if (arraySchema.minItems() < Integer.MAX_VALUE) {
             arraySchemaObject.setMinItems(arraySchema.minItems());
         }
+
+        getSchemaFromAnnotation(arraySchema.contains(), components, jsonViewAnnotation).ifPresent(arraySchemaObject::setContains);
+        getSchemaFromAnnotation(arraySchema.unevaluatedItems(), components, jsonViewAnnotation).ifPresent(arraySchemaObject::setUnevaluatedItems);
+
+        if (arraySchema.maxContains() > 0) {
+            arraySchemaObject.setMaxContains(arraySchema.maxContains());
+        }
+        if (arraySchema.minContains() > 0) {
+            arraySchemaObject.setMinContains(arraySchema.minContains());
+        }
+        if (arraySchema.prefixItems().length > 0) {
+            for (io.swagger.v3.oas.annotations.media.Schema prefixItem : arraySchema.prefixItems()) {
+                getSchemaFromAnnotation(prefixItem, components, jsonViewAnnotation).ifPresent(arraySchemaObject::addPrefixItem);
+            }
+        }
+
         if (arraySchema.extensions().length > 0) {
             Map<String, Object> extensions = AnnotationsUtils.getExtensions(arraySchema.extensions());
             if (extensions != null) {
@@ -440,6 +460,90 @@ public abstract class AnnotationsUtils {
         if (StringUtils.isNotBlank(schema.type())) {
             schemaObject.setType(schema.type());
         }
+
+        if (schema.types().length > 0) {
+            if (schema.types().length == 1) {
+                schemaObject.setType(schema.types()[0]);
+            } else {
+                for (String type : schema.types()) {
+                    schemaObject.addType(type);
+                }
+            }
+        }
+        if (StringUtils.isNotBlank(schema.$id())) {
+            schemaObject.set$id(schema.$id());
+        }
+        if (StringUtils.isNotBlank(schema.$schema())) {
+            schemaObject.set$schema(schema.$schema());
+        }
+        if (StringUtils.isNotBlank(schema.$anchor())) {
+            schemaObject.set$anchor(schema.$anchor());
+        }
+        if (StringUtils.isNotBlank(schema.contentEncoding())) {
+            schemaObject.setContentEncoding(schema.contentEncoding());
+        }
+        if (StringUtils.isNotBlank(schema.contentMediaType())) {
+            schemaObject.setContentMediaType(schema.contentMediaType());
+        }
+        if (schema.exclusiveMaximumValue() != Integer.MAX_VALUE && schema.exclusiveMaximumValue() > 0) {
+            schemaObject.setExclusiveMaximumValue(BigDecimal.valueOf(schema.exclusiveMaximumValue()));
+        }
+        if (schema.exclusiveMinimumValue() > 0) {
+            schemaObject.setExclusiveMinimumValue(BigDecimal.valueOf(schema.exclusiveMinimumValue()));
+        }
+        if (!schema.contentSchema().equals(Void.class)) {
+            schemaObject.setContentSchema(resolveSchemaFromType(schema.contentSchema(), components, jsonViewAnnotation));
+        }
+        if (!schema.propertyNames().equals(Void.class)) {
+            schemaObject.setPropertyNames(resolveSchemaFromType(schema.propertyNames(), components, jsonViewAnnotation));
+        }
+        if (!schema._if().equals(Void.class)) {
+            schemaObject.setIf(resolveSchemaFromType(schema._if(), components, jsonViewAnnotation));
+        }
+        if (!schema._else().equals(Void.class)) {
+            schemaObject.setElse(resolveSchemaFromType(schema._else(), components, jsonViewAnnotation));
+        }
+        if (!schema.then().equals(Void.class)) {
+            schemaObject.setThen(resolveSchemaFromType(schema.then(), components, jsonViewAnnotation));
+        }
+        if (StringUtils.isNotBlank(schema.$comment())) {
+            schemaObject.set$comment(schema.$comment());
+        }
+        if (schema.dependentRequiredMap().length > 0) {
+            final Map<String, List<String>> dependentRequired = new LinkedHashMap<>();
+            for (DependentRequired dependentRequiredAnnotation : schema.dependentRequiredMap()) {
+                dependentRequired.put(dependentRequiredAnnotation.name(), Arrays.asList(dependentRequiredAnnotation.value()));
+            }
+            schemaObject.setDependentRequired(dependentRequired);
+        }
+        if (schema.dependentSchemas().length > 0) {
+            final Map<String, Schema> dependentSchema = new LinkedHashMap<>();
+            for (StringToClassMapItem mapItem : schema.dependentSchemas()) {
+                dependentSchema.put(mapItem.key(), resolveSchemaFromType(mapItem.value(), components, jsonViewAnnotation));
+            }
+            schemaObject.setDependentSchemas(dependentSchema);
+        }
+        if (schema.patternProperties().length > 0) {
+            final Map<String, Schema> patternProperties = new LinkedHashMap<>();
+            for (StringToClassMapItem mapItem : schema.patternProperties()) {
+                patternProperties.put(mapItem.key(), resolveSchemaFromType(mapItem.value(), components, jsonViewAnnotation));
+            }
+            schemaObject.setPatternProperties(patternProperties);
+        }
+        if (schema.properties().length > 0) {
+            final Map<String, Schema> properties = new LinkedHashMap<>();
+            for (StringToClassMapItem mapItem : schema.properties()) {
+                properties.put(mapItem.key(), resolveSchemaFromType(mapItem.value(), components, jsonViewAnnotation));
+            }
+            schemaObject.setProperties(properties);
+        }
+        if (!schema.unevaluatedProperties().equals(Void.class)) {
+            schemaObject.setUnevaluatedProperties(resolveSchemaFromType(schema.unevaluatedProperties(), components, jsonViewAnnotation));
+        }
+        if (schema.examples().length > 0) {
+            schemaObject.setExamples(Arrays.asList(schema.examples()));
+        }
+
         if (StringUtils.isNotBlank(schema.defaultValue())) {
             schemaObject.setDefault(schema.defaultValue());
         }
@@ -557,6 +661,10 @@ public abstract class AnnotationsUtils {
             schemaObject.additionalProperties(true);
         } else if (schema.additionalProperties().equals(io.swagger.v3.oas.annotations.media.Schema.AdditionalPropertiesValue.FALSE)) {
             schemaObject.additionalProperties(false);
+        } else {
+            if (!schema.additionalPropertiesSchema().equals(Void.class)) {
+                schemaObject.additionalProperties(resolveSchemaFromType(schema.additionalPropertiesSchema(), components, jsonViewAnnotation));
+            }
         }
 
         return Optional.of(schemaObject);
@@ -748,6 +856,10 @@ public abstract class AnnotationsUtils {
             infoObject.setVersion(info.version());
             isEmpty = false;
         }
+        if (StringUtils.isNotBlank(info.summary())) {
+            infoObject.setSummary(info.summary());
+            isEmpty = false;
+        }
         if (info.extensions() != null && info.extensions().length > 0) {
             Map<String, Object> extensions = AnnotationsUtils.getExtensions(info.extensions());
             if (extensions != null) {
@@ -808,6 +920,10 @@ public abstract class AnnotationsUtils {
         }
         if (StringUtils.isNotBlank(license.url())) {
             licenseObject.setUrl(license.url());
+            isEmpty = false;
+        }
+        if (StringUtils.isNotBlank(license.identifier())) {
+            licenseObject.setIdentifier(license.identifier());
             isEmpty = false;
         }
         if (license.extensions() != null && license.extensions().length > 0) {
@@ -1126,6 +1242,40 @@ public abstract class AnnotationsUtils {
                 content.addMediaType(annotationContent.mediaType(), mediaType);
             } else {
                 applyTypes(classTypes, methodTypes, content, mediaType);
+            }
+
+            DependentSchema[] dependentSchemas = annotationContent.dependentSchemas();
+            if (dependentSchemas.length > 0) {
+                final Map<String, Schema> dependentSchemaMap = new LinkedHashMap<>();
+                for (DependentSchema dependentSchema : dependentSchemas) {
+                    if ("array".equals(mediaType.getSchema().getType())) {
+                        getArraySchema(dependentSchema.array(), components, jsonViewAnnotation).ifPresent(arraySchema -> dependentSchemaMap.put(dependentSchema.name(), arraySchema));
+                    } else {
+                        getSchemaFromAnnotation(dependentSchema.schema(), components, jsonViewAnnotation).ifPresent(schema1 -> dependentSchemaMap.put(dependentSchema.name(), schema1));
+                    }
+                }
+                mediaType.getSchema().setDependentSchemas(dependentSchemaMap);
+            }
+            getSchemaFromAnnotation(annotationContent.contentSchema(), components, jsonViewAnnotation).ifPresent(mediaType.getSchema()::setContentSchema);
+            getSchemaFromAnnotation(annotationContent.propertyNames(), components, jsonViewAnnotation).ifPresent(mediaType.getSchema()::setPropertyNames);
+            getSchemaFromAnnotation(annotationContent._if(), components, jsonViewAnnotation).ifPresent(mediaType.getSchema()::setIf);
+            getSchemaFromAnnotation(annotationContent._then(), components, jsonViewAnnotation).ifPresent(mediaType.getSchema()::setThen);
+            getSchemaFromAnnotation(annotationContent._else(), components, jsonViewAnnotation).ifPresent(mediaType.getSchema()::setElse);
+            getSchemaFromAnnotation(annotationContent.not(), components, jsonViewAnnotation).ifPresent(mediaType.getSchema()::setNot);
+            if (annotationContent.oneOf().length > 0) {
+                for (io.swagger.v3.oas.annotations.media.Schema oneOfSchema : annotationContent.oneOf()) {
+                    getSchemaFromAnnotation(oneOfSchema, components, jsonViewAnnotation).ifPresent(mediaType.getSchema()::addOneOfItem);
+                }
+            }
+            if (annotationContent.anyOf().length > 0) {
+                for (io.swagger.v3.oas.annotations.media.Schema anyOfSchema : annotationContent.anyOf()) {
+                    getSchemaFromAnnotation(anyOfSchema, components, jsonViewAnnotation).ifPresent(mediaType.getSchema()::addAnyOfItem);
+                }
+            }
+            if (annotationContent.allOf().length > 0) {
+                for (io.swagger.v3.oas.annotations.media.Schema anyOfSchema : annotationContent.allOf()) {
+                    getSchemaFromAnnotation(anyOfSchema, components, jsonViewAnnotation).ifPresent(mediaType.getSchema()::addAllOfItem);
+                }
             }
         }
 
@@ -2064,16 +2214,16 @@ public abstract class AnnotationsUtils {
             }
 
             @Override
-            public String maxContains() {
-                if (StringUtils.isNotBlank(master.maxContains()) || StringUtils.isBlank(patch.maxContains())) {
+            public int maxContains() {
+                if (master.maxContains() > 0) {
                     return master.maxContains();
                 }
                 return patch.maxContains();
             }
 
             @Override
-            public String minContains() {
-                if (StringUtils.isNotBlank(master.minContains()) || StringUtils.isBlank(patch.minContains())) {
+            public int minContains() {
+                if (master.minContains() > 0) {
                     return master.minContains();
                 }
                 return patch.minContains();
@@ -2088,8 +2238,8 @@ public abstract class AnnotationsUtils {
             }
 
             @Override
-            public io.swagger.v3.oas.annotations.media.Schema[] items() {
-                if (master.items().length > 0 || patch.items().length == 0) {
+            public io.swagger.v3.oas.annotations.media.Schema items() {
+                if (!master.items().equals(Void.class) || patch.items().equals(Void.class)) {
                     return master.items();
                 }
                 return patch.items();
@@ -2118,8 +2268,8 @@ public abstract class AnnotationsUtils {
             }
 
             @Override
-            public io.swagger.v3.oas.annotations.media.Schema[] items() {
-                return new io.swagger.v3.oas.annotations.media.Schema[0];
+            public io.swagger.v3.oas.annotations.media.Schema items() {
+                return arraySchema.items();
             }
 
             @Override
@@ -2158,12 +2308,12 @@ public abstract class AnnotationsUtils {
             }
 
             @Override
-            public String maxContains() {
+            public int maxContains() {
                 return arraySchema.maxContains();
             }
 
             @Override
-            public String minContains() {
+            public int minContains() {
                 return arraySchema.minContains();
             }
 

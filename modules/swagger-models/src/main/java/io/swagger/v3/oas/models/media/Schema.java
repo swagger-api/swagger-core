@@ -1457,6 +1457,19 @@ public class Schema<T> {
      * @since 2.2.0 (OpenAPI 3.1.0)
      */
     @OpenAPI31
+    public Schema addPrefixItem(Schema prefixItem) {
+        if (this.prefixItems == null) {
+            this.prefixItems = new ArrayList<>();
+        }
+        this.prefixItems.add(prefixItem);
+        return this;
+    }
+
+    /**
+     *
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
+    @OpenAPI31
     public String getContentEncoding() {
         return contentEncoding;
     }

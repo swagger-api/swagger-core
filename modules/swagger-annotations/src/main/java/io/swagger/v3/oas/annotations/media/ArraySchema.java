@@ -41,7 +41,7 @@ public @interface ArraySchema {
      * @return items
      */
     @OpenAPI31
-    Schema[] items() default {};
+    Schema items() default @Schema;
 
     /**
      * The schema of the items in the array
@@ -105,7 +105,7 @@ public @interface ArraySchema {
      * @return max contains
      */
     @OpenAPI31
-    String maxContains() default "";
+    int maxContains() default 0;
 
     /**
      * Provides min contains related to this schema
@@ -114,7 +114,7 @@ public @interface ArraySchema {
      * @return min contains
      */
     @OpenAPI31
-    String minContains() default "";
+    int minContains() default 0;
 
     /**
      * Provides unevaluted items to this schema
