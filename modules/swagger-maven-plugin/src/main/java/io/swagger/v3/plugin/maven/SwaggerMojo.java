@@ -90,7 +90,7 @@ public class SwaggerMojo extends AbstractMojo {
                     openAPI = f.filter(openAPI, filterImpl, new HashMap<>(), new HashMap<>(),
                             new HashMap<>());
                 } catch (Exception e) {
-                    getLog().error( "Error applying filter to API specification" , e);
+                    getLog().error("Error applying filter to API specification", e);
                     throw new MojoExecutionException("Error applying filter to API specification: " + e.getMessage(), e);
                 }
             }
@@ -154,6 +154,9 @@ public class SwaggerMojo extends AbstractMojo {
         if (alwaysResolveAppPath == null) {
             alwaysResolveAppPath = Boolean.FALSE;
         }
+        if (openapi31 == null) {
+            openapi31 = Boolean.FALSE;
+        }
         if (config.isPrettyPrint() == null) {
             config.prettyPrint(prettyPrint);
         }
@@ -165,6 +168,9 @@ public class SwaggerMojo extends AbstractMojo {
         }
         if (config.isAlwaysResolveAppPath() == null) {
             config.alwaysResolveAppPath(alwaysResolveAppPath);
+        }
+        if (config.isOpenAPI31() == null) {
+            config.setOpenAPI31(openapi31);
         }
     }
 
@@ -391,6 +397,12 @@ public class SwaggerMojo extends AbstractMojo {
      */
     @Parameter(property = "resolve.alwaysResolveAppPath")
     private Boolean alwaysResolveAppPath;
+
+    /**
+     * @since 2.2.0
+     */
+    @Parameter(property = "resolve.openapi31")
+    private Boolean openapi31;
 
 
     private String projectEncoding = "UTF-8";

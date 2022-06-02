@@ -1237,7 +1237,7 @@ public class Schema<T> {
     }
 
     public void set$ref(String $ref) {
-        if ($ref != null && ($ref.indexOf('.') == -1 && $ref.indexOf('/') == -1)) {
+        if ($ref != null && !$ref.startsWith("#") && ($ref.indexOf('.') == -1 && $ref.indexOf('/') == -1)) {
             $ref = Components.COMPONENTS_SCHEMAS_REF + $ref;
         }
         this.$ref = $ref;
@@ -1246,6 +1246,11 @@ public class Schema<T> {
     public Schema $ref(String $ref) {
 
         set$ref($ref);
+        return this;
+    }
+
+    public Schema raw$ref(String $ref) {
+        this.$ref = $ref;
         return this;
     }
 
@@ -1960,7 +1965,8 @@ public class Schema<T> {
                 Objects.equals(this.dependentSchemas, schema.dependentSchemas) &&
                 Objects.equals(this.$comment, schema.$comment) &&
                 Objects.equals(this.examples, schema.examples) &&
-                Objects.equals(this.prefixItems, schema.prefixItems)
+                Objects.equals(this.prefixItems, schema.prefixItems) &&
+                Objects.equals(this.items, schema.items)
 
                 ;
     }
@@ -1974,7 +1980,7 @@ public class Schema<T> {
                 discriminator, _enum, _default, patternProperties, $id, $anchor, $schema, types, allOf, anyOf, oneOf, _const,
                 contentEncoding, contentMediaType, contentSchema, propertyNames, unevaluatedProperties, maxContains,
                 minContains, additionalItems, unevaluatedItems, _if, _else, then, dependentRequired, dependentSchemas,
-                $comment, examples, prefixItems);
+                $comment, examples, prefixItems, items);
     }
 
     public java.util.Map<String, Object> getExtensions() {

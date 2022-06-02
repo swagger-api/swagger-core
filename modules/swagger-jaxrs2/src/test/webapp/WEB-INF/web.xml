@@ -27,9 +27,49 @@
         <load-on-startup>1</load-on-startup>
     </servlet>
 
+    <servlet>
+        <servlet-name>oas</servlet-name>
+        <servlet-class>io.swagger.v3.jaxrs2.integration.OpenApiServlet</servlet-class>
+
+        <init-param>
+            <param-name>jersey.config.server.wadl.disableWadl</param-name>
+            <param-value>true</param-value>
+        </init-param>
+        <init-param>
+            <param-name>jersey.config.server.provider.packages</param-name>
+            <param-value>
+                io.swagger.v3.jaxrs2.integration.resources,io.swagger.v3.jaxrs2.it.resources
+            </param-value>
+        </init-param>
+        <init-param>
+            <param-name>openApi.configuration.prettyPrint</param-name>
+            <param-value>true</param-value>
+        </init-param>
+
+        <init-param>
+            <param-name>openApi.configuration.openAPI31</param-name>
+            <param-value>true</param-value>
+        </init-param>
+    </servlet>
+
+    <servlet>
+        <servlet-name>bootstrap</servlet-name>
+        <servlet-class>io.swagger.v3.jaxrs2.BootstrapServlet</servlet-class>
+    </servlet>
+
     <servlet-mapping>
         <servlet-name>jersey</servlet-name>
         <url-pattern>/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>oas</servlet-name>
+        <url-pattern>/oas/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>bootstrap</servlet-name>
+        <url-pattern>/bootstrap</url-pattern>
     </servlet-mapping>
 
 </web-app>

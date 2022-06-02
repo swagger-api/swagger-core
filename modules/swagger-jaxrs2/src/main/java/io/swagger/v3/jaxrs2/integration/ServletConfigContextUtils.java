@@ -46,6 +46,11 @@ public class ServletConfigContextUtils {
      */
     public static final String OPENAPI_CONFIGURATION_MODEL_CONVERTERS_KEY = "openApi.configuration.modelConverterClasses";
 
+    /**
+     * @since 2.2.0
+     */
+    public static final String OPENAPI_CONFIGURATION_OPENAPI_31_KEY = "openApi.configuration.openAPI31";
+
     public static Set<String> resolveResourcePackages(ServletConfig servletConfig) {
         if (!isServletConfigAvailable(servletConfig)) {
             return null;

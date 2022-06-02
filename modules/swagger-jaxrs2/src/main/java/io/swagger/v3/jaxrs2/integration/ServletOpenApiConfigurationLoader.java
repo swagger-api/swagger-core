@@ -17,6 +17,7 @@ import static io.swagger.v3.jaxrs2.integration.ServletConfigContextUtils.OPENAPI
 import static io.swagger.v3.jaxrs2.integration.ServletConfigContextUtils.OPENAPI_CONFIGURATION_CACHE_TTL_KEY;
 import static io.swagger.v3.jaxrs2.integration.ServletConfigContextUtils.OPENAPI_CONFIGURATION_FILTER_KEY;
 import static io.swagger.v3.jaxrs2.integration.ServletConfigContextUtils.OPENAPI_CONFIGURATION_OBJECT_MAPPER_PROCESSOR_KEY;
+import static io.swagger.v3.jaxrs2.integration.ServletConfigContextUtils.OPENAPI_CONFIGURATION_OPENAPI_31_KEY;
 import static io.swagger.v3.jaxrs2.integration.ServletConfigContextUtils.OPENAPI_CONFIGURATION_PRETTYPRINT_KEY;
 import static io.swagger.v3.jaxrs2.integration.ServletConfigContextUtils.OPENAPI_CONFIGURATION_READALLRESOURCES_KEY;
 import static io.swagger.v3.jaxrs2.integration.ServletConfigContextUtils.OPENAPI_CONFIGURATION_READER_KEY;
@@ -61,6 +62,7 @@ public class ServletOpenApiConfigurationLoader implements OpenApiConfigurationLo
                     .cacheTTL(getLongInitParam(servletConfig, OPENAPI_CONFIGURATION_CACHE_TTL_KEY))
                     .scannerClass(getInitParam(servletConfig, OPENAPI_CONFIGURATION_SCANNER_KEY))
                     .objectMapperProcessorClass(getInitParam(servletConfig, OPENAPI_CONFIGURATION_OBJECT_MAPPER_PROCESSOR_KEY))
+                    .openAPI31(getBooleanInitParam(servletConfig, OPENAPI_CONFIGURATION_OPENAPI_31_KEY))
                     .modelConverterClasses(resolveModelConverterClasses(servletConfig));
 
             return configuration;
@@ -127,6 +129,9 @@ public class ServletOpenApiConfigurationLoader implements OpenApiConfigurationLo
                 return true;
             }
             if (getInitParam(servletConfig, OPENAPI_CONFIGURATION_OBJECT_MAPPER_PROCESSOR_KEY) != null) {
+                return true;
+            }
+            if (getInitParam(servletConfig, OPENAPI_CONFIGURATION_OPENAPI_31_KEY) != null) {
                 return true;
             }
             return resolveModelConverterClasses(servletConfig) != null;

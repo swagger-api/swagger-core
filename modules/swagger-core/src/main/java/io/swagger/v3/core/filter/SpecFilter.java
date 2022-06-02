@@ -2,6 +2,7 @@ package io.swagger.v3.core.filter;
 
 import io.swagger.v3.core.model.ApiDescription;
 import io.swagger.v3.core.util.Json;
+import io.swagger.v3.core.util.Json31;
 import io.swagger.v3.core.util.RefUtils;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
@@ -26,7 +27,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,6 +46,8 @@ public class SpecFilter {
         OpenAPI clone = new OpenAPI();
         clone.info(filteredOpenAPI.getInfo());
         clone.openapi(filteredOpenAPI.getOpenapi());
+        clone.jsonSchemaDialect(filteredOpenAPI.getJsonSchemaDialect());
+        clone.setSpecVersion(filteredOpenAPI.getSpecVersion());
         clone.setExtensions(filteredOpenAPI.getExtensions());
         clone.setExternalDocs(filteredOpenAPI.getExternalDocs());
         clone.setSecurity(filteredOpenAPI.getSecurity());
@@ -61,41 +63,9 @@ public class SpecFilter {
                 PathItem pathItem = filteredOpenAPI.getPaths().get(resourcePath);
 
                 PathItem filteredPathItem = filterPathItem(filter, pathItem, resourcePath, params, cookies, headers);
+                PathItem clonedPathItem = cloneFilteredPathItem(filter,filteredPathItem, resourcePath, params, cookies, headers, allowedTags, filteredTags);
 
-                if (filteredPathItem != null) {
-
-                    PathItem clonedPathItem = new PathItem();
-                    clonedPathItem.set$ref(filteredPathItem.get$ref());
-                    clonedPathItem.setDescription(filteredPathItem.getDescription());
-                    clonedPathItem.setSummary(filteredPathItem.getSummary());
-                    clonedPathItem.setExtensions(filteredPathItem.getExtensions());
-                    clonedPathItem.setParameters(filteredPathItem.getParameters());
-                    clonedPathItem.setServers(filteredPathItem.getServers());
-
-                    Map<PathItem.HttpMethod, Operation> ops = filteredPathItem.readOperationsMap();
-
-                    for (Map.Entry<PathItem.HttpMethod, Operation> entry : ops.entrySet()) {
-                        PathItem.HttpMethod key = entry.getKey();
-                        Operation op = entry.getValue();
-                        List<String> opTagsBeforeFilter = null;
-                        if (op.getTags() != null) {
-                            opTagsBeforeFilter = new ArrayList<>(op.getTags());
-                        } else {
-                            opTagsBeforeFilter = new ArrayList<>();
-                        }
-                        op = filterOperation(filter, op, resourcePath, key.toString(), params, cookies, headers);
-                        clonedPathItem.operation(key, op);
-                        if (op == null) {
-                            filteredTags.addAll(opTagsBeforeFilter);
-                        } else {
-                            if (op.getTags() != null) {
-                                opTagsBeforeFilter.removeAll(op.getTags());
-                                allowedTags.addAll(op.getTags());
-                            }
-                            filteredTags.addAll(opTagsBeforeFilter);
-                        }
-
-                    }
+                if (clonedPathItem != null) {
                     if (!clonedPathItem.readOperations().isEmpty()) {
                         clonedPaths.addPathItem(resourcePath, clonedPathItem);
                     }
@@ -108,13 +78,24 @@ public class SpecFilter {
 
         final List<Tag> tags = clone.getTags();
         if (tags != null && !filteredTags.isEmpty()) {
-            for (Iterator<Tag> it = tags.iterator(); it.hasNext(); ) {
-                if (filteredTags.contains(it.next().getName())) {
-                    it.remove();
-                }
-            }
+            tags.removeIf(tag -> filteredTags.contains(tag.getName()));
             if (clone.getTags().isEmpty()) {
                 clone.setTags(null);
+            }
+        }
+
+        if (filteredOpenAPI.getWebhooks() != null) {
+            for (String resourcePath : filteredOpenAPI.getWebhooks().keySet()) {
+                PathItem pathItem = filteredOpenAPI.getPaths().get(resourcePath);
+
+                PathItem filteredPathItem = filterPathItem(filter, pathItem, resourcePath, params, cookies, headers);
+                PathItem clonedPathItem = cloneFilteredPathItem(filter,filteredPathItem, resourcePath, params, cookies, headers, allowedTags, filteredTags);
+
+                if (clonedPathItem != null) {
+                    if (!clonedPathItem.readOperations().isEmpty()) {
+                        clone.addWebhooks(resourcePath, clonedPathItem);
+                    }
+                }
             }
         }
 
@@ -130,8 +111,7 @@ public class SpecFilter {
             clone.getComponents().setParameters(filteredOpenAPI.getComponents().getParameters());
             clone.getComponents().setRequestBodies(filteredOpenAPI.getComponents().getRequestBodies());
             clone.getComponents().setResponses(filteredOpenAPI.getComponents().getResponses());
-
-
+            clone.getComponents().setPathItems(filteredOpenAPI.getComponents().getPathItems());
         }
 
         if (filter.isRemovingUnreferencedDefinitions()) {
@@ -278,7 +258,12 @@ public class SpecFilter {
 
                 try {
                     // TODO solve this, and generally handle clone and passing references
-                    Schema clonedModel = Json.mapper().readValue(Json.pretty(definition), Schema.class);
+                    Schema clonedModel;
+                    if (filter.isOpenAPI31Filter())  {
+                        clonedModel = Json31.mapper().readValue(Json31.pretty(definition), Schema.class);
+                    } else {
+                        clonedModel = Json.mapper().readValue(Json.pretty(definition), Schema.class);
+                    }
                     if (clonedModel.getProperties() != null) {
                         clonedModel.getProperties().clear();
                     }
@@ -440,5 +425,43 @@ public class SpecFilter {
         if (model != null) {
             addSchemaRef(model, nestedReferencedDefinitions);
         }
+    }
+
+    private PathItem cloneFilteredPathItem(OpenAPISpecFilter filter, PathItem filteredPathItem, String resourcePath, Map<String, List<String>> params, Map<String, String> cookies, Map<String, List<String>> headers, Set<String> allowedTags, Set<String> filteredTags) {
+        if (filteredPathItem == null) {
+            return null;
+        }
+        PathItem clonedPathItem = new PathItem();
+        clonedPathItem.set$ref(filteredPathItem.get$ref());
+        clonedPathItem.setDescription(filteredPathItem.getDescription());
+        clonedPathItem.setSummary(filteredPathItem.getSummary());
+        clonedPathItem.setExtensions(filteredPathItem.getExtensions());
+        clonedPathItem.setParameters(filteredPathItem.getParameters());
+        clonedPathItem.setServers(filteredPathItem.getServers());
+
+        Map<PathItem.HttpMethod, Operation> ops = filteredPathItem.readOperationsMap();
+
+        for (Map.Entry<PathItem.HttpMethod, Operation> entry : ops.entrySet()) {
+            PathItem.HttpMethod key = entry.getKey();
+            Operation op = entry.getValue();
+            final List<String> opTagsBeforeFilter;
+            if (op.getTags() != null) {
+                opTagsBeforeFilter = new ArrayList<>(op.getTags());
+            } else {
+                opTagsBeforeFilter = new ArrayList<>();
+            }
+            op = filterOperation(filter, op, resourcePath, key.toString(), params, cookies, headers);
+            clonedPathItem.operation(key, op);
+            if (op == null) {
+                filteredTags.addAll(opTagsBeforeFilter);
+            } else {
+                if (op.getTags() != null) {
+                    opTagsBeforeFilter.removeAll(op.getTags());
+                    allowedTags.addAll(op.getTags());
+                }
+                filteredTags.addAll(opTagsBeforeFilter);
+            }
+        }
+        return clonedPathItem;
     }
 }

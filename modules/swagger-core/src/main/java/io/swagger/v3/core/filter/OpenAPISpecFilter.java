@@ -74,4 +74,8 @@ public interface OpenAPISpecFilter {
             Map<String, List<String>> headers);
 
     boolean isRemovingUnreferencedDefinitions();
+
+    default boolean isOpenAPI31Filter() {
+        return false;
+    }
 }

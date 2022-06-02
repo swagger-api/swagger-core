@@ -42,6 +42,8 @@ public class SwaggerLoader {
 
     private Boolean alwaysResolveAppPath = false;
 
+    private Boolean openAPI31 = false;
+
     /**
      * @since 2.0.6
      */
@@ -193,6 +195,17 @@ public class SwaggerLoader {
         this.alwaysResolveAppPath = alwaysResolveAppPath;
     }
 
+    public Boolean getOpenAPI31() {
+        return openAPI31;
+    }
+
+    /**
+     *  @since 2.2.0
+     */
+    public void setOpenAPI31(Boolean openAPI31) {
+        this.openAPI31 = openAPI31;
+    }
+
     public Map<String, String> resolve() throws Exception{
 
         Set<String> ignoredRoutesSet = null;
@@ -239,7 +252,8 @@ public class SwaggerLoader {
                 .objectMapperProcessorClass(objectMapperProcessorClass)
                 .modelConverterClasses(modelConverterSet)
                 .sortOutput(sortOutput)
-                .alwaysResolveAppPath(alwaysResolveAppPath);
+                .alwaysResolveAppPath(alwaysResolveAppPath)
+                .openAPI31(openAPI31);
         try {
             GenericOpenApiContextBuilder builder = new JaxrsOpenApiContextBuilder()
                     .openApiConfiguration(config);
