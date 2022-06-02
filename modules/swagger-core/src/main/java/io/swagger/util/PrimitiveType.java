@@ -4,10 +4,8 @@ import com.fasterxml.jackson.databind.type.TypeFactory;
 import io.swagger.models.properties.*;
 
 import java.lang.reflect.Type;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * The <code>PrimitiveType</code> enumeration defines a mapping of limited set
@@ -175,6 +173,12 @@ public enum PrimitiveType {
      * Joda lib.
      */
     private static final Map<String, PrimitiveType> EXTERNAL_CLASSES;
+
+    /**
+     * Adds support for custom mapping of classes to primitive types
+     */
+    private static Map<String, PrimitiveType> customClasses = new ConcurrentHashMap<String, PrimitiveType>();
+
     /**
      * Alternative names for primitive types that have to be supported for
      * backward compatibility.
@@ -236,12 +240,28 @@ public enum PrimitiveType {
         this.commonName = commonName;
     }
 
+    /**
+     * Adds support for custom mapping of classes to primitive types
+     *
+     * @return Map of custom classes to primitive type
+     * @since 1.6.6
+     */
+    public static Map<String, PrimitiveType> customClasses() {
+        return customClasses;
+    }
+
     public static PrimitiveType fromType(Type type) {
         final Class<?> raw = TypeFactory.defaultInstance().constructType(type).getRawClass();
         final PrimitiveType key = KEY_CLASSES.get(raw);
         if (key != null) {
             return key;
         }
+
+        final PrimitiveType custom = customClasses.get(raw.getName());
+        if (custom != null) {
+            return custom;
+        }
+
         final PrimitiveType external = EXTERNAL_CLASSES.get(raw.getName());
         if (external != null) {
             return external;
