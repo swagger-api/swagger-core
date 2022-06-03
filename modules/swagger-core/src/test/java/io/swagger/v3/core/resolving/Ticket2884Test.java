@@ -2,16 +2,20 @@ package io.swagger.v3.core.resolving;
 
 import io.swagger.v3.core.converter.AnnotatedType;
 import io.swagger.v3.core.converter.ModelConverterContextImpl;
+import io.swagger.v3.core.converter.ModelConverters;
+import io.swagger.v3.core.converter.ResolvedSchema;
 import io.swagger.v3.core.jackson.ModelResolver;
 import io.swagger.v3.core.matchers.SerializationMatchers;
 import io.swagger.v3.core.resolving.resources.Ticket2884Model;
 import io.swagger.v3.core.resolving.resources.Ticket2884ModelClass;
 import io.swagger.v3.oas.models.media.Schema;
+import org.junit.Assert;
 import org.testng.annotations.Test;
 
 public class Ticket2884Test extends SwaggerTestBase {
+
     @Test
-    public void test2884() throws Exception {
+    public void test2884() {
         final ModelResolver modelResolver = new ModelResolver(mapper());
 
         ModelConverterContextImpl context = new ModelConverterContextImpl(modelResolver);
@@ -45,4 +49,10 @@ public class Ticket2884Test extends SwaggerTestBase {
                 "            type: string\n");
     }
 
+    @Test
+    public void test2884_null() {
+        ResolvedSchema schema = ModelConverters.getInstance().readAllAsResolvedSchema(new AnnotatedType(Ticket2884ModelClass.class).resolveAsRef(true));
+        Object o = schema.schema.getProperties().get(Ticket2884ModelClass.class.getSimpleName());
+        Assert.assertNotNull(o);
+    }
 }
