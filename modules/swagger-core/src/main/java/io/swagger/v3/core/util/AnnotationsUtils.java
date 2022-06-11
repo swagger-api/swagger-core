@@ -1256,12 +1256,14 @@ public abstract class AnnotationsUtils {
                 }
                 mediaType.getSchema().setDependentSchemas(dependentSchemaMap);
             }
-            getSchemaFromAnnotation(annotationContent.contentSchema(), components, jsonViewAnnotation).ifPresent(mediaType.getSchema()::setContentSchema);
-            getSchemaFromAnnotation(annotationContent.propertyNames(), components, jsonViewAnnotation).ifPresent(mediaType.getSchema()::setPropertyNames);
-            getSchemaFromAnnotation(annotationContent._if(), components, jsonViewAnnotation).ifPresent(mediaType.getSchema()::setIf);
-            getSchemaFromAnnotation(annotationContent._then(), components, jsonViewAnnotation).ifPresent(mediaType.getSchema()::setThen);
-            getSchemaFromAnnotation(annotationContent._else(), components, jsonViewAnnotation).ifPresent(mediaType.getSchema()::setElse);
-            getSchemaFromAnnotation(annotationContent.not(), components, jsonViewAnnotation).ifPresent(mediaType.getSchema()::setNot);
+            if (mediaType.getSchema() != null) {
+                getSchemaFromAnnotation(annotationContent.contentSchema(), components, jsonViewAnnotation).ifPresent(mediaType.getSchema()::setContentSchema);
+                getSchemaFromAnnotation(annotationContent.propertyNames(), components, jsonViewAnnotation).ifPresent(mediaType.getSchema()::setPropertyNames);
+                getSchemaFromAnnotation(annotationContent._if(), components, jsonViewAnnotation).ifPresent(mediaType.getSchema()::setIf);
+                getSchemaFromAnnotation(annotationContent._then(), components, jsonViewAnnotation).ifPresent(mediaType.getSchema()::setThen);
+                getSchemaFromAnnotation(annotationContent._else(), components, jsonViewAnnotation).ifPresent(mediaType.getSchema()::setElse);
+                getSchemaFromAnnotation(annotationContent.not(), components, jsonViewAnnotation).ifPresent(mediaType.getSchema()::setNot);
+            }
             if (annotationContent.oneOf().length > 0) {
                 for (io.swagger.v3.oas.annotations.media.Schema oneOfSchema : annotationContent.oneOf()) {
                     getSchemaFromAnnotation(oneOfSchema, components, jsonViewAnnotation).ifPresent(mediaType.getSchema()::addOneOfItem);
