@@ -1,8 +1,8 @@
 package io.swagger.v3.oas.models.media;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import io.swagger.v3.oas.annotations.OpenAPI30;
-import io.swagger.v3.oas.annotations.OpenAPI31;
+import io.swagger.v3.oas.models.annotations.OpenAPI30;
+import io.swagger.v3.oas.models.annotations.OpenAPI31;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.ExternalDocumentation;
 import io.swagger.v3.oas.models.SpecVersion;

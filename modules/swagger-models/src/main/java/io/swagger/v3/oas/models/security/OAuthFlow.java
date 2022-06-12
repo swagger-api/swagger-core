@@ -1,6 +1,6 @@
 package io.swagger.v3.oas.models.security;
 
-import io.swagger.v3.oas.annotations.OpenAPI31;
+import io.swagger.v3.oas.models.annotations.OpenAPI31;
 
 import java.util.Objects;
 
