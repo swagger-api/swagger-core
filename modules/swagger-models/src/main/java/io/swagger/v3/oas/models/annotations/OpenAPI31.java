@@ -1,4 +1,4 @@
-package io.swagger.v3.oas.annotations;
+package io.swagger.v3.oas.models.annotations;
 
 import java.lang.annotation.Inherited;
 
