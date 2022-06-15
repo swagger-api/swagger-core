@@ -867,7 +867,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             StringUtils.isNotBlank(model.getName()))
         {
             if (context.getDefinedModels().containsKey(model.getName())) {
-                model = new Schema().name(model.getName()).$ref(constructRef(model.getName()));
+                model = new Schema().$ref(constructRef(model.getName()));
             }
         } else if (model != null && model.get$ref() != null) {
             model = new Schema().$ref(StringUtils.isNotEmpty(model.get$ref()) ? model.get$ref() : model.getName());
@@ -1967,6 +1967,9 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 String name = model.getName();
                 if (JsonTypeInfo.Id.CLASS.equals(id)) {
                     name = type.getRawClass().getName();
+                }
+                if(JsonTypeInfo.Id.NAME.equals(id) && name == null) {
+                    name = type.getRawClass().getSimpleName();
                 }
                 Schema wrapperSchema = new ObjectSchema();
                 wrapperSchema.name(model.getName());

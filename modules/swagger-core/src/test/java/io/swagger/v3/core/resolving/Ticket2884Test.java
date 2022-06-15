@@ -52,7 +52,11 @@ public class Ticket2884Test extends SwaggerTestBase {
     @Test
     public void test2884_null() {
         ResolvedSchema schema = ModelConverters.getInstance().readAllAsResolvedSchema(new AnnotatedType(Ticket2884ModelClass.class).resolveAsRef(true));
-        Object o = schema.schema.getProperties().get(Ticket2884ModelClass.class.getSimpleName());
+        Schema o = (Schema)schema.schema.getProperties().get(Ticket2884ModelClass.class.getSimpleName());
         Assert.assertNotNull(o);
+        Assert.assertTrue(o.get$ref().contains(Ticket2884ModelClass.class.getSimpleName()));
+        SerializationMatchers.assertEqualsToYaml(schema.schema.getProperties(), "Ticket2884ModelClass:\n" +
+                "  $ref: '#/components/schemas/Ticket2884ModelClass'");
+
     }
 }
