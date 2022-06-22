@@ -29,6 +29,10 @@ public class Schema31Serializer extends JsonSerializer<Schema> implements Resolv
             Schema value, JsonGenerator jgen, SerializerProvider provider)
             throws IOException {
 
+        if (value.getBooleanSchemaValue() != null) {
+            jgen.writeBoolean(value.getBooleanSchemaValue());
+            return;
+        }
         if (value.getExampleSetFlag() && value.getExample() == null) {
             jgen.writeStartObject();
             defaultSerializer.unwrappingSerializer(null).serialize(value, jgen, provider);

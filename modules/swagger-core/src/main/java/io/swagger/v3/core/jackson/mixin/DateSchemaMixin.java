@@ -15,4 +15,7 @@ public abstract class DateSchemaMixin {
 
     @JsonIgnore
     public abstract Map<String, Object> getJsonSchema();
+
+    @JsonIgnore
+    public abstract Boolean getBooleanSchemaValue();
 }

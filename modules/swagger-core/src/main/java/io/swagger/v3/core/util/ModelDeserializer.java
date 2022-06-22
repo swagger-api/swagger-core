@@ -125,6 +125,9 @@ public class ModelDeserializer extends JsonDeserializer<Schema> {
     }
 
     private Schema deserializeJsonSchema(JsonNode node) {
+        if (node.isBoolean()) {
+            return new Schema().booleanSchemaValue(node.booleanValue());
+        }
         JsonNode additionalProperties = node.get("additionalProperties");
         JsonNode type = node.get("type");
         Schema schema = null;
