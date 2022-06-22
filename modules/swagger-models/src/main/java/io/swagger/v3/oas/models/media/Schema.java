@@ -246,6 +246,14 @@ public class Schema<T> {
     private List<T> examples;
 
     /**
+     * @since 2.2.2 (OpenAPI 3.1.0)
+     *
+     * when set, this represents a boolean schema value
+     */
+    @OpenAPI31
+    private Boolean booleanSchemaValue;
+
+    /**
      *
      * @since 2.2.0 (OpenAPI 3.1.0)
      */
@@ -2122,6 +2130,34 @@ public class Schema<T> {
     @OpenAPI31
     public Schema _const(Object _const) {
         this._const = cast(_const);
+        return this;
+    }
+
+    /**
+     *
+     * @since 2.2.2 (OpenAPI 3.1.0)
+     */
+    @OpenAPI31
+    public Boolean getBooleanSchemaValue() {
+        return booleanSchemaValue;
+    }
+
+    /**
+     *
+     * @since 2.2.2 (OpenAPI 3.1.0)
+     */
+    @OpenAPI31
+    public void setBooleanSchemaValue(Boolean booleanSchemaValue) {
+        this.booleanSchemaValue = booleanSchemaValue;
+    }
+
+    /**
+     *
+     * @since 2.2.2 (OpenAPI 3.1.0)
+     */
+    @OpenAPI31
+    public Schema booleanSchemaValue(Boolean booleanSchemaValue) {
+        this.booleanSchemaValue = booleanSchemaValue;
         return this;
     }
 }
