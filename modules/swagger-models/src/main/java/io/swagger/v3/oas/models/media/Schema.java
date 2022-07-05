@@ -177,7 +177,7 @@ public class Schema<T> {
      * @since 2.2.0 (OpenAPI 3.1.0)
      */
     @OpenAPI31
-    private Object unevaluatedProperties;
+    private Schema unevaluatedProperties;
 
     /**
      * @since 2.2.0 (OpenAPI 3.1.0)
@@ -586,6 +586,7 @@ public class Schema<T> {
 
     protected Schema(String type, String format) {
         this.type = type;
+        this.addType(type);
         this.format = format;
     }
 
@@ -595,6 +596,7 @@ public class Schema<T> {
 
     protected Schema(String type, String format, SpecVersion specVersion) {
         this.type = type;
+        this.addType(type);
         this.format = format;
         this.specVersion = specVersion;
     }
@@ -1560,7 +1562,7 @@ public class Schema<T> {
      * @since 2.2.0 (OpenAPI 3.1.0)
      */
     @OpenAPI31
-    public Object getUnevaluatedProperties() {
+    public Schema getUnevaluatedProperties() {
         return unevaluatedProperties;
     }
 
@@ -1569,7 +1571,7 @@ public class Schema<T> {
      * @since 2.2.0 (OpenAPI 3.1.0)
      */
     @OpenAPI31
-    public void setUnevaluatedProperties(Object unevaluatedProperties) {
+    public void setUnevaluatedProperties(Schema unevaluatedProperties) {
         this.unevaluatedProperties = unevaluatedProperties;
     }
 
@@ -1578,7 +1580,7 @@ public class Schema<T> {
      * @since 2.2.0 (OpenAPI 3.1.0)
      */
     @OpenAPI31
-    public Schema unevaluatedProperties(Object unevaluatedProperties) {
+    public Schema unevaluatedProperties(Schema unevaluatedProperties) {
         this.unevaluatedProperties = unevaluatedProperties;
         return this;
     }
