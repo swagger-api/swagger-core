@@ -545,7 +545,8 @@ public class OpenAPI3_1SerializationTest {
                 "    body:\n" +
                 "      content:\n" +
                 "        application/json:\n" +
-                "          schema: {}\n" +
+                "          schema: \n" +
+                "            type: object\n" +
                 "  headers:\n" +
                 "    test-head:\n" +
                 "      description: test header description\n" +
@@ -605,7 +606,9 @@ public class OpenAPI3_1SerializationTest {
                 "      \"body\" : {\n" +
                 "        \"content\" : {\n" +
                 "          \"application/json\" : {\n" +
-                "            \"schema\" : { }\n" +
+                "            \"schema\" : {\n" +
+                "              \"type\" : \"object\"\n" +
+                "            }\n" +
                 "          }\n" +
                 "        }\n" +
                 "      }\n" +
@@ -1110,7 +1113,8 @@ public class OpenAPI3_1SerializationTest {
                 "    body:\n" +
                 "      content:\n" +
                 "        application/json:\n" +
-                "          schema: {}");
+                "          schema: \n" +
+                "            type: object");
         SerializationMatchers.assertEqualsToJson31(openAPI, "{\n" +
                 "  \"openapi\" : \"3.1.0\",\n" +
                 "  \"paths\" : {\n" +
@@ -1130,7 +1134,9 @@ public class OpenAPI3_1SerializationTest {
                 "      \"body\" : {\n" +
                 "        \"content\" : {\n" +
                 "          \"application/json\" : {\n" +
-                "            \"schema\" : { }\n" +
+                "            \"schema\" : {\n" +
+                "              \"type\" : \"object\"\n" +
+                "            }\n" +
                 "          }\n" +
                 "        }\n" +
                 "      }\n" +
