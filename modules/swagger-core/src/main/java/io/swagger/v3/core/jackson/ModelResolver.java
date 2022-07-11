@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.annotation.JsonView;
@@ -1967,6 +1968,10 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 String name = model.getName();
                 if (JsonTypeInfo.Id.CLASS.equals(id)) {
                     name = type.getRawClass().getName();
+                }
+                JsonTypeName typeName = type.getRawClass().getDeclaredAnnotation((JsonTypeName.class));
+                if (JsonTypeInfo.Id.NAME.equals(id) && typeName != null) {
+                    name = typeName.value();
                 }
                 if(JsonTypeInfo.Id.NAME.equals(id) && name == null) {
                     name = type.getRawClass().getSimpleName();
