@@ -23,7 +23,6 @@ import com.fasterxml.jackson.databind.introspect.Annotated;
 import com.fasterxml.jackson.databind.introspect.AnnotatedClass;
 import com.fasterxml.jackson.databind.introspect.AnnotatedMember;
 import com.fasterxml.jackson.databind.introspect.AnnotatedMethod;
-import com.fasterxml.jackson.databind.introspect.AnnotationMap;
 import com.fasterxml.jackson.databind.introspect.BeanPropertyDefinition;
 import com.fasterxml.jackson.databind.introspect.POJOPropertyBuilder;
 import com.fasterxml.jackson.databind.jsontype.NamedType;
@@ -577,11 +576,8 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             if (member != null && !ignore(member, xmlAccessorTypeAnnotation, propName, propertiesToIgnore, propDef)) {
 
                 List<Annotation> annotationList = new ArrayList<>();
-                AnnotationMap annotationMap = member.getAllAnnotations();
-                if (annotationMap != null) {
-                    for (Annotation a : annotationMap.annotations()) {
-                        annotationList.add(a);
-                    }
+                for (Annotation a : member.annotations()) {
+                    annotationList.add(a);
                 }
 
                 annotations = annotationList.toArray(new Annotation[annotationList.size()]);
@@ -1120,11 +1116,8 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                             return PrimitiveType.createProperty(propType);
                         } else {
                             List<Annotation> list = new ArrayList<>();
-                            AnnotationMap annotationMap = propMember.getAllAnnotations();
-                            if (annotationMap != null) {
-                                for (Annotation a : annotationMap.annotations()) {
-                                    list.add(a);
-                                }
+                            for (Annotation a : propMember.annotations()) {
+                                list.add(a);
                             }
                             Annotation[] annotations = list.toArray(new Annotation[list.size()]);
                             AnnotatedType aType = new AnnotatedType()

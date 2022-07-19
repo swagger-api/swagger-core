@@ -655,12 +655,8 @@
         <servlet-api-version>4.0.3</servlet-api-version>
         <jersey2-version>2.26</jersey2-version>
         <junit-version>4.13.1</junit-version>
-        <jackson-version>2.13.2</jackson-version>
-        <!--
-          jackson-databind 2.13.2 is still affected by CVE-2020-36518.
-          This version pin for jackson-databind can be removed when bumping jackson to 2.14
-          -->
-        <jackson-databind-version>2.13.2.2</jackson-databind-version>
+        <jackson-version>2.13.3</jackson-version>
+        <jackson-databind-version>2.13.3</jackson-databind-version>
         <logback-version>1.2.9</logback-version>
         <classgraph-version>4.8.138</classgraph-version>
         <guava-version>31.0.1-jre</guava-version>
