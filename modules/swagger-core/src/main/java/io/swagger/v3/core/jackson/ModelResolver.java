@@ -336,7 +336,8 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             if (xml != null) {
                 model.xml(xml);
             }
-            applyBeanValidatorAnnotations(model, annotatedType.getCtxAnnotations(), null);
+            final boolean ignoreNotNullAnnotations = resolvedSchemaAnnotation != null && resolvedSchemaAnnotation.forceUseRequired();
+            applyBeanValidatorAnnotations(model, annotatedType.getCtxAnnotations(), null, ignoreNotNullAnnotations);
             resolveSchemaMembers(model, annotatedType);
             if (resolvedArrayAnnotation != null) {
                 ArraySchema schema = new ArraySchema();
@@ -697,7 +698,8 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                     }
                     property.setName(propName);
                     JAXBAnnotationsHelper.apply(propBeanDesc.getClassInfo(), annotations, property);
-                    applyBeanValidatorAnnotations(property, annotations, model);
+                    final boolean ignoreNotNullAnnotations = resolvedSchemaAnnotation != null && resolvedSchemaAnnotation.forceUseRequired();
+                    applyBeanValidatorAnnotations(property, annotations, model, ignoreNotNullAnnotations);
 
                     props.add(property);
                 }
@@ -1270,14 +1272,14 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         }
     }
 
-    protected void applyBeanValidatorAnnotations(Schema property, Annotation[] annotations, Schema parent) {
+    protected void applyBeanValidatorAnnotations(Schema property, Annotation[] annotations, Schema parent, boolean ignoreNotNullAnnotations) {
         Map<String, Annotation> annos = new HashMap<>();
         if (annotations != null) {
             for (Annotation anno : annotations) {
                 annos.put(anno.annotationType().getName(), anno);
             }
         }
-        if (parent != null && annotations != null) {
+        if (parent != null && annotations != null && !ignoreNotNullAnnotations) {
             boolean requiredItem = Arrays.stream(annotations).anyMatch(annotation ->
                     NOT_NULL_ANNOTATIONS.contains(annotation.annotationType().getSimpleName())
             );

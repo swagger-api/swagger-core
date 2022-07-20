@@ -1616,6 +1616,12 @@ public abstract class AnnotationsUtils {
                 return patch.required();
             }
 
+            public boolean forceUseRequired() {
+                if (master.forceUseRequired() || !patch.forceUseRequired()) {
+                    return master.forceUseRequired();
+                }
+                return patch.forceUseRequired();
+            }
             @Override
             public String description() {
                 if (StringUtils.isNotBlank(master.description()) || StringUtils.isBlank(patch.description())) {

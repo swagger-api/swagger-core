@@ -169,6 +169,14 @@ public @interface Schema {
     boolean required() default false;
 
     /**
+     * Fore usage of required() to decide if the item is required or not.
+     * Other heuristics like @NotNull annotations are disabled.
+     *
+     * @return whether or not required() value should be applied forcefully.
+     **/
+    boolean forceUseRequired() default false;
+
+    /**
      * A description of the schema.
      *
      * @return the schema's description
