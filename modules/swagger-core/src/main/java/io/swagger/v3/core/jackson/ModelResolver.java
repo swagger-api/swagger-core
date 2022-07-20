@@ -336,7 +336,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             if (xml != null) {
                 model.xml(xml);
             }
-            applyBeanValidatorAnnotations(model, annotatedType.getCtxAnnotations(), null);
+            applyBeanValidatorAnnotations(model, annotatedType.getCtxAnnotations(), null, false);
             resolveSchemaMembers(model, annotatedType);
             if (resolvedArrayAnnotation != null) {
                 ArraySchema schema = new ArraySchema();
@@ -625,6 +625,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                                         (io.swagger.v3.oas.annotations.media.Schema) propSchemaOrArray;
 
                 io.swagger.v3.oas.annotations.media.Schema.AccessMode accessMode = resolveAccessMode(propDef, type, propResolvedSchemaAnnotation);
+                io.swagger.v3.oas.annotations.media.Schema.RequiredMode requiredMode = resolveRequiredMode(propResolvedSchemaAnnotation);
 
 
                 AnnotatedType aType = new AnnotatedType()
@@ -697,7 +698,11 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                     }
                     property.setName(propName);
                     JAXBAnnotationsHelper.apply(propBeanDesc.getClassInfo(), annotations, property);
-                    applyBeanValidatorAnnotations(property, annotations, model);
+                    if (property != null && io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED.equals(requiredMode)) {
+                        addRequiredItem(model, property.getName());
+                    }
+                    final boolean applyNotNullAnnotations = io.swagger.v3.oas.annotations.media.Schema.RequiredMode.AUTO.equals(requiredMode);
+                    applyBeanValidatorAnnotations(property, annotations, model, applyNotNullAnnotations);
 
                     props.add(property);
                 }
@@ -1270,14 +1275,14 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         }
     }
 
-    protected void applyBeanValidatorAnnotations(Schema property, Annotation[] annotations, Schema parent) {
+    protected void applyBeanValidatorAnnotations(Schema property, Annotation[] annotations, Schema parent, boolean applyNotNullAnnotations) {
         Map<String, Annotation> annos = new HashMap<>();
         if (annotations != null) {
             for (Annotation anno : annotations) {
                 annos.put(anno.annotationType().getName(), anno);
             }
         }
-        if (parent != null && annotations != null) {
+        if (parent != null && annotations != null && applyNotNullAnnotations) {
             boolean requiredItem = Arrays.stream(annotations).anyMatch(annotation ->
                     NOT_NULL_ANNOTATIONS.contains(annotation.annotationType().getSimpleName())
             );
@@ -1687,6 +1692,15 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         }
 
         return null;
+    }
+
+    protected io.swagger.v3.oas.annotations.media.Schema.RequiredMode resolveRequiredMode(io.swagger.v3.oas.annotations.media.Schema schema) {
+        if (schema != null && !schema.requiredMode().equals(io.swagger.v3.oas.annotations.media.Schema.RequiredMode.AUTO)) {
+            return schema.requiredMode();
+        } else if (schema != null && schema.required()) {
+            return io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED;
+        }
+        return io.swagger.v3.oas.annotations.media.Schema.RequiredMode.AUTO;
     }
 
     protected io.swagger.v3.oas.annotations.media.Schema.AccessMode resolveAccessMode(BeanPropertyDefinition propDef, JavaType type, io.swagger.v3.oas.annotations.media.Schema schema) {

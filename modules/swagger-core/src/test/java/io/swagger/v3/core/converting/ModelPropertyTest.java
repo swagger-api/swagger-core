@@ -7,6 +7,7 @@ import io.swagger.v3.core.oas.models.ModelWithBooleanProperty;
 import io.swagger.v3.core.oas.models.ModelWithModelPropertyOverrides;
 import io.swagger.v3.core.oas.models.ModelWithPrimitiveArray;
 import io.swagger.v3.core.oas.models.ReadOnlyFields;
+import io.swagger.v3.core.oas.models.RequiredFields;
 import io.swagger.v3.oas.models.media.ArraySchema;
 import io.swagger.v3.oas.models.media.BooleanSchema;
 import io.swagger.v3.oas.models.media.IntegerSchema;
@@ -19,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
@@ -95,6 +97,20 @@ public class ModelPropertyTest {
         final Map<String, Schema> models = ModelConverters.getInstance().readAll(ReadOnlyFields.class);
         Schema model = models.get("ReadOnlyFields");
         assertTrue(((Schema) model.getProperties().get("id")).getReadOnly());
+    }
+
+    @Test
+    public void testRequiredProperty() {
+        final Map<String, Schema> models = ModelConverters.getInstance().readAll(RequiredFields.class);
+        Schema model = models.get("RequiredFields");
+        assertTrue(model.getRequired().contains("required"));
+        assertFalse(model.getRequired().contains("notRequired"));
+        assertTrue(model.getRequired().contains("notRequiredWithAnnotation"));
+        assertFalse(model.getRequired().contains("modeAuto"));
+        assertTrue(model.getRequired().contains("modeAutoWithAnnotation"));
+        assertTrue(model.getRequired().contains("modeRequired"));
+        assertFalse(model.getRequired().contains("modeNotRequired"));
+        assertFalse(model.getRequired().contains("modeNotRequiredWithAnnotation"));
     }
 
     @Test
