@@ -11,6 +11,8 @@ import io.swagger.v3.oas.models.security.SecurityScheme;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
 
 public class SecuritySchemeDeserializer extends JsonDeserializer<SecurityScheme> {
 
@@ -61,6 +63,15 @@ public class SecuritySchemeDeserializer extends JsonDeserializer<SecurityScheme>
             } else if ("mutualTLS".equals(type)) {
                 result
                         .type(SecurityScheme.Type.MUTUALTLS);
+            }
+            final Iterator<String> fieldNames = node.fieldNames();
+            while(fieldNames.hasNext()) {
+                final String fieldName = fieldNames.next();
+                if(fieldName.startsWith("x-")) {
+                    final JsonNode fieldValue = node.get(fieldName);
+                    final Object value = Json.mapper().treeToValue(fieldValue, Object.class);
+                    result.addExtension(fieldName, value);
+                }
             }
         }
 

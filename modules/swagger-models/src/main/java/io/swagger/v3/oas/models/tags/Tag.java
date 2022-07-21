@@ -1,6 +1,6 @@
 package io.swagger.v3.oas.models.tags;
 
-import io.swagger.v3.oas.annotations.OpenAPI31;
+import io.swagger.v3.oas.models.annotations.OpenAPI31;
 import io.swagger.v3.oas.models.ExternalDocumentation;
 
 import java.util.Objects;

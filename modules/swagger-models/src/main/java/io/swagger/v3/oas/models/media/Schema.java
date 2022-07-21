@@ -1,8 +1,8 @@
 package io.swagger.v3.oas.models.media;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import io.swagger.v3.oas.annotations.OpenAPI30;
-import io.swagger.v3.oas.annotations.OpenAPI31;
+import io.swagger.v3.oas.models.annotations.OpenAPI30;
+import io.swagger.v3.oas.models.annotations.OpenAPI31;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.ExternalDocumentation;
 import io.swagger.v3.oas.models.SpecVersion;
@@ -177,7 +177,7 @@ public class Schema<T> {
      * @since 2.2.0 (OpenAPI 3.1.0)
      */
     @OpenAPI31
-    private Object unevaluatedProperties;
+    private Schema unevaluatedProperties;
 
     /**
      * @since 2.2.0 (OpenAPI 3.1.0)
@@ -244,6 +244,14 @@ public class Schema<T> {
      */
     @OpenAPI31
     private List<T> examples;
+
+    /**
+     * @since 2.2.2 (OpenAPI 3.1.0)
+     *
+     * when set, this represents a boolean schema value
+     */
+    @OpenAPI31
+    private Boolean booleanSchemaValue;
 
     /**
      *
@@ -578,6 +586,7 @@ public class Schema<T> {
 
     protected Schema(String type, String format) {
         this.type = type;
+        this.addType(type);
         this.format = format;
     }
 
@@ -587,6 +596,7 @@ public class Schema<T> {
 
     protected Schema(String type, String format, SpecVersion specVersion) {
         this.type = type;
+        this.addType(type);
         this.format = format;
         this.specVersion = specVersion;
     }
@@ -1237,7 +1247,7 @@ public class Schema<T> {
     }
 
     public void set$ref(String $ref) {
-        if ($ref != null && ($ref.indexOf('.') == -1 && $ref.indexOf('/') == -1)) {
+        if ($ref != null && !$ref.startsWith("#") && ($ref.indexOf('.') == -1 && $ref.indexOf('/') == -1)) {
             $ref = Components.COMPONENTS_SCHEMAS_REF + $ref;
         }
         this.$ref = $ref;
@@ -1246,6 +1256,11 @@ public class Schema<T> {
     public Schema $ref(String $ref) {
 
         set$ref($ref);
+        return this;
+    }
+
+    public Schema raw$ref(String $ref) {
+        this.$ref = $ref;
         return this;
     }
 
@@ -1547,7 +1562,7 @@ public class Schema<T> {
      * @since 2.2.0 (OpenAPI 3.1.0)
      */
     @OpenAPI31
-    public Object getUnevaluatedProperties() {
+    public Schema getUnevaluatedProperties() {
         return unevaluatedProperties;
     }
 
@@ -1556,7 +1571,7 @@ public class Schema<T> {
      * @since 2.2.0 (OpenAPI 3.1.0)
      */
     @OpenAPI31
-    public void setUnevaluatedProperties(Object unevaluatedProperties) {
+    public void setUnevaluatedProperties(Schema unevaluatedProperties) {
         this.unevaluatedProperties = unevaluatedProperties;
     }
 
@@ -1565,7 +1580,7 @@ public class Schema<T> {
      * @since 2.2.0 (OpenAPI 3.1.0)
      */
     @OpenAPI31
-    public Schema unevaluatedProperties(Object unevaluatedProperties) {
+    public Schema unevaluatedProperties(Schema unevaluatedProperties) {
         this.unevaluatedProperties = unevaluatedProperties;
         return this;
     }
@@ -1960,7 +1975,8 @@ public class Schema<T> {
                 Objects.equals(this.dependentSchemas, schema.dependentSchemas) &&
                 Objects.equals(this.$comment, schema.$comment) &&
                 Objects.equals(this.examples, schema.examples) &&
-                Objects.equals(this.prefixItems, schema.prefixItems)
+                Objects.equals(this.prefixItems, schema.prefixItems) &&
+                Objects.equals(this.items, schema.items)
 
                 ;
     }
@@ -1974,7 +1990,7 @@ public class Schema<T> {
                 discriminator, _enum, _default, patternProperties, $id, $anchor, $schema, types, allOf, anyOf, oneOf, _const,
                 contentEncoding, contentMediaType, contentSchema, propertyNames, unevaluatedProperties, maxContains,
                 minContains, additionalItems, unevaluatedItems, _if, _else, then, dependentRequired, dependentSchemas,
-                $comment, examples, prefixItems);
+                $comment, examples, prefixItems, items);
     }
 
     public java.util.Map<String, Object> getExtensions() {
@@ -2116,6 +2132,34 @@ public class Schema<T> {
     @OpenAPI31
     public Schema _const(Object _const) {
         this._const = cast(_const);
+        return this;
+    }
+
+    /**
+     *
+     * @since 2.2.2 (OpenAPI 3.1.0)
+     */
+    @OpenAPI31
+    public Boolean getBooleanSchemaValue() {
+        return booleanSchemaValue;
+    }
+
+    /**
+     *
+     * @since 2.2.2 (OpenAPI 3.1.0)
+     */
+    @OpenAPI31
+    public void setBooleanSchemaValue(Boolean booleanSchemaValue) {
+        this.booleanSchemaValue = booleanSchemaValue;
+    }
+
+    /**
+     *
+     * @since 2.2.2 (OpenAPI 3.1.0)
+     */
+    @OpenAPI31
+    public Schema booleanSchemaValue(Boolean booleanSchemaValue) {
+        this.booleanSchemaValue = booleanSchemaValue;
         return this;
     }
 }
