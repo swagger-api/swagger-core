@@ -33,14 +33,11 @@ public class IntegerSchema extends Schema<Number> {
     @Override
     protected Number cast(Object value) {
         if (value != null) {
-            try {
-                Number casted = NumberFormat.getInstance().parse(value.toString());
-                if (Integer.MIN_VALUE <= casted.longValue() && casted.longValue() <= Integer.MAX_VALUE) {
-                    return Integer.parseInt(value.toString());
-                } else {
-                    return Long.parseLong(value.toString());
-                }
-            } catch (Exception e) {
+            long casted = Long.parseLong(value.toString());
+            if (Integer.MIN_VALUE <= casted && casted <= Integer.MAX_VALUE) {
+                return (int)casted;
+            } else {
+                return casted;
             }
         }
         return null;
