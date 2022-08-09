@@ -1,10 +1,14 @@
 package io.swagger.v3.core.deserialization;
 
 import io.swagger.v3.core.matchers.SerializationMatchers;
+import io.swagger.v3.core.util.Json;
+import io.swagger.v3.core.util.Json31;
 import io.swagger.v3.core.util.ResourceUtils;
 import io.swagger.v3.core.util.Yaml;
 import io.swagger.v3.core.util.Yaml31;
+import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.media.Schema;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
@@ -13,6 +17,7 @@ import static org.junit.Assert.assertNull;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertTrue;
 
 public class OpenAPI3_1DeserializationTest {
 
@@ -221,5 +226,30 @@ public class OpenAPI3_1DeserializationTest {
         assertEquals(openAPI.getPaths().get("/pets").getPost().getResponses().get("default").getHeaders().get("head").get$ref(), "#/components/headers/head");
         assertEquals(openAPI.getPaths().get("/pets").getPost().getResponses().get("default").getHeaders().get("head").getDescription(), "ref header description");
 
+    }
+
+    @Test
+    public void testBooleanSchemaDeserialization() throws Exception{
+        OpenAPI openAPI = new OpenAPI()
+                .openapi("3.1.0")
+                .components(new Components().addSchemas("test", new Schema().booleanSchemaValue(true)));
+
+        String json = Json31.pretty(openAPI);
+        String yaml = Yaml31.pretty(openAPI);
+        OpenAPI oas = Json31.mapper().readValue(json, OpenAPI.class);
+        assertTrue(Boolean.TRUE.equals(oas.getComponents().getSchemas().get("test").getBooleanSchemaValue()));
+        Schema schema = Json31.mapper().readValue("true", Schema.class);
+        assertTrue(Boolean.TRUE.equals(schema.getBooleanSchemaValue()));
+        oas = Yaml31.mapper().readValue(yaml, OpenAPI.class);
+        assertTrue(Boolean.TRUE.equals(oas.getComponents().getSchemas().get("test").getBooleanSchemaValue()));
+        schema = Yaml31.mapper().readValue("true", Schema.class);
+        assertTrue(Boolean.TRUE.equals(schema.getBooleanSchemaValue()));
+
+        json = Json.pretty(openAPI);
+        yaml = Yaml.pretty(openAPI);
+        oas = Json.mapper().readValue(json, OpenAPI.class);
+        assertNull(oas.getComponents().getSchemas().get("test").getBooleanSchemaValue());
+        oas = Yaml.mapper().readValue(yaml, OpenAPI.class);
+        assertNull(oas.getComponents().getSchemas().get("test").getBooleanSchemaValue());
     }
 }
