@@ -37,7 +37,6 @@ public @interface ArraySchema {
     /**
      * The schemas of the items in the array
      *
-     * @since 2.2.1 / OpenAPI 3.1
      * @return items
      */
     @OpenAPI31
