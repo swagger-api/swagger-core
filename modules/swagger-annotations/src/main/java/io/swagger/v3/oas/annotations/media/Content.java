@@ -86,10 +86,10 @@ public @interface Content {
     Extension[] extensions() default {};
 
     /**
-     * Allows to specify the dependentSchemas value providing a Schema annotations map
+     * Subschemas to be applied for a given condition.
      *
      * @since 2.2.1 / OpenAPI 3.1
-     * @return the schema properties
+     * @return list of dependent schemas.
      */
     @OpenAPI31
     DependentSchema[] dependentSchemas() default {};
@@ -107,7 +107,7 @@ public @interface Content {
      * Provides property names related to this schema
      *
      * @since 2.2.1 / OpenAPI 3.1
-     * @return content schema
+     * @return proeprty names
      */
     @OpenAPI31
     Schema propertyNames() default @Schema();
@@ -116,7 +116,7 @@ public @interface Content {
      * Provides the if sub schema related to this schema
      *
      * @since 2.2.1 / OpenAPI 3.1
-     * @return content schema
+     * @return if schema
      */
     @OpenAPI31
     Schema _if() default @Schema();
@@ -125,7 +125,7 @@ public @interface Content {
      * Provides the then sub schema related to this schema
      *
      * @since 2.2.1 / OpenAPI 3.1
-     * @return content schema
+     * @return then schema
      */
     @OpenAPI31
     Schema _then() default @Schema();
@@ -134,36 +134,40 @@ public @interface Content {
      * Provides the else sub schema related to this schema
      *
      * @since 2.2.1 / OpenAPI 3.1
-     * @return content schema
+     * @return else schema
      */
     @OpenAPI31
     Schema _else() default @Schema();
 
     /**
-     * Provides a java class to be used to disallow matching properties.
+     * Set schemas to validate according a given condition.
      *
-     * @return a class with disallowed properties
+     * @since 2.2.1 / OpenAPI 3.1
+     * @return not schema to be validated
      **/
     Schema not() default @Schema();
 
     /**
-     * Provides an array of java class implementations which can be used to describe multiple acceptable schemas.
+     * Provides the oneOf sub schemas related to this schema.
      *
-     * @return the list of possible classes for a single match
+     * @since 2.2.1 / OpenAPI 3.1
+     * @return oneOf sub schemas
      **/
     Schema[] oneOf() default {};
 
     /**
-     * Provides an array of java class implementations which can be used to describe multiple acceptable schemas.
+     * Provides the anyOf sub schemas related to this schema.
      *
-     * @return the list of possible class matches
+     * @since 2.2.1 / OpenAPI 3.1
+     * @return anyOf sub schemas
      **/
     Schema[] anyOf() default {};
 
     /**
-     * Provides an array of java class implementations which can be used to describe multiple acceptable schemas.
+     * Provides the allOf sub schemas related to this schema..
      *
-     * @return the list of classes to match
+     * @since 2.2.1 / OpenAPI 3.1
+     * @return allOf sub schemas
      **/
     Schema[] allOf() default {};
 

@@ -9,7 +9,6 @@ import io.swagger.v3.core.converter.AnnotatedType;
 import io.swagger.v3.core.converter.ModelConverters;
 import io.swagger.v3.core.converter.ResolvedSchema;
 import io.swagger.v3.oas.annotations.StringToClassMapItem;
-import io.swagger.v3.oas.annotations.Webhook;
 import io.swagger.v3.oas.annotations.extensions.Extension;
 import io.swagger.v3.oas.annotations.extensions.ExtensionProperty;
 import io.swagger.v3.oas.annotations.links.LinkParameter;
@@ -20,7 +19,6 @@ import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.SchemaProperty;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.ExternalDocumentation;
-import io.swagger.v3.oas.models.PathItem;
 import io.swagger.v3.oas.models.examples.Example;
 import io.swagger.v3.oas.models.headers.Header;
 import io.swagger.v3.oas.models.info.Contact;
@@ -106,7 +104,27 @@ public abstract class AnnotationsUtils {
                 && !schema.hidden()
                 && !schema.enumAsRef()
                 && schema.dependentSchemas().length == 0
-                // @@ TODO ADD ALL UPDATED FIELDS
+                && schema.patternProperties().length == 0
+                && schema.unevaluatedProperties().equals(Void.class)
+                && schema.types().length == 0
+                && schema.exclusiveMinimumValue() == 0
+                && schema.exclusiveMaximumValue() == Integer.MAX_VALUE
+                && StringUtils.isBlank(schema.$id())
+                && StringUtils.isBlank(schema.$schema())
+                && StringUtils.isBlank(schema.$anchor())
+                && StringUtils.isBlank(schema.contentEncoding())
+                && StringUtils.isBlank(schema.contentMediaType())
+                && schema.contentSchema().equals(Void.class)
+                && schema.propertyNames().equals(Void.class)
+                && schema._if().equals(Void.class)
+                && schema._else().equals(Void.class)
+                && schema.then().equals(Void.class)
+                && StringUtils.isBlank(schema.$comment())
+                && schema.dependentRequiredMap().length == 0
+                && schema.patternProperties().length == 0
+                && schema.properties().length == 0
+
+
                 && schema.additionalProperties().equals(io.swagger.v3.oas.annotations.media.Schema.AdditionalPropertiesValue.USE_ADDITIONAL_PROPERTIES_ANNOTATION)
                 ) {
             return false;

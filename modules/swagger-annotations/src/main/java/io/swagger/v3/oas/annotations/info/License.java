@@ -11,7 +11,7 @@ import java.lang.annotation.Target;
  * The annotation may be used in {@link Info#license()} to define a license for the OpenAPI spec.
  *
  * @see <a target="_new" href="https://github.com/OAI/OpenAPI-Specification/blob/3.0.1/versions/3.0.1.md#licenseObject">License (OpenAPI 3.0 pecification)</a>
- * @see <a target="_new" href="https://github.com/OAI/OpenAPI-Specification/blob/3.0.1/versions/3.1.0.md#licenseObject">License (OpenAPI 3.1 specification)</a>
+ * @see <a target="_new" href="https://github.com/OAI/OpenAPI-Specification/blob/3.1.0/versions/3.1.0.md#licenseObject">License (OpenAPI 3.1 specification)</a>
  * @see io.swagger.v3.oas.annotations.OpenAPIDefinition
  * @see Info
  **/
@@ -28,7 +28,7 @@ public @interface License {
     /**
      * A URL to the license used for the API. MUST be in the format of a URL.
      *
-     * @return the URL of the license
+     * @return URL to the license
      **/
     String url() default "";
 

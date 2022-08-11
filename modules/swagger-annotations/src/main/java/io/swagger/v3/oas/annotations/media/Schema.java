@@ -382,10 +382,10 @@ public @interface Schema {
     String $id() default "";
 
     /**
-     * Provides the $schema
+     * Provides Json Schema dialect where the schema is valid.
      *
      * @since 2.2.1 / OpenAPI 3.1
-     * @return external reference related to this schema
+     * @return json schema dialect
      */
     @OpenAPI31
     String $schema() default "";
@@ -492,7 +492,7 @@ public @interface Schema {
      * Provides $comment related to this schema
      *
      * @since 2.2.1 / OpenAPI 3.1
-     * @return $comment relaed to schema
+     * @return $comment related to schema
      */
     @OpenAPI31
     String $comment() default "";
@@ -566,7 +566,7 @@ public @interface Schema {
     StringToClassMapItem[] patternProperties() default {};
 
     /**
-     * Provoes properties related to this schema
+     * Provides properties related to this schema
      *
      * @return schema properties
      */
@@ -585,7 +585,6 @@ public @interface Schema {
     /**
      * Provides an array of examples of the schema.  When associated with a specific media type, the example string shall be parsed by the consumer to be treated as an object or an array.
      *
-     * @since 2.2.1 / OpenAPI 3.1
      * @return an array of examples of this schema
      **/
     @OpenAPI31
