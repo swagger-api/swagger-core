@@ -16,6 +16,7 @@ import static java.lang.annotation.ElementType.TYPE;
 /**
  * Container for repeatable {@link DependentRequired} annotation
  *
+ * @since 2.2.1 / OpenAPI 3.1
  * @see DependentRequired
  */
 @Target({FIELD, METHOD, PARAMETER, TYPE, ANNOTATION_TYPE})
