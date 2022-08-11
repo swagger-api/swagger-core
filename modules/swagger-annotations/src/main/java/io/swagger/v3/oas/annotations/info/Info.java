@@ -70,10 +70,10 @@ public @interface Info {
     Extension[] extensions() default {};
 
     /**
-     * A summary of application.
+     * A short API summary.
      *
      * @since 2.2.1 / OpenAPI 3.1
-     * @return the application's summary
+     * @return API summary
      **/
     @OpenAPI31
     String summary() default "";
