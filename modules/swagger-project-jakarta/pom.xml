@@ -567,7 +567,7 @@
     <properties>
         <joda-version>1.9.2</joda-version>
         <joda-time-version>2.10.13</joda-time-version>
-        <snakeyaml-version>1.30</snakeyaml-version>
+        <snakeyaml-version>1.31</snakeyaml-version>
         <jakarta.ws-version>3.0.0</jakarta.ws-version>
         <jakarta.xml.bind-api-version>3.0.0</jakarta.xml.bind-api-version>
         <jakarta.activation-api-version>2.0.0</jakarta.activation-api-version>
