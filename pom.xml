@@ -526,6 +526,11 @@
                 <version>${jackson-version}</version>
             </dependency>
             <dependency>
+                <groupId>org.yaml</groupId>
+                <artifactId>snakeyaml</artifactId>
+                <version>${snakeyaml-version}</version>
+            </dependency>
+            <dependency>
                 <groupId>joda-time</groupId>
                 <artifactId>joda-time</artifactId>
                 <version>${joda-time-version}</version>
@@ -627,6 +632,7 @@
             This version pin for jackson-databind can be removed when bumping jackson to 2.14
         -->
         <jackson-databind-version>2.13.2.2</jackson-databind-version>
+        <snakeyaml-version>1.31</snakeyaml-version>
         <logback-version>1.2.9</logback-version>
         <reflections-version>0.9.11</reflections-version>
         <guava-version>31.0.1-android</guava-version>
