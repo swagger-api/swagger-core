@@ -254,6 +254,14 @@ public class Schema<T> {
     private Boolean booleanSchemaValue;
 
     /**
+     * @since 2.2.3
+     *
+     * when set, this represents the groups which the schema is created from if any
+     */
+    @JsonIgnore
+    private Class<?>[] groups;
+
+    /**
      *
      * @since 2.2.0 (OpenAPI 3.1.0)
      */
@@ -2160,6 +2168,30 @@ public class Schema<T> {
     @OpenAPI31
     public Schema booleanSchemaValue(Boolean booleanSchemaValue) {
         this.booleanSchemaValue = booleanSchemaValue;
+        return this;
+    }
+    /**
+     *
+     * @since 2.2.3
+     */
+    public Class<?>[] getGroups() {
+        return groups;
+    }
+
+    /**
+     *
+     * @since 2.2.3
+     */
+    public void setGroups(Class<?>[] groups) {
+        this.groups = groups;
+    }
+
+    /**
+     *
+     * @since 2.2.3
+     */
+    public Schema groups(Class<?>[] groups) {
+        this.groups = groups;
         return this;
     }
 }

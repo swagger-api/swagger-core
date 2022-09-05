@@ -325,6 +325,14 @@ public @interface Schema {
      */
     AdditionalPropertiesValue additionalProperties() default AdditionalPropertiesValue.USE_ADDITIONAL_PROPERTIES_ANNOTATION;
 
+    /**
+     * Specify one or more groups to link to a specific @RequestBody annotation.
+     * To define custom groups annotations for the sole purpose of using them as type-safe group arguments.
+     *
+     * @since 2.2.3
+     */
+    Class<?>[] groups() default {};
+
     enum AccessMode {
         AUTO,
         READ_ONLY,

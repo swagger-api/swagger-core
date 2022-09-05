@@ -19,12 +19,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyMetadata;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.databind.introspect.Annotated;
-import com.fasterxml.jackson.databind.introspect.AnnotatedClass;
-import com.fasterxml.jackson.databind.introspect.AnnotatedMember;
-import com.fasterxml.jackson.databind.introspect.AnnotatedMethod;
-import com.fasterxml.jackson.databind.introspect.BeanPropertyDefinition;
-import com.fasterxml.jackson.databind.introspect.POJOPropertyBuilder;
+import com.fasterxml.jackson.databind.introspect.*;
 import com.fasterxml.jackson.databind.jsontype.NamedType;
 import com.fasterxml.jackson.databind.util.Annotations;
 import io.swagger.v3.core.converter.AnnotatedType;
@@ -43,6 +38,7 @@ import io.swagger.v3.oas.annotations.media.PatternProperties;
 import io.swagger.v3.oas.annotations.media.PatternProperty;
 import io.swagger.v3.oas.annotations.media.SchemaProperties;
 import io.swagger.v3.oas.annotations.media.SchemaProperty;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.ExternalDocumentation;
 import io.swagger.v3.oas.models.media.ArraySchema;
@@ -179,6 +175,22 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             beanDesc = recurBeanDesc;
         }
 
+        // use RequestBody annotation to customize and to define configuration to request body object and members
+        RequestBody requestBody = null;
+        if(annotatedType != null && annotatedType.getCtxAnnotations() != null){
+            Optional<Annotation> annotationOptional = Arrays.stream(annotatedType.getCtxAnnotations()).filter(annotation -> annotation instanceof RequestBody).findFirst();
+            if(annotationOptional.isPresent()){
+                requestBody = (RequestBody) annotationOptional.get();
+            }
+        }
+
+        // allocating RequestBody groups
+        Class<?>[] groups = null;
+        if(requestBody != null && requestBody.groups() != null) {
+            groups = requestBody.groups();
+        } else if (annotatedType != null && annotatedType.getParent() != null && annotatedType.getParent().getGroups() != null) {
+            groups = annotatedType.getParent().getGroups();
+        }
 
         String name = annotatedType.getName();
         if (StringUtils.isBlank(name)) {
@@ -192,6 +204,11 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         }
 
         name = decorateModelName(annotatedType, name);
+
+        // Changing current Schema name to new name fitting for model grouping to make models unique per group
+        if(name != null && groups != null && groups.length >0) {
+            name = name.concat("_").concat(Arrays.stream(groups).map(Class::getSimpleName).collect(Collectors.joining("_")));
+        }
 
         // if we have a ref we don't consider anything else
         if (resolvedSchemaAnnotation != null &&
@@ -504,6 +521,11 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             }
         }
 
+        // setting current Schema groups if exists
+        if(model != null && groups != null && groups.length >0 ) {
+            model.setGroups(groups);
+        }
+
         if (!type.isContainerType() && StringUtils.isNotBlank(name)) {
             // define the model here to support self/cyclic referencing of models
             context.defineModel(name, model, annotatedType, null);
@@ -573,7 +595,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
             PropertyMetadata md = propDef.getMetadata();
 
-            if (member != null && !ignore(member, xmlAccessorTypeAnnotation, propName, propertiesToIgnore, propDef)) {
+            if (member != null && !ignore(member, xmlAccessorTypeAnnotation, propName, propertiesToIgnore, propDef, model)) {
 
                 List<Annotation> annotationList = new ArrayList<>();
                 for (Annotation a : member.annotations()) {
@@ -992,7 +1014,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
     }
 
     protected boolean ignore(final Annotated member, final XmlAccessorType xmlAccessorTypeAnnotation, final String propName, final Set<String> propertiesToIgnore) {
-        return ignore (member, xmlAccessorTypeAnnotation, propName, propertiesToIgnore, null);
+        return ignore (member, xmlAccessorTypeAnnotation, propName, propertiesToIgnore, null, null);
     }
 
     protected boolean hasHiddenAnnotation(Annotated annotated) {
@@ -1002,7 +1024,15 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         );
     }
 
-    protected boolean ignore(final Annotated member, final XmlAccessorType xmlAccessorTypeAnnotation, final String propName, final Set<String> propertiesToIgnore, BeanPropertyDefinition propDef) {
+    private boolean hasGroupAnnotation(Annotated annotated, Schema model) {
+        if (model != null && model.getGroups() != null && model.getGroups().length != 0) {
+            io.swagger.v3.oas.annotations.media.Schema schema = annotated.getAnnotation(io.swagger.v3.oas.annotations.media.Schema.class);
+            return !(schema != null && schema.groups() != null && Arrays.asList(schema.groups()).stream().filter(annotatedClass -> Arrays.asList(model.getGroups()).stream().filter(modelClass -> annotatedClass.equals(modelClass)).findFirst().isPresent()).findFirst().isPresent());
+        }
+        return false;
+    }
+
+    protected boolean ignore(final Annotated member, final XmlAccessorType xmlAccessorTypeAnnotation, final String propName, final Set<String> propertiesToIgnore, BeanPropertyDefinition propDef, Schema model) {
         if (propertiesToIgnore.contains(propName)) {
             return true;
         }
@@ -1012,18 +1042,21 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         if (hasHiddenAnnotation(member)) {
             return true;
         }
+        if (hasGroupAnnotation(member, model)) {
+            return true;
+        }
 
         if (propDef != null) {
-            if (propDef.hasGetter() && hasHiddenAnnotation(propDef.getGetter())) {
+            if (propDef.hasGetter() && (hasHiddenAnnotation(propDef.getGetter()) || hasGroupAnnotation(propDef.getGetter(), model))) {
                 return true;
             }
-            if (propDef.hasSetter() && hasHiddenAnnotation(propDef.getSetter())) {
+            if (propDef.hasSetter() && (hasHiddenAnnotation(propDef.getSetter()) || hasGroupAnnotation(propDef.getGetter(), model))) {
                 return true;
             }
-            if (propDef.hasConstructorParameter() && hasHiddenAnnotation(propDef.getConstructorParameter())) {
+            if (propDef.hasConstructorParameter() && (hasHiddenAnnotation(propDef.getConstructorParameter()) || hasGroupAnnotation(propDef.getGetter(), model))) {
                 return true;
             }
-            if (propDef.hasField() && hasHiddenAnnotation(propDef.getField())) {
+            if (propDef.hasField() && (hasHiddenAnnotation(propDef.getField()) || hasGroupAnnotation(propDef.getGetter(), model))) {
                 return true;
             }
         }

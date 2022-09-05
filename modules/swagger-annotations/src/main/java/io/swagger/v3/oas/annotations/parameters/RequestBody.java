@@ -60,4 +60,12 @@ public @interface RequestBody {
      **/
     String ref() default "";
 
+    /**
+     * Specify one or more groups to link to a specific @Schema annotation.
+     * To define custom groups annotations for the sole purpose of using them as type-safe group arguments.
+     *
+     * @since 2.2.3
+     */
+    Class<?>[] groups() default {};
+
 }
