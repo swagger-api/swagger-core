@@ -1780,6 +1780,15 @@ public abstract class AnnotationsUtils {
                 }
                 return patch.additionalProperties();
             }
+
+            @Override
+            public Class<?>[] groups() {
+                if ((master.groups() != null || patch.groups() == null) && (master.groups().length > 0 || (patch.groups() != null && patch.groups().length == 0))) {
+                    return master.groups();
+                }
+                return patch.groups();
+
+            }
         };
 
         return (io.swagger.v3.oas.annotations.media.Schema)schema;
