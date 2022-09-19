@@ -24,6 +24,12 @@ import io.swagger.v3.oas.models.security.Scopes;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.servers.Server;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import org.testng.Assert;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
@@ -103,5 +109,15 @@ public class SecurityDefinitionTest {
 
         final String json = ResourceUtils.loadClassResource(getClass(), "ModelWithSecurityRequirements.json");
         SerializationMatchers.assertEqualsToJson(oas, json);
+    }
+
+    @Test(description = "Security Scheme deserialization should not remove extensions")
+    public void doNotRemoveExtensions() {
+        final SecurityScheme securityScheme = TestUtils.deserializeJsonFileFromClasspath("specFiles/securitySchemaWithExtension.json", SecurityScheme.class);
+
+        final Map<String, Object> extensions = securityScheme.getExtensions();
+        final Map<String, Object> expected = Collections.singletonMap("x-custom", Collections.singletonMap("key-string", "value-one"));
+
+        assertEquals(extensions, expected);
     }
 }

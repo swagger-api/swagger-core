@@ -108,4 +108,7 @@ public abstract class SchemaMixin {
 
     @JsonIgnore
     public abstract Object getConst();
+
+    @JsonIgnore
+    public abstract Boolean getBooleanSchemaValue();
 }

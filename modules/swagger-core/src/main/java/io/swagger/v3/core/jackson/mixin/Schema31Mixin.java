@@ -59,6 +59,9 @@ public abstract class Schema31Mixin {
     @JsonIgnore
     public abstract Object getJsonSchemaImpl();
 
+    @JsonIgnore
+    public abstract Boolean getBooleanSchemaValue();
+
     public static class TypeSerializer extends JsonSerializer<Set<String>> {
 
         @Override

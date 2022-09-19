@@ -5,7 +5,9 @@ import io.swagger.v3.core.resolving.resources.TestObject2616;
 import io.swagger.v3.core.resolving.resources.TestObjectTicket2620;
 import io.swagger.v3.core.resolving.resources.TestObjectTicket2620Subtypes;
 import io.swagger.v3.core.resolving.resources.TestObjectTicket2900;
+import io.swagger.v3.core.resolving.resources.TestObjectTicket4247;
 import io.swagger.v3.core.util.Json;
+import io.swagger.v3.core.util.Yaml;
 import io.swagger.v3.oas.models.media.ArraySchema;
 import io.swagger.v3.oas.models.media.ComposedSchema;
 import io.swagger.v3.oas.models.media.Schema;
@@ -124,5 +126,17 @@ public class ComposedSchemaTest {
         Assert.assertNotNull(model);
         model = schemas.get("objects");
         Assert.assertNull(model);
+    }
+
+    @Test(description = "read composed schem refs #4247")
+    public void readComposedSchema_ticket4247() {
+        Map<String, Schema> schemas = ModelConverters.getInstance().readAll(TestObjectTicket4247.class);
+        Schema model = schemas.get("TestObjectTicket4247");
+        Assert.assertNotNull(model);
+        Map<String, Schema> properties = model.getProperties();
+        Assert.assertNotNull(properties.get("value"));
+        Assert.assertTrue(((ComposedSchema)properties.get("value")).getOneOf().size() == 2);
+        Assert.assertEquals(((ComposedSchema)properties.get("value")).getOneOf().get(0).getType(), "string");
+        Assert.assertEquals(((ComposedSchema)properties.get("value")).getOneOf().get(1).getType(), "number");
     }
 }

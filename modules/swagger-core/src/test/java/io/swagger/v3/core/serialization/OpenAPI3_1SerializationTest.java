@@ -1,7 +1,10 @@
 package io.swagger.v3.core.serialization;
 
 import io.swagger.v3.core.matchers.SerializationMatchers;
+import io.swagger.v3.core.util.Json;
+import io.swagger.v3.core.util.Json31;
 import io.swagger.v3.core.util.ResourceUtils;
+import io.swagger.v3.core.util.Yaml;
 import io.swagger.v3.core.util.Yaml31;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
@@ -542,7 +545,8 @@ public class OpenAPI3_1SerializationTest {
                 "    body:\n" +
                 "      content:\n" +
                 "        application/json:\n" +
-                "          schema: {}\n" +
+                "          schema: \n" +
+                "            type: object\n" +
                 "  headers:\n" +
                 "    test-head:\n" +
                 "      description: test header description\n" +
@@ -602,7 +606,9 @@ public class OpenAPI3_1SerializationTest {
                 "      \"body\" : {\n" +
                 "        \"content\" : {\n" +
                 "          \"application/json\" : {\n" +
-                "            \"schema\" : { }\n" +
+                "            \"schema\" : {\n" +
+                "              \"type\" : \"object\"\n" +
+                "            }\n" +
                 "          }\n" +
                 "        }\n" +
                 "      }\n" +
@@ -1107,7 +1113,8 @@ public class OpenAPI3_1SerializationTest {
                 "    body:\n" +
                 "      content:\n" +
                 "        application/json:\n" +
-                "          schema: {}");
+                "          schema: \n" +
+                "            type: object");
         SerializationMatchers.assertEqualsToJson31(openAPI, "{\n" +
                 "  \"openapi\" : \"3.1.0\",\n" +
                 "  \"paths\" : {\n" +
@@ -1127,7 +1134,9 @@ public class OpenAPI3_1SerializationTest {
                 "      \"body\" : {\n" +
                 "        \"content\" : {\n" +
                 "          \"application/json\" : {\n" +
-                "            \"schema\" : { }\n" +
+                "            \"schema\" : {\n" +
+                "              \"type\" : \"object\"\n" +
+                "            }\n" +
                 "          }\n" +
                 "        }\n" +
                 "      }\n" +
@@ -1357,5 +1366,56 @@ public class OpenAPI3_1SerializationTest {
                 "}");
     }
 
+    @Test
+    public void testBooleanSchemaSerialization() {
+        OpenAPI openAPI = new OpenAPI()
+                .openapi("3.1.0")
+                .components(new Components().addSchemas("test", new Schema().booleanSchemaValue(true)));
+
+        System.out.println("--------- root ----------");
+        Json31.prettyPrint(openAPI);
+        assertEquals(Json31.pretty(openAPI), "{\n" +
+                "  \"openapi\" : \"3.1.0\",\n" +
+                "  \"components\" : {\n" +
+                "    \"schemas\" : {\n" +
+                "      \"test\" : true\n" +
+                "    }\n" +
+                "  }\n" +
+                "}");
+        System.out.println("--------- schema ----------");
+        Json31.prettyPrint(openAPI.getComponents().getSchemas().get("test"));
+        assertEquals(Json31.pretty(openAPI.getComponents().getSchemas().get("test")), "true");
+        System.out.println("--------- root YAML----------");
+        Yaml31.prettyPrint(openAPI);
+        assertEquals(Yaml31.pretty(openAPI), "openapi: 3.1.0\n" +
+                "components:\n" +
+                "  schemas:\n" +
+                "    test: true\n");
+        System.out.println("--------- schema YAML ----------");
+        Yaml31.prettyPrint(openAPI.getComponents().getSchemas().get("test"));
+        assertEquals(Yaml31.pretty(openAPI.getComponents().getSchemas().get("test")), "true\n");
+        System.out.println("--------- root 3.0 ----------");
+        Json.prettyPrint(openAPI);
+        assertEquals(Json.pretty(openAPI), "{\n" +
+                "  \"openapi\" : \"3.1.0\",\n" +
+                "  \"components\" : {\n" +
+                "    \"schemas\" : {\n" +
+                "      \"test\" : { }\n" +
+                "    }\n" +
+                "  }\n" +
+                "}");
+        System.out.println("--------- schema 3.0 ----------");
+        Json.prettyPrint(openAPI.getComponents().getSchemas().get("test"));
+        assertEquals(Json.pretty(openAPI.getComponents().getSchemas().get("test")), "{ }");
+        System.out.println("--------- root YAML 3.0 ----------");
+        Yaml.prettyPrint(openAPI);
+        assertEquals(Yaml.pretty(openAPI), "openapi: 3.1.0\n" +
+                "components:\n" +
+                "  schemas:\n" +
+                "    test: {}\n");
+        System.out.println("--------- schema YAML 3.0 ----------");
+        Yaml.prettyPrint(openAPI.getComponents().getSchemas().get("test"));
+        assertEquals(Yaml.pretty(openAPI.getComponents().getSchemas().get("test")), "{}\n");
+    }
 
 }

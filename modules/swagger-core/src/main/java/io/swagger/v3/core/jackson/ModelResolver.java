@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.annotation.JsonView;
@@ -22,7 +23,6 @@ import com.fasterxml.jackson.databind.introspect.Annotated;
 import com.fasterxml.jackson.databind.introspect.AnnotatedClass;
 import com.fasterxml.jackson.databind.introspect.AnnotatedMember;
 import com.fasterxml.jackson.databind.introspect.AnnotatedMethod;
-import com.fasterxml.jackson.databind.introspect.AnnotationMap;
 import com.fasterxml.jackson.databind.introspect.BeanPropertyDefinition;
 import com.fasterxml.jackson.databind.introspect.POJOPropertyBuilder;
 import com.fasterxml.jackson.databind.jsontype.NamedType;
@@ -337,6 +337,9 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             return new Schema();
         }
 
+        List<Class<?>> composedSchemaReferencedClasses = getComposedSchemaReferencedClasses(type.getRawClass(), annotatedType.getCtxAnnotations(), resolvedSchemaAnnotation);
+        boolean isComposedSchema = composedSchemaReferencedClasses != null;
+
         if (isPrimitive) {
             XML xml = resolveXml(beanDesc.getClassInfo(), annotatedType.getCtxAnnotations(), resolvedSchemaAnnotation);
             if (xml != null) {
@@ -356,7 +359,9 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 // Return the model as a ref only property
                 model = new Schema().$ref(Components.COMPONENTS_SCHEMAS_REF + name);
             }
-            return model;
+            if (!isComposedSchema) {
+                return model;
+            }
         }
 
         /**
@@ -393,9 +398,6 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                     .skipOverride(true);
             return context.resolve(aType);
         }
-
-        List<Class<?>> composedSchemaReferencedClasses = getComposedSchemaReferencedClasses(type.getRawClass(), annotatedType.getCtxAnnotations(), resolvedSchemaAnnotation);
-        boolean isComposedSchema = composedSchemaReferencedClasses != null;
 
         if (type.isContainerType()) {
             // TODO currently a MapSchema or ArraySchema don't also support composed schema props (oneOf,..)
@@ -586,11 +588,8 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             if (member != null && !ignore(member, xmlAccessorTypeAnnotation, propName, propertiesToIgnore, propDef)) {
 
                 List<Annotation> annotationList = new ArrayList<>();
-                AnnotationMap annotationMap = member.getAllAnnotations();
-                if (annotationMap != null) {
-                    for (Annotation a : annotationMap.annotations()) {
-                        annotationList.add(a);
-                    }
+                for (Annotation a : member.annotations()) {
+                    annotationList.add(a);
                 }
 
                 annotations = annotationList.toArray(new Annotation[annotationList.size()]);
@@ -1130,11 +1129,8 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                             return PrimitiveType.createProperty(propType);
                         } else {
                             List<Annotation> list = new ArrayList<>();
-                            AnnotationMap annotationMap = propMember.getAllAnnotations();
-                            if (annotationMap != null) {
-                                for (Annotation a : annotationMap.annotations()) {
-                                    list.add(a);
-                                }
+                            for (Annotation a : propMember.annotations()) {
+                                list.add(a);
                             }
                             Annotation[] annotations = list.toArray(new Annotation[list.size()]);
                             AnnotatedType aType = new AnnotatedType()
@@ -1978,6 +1974,13 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 String name = model.getName();
                 if (JsonTypeInfo.Id.CLASS.equals(id)) {
                     name = type.getRawClass().getName();
+                }
+                JsonTypeName typeName = type.getRawClass().getDeclaredAnnotation((JsonTypeName.class));
+                if (JsonTypeInfo.Id.NAME.equals(id) && typeName != null) {
+                    name = typeName.value();
+                }
+                if(JsonTypeInfo.Id.NAME.equals(id) && name == null) {
+                    name = type.getRawClass().getSimpleName();
                 }
                 Schema wrapperSchema = new ObjectSchema();
                 wrapperSchema.name(model.getName());
