@@ -327,6 +327,9 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             return new Schema();
         }
 
+        List<Class<?>> composedSchemaReferencedClasses = getComposedSchemaReferencedClasses(type.getRawClass(), annotatedType.getCtxAnnotations(), resolvedSchemaAnnotation);
+        boolean isComposedSchema = composedSchemaReferencedClasses != null;
+
         if (isPrimitive) {
             XML xml = resolveXml(beanDesc.getClassInfo(), annotatedType.getCtxAnnotations(), resolvedSchemaAnnotation);
             if (xml != null) {
@@ -346,7 +349,9 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 // Return the model as a ref only property
                 model = new Schema().$ref(Components.COMPONENTS_SCHEMAS_REF + name);
             }
-            return model;
+            if (!isComposedSchema) {
+                return model;
+            }
         }
 
         /**
@@ -383,9 +388,6 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                     .skipOverride(true);
             return context.resolve(aType);
         }
-
-        List<Class<?>> composedSchemaReferencedClasses = getComposedSchemaReferencedClasses(type.getRawClass(), annotatedType.getCtxAnnotations(), resolvedSchemaAnnotation);
-        boolean isComposedSchema = composedSchemaReferencedClasses != null;
 
         if (type.isContainerType()) {
             // TODO currently a MapSchema or ArraySchema don't also support composed schema props (oneOf,..)
