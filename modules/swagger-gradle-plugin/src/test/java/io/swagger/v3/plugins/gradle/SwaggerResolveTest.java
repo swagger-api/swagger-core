@@ -171,6 +171,7 @@ public class SwaggerResolveTest {
                 "    resourcePackages = ['io.swagger.v3.plugins.gradle.petstore']\n" +
                 "    outputPath = \'" + toNormalizedPath(outputDir) + "\'\n" +
                 "    openAPI31 = \'TRUE\'\n" +
+                "    convertToOpenAPI31 = \'TRUE\'\n" +
                 "    openApiFile = file(\'" + toNormalizedPath(openapiInputFile.getAbsolutePath()) + "\')\n" +
                 "}";
 

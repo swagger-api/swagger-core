@@ -19,7 +19,7 @@ import static java.lang.annotation.ElementType.TYPE;
  *
  * @see Schema
  *
- * @since 2.2.1 / OpenAPI 3.1
+ * @since 2.2.4 / OpenAPI 3.1
  **/
 @Target({FIELD, METHOD, PARAMETER, TYPE, ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)

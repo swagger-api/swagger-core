@@ -74,6 +74,8 @@ public class ResolveTask extends DefaultTask {
 
     private Boolean openAPI31 = false;
 
+    private Boolean convertToOpenAPI31 = false;
+
     @Input
     @Optional
     public String getOutputFileName() {
@@ -333,6 +335,22 @@ public class ResolveTask extends DefaultTask {
         this.openAPI31 = openAPI31;
     }
 
+    /**
+     * @since 2.2.4
+     */
+    @Input
+    @Optional
+    public Boolean getConvertToOpenAPI31() {
+        return convertToOpenAPI31;
+    }
+
+    public void setConvertToOpenAPI31(Boolean convertToOpenAPI31) {
+        this.convertToOpenAPI31 = convertToOpenAPI31;
+        if (Boolean.TRUE.equals(convertToOpenAPI31)) {
+            this.openAPI31 = true;
+        }
+    }
+
     @TaskAction
     public void resolve() throws GradleException {
         if (skip) {
@@ -440,6 +458,9 @@ public class ResolveTask extends DefaultTask {
 
             method=swaggerLoaderClass.getDeclaredMethod("setOpenAPI31", Boolean.class);
             method.invoke(swaggerLoader, openAPI31);
+
+            method=swaggerLoaderClass.getDeclaredMethod("setConvertToOpenAPI31", Boolean.class);
+            method.invoke(swaggerLoader, convertToOpenAPI31);
 
             method=swaggerLoaderClass.getDeclaredMethod("resolve");
             Map<String, String> specs = (Map<String, String>)method.invoke(swaggerLoader);

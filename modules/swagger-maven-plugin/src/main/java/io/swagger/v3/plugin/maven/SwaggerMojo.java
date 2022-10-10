@@ -157,6 +157,9 @@ public class SwaggerMojo extends AbstractMojo {
         if (openapi31 == null) {
             openapi31 = Boolean.FALSE;
         }
+        if (convertToOpenAPI31 == null) {
+            convertToOpenAPI31 = Boolean.FALSE;
+        }
         if (config.isPrettyPrint() == null) {
             config.prettyPrint(prettyPrint);
         }
@@ -171,6 +174,9 @@ public class SwaggerMojo extends AbstractMojo {
         }
         if (config.isOpenAPI31() == null) {
             config.setOpenAPI31(openapi31);
+        }
+        if (config.isConvertToOpenAPI31() == null) {
+            config.setConvertToOpenAPI31(convertToOpenAPI31);
         }
     }
 
@@ -415,6 +421,11 @@ public class SwaggerMojo extends AbstractMojo {
     @Parameter(property = "resolve.openapi31")
     private Boolean openapi31;
 
+    /**
+     * @since 2.2.4
+     */
+    @Parameter(property = "resolve.convertToOpenAPI31")
+    private Boolean convertToOpenAPI31;
 
     private String projectEncoding = "UTF-8";
     private SwaggerConfiguration config;
