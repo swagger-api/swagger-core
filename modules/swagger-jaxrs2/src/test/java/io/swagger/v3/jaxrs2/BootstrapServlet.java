@@ -45,6 +45,7 @@ public class BootstrapServlet extends HttpServlet {
                 .openAPI(oas)
                 .prettyPrint(true)
                 .openAPI31(true)
+                .convertToOpenAPI31(true)
                 .resourcePackages(Stream.of("io.swagger.v3.jaxrs2.it.resources").collect(Collectors.toSet()));
 
         try {

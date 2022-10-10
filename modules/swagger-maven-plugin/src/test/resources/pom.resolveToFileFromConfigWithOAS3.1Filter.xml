@@ -19,6 +19,7 @@
                     </configurationFilePath>
                     <outputFormat>JSONANDYAML</outputFormat>
                     <openapi31>true</openapi31>
+                    <convertToOpenAPI31>true</convertToOpenAPI31>
                 </configuration>
             </plugin>
         </plugins>

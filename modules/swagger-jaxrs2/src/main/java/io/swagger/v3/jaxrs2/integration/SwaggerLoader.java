@@ -44,6 +44,8 @@ public class SwaggerLoader {
 
     private Boolean openAPI31 = false;
 
+    private Boolean convertToOpenAPI31 = false;
+
     /**
      * @since 2.0.6
      */
@@ -199,11 +201,22 @@ public class SwaggerLoader {
         return openAPI31;
     }
 
+    public Boolean getConvertToOpenAPI31() {
+        return convertToOpenAPI31;
+    }
+
     /**
      *  @since 2.2.0
      */
     public void setOpenAPI31(Boolean openAPI31) {
         this.openAPI31 = openAPI31;
+    }
+
+    /**
+     *  @since 2.2.4
+     */
+    public void setConvertToOpenAPI31(Boolean convertToOpenAPI31) {
+        this.convertToOpenAPI31 = convertToOpenAPI31;
     }
 
     public Map<String, String> resolve() throws Exception{
@@ -253,7 +266,8 @@ public class SwaggerLoader {
                 .modelConverterClasses(modelConverterSet)
                 .sortOutput(sortOutput)
                 .alwaysResolveAppPath(alwaysResolveAppPath)
-                .openAPI31(openAPI31);
+                .openAPI31(openAPI31)
+                .convertToOpenAPI31(convertToOpenAPI31);
         try {
             GenericOpenApiContextBuilder builder = new JaxrsOpenApiContextBuilder()
                     .openApiConfiguration(config);

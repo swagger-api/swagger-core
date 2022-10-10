@@ -51,6 +51,8 @@ public class ServletConfigContextUtils {
      */
     public static final String OPENAPI_CONFIGURATION_OPENAPI_31_KEY = "openApi.configuration.openAPI31";
 
+    public static final String OPENAPI_CONFIGURATION_CONVERT_TO_OPENAPI_31_KEY = "openApi.configuration.convertToOpenAPI31";
+
     public static Set<String> resolveResourcePackages(ServletConfig servletConfig) {
         if (!isServletConfigAvailable(servletConfig)) {
             return null;

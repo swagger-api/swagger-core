@@ -72,7 +72,7 @@ public @interface Info {
     /**
      * A short API summary.
      *
-     * @since 2.2.1 / OpenAPI 3.1
+     * @since 2.2.4 / OpenAPI 3.1
      * @return API summary
      **/
     @OpenAPI31
