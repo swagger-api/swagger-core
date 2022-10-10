@@ -318,14 +318,14 @@ public @interface Schema {
     /**
      * List of schema types
      *
-     * @since 2.2.1 / OpenAPI 3.1
+     * @since 2.2.4 / OpenAPI 3.1
      * @return array of types
      */
     @OpenAPI31
     String[] types() default {};
 
     /**
-     * @since 2.2.1 / OpenAPI 3.1
+     * @since 2.2.4 / OpenAPI 3.1
      *
      * OAS 3.1 version of `exclusiveMaximum`, accepting a numeric value
      *
@@ -337,7 +337,7 @@ public @interface Schema {
     /**
      * Provides an exclusive minimum for a expressing exclusive range.
      *
-     * @since 2.2.1 / OpenAPI 3.1
+     * @since 2.2.4 / OpenAPI 3.1
      * @return an exclusive minimum.
      */
     @OpenAPI31
@@ -346,7 +346,7 @@ public @interface Schema {
     /**
      * Provides the $id related to this schema.
      *
-     * @since 2.2.1 / OpenAPI 3.1
+     * @since 2.2.4 / OpenAPI 3.1
      * @return the $id of schema
      */
     @OpenAPI31
@@ -355,7 +355,7 @@ public @interface Schema {
     /**
      * Provides Json Schema dialect where the schema is valid.
      *
-     * @since 2.2.1 / OpenAPI 3.1
+     * @since 2.2.4 / OpenAPI 3.1
      * @return json schema dialect
      */
     @OpenAPI31
@@ -364,7 +364,7 @@ public @interface Schema {
     /**
      * Provides the $anchor related to schema
      *
-     * @since 2.2.1 / OpenAPI 3.1
+     * @since 2.2.4 / OpenAPI 3.1
      * @return $anchor schema
      */
     @OpenAPI31
@@ -373,7 +373,7 @@ public @interface Schema {
     /**
      * Provides the content encoding related to this schema
      *
-     * @since 2.2.1 / OpenAPI 3.1
+     * @since 2.2.4 / OpenAPI 3.1
      * @return content encoding
      */
     @OpenAPI31
@@ -382,7 +382,7 @@ public @interface Schema {
     /**
      * Provides the content media type related to this schema
      *
-     * @since 2.2.1 / OpenAPI 3.1
+     * @since 2.2.4 / OpenAPI 3.1
      * @return content media type
      */
     @OpenAPI31
@@ -391,7 +391,7 @@ public @interface Schema {
     /**
      * Provides the content schema related to this schema
      *
-     * @since 2.2.1 / OpenAPI 3.1
+     * @since 2.2.4 / OpenAPI 3.1
      * @return content schema
      */
     @OpenAPI31
@@ -400,7 +400,7 @@ public @interface Schema {
     /**
      * Provides property names related to this schema
      *
-     * @since 2.2.1 / OpenAPI 3.1
+     * @since 2.2.4 / OpenAPI 3.1
      * @return property names
      */
     @OpenAPI31
@@ -409,7 +409,7 @@ public @interface Schema {
     /**
      * Provides the if sub schema related to this schema
      *
-     * @since 2.2.1 / OpenAPI 3.1
+     * @since 2.2.4 / OpenAPI 3.1
      * @return if sub schema
      */
     @OpenAPI31
@@ -418,7 +418,7 @@ public @interface Schema {
     /**
      * Provides the else sub schema related to this schema
      *
-     * @since 2.2.1 / OpenAPI 3.1
+     * @since 2.2.4 / OpenAPI 3.1
      * @return else sub schema
      */
     @OpenAPI31
@@ -427,7 +427,7 @@ public @interface Schema {
     /**
      * Provides the then sub schema related to this schema
      *
-     * @since 2.2.1 / OpenAPI 3.1
+     * @since 2.2.4 / OpenAPI 3.1
      * @return then sub schema
      */
     @OpenAPI31
@@ -436,7 +436,7 @@ public @interface Schema {
     /**
      * Provides $comment related to this schema
      *
-     * @since 2.2.1 / OpenAPI 3.1
+     * @since 2.2.4 / OpenAPI 3.1
      * @return $comment related to schema
      */
     @OpenAPI31
@@ -472,7 +472,7 @@ public @interface Schema {
     /**
      * Allows to specify the dependentRequired value
      **
-     * @since 2.2.1 / OpenAPI 3.1
+     * @since 2.2.4 / OpenAPI 3.1
      * @return the list of DependentRequire annotations
      *
      */
@@ -482,7 +482,7 @@ public @interface Schema {
     /**
      * Allows to specify the dependentSchemas value providing a Class to be resolved into a Schema
      *
-     * @since 2.2.1 / OpenAPI 3.1
+     * @since 2.2.4 / OpenAPI 3.1
      * @return the list of dependentSchemas annotations
      *
      */
@@ -492,7 +492,7 @@ public @interface Schema {
     /**
      * Provides pattern properties to this schema
      *
-     * @since 2.2.1 / OpenAPI 3.1
+     * @since 2.2.4 / OpenAPI 3.1
      * @return pattern properties
      */
     @OpenAPI31
@@ -508,7 +508,7 @@ public @interface Schema {
     /**
      * Provides unevaluated properties to this schema
      *
-     * @since 2.2.1 / OpenAPI 3.1
+     * @since 2.2.4 / OpenAPI 3.1
      * @return unevaluated properties
      */
     @OpenAPI31

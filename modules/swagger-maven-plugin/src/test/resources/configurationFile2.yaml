@@ -2,6 +2,7 @@ resourcePackages:
   - io.swagger.v3.plugin.maven.petstore.petstore
 prettyPrint: true
 openAPI31: true
+convertToOpenAPI31: true
 cacheTTL: 0
 openAPI:
   openapi: 3.0.1

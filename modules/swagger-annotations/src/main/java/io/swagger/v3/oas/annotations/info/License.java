@@ -42,8 +42,8 @@ public @interface License {
     /**
      * An identifier for a License instance.
      *
-     * @since 2.2.1 / OpenAPI 3.1
-     * @return the URL of the license
+     * @since 2.2.4 / OpenAPI 3.1
+     * @return the identifier of the license
      **/
     @OpenAPI31
     String identifier() default "";

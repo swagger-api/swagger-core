@@ -73,6 +73,8 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
 
     private Boolean openAPI31;
 
+    private Boolean convertToOpenAPI31;
+
     public long getCacheTTL() {
         return cacheTTL;
     }
@@ -302,6 +304,30 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
         return (T) this;
     }
 
+    /**
+     * @since 2.2.4
+     */
+    public Boolean isConvertToOpenAPI31() {
+        return convertToOpenAPI31;
+    }
+
+    /**
+     * @since 2.2.4
+     */
+    public void setConvertToOpenAPI31(Boolean convertToOpenAPI31) {
+        this.convertToOpenAPI31 = convertToOpenAPI31;
+        if (Boolean.TRUE.equals(convertToOpenAPI31)) {
+            this.openAPI31 = true;
+        }
+    }
+
+    /**
+     * @since 2.2.4
+     */
+    public T convertToOpenAPI31(Boolean convertToOpenAPI31) {
+        this.setConvertToOpenAPI31(convertToOpenAPI31);
+        return (T) this;
+    }
 
     protected void register() {
         OpenApiContextLocator.getInstance().putOpenApiContext(id, this);
@@ -439,6 +465,7 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
             openApiConfiguration = new SwaggerConfiguration().resourcePackages(resourcePackages).resourceClasses(resourceClasses);
             ((SwaggerConfiguration) openApiConfiguration).setId(id);
             ((SwaggerConfiguration) openApiConfiguration).setOpenAPI31(openAPI31);
+            ((SwaggerConfiguration) openApiConfiguration).setConvertToOpenAPI31(convertToOpenAPI31);
         }
 
         openApiConfiguration = mergeParentConfiguration(openApiConfiguration, parent);
@@ -527,6 +554,10 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
         if (openApiConfiguration.isOpenAPI31() != null && this.openAPI31 == null) {
             this.openAPI31 = openApiConfiguration.isOpenAPI31();
         }
+
+        if (openApiConfiguration.isConvertToOpenAPI31() != null && this.convertToOpenAPI31 == null) {
+            this.convertToOpenAPI31 = openApiConfiguration.isConvertToOpenAPI31();
+        }
         register();
         return (T) this;
     }
@@ -593,6 +624,9 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
         if (merged.isOpenAPI31() == null) {
             merged.setOpenAPI31(parentConfig.isOpenAPI31());
         }
+        if (merged.isConvertToOpenAPI31() == null) {
+            merged.setConvertToOpenAPI31(parentConfig.isConvertToOpenAPI31());
+        }
 
         return merged;
     }
@@ -603,7 +637,7 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
         if (cacheTTL == 0) {
             resetReader();
             OpenAPI openAPI = getOpenApiReader().read(getOpenApiScanner().classes(), getOpenApiScanner().resources());
-            if (Boolean.TRUE.equals(openAPI31)) {
+            if (Boolean.TRUE.equals(convertToOpenAPI31)) {
                 openAPI = new SpecFilter().filter(openAPI, new OpenAPI31SpecFilter(), null, null, null);
             }
             return openAPI;
@@ -615,7 +649,7 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
             cached.createdAt = System.currentTimeMillis();
             resetReader();
             cached.openApi = getOpenApiReader().read(getOpenApiScanner().classes(), getOpenApiScanner().resources());
-            if (Boolean.TRUE.equals(openAPI31)) {
+            if (Boolean.TRUE.equals(convertToOpenAPI31)) {
                 cached.openApi = new SpecFilter().filter(cached.openApi, new OpenAPI31SpecFilter(), null, null, null);
             }
             cache.put("openapi", cached);
