@@ -32,7 +32,7 @@ public class XmlModelTest {
         final Schema model = schemas.get("Monster");
 
         assertNotNull(model);
-        assertTrue(model instanceof Schema);
+        assertTrue(Schema.class.isAssignableFrom(model.getClass()));
         XML xml = model.getXml();
 
         assertNotNull(xml);
@@ -50,7 +50,7 @@ public class XmlModelTest {
         final Schema model = schemas.get("Address");
 
         assertNotNull(model);
-        assertTrue(model instanceof Schema);
+        assertTrue(Schema.class.isAssignableFrom(model.getClass()));
 
         final Schema property = (Schema) model.getProperties().get("streetNumber");
         final XML xml = property.getXml();
@@ -114,7 +114,7 @@ public class XmlModelTest {
 
         final Schema model = schemas.get("NestedModelWithJAXBAnnotations");
         assertNotNull(model);
-        assertTrue(model instanceof Schema);
+        assertTrue(Schema.class.isAssignableFrom(model.getClass()));
 
         final XML rootXml = model.getXml();
         assertNotNull(rootXml);
@@ -147,6 +147,15 @@ public class XmlModelTest {
                 fail(String.format("Unexpected property: %s", name));
             }
         }
+
+        final Schema subModel = schemas.get("SubModelWithJAXBAnnotations");
+        assertNotNull(subModel);
+        assertTrue(Schema.class.isAssignableFrom(subModel.getClass()));
+
+        final XML subXml = subModel.getXml();
+        assertNotNull(subXml);
+        assertEquals(subXml.getName(), "SubName");
+        assertNull(subXml.getNamespace());
     }
 
     @Test(description = "it should deserialize a model")
@@ -188,11 +197,11 @@ public class XmlModelTest {
     }
 
     @XmlRootElement(name = "monster")
-    class Monster {
+    static class Monster {
         public String name = "";
 
         @XmlElementWrapper()
         @XmlElement(name = "children")
-        public java.util.List<String> children = new ArrayList<String>();
+        public java.util.List<String> children = new ArrayList<>();
     }
 }

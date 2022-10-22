@@ -110,6 +110,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
     public ModelResolver(ObjectMapper mapper) {
         super(mapper);
     }
+
     public ModelResolver(ObjectMapper mapper, TypeNameResolver typeNameResolver) {
         super(mapper, typeNameResolver);
     }
@@ -207,7 +208,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             Annotation[] ctxAnnotation = null;
             if (resolvedArrayAnnotation != null && annotatedType.getCtxAnnotations() != null) {
                 List<Annotation> annList = new ArrayList<>();
-                for (Annotation a: annotatedType.getCtxAnnotations()) {
+                for (Annotation a : annotatedType.getCtxAnnotations()) {
                     if (!(a instanceof ArraySchema)) {
                         annList.add(a);
                     }
@@ -369,7 +370,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
         Type jsonValueType = findJsonValueType(beanDesc);
 
-        if(jsonValueType != null) {
+        if (jsonValueType != null) {
             AnnotatedType aType = new AnnotatedType()
                     .type(jsonValueType)
                     .parent(annotatedType.getParent())
@@ -544,7 +545,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
             // hack to avoid clobbering properties with get/is names
             // it's ugly but gets around https://github.com/swagger-api/swagger-core/issues/415
-            if(propDef.getPrimaryMember() != null) {
+            if (propDef.getPrimaryMember() != null) {
                 final JsonProperty jsonPropertyAnn = propDef.getPrimaryMember().getAnnotation(JsonProperty.class);
                 if (jsonPropertyAnn == null || !jsonPropertyAnn.value().equals(propName)) {
                     if (member != null) {
@@ -578,14 +579,14 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
                 annotations = annotationList.toArray(new Annotation[annotationList.size()]);
 
-                if(hiddenByJsonView(annotations, annotatedType)) {
+                if (hiddenByJsonView(annotations, annotatedType)) {
                     continue;
                 }
 
                 JavaType propType = member.getType();
-                if(propType != null && "void".equals(propType.getRawClass().getName())) {
+                if (propType != null && "void".equals(propType.getRawClass().getName())) {
                     if (member instanceof AnnotatedMethod) {
-                        propType = ((AnnotatedMethod)member).getParameterType(0);
+                        propType = ((AnnotatedMethod) member).getParameterType(0);
                     }
 
                 }
@@ -635,9 +636,9 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                     JsonUnwrapped uw = propMember.getAnnotation(JsonUnwrapped.class);
                     if (uw != null && uw.enabled()) {
                         t
-                            .ctxAnnotations(null)
-                            .jsonUnwrappedHandler(null)
-                            .resolveAsRef(false);
+                                .ctxAnnotations(null)
+                                .jsonUnwrappedHandler(null)
+                                .resolveAsRef(false);
                         handleUnwrapped(props, context.resolve(t), uw.prefix(), uw.suffix(), requiredProps);
                         return null;
                     } else {
@@ -701,7 +702,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         }
         if (modelProps.size() > 0) {
             model.setProperties(modelProps);
-            for(String propName : requiredProps) {
+            for (String propName : requiredProps) {
                 addRequiredItem(model, propName);
             }
         }
@@ -856,9 +857,8 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         }
 
         if (model != null && annotatedType.isResolveAsRef() &&
-            (isComposedSchema || "object".equals(model.getType())) &&
-            StringUtils.isNotBlank(model.getName()))
-        {
+                (isComposedSchema || "object".equals(model.getType())) &&
+                StringUtils.isNotBlank(model.getName())) {
             if (context.getDefinedModels().containsKey(model.getName())) {
                 model = new Schema().$ref(constructRef(model.getName()));
             }
@@ -895,13 +895,13 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         // if not found use previous deprecated method which could lead to inaccurate result
         try {
             Method m = BeanDescription.class.getMethod("findJsonValueAccessor");
-            AnnotatedMember jsonValueMember = (AnnotatedMember)m.invoke(beanDesc);
+            AnnotatedMember jsonValueMember = (AnnotatedMember) m.invoke(beanDesc);
             if (jsonValueMember != null) {
                 return jsonValueMember.getType();
             }
         } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
             LOGGER.warn("jackson BeanDescription.findJsonValueAccessor not found, this could lead to inaccurate result, please update jackson to 2.9+");
-            final AnnotatedMethod jsonValueMethod  = beanDesc.findJsonValueMethod();
+            final AnnotatedMethod jsonValueMethod = beanDesc.findJsonValueMethod();
             if (jsonValueMethod != null) {
                 return jsonValueMethod.getType();
             }
@@ -910,7 +910,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
     }
 
     private Schema clone(Schema property) {
-        if(property == null)
+        if (property == null)
             return property;
         try {
             String cloneName = property.getName();
@@ -924,7 +924,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
     private boolean isSubtype(AnnotatedClass childClass, Class<?> parentClass) {
         final BeanDescription parentDesc = _mapper.getSerializationConfig().introspectClassAnnotations(parentClass);
-        List<NamedType> subTypes =_intr.findSubtypes(parentDesc.getClassInfo());
+        List<NamedType> subTypes = _intr.findSubtypes(parentDesc.getClassInfo());
         if (subTypes == null) {
             return false;
         }
@@ -959,14 +959,14 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         Enum<?>[] enumConstants = enumClass.getEnumConstants();
         if (enumConstants != null) {
             String[] enumValues = _intr.findEnumValues(propClass, enumConstants,
-                new String[enumConstants.length]);
+                    new String[enumConstants.length]);
 
             for (Enum<?> en : enumConstants) {
                 String n;
 
                 String enumValue = enumValues[en.ordinal()];
                 String s = jsonValueMethod.flatMap(m -> ReflectionUtils.safeInvoke(m, en))
-                    .map(Object::toString).orElse(null);
+                        .map(Object::toString).orElse(null);
 
                 if (s != null) {
                     n = s;
@@ -988,13 +988,13 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
     }
 
     protected boolean ignore(final Annotated member, final XmlAccessorType xmlAccessorTypeAnnotation, final String propName, final Set<String> propertiesToIgnore) {
-        return ignore (member, xmlAccessorTypeAnnotation, propName, propertiesToIgnore, null);
+        return ignore(member, xmlAccessorTypeAnnotation, propName, propertiesToIgnore, null);
     }
 
     protected boolean hasHiddenAnnotation(Annotated annotated) {
         return annotated.hasAnnotation(Hidden.class) || (
                 annotated.hasAnnotation(io.swagger.v3.oas.annotations.media.Schema.class) &&
-                annotated.getAnnotation(io.swagger.v3.oas.annotations.media.Schema.class).hidden()
+                        annotated.getAnnotation(io.swagger.v3.oas.annotations.media.Schema.class).hidden()
         );
     }
 
@@ -1043,7 +1043,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         if (StringUtils.isBlank(suffix) && StringUtils.isBlank(prefix)) {
             if (innerModel.getProperties() != null) {
                 props.addAll(innerModel.getProperties().values());
-                if(innerModel.getRequired() != null) {
+                if (innerModel.getRequired() != null) {
                     requiredProps.addAll(innerModel.getRequired());
                 }
 
@@ -1157,6 +1157,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             public UUIDGeneratorWrapper(Class<? extends ObjectIdGenerator> generator) {
                 super(generator);
             }
+
             @Override
             protected Schema processAsProperty(String propertyName, AnnotatedType type,
                                                ModelConverterContext context, ObjectMapper mapper) {
@@ -1208,8 +1209,8 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         }
 
         public Schema processJsonIdentity(AnnotatedType type, ModelConverterContext context,
-                                                 ObjectMapper mapper, JsonIdentityInfo identityInfo,
-                                                 JsonIdentityReference identityReference) {
+                                          ObjectMapper mapper, JsonIdentityInfo identityInfo,
+                                          JsonIdentityReference identityReference) {
             final GeneratorWrapper.Base wrapper = identityInfo != null ? getWrapper(identityInfo.generator()) : null;
             if (wrapper == null) {
                 return null;
@@ -1222,30 +1223,31 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         }
 
         private GeneratorWrapper.Base getWrapper(Class<? extends ObjectIdGenerator> generator) {
-            if(ObjectIdGenerators.PropertyGenerator.class.isAssignableFrom(generator)) {
+            if (ObjectIdGenerators.PropertyGenerator.class.isAssignableFrom(generator)) {
                 return new PropertyGeneratorWrapper(generator);
-            } else if(ObjectIdGenerators.IntSequenceGenerator.class.isAssignableFrom(generator)) {
+            } else if (ObjectIdGenerators.IntSequenceGenerator.class.isAssignableFrom(generator)) {
                 return new IntGeneratorWrapper(generator);
-            } else if(ObjectIdGenerators.UUIDGenerator.class.isAssignableFrom(generator)) {
+            } else if (ObjectIdGenerators.UUIDGenerator.class.isAssignableFrom(generator)) {
                 return new UUIDGeneratorWrapper(generator);
-            } else if(ObjectIdGenerators.None.class.isAssignableFrom(generator)) {
+            } else if (ObjectIdGenerators.None.class.isAssignableFrom(generator)) {
                 return new NoneGeneratorWrapper(generator);
             }
             return null;
         }
 
         protected Schema process(Schema id, String propertyName, AnnotatedType type,
-                                      ModelConverterContext context) {
+                                 ModelConverterContext context) {
 
             type = removeJsonIdentityAnnotations(type);
             Schema model = context.resolve(type);
-            if(model == null){
-                model = resolve(type,context, null);
+            if (model == null) {
+                model = resolve(type, context, null);
             }
             model.addProperties(propertyName, id);
             return new Schema().$ref(StringUtils.isNotEmpty(model.get$ref())
                     ? model.get$ref() : model.getName());
         }
+
         private AnnotatedType removeJsonIdentityAnnotations(AnnotatedType type) {
             return new AnnotatedType()
                     .jsonUnwrappedHandler(type.getJsonUnwrappedHandler())
@@ -1328,7 +1330,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 property.setPattern(pattern.regexp());
             }
 
-            if(property.getItems() != null && property.getItems() instanceof StringSchema) {
+            if (property.getItems() != null && property.getItems() instanceof StringSchema) {
                 property.getItems().setPattern(pattern.regexp());
             }
 
@@ -1365,7 +1367,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
             final Schema subtypeModel = context.resolve(new AnnotatedType().type(subtypeType));
 
-            if (    StringUtils.isBlank(subtypeModel.getName()) ||
+            if (StringUtils.isBlank(subtypeModel.getName()) ||
                     subtypeModel.getName().equals(model.getName())) {
                 subtypeModel.setName(_typeNameResolver.nameForType(_mapper.constructType(subtypeType),
                         TypeNameResolver.Options.SKIP_API_MODEL));
@@ -1447,7 +1449,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
     }
 
     private void removeSelfFromSubTypes(List<NamedType> types, BeanDescription bean) {
-        Class<?> beanClass= bean.getType().getRawClass();
+        Class<?> beanClass = bean.getType().getRawClass();
         types.removeIf(type -> beanClass.equals(type.getType()));
     }
 
@@ -1541,7 +1543,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
         PatternProperties props = a.getRawClass().getAnnotation(PatternProperties.class);
         if (props != null && props.value().length > 0) {
-            for (PatternProperty prop: props.value()) {
+            for (PatternProperty prop : props.value()) {
                 propList.put(prop.regex(), prop);
             }
         }
@@ -1551,7 +1553,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         }
         props = AnnotationsUtils.getAnnotation(PatternProperties.class, annotations);
         if (props != null && props.value().length > 0) {
-            for (PatternProperty prop: props.value()) {
+            for (PatternProperty prop : props.value()) {
                 propList.put(prop.regex(), prop);
             }
         }
@@ -1566,7 +1568,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
         Map<String, Schema> patternProperties = new LinkedHashMap<>();
 
-        for (PatternProperty prop: propList.values()) {
+        for (PatternProperty prop : propList.values()) {
             String key = prop.regex();
             if (StringUtils.isBlank(key)) {
                 continue;
@@ -1590,7 +1592,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
         SchemaProperties props = a.getRawClass().getAnnotation(SchemaProperties.class);
         if (props != null && props.value().length > 0) {
-            for (SchemaProperty prop: props.value()) {
+            for (SchemaProperty prop : props.value()) {
                 propList.put(prop.name(), prop);
             }
         }
@@ -1600,7 +1602,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         }
         props = AnnotationsUtils.getAnnotation(SchemaProperties.class, annotations);
         if (props != null && props.value().length > 0) {
-            for (SchemaProperty prop: props.value()) {
+            for (SchemaProperty prop : props.value()) {
                 propList.put(prop.name(), prop);
             }
         }
@@ -1615,7 +1617,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
         Map<String, Schema> schemaProperties = new LinkedHashMap<>();
 
-        for (SchemaProperty prop: propList.values()) {
+        for (SchemaProperty prop : propList.values()) {
             String key = prop.name();
             if (StringUtils.isBlank(key)) {
                 continue;
@@ -1650,9 +1652,9 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         XmlElement elem = a.getAnnotation(XmlElement.class);
         if (elem == null) {
             if (annotations != null) {
-                for (Annotation ann: annotations) {
+                for (Annotation ann : annotations) {
                     if (ann instanceof XmlElement) {
-                        elem = (XmlElement)ann;
+                        elem = (XmlElement) ann;
                         break;
                     }
                 }
@@ -1962,7 +1964,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 if (JsonTypeInfo.Id.NAME.equals(id) && typeName != null) {
                     name = typeName.value();
                 }
-                if(JsonTypeInfo.Id.NAME.equals(id) && name == null) {
+                if (JsonTypeInfo.Id.NAME.equals(id) && name == null) {
                     name = type.getRawClass().getSimpleName();
                 }
                 Schema wrapperSchema = new ObjectSchema();
@@ -2007,12 +2009,17 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
     }
 
     protected XML resolveXml(Annotated a, Annotation[] annotations, io.swagger.v3.oas.annotations.media.Schema schema) {
-        // if XmlRootElement annotation, construct a Xml object and attach it to the model
-        XmlRootElement rootAnnotation = null;
+        // if XmlRootElement or XmlType annotation, construct a Xml object and attach it to the model
+        final XmlRootElement rootAnnotation = extractAnnotation(a, annotations, XmlRootElement.class);
+        final XmlType typeAnnotation = extractAnnotation(a, annotations, XmlType.class);
         XmlSchema xmlSchema = null;
-        if (a != null) {
-            rootAnnotation = a.getAnnotation(XmlRootElement.class);
-            Class<?> rawType = a.getRawType();
+
+        // Why doing this only for XmlRootElement?
+        // Assumption here is that class with XmlType annotation appears as aggregate
+        // to a class with XmlRootElement annotation
+        // Otherwise set 'namespace' XmlType
+        if (rootAnnotation != null) {
+            final Class<?> rawType = a.getRawType();
             if (rawType != null) {
                 Package aPackage = rawType.getPackage();
                 if (aPackage != null) {
@@ -2020,32 +2027,44 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 }
             }
         }
-        if (rootAnnotation == null) {
-            if (annotations != null) {
-                for (Annotation ann: annotations) {
-                    if (ann instanceof XmlRootElement) {
-                        rootAnnotation = (XmlRootElement)ann;
-                        break;
-                    }
-                }
-            }
-        }
 
-        if (rootAnnotation != null && !"".equals(rootAnnotation.name()) && !JAXB_DEFAULT.equals(rootAnnotation.name())) {
-            XML xml = new XML().name(rootAnnotation.name());
-            if (xmlSchema != null && isNonTrivialXmlNamespace(xmlSchema.namespace())) {
-                xml.namespace(xmlSchema.namespace());
-            }
-            // Let XmlRootElement overwrite global XmlSchema namespace if present
-            if (isNonTrivialXmlNamespace(rootAnnotation.namespace())) {
+        final XML xml = new XML();
+        if (xmlSchema != null && isNonTrivialXmlIdentifier(xmlSchema.namespace())) {
+            xml.namespace(xmlSchema.namespace());
+        }
+        if (rootAnnotation != null && isNonTrivialXmlIdentifier(rootAnnotation.name())) {
+            xml.name(rootAnnotation.name());
+            if (isNonTrivialXmlIdentifier(rootAnnotation.namespace())) {
                 xml.namespace(rootAnnotation.namespace());
             }
+        }
+        if (typeAnnotation != null && isNonTrivialXmlIdentifier(typeAnnotation.name())) {
+            xml.name(typeAnnotation.name());
+            if (isNonTrivialXmlIdentifier(typeAnnotation.namespace())) {
+                xml.namespace(typeAnnotation.namespace());
+            }
+        }
+        if (isNonTrivialXmlIdentifier(xml.getName())) {
             return xml;
         }
         return null;
     }
 
-    private boolean isNonTrivialXmlNamespace(String namespace) {
+    private <A extends Annotation> A extractAnnotation(Annotated a, Annotation[] annotations, Class<A> annotationClass) {
+        if (a != null && a.getAnnotation(annotationClass) != null) {
+            return a.getAnnotation(annotationClass);
+        }
+        if (annotations != null) {
+            for (Annotation ann : annotations) {
+                if (annotationClass.isInstance(ann)) {
+                    return annotationClass.cast(ann);
+                }
+            }
+        }
+        return null;
+    }
+
+    private boolean isNonTrivialXmlIdentifier(String namespace) {
         return namespace != null && !"".equals(namespace) && !JAXB_DEFAULT.equals(namespace);
     }
 
@@ -2275,7 +2294,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
     }
 
     /**
-     *  Decorate the name based on the JsonView
+     * Decorate the name based on the JsonView
      */
     protected String decorateModelName(AnnotatedType type, String originalName) {
         if (StringUtils.isBlank(originalName)) {
@@ -2295,7 +2314,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
     }
 
     protected boolean hiddenByJsonView(Annotation[] annotations,
-                                     AnnotatedType type) {
+                                       AnnotatedType type) {
         JsonView jsonView = type.getJsonViewAnnotation();
         if (jsonView == null)
             return false;
