@@ -67,13 +67,7 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementRef;
-import javax.xml.bind.annotation.XmlElementRefs;
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.*;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
@@ -2013,10 +2007,18 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
     }
 
     protected XML resolveXml(Annotated a, Annotation[] annotations, io.swagger.v3.oas.annotations.media.Schema schema) {
-        // if XmlRootElement annotation, construct an Xml object and attach it to the model
+        // if XmlRootElement annotation, construct a Xml object and attach it to the model
         XmlRootElement rootAnnotation = null;
+        XmlSchema xmlSchema = null;
         if (a != null) {
             rootAnnotation = a.getAnnotation(XmlRootElement.class);
+            Class<?> rawType = a.getRawType();
+            if (rawType != null) {
+                Package aPackage = rawType.getPackage();
+                if (aPackage != null) {
+                    xmlSchema = aPackage.getAnnotation(XmlSchema.class);
+                }
+            }
         }
         if (rootAnnotation == null) {
             if (annotations != null) {
@@ -2028,14 +2030,23 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 }
             }
         }
+
         if (rootAnnotation != null && !"".equals(rootAnnotation.name()) && !JAXB_DEFAULT.equals(rootAnnotation.name())) {
             XML xml = new XML().name(rootAnnotation.name());
-            if (rootAnnotation.namespace() != null && !"".equals(rootAnnotation.namespace()) && !JAXB_DEFAULT.equals(rootAnnotation.namespace())) {
+            if (xmlSchema != null && isNonTrivialXmlNamespace(xmlSchema.namespace())) {
+                xml.namespace(xmlSchema.namespace());
+            }
+            // Let XmlRootElement overwrite global XmlSchema namespace if present
+            if (isNonTrivialXmlNamespace(rootAnnotation.namespace())) {
                 xml.namespace(rootAnnotation.namespace());
             }
             return xml;
         }
         return null;
+    }
+
+    private boolean isNonTrivialXmlNamespace(String namespace) {
+        return namespace != null && !"".equals(namespace) && !JAXB_DEFAULT.equals(namespace);
     }
 
     protected Set<String> resolveIgnoredProperties(Annotations a, Annotation[] annotations) {
