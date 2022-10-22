@@ -3,7 +3,7 @@ package io.swagger.v3.core.oas.models.xmltest;
 import javax.xml.bind.annotation.*;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "SubName", propOrder = {
+@XmlType(name = "SubType", propOrder = {
         "id",
         "name"
 })
