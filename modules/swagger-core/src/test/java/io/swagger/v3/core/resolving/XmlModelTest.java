@@ -4,6 +4,7 @@ import io.swagger.v3.core.converter.ModelConverters;
 import io.swagger.v3.core.oas.models.Address;
 import io.swagger.v3.core.oas.models.Issue534;
 import io.swagger.v3.core.oas.models.ModelWithJAXBAnnotations;
+import io.swagger.v3.core.oas.models.xmltest.NestedModelWithJAXBAnnotations;
 import io.swagger.v3.core.util.Yaml;
 import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.media.XML;
@@ -100,6 +101,48 @@ public class XmlModelTest {
                 assertEquals(xml.getName(), "wrappedListItems");
                 assertNull(xml.getAttribute());
                 assertTrue(xml.getWrapped());
+            } else {
+                fail(String.format("Unexpected property: %s", name));
+            }
+        }
+    }
+
+    @Test(description = "it should process a nested model with JAXB annotations and a namespace")
+    public void processModelWithJAXBAnnotationsAndNamespace() {
+        final Map<String, Schema> schemas = ModelConverters.getInstance().readAll(NestedModelWithJAXBAnnotations.class);
+        assertEquals(schemas.size(), 2);
+
+        final Schema model = schemas.get("NestedModelWithJAXBAnnotations");
+        assertNotNull(model);
+        assertTrue(model instanceof Schema);
+
+        final XML rootXml = model.getXml();
+        assertNotNull(rootXml);
+        assertEquals(rootXml.getName(), "RootName");
+        assertEquals(rootXml.getNamespace(), "https://www.openapis.org/test/nested");
+
+        Map<String, Schema> props = model.getProperties();
+        for (Map.Entry<String, Schema> entry : props.entrySet()) {
+            final String name = entry.getKey();
+            final Schema property = entry.getValue();
+            if ("id".equals(name)) {
+                final XML xml = property.getXml();
+                assertNotNull(xml);
+                assertNull(xml.getName());
+                assertTrue(xml.getAttribute());
+                assertNull(xml.getWrapped());
+            } else if ("name".equals(name)) {
+                final XML xml = property.getXml();
+                assertNotNull(xml);
+                assertEquals(xml.getName(), "named");
+                assertNull(xml.getAttribute());
+                assertNull(xml.getWrapped());
+            } else if ("subName".equals(name)) {
+                final XML xml = property.getXml();
+                assertNotNull(xml);
+                assertEquals(xml.getName(), "SubName");
+                assertNull(xml.getAttribute());
+                assertNull(xml.getWrapped());
             } else {
                 fail(String.format("Unexpected property: %s", name));
             }
