@@ -742,7 +742,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
          * This must be done after model.setProperties so that the model's set
          * of properties is available to filter from any subtypes
          **/
-        if (!resolveSubtypes(model, beanDesc, context)) {
+        if (!resolveSubtypes(model, beanDesc, context, annotatedType.getJsonViewAnnotation())) {
             model.setDiscriminator(null);
         }
 
@@ -1370,7 +1370,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         }
     }
 
-    private boolean resolveSubtypes(Schema model, BeanDescription bean, ModelConverterContext context) {
+    private boolean resolveSubtypes(Schema model, BeanDescription bean, ModelConverterContext context, JsonView jsonViewAnnotation) {
         final List<NamedType> types = _intr.findSubtypes(bean.getClassInfo());
         if (types == null) {
             return false;
@@ -1398,7 +1398,8 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 continue;
             }
 
-            final Schema subtypeModel = context.resolve(new AnnotatedType().type(subtypeType));
+            final Schema subtypeModel = context.resolve(new AnnotatedType().type(subtypeType)
+                .jsonViewAnnotation(jsonViewAnnotation));
 
             if (    StringUtils.isBlank(subtypeModel.getName()) ||
                     subtypeModel.getName().equals(model.getName())) {
