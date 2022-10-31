@@ -174,6 +174,19 @@ public abstract class AnnotationsUtils {
         if (!equals(thisArraySchema.schema(), thatArraySchema.schema())) {
             return false;
         }
+
+        if (!equals(thisArraySchema.contains(), thatArraySchema.contains())) {
+            return false;
+        }
+        if (thisArraySchema.maxContains() != thatArraySchema.maxContains()) {
+            return false;
+        }
+        if (thisArraySchema.minContains() != thatArraySchema.minContains()) {
+            return false;
+        }
+        if (!Arrays.equals(thisArraySchema.prefixItems(), thatArraySchema.prefixItems())) {
+            return false;
+        }
         return true;
     }
 
@@ -316,6 +329,52 @@ public abstract class AnnotationsUtils {
             return false;
         }
 
+        if (!Arrays.equals(thisSchema.types(), thatSchema.types())) {
+            return false;
+        }
+        if (thisSchema.exclusiveMaximumValue() != thatSchema.exclusiveMaximumValue()) {
+            return false;
+        }
+        if (thisSchema.exclusiveMinimumValue() != thatSchema.exclusiveMinimumValue()) {
+            return false;
+        }
+        if (!StringUtils.equals(thisSchema.$id(), thatSchema.$id())) {
+            return false;
+        }
+        if (!StringUtils.equals(thisSchema.$schema(), thatSchema.$schema())) {
+            return false;
+        }
+        if (!StringUtils.equals(thisSchema.$anchor(), thatSchema.$anchor())) {
+            return false;
+        }
+        if (!StringUtils.equals(thisSchema.contentEncoding(), thatSchema.contentEncoding())) {
+            return false;
+        }
+        if (!StringUtils.equals(thisSchema.contentMediaType(), thatSchema.contentMediaType())) {
+            return false;
+        }
+        if (!StringUtils.equals(thisSchema.contentMediaType(), thatSchema.contentMediaType())) {
+            return false;
+        }
+        if (!thisSchema.contentSchema().equals(thatSchema.contentSchema())) {
+            return false;
+        }
+        if (!thisSchema.propertyNames().equals(thatSchema.propertyNames())) {
+            return false;
+        }
+        if (!thisSchema._if().equals(thatSchema._if())) {
+            return false;
+        }
+        if (!thisSchema._else().equals(thatSchema._else())) {
+            return false;
+        }
+        if (!thisSchema.then().equals(thatSchema.then())) {
+            return false;
+        }
+        if (!thisSchema.$comment().equals(thatSchema.$comment())) {
+            return false;
+        }
+
         return true;
     }
 
@@ -329,6 +388,11 @@ public abstract class AnnotationsUtils {
                 && array.minItems() == Integer.MAX_VALUE
                 && !hasSchemaAnnotation(array.schema())
                 && !hasSchemaAnnotation(array.arraySchema())
+                && !hasSchemaAnnotation(array.contains())
+                && array.maxContains() == 0
+                && array.minContains() == 0
+                && !hasSchemaAnnotation(array.unevaluatedItems())
+                && array.prefixItems().length == 0
                 ) {
             return false;
         }
