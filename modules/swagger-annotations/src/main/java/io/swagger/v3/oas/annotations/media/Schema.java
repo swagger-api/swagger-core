@@ -164,9 +164,9 @@ public @interface Schema {
     /**
      * Mandates that the annotated item is required or not.
      *
-     * @deprecated As of 2.3.1, replaced by {@link #requiredMode()}
+     * @deprecated since 2.2.5, replaced by {@link #requiredMode()}
      *
-     * @return whether or not this schema is required
+     * @return whether this schema is required
      **/
     @Deprecated
     boolean required() default false;
@@ -178,6 +178,7 @@ public @interface Schema {
      * RequiredMode.REQUIRED: will force the item to be considered as required regardless of heuristics.
      * RequiredMode.NOT_REQUIRED: will force the item to be considered as not required regardless of heuristics.
      *
+     * @since 2.2.5
      * @return the requiredMode for this schema (property)
      *
      */
