@@ -24,7 +24,7 @@ public abstract class ReferenceTypeUtils {
      */
     public static AnnotatedType unwrapReference(AnnotatedType type) {
 
-        if (type == null) {
+        if (type == null || type.getType() == null) {
             return type;
         }
         try {
