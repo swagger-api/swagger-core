@@ -24,8 +24,10 @@ public abstract class ReferenceTypeUtils {
      */
     public static AnnotatedType unwrapReference(AnnotatedType type) {
 
-        if (type == null || type.getType() == null) {
+        if (type == null) {
             return type;
+        } else if (type.getType() == null) {
+            return null;
         }
         try {
             final JavaType jtype;
