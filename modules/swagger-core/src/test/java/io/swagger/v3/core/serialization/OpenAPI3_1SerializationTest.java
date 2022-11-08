@@ -1,5 +1,6 @@
 package io.swagger.v3.core.serialization;
 
+import com.fasterxml.jackson.core.util.DefaultIndenter;
 import io.swagger.v3.core.matchers.SerializationMatchers;
 import io.swagger.v3.core.util.Json;
 import io.swagger.v3.core.util.Json31;
@@ -1374,14 +1375,14 @@ public class OpenAPI3_1SerializationTest {
 
         System.out.println("--------- root ----------");
         Json31.prettyPrint(openAPI);
-        assertEquals(Json31.pretty(openAPI), "{\n" +
+        assertEquals(Json31.pretty(openAPI), withJacksonSystemLineSeparator("{\n" +
                 "  \"openapi\" : \"3.1.0\",\n" +
                 "  \"components\" : {\n" +
                 "    \"schemas\" : {\n" +
                 "      \"test\" : true\n" +
                 "    }\n" +
                 "  }\n" +
-                "}");
+                "}"));
         System.out.println("--------- schema ----------");
         Json31.prettyPrint(openAPI.getComponents().getSchemas().get("test"));
         assertEquals(Json31.pretty(openAPI.getComponents().getSchemas().get("test")), "true");
@@ -1396,14 +1397,14 @@ public class OpenAPI3_1SerializationTest {
         assertEquals(Yaml31.pretty(openAPI.getComponents().getSchemas().get("test")), "true\n");
         System.out.println("--------- root 3.0 ----------");
         Json.prettyPrint(openAPI);
-        assertEquals(Json.pretty(openAPI), "{\n" +
+        assertEquals(Json.pretty(openAPI), withJacksonSystemLineSeparator("{\n" +
                 "  \"openapi\" : \"3.1.0\",\n" +
                 "  \"components\" : {\n" +
                 "    \"schemas\" : {\n" +
                 "      \"test\" : { }\n" +
                 "    }\n" +
                 "  }\n" +
-                "}");
+                "}"));
         System.out.println("--------- schema 3.0 ----------");
         Json.prettyPrint(openAPI.getComponents().getSchemas().get("test"));
         assertEquals(Json.pretty(openAPI.getComponents().getSchemas().get("test")), "{ }");
@@ -1418,4 +1419,7 @@ public class OpenAPI3_1SerializationTest {
         assertEquals(Yaml.pretty(openAPI.getComponents().getSchemas().get("test")), "{}\n");
     }
 
+    private static String withJacksonSystemLineSeparator(String s) {
+        return s.replace("\n", DefaultIndenter.SYS_LF);
+    }
 }

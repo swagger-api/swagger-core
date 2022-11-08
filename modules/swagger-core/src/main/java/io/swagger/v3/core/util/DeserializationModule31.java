@@ -1,6 +1,11 @@
 package io.swagger.v3.core.util;
 
+import com.fasterxml.jackson.databind.BeanDescription;
+import com.fasterxml.jackson.databind.DeserializationConfig;
+import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.databind.deser.BeanDeserializerModifier;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Paths;
 import io.swagger.v3.oas.models.callbacks.Callback;
 import io.swagger.v3.oas.models.headers.Header;
@@ -26,5 +31,15 @@ public class DeserializationModule31 extends SimpleModule {
         this.addDeserializer(ApiResponses.class, new ApiResponses31Deserializer());
         this.addDeserializer(Paths.class, new Paths31Deserializer());
         this.addDeserializer(Callback.class, new Callback31Deserializer());
+
+        this.setDeserializerModifier(new BeanDeserializerModifier()
+        {
+            @Override public JsonDeserializer<?> modifyDeserializer(DeserializationConfig config, BeanDescription beanDesc, JsonDeserializer<?> deserializer) {
+                if (beanDesc.getBeanClass() == OpenAPI.class) {
+                    return new OpenAPI31Deserializer(deserializer);
+                }
+                return deserializer;
+            }
+        });
     }
 }

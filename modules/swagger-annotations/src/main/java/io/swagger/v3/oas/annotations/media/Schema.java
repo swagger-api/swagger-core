@@ -164,9 +164,25 @@ public @interface Schema {
     /**
      * Mandates that the annotated item is required or not.
      *
-     * @return whether or not this schema is required
+     * @deprecated since 2.2.5, replaced by {@link #requiredMode()}
+     *
+     * @return whether this schema is required
      **/
+    @Deprecated
     boolean required() default false;
+
+    /**
+     * Allows to specify the required mode (RequiredMode.AUTO, REQUIRED, NOT_REQUIRED)
+     *
+     * RequiredMode.AUTO: will let the library decide based on its heuristics.
+     * RequiredMode.REQUIRED: will force the item to be considered as required regardless of heuristics.
+     * RequiredMode.NOT_REQUIRED: will force the item to be considered as not required regardless of heuristics.
+     *
+     * @since 2.2.5
+     * @return the requiredMode for this schema (property)
+     *
+     */
+    RequiredMode requiredMode() default RequiredMode.AUTO;
 
     /**
      * A description of the schema.
@@ -344,5 +360,11 @@ public @interface Schema {
         TRUE,
         FALSE,
         USE_ADDITIONAL_PROPERTIES_ANNOTATION;
+    }
+
+    enum RequiredMode {
+        AUTO,
+        REQUIRED,
+        NOT_REQUIRED;
     }
 }

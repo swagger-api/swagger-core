@@ -1,6 +1,7 @@
 package io.swagger.v3.oas.models.media;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import io.swagger.v3.oas.models.annotations.OpenAPI30;
 import io.swagger.v3.oas.models.annotations.OpenAPI31;
 import io.swagger.v3.oas.models.Components;
@@ -25,6 +26,8 @@ import java.util.Set;
  */
 
 public class Schema<T> {
+
+    public static final String BIND_TYPE_AND_TYPES = "bind-type";
 
     protected T _default;
 
@@ -1118,6 +1121,10 @@ public class Schema<T> {
      **/
 
     public String getType() {
+        boolean bindTypes = Boolean.valueOf(System.getProperty(BIND_TYPE_AND_TYPES, "false"));
+        if (bindTypes && type == null && types != null && types.size() == 1) {
+            return types.iterator().next();
+        }
         return type;
     }
 
