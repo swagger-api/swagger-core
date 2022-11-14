@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import io.swagger.models.ArrayModel;
+import io.swagger.models.BooleanValueModel;
 import io.swagger.models.ComposedModel;
 import io.swagger.models.Model;
 import io.swagger.models.ModelImpl;
@@ -21,6 +22,9 @@ public class ModelDeserializer extends JsonDeserializer<Model> {
     public Model deserialize(JsonParser jp, DeserializationContext ctxt)
             throws IOException, JsonProcessingException {
         JsonNode node = jp.getCodec().readTree(jp);
+        if (node.isBoolean()) {
+            return new BooleanValueModel(node.asBoolean());
+        }
         JsonNode sub = node.get("$ref");
         JsonNode allOf = node.get("allOf");
 
