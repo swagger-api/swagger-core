@@ -99,7 +99,8 @@ public class PropertyBuilder {
         REQUIRED("required"),
         VENDOR_EXTENSIONS("vendorExtensions"),
         ALLOW_EMPTY_VALUE("allowEmptyValue"),
-        MULTIPLE_OF("multipleOf");
+        MULTIPLE_OF("multipleOf"),
+        ADDITIONAL_PROPERTIES("additionalProperties");
 
         private String propertyName;
 
