@@ -33,6 +33,7 @@ import org.testng.annotations.Test;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertTrue;
 
 public class OpenAPI3_1SerializationTest {
 
@@ -1417,6 +1418,83 @@ public class OpenAPI3_1SerializationTest {
         System.out.println("--------- schema YAML 3.0 ----------");
         Yaml.prettyPrint(openAPI.getComponents().getSchemas().get("test"));
         assertEquals(Yaml.pretty(openAPI.getComponents().getSchemas().get("test")), "{}\n");
+    }
+
+    @Test
+    public void testBooleanAdditionalPropertiesSerialization() throws Exception{
+        String expectedJson = "{\n" +
+                "  \"openapi\" : \"3.1.0\",\n" +
+                "  \"components\" : {\n" +
+                "    \"schemas\" : {\n" +
+                "      \"test\" : {\n" +
+                "        \"type\" : \"object\",\n" +
+                "        \"additionalProperties\" : true\n" +
+                "      }\n" +
+                "    }\n" +
+                "  }\n" +
+                "}";
+
+        String expectedYaml = "openapi: 3.1.0\n" +
+                "components:\n" +
+                "  schemas:\n" +
+                "    test:\n" +
+                "      type: object\n" +
+                "      additionalProperties: true\n";
+
+        OpenAPI openAPI = Json31.mapper().readValue(expectedJson, OpenAPI.class);
+        String ser = Json31.pretty(openAPI);
+        assertEquals(ser, withJacksonSystemLineSeparator(expectedJson));
+        assertTrue(Boolean.TRUE.equals(openAPI.getComponents().getSchemas().get("test").getAdditionalProperties()));
+        openAPI = Json.mapper().readValue(expectedJson, OpenAPI.class);
+        ser = Json.pretty(openAPI);
+        assertEquals(ser, withJacksonSystemLineSeparator(expectedJson));
+        assertTrue(Boolean.TRUE.equals(openAPI.getComponents().getSchemas().get("test").getAdditionalProperties()));
+
+        openAPI = Yaml31.mapper().readValue(expectedYaml, OpenAPI.class);
+        ser = Yaml31.pretty(openAPI);
+        assertEquals(ser, withJacksonSystemLineSeparator(expectedYaml));
+        assertTrue(Boolean.TRUE.equals(openAPI.getComponents().getSchemas().get("test").getAdditionalProperties()));
+        openAPI = Yaml.mapper().readValue(expectedYaml, OpenAPI.class);
+        ser = Yaml.pretty(openAPI);
+        assertEquals(ser, withJacksonSystemLineSeparator(expectedYaml));
+        assertTrue(Boolean.TRUE.equals(openAPI.getComponents().getSchemas().get("test").getAdditionalProperties()));
+
+        expectedJson = "{\n" +
+                "  \"openapi\" : \"3.0.0\",\n" +
+                "  \"components\" : {\n" +
+                "    \"schemas\" : {\n" +
+                "      \"test\" : {\n" +
+                "        \"type\" : \"object\",\n" +
+                "        \"additionalProperties\" : true\n" +
+                "      }\n" +
+                "    }\n" +
+                "  }\n" +
+                "}";
+
+        expectedYaml = "openapi: 3.0.0\n" +
+                "components:\n" +
+                "  schemas:\n" +
+                "    test:\n" +
+                "      type: object\n" +
+                "      additionalProperties: true\n";
+
+        openAPI = Json31.mapper().readValue(expectedJson, OpenAPI.class);
+        ser = Json31.pretty(openAPI);
+        assertEquals(ser, withJacksonSystemLineSeparator(expectedJson));
+        assertTrue(Boolean.TRUE.equals(openAPI.getComponents().getSchemas().get("test").getAdditionalProperties()));
+        openAPI = Json.mapper().readValue(expectedJson, OpenAPI.class);
+        ser = Json.pretty(openAPI);
+        assertEquals(ser, withJacksonSystemLineSeparator(expectedJson));
+        assertTrue(Boolean.TRUE.equals(openAPI.getComponents().getSchemas().get("test").getAdditionalProperties()));
+
+        openAPI = Yaml31.mapper().readValue(expectedYaml, OpenAPI.class);
+        ser = Yaml31.pretty(openAPI);
+        assertEquals(ser, withJacksonSystemLineSeparator(expectedYaml));
+        assertTrue(Boolean.TRUE.equals(openAPI.getComponents().getSchemas().get("test").getAdditionalProperties()));
+        openAPI = Yaml.mapper().readValue(expectedYaml, OpenAPI.class);
+        ser = Yaml.pretty(openAPI);
+        assertEquals(ser, withJacksonSystemLineSeparator(expectedYaml));
+        assertTrue(Boolean.TRUE.equals(openAPI.getComponents().getSchemas().get("test").getAdditionalProperties()));
     }
 
     private static String withJacksonSystemLineSeparator(String s) {
