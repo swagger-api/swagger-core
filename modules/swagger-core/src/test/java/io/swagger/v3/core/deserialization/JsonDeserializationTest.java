@@ -8,6 +8,7 @@ import io.swagger.v3.core.util.TestUtils;
 import io.swagger.v3.core.util.Yaml;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.PathItem;
+import io.swagger.v3.oas.models.examples.Example;
 import io.swagger.v3.oas.models.headers.Header;
 import io.swagger.v3.oas.models.media.ComposedSchema;
 import io.swagger.v3.oas.models.media.Encoding;
@@ -409,6 +410,120 @@ public class JsonDeserializationTest {
         assertNull(oas.getComponents().getSchemas().get("UserStatus").getExample());
         assertFalse(oas.getComponents().getSchemas().get("UserStatus").getExampleSetFlag());
         Yaml.prettyPrint(oas);
+    }
+
+    @Test
+    public void testNullExampleAndValues() throws Exception {
+        String yamlNull = "openapi: 3.0.1\n" +
+                "paths:\n" +
+                "  /:\n" +
+                "    get:\n" +
+                "      description: Operation Description\n" +
+                "      operationId: operationId\n" +
+                "components:\n" +
+                "  schemas:\n" +
+                "    UserStatus:\n" +
+                "      type: object\n" +
+                "      example: null\n";
+
+        String yamlMissing = "openapi: 3.0.1\n" +
+                "paths:\n" +
+                "  /:\n" +
+                "    get:\n" +
+                "      description: Operation Description\n" +
+                "      operationId: operationId\n" +
+                "components:\n" +
+                "  schemas:\n" +
+                "    UserStatus:\n" +
+                "      type: object\n";
+
+        String yamlNotNull = "openapi: 3.0.1\n" +
+                "paths:\n" +
+                "  /:\n" +
+                "    get:\n" +
+                "      description: Operation Description\n" +
+                "      operationId: operationId\n" +
+                "components:\n" +
+                "  schemas:\n" +
+                "    UserStatus:\n" +
+                "      type: object\n" +
+                "      example:\n" +
+                "        value: bar\n";
+
+        String yamlValueNull = "openapi: 3.0.1\n" +
+                "paths:\n" +
+                "  /:\n" +
+                "    get:\n" +
+                "      description: Operation Description\n" +
+                "      operationId: operationId\n" +
+                "components:\n" +
+                "  examples:\n" +
+                "    UserStatus:\n" +
+                "      summary: string\n" +
+                "      value: null\n";
+
+        String yamlValueMissing = "openapi: 3.0.1\n" +
+                "paths:\n" +
+                "  /:\n" +
+                "    get:\n" +
+                "      description: Operation Description\n" +
+                "      operationId: operationId\n" +
+                "components:\n" +
+                "  examples:\n" +
+                "    UserStatus:\n" +
+                "      summary: string\n";
+
+        String yamlValueNotNull = "openapi: 3.0.1\n" +
+                "paths:\n" +
+                "  /:\n" +
+                "    get:\n" +
+                "      description: Operation Description\n" +
+                "      operationId: operationId\n" +
+                "components:\n" +
+                "  examples:\n" +
+                "    UserStatus:\n" +
+                "      summary: string\n" +
+                "      value: bar\n";
+
+        OpenAPI oas = Yaml.mapper().readValue(yamlNull, OpenAPI.class);
+        Yaml.prettyPrint(oas);
+
+        assertNull(oas.getComponents().getSchemas().get("UserStatus").getExample());
+        assertTrue(oas.getComponents().getSchemas().get("UserStatus").getExampleSetFlag());
+        assertEquals(Yaml.pretty(oas), yamlNull);
+
+        oas = Yaml.mapper().readValue(yamlMissing, OpenAPI.class);
+        Yaml.prettyPrint(oas);
+        assertNull(oas.getComponents().getSchemas().get("UserStatus").getExample());
+        assertFalse(oas.getComponents().getSchemas().get("UserStatus").getExampleSetFlag());
+        assertEquals(Yaml.pretty(oas), yamlMissing);
+
+        oas = Yaml.mapper().readValue(yamlNotNull, OpenAPI.class);
+        Yaml.prettyPrint(oas);
+        assertNotNull(oas.getComponents().getSchemas().get("UserStatus").getExample());
+        assertTrue(oas.getComponents().getSchemas().get("UserStatus").getExampleSetFlag());
+        assertEquals(Yaml.pretty(oas), yamlNotNull);
+
+        oas = Yaml.mapper().readValue(yamlValueNull, OpenAPI.class);
+        Yaml.prettyPrint(oas);
+        Example ex = oas.getComponents().getExamples().get("UserStatus");
+        assertNull(ex.getValue());
+        assertTrue(ex.getValueSetFlag());
+        assertEquals(Yaml.pretty(oas), yamlValueNull);
+
+        oas = Yaml.mapper().readValue(yamlValueMissing, OpenAPI.class);
+        Yaml.prettyPrint(oas);
+        ex = oas.getComponents().getExamples().get("UserStatus");
+        assertNull(ex.getValue());
+        assertFalse(ex.getValueSetFlag());
+        assertEquals(Yaml.pretty(oas), yamlValueMissing);
+
+        oas = Yaml.mapper().readValue(yamlValueNotNull, OpenAPI.class);
+        Yaml.prettyPrint(oas);
+        ex = oas.getComponents().getExamples().get("UserStatus");
+        assertNotNull(ex.getValue());
+        assertTrue(ex.getValueSetFlag());
+        assertEquals(Yaml.pretty(oas), yamlValueNotNull);
     }
 
     @Test
