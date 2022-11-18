@@ -14,6 +14,7 @@ import com.fasterxml.jackson.databind.ser.BeanSerializerModifier;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import io.swagger.v3.core.jackson.ExampleSerializer;
 import io.swagger.v3.core.jackson.Schema31Serializer;
 import io.swagger.v3.core.jackson.MediaTypeSerializer;
 import io.swagger.v3.core.jackson.SchemaSerializer;
@@ -116,6 +117,8 @@ public class ObjectMapperFactory {
                                 return new SchemaSerializer((JsonSerializer<Object>) serializer);
                             } else if (MediaType.class.isAssignableFrom(desc.getBeanClass())) {
                                 return new MediaTypeSerializer((JsonSerializer<Object>) serializer);
+                            } else if (Example.class.isAssignableFrom(desc.getBeanClass())) {
+                                return new ExampleSerializer((JsonSerializer<Object>) serializer);
                             }
                             return serializer;
                         }
@@ -135,6 +138,8 @@ public class ObjectMapperFactory {
                                 return new Schema31Serializer((JsonSerializer<Object>) serializer);
                             } else if (MediaType.class.isAssignableFrom(desc.getBeanClass())) {
                                 return new MediaTypeSerializer((JsonSerializer<Object>) serializer);
+                            } else if (Example.class.isAssignableFrom(desc.getBeanClass())) {
+                                return new ExampleSerializer((JsonSerializer<Object>) serializer);
                             }
                             return serializer;
                         }
