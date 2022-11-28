@@ -152,8 +152,12 @@ public class ModelDeserializer extends JsonDeserializer<Schema> {
             }
             if (additionalProperties != null) {
                 try {
-                    Schema innerSchema = Json31.mapper().convertValue(additionalProperties, JsonSchema.class);
-                    schema.setAdditionalProperties(innerSchema);
+                    if (additionalProperties.isBoolean()) {
+                        schema.setAdditionalProperties(additionalProperties.booleanValue());
+                    } else {
+                        Schema innerSchema = deserializeJsonSchema(additionalProperties);
+                        schema.setAdditionalProperties(innerSchema);
+                    }
                 } catch (Exception e) {
                     Boolean additionalPropsBoolean = Json31.mapper().convertValue(additionalProperties, Boolean.class);
                     schema.setAdditionalProperties(additionalPropsBoolean);

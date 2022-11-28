@@ -1,7 +1,6 @@
 package io.swagger.v3.oas.models.media;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import io.swagger.v3.oas.models.annotations.OpenAPI30;
 import io.swagger.v3.oas.models.annotations.OpenAPI31;
 import io.swagger.v3.oas.models.Components;
@@ -49,6 +48,7 @@ public class Schema<T> {
     private Integer maxProperties = null;
     private Integer minProperties = null;
     private List<String> required = null;
+    @OpenAPI30
     private String type = null;
     private Schema not = null;
     private Map<String, Schema> properties = null;
