@@ -934,7 +934,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             return property;
         try {
             String cloneName = property.getName();
-            property = Json.mapper().readValue(Json.pretty(property), Schema.class);
+            property = _mapper.readValue(Json.pretty(property), Schema.class);
             property.setName(cloneName);
         } catch (IOException e) {
             LOGGER.error("Could not clone property", e);
@@ -1093,7 +1093,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             if (innerModel.getProperties() != null) {
                 for (Schema prop : (Collection<Schema>) innerModel.getProperties().values()) {
                     try {
-                        Schema clonedProp = Json.mapper().readValue(Json.pretty(prop), Schema.class);
+                        Schema clonedProp = _mapper.readValue(Json.pretty(prop), Schema.class);
                         clonedProp.setName(prefix + prop.getName() + suffix);
                         props.add(clonedProp);
                     } catch (IOException e) {
