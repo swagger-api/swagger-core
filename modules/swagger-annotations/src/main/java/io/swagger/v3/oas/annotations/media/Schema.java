@@ -332,7 +332,7 @@ public @interface Schema {
      * @return the exclusive maximum value for this schema
      **/
     @OpenAPI31
-    int exclusiveMaximumValue() default Integer.MAX_VALUE;
+    int exclusiveMaximumValue() default 0;
 
     /**
      * Provides an exclusive minimum for a expressing exclusive range.
@@ -522,4 +522,13 @@ public @interface Schema {
      **/
     @OpenAPI31
     String[] examples() default {};
+
+    /**
+     * Provides value restricted to this schema.
+     *
+     * @since 2.2.4 / OpenAPI 3.1
+     * @return const value
+     */
+    @OpenAPI31
+    String _const() default "";
 }

@@ -374,6 +374,9 @@ public abstract class AnnotationsUtils {
         if (!thisSchema.$comment().equals(thatSchema.$comment())) {
             return false;
         }
+        if (!thisSchema._const().equals(thatSchema._const())) {
+            return false;
+        }
 
         return true;
     }
@@ -583,6 +586,13 @@ public abstract class AnnotationsUtils {
         }
         if (!schema.then().equals(Void.class)) {
             schemaObject.setThen(resolveSchemaFromType(schema.then(), components, jsonViewAnnotation));
+        }
+        if (StringUtils.isNotBlank(schema._const())) {
+            try {
+                schemaObject.setConst(Json.mapper().readTree(schema._const()));
+            } catch (IOException e) {
+                schemaObject.setConst(schema._const());
+            }
         }
         if (StringUtils.isNotBlank(schema.$comment())) {
             schemaObject.set$comment(schema.$comment());
@@ -2124,6 +2134,14 @@ public abstract class AnnotationsUtils {
                     return master.examples();
                 }
                 return patch.examples();
+            }
+
+            @Override
+            public String _const() {
+                if (!master._const().equals(Void.class) || patch._const().equals(Void.class)) {
+                    return master._const();
+                }
+                return patch._const();
             }
 
             @Override
