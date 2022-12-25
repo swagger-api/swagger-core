@@ -33,11 +33,15 @@ import io.swagger.v3.core.converter.ModelConverterContext;
 import io.swagger.v3.core.util.AnnotationsUtils;
 import io.swagger.v3.core.util.Constants;
 import io.swagger.v3.core.util.Json;
+import io.swagger.v3.core.util.Json31;
 import io.swagger.v3.core.util.ObjectMapperFactory;
 import io.swagger.v3.core.util.OptionalUtils;
 import io.swagger.v3.core.util.PrimitiveType;
 import io.swagger.v3.core.util.ReflectionUtils;
+import io.swagger.v3.core.util.Yaml31;
 import io.swagger.v3.oas.annotations.Hidden;
+import io.swagger.v3.oas.annotations.StringToClassMapItem;
+import io.swagger.v3.oas.annotations.media.DependentRequired;
 import io.swagger.v3.oas.annotations.media.DiscriminatorMapping;
 import io.swagger.v3.oas.annotations.media.PatternProperties;
 import io.swagger.v3.oas.annotations.media.PatternProperty;
@@ -112,6 +116,8 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
      * Allows all enums to be resolved as a reference to a scheme added to the components section.
      */
     public static boolean enumsAsRef = System.getProperty(SET_PROPERTY_OF_ENUMS_AS_REF) != null;
+
+    private boolean openapi31;
 
     public ModelResolver(ObjectMapper mapper) {
         super(mapper);
@@ -336,7 +342,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 model.xml(xml);
             }
             applyBeanValidatorAnnotations(model, annotatedType.getCtxAnnotations(), null);
-            resolveSchemaMembers(model, annotatedType);
+            resolveSchemaMembers(model, annotatedType, context, next);
             if (resolvedArrayAnnotation != null) {
                 ArraySchema schema = new ArraySchema();
                 resolveArraySchema(annotatedType, schema, resolvedArrayAnnotation);
@@ -517,7 +523,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         }
 
         if (!(model instanceof ArraySchema) || (model instanceof ArraySchema && resolvedArrayAnnotation == null)) {
-            resolveSchemaMembers(model, annotatedType);
+            resolveSchemaMembers(model, annotatedType, context, next);
         }
 
         final XmlAccessorType xmlAccessorTypeAnnotation = beanDesc.getClassAnnotations().get(XmlAccessorType.class);
@@ -706,7 +712,14 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             modelProps.put(prop.getName(), prop);
         }
         if (modelProps.size() > 0) {
-            model.setProperties(modelProps);
+            if (model.getProperties() == null) {
+                model.setProperties(modelProps);
+            } else {
+                for (String key : modelProps.keySet()) {
+                    model.addProperty(key, modelProps.get(key));
+                }
+            }
+
             for(String propName : requiredProps) {
                 addRequiredItem(model, propName);
             }
@@ -920,7 +933,11 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             return property;
         try {
             String cloneName = property.getName();
-            property = Json.mapper().readValue(Json.pretty(property), Schema.class);
+            if(openapi31) {
+                property = Json31.mapper().readValue(Json31.pretty(property), Schema.class);
+            } else {
+                property = Json.mapper().readValue(Json.pretty(property), Schema.class);
+            }
             property.setName(cloneName);
         } catch (IOException e) {
             LOGGER.error("Could not clone property", e);
@@ -2099,8 +2116,190 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         return null;
     }
 
+    protected Integer resolveMaxContains(AnnotatedType a, io.swagger.v3.oas.annotations.media.ArraySchema arraySchema) {
+        if (arraySchema != null && arraySchema.maxContains() > 0) {
+            return arraySchema.maxContains();
+        }
+        return null;
+    }
+
+    protected Integer resolveMinContains(AnnotatedType a, io.swagger.v3.oas.annotations.media.ArraySchema arraySchema) {
+        if (arraySchema != null && arraySchema.minContains() > 0) {
+            return arraySchema.minContains();
+        }
+        return null;
+    }
+
+    protected BigDecimal resolveExclusiveMaximumValue(Annotated a, Annotation[] annotations, io.swagger.v3.oas.annotations.media.Schema schema) {
+        if (schema != null && schema.exclusiveMaximumValue() > 0) {
+            return new BigDecimal(schema.exclusiveMaximumValue());
+        }
+        return null;
+    }
+
+    protected BigDecimal resolveExclusiveMinimumValue(Annotated a, Annotation[] annotations, io.swagger.v3.oas.annotations.media.Schema schema) {
+        if (schema != null && schema.exclusiveMinimumValue() > 0) {
+            return new BigDecimal(schema.exclusiveMinimumValue());
+        }
+        return null;
+    }
+
+    protected String resolveId(Annotated a, Annotation[] annotations, io.swagger.v3.oas.annotations.media.Schema schema) {
+        if (schema != null && StringUtils.isNotBlank(schema.$id())) {
+            return schema.$id();
+        }
+        return null;
+    }
+
+    protected String resolve$schema(Annotated a, Annotation[] annotations, io.swagger.v3.oas.annotations.media.Schema schema) {
+        if (schema != null && StringUtils.isNotBlank(schema.$schema())) {
+            return schema.$schema();
+        }
+        return null;
+    }
+
+    protected String resolve$anchor(Annotated a, Annotation[] annotations, io.swagger.v3.oas.annotations.media.Schema schema) {
+        if (schema != null && StringUtils.isNotBlank(schema.$anchor())) {
+            return schema.$anchor();
+        }
+        return null;
+    }
+
+    protected String resolve$comment(Annotated a, Annotation[] annotations, io.swagger.v3.oas.annotations.media.Schema schema) {
+        if (schema != null && StringUtils.isNotBlank(schema.$comment())) {
+            return schema.$comment();
+        }
+        return null;
+    }
+
+    protected String resolveContentEncoding(Annotated a, Annotation[] annotations, io.swagger.v3.oas.annotations.media.Schema schema) {
+        if (schema != null && StringUtils.isNotBlank(schema.contentEncoding())) {
+            return schema.contentEncoding();
+        }
+        return null;
+    }
+
+    protected String resolveContentMediaType(Annotated a, Annotation[] annotations, io.swagger.v3.oas.annotations.media.Schema schema) {
+        if (schema != null && StringUtils.isNotBlank(schema.contentMediaType())) {
+            return schema.contentMediaType();
+        }
+         return null;
+    }
+
+    protected void resolveContains(AnnotatedType annotatedType, ArraySchema arraySchema, io.swagger.v3.oas.annotations.media.ArraySchema arraySchemaAnnotation) {
+        final io.swagger.v3.oas.annotations.media.Schema containsAnnotation = arraySchemaAnnotation.contains();
+        final Schema contains = new Schema();
+        if (StringUtils.isNotBlank(containsAnnotation.type())) {
+            contains.addType(containsAnnotation.type());
+        }
+        arraySchema.setContains(contains);
+        resolveSchemaMembers(arraySchema, null, null, containsAnnotation);
+
+        Integer maxContains = resolveMaxContains(annotatedType, arraySchemaAnnotation);
+        if (maxContains != null) {
+            arraySchema.setMaxContains(maxContains);
+        }
+        Integer minContains = resolveMinContains(annotatedType, arraySchemaAnnotation);
+        if (minContains != null) {
+            arraySchema.setMinContains(minContains);
+        }
+    }
+
+    protected void resolveUnevaluatedItems(AnnotatedType annotatedType, ArraySchema arraySchema, io.swagger.v3.oas.annotations.media.ArraySchema arraySchemaAnnotation) {
+        final io.swagger.v3.oas.annotations.media.Schema unevaluatedItemsAnnotation = arraySchemaAnnotation.unevaluatedItems();
+        final Schema unevaluatedItems = new Schema();
+        if (StringUtils.isNotBlank(unevaluatedItemsAnnotation.type())) {
+            unevaluatedItems.addType(unevaluatedItemsAnnotation.type());
+        }
+        arraySchema.setUnevaluatedItems(unevaluatedItems);
+        resolveSchemaMembers(arraySchema, null, null, unevaluatedItemsAnnotation);
+    }
+
+    protected String resolveConst(Annotated a, Annotation[] annotations, io.swagger.v3.oas.annotations.media.Schema schema) {
+        if (schema != null && StringUtils.isNotBlank(schema._const())) {
+            return schema._const();
+        }
+        return null;
+    }
+
+    protected Map<String, List<String>> resolveDependentRequired(Annotated a, Annotation[] annotations, io.swagger.v3.oas.annotations.media.Schema schema) {
+        if (schema.dependentRequiredMap().length == 0) {
+            return null;
+        }
+        final Map<String, List<String>> dependentRequiredMap = new HashMap<>();
+        for (DependentRequired dependentRequired: schema.dependentRequiredMap()) {
+            final String name = dependentRequired.name();
+            if (dependentRequired.value().length == 0) {
+                continue;
+            }
+            final List<String> values = Arrays.asList(dependentRequired.value());
+            dependentRequiredMap.put(name, values);
+        }
+        return dependentRequiredMap;
+    }
+
+    protected Map<String, Schema> resolveDependentSchemas(Annotated a, Annotation[] annotations, io.swagger.v3.oas.annotations.media.Schema schemaAnnotation, AnnotatedType annotatedType, ModelConverterContext context, Iterator<ModelConverter> next) {
+        if (schemaAnnotation.dependentSchemas().length == 0) {
+            return null;
+        }
+        final Map<String, Schema> dependentSchemas = new HashMap<>();
+        for (StringToClassMapItem mapItem : schemaAnnotation.dependentSchemas()) {
+            final String key = mapItem.key();
+            if (mapItem.value() == null || Void.class.equals(mapItem.value())) {
+                continue;
+            }
+            final Schema schema = resolve(new AnnotatedType(mapItem.value()), context, next);
+            if (schema == null) {
+                continue;
+            }
+            dependentSchemas.put(key, schema);
+        }
+        return dependentSchemas;
+    }
+
+    protected Map<String, Schema> resolvePatternProperties(Annotated a, Annotation[] annotations, io.swagger.v3.oas.annotations.media.Schema schemaAnnotation, AnnotatedType annotatedType, ModelConverterContext context, Iterator<ModelConverter> next) {
+        if (schemaAnnotation.patternProperties().length == 0) {
+            return null;
+        }
+        final Map<String, Schema> patternPropertyMap = new HashMap<>();
+        for (StringToClassMapItem patternPropertyItem : schemaAnnotation.patternProperties()) {
+            final String key = patternPropertyItem.key();
+            if (Void.class.equals(patternPropertyItem.value())) {
+                continue;
+            }
+            final Schema schema = resolve(new AnnotatedType(patternPropertyItem.value()), context, next);
+            if (schema == null) {
+                continue;
+            }
+            patternPropertyMap.put(key, schema);
+        }
+        return patternPropertyMap;
+    }
+
+    protected Map<String, Schema> resolveProperties(Annotated a, Annotation[] annotations, io.swagger.v3.oas.annotations.media.Schema schemaAnnotation, AnnotatedType annotatedType, ModelConverterContext context, Iterator<ModelConverter> next) {
+        if (schemaAnnotation.properties().length == 0) {
+            return null;
+        }
+        final Map<String, Schema> propertyMap = new HashMap<>();
+        for (StringToClassMapItem propertyItem : schemaAnnotation.properties()) {
+            final String key = propertyItem.key();
+            if (Void.class.equals(propertyItem.value())) {
+                continue;
+            }
+            final Schema schema = resolve(new AnnotatedType(propertyItem.value()), context, next);
+            if (schema == null) {
+                continue;
+            }
+            propertyMap.put(key, schema);
+        }
+        return propertyMap;
+    }
 
     protected void resolveSchemaMembers(Schema schema, AnnotatedType annotatedType) {
+        resolveSchemaMembers(schema, annotatedType, null, null);
+    }
+
+    protected void resolveSchemaMembers(Schema schema, AnnotatedType annotatedType, ModelConverterContext context, Iterator<ModelConverter> next) {
         final JavaType type;
         if (annotatedType.getType() instanceof JavaType) {
             type = (JavaType) annotatedType.getType();
@@ -2120,6 +2319,62 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         Annotated a = beanDesc.getClassInfo();
         Annotation[] annotations = annotatedType.getCtxAnnotations();
         resolveSchemaMembers(schema, a, annotations, schemaAnnotation);
+
+        if (openapi31 && schema != null && schemaAnnotation != null) {
+            if (!Void.class.equals(schemaAnnotation.contentSchema())) {
+                final Schema contentSchema = resolve(new AnnotatedType(schemaAnnotation.contentSchema()), context, next);
+                schema.setContentSchema(contentSchema);
+            }
+            if (!Void.class.equals(schemaAnnotation.propertyNames())) {
+                final Schema propertyNames = resolve(new AnnotatedType(schemaAnnotation.propertyNames()), context, next);
+                schema.setPropertyNames(propertyNames);
+            }
+            if (!Void.class.equals(schemaAnnotation._if())) {
+                final Schema ifSchema = resolve(new AnnotatedType(schemaAnnotation._if()), context, next);
+                schema.setIf(ifSchema);
+            }
+            if (!Void.class.equals(schemaAnnotation._else())) {
+                final Schema elseSchema = resolve(new AnnotatedType(schemaAnnotation._else()), context, next);
+                schema.setElse(elseSchema);
+            }
+            if (!Void.class.equals(schemaAnnotation.then())) {
+                final Schema thenSchema = resolve(new AnnotatedType(schemaAnnotation.then()), context, next);
+                schema.setThen(thenSchema);
+            }
+            if (!Void.class.equals(schemaAnnotation.contentSchema())) {
+                final Schema contentSchema = resolve(new AnnotatedType(schemaAnnotation.contentSchema()), context, next);
+                schema.setContentSchema(contentSchema);
+            }
+            if (!Void.class.equals(schemaAnnotation.unevaluatedProperties())) {
+                final Schema unevaluatedProperties = resolve(new AnnotatedType(schemaAnnotation.unevaluatedProperties()), context, next);
+                schema.setUnevaluatedProperties(unevaluatedProperties);
+            }
+            final Map<String, List<String>> dependentRequired =  resolveDependentRequired(a, annotations, schemaAnnotation);
+            if (dependentRequired != null && !dependentRequired.isEmpty()) {
+                schema.setDependentRequired(dependentRequired);
+            }
+            final Map<String, Schema> dependentSchemas = resolveDependentSchemas(a, annotations, schemaAnnotation, annotatedType, context, next);
+            if (dependentSchemas != null && !dependentSchemas.isEmpty()) {
+                schema.setDependentSchemas(dependentSchemas);
+                if (schema.getDependentSchemas() == null) {
+                    schema.setDependentSchemas(dependentSchemas);
+                } else {
+                    schema.getDependentSchemas().putAll(dependentSchemas);
+                }
+            }
+            final Map<String, Schema> patternProperties = resolvePatternProperties(a, annotations, schemaAnnotation, annotatedType, context, next);
+            if (patternProperties != null && !patternProperties.isEmpty()) {
+                for (String key : patternProperties.keySet()) {
+                    schema.addPatternProperty(key, patternProperties.get(key));
+                }
+            }
+            final Map<String, Schema> properties = resolveProperties(a, annotations, schemaAnnotation, annotatedType, context, next);
+            if (properties != null && !properties.isEmpty()) {
+                for (String key : properties.keySet()) {
+                    schema.addProperty(key, properties.get(key));
+                }
+            }
+        }
     }
 
     protected void resolveSchemaMembers(Schema schema, Annotated a, Annotation[] annotations, io.swagger.v3.oas.annotations.media.Schema schemaAnnotation) {
@@ -2220,6 +2475,55 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         Map<String, Object> extensions = resolveExtensions(a, annotations, schemaAnnotation);
         if (extensions != null) {
             extensions.forEach(schema::addExtension);
+        }
+
+        if (openapi31 && schemaAnnotation != null) {
+            for (String type : schemaAnnotation.types()) {
+                schema.addType(type);
+            }
+            BigDecimal exclusiveMaximumValue = resolveExclusiveMaximumValue(a, annotations, schemaAnnotation);
+            if (exclusiveMaximumValue != null) {
+                schema.setExclusiveMaximumValue(exclusiveMaximumValue);
+            }
+            BigDecimal exclusiveMinimumValue = resolveExclusiveMinimumValue(a, annotations, schemaAnnotation);
+            if (exclusiveMinimumValue != null) {
+                schema.setExclusiveMinimumValue(exclusiveMinimumValue);
+            }
+            String $id = resolveId(a, annotations, schemaAnnotation);
+            if ($id != null) {
+                schema.set$id($id);
+            }
+            String $schema = resolve$schema(a, annotations, schemaAnnotation);
+            if ($schema != null) {
+                schema.set$schema($schema);
+            }
+            String $anchor = resolve$anchor(a, annotations, schemaAnnotation);
+            if ($anchor != null) {
+                schema.set$anchor($anchor);
+            }
+            String $comment = resolve$comment(a, annotations, schemaAnnotation);
+            if ($comment != null) {
+                schema.set$comment($comment);
+            }
+            String contentEncoding = resolveContentEncoding(a, annotations, schemaAnnotation);
+            if (contentEncoding != null) {
+                schema.setContentEncoding(contentEncoding);
+            }
+            String contentMediaType = resolveContentMediaType(a, annotations, schemaAnnotation);
+            if (contentMediaType != null) {
+                schema.setContentMediaType(contentMediaType);
+            }
+            if (schemaAnnotation.examples().length > 0) {
+                if (schema.getExamples() == null || schema.getExamples().isEmpty()) {
+                    schema.setExamples(Arrays.asList(schemaAnnotation.examples()));
+                } else {
+                    schema.getExamples().addAll(Arrays.asList(schemaAnnotation.examples()));
+                }
+            }
+            String _const = resolveConst(a, annotations, schemaAnnotation);
+            if (_const != null) {
+                schema.setConst(_const);
+            }
         }
     }
 
@@ -2328,6 +2632,38 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             if (AnnotationsUtils.hasSchemaAnnotation(resolvedArrayAnnotation.arraySchema())) {
                 resolveSchemaMembers(schema, null, null, resolvedArrayAnnotation.arraySchema());
             }
+            if (!openapi31) {
+                return;
+            }
+            if (AnnotationsUtils.hasSchemaAnnotation(resolvedArrayAnnotation.contains())) {
+                resolveContains(annotatedType, schema, resolvedArrayAnnotation);
+            }
+            if (AnnotationsUtils.hasSchemaAnnotation(resolvedArrayAnnotation.unevaluatedItems())) {
+                resolveUnevaluatedItems(annotatedType, schema, resolvedArrayAnnotation);
+            }
+            if (resolvedArrayAnnotation.prefixItems().length > 0) {
+                for (io.swagger.v3.oas.annotations.media.Schema prefixItemAnnotation : resolvedArrayAnnotation.prefixItems()) {
+                    final Schema prefixItem = new Schema();
+                    if (StringUtils.isNotBlank(prefixItemAnnotation.type())) {
+                        prefixItem.addType(prefixItemAnnotation.type());
+                    }
+                    resolveSchemaMembers(prefixItem, null, null, prefixItemAnnotation);
+                    schema.addPrefixItem(prefixItem);
+                }
+            }
         }
+    }
+
+    public ModelResolver openapi31(boolean openapi31) {
+        this.openapi31 = openapi31;
+        return this;
+    }
+
+    public boolean isOpenapi31() {
+        return openapi31;
+    }
+
+    public void setOpenapi31(boolean openapi31) {
+        this.openapi31 = openapi31;
     }
 }
