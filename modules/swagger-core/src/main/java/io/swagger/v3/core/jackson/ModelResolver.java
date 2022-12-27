@@ -2296,8 +2296,10 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
     protected void resolveContains(AnnotatedType annotatedType, ArraySchema arraySchema, io.swagger.v3.oas.annotations.media.ArraySchema arraySchemaAnnotation) {
         final io.swagger.v3.oas.annotations.media.Schema containsAnnotation = arraySchemaAnnotation.contains();
         final Schema contains = new Schema();
-        if (StringUtils.isNotBlank(containsAnnotation.type())) {
-            contains.addType(containsAnnotation.type());
+        if (containsAnnotation.types().length > 0) {
+            for (String type : containsAnnotation.types()) {
+                contains.addType(type);
+            }
         }
         arraySchema.setContains(contains);
         resolveSchemaMembers(arraySchema, null, null, containsAnnotation);
@@ -2317,6 +2319,11 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         final Schema unevaluatedItems = new Schema();
         if (StringUtils.isNotBlank(unevaluatedItemsAnnotation.type())) {
             unevaluatedItems.addType(unevaluatedItemsAnnotation.type());
+        }
+        if (unevaluatedItemsAnnotation.types().length > 0) {
+            for (String type : unevaluatedItemsAnnotation.types()) {
+                unevaluatedItems.addType(type);
+            }
         }
         arraySchema.setUnevaluatedItems(unevaluatedItems);
         resolveSchemaMembers(arraySchema, null, null, unevaluatedItemsAnnotation);
@@ -2739,23 +2746,27 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             if (AnnotationsUtils.hasSchemaAnnotation(resolvedArrayAnnotation.arraySchema())) {
                 resolveSchemaMembers(schema, null, null, resolvedArrayAnnotation.arraySchema());
             }
-            if (!openapi31) {
-                return;
-            }
-            if (AnnotationsUtils.hasSchemaAnnotation(resolvedArrayAnnotation.contains())) {
-                resolveContains(annotatedType, schema, resolvedArrayAnnotation);
-            }
-            if (AnnotationsUtils.hasSchemaAnnotation(resolvedArrayAnnotation.unevaluatedItems())) {
-                resolveUnevaluatedItems(annotatedType, schema, resolvedArrayAnnotation);
-            }
-            if (resolvedArrayAnnotation.prefixItems().length > 0) {
-                for (io.swagger.v3.oas.annotations.media.Schema prefixItemAnnotation : resolvedArrayAnnotation.prefixItems()) {
-                    final Schema prefixItem = new Schema();
-                    if (StringUtils.isNotBlank(prefixItemAnnotation.type())) {
-                        prefixItem.addType(prefixItemAnnotation.type());
+            if (openapi31) {
+                if (AnnotationsUtils.hasSchemaAnnotation(resolvedArrayAnnotation.contains())) {
+                    resolveContains(annotatedType, schema, resolvedArrayAnnotation);
+                }
+                if (AnnotationsUtils.hasSchemaAnnotation(resolvedArrayAnnotation.unevaluatedItems())) {
+                    resolveUnevaluatedItems(annotatedType, schema, resolvedArrayAnnotation);
+                }
+                if (resolvedArrayAnnotation.prefixItems().length > 0) {
+                    for (io.swagger.v3.oas.annotations.media.Schema prefixItemAnnotation : resolvedArrayAnnotation.prefixItems()) {
+                        final Schema prefixItem = new Schema();
+                        if (StringUtils.isNotBlank(prefixItemAnnotation.type())) {
+                            prefixItem.addType(prefixItemAnnotation.type());
+                        }
+                        resolveSchemaMembers(prefixItem, null, null, prefixItemAnnotation);
+                        schema.addPrefixItem(prefixItem);
                     }
-                    resolveSchemaMembers(prefixItem, null, null, prefixItemAnnotation);
-                    schema.addPrefixItem(prefixItem);
+                }
+                if (schema.getItems() != null && AnnotationsUtils.hasSchemaAnnotation(resolvedArrayAnnotation.items())) {
+                    for (String type : resolvedArrayAnnotation.items().types()) {
+                        schema.getItems().addType(type);
+                    }
                 }
             }
         }
