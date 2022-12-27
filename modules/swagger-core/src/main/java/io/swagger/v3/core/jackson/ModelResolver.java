@@ -42,6 +42,8 @@ import io.swagger.v3.core.util.Yaml31;
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.StringToClassMapItem;
 import io.swagger.v3.oas.annotations.media.DependentRequired;
+import io.swagger.v3.oas.annotations.media.DependentSchema;
+import io.swagger.v3.oas.annotations.media.DependentSchemas;
 import io.swagger.v3.oas.annotations.media.DiscriminatorMapping;
 import io.swagger.v3.oas.annotations.media.PatternProperties;
 import io.swagger.v3.oas.annotations.media.PatternProperty;
@@ -792,6 +794,17 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 model.properties(schemaProperties);
             } else {
                 model.getProperties().putAll(schemaProperties);
+            }
+        }
+
+        if (openapi31) {
+            Map<String, Schema> dependentSchemas = resolveDependentSchemas(type, annotatedType.getCtxAnnotations(), context);
+            if (model != null && dependentSchemas != null && !dependentSchemas.isEmpty()) {
+                if (model.getDependentSchemas() == null) {
+                    model.dependentSchemas(dependentSchemas);
+                } else {
+                    model.getDependentSchemas().putAll(dependentSchemas);
+                }
             }
         }
 
@@ -1654,6 +1667,58 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             }
         }
         return schemaProperties;
+    }
+
+    protected Map<String, Schema> resolveDependentSchemas(JavaType a, Annotation[] annotations, ModelConverterContext context) {
+        final Map<String, DependentSchema> dependentSchemaMap = new LinkedHashMap<>();
+
+        DependentSchemas dependentSchemasAnnotation = a.getRawClass().getAnnotation(DependentSchemas.class);
+        if (dependentSchemasAnnotation != null && dependentSchemasAnnotation.value().length > 0) {
+            for (DependentSchema dependentSchemaAnnotation : dependentSchemasAnnotation.value()) {
+                dependentSchemaMap.put(dependentSchemaAnnotation.name(), dependentSchemaAnnotation);
+            }
+        }
+
+        DependentSchema singleDependentSchema = a.getRawClass().getAnnotation(DependentSchema.class);
+        if (singleDependentSchema != null) {
+            dependentSchemaMap.put(singleDependentSchema.name(), singleDependentSchema);
+        }
+
+        dependentSchemasAnnotation = AnnotationsUtils.getAnnotation(DependentSchemas.class, annotations);
+        if (dependentSchemasAnnotation != null && dependentSchemasAnnotation.value().length > 0) {
+            for (DependentSchema dependentSchemaAnnotation : dependentSchemasAnnotation.value()) {
+                dependentSchemaMap.put(dependentSchemaAnnotation.name(), dependentSchemaAnnotation);
+            }
+        }
+
+        singleDependentSchema = AnnotationsUtils.getAnnotation(DependentSchema.class, annotations);
+        if (singleDependentSchema != null) {
+            dependentSchemaMap.put(singleDependentSchema.name(), singleDependentSchema);
+        }
+
+        if (dependentSchemaMap.isEmpty()) {
+            return null;
+        }
+
+        Map<String, Schema> dependentSchemas = new LinkedHashMap<>();
+
+        for (DependentSchema dependentSchemaAnnotation: dependentSchemaMap.values()) {
+            String name = dependentSchemaAnnotation.name();
+            if (StringUtils.isBlank(name)) {
+                continue;
+            }
+            Annotation[] propAnnotations = new Annotation[]{dependentSchemaAnnotation.schema(), dependentSchemaAnnotation.array()};
+            AnnotatedType propType = new AnnotatedType()
+                    .type(Object.class)
+                    .ctxAnnotations(propAnnotations)
+                    .resolveAsRef(true);
+            Schema resolvedPropSchema = context.resolve(propType);
+            if (resolvedPropSchema != null) {
+                dependentSchemas.put(name, resolvedPropSchema);
+            }
+        }
+
+        return dependentSchemas;
     }
 
     protected Object resolveDefaultValue(Annotated a, Annotation[] annotations, io.swagger.v3.oas.annotations.media.Schema schema) {
