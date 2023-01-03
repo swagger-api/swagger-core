@@ -69,6 +69,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.concurrent.CompletionStage;
 import java.util.stream.Collectors;
 
 public class Reader implements OpenApiReader {
@@ -1071,7 +1072,7 @@ public class Reader implements OpenApiReader {
         Type returnType = method.getGenericReturnType();
 
         if (annotatedMethod != null && annotatedMethod.getType() != null) {
-            returnType = annotatedMethod.getType();
+            returnType = extractTypeFromMethod(annotatedMethod);
         }
 
         final Class<?> subResource = getSubResourceWithJaxRsSubresourceLocatorSpecs(method);
@@ -1131,6 +1132,14 @@ public class Reader implements OpenApiReader {
 
 
         return operation;
+    }
+
+    private Type extractTypeFromMethod(AnnotatedMethod annotatedMethod) {
+        if(CompletionStage.class.isAssignableFrom(annotatedMethod.getType().getRawClass())) {
+            // CompletionStage's 1st generic type is the real return type.
+            return annotatedMethod.getType().getBindings().getBoundType(0);
+        }
+        return annotatedMethod.getType();
     }
 
     protected Content resolveEmptyContent(Produces classProduces, Produces methodProduces) {
