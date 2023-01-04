@@ -53,6 +53,9 @@ public abstract class Schema31Mixin {
     @JsonIgnore
     public abstract boolean getExampleSetFlag();
 
+    @JsonIgnore
+    public abstract boolean getDefaultSetFlag();
+
     @JsonInclude(value = JsonInclude.Include.NON_NULL, content = JsonInclude.Include.ALWAYS)
     public abstract Object getExample();
 
