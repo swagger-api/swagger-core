@@ -1341,9 +1341,14 @@ public class Schema<T> {
     }
 
     public void setExample(Object example) {
-        this.example = cast(example);
-        if (!(example != null && this.example == null)) {
+        if (SpecVersion.V30.equals(specVersion) && Boolean.TRUE.equals(nullable) && (example == null || "null".equals(example.toString()))) {
+            this.example = null;
             exampleSetFlag = true;
+        } else {
+            this.example = cast(example);
+            if (!(example != null && this.example == null)) {
+                exampleSetFlag = true;
+            }
         }
     }
 
@@ -1425,7 +1430,6 @@ public class Schema<T> {
     }
 
     /**
-     *
      * @since 2.2.0 (OpenAPI 3.1.0)
      */
     @OpenAPI31
