@@ -108,7 +108,7 @@ public abstract class AnnotationsUtils {
                 && schema.unevaluatedProperties().equals(Void.class)
                 && schema.types().length == 0
                 && schema.exclusiveMinimumValue() == 0
-                && schema.exclusiveMaximumValue() == Integer.MAX_VALUE
+                && schema.exclusiveMaximumValue() == 0
                 && StringUtils.isBlank(schema.$id())
                 && StringUtils.isBlank(schema.$schema())
                 && StringUtils.isBlank(schema.$anchor())
