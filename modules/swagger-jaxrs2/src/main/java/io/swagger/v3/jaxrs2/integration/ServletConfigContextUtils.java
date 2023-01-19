@@ -128,7 +128,7 @@ public class ServletConfigContextUtils {
         if (StringUtils.isBlank(param)) {
             return null;
         }
-        return Boolean.valueOf(Boolean.parseBoolean(param));
+        return Boolean.parseBoolean(param);
     }
 
     public static Long getLongInitParam(ServletConfig sc, String paramKey) {
