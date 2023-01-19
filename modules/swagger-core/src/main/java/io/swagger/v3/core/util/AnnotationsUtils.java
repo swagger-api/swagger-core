@@ -545,10 +545,9 @@ public abstract class AnnotationsUtils {
         if (schema.types().length > 0) {
             if (schema.types().length == 1) {
                 schemaObject.setType(schema.types()[0]);
-            } else {
-                for (String type : schema.types()) {
-                    schemaObject.addType(type);
-                }
+            }
+            for (String type : schema.types()) {
+                schemaObject.addType(type);
             }
         }
         if (StringUtils.isNotBlank(schema.$id())) {
