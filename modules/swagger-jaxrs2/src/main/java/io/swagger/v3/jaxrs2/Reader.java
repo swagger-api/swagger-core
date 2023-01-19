@@ -270,6 +270,10 @@ public class Reader implements OpenApiReader {
         // class path
         final javax.ws.rs.Path apiPath = ReflectionUtils.getAnnotation(cls, javax.ws.rs.Path.class);
 
+        if (Boolean.TRUE.equals(config.isOpenAPI31())) {
+            openAPI.setOpenapi("3.1.0");
+        }
+
         if (hidden != null) { //  || (apiPath == null && !isSubresource)) {
             return openAPI;
         }
