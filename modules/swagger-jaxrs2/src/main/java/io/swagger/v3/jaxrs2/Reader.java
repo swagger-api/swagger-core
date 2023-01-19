@@ -11,6 +11,7 @@ import io.swagger.v3.core.converter.ModelConverters;
 import io.swagger.v3.core.converter.ResolvedSchema;
 import io.swagger.v3.core.util.AnnotationsUtils;
 import io.swagger.v3.core.util.Json;
+import io.swagger.v3.core.util.Json31;
 import io.swagger.v3.core.util.ParameterProcessor;
 import io.swagger.v3.core.util.PathUtils;
 import io.swagger.v3.core.util.ReflectionUtils;
@@ -384,7 +385,12 @@ public class Reader implements OpenApiReader {
 
 
         JavaType classType = TypeFactory.defaultInstance().constructType(cls);
-        BeanDescription bd = Json.mapper().getSerializationConfig().introspect(classType);
+        BeanDescription bd;
+        if (Boolean.TRUE.equals(config.isOpenAPI31())) {
+            bd = Json31.mapper().getSerializationConfig().introspect(classType);
+        } else {
+            bd = Json.mapper().getSerializationConfig().introspect(classType);
+        }
 
         final List<Parameter> globalParameters = new ArrayList<>();
 
