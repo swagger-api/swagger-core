@@ -1285,16 +1285,18 @@ public class Reader implements OpenApiReader {
             operation.setDeprecated(apiOperation.deprecated());
         }
 
+        final boolean openapi31 = Boolean.TRUE.equals(config.isOpenAPI31());
+
         ReaderUtils.getStringListFromStringArray(apiOperation.tags()).ifPresent(tags ->
             tags.stream()
                     .filter(t -> operation.getTags() == null || (operation.getTags() != null && !operation.getTags().contains(t)))
                     .forEach(operation::addTagsItem));
 
         if (operation.getExternalDocs() == null) { // if not set in root annotation
-            AnnotationsUtils.getExternalDocumentation(apiOperation.externalDocs()).ifPresent(operation::setExternalDocs);
+            AnnotationsUtils.getExternalDocumentation(apiOperation.externalDocs(), openapi31).ifPresent(operation::setExternalDocs);
         }
 
-        OperationParser.getApiResponses(apiOperation.responses(), classProduces, methodProduces, components, jsonViewAnnotation).ifPresent(responses -> {
+        OperationParser.getApiResponses(apiOperation.responses(), classProduces, methodProduces, components, jsonViewAnnotation, openapi31).ifPresent(responses -> {
             if (operation.getResponses() == null) {
                 operation.setResponses(responses);
             } else {
@@ -1326,9 +1328,13 @@ public class Reader implements OpenApiReader {
 
         // Extensions in Operation
         if (apiOperation.extensions().length > 0) {
-            Map<String, Object> extensions = AnnotationsUtils.getExtensions(apiOperation.extensions());
+            Map<String, Object> extensions = AnnotationsUtils.getExtensions(openapi31, apiOperation.extensions());
             if (extensions != null) {
-                extensions.forEach(operation::addExtension);
+                if (openapi31) {
+                    extensions.forEach(operation::addExtension31);
+                } else {
+                    extensions.forEach(operation::addExtension);
+                }
             }
         }
     }
