@@ -1,0 +1,33 @@
+openapi: 3.1.0
+paths:
+  /links:
+    get:
+      operationId: getUserWithAddress
+      parameters:
+        - name: userId
+          in: query
+          schema:
+            type: string
+      responses:
+        default:
+          description: test description
+          content:
+            '*/*':
+              schema:
+                type: object
+                dependentSchemas:
+                  value:
+                    type:
+                      - string
+                      - number
+          links:
+            address:
+              operationId: getAddress
+              parameters:
+                userId: $request.query.userId
+            user:
+              operationId: getUser
+              parameters:
+                userId: $request.query.userId
+              x-one:
+                x-sample-extension: "true"
