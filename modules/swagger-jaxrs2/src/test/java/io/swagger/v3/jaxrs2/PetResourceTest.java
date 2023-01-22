@@ -1,5 +1,7 @@
 package io.swagger.v3.jaxrs2;
 
+import io.swagger.v3.core.util.Yaml;
+import io.swagger.v3.core.util.Yaml31;
 import io.swagger.v3.jaxrs2.annotations.AbstractAnnotationTest;
 import io.swagger.v3.jaxrs2.matchers.SerializationMatchers;
 import io.swagger.v3.jaxrs2.petstore.EmptyPetResource;
@@ -8,7 +10,9 @@ import io.swagger.v3.jaxrs2.petstore.callback.MultipleCallbacksTestWithOperation
 import io.swagger.v3.jaxrs2.petstore.callback.RepeatableCallbackResource;
 import io.swagger.v3.jaxrs2.petstore.callback.SimpleCallbackWithOperationResource;
 import io.swagger.v3.jaxrs2.petstore.example.ExamplesResource;
+import io.swagger.v3.jaxrs2.petstore.link.LinksAndContent31Resource;
 import io.swagger.v3.jaxrs2.petstore.link.LinksResource;
+import io.swagger.v3.jaxrs2.petstore.openapidefintion.OpenAPI31DefinitionResource;
 import io.swagger.v3.jaxrs2.petstore.openapidefintion.OpenAPIDefinitionResource;
 import io.swagger.v3.jaxrs2.petstore.operation.AnnotatedSameNameOperationResource;
 import io.swagger.v3.jaxrs2.petstore.operation.ExternalDocumentationResource;
@@ -26,6 +30,7 @@ import io.swagger.v3.jaxrs2.petstore.parameter.MultipleNotAnnotatedParameter;
 import io.swagger.v3.jaxrs2.petstore.parameter.OpenAPIJaxRSAnnotatedParameter;
 import io.swagger.v3.jaxrs2.petstore.parameter.OpenAPIWithContentJaxRSAnnotatedParameter;
 import io.swagger.v3.jaxrs2.petstore.parameter.OpenAPIWithImplementationJaxRSAnnotatedParameter;
+import io.swagger.v3.jaxrs2.petstore.parameter.Parameters31Resource;
 import io.swagger.v3.jaxrs2.petstore.parameter.ParametersResource;
 import io.swagger.v3.jaxrs2.petstore.parameter.RepeatableParametersResource;
 import io.swagger.v3.jaxrs2.petstore.parameter.SingleJaxRSAnnotatedParameter;
@@ -46,6 +51,7 @@ import io.swagger.v3.jaxrs2.petstore.tags.TagClassResource;
 import io.swagger.v3.jaxrs2.petstore.tags.TagMethodResource;
 import io.swagger.v3.jaxrs2.petstore.tags.TagOpenAPIDefinitionResource;
 import io.swagger.v3.jaxrs2.petstore.tags.TagOperationResource;
+import io.swagger.v3.oas.integration.SwaggerConfiguration;
 import io.swagger.v3.oas.models.OpenAPI;
 import org.testng.annotations.Test;
 
@@ -249,6 +255,25 @@ public class PetResourceTest extends AbstractAnnotationTest {
         return classes;
     }
 
+    @Test(description = "Test an empty resource class (Without operations or annotations)")
+    public void testEmptyPet31Resource() {
+        Reader reader = new Reader(new SwaggerConfiguration()
+                .openAPI(new OpenAPI())
+                .openAPI31(true));
+        OpenAPI openAPI = reader.read(Object.class);
+        SerializationMatchers.assertEqualsToYaml31(openAPI, "openapi: 3.1.0");
+    }
+
+    @Test(description = "Test a resource with Links and Content)")
+    public void testLinksAndContent31Resource() {
+        compare(LinksAndContent31Resource.class, LINKS_SOURCE, true);
+    }
+
+    @Test(description = "Test OpenAPIDefinition resource)")
+    public void testOpenAPI31DefinitionResource() {
+        compare(OpenAPI31DefinitionResource.class, PETSTORE_SOURCE, true);
+    }
+
     /**
      * Compare a class that were read and parsed to a yaml against a yaml file.
      *
@@ -256,9 +281,17 @@ public class PetResourceTest extends AbstractAnnotationTest {
      * @param source where is the yaml.
      */
     private void compare(final Class clazz, final String source) {
+        compare(clazz, source, false);
+    }
+
+    private void compare(final Class clazz, final String source, boolean openapi31) {
         final String file = source + clazz.getSimpleName() + YAML_EXTENSION;
         try {
-            compareAsYaml(clazz, getOpenAPIAsString(file));
+            if (openapi31) {
+                compareAsYamlOAS31(clazz, getOpenAPIAsString(file));
+            } else {
+                compareAsYaml(clazz, getOpenAPIAsString(file));
+            }
         } catch (IOException e) {
             e.printStackTrace();
             fail();
