@@ -3,6 +3,7 @@ package io.swagger.v3.core.converter;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import io.swagger.v3.core.jackson.ModelResolver;
 import io.swagger.v3.core.util.Json;
+import io.swagger.v3.core.util.Json31;
 import io.swagger.v3.oas.models.media.Schema;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,6 +30,15 @@ public class ModelConverters {
     public ModelConverters() {
         converters = new CopyOnWriteArrayList<>();
         converters.add(new ModelResolver(Json.mapper()));
+    }
+
+    public ModelConverters(boolean openapi31) {
+        converters = new CopyOnWriteArrayList<>();
+        if (openapi31) {
+            converters.add(new ModelResolver(Json31.mapper()).openapi31(true));
+        } else {
+            converters.add(new ModelResolver(Json.mapper()));
+        }
     }
 
     public static ModelConverters getInstance() {

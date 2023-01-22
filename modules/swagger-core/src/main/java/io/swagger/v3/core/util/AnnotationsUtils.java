@@ -471,6 +471,9 @@ public abstract class AnnotationsUtils {
         return getArraySchema(arraySchema, null, jsonViewAnnotation);
     }
     public static Optional<ArraySchema> getArraySchema(io.swagger.v3.oas.annotations.media.ArraySchema arraySchema, Components components, JsonView jsonViewAnnotation) {
+        return getArraySchema(arraySchema, components, jsonViewAnnotation, false);
+    }
+    public static Optional<ArraySchema> getArraySchema(io.swagger.v3.oas.annotations.media.ArraySchema arraySchema, Components components, JsonView jsonViewAnnotation, boolean openapi31) {
         if (arraySchema == null || !hasArrayAnnotation(arraySchema)) {
             return Optional.empty();
         }
@@ -486,8 +489,8 @@ public abstract class AnnotationsUtils {
             arraySchemaObject.setMinItems(arraySchema.minItems());
         }
 
-        getSchemaFromAnnotation(arraySchema.contains(), components, jsonViewAnnotation).ifPresent(arraySchemaObject::setContains);
-        getSchemaFromAnnotation(arraySchema.unevaluatedItems(), components, jsonViewAnnotation).ifPresent(arraySchemaObject::setUnevaluatedItems);
+        getSchemaFromAnnotation(arraySchema.contains(), components, jsonViewAnnotation, openapi31).ifPresent(arraySchemaObject::setContains);
+        getSchemaFromAnnotation(arraySchema.unevaluatedItems(), components, jsonViewAnnotation, openapi31).ifPresent(arraySchemaObject::setUnevaluatedItems);
 
         if (arraySchema.maxContains() > 0) {
             arraySchemaObject.setMaxContains(arraySchema.maxContains());
@@ -497,12 +500,12 @@ public abstract class AnnotationsUtils {
         }
         if (arraySchema.prefixItems().length > 0) {
             for (io.swagger.v3.oas.annotations.media.Schema prefixItem : arraySchema.prefixItems()) {
-                getSchemaFromAnnotation(prefixItem, components, jsonViewAnnotation).ifPresent(arraySchemaObject::addPrefixItem);
+                getSchemaFromAnnotation(prefixItem, components, jsonViewAnnotation, openapi31).ifPresent(arraySchemaObject::addPrefixItem);
             }
         }
 
         if (arraySchema.extensions().length > 0) {
-            Map<String, Object> extensions = AnnotationsUtils.getExtensions(arraySchema.extensions());
+            Map<String, Object> extensions = AnnotationsUtils.getExtensions(openapi31, arraySchema.extensions());
             if (extensions != null) {
                 extensions.forEach(arraySchemaObject::addExtension);
             }
@@ -510,7 +513,7 @@ public abstract class AnnotationsUtils {
 
         if (arraySchema.schema() != null) {
             if (arraySchema.schema().implementation().equals(Void.class)) {
-                getSchemaFromAnnotation(arraySchema.schema(), components, jsonViewAnnotation).ifPresent(arraySchemaObject::setItems);
+                getSchemaFromAnnotation(arraySchema.schema(), components, jsonViewAnnotation, openapi31).ifPresent(arraySchemaObject::setItems);
             } // if present, schema implementation handled upstream
         }
 
@@ -518,9 +521,18 @@ public abstract class AnnotationsUtils {
     }
 
     public static Optional<Schema> getSchemaFromAnnotation(io.swagger.v3.oas.annotations.media.Schema schema, JsonView jsonViewAnnotation) {
-        return getSchemaFromAnnotation(schema, null, jsonViewAnnotation);
+        return getSchemaFromAnnotation(schema, jsonViewAnnotation, false);
     }
+
+    public static Optional<Schema> getSchemaFromAnnotation(io.swagger.v3.oas.annotations.media.Schema schema, JsonView jsonViewAnnotation, boolean openapi31) {
+        return getSchemaFromAnnotation(schema, null, jsonViewAnnotation, openapi31);
+    }
+
     public static Optional<Schema> getSchemaFromAnnotation(io.swagger.v3.oas.annotations.media.Schema schema, Components components, JsonView jsonViewAnnotation) {
+        return getSchemaFromAnnotation(schema, components, jsonViewAnnotation, false);
+    }
+
+    public static Optional<Schema> getSchemaFromAnnotation(io.swagger.v3.oas.annotations.media.Schema schema, Components components, JsonView jsonViewAnnotation, boolean openapi31) {
         if (schema == null || !hasSchemaAnnotation(schema)) {
             return Optional.empty();
         }
@@ -572,23 +584,29 @@ public abstract class AnnotationsUtils {
             schemaObject.setExclusiveMinimumValue(BigDecimal.valueOf(schema.exclusiveMinimumValue()));
         }
         if (!schema.contentSchema().equals(Void.class)) {
-            schemaObject.setContentSchema(resolveSchemaFromType(schema.contentSchema(), components, jsonViewAnnotation));
+            schemaObject.setContentSchema(resolveSchemaFromType(schema.contentSchema(), components, jsonViewAnnotation, openapi31));
         }
         if (!schema.propertyNames().equals(Void.class)) {
-            schemaObject.setPropertyNames(resolveSchemaFromType(schema.propertyNames(), components, jsonViewAnnotation));
+            schemaObject.setPropertyNames(resolveSchemaFromType(schema.propertyNames(), components, jsonViewAnnotation, openapi31));
         }
         if (!schema._if().equals(Void.class)) {
-            schemaObject.setIf(resolveSchemaFromType(schema._if(), components, jsonViewAnnotation));
+            schemaObject.setIf(resolveSchemaFromType(schema._if(), components, jsonViewAnnotation, openapi31));
         }
         if (!schema._else().equals(Void.class)) {
-            schemaObject.setElse(resolveSchemaFromType(schema._else(), components, jsonViewAnnotation));
+            schemaObject.setElse(resolveSchemaFromType(schema._else(), components, jsonViewAnnotation, openapi31));
         }
         if (!schema.then().equals(Void.class)) {
-            schemaObject.setThen(resolveSchemaFromType(schema.then(), components, jsonViewAnnotation));
+            schemaObject.setThen(resolveSchemaFromType(schema.then(), components, jsonViewAnnotation, openapi31));
         }
         if (StringUtils.isNotBlank(schema._const())) {
             try {
-                schemaObject.setConst(Json.mapper().readTree(schema._const()));
+                Object _const;
+                if (openapi31) {
+                    _const = Json31.mapper().readTree(schema._const());
+                } else {
+                    _const = Json.mapper().readTree(schema._const());
+                }
+                schemaObject.setConst(_const);
             } catch (IOException e) {
                 schemaObject.setConst(schema._const());
             }
@@ -606,26 +624,26 @@ public abstract class AnnotationsUtils {
         if (schema.dependentSchemas().length > 0) {
             final Map<String, Schema> dependentSchema = new LinkedHashMap<>();
             for (StringToClassMapItem mapItem : schema.dependentSchemas()) {
-                dependentSchema.put(mapItem.key(), resolveSchemaFromType(mapItem.value(), components, jsonViewAnnotation));
+                dependentSchema.put(mapItem.key(), resolveSchemaFromType(mapItem.value(), components, jsonViewAnnotation, openapi31));
             }
             schemaObject.setDependentSchemas(dependentSchema);
         }
         if (schema.patternProperties().length > 0) {
             final Map<String, Schema> patternProperties = new LinkedHashMap<>();
             for (StringToClassMapItem mapItem : schema.patternProperties()) {
-                patternProperties.put(mapItem.key(), resolveSchemaFromType(mapItem.value(), components, jsonViewAnnotation));
+                patternProperties.put(mapItem.key(), resolveSchemaFromType(mapItem.value(), components, jsonViewAnnotation, openapi31));
             }
             schemaObject.setPatternProperties(patternProperties);
         }
         if (schema.properties().length > 0) {
             final Map<String, Schema> properties = new LinkedHashMap<>();
             for (StringToClassMapItem mapItem : schema.properties()) {
-                properties.put(mapItem.key(), resolveSchemaFromType(mapItem.value(), components, jsonViewAnnotation));
+                properties.put(mapItem.key(), resolveSchemaFromType(mapItem.value(), components, jsonViewAnnotation, openapi31));
             }
             schemaObject.setProperties(properties);
         }
         if (!schema.unevaluatedProperties().equals(Void.class)) {
-            schemaObject.setUnevaluatedProperties(resolveSchemaFromType(schema.unevaluatedProperties(), components, jsonViewAnnotation));
+            schemaObject.setUnevaluatedProperties(resolveSchemaFromType(schema.unevaluatedProperties(), components, jsonViewAnnotation, openapi31));
         }
         if (schema.examples().length > 0) {
             schemaObject.setExamples(Arrays.asList(schema.examples()));
@@ -636,7 +654,11 @@ public abstract class AnnotationsUtils {
         }
         if (StringUtils.isNotBlank(schema.example())) {
             try {
-                schemaObject.setExample(Json.mapper().readTree(schema.example()));
+                if (openapi31) {
+                    schemaObject.setExample(Json31.mapper().readTree(schema.example()));
+                } else {
+                    schemaObject.setExample(Json.mapper().readTree(schema.example()));
+                }
             } catch (IOException e) {
                 schemaObject.setExample(schema.example());
             }
@@ -716,31 +738,31 @@ public abstract class AnnotationsUtils {
             }
         }
 
-        getExternalDocumentation(schema.externalDocs()).ifPresent(schemaObject::setExternalDocs);
+        getExternalDocumentation(schema.externalDocs(), openapi31).ifPresent(schemaObject::setExternalDocs);
 
         if (!schema.not().equals(Void.class)) {
             Class<?> schemaImplementation = schema.not();
-            Schema notSchemaObject = resolveSchemaFromType(schemaImplementation, components, jsonViewAnnotation);
+            Schema notSchemaObject = resolveSchemaFromType(schemaImplementation, components, jsonViewAnnotation, openapi31);
             schemaObject.setNot(notSchemaObject);
         }
         if (schema.oneOf().length > 0) {
             Class<?>[] schemaImplementations = schema.oneOf();
             for (Class<?> schemaImplementation : schemaImplementations) {
-                Schema oneOfSchemaObject = resolveSchemaFromType(schemaImplementation, components, jsonViewAnnotation);
+                Schema oneOfSchemaObject = resolveSchemaFromType(schemaImplementation, components, jsonViewAnnotation, openapi31);
                 ((ComposedSchema) schemaObject).addOneOfItem(oneOfSchemaObject);
             }
         }
         if (schema.anyOf().length > 0) {
             Class<?>[] schemaImplementations = schema.anyOf();
             for (Class<?> schemaImplementation : schemaImplementations) {
-                Schema anyOfSchemaObject = resolveSchemaFromType(schemaImplementation, components, jsonViewAnnotation);
+                Schema anyOfSchemaObject = resolveSchemaFromType(schemaImplementation, components, jsonViewAnnotation, openapi31);
                 ((ComposedSchema) schemaObject).addAnyOfItem(anyOfSchemaObject);
             }
         }
         if (schema.allOf().length > 0) {
             Class<?>[] schemaImplementations = schema.allOf();
             for (Class<?> schemaImplementation : schemaImplementations) {
-                Schema allOfSchemaObject = resolveSchemaFromType(schemaImplementation, components, jsonViewAnnotation);
+                Schema allOfSchemaObject = resolveSchemaFromType(schemaImplementation, components, jsonViewAnnotation, openapi31);
                 ((ComposedSchema) schemaObject).addAllOfItem(allOfSchemaObject);
             }
         }
@@ -750,7 +772,7 @@ public abstract class AnnotationsUtils {
             schemaObject.additionalProperties(false);
         } else {
             if (!schema.additionalPropertiesSchema().equals(Void.class)) {
-                schemaObject.additionalProperties(resolveSchemaFromType(schema.additionalPropertiesSchema(), components, jsonViewAnnotation));
+                schemaObject.additionalProperties(resolveSchemaFromType(schema.additionalPropertiesSchema(), components, jsonViewAnnotation, openapi31));
             }
         }
 
@@ -758,13 +780,22 @@ public abstract class AnnotationsUtils {
     }
 
     public static Schema resolveSchemaFromType(Class<?> schemaImplementation, Components components, JsonView jsonViewAnnotation) {
+        return resolveSchemaFromType(schemaImplementation, components, jsonViewAnnotation, false);
+    }
+
+    public static Schema resolveSchemaFromType(Class<?> schemaImplementation, Components components, JsonView jsonViewAnnotation, boolean openapi31) {
         Schema schemaObject;
         PrimitiveType primitiveType = PrimitiveType.fromType(schemaImplementation);
         if (primitiveType != null) {
             schemaObject = primitiveType.createProperty();
         } else {
             schemaObject = new Schema();
-            ResolvedSchema resolvedSchema = ModelConverters.getInstance().readAllAsResolvedSchema(new AnnotatedType().type(schemaImplementation).jsonViewAnnotation(jsonViewAnnotation));
+            ResolvedSchema resolvedSchema;
+            if (openapi31) {
+                resolvedSchema = new ModelConverters(true).readAllAsResolvedSchema(new AnnotatedType().type(schemaImplementation).jsonViewAnnotation(jsonViewAnnotation));
+            } else {
+                resolvedSchema = ModelConverters.getInstance().readAllAsResolvedSchema(new AnnotatedType().type(schemaImplementation).jsonViewAnnotation(jsonViewAnnotation));
+            }
             Map<String, Schema> schemaMap;
             if (resolvedSchema != null) {
                 schemaMap = resolvedSchema.referencedSchemas;
@@ -894,6 +925,10 @@ public abstract class AnnotationsUtils {
     }
 
     public static Optional<ExternalDocumentation> getExternalDocumentation(io.swagger.v3.oas.annotations.ExternalDocumentation externalDocumentation) {
+        return getExternalDocumentation(externalDocumentation, false);
+    }
+
+    public static Optional<ExternalDocumentation> getExternalDocumentation(io.swagger.v3.oas.annotations.ExternalDocumentation externalDocumentation, boolean openapi31) {
         if (externalDocumentation == null) {
             return Optional.empty();
         }
@@ -908,9 +943,13 @@ public abstract class AnnotationsUtils {
             external.setUrl(externalDocumentation.url());
         }
         if (externalDocumentation.extensions() != null && externalDocumentation.extensions().length > 0) {
-            Map<String, Object> extensions = AnnotationsUtils.getExtensions(externalDocumentation.extensions());
+            Map<String, Object> extensions = AnnotationsUtils.getExtensions(openapi31, externalDocumentation.extensions());
             if (extensions != null) {
-                extensions.forEach(external::addExtension);
+                if (openapi31) {
+                    extensions.forEach(external::addExtension31);
+                } else {
+                    extensions.forEach(external::addExtension);
+                }
                 isEmpty = false;
             }
         }
@@ -922,6 +961,10 @@ public abstract class AnnotationsUtils {
     }
 
     public static Optional<Info> getInfo(io.swagger.v3.oas.annotations.info.Info info) {
+        return getInfo(info, false);
+    }
+
+    public static Optional<Info> getInfo(io.swagger.v3.oas.annotations.info.Info info, boolean openapi31) {
         if (info == null) {
             return Optional.empty();
         }
@@ -948,9 +991,13 @@ public abstract class AnnotationsUtils {
             isEmpty = false;
         }
         if (info.extensions() != null && info.extensions().length > 0) {
-            Map<String, Object> extensions = AnnotationsUtils.getExtensions(info.extensions());
+            Map<String, Object> extensions = AnnotationsUtils.getExtensions(openapi31, info.extensions());
             if (extensions != null) {
-                extensions.forEach(infoObject::addExtension);
+                if (openapi31) {
+                    extensions.forEach(infoObject::addExtension31);
+                } else {
+                    extensions.forEach(infoObject::addExtension);
+                }
                 isEmpty = false;
             }
         }
@@ -964,6 +1011,10 @@ public abstract class AnnotationsUtils {
     }
 
     public static Optional<Contact> getContact(io.swagger.v3.oas.annotations.info.Contact contact) {
+        return getContact(contact, false);
+    }
+
+    public static Optional<Contact> getContact(io.swagger.v3.oas.annotations.info.Contact contact, boolean openapi31) {
         if (contact == null) {
             return Optional.empty();
         }
@@ -982,9 +1033,13 @@ public abstract class AnnotationsUtils {
             isEmpty = false;
         }
         if (contact.extensions() != null && contact.extensions().length > 0) {
-            Map<String, Object> extensions = AnnotationsUtils.getExtensions(contact.extensions());
+            Map<String, Object> extensions = AnnotationsUtils.getExtensions(openapi31, contact.extensions());
             if (extensions != null) {
-                extensions.forEach(contactObject::addExtension);
+                if(openapi31) {
+                    extensions.forEach(contactObject::addExtension31);
+                } else {
+                    extensions.forEach(contactObject::addExtension);
+                }
                 isEmpty = false;
             }
         }
@@ -996,6 +1051,10 @@ public abstract class AnnotationsUtils {
     }
 
     public static Optional<License> getLicense(io.swagger.v3.oas.annotations.info.License license) {
+        return getLicense(license, false);
+    }
+
+    public static Optional<License> getLicense(io.swagger.v3.oas.annotations.info.License license, boolean openapi31) {
         if (license == null) {
             return Optional.empty();
         }
@@ -1014,9 +1073,13 @@ public abstract class AnnotationsUtils {
             isEmpty = false;
         }
         if (license.extensions() != null && license.extensions().length > 0) {
-            Map<String, Object> extensions = AnnotationsUtils.getExtensions(license.extensions());
+            Map<String, Object> extensions = AnnotationsUtils.getExtensions(openapi31, license.extensions());
             if (extensions != null) {
-                extensions.forEach(licenseObject::addExtension);
+                if (openapi31) {
+                    extensions.forEach(licenseObject::addExtension31);
+                } else {
+                    extensions.forEach(licenseObject::addExtension);
+                }
                 isEmpty = false;
             }
         }
@@ -1027,17 +1090,25 @@ public abstract class AnnotationsUtils {
     }
 
     public static Map<String, Link> getLinks(io.swagger.v3.oas.annotations.links.Link[] links) {
+        return getLinks(links, false);
+    }
+
+    public static Map<String, Link> getLinks(io.swagger.v3.oas.annotations.links.Link[] links, boolean openapi31) {
         Map<String, Link> linkMap = new HashMap<>();
         if (links == null) {
             return linkMap;
         }
         for (io.swagger.v3.oas.annotations.links.Link link : links) {
-            getLink(link).ifPresent(linkResult -> linkMap.put(link.name(), linkResult));
+            getLink(link, openapi31).ifPresent(linkResult -> linkMap.put(link.name(), linkResult));
         }
         return linkMap;
     }
 
     public static Optional<Link> getLink(io.swagger.v3.oas.annotations.links.Link link) {
+        return getLink(link, false);
+    }
+
+    public static Optional<Link> getLink(io.swagger.v3.oas.annotations.links.Link link, boolean openapi31) {
         if (link == null) {
             return Optional.empty();
         }
@@ -1064,9 +1135,13 @@ public abstract class AnnotationsUtils {
             isEmpty = false;
         }
         if (link.extensions() != null && link.extensions().length > 0) {
-            Map<String, Object> extensions = AnnotationsUtils.getExtensions(link.extensions());
+            Map<String, Object> extensions = AnnotationsUtils.getExtensions(openapi31, link.extensions());
             if (extensions != null) {
-                extensions.forEach(linkObject::addExtension);
+                if (openapi31) {
+                    extensions.forEach(linkObject::addExtension31);
+                } else {
+                    extensions.forEach(linkObject::addExtension);
+                }
                 isEmpty = false;
             }
         }
@@ -1081,7 +1156,11 @@ public abstract class AnnotationsUtils {
         if (StringUtils.isNotBlank(link.requestBody())) {
             JsonNode processedValue = null;
             try {
-                processedValue = Json.mapper().readTree(link.requestBody());
+                if (openapi31) {
+                    processedValue = Json31.mapper().readTree(link.requestBody());
+                } else {
+                    processedValue = Json.mapper().readTree(link.requestBody());
+                }
             } catch (Exception e) {
                 // not a json string
             }
@@ -1094,8 +1173,7 @@ public abstract class AnnotationsUtils {
         return Optional.of(linkObject);
     }
 
-    public static Map<String, String> getLinkParameters(LinkParameter[]
-                                                                linkParameter) {
+    public static Map<String, String> getLinkParameters(LinkParameter[] linkParameter) {
         Map<String, String> linkParametersMap = new HashMap<>();
         if (linkParameter == null) {
             return linkParametersMap;
@@ -1110,6 +1188,10 @@ public abstract class AnnotationsUtils {
     }
 
     public static Optional<Map<String, Header>> getHeaders(io.swagger.v3.oas.annotations.headers.Header[] annotationHeaders, JsonView jsonViewAnnotation) {
+        return getHeaders(annotationHeaders, jsonViewAnnotation, false);
+    }
+
+    public static Optional<Map<String, Header>> getHeaders(io.swagger.v3.oas.annotations.headers.Header[] annotationHeaders, JsonView jsonViewAnnotation, boolean openapi31) {
         if (annotationHeaders == null) {
             return Optional.empty();
         }
@@ -1126,6 +1208,10 @@ public abstract class AnnotationsUtils {
     }
 
     public static Optional<Header> getHeader(io.swagger.v3.oas.annotations.headers.Header header, JsonView jsonViewAnnotation) {
+        return getHeader(header, jsonViewAnnotation, false);
+    }
+
+    public static Optional<Header> getHeader(io.swagger.v3.oas.annotations.headers.Header header, JsonView jsonViewAnnotation, boolean openapi31) {
 
         if (header == null) {
             return Optional.empty();
@@ -1152,7 +1238,7 @@ public abstract class AnnotationsUtils {
 
         if (header.schema() != null) {
             if (header.schema().implementation().equals(Void.class)) {
-                AnnotationsUtils.getSchemaFromAnnotation(header.schema(), jsonViewAnnotation).ifPresent(
+                AnnotationsUtils.getSchemaFromAnnotation(header.schema(), jsonViewAnnotation, openapi31).ifPresent(
                     headerObject::setSchema);
             }
         }
@@ -1165,6 +1251,10 @@ public abstract class AnnotationsUtils {
     }
 
     public static void addEncodingToMediaType(MediaType mediaType, io.swagger.v3.oas.annotations.media.Encoding encoding, JsonView jsonViewAnnotation) {
+        addEncodingToMediaType(mediaType, encoding, jsonViewAnnotation, false);
+    }
+
+    public static void addEncodingToMediaType(MediaType mediaType, io.swagger.v3.oas.annotations.media.Encoding encoding, JsonView jsonViewAnnotation, boolean openapi31) {
         if (encoding == null) {
             return;
         }
@@ -1186,12 +1276,16 @@ public abstract class AnnotationsUtils {
             }
 
             if (encoding.headers() != null) {
-                getHeaders(encoding.headers(), jsonViewAnnotation).ifPresent(encodingObject::headers);
+                getHeaders(encoding.headers(), jsonViewAnnotation, openapi31).ifPresent(encodingObject::headers);
             }
             if (encoding.extensions() != null && encoding.extensions().length > 0) {
-                Map<String, Object> extensions = AnnotationsUtils.getExtensions(encoding.extensions());
+                Map<String, Object> extensions = AnnotationsUtils.getExtensions(openapi31, encoding.extensions());
                 if (extensions != null) {
-                    extensions.forEach(encodingObject::addExtension);
+                    if (openapi31) {
+                        extensions.forEach(encodingObject::addExtension31);
+                    } else {
+                        extensions.forEach(encodingObject::addExtension);
+                    }
                 }
             }
 
@@ -1251,6 +1345,10 @@ public abstract class AnnotationsUtils {
     }
 
     public static Optional<Content> getContent(io.swagger.v3.oas.annotations.media.Content[] annotationContents, String[] classTypes, String[] methodTypes, Schema schema, Components components, JsonView jsonViewAnnotation) {
+        return getContent(annotationContents, classTypes, methodTypes, schema, components, jsonViewAnnotation, false);
+    }
+
+    public static Optional<Content> getContent(io.swagger.v3.oas.annotations.media.Content[] annotationContents, String[] classTypes, String[] methodTypes, Schema schema, Components components, JsonView jsonViewAnnotation, boolean openapi31) {
         if (annotationContents == null || annotationContents.length == 0) {
             return Optional.empty();
         }
@@ -1261,7 +1359,7 @@ public abstract class AnnotationsUtils {
         for (io.swagger.v3.oas.annotations.media.Content annotationContent : annotationContents) {
             MediaType mediaType = new MediaType();
             if (components != null) {
-                getSchema(annotationContent, components, jsonViewAnnotation).ifPresent(mediaType::setSchema);
+                getSchema(annotationContent, components, jsonViewAnnotation, openapi31).ifPresent(mediaType::setSchema);
                 if (annotationContent.schemaProperties().length > 0) {
                     if (mediaType.getSchema() == null) {
                         mediaType.schema(new Schema<Object>().type("object"));
@@ -1276,7 +1374,7 @@ public abstract class AnnotationsUtils {
                                 isArray = true;
                             }
                         }
-                        getSchema(sp.schema(), sp.array(), isArray, schemaImplementation, components, jsonViewAnnotation)
+                        getSchema(sp.schema(), sp.array(), isArray, schemaImplementation, components, jsonViewAnnotation, openapi31)
                                 .ifPresent(s -> {
                                     if ("array".equals(oSchema.getType())) {
                                         oSchema.getItems().addProperty(sp.name(), s);
@@ -1292,7 +1390,7 @@ public abstract class AnnotationsUtils {
                         mediaType.getSchema() != null &&
                         !Boolean.TRUE.equals(mediaType.getSchema().getAdditionalProperties()) &&
                         !Boolean.FALSE.equals(mediaType.getSchema().getAdditionalProperties())) {
-                        getSchemaFromAnnotation(annotationContent.additionalPropertiesSchema(), components, jsonViewAnnotation)
+                        getSchemaFromAnnotation(annotationContent.additionalPropertiesSchema(), components, jsonViewAnnotation, openapi31)
                                 .ifPresent(s -> {
                                             if ("array".equals(mediaType.getSchema().getType())) {
                                                 mediaType.getSchema().getItems().additionalProperties(s);
@@ -1315,15 +1413,19 @@ public abstract class AnnotationsUtils {
                 }
             }
             if (annotationContent.extensions() != null && annotationContent.extensions().length > 0) {
-                Map<String, Object> extensions = AnnotationsUtils.getExtensions(annotationContent.extensions());
+                Map<String, Object> extensions = AnnotationsUtils.getExtensions(openapi31, annotationContent.extensions());
                 if (extensions != null) {
-                    extensions.forEach(mediaType::addExtension);
+                    if (openapi31) {
+                        extensions.forEach(mediaType::addExtension31);
+                    } else {
+                        extensions.forEach(mediaType::addExtension);
+                    }
                 }
             }
 
             io.swagger.v3.oas.annotations.media.Encoding[] encodings = annotationContent.encoding();
             for (io.swagger.v3.oas.annotations.media.Encoding encoding : encodings) {
-                addEncodingToMediaType(mediaType, encoding, jsonViewAnnotation);
+                addEncodingToMediaType(mediaType, encoding, jsonViewAnnotation, openapi31);
             }
             if (StringUtils.isNotBlank(annotationContent.mediaType())) {
                 content.addMediaType(annotationContent.mediaType(), mediaType);
@@ -1336,20 +1438,20 @@ public abstract class AnnotationsUtils {
                 final Map<String, Schema> dependentSchemaMap = new LinkedHashMap<>();
                 for (DependentSchema dependentSchema : dependentSchemas) {
                     if ("array".equals(mediaType.getSchema().getType())) {
-                        getArraySchema(dependentSchema.array(), components, jsonViewAnnotation).ifPresent(arraySchema -> dependentSchemaMap.put(dependentSchema.name(), arraySchema));
+                        getArraySchema(dependentSchema.array(), components, jsonViewAnnotation, openapi31).ifPresent(arraySchema -> dependentSchemaMap.put(dependentSchema.name(), arraySchema));
                     } else {
-                        getSchemaFromAnnotation(dependentSchema.schema(), components, jsonViewAnnotation).ifPresent(schema1 -> dependentSchemaMap.put(dependentSchema.name(), schema1));
+                        getSchemaFromAnnotation(dependentSchema.schema(), components, jsonViewAnnotation, openapi31).ifPresent(schema1 -> dependentSchemaMap.put(dependentSchema.name(), schema1));
                     }
                 }
                 mediaType.getSchema().setDependentSchemas(dependentSchemaMap);
             }
             if (mediaType.getSchema() != null) {
-                getSchemaFromAnnotation(annotationContent.contentSchema(), components, jsonViewAnnotation).ifPresent(mediaType.getSchema()::setContentSchema);
-                getSchemaFromAnnotation(annotationContent.propertyNames(), components, jsonViewAnnotation).ifPresent(mediaType.getSchema()::setPropertyNames);
-                getSchemaFromAnnotation(annotationContent._if(), components, jsonViewAnnotation).ifPresent(mediaType.getSchema()::setIf);
-                getSchemaFromAnnotation(annotationContent._then(), components, jsonViewAnnotation).ifPresent(mediaType.getSchema()::setThen);
-                getSchemaFromAnnotation(annotationContent._else(), components, jsonViewAnnotation).ifPresent(mediaType.getSchema()::setElse);
-                getSchemaFromAnnotation(annotationContent.not(), components, jsonViewAnnotation).ifPresent(mediaType.getSchema()::setNot);
+                getSchemaFromAnnotation(annotationContent.contentSchema(), components, jsonViewAnnotation, openapi31).ifPresent(mediaType.getSchema()::setContentSchema);
+                getSchemaFromAnnotation(annotationContent.propertyNames(), components, jsonViewAnnotation, openapi31).ifPresent(mediaType.getSchema()::setPropertyNames);
+                getSchemaFromAnnotation(annotationContent._if(), components, jsonViewAnnotation, openapi31).ifPresent(mediaType.getSchema()::setIf);
+                getSchemaFromAnnotation(annotationContent._then(), components, jsonViewAnnotation, openapi31).ifPresent(mediaType.getSchema()::setThen);
+                getSchemaFromAnnotation(annotationContent._else(), components, jsonViewAnnotation, openapi31).ifPresent(mediaType.getSchema()::setElse);
+                getSchemaFromAnnotation(annotationContent.not(), components, jsonViewAnnotation, openapi31).ifPresent(mediaType.getSchema()::setNot);
             }
             if (annotationContent.oneOf().length > 0) {
                 for (io.swagger.v3.oas.annotations.media.Schema oneOfSchema : annotationContent.oneOf()) {
@@ -1375,6 +1477,10 @@ public abstract class AnnotationsUtils {
     }
 
     public static Optional<? extends Schema> getSchema(io.swagger.v3.oas.annotations.media.Content annotationContent, Components components, JsonView jsonViewAnnotation) {
+        return getSchema(annotationContent, components, jsonViewAnnotation, false);
+    }
+
+    public static Optional<? extends Schema> getSchema(io.swagger.v3.oas.annotations.media.Content annotationContent, Components components, JsonView jsonViewAnnotation, boolean openapi31) {
         Class<?> schemaImplementation = annotationContent.schema().implementation();
         boolean isArray = false;
         if (schemaImplementation == Void.class) {
@@ -1383,7 +1489,7 @@ public abstract class AnnotationsUtils {
                 isArray = true;
             }
         }
-        return getSchema(annotationContent.schema(), annotationContent.array(), isArray, schemaImplementation, components, jsonViewAnnotation);
+        return getSchema(annotationContent.schema(), annotationContent.array(), isArray, schemaImplementation, components, jsonViewAnnotation, openapi31);
     }
 
     public static Optional<? extends Schema> getSchema(io.swagger.v3.oas.annotations.media.Schema schemaAnnotation,
@@ -1392,13 +1498,24 @@ public abstract class AnnotationsUtils {
                                                        Class<?> schemaImplementation,
                                                        Components components,
                                                        JsonView jsonViewAnnotation) {
+        return getSchema(schemaAnnotation, arrayAnnotation, isArray, schemaImplementation, components, jsonViewAnnotation, false);
+
+    }
+
+    public static Optional<? extends Schema> getSchema(io.swagger.v3.oas.annotations.media.Schema schemaAnnotation,
+                                                       io.swagger.v3.oas.annotations.media.ArraySchema arrayAnnotation,
+                                                       boolean isArray,
+                                                       Class<?> schemaImplementation,
+                                                       Components components,
+                                                       JsonView jsonViewAnnotation,
+                                                       boolean openapi31) {
         if (schemaImplementation != Void.class) {
-            Schema schemaObject = resolveSchemaFromType(schemaImplementation, components, jsonViewAnnotation);
+            Schema schemaObject = resolveSchemaFromType(schemaImplementation, components, jsonViewAnnotation, openapi31);
             if (StringUtils.isNotBlank(schemaAnnotation.format())) {
                schemaObject.setFormat(schemaAnnotation.format());
             }
             if (isArray) {
-                Optional<ArraySchema> arraySchema = AnnotationsUtils.getArraySchema(arrayAnnotation, components, jsonViewAnnotation);
+                Optional<ArraySchema> arraySchema = AnnotationsUtils.getArraySchema(arrayAnnotation, components, jsonViewAnnotation, openapi31);
                 if (arraySchema.isPresent()) {
                     arraySchema.get().setItems(schemaObject);
                     return arraySchema;
@@ -1410,7 +1527,7 @@ public abstract class AnnotationsUtils {
             }
 
         } else {
-            Optional<Schema> schemaFromAnnotation = AnnotationsUtils.getSchemaFromAnnotation(schemaAnnotation, components, jsonViewAnnotation);
+            Optional<Schema> schemaFromAnnotation = AnnotationsUtils.getSchemaFromAnnotation(schemaAnnotation, components, jsonViewAnnotation, openapi31);
             if (schemaFromAnnotation.isPresent()) {
                 if (StringUtils.isBlank(schemaFromAnnotation.get().get$ref()) && StringUtils.isBlank(schemaFromAnnotation.get().getType()) && !(schemaFromAnnotation.get() instanceof ComposedSchema)) {
                     // default to string
@@ -1418,7 +1535,7 @@ public abstract class AnnotationsUtils {
                 }
                 return Optional.of(schemaFromAnnotation.get());
             } else {
-                Optional<ArraySchema> arraySchemaFromAnnotation = AnnotationsUtils.getArraySchema(arrayAnnotation, components, jsonViewAnnotation);
+                Optional<ArraySchema> arraySchemaFromAnnotation = AnnotationsUtils.getArraySchema(arrayAnnotation, components, jsonViewAnnotation, openapi31);
                 if (arraySchemaFromAnnotation.isPresent()) {
                     if (arraySchemaFromAnnotation.get().getItems() != null && StringUtils.isBlank(arraySchemaFromAnnotation.get().getItems().get$ref()) && StringUtils.isBlank(arraySchemaFromAnnotation.get().getItems().getType())) {
                         // default to string
@@ -1500,6 +1617,10 @@ public abstract class AnnotationsUtils {
     }
 
     public static Map<String, Object> getExtensions(Extension... extensions) {
+        return getExtensions(false, extensions);
+    }
+
+    public static Map<String, Object> getExtensions(boolean openapi31, Extension... extensions) {
         final Map<String, Object> map = new HashMap<>();
         for (Extension extension : extensions) {
             final String name = extension.name();
@@ -1514,7 +1635,11 @@ public abstract class AnnotationsUtils {
                     if (key.isEmpty()) {
                         if (propertyAsJson) {
                             try {
-                                processedValue = Json.mapper().readTree(propertyValue);
+                                if (openapi31) {
+                                    processedValue = Json31.mapper().readTree(propertyValue);
+                                } else {
+                                    processedValue = Json.mapper().readTree(propertyValue);
+                                }
                                 map.put(StringUtils.prependIfMissing(propertyName, "x-"), processedValue);
                             } catch (Exception e) {
                                 map.put(StringUtils.prependIfMissing(propertyName, "x-"), propertyValue);
@@ -1531,7 +1656,11 @@ public abstract class AnnotationsUtils {
                         @SuppressWarnings("unchecked") final Map<String, Object> mapValue = (Map<String, Object>) value;
                         if (propertyAsJson) {
                             try {
-                                processedValue = Json.mapper().readTree(propertyValue);
+                                if (openapi31) {
+                                    processedValue = Json31.mapper().readTree(propertyValue);
+                                } else {
+                                    processedValue = Json.mapper().readTree(propertyValue);
+                                }
                                 mapValue.put(propertyName, processedValue);
                             } catch (Exception e) {
                                 mapValue.put(propertyName, propertyValue);
