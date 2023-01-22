@@ -16,6 +16,8 @@ import java.util.Set;
 
 public abstract class AbstractOpenAPIExtension implements OpenAPIExtension {
 
+    protected boolean openapi31;
+
     @Override
     public String extractOperationMethod(Method method, Iterator<OpenAPIExtension> chain) {
         if (chain.hasNext()) {
@@ -60,5 +62,10 @@ public abstract class AbstractOpenAPIExtension implements OpenAPIExtension {
 
     protected JavaType constructType(Type type) {
         return TypeFactory.defaultInstance().constructType(type);
+    }
+
+    @Override
+    public void setOpenAPI31(boolean openapi31) {
+        this.openapi31 = openapi31;
     }
 }
