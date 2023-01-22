@@ -1396,6 +1396,8 @@ public class Reader implements OpenApiReader {
         final OpenAPIExtension extension = chain.next();
         LOGGER.debug("trying extension {}", extension);
 
+        extension.setOpenAPI31(Boolean.TRUE.equals(config.isOpenAPI31()));
+
         return extension.extractParameters(annotations, type, typesToSkip, components, classConsumes, methodConsumes, true, jsonViewAnnotation, chain);
     }
 
