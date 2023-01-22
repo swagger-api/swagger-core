@@ -29,6 +29,10 @@ import java.util.Optional;
 public class ParameterProcessor {
     static Logger LOGGER = LoggerFactory.getLogger(ParameterProcessor.class);
 
+    public static Parameter applyAnnotations(Parameter parameter, Type type, List<Annotation> annotations, Components components, String[] classTypes, String[] methodTypes, JsonView jsonViewAnnotation) {
+        return applyAnnotations(parameter, type, annotations, components, classTypes, methodTypes, jsonViewAnnotation, false);
+    }
+
     public static Parameter applyAnnotations(
             Parameter parameter,
             Type type,
@@ -36,7 +40,8 @@ public class ParameterProcessor {
             Components components,
             String[] classTypes,
             String[] methodTypes,
-            JsonView jsonViewAnnotation) {
+            JsonView jsonViewAnnotation,
+            boolean openapi31) {
 
         final AnnotationsHelper helper = new AnnotationsHelper(annotations, type);
         if (helper.isContext()) {
@@ -60,7 +65,13 @@ public class ParameterProcessor {
                 .skipOverride(true)
                 .jsonViewAnnotation(jsonViewAnnotation)
                 .ctxAnnotations(reworkedAnnotations.toArray(new Annotation[reworkedAnnotations.size()]));
-        ResolvedSchema resolvedSchema = ModelConverters.getInstance().resolveAsResolvedSchema(annotatedType);
+
+        final ResolvedSchema resolvedSchema;
+        if (openapi31) {
+            resolvedSchema = new ModelConverters(true).readAllAsResolvedSchema(annotatedType);
+        } else {
+            resolvedSchema = ModelConverters.getInstance().resolveAsResolvedSchema(annotatedType);
+        }
 
         if (resolvedSchema.schema != null) {
             parameter.setSchema(resolvedSchema.schema);
