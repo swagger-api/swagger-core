@@ -5,6 +5,7 @@ import io.swagger.v3.core.util.Yaml31;
 import io.swagger.v3.jaxrs2.annotations.AbstractAnnotationTest;
 import io.swagger.v3.jaxrs2.matchers.SerializationMatchers;
 import io.swagger.v3.jaxrs2.petstore.EmptyPetResource;
+import io.swagger.v3.jaxrs2.petstore.callback.ComplexCallback31Resource;
 import io.swagger.v3.jaxrs2.petstore.callback.ComplexCallbackResource;
 import io.swagger.v3.jaxrs2.petstore.callback.MultipleCallbacksTestWithOperationResource;
 import io.swagger.v3.jaxrs2.petstore.callback.RepeatableCallbackResource;
@@ -277,6 +278,11 @@ public class PetResourceTest extends AbstractAnnotationTest {
     @Test(description = "Test Parameters resources)")
     public void testParameters31Resource() {
         compare(Parameters31Resource.class, PARAMETERS_SOURCE, true);
+    }
+
+    @Test(description = "Test some resources with Callbacks)")
+    public void testCallBacks31Resources() {
+        compare(ComplexCallback31Resource.class, CALLBACKS_SOURCE, true);
     }
 
     /**
