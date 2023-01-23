@@ -274,6 +274,11 @@ public class PetResourceTest extends AbstractAnnotationTest {
         compare(OpenAPI31DefinitionResource.class, PETSTORE_SOURCE, true);
     }
 
+    @Test(description = "Test Parameters resources)")
+    public void testParameters31Resource() {
+        compare(Parameters31Resource.class, PARAMETERS_SOURCE, true);
+    }
+
     /**
      * Compare a class that were read and parsed to a yaml against a yaml file.
      *
