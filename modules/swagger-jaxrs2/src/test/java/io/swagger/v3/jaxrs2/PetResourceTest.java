@@ -1,7 +1,5 @@
 package io.swagger.v3.jaxrs2;
 
-import io.swagger.v3.core.util.Yaml;
-import io.swagger.v3.core.util.Yaml31;
 import io.swagger.v3.jaxrs2.annotations.AbstractAnnotationTest;
 import io.swagger.v3.jaxrs2.matchers.SerializationMatchers;
 import io.swagger.v3.jaxrs2.petstore.EmptyPetResource;
@@ -36,6 +34,7 @@ import io.swagger.v3.jaxrs2.petstore.parameter.ParametersResource;
 import io.swagger.v3.jaxrs2.petstore.parameter.RepeatableParametersResource;
 import io.swagger.v3.jaxrs2.petstore.parameter.SingleJaxRSAnnotatedParameter;
 import io.swagger.v3.jaxrs2.petstore.parameter.SingleNotAnnotatedParameter;
+import io.swagger.v3.jaxrs2.petstore.requestbody.RequestBody31Resource;
 import io.swagger.v3.jaxrs2.petstore.requestbody.RequestBodyMethodPriorityResource;
 import io.swagger.v3.jaxrs2.petstore.requestbody.RequestBodyParameterPriorityResource;
 import io.swagger.v3.jaxrs2.petstore.requestbody.RequestBodyResource;
@@ -283,6 +282,11 @@ public class PetResourceTest extends AbstractAnnotationTest {
     @Test(description = "Test some resources with Callbacks)")
     public void testCallBacks31Resources() {
         compare(ComplexCallback31Resource.class, CALLBACKS_SOURCE, true);
+    }
+
+    @Test(description = "Test some resources with Callbacks)")
+    public void testRequestBody31Resources() {
+        compare(RequestBody31Resource.class, REQUEST_BODIES_SOURCE, true);
     }
 
     /**
