@@ -68,7 +68,7 @@ public class ParameterProcessor {
 
         final ResolvedSchema resolvedSchema;
         if (openapi31) {
-            resolvedSchema = new ModelConverters(true).readAllAsResolvedSchema(annotatedType);
+            resolvedSchema = new ModelConverters(true).resolveAsResolvedSchema(annotatedType);
         } else {
             resolvedSchema = ModelConverters.getInstance().resolveAsResolvedSchema(annotatedType);
         }
