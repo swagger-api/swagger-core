@@ -1,8 +1,10 @@
 package io.swagger.v3.jaxrs2;
 
+import io.swagger.v3.core.util.Yaml31;
 import io.swagger.v3.jaxrs2.annotations.AbstractAnnotationTest;
 import io.swagger.v3.jaxrs2.matchers.SerializationMatchers;
 import io.swagger.v3.jaxrs2.petstore.EmptyPetResource;
+import io.swagger.v3.jaxrs2.petstore.WebHookResource;
 import io.swagger.v3.jaxrs2.petstore.callback.ComplexCallback31Resource;
 import io.swagger.v3.jaxrs2.petstore.callback.ComplexCallbackResource;
 import io.swagger.v3.jaxrs2.petstore.callback.MultipleCallbacksTestWithOperationResource;
@@ -284,9 +286,14 @@ public class PetResourceTest extends AbstractAnnotationTest {
         compare(ComplexCallback31Resource.class, CALLBACKS_SOURCE, true);
     }
 
-    @Test(description = "Test some resources with Callbacks)")
+    @Test(description = "Test some resources with Request Body)")
     public void testRequestBody31Resources() {
         compare(RequestBody31Resource.class, REQUEST_BODIES_SOURCE, true);
+    }
+
+    @Test(description = "Test webhook resources")
+    public void testWebhooksResource() {
+        compare(WebHookResource.class, PETSTORE_SOURCE, true);
     }
 
     /**

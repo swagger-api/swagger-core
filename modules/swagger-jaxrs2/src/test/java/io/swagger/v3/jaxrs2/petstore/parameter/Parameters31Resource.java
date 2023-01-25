@@ -122,7 +122,7 @@ public class Parameters31Resource {
         return null;
     }
 
-    static class SubscriptionResponse {
+    public static class SubscriptionResponse {
         public String subscriptionId;
     }
 }
