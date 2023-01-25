@@ -283,6 +283,8 @@ public class Reader implements OpenApiReader {
         List<io.swagger.v3.oas.annotations.security.SecurityScheme> apiSecurityScheme = ReflectionUtils.getRepeatableAnnotations(cls, io.swagger.v3.oas.annotations.security.SecurityScheme.class);
         List<io.swagger.v3.oas.annotations.security.SecurityRequirement> apiSecurityRequirements = ReflectionUtils.getRepeatableAnnotations(cls, io.swagger.v3.oas.annotations.security.SecurityRequirement.class);
 
+        io.swagger.v3.oas.annotations.Webhooks webhooksAnnotation = ReflectionUtils.getAnnotation(cls, io.swagger.v3.oas.annotations.Webhooks.class);
+
         ExternalDocumentation apiExternalDocs = ReflectionUtils.getAnnotation(cls, ExternalDocumentation.class);
         io.swagger.v3.oas.annotations.tags.Tag[] apiTags = ReflectionUtils.getRepeatableAnnotationsArray(cls, io.swagger.v3.oas.annotations.tags.Tag.class);
         io.swagger.v3.oas.annotations.servers.Server[] apiServers = ReflectionUtils.getRepeatableAnnotationsArray(cls, io.swagger.v3.oas.annotations.servers.Server.class);
@@ -657,6 +659,23 @@ public class Reader implements OpenApiReader {
                     openAPI.setPaths(this.paths);
 
                 }
+            }
+        }
+
+        if (webhooksAnnotation != null && webhooksAnnotation.value().length > 0) {
+            Map<String, PathItem> webhooks = new HashMap<>();
+            for (io.swagger.v3.oas.annotations.Webhook webhookAnnotation : webhooksAnnotation.value()) {
+                io.swagger.v3.oas.annotations.Operation apiOperation = webhookAnnotation.operation();
+                PathItem pathItemObject = new PathItem();
+                Operation operation = new Operation();
+
+                setOperationObjectFromApiOperationAnnotation(operation, apiOperation, null, classProduces, null, classConsumes, null);
+
+                pathItemObject.post(operation);
+                webhooks.put(webhookAnnotation.name(), pathItemObject);
+            }
+            if (!webhooks.isEmpty()) {
+                openAPI.setWebhooks(webhooks);
             }
         }
 
@@ -1459,6 +1478,9 @@ public class Reader implements OpenApiReader {
             return false;
         }
         if (components.getResponses() != null && components.getResponses().size() > 0) {
+            return false;
+        }
+        if (components.getPathItems() != null && components.getPathItems().size() > 0) {
             return false;
         }
 
