@@ -44,7 +44,9 @@ public class ModelDeserializer extends JsonDeserializer<Schema> {
             schema = deserializeJsonSchema(node);
             return schema;
         }
-
+        if (node.isBoolean()) {
+            return new Schema().booleanSchemaValue(node.booleanValue());
+        }
 
         List<String> composed = Arrays.asList("allOf", "anyOf", "oneOf");
         for (String field: composed) {
@@ -98,23 +100,22 @@ public class ModelDeserializer extends JsonDeserializer<Schema> {
         JsonNode additionalProperties = node.get("additionalProperties");
         Schema schema = null;
         if (additionalProperties != null) {
-            // try first to convert to Schema, if it fails it must be a boolean
-            try {
-                Schema innerSchema = Json.mapper().convertValue(additionalProperties, Schema.class);
-                ((ObjectNode)node).remove("additionalProperties");
-                MapSchema ms = Json.mapper().convertValue(node, MapSchema.class);
-                ms.setAdditionalProperties(innerSchema);
-                schema = ms;
-            } catch (Exception e) {
+            if (additionalProperties.isBoolean()) {
                 Boolean additionalPropsBoolean = Json.mapper().convertValue(additionalProperties, Boolean.class);
+                ((ObjectNode)node).remove("additionalProperties");
                 if (additionalPropsBoolean) {
                     schema = Json.mapper().convertValue(node, MapSchema.class);
                 } else {
                     schema = Json.mapper().convertValue(node, ObjectSchema.class);
                 }
                 schema.setAdditionalProperties(additionalPropsBoolean);
+            } else {
+                Schema innerSchema = Json.mapper().convertValue(additionalProperties, Schema.class);
+                ((ObjectNode)node).remove("additionalProperties");
+                MapSchema ms = Json.mapper().convertValue(node, MapSchema.class);
+                ms.setAdditionalProperties(innerSchema);
+                schema = ms;
             }
-
         } else {
             schema = Json.mapper().convertValue(node, ObjectSchema.class);
         }
@@ -151,8 +152,12 @@ public class ModelDeserializer extends JsonDeserializer<Schema> {
             }
             if (additionalProperties != null) {
                 try {
-                    Schema innerSchema = Json31.mapper().convertValue(additionalProperties, JsonSchema.class);
-                    schema.setAdditionalProperties(innerSchema);
+                    if (additionalProperties.isBoolean()) {
+                        schema.setAdditionalProperties(additionalProperties.booleanValue());
+                    } else {
+                        Schema innerSchema = deserializeJsonSchema(additionalProperties);
+                        schema.setAdditionalProperties(innerSchema);
+                    }
                 } catch (Exception e) {
                     Boolean additionalPropsBoolean = Json31.mapper().convertValue(additionalProperties, Boolean.class);
                     schema.setAdditionalProperties(additionalPropsBoolean);

@@ -45,7 +45,7 @@ sed -i -e "s/$sc_find/$sc_replace/g" $CUR/README.md
 # update readme with a line for the new release replacing the previous
 CURDATE=$(date +"%Y-%m-%d")
 sc_find="------------------------- | ------------ | -------------------------- | ----- | ----"
-sc_add="$SC_VERSION (**current stable**)| $CURDATE   | 3.0           | [tag v$SC_VERSION](https:\/\/github.com\/swagger-api\/swagger-core\/tree\/v$SC_VERSION) | Supported"
+sc_add="$SC_VERSION (**current stable**)| $CURDATE   | 3.x           | [tag v$SC_VERSION](https:\/\/github.com\/swagger-api\/swagger-core\/tree\/v$SC_VERSION) | Supported"
 sc_replace="$sc_find\n$sc_add"
 sed -i -e "s/$sc_find/$sc_replace/g" $CUR/README.md
 

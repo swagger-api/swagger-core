@@ -5,8 +5,8 @@ public enum SecuritySchemeType {
     APIKEY("apiKey"),
     HTTP("http"),
     OPENIDCONNECT("openIdConnect"),
-    OAUTH2("oauth2"),
-    MUTUALTLS("mutualTLS");
+    MUTUALTLS("mutualTLS"),
+    OAUTH2("oauth2");
 
     private String value;
 

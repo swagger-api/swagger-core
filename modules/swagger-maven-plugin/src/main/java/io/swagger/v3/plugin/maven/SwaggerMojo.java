@@ -219,7 +219,7 @@ public class SwaggerMojo extends AbstractMojo {
             List<BiFunction<String, Class<T>, T>> mappers = getSortedMappers(pathObj);
 
             T instance = null;
-            Throwable caughtEx = null;
+            List<Throwable> caughtExs = new ArrayList<>();
 
             // iterate through mappers and see if one is able to parse
             for (BiFunction<String, Class<T>, T> mapper : mappers) {
@@ -227,16 +227,27 @@ public class SwaggerMojo extends AbstractMojo {
                     instance = mapper.apply(fileContent, outputClass);
                     break;
                 } catch (Exception e) {
-                    caughtEx = e;
+                    caughtExs.add(e);
                 }
             }
 
             // if no mapper could read the content correctly, finish with error
             if (instance == null) {
-                if (caughtEx == null) {
-                    caughtEx = new IllegalStateException("undefined state");
+                if (caughtExs.isEmpty()) {
+                    caughtExs.add(new IllegalStateException("undefined state"));
                 }
-                getLog().error(format("Could not read file '%s' for config %s", pathObj.toString(), configName), caughtEx);
+
+
+                // we give more importance to the first exception, it was produced by the preferred mapper
+                Throwable caughtEx = caughtExs.get(0);
+                getLog().error(format("Could not read file '%s' for config %s", pathObj, configName), caughtEx);
+
+                if(caughtExs.size() > 1){
+                    for (Throwable ex : caughtExs.subList(1, caughtExs.size())) {
+                        getLog().warn(format("Also could not read file '%s' for config %s with alternate mapper", pathObj, configName), ex);
+                    }
+                }
+
                 throw new IllegalStateException(caughtEx.getMessage(), caughtEx);
             }
 

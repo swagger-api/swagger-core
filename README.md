@@ -5,6 +5,8 @@
 **NOTE:** Since version 2.1.7, Swagger Core also supports the Jakarta namespace. There are a parallel set of artifacts with the `-jakarta` suffix, providing the same functionality as the unsuffixed (i.e.: `javax`) artifacts.
 Please see the [Wiki](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Getting-started) for more details.
 
+**NOTE:** Since version 2.2.0 Swagger Core supports OpenAPI 3.1; see [this page](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---OpenAPI-3.1) for details
+
 ![Build Test Deploy](https://github.com/swagger-api/swagger-core/workflows/Build%20Test%20Deploy%20master/badge.svg?branch=master)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.swagger.core.v3/swagger-project/badge.svg?style=plastic)](https://maven-badges.herokuapp.com/maven-central/io.swagger.core.v3/swagger-project)
 
@@ -21,10 +23,15 @@ The OpenAPI Specification has undergone several revisions since initial creation
 
 Swagger core Version      | Release Date | OpenAPI Spec compatibility | Notes | Status
 ------------------------- | ------------ | -------------------------- | ----- | ----
-2.2.3 (**current stable**)| 2022-09-27   | 3.0           | [tag v2.2.3](https://github.com/swagger-api/swagger-core/tree/v2.2.3) | Supported
-2.2.2                     | 2022-07-20   | 3.0           | [tag v2.2.2](https://github.com/swagger-api/swagger-core/tree/v2.2.2) | Supported
-2.2.1                     | 2022-06-15   | 3.0           | [tag v2.2.1](https://github.com/swagger-api/swagger-core/tree/v2.2.1) | Supported
-2.2.0                     | 2022-04-04   | 3.0           | [tag v2.2.0](https://github.com/swagger-api/swagger-core/tree/v2.2.0) | Supported
+2.2.8 (**current stable**)| 2023-01-06   | 3.x           | [tag v2.2.8](https://github.com/swagger-api/swagger-core/tree/v2.2.8) | Supported
+2.2.7                     | 2022-11-15   | 3.x           | [tag v2.2.7](https://github.com/swagger-api/swagger-core/tree/v2.2.7) | Supported
+2.2.6                     | 2022-11-02   | 3.x           | [tag v2.2.6](https://github.com/swagger-api/swagger-core/tree/v2.2.6) | Supported
+2.2.5                     | 2022-11-02   | 3.x           | [tag v2.2.5](https://github.com/swagger-api/swagger-core/tree/v2.2.5) | Supported
+2.2.4                     | 2022-10-16   | 3.x           | [tag v2.2.4](https://github.com/swagger-api/swagger-core/tree/v2.2.4) | Supported
+2.2.3                     | 2022-09-27   | 3.x           | [tag v2.2.3](https://github.com/swagger-api/swagger-core/tree/v2.2.3) | Supported
+2.2.2                     | 2022-07-20   | 3.x           | [tag v2.2.2](https://github.com/swagger-api/swagger-core/tree/v2.2.2) | Supported
+2.2.1                     | 2022-06-15   | 3.x           | [tag v2.2.1](https://github.com/swagger-api/swagger-core/tree/v2.2.1) | Supported
+2.2.0                     | 2022-04-04   | 3.x           | [tag v2.2.0](https://github.com/swagger-api/swagger-core/tree/v2.2.0) | Supported
 2.1.13                     | 2022-02-07   | 3.0           | [tag v2.1.13](https://github.com/swagger-api/swagger-core/tree/v2.1.13) | Supported
 2.1.12                     | 2021-12-23   | 3.0           | [tag v2.1.12](https://github.com/swagger-api/swagger-core/tree/v2.1.12)                                           | Supported
 2.1.11                     | 2021-09-29   | 3.0           | [tag v2.1.11](https://github.com/swagger-api/swagger-core/tree/v2.1.11)                                           | Supported**
@@ -87,7 +94,7 @@ You need the following installed and available in your $PATH:
 * Jackson 2.4.5 or greater
 
 
-### To build from source (currently 2.2.4-SNAPSHOT)
+### To build from source (currently 2.2.9-SNAPSHOT)
 ```
 # first time building locally
 mvn -N

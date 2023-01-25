@@ -81,6 +81,7 @@ public abstract class AnnotationsUtils {
                 && schema.maxProperties() == 0
                 && schema.requiredProperties().length == 0
                 && !schema.required()
+                && schema.requiredMode().equals(io.swagger.v3.oas.annotations.media.Schema.RequiredMode.AUTO)
                 && !schema.nullable()
                 && !schema.readOnly()
                 && !schema.writeOnly()
@@ -283,6 +284,9 @@ public abstract class AnnotationsUtils {
             return false;
         }
         if (thisSchema.required() != thatSchema.required()) {
+            return false;
+        }
+        if (!thisSchema.requiredMode().equals(thatSchema.requiredMode())) {
             return false;
         }
         if (thisSchema.nullable() != thatSchema.nullable()) {
@@ -1990,6 +1994,14 @@ public abstract class AnnotationsUtils {
                     return master.required();
                 }
                 return patch.required();
+            }
+
+            @Override
+            public RequiredMode requiredMode() {
+                if (!master.requiredMode().equals(RequiredMode.AUTO) || patch.requiredMode().equals(RequiredMode.AUTO)) {
+                    return master.requiredMode();
+                }
+                return patch.requiredMode();
             }
 
             @Override
