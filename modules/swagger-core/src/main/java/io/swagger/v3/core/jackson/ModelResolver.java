@@ -188,7 +188,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             if (!annotatedType.isSkipSchemaName() && resolvedSchemaAnnotation != null && !resolvedSchemaAnnotation.name().isEmpty()) {
                 name = resolvedSchemaAnnotation.name();
             }
-            if (StringUtils.isBlank(name) && !ReflectionUtils.isSystemType(type)) {
+            if (StringUtils.isBlank(name) && (type.isEnumType() || !ReflectionUtils.isSystemType(type))) {
                 name = _typeName(type, beanDesc);
             }
         }
