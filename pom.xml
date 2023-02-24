@@ -105,10 +105,6 @@
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.8.1</version>
-                <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -650,9 +646,10 @@
         </dependencies>
     </dependencyManagement>
     <properties>
+        <maven.compiler.release>8</maven.compiler.release>
         <joda-version>1.9.2</joda-version>
         <joda-time-version>2.12.1</joda-time-version>
-        <snakeyaml-version>1.33</snakeyaml-version>
+        <snakeyaml-version>2.0</snakeyaml-version>
         <jakarta.ws-version>2.1.6</jakarta.ws-version>
         <jakarta.xml.bind-api-version>2.3.3</jakarta.xml.bind-api-version>
         <jakarta.activation-api-version>1.2.2</jakarta.activation-api-version>
@@ -660,8 +657,8 @@
         <servlet-api-version>4.0.3</servlet-api-version>
         <jersey2-version>2.26</jersey2-version>
         <junit-version>4.13.1</junit-version>
-        <jackson-version>2.14.0</jackson-version>
-        <jackson-databind-version>2.14.0</jackson-databind-version>
+        <jackson-version>2.14.2</jackson-version>
+        <jackson-databind-version>2.14.2</jackson-databind-version>
         <logback-version>1.4.4</logback-version>
         <classgraph-version>4.8.150</classgraph-version>
         <guava-version>31.0.1-jre</guava-version>
@@ -670,13 +667,13 @@
         <commons-io-version>2.11.0</commons-io-version>
         <slf4j-version>1.7.35</slf4j-version>
         <jetty-version>9.4.49.v20220914</jetty-version>
-        <testng-version>7.3.0</testng-version>
+        <testng-version>7.7.0</testng-version>
         <mockito-version>2.28.2</mockito-version>
         <rest-assured-version>4.3.2</rest-assured-version>
         <httpcomponents-version>4.5.13</httpcomponents-version>
         <commons-codec-version>1.15</commons-codec-version>
 
-        <surefire-version>2.21.0</surefire-version>
+        <surefire-version>2.22.2</surefire-version>
         <enforcer-plugin-version>3.0.0-M2</enforcer-plugin-version>
         <failsafe-plugin-version>2.22.2</failsafe-plugin-version>
 
