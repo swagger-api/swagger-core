@@ -90,7 +90,7 @@
             <extension>
                 <groupId>org.apache.maven.wagon</groupId>
                 <artifactId>wagon-ssh-external</artifactId>
-                <version>3.0.0</version>
+                <version>3.5.2</version>
             </extension>
             <extension>
                 <groupId>org.apache.maven.wagon</groupId>
@@ -104,7 +104,7 @@
         <plugins>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.1</version>
+                <version>3.10.1</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -163,7 +163,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.1.1</version>
+                <version>3.5.0</version>
                 <configuration>
                     <aggregate>true</aggregate>
                     <source>1.8</source>
@@ -187,7 +187,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>3.2.0</version>
+                <version>3.3.0</version>
                 <configuration>
                     <excludes>
                         <exclude>**/logback.xml</exclude>
@@ -205,12 +205,12 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-site-plugin</artifactId>
-                <version>3.7.1</version>
+                <version>3.12.0</version>
             </plugin>
             <plugin>
                 <groupId>org.sonatype.plugins</groupId>
                 <artifactId>nexus-staging-maven-plugin</artifactId>
-                <version>1.6.8</version>
+                <version>1.6.13</version>
                 <extensions>true</extensions>
                 <configuration>
                     <serverId>ossrh</serverId>
@@ -318,7 +318,7 @@
                         <dependency>
                             <groupId>org.glassfish.jersey.containers</groupId>
                             <artifactId>jersey-container-servlet</artifactId>
-                            <version>${jersey2-version}</version>
+                            <version>2.30.1</version>
                             <exclusions>
                                 <exclusion>
                                     <groupId>org.javassist</groupId>
@@ -358,7 +358,7 @@
                 <plugin>
                     <groupId>org.jacoco</groupId>
                     <artifactId>jacoco-maven-plugin</artifactId>
-                    <version>0.8.1</version>
+                    <version>0.8.6</version>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -434,7 +434,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.0.0</version>
+                <version>3.5.0</version>
                 <configuration>
                     <aggregate>true</aggregate>
                     <source>1.8</source>
@@ -653,9 +653,9 @@
         <jakarta.ws-version>2.1.6</jakarta.ws-version>
         <jakarta.xml.bind-api-version>2.3.3</jakarta.xml.bind-api-version>
         <jakarta.activation-api-version>1.2.2</jakarta.activation-api-version>
-        <bnd-version>5.2.0</bnd-version>
+        <bnd-version>6.4.0</bnd-version>
         <servlet-api-version>4.0.3</servlet-api-version>
-        <jersey2-version>2.26</jersey2-version>
+        <jersey2-version>2.39</jersey2-version>
         <junit-version>4.13.2</junit-version>
         <jackson-version>2.14.2</jackson-version>
         <jackson-databind-version>2.14.2</jackson-databind-version>
@@ -665,7 +665,7 @@
         <ant-version>1.10.13</ant-version>
         <commons-lang-version>3.12.0</commons-lang-version>
         <commons-io-version>2.11.0</commons-io-version>
-        <slf4j-version>1.7.35</slf4j-version>
+        <slf4j-version>1.7.36</slf4j-version>
         <jetty-version>9.4.49.v20220914</jetty-version>
         <testng-version>7.7.1</testng-version>
         <mockito-version>2.28.2</mockito-version>
@@ -674,7 +674,7 @@
         <commons-codec-version>1.15</commons-codec-version>
 
         <surefire-version>2.22.2</surefire-version>
-        <enforcer-plugin-version>3.0.0-M2</enforcer-plugin-version>
+        <enforcer-plugin-version>3.2.1</enforcer-plugin-version>
         <failsafe-plugin-version>2.22.2</failsafe-plugin-version>
 
         <coverage.complexity.minimum>0.90</coverage.complexity.minimum>
