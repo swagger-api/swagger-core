@@ -804,7 +804,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                     .collect(Collectors.toList());
             allOfFiltered.forEach(c -> {
                 Schema allOfRef = context.resolve(new AnnotatedType().type(c).jsonViewAnnotation(annotatedType.getJsonViewAnnotation()));
-                Schema refSchema = new Schema().$ref(allOfRef.getName());
+                Schema refSchema = new Schema().$ref(Components.COMPONENTS_SCHEMAS_REF + allOfRef.getName());
                 if (StringUtils.isBlank(allOfRef.getName())) {
                     refSchema = allOfRef;
                 }
@@ -826,7 +826,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             anyOfFiltered.forEach(c -> {
                 Schema anyOfRef = context.resolve(new AnnotatedType().type(c).jsonViewAnnotation(annotatedType.getJsonViewAnnotation()));
                 if (StringUtils.isNotBlank(anyOfRef.getName())) {
-                    composedSchema.addAnyOfItem(new Schema().$ref(anyOfRef.getName()));
+                    composedSchema.addAnyOfItem(new Schema().$ref(Components.COMPONENTS_SCHEMAS_REF + anyOfRef.getName()));
                 } else {
                     composedSchema.addAnyOfItem(anyOfRef);
                 }
@@ -848,7 +848,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                     if (StringUtils.isBlank(oneOfRef.getName())) {
                         composedSchema.addOneOfItem(oneOfRef);
                     } else {
-                        composedSchema.addOneOfItem(new Schema().$ref(oneOfRef.getName()));
+                        composedSchema.addOneOfItem(new Schema().$ref(Components.COMPONENTS_SCHEMAS_REF + oneOfRef.getName()));
                     }
                     // remove shared properties defined in the parent
                     if (isSubtype(beanDesc.getClassInfo(), c)) {
