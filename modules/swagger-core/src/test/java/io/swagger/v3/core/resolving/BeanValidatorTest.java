@@ -1,13 +1,17 @@
 package io.swagger.v3.core.resolving;
 
-import java.math.BigDecimal;
-import java.util.Map;
-
 import io.swagger.v3.core.converter.ModelConverters;
 import io.swagger.v3.core.oas.models.BeanValidationsModel;
-import io.swagger.v3.oas.models.media.*;
+import io.swagger.v3.oas.models.media.ArraySchema;
+import io.swagger.v3.oas.models.media.IntegerSchema;
+import io.swagger.v3.oas.models.media.NumberSchema;
+import io.swagger.v3.oas.models.media.Schema;
+import io.swagger.v3.oas.models.media.StringSchema;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import java.math.BigDecimal;
+import java.util.Map;
 
 public class BeanValidatorTest {
 
