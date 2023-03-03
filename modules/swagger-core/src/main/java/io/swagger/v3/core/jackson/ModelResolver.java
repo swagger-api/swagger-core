@@ -1,104 +1,37 @@
 package io.swagger.v3.core.jackson;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIdentityReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.fasterxml.jackson.annotation.JsonTypeName;
-import com.fasterxml.jackson.annotation.JsonUnwrapped;
-import com.fasterxml.jackson.annotation.JsonValue;
-import com.fasterxml.jackson.annotation.JsonView;
-import com.fasterxml.jackson.annotation.ObjectIdGenerator;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-import com.fasterxml.jackson.databind.AnnotationIntrospector;
-import com.fasterxml.jackson.databind.BeanDescription;
-import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.PropertyMetadata;
-import com.fasterxml.jackson.databind.SerializationFeature;
+import static io.swagger.v3.core.jackson.JAXBAnnotationsHelper.JAXB_DEFAULT;
+import static io.swagger.v3.core.util.RefUtils.constructRef;
+
+import javax.validation.constraints.*;
+import javax.xml.bind.annotation.*;
+import java.io.IOException;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.*;
+import java.math.BigDecimal;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.databind.introspect.Annotated;
-import com.fasterxml.jackson.databind.introspect.AnnotatedClass;
-import com.fasterxml.jackson.databind.introspect.AnnotatedMember;
-import com.fasterxml.jackson.databind.introspect.AnnotatedMethod;
-import com.fasterxml.jackson.databind.introspect.BeanPropertyDefinition;
-import com.fasterxml.jackson.databind.introspect.POJOPropertyBuilder;
+import com.fasterxml.jackson.databind.introspect.*;
 import com.fasterxml.jackson.databind.jsontype.NamedType;
 import com.fasterxml.jackson.databind.util.Annotations;
 import io.swagger.v3.core.converter.AnnotatedType;
 import io.swagger.v3.core.converter.ModelConverter;
 import io.swagger.v3.core.converter.ModelConverterContext;
-import io.swagger.v3.core.util.AnnotationsUtils;
-import io.swagger.v3.core.util.Constants;
-import io.swagger.v3.core.util.Json;
-import io.swagger.v3.core.util.ObjectMapperFactory;
-import io.swagger.v3.core.util.ReferenceTypeUtils;
-import io.swagger.v3.core.util.PrimitiveType;
-import io.swagger.v3.core.util.ReflectionUtils;
+import io.swagger.v3.core.util.*;
 import io.swagger.v3.oas.annotations.Hidden;
-import io.swagger.v3.oas.annotations.media.DiscriminatorMapping;
-import io.swagger.v3.oas.annotations.media.PatternProperties;
-import io.swagger.v3.oas.annotations.media.PatternProperty;
-import io.swagger.v3.oas.annotations.media.SchemaProperties;
-import io.swagger.v3.oas.annotations.media.SchemaProperty;
+import io.swagger.v3.oas.annotations.media.*;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.ExternalDocumentation;
-import io.swagger.v3.oas.models.media.ArraySchema;
-import io.swagger.v3.oas.models.media.ComposedSchema;
-import io.swagger.v3.oas.models.media.Discriminator;
-import io.swagger.v3.oas.models.media.IntegerSchema;
-import io.swagger.v3.oas.models.media.MapSchema;
-import io.swagger.v3.oas.models.media.NumberSchema;
-import io.swagger.v3.oas.models.media.ObjectSchema;
-import io.swagger.v3.oas.models.media.Schema;
-import io.swagger.v3.oas.models.media.StringSchema;
-import io.swagger.v3.oas.models.media.UUIDSchema;
-import io.swagger.v3.oas.models.media.XML;
+import io.swagger.v3.oas.models.media.*;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.validation.constraints.DecimalMax;
-import javax.validation.constraints.DecimalMin;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
-import javax.xml.bind.annotation.XmlElementRef;
-import javax.xml.bind.annotation.XmlElementRefs;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlSchema;
-import java.io.IOException;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Type;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import static io.swagger.v3.core.jackson.JAXBAnnotationsHelper.JAXB_DEFAULT;
-import static io.swagger.v3.core.util.RefUtils.constructRef;
 
 public class ModelResolver extends AbstractModelConverter implements ModelConverter {
 
@@ -703,6 +636,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                         addRequiredItem(model, property.getName());
                     }
                     final boolean applyNotNullAnnotations = io.swagger.v3.oas.annotations.media.Schema.RequiredMode.AUTO.equals(requiredMode);
+                    annotations = addGenericTypeAnnotations(propDef, annotations);
                     applyBeanValidatorAnnotations(property, annotations, model, applyNotNullAnnotations);
 
                     props.add(property);
@@ -903,6 +837,24 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         model = resolveWrapping(type, context, model);
 
         return model;
+    }
+
+    private Annotation[] addGenericTypeAnnotations(BeanPropertyDefinition propDef, Annotation[] annotations) {
+        AnnotatedField field = propDef.getField();
+        if (!field.getType().getRawClass().equals(Optional.class)) {
+            return annotations;
+        }
+
+        java.lang.reflect.AnnotatedType annotatedType = field.getAnnotated().getAnnotatedType();
+        if (!(annotatedType instanceof AnnotatedParameterizedType)) {
+            return annotations;
+        }
+
+        AnnotatedParameterizedType parameterizedType = (AnnotatedParameterizedType) annotatedType;
+
+        Stream<Annotation> genericTypeAnnotations = Stream.of(parameterizedType.getAnnotatedActualTypeArguments())
+                                                          .flatMap(type -> Stream.of(type.getAnnotations()));
+        return Stream.concat(Stream.of(annotations), genericTypeAnnotations).toArray(Annotation[]::new);
     }
 
     private boolean shouldResolveEnumAsRef(io.swagger.v3.oas.annotations.media.Schema resolvedSchemaAnnotation) {
