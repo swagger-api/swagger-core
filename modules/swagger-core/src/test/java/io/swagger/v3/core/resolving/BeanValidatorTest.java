@@ -1,17 +1,13 @@
 package io.swagger.v3.core.resolving;
 
-import io.swagger.v3.core.converter.ModelConverters;
-import io.swagger.v3.core.oas.models.BeanValidationsModel;
-import io.swagger.v3.oas.models.media.ArraySchema;
-import io.swagger.v3.oas.models.media.IntegerSchema;
-import io.swagger.v3.oas.models.media.NumberSchema;
-import io.swagger.v3.oas.models.media.Schema;
-import io.swagger.v3.oas.models.media.StringSchema;
-import org.testng.Assert;
-import org.testng.annotations.Test;
-
 import java.math.BigDecimal;
 import java.util.Map;
+
+import io.swagger.v3.core.converter.ModelConverters;
+import io.swagger.v3.core.oas.models.BeanValidationsModel;
+import io.swagger.v3.oas.models.media.*;
+import org.testng.Assert;
+import org.testng.annotations.Test;
 
 public class BeanValidatorTest {
 
@@ -43,5 +39,9 @@ public class BeanValidatorTest {
         final ArraySchema items = (ArraySchema) properties.get("items");
         Assert.assertEquals((int) items.getMinItems(), 2);
         Assert.assertEquals((int) items.getMaxItems(), 10);
+
+        final StringSchema optionalValue = (StringSchema) properties.get("optionalValue");
+        Assert.assertEquals((int) optionalValue.getMinLength(), 1);
+        Assert.assertEquals((int) optionalValue.getMaxLength(), 10);
     }
 }
