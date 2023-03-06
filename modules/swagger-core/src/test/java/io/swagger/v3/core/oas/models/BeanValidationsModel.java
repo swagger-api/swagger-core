@@ -37,7 +37,7 @@ public class BeanValidationsModel {
     protected Integer birthYear;
 
     @Size(min = 2, max = 10)
-    private List<String> items;
+    private List<@Size(min = 3, max = 4) String> items;
 
     private Optional<@Size(min= 1, max=10) String> optionalValue;
 
