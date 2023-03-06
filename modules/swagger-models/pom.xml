@@ -9,7 +9,6 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>swagger-models</artifactId>
-    <packaging>bundle</packaging>
     <name>swagger-models</name>
     <build>
         <sourceDirectory>src/main/java</sourceDirectory>
@@ -29,22 +28,41 @@
         </testResources>
         <plugins>
             <plugin>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-bundle-plugin</artifactId>
-                <version>${felix-version}</version>
-                <extensions>true</extensions>
+                <groupId>biz.aQute.bnd</groupId>
+                <artifactId>bnd-maven-plugin</artifactId>
                 <configuration>
-                    <instructions>
-                        <Export-Package>
-                            io.swagger.models.auth,
-                            io.swagger.models.parameters,
-                            io.swagger.models.properties,
-                            io.swagger.models.refs,
-                            io.swagger.models.utils,
-                            io.swagger.models
-                        </Export-Package>
-                    </instructions>
+                    <bnd>
+                        Export-Package: \
+                        io.swagger.models.auth,\
+                        io.swagger.models.parameters,\
+                        io.swagger.models.properties,\
+                        io.swagger.models.refs,\
+                        io.swagger.models.utils,\
+                        io.swagger.models
+                    </bnd>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>default-jar</id>
+                        <configuration>
+                            <archive>
+                                <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
+                                <manifestEntries>
+                                    <Automatic-Module-Name>io.swagger.models</Automatic-Module-Name>
+                                </manifestEntries>
+                            </archive>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <goals>
+                            <goal>test-jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
@@ -87,7 +105,7 @@
         </dependency>
         <dependency>
             <groupId>org.powermock</groupId>
-            <artifactId>powermock-api-mockito</artifactId>
+            <artifactId>powermock-api-mockito2</artifactId>
             <exclusions>
                 <exclusion>
                     <groupId>junit</groupId>
@@ -98,11 +116,6 @@
                     <artifactId>hamcrest-core</artifactId>
                 </exclusion>
             </exclusions>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-core</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -117,7 +130,5 @@
         <coverage.line.minimum>0.0</coverage.line.minimum>
         <!-- Setting this to a really high number since this module has almost no coverage -->
         <coverage.missed.classes>41</coverage.missed.classes>
-        <powermock.version>1.6.4</powermock.version>
-        <mockito-version>1.10.19</mockito-version>
     </properties>
 </project>

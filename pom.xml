@@ -112,7 +112,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
-                <version>2.1.2</version>
+                <version>3.2.1</version>
                 <executions>
                     <execution>
                         <id>attach-sources</id>
@@ -126,7 +126,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>2.7</version>
+                <version>3.5.0</version>
                 <configuration>
                     <aggregate>true</aggregate>
                     <source>1.7</source>
@@ -149,16 +149,12 @@
             </plugin>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.0</version>
-                <configuration>
-                    <source>1.7</source>
-                    <target>1.7</target>
-                </configuration>
+                <version>3.10.1</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>2.4</version>
+                <version>3.3.0</version>
                 <configuration>
                     <excludes>
                         <exclude>**/logback.xml</exclude>
@@ -176,90 +172,12 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-site-plugin</artifactId>
-                <version>2.1</version>
+                <version>3.12.0</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-release-plugin</artifactId>
-                <version>2.1</version>
-            </plugin>
-            <plugin>
-                <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>default-prepare-agent</id>
-                        <goals>
-                            <goal>prepare-agent</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>default-report</id>
-                        <phase>prepare-package</phase>
-                        <goals>
-                            <goal>report</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>default-check</id>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <excludes>
-                        <!-- TODO remove these excludes and add tests -->
-                        <exclude>**/io/swagger/config/FilterFactory.*</exclude>
-                        <exclude>**/io/swagger/model/ApiInfo.*</exclude>
-                        <exclude>**/io/swagger/util/Yaml.*</exclude>
-                        <exclude>**/io/swagger/jackson/*</exclude>
-                        <exclude>**/io/swagger/jackson/mixin/*</exclude>
-                        <exclude>**/io/swagger/converter/ModelConverters.*</exclude>
-
-                        <!-- JAXRS -->
-                        <exclude>**/io/swagger/jaxrs/json/JacksonJsonProvider.*</exclude>
-                        <exclude>**/io/swagger/jaxrs/listing/ApiListingResource.*</exclude>
-                        <exclude>**/io/swagger/jaxrs/listing/SwaggerSerializers.*</exclude>
-                        <exclude>**/io/swagger/jaxrs/config/WebXMLReader.*</exclude>
-                        <exclude>**/io/swagger/jaxrs/config/DefaultJaxrsScanner.*</exclude>
-                        <exclude>**/io/swagger/jaxrs/config/DefaultJaxrsConfig.*</exclude>
-
-                        <!-- Servlet -->
-                        <exclude>**/io/swagger/servlet/config/WebXMLReader.*</exclude>
-                        <exclude>**/io/swagger/servlet/config/ServletScanner.*</exclude>
-                        <exclude>**/io/swagger/servlet/config/DefaultServletConfig.*</exclude>
-                        <exclude>**/io/swagger/servlet/listing/ApiDeclarationServlet.*</exclude>
-                        <exclude>**/*ServletReaderExtension$*.*</exclude>
-                    </excludes>
-                    <rules>
-                        <rule>
-                            <element>BUNDLE</element>
-                            <limits>
-                                <limit>
-                                    <counter>COMPLEXITY</counter>
-                                    <value>COVEREDRATIO</value>
-                                    <minimum>${coverage.complexity.minimum}</minimum>
-                                </limit>
-                                <limit>
-                                    <counter>CLASS</counter>
-                                    <value>MISSEDCOUNT</value>
-                                    <maximum>${coverage.missed.classes}</maximum>
-                                </limit>
-                            </limits>
-                        </rule>
-                        <rule>
-                            <element>CLASS</element>
-                            <limits>
-                                <limit>
-                                    <counter>LINE</counter>
-                                    <value>COVEREDRATIO</value>
-                                    <minimum>${coverage.line.minimum}</minimum>
-                                </limit>
-                            </limits>
-                        </rule>
-                    </rules>
-                </configuration>
+                <version>2.5.3</version>
             </plugin>
         </plugins>
         <pluginManagement>
@@ -289,9 +207,56 @@
                     <version>${enforcer-plugin-version}</version>
                 </plugin>
                 <plugin>
-                    <groupId>org.jacoco</groupId>
-                    <artifactId>jacoco-maven-plugin</artifactId>
-                    <version>0.7.2.201409121644</version>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>3.0.0-M9</version>
+                    <configuration>
+                        <classesDirectory>${project.build.outputDirectory}</classesDirectory>
+                        <argLine>--add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.util=ALL-UNNAMED</argLine>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>biz.aQute.bnd</groupId>
+                    <artifactId>bnd-maven-plugin</artifactId>
+                    <version>${bnd-version}</version>
+                    <configuration>
+                        <bnd><![CDATA[
+                            Bundle-SymbolicName: ${project.groupId}.${project.artifactId}
+                            -exportcontents: ${packages;NAMED;!*.internal}
+                            -noextraheaders: true
+                            -noclassforname: true
+                            -snapshot: SNAPSHOT
+                            -contract: \
+                                JavaJAXRS;resolution:=optional,\
+                                JavaServlet;resolution:=optional
+                            -define-contract: \
+                                osgi.contract;\
+                                    osgi.contract=JavaJAXRS;\
+                                    version:List<Version>="1.1.1";\
+                                    uses:="\
+                                        javax.ws.rs,\
+                                        javax.ws.rs.core,\
+                                        javax.ws.rs.ext,\
+                                        javax.ws.rs.client,\
+                                        javax.ws.rs.container",\
+                                osgi.contract;\
+                                    osgi.contract=JavaServlet;\
+                                    version:List<Version>="2.5";\
+                                    uses:="\
+                                        javax.servlet,\
+                                        javax.servlet.annotation,\
+                                        javax.servlet.descriptor,\
+                                        javax.servlet.http"
+                            -cdiannotations:
+                        ]]></bnd>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>bnd-process</goal>
+                            </goals>
+                        </execution>
+                    </executions>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -375,7 +340,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>2.9</version>
+                <version>3.5.0</version>
                 <configuration>
                     <aggregate>true</aggregate>
                     <debug>true</debug>
@@ -397,7 +362,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-project-info-reports-plugin</artifactId>
-                <version>2.6</version>
+                <version>2.9</version>
                 <reportSets>
                     <reportSet>
                         <reports>
@@ -414,11 +379,6 @@
                 <groupId>org.apache.maven</groupId>
                 <artifactId>maven-plugin-tools-api</artifactId>
                 <version>2.1</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-bundle-plugin</artifactId>
-                <version>${felix-version}</version>
             </dependency>
             <dependency>
                 <groupId>org.slf4j</groupId>
@@ -445,15 +405,9 @@
                 <scope>test</scope>
             </dependency>
             <dependency>
-                <groupId>com.jayway.restassured</groupId>
+                <groupId>io.rest-assured</groupId>
                 <artifactId>rest-assured</artifactId>
                 <version>${rest-assured-version}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.mockito</groupId>
-                <artifactId>mockito-all</artifactId>
-                <version>${mockito-version}</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
@@ -568,7 +522,7 @@
             <dependency>
                 <groupId>org.glassfish.hk2.external</groupId>
                 <artifactId>javax.inject</artifactId>
-                <version>2.2.0</version>
+                <version>2.4.0</version>
             </dependency>
             <dependency>
                 <groupId>org.hibernate</groupId>
@@ -603,52 +557,56 @@
             </dependency>
             <dependency>
                 <groupId>org.powermock</groupId>
-                <artifactId>powermock-api-mockito</artifactId>
+                <artifactId>powermock-api-mockito2</artifactId>
                 <version>${powermock.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.mockito</groupId>
-                <artifactId>mockito-core</artifactId>
-                <version>${mockito-version}</version>
             </dependency>
             <dependency>
                 <groupId>asm</groupId>
                 <artifactId>asm</artifactId>
                 <version>3.3.1</version>
             </dependency>
+            <dependency>
+                <groupId>jakarta.xml.bind</groupId>
+                <artifactId>jakarta.xml.bind-api</artifactId>
+                <version>${jakarta.xml.bind-api-version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
     <properties>
-        <joda-version>1.8.1</joda-version>
-        <joda-time-version>2.12.1</joda-time-version>
+        <maven.compiler.release>7</maven.compiler.release>
+        <joda-version>1.9.2</joda-version>
+        <joda-time-version>2.12.2</joda-time-version>
 
-        <felix-version>3.3.0</felix-version>
+        <bnd-version>6.4.0</bnd-version>
         <servlet-api-version>2.5</servlet-api-version>
-        <jersey-version>1.13</jersey-version>
-        <jersey2-version>2.26</jersey2-version>
-        <jackson-version>2.14.0</jackson-version>
-        <jackson-databind-version>2.14.0</jackson-databind-version>
-        <snakeyaml-version>1.33</snakeyaml-version>
-        <logback-version>1.4.4</logback-version>
+        <jersey-version>1.19.4</jersey-version>
+        <jersey2-version>2.39</jersey2-version>
+        <jackson-version>2.14.2</jackson-version>
+        <jackson-databind-version>2.14.2</jackson-databind-version>
+        <snakeyaml-version>2.0</snakeyaml-version>
+        <logback-version>1.4.5</logback-version>
         <reflections-version>0.10.2</reflections-version>
-        <guava-version>31.0.1-android</guava-version>
+        <guava-version>31.1-android</guava-version>
         <javassist-version>3.21.0-GA</javassist-version>
 
-        <testng-version>6.14.3</testng-version>
-        <mockito-version>1.9.5</mockito-version>
-        <rest-assured-version>2.9.0</rest-assured-version>
-        <surefire-version>2.18.1</surefire-version>
+        <testng-version>7.7.1</testng-version>
+        <mockito-version>2.28.2</mockito-version>
+        <rest-assured-version>5.3.0</rest-assured-version>
+        <surefire-version>2.22.2</surefire-version>
         <maven-plugin-version>1.0.0</maven-plugin-version>
         <commons-lang-version>3.12.0</commons-lang-version>
-        <slf4j-version>1.7.22</slf4j-version>
-        <jetty-version>9.2.14.v20151106</jetty-version>
+        <slf4j-version>1.7.36</slf4j-version>
+        <jetty-version>9.4.49.v20220914</jetty-version>
         <servlet-api-version>2.5</servlet-api-version>
         <coverage.complexity.minimum>0.90</coverage.complexity.minimum>
         <coverage.line.minimum>0.90</coverage.line.minimum>
         <coverage.missed.classes>0</coverage.missed.classes>
         <commons-io-version>2.11.0</commons-io-version>
-        <enforcer-plugin-version>1.4</enforcer-plugin-version>
-        <failsafe-plugin-version>2.19.1</failsafe-plugin-version>
+        <enforcer-plugin-version>3.2.1</enforcer-plugin-version>
+        <failsafe-plugin-version>2.22.2</failsafe-plugin-version>
         <validation-api-version>1.1.0.Final</validation-api-version>
+        <powermock.version>2.0.9</powermock.version>
+        <mockito-version>5.1.1</mockito-version>
+        <jakarta.xml.bind-api-version>2.3.3</jakarta.xml.bind-api-version>
     </properties>
 </project>

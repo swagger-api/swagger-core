@@ -9,7 +9,6 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>swagger-jaxrs</artifactId>
-    <packaging>bundle</packaging>
     <name>swagger-jaxrs</name>
     <build>
         <sourceDirectory>src/main/java</sourceDirectory>
@@ -29,24 +28,40 @@
         </testResources>
         <plugins>
             <plugin>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-bundle-plugin</artifactId>
-                <version>${felix-version}</version>
-                <extensions>true</extensions>
+                <groupId>biz.aQute.bnd</groupId>
+                <artifactId>bnd-maven-plugin</artifactId>
                 <configuration>
-                    <instructions>
-                        <Export-Package>
-                            io.swagger.jaxrs,
-                            io.swagger.jaxrs.config,
-                            io.swagger.jaxrs.ext,
-                            io.swagger.jaxrs.listing
-                        </Export-Package>
-                        <Import-Package>
-                            javax.ws.rs*;version="[1.1,3)",
-                            *
-                        </Import-Package>
-                    </instructions>
+                    <bnd>
+                        Import-Package: javax.ws.rs*;version="[1.1,3)",*
+                        Export-Package: \
+                        io.swagger.jaxrs,\
+                        io.swagger.jaxrs.config,\
+                        io.swagger.jaxrs.ext,\
+                        io.swagger.jaxrs.listing
+                    </bnd>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>default-jar</id>
+                        <configuration>
+                            <archive>
+                                <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
+                                <manifestEntries>
+                                    <Automatic-Module-Name>io.swagger.jaxrs</Automatic-Module-Name>
+                                </manifestEntries>
+                            </archive>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <goals>
+                            <goal>test-jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
@@ -69,25 +84,6 @@
                 </executions>
             </plugin>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-failsafe-plugin</artifactId>
-                <version>${failsafe-plugin-version}</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>integration-test</goal>
-                            <goal>verify</goal>
-                        </goals>
-                        <configuration>
-                            <systemPropertyVariables>
-                                <jetty.port>${jetty.port}</jetty.port>
-                            </systemPropertyVariables>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <plugin>
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-maven-plugin</artifactId>
                 <version>${jetty-version}</version>
@@ -96,10 +92,18 @@
                     <httpConnector><port>${jetty.port}</port></httpConnector>
                     <stopKey>a</stopKey>
                     <stopPort>${jetty.port.stop}</stopPort>
+                    <supportedPackagings>
+                        <supportedPackaging>jar</supportedPackaging>
+                    </supportedPackagings>
                     <useTestScope>true</useTestScope>
                     <webAppSourceDirectory>${project.basedir}/src/test/webapp</webAppSourceDirectory>
                 </configuration>
                 <dependencies>
+                    <dependency>
+                        <groupId>jakarta.xml.bind</groupId>
+                        <artifactId>jakarta.xml.bind-api</artifactId>
+                        <version>${jakarta.xml.bind-api-version}</version>
+                    </dependency>
                     <dependency>
                         <groupId>com.sun.jersey</groupId>
                         <artifactId>jersey-servlet</artifactId>
@@ -123,6 +127,24 @@
                         <goals>
                             <goal>stop</goal>
                         </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>${failsafe-plugin-version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                        <configuration>
+                            <systemPropertyVariables>
+                                <jetty.port>${jetty.port}</jetty.port>
+                            </systemPropertyVariables>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
@@ -207,22 +229,20 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>com.jayway.restassured</groupId>
+            <groupId>io.rest-assured</groupId>
             <artifactId>rest-assured</artifactId>
+            <version>${rest-assured-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
-            <artifactId>mockito-all</artifactId>
+            <artifactId>mockito-core</artifactId>
+            <version>${mockito-version}</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
         </dependency>
     </dependencies>
-    <properties>
-        <coverage.complexity.minimum>0.50</coverage.complexity.minimum>
-        <coverage.line.minimum>0.00</coverage.line.minimum>
-        <coverage.missed.classes>4</coverage.missed.classes>
-    </properties>
 </project>
