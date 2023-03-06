@@ -17,8 +17,8 @@ import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 
 import static io.swagger.jaxrs.config.SwaggerContextService.*;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
@@ -50,7 +50,7 @@ public class SwaggerContextServiceTest {
         bc.setDescription("Bean Config test 2");
         beanConfigScanner2 = bc;
     }
-    
+
     void stubWithPathBasedConfigInitParam() {
 
         when(servletContext1.getAttribute(SCANNER_ID_PREFIX + "/url1")).thenReturn(beanConfigScanner1);
@@ -301,7 +301,7 @@ public class SwaggerContextServiceTest {
             .withServletConfig(servletConfig1)
             .withBasePath("/url1")
             .initConfig();
-        
+
         new SwaggerContextService()
             .withServletConfig(servletConfig2)
             .withBasePath("url2")

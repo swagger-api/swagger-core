@@ -1,10 +1,10 @@
 package io.swagger.functional.test;
 
-import static com.jayway.restassured.RestAssured.given;
+import static io.restassured.RestAssured.given;
 import static org.testng.Assert.assertEquals;
 
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.jayway.restassured.http.ContentType;
+import io.restassured.http.ContentType;
 import io.swagger.util.Json;
 import io.swagger.util.Yaml;
 
@@ -17,7 +17,7 @@ import org.testng.annotations.Test;
 /**
  * Created by rbolles on 2/16/16.
  * <p>
- * An functional integration test that runs during maven's integration-test phase,
+ * A functional integration test that runs during maven's integration-test phase,
  * uses RestAssured to define REST API tests, and Jetty's Maven plugin to serve a simple
  * sample app just prior to the integration-test phase starting.
  */

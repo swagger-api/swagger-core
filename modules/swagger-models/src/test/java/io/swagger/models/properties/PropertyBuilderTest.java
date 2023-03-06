@@ -5,7 +5,7 @@ import io.swagger.models.Model;
 import io.swagger.models.ModelImpl;
 import io.swagger.models.properties.PropertyBuilder.PropertyId;
 import io.swagger.models.properties.StringProperty.Format;
-import org.mockito.Matchers;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.DataProvider;
@@ -277,7 +277,7 @@ public class PropertyBuilderTest {
 
         // given
         uuidProperty = Mockito.spy(uuidProperty);
-        Mockito.doThrow(new RuntimeException()).when(uuidProperty)._enum(Matchers.anyString());
+        Mockito.doThrow(new RuntimeException()).when(uuidProperty)._enum(ArgumentMatchers.anyString());
 
         // when
         PropertyBuilder.merge(uuidProperty, args);
@@ -314,7 +314,7 @@ public class PropertyBuilderTest {
 
         // given
         dateProperty = Mockito.spy(dateProperty);
-        Mockito.doThrow(new RuntimeException()).when(dateProperty)._enum(Matchers.anyString());
+        Mockito.doThrow(new RuntimeException()).when(dateProperty)._enum(ArgumentMatchers.anyString());
 
         // when
         PropertyBuilder.merge(dateProperty, args);
@@ -336,7 +336,7 @@ public class PropertyBuilderTest {
 
         // given
         dateTimeProperty = Mockito.spy(dateTimeProperty);
-        Mockito.doThrow(new RuntimeException()).when(dateTimeProperty)._enum(Matchers.anyString());
+        Mockito.doThrow(new RuntimeException()).when(dateTimeProperty)._enum(ArgumentMatchers.anyString());
 
         // when
         PropertyBuilder.merge(dateTimeProperty, args);
