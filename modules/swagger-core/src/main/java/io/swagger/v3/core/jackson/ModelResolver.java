@@ -86,6 +86,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -695,8 +696,8 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                         addRequiredItem(model, property.getName());
                     }
                     final boolean applyNotNullAnnotations = io.swagger.v3.oas.annotations.media.Schema.RequiredMode.AUTO.equals(requiredMode);
-                    annotations = addGenericTypeAnnotations(propDef, annotations);
-                    applyBeanValidatorAnnotations(property, annotations, model, applyNotNullAnnotations);
+                    annotations = addGenericTypeArgumentAnnotationsForOptionalField(propDef, annotations);
+                    applyBeanValidatorAnnotations(propDef, property, annotations, model, applyNotNullAnnotations);
 
                     props.add(property);
                 }
@@ -898,22 +899,38 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         return model;
     }
 
-    private Annotation[] addGenericTypeAnnotations(BeanPropertyDefinition propDef, Annotation[] annotations) {
-        AnnotatedField field = propDef.getField();
-        if (!field.getType().getRawClass().equals(Optional.class)) {
+    private Annotation[] addGenericTypeArgumentAnnotationsForOptionalField(BeanPropertyDefinition propDef, Annotation[] annotations) {
+
+        boolean isNotOptionalType = Optional.ofNullable(propDef)
+                                            .map(BeanPropertyDefinition::getField)
+                                            .map(AnnotatedField::getAnnotated)
+                                            .map(field -> !(field.getType().equals(Optional.class)))
+                                            .orElse(false);
+
+        if (isNotOptionalType) {
             return annotations;
         }
 
-        java.lang.reflect.AnnotatedType annotatedType = field.getAnnotated().getAnnotatedType();
-        if (!(annotatedType instanceof AnnotatedParameterizedType)) {
-            return annotations;
-        }
+        Stream<Annotation> genericTypeArgumentAnnotations = extractGenericTypeArgumentAnnotations(propDef);
+        return Stream.concat(Stream.of(annotations), genericTypeArgumentAnnotations).toArray(Annotation[]::new);
+    }
 
-        AnnotatedParameterizedType parameterizedType = (AnnotatedParameterizedType) annotatedType;
+    private Stream<Annotation> extractGenericTypeArgumentAnnotations(BeanPropertyDefinition propDef) {
+        return Optional.ofNullable(propDef)
+                       .map(BeanPropertyDefinition::getField)
+                       .map(AnnotatedField::getAnnotated)
+                       .map(this::getGenericTypeArgumentAnnotations)
+                       .orElseGet(Stream::of);
+    }
 
-        Stream<Annotation> genericTypeAnnotations = Stream.of(parameterizedType.getAnnotatedActualTypeArguments())
-                                                          .flatMap(type -> Stream.of(type.getAnnotations()));
-        return Stream.concat(Stream.of(annotations), genericTypeAnnotations).toArray(Annotation[]::new);
+    private Stream<Annotation> getGenericTypeArgumentAnnotations(Field field) {
+        return Optional.of(field.getAnnotatedType())
+                       .filter(annotatedType -> annotatedType instanceof AnnotatedParameterizedType)
+                       .map(annotatedType -> (AnnotatedParameterizedType) annotatedType)
+                       .map(AnnotatedParameterizedType::getAnnotatedActualTypeArguments)
+                       .map(types -> Stream.of(types)
+                                           .flatMap(type -> Stream.of(type.getAnnotations())))
+                       .orElseGet(Stream::of);
     }
 
     private boolean shouldResolveEnumAsRef(io.swagger.v3.oas.annotations.media.Schema resolvedSchemaAnnotation) {
@@ -1306,6 +1323,15 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                     .skipJsonIdentity(true)
                     .propertyName(type.getPropertyName())
                     .ctxAnnotations(AnnotationsUtils.removeAnnotations(type.getCtxAnnotations(), JsonIdentityInfo.class, JsonIdentityReference.class));
+        }
+    }
+
+    protected void applyBeanValidatorAnnotations(BeanPropertyDefinition propDef, Schema property, Annotation[] annotations, Schema parent, boolean applyNotNullAnnotations) {
+        applyBeanValidatorAnnotations(property, annotations, parent, applyNotNullAnnotations);
+
+        if (Objects.nonNull(property.getItems())) {
+            Annotation[] genericTypeArgumentAnnotations = extractGenericTypeArgumentAnnotations(propDef).toArray(Annotation[]::new);
+            applyBeanValidatorAnnotations(property.getItems(), genericTypeArgumentAnnotations, property, applyNotNullAnnotations);
         }
     }
 
