@@ -107,13 +107,13 @@ If you're interested in the change history of swagger and the swagger-core frame
 ### Prerequisites
 You need the following installed and available in your $PATH:
 
-* Java 8 (http://java.oracle.com)
+* Java 11 (http://java.oracle.com)
 * Apache maven 3.0.4 or greater (http://maven.apache.org/)
 
 ### Prerequisites 2.X
 You need the following installed and available in your $PATH:
 
-* Java 8 (http://java.oracle.com)
+* Java 11 (http://java.oracle.com)
 * Apache maven 3.0.4 or greater (http://maven.apache.org/)
 
 
