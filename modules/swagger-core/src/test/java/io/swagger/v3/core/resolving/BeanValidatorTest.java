@@ -43,5 +43,11 @@ public class BeanValidatorTest {
         final ArraySchema items = (ArraySchema) properties.get("items");
         Assert.assertEquals((int) items.getMinItems(), 2);
         Assert.assertEquals((int) items.getMaxItems(), 10);
+        Assert.assertEquals((int) items.getItems().getMinLength(), 3);
+        Assert.assertEquals((int) items.getItems().getMaxLength(), 4);
+
+        final StringSchema optionalValue = (StringSchema) properties.get("optionalValue");
+        Assert.assertEquals((int) optionalValue.getMinLength(), 1);
+        Assert.assertEquals((int) optionalValue.getMaxLength(), 10);
     }
 }

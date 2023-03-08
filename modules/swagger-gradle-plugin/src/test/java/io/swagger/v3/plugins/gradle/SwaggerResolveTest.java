@@ -81,11 +81,11 @@ public class SwaggerResolveTest {
                 "    mavenCentral()\n" +
                 "}\n" +
                 "dependencies {  \n" +
-                "    compile group: 'io.swagger.core.v3', name: 'swagger-jaxrs2', version:'2.2.8-SNAPSHOT'\n" +
-                "    compile group: 'javax.ws.rs', name: 'javax.ws.rs-api', version:'2.1'\n" +
-                "    compile group: 'javax.servlet', name: 'javax.servlet-api', version:'3.1.0'\n" +
-                "    testCompile group: 'com.github.tomakehurst', name: 'wiremock', version:'2.27.2'\n" +
-                "    testCompile 'junit:junit:4+'\n" +
+                "    implementation 'io.swagger.core.v3:swagger-jaxrs2:2.2.9-SNAPSHOT'\n" +
+                "    implementation 'javax.ws.rs:javax.ws.rs-api:2.1'\n" +
+                "    implementation 'javax.servlet:javax.servlet-api:3.1.0'\n" +
+                "    testImplementation 'com.github.tomakehurst:wiremock:2.27.2'\n" +
+                "    testImplementation 'junit:junit:4+'\n" +
                 "\n" +
                 "\n" +
                 "}\n" +
@@ -154,11 +154,11 @@ public class SwaggerResolveTest {
                 "    mavenCentral()\n" +
                 "}\n" +
                 "dependencies {  \n" +
-                "    compile group: 'io.swagger.core.v3', name: 'swagger-jaxrs2', version:'2.2.8-SNAPSHOT'\n" +
-                "    compile group: 'javax.ws.rs', name: 'javax.ws.rs-api', version:'2.1'\n" +
-                "    compile group: 'javax.servlet', name: 'javax.servlet-api', version:'3.1.0'\n" +
-                "    testCompile group: 'com.github.tomakehurst', name: 'wiremock', version:'2.27.2'\n" +
-                "    testCompile 'junit:junit:4+'\n" +
+                "    implementation 'io.swagger.core.v3:swagger-jaxrs2:2.2.9-SNAPSHOT'\n" +
+                "    implementation 'javax.ws.rs:javax.ws.rs-api:2.1'\n" +
+                "    implementation 'javax.servlet:javax.servlet-api:3.1.0'\n" +
+                "    testImplementation 'com.github.tomakehurst:wiremock:2.27.2'\n" +
+                "    testImplementation 'junit:junit:4+'\n" +
                 "\n" +
                 "\n" +
                 "}\n" +

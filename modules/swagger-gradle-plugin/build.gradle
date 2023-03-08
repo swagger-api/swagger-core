@@ -4,7 +4,7 @@
 plugins {
     id 'java-gradle-plugin'
     // Publishing publicly
-    id 'com.gradle.plugin-publish' version '0.19.0'
+    id 'com.gradle.plugin-publish' version '0.21.0'
     // Publishing to maven
     id 'maven-publish'
 }
@@ -18,9 +18,13 @@ repositories {
     mavenCentral()
 }
 
+compileJava {
+    options.release = 8
+}
+
 dependencies {
     implementation gradleApi()
-    implementation 'org.apache.commons:commons-lang3:3.7'
+    implementation 'org.apache.commons:commons-lang3:3.12.0'
 
     testImplementation gradleTestKit()
     testImplementation('com.github.tomakehurst:wiremock:2.27.2') {
@@ -35,8 +39,8 @@ dependencies {
         exclude group: 'com.github.jknack', module: 'handlebars-helpers'
     }
     testImplementation 'javax.servlet:javax.servlet-api:3.1.0'
-    testImplementation 'com.google.guava:guava:30.1-jre'
-    testImplementation 'javax.ws.rs:javax.ws.rs-api:2.1'
+    testImplementation 'com.google.guava:guava:31.1-jre'
+    testImplementation 'javax.ws.rs:javax.ws.rs-api:2.1.1'
     testImplementation "io.swagger.core.v3:swagger-jaxrs2:${project.version}"
     testImplementation 'junit:junit:4+'
     testImplementation "org.eclipse.jetty:jetty-server:${project.jettyVersion}"
@@ -46,10 +50,10 @@ dependencies {
     testImplementation "org.eclipse.jetty:jetty-proxy:${project.jettyVersion}"
     testImplementation "org.apache.httpcomponents:httpclient:4.5.13"
     testImplementation "commons-codec:commons-codec:1.15"
-    testImplementation "commons-io:commons-io:2.7"
+    testImplementation "commons-io:commons-io:2.11.0"
     testImplementation "org.apache.commons:commons-compress:1.21"
-    testImplementation "com.github.jknack:handlebars:4.2.1"
-    testImplementation "com.github.jknack:handlebars-helpers:4.2.1"
+    testImplementation "com.github.jknack:handlebars:4.3.1"
+    testImplementation "com.github.jknack:handlebars-helpers:4.3.1"
 }
 
 // * * * * * * * * * * * *

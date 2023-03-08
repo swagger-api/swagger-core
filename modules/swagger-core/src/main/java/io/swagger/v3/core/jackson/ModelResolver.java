@@ -21,6 +21,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.introspect.Annotated;
 import com.fasterxml.jackson.databind.introspect.AnnotatedClass;
+import com.fasterxml.jackson.databind.introspect.AnnotatedField;
 import com.fasterxml.jackson.databind.introspect.AnnotatedMember;
 import com.fasterxml.jackson.databind.introspect.AnnotatedMethod;
 import com.fasterxml.jackson.databind.introspect.BeanPropertyDefinition;
@@ -77,6 +78,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchema;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.AnnotatedParameterizedType;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -94,6 +96,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -188,7 +191,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             if (!annotatedType.isSkipSchemaName() && resolvedSchemaAnnotation != null && !resolvedSchemaAnnotation.name().isEmpty()) {
                 name = resolvedSchemaAnnotation.name();
             }
-            if (StringUtils.isBlank(name) && !ReflectionUtils.isSystemType(type)) {
+            if (StringUtils.isBlank(name) && (type.isEnumType() || !ReflectionUtils.isSystemType(type))) {
                 name = _typeName(type, beanDesc);
             }
         }
@@ -703,7 +706,8 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                         addRequiredItem(model, property.getName());
                     }
                     final boolean applyNotNullAnnotations = io.swagger.v3.oas.annotations.media.Schema.RequiredMode.AUTO.equals(requiredMode);
-                    applyBeanValidatorAnnotations(property, annotations, model, applyNotNullAnnotations);
+                    annotations = addGenericTypeArgumentAnnotationsForOptionalField(propDef, annotations);
+                    applyBeanValidatorAnnotations(propDef, property, annotations, model, applyNotNullAnnotations);
 
                     props.add(property);
                 }
@@ -742,7 +746,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
          * This must be done after model.setProperties so that the model's set
          * of properties is available to filter from any subtypes
          **/
-        if (!resolveSubtypes(model, beanDesc, context)) {
+        if (!resolveSubtypes(model, beanDesc, context, annotatedType.getJsonViewAnnotation())) {
             model.setDiscriminator(null);
         }
 
@@ -804,7 +808,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                     .collect(Collectors.toList());
             allOfFiltered.forEach(c -> {
                 Schema allOfRef = context.resolve(new AnnotatedType().type(c).jsonViewAnnotation(annotatedType.getJsonViewAnnotation()));
-                Schema refSchema = new Schema().$ref(allOfRef.getName());
+                Schema refSchema = new Schema().$ref(Components.COMPONENTS_SCHEMAS_REF + allOfRef.getName());
                 if (StringUtils.isBlank(allOfRef.getName())) {
                     refSchema = allOfRef;
                 }
@@ -826,7 +830,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             anyOfFiltered.forEach(c -> {
                 Schema anyOfRef = context.resolve(new AnnotatedType().type(c).jsonViewAnnotation(annotatedType.getJsonViewAnnotation()));
                 if (StringUtils.isNotBlank(anyOfRef.getName())) {
-                    composedSchema.addAnyOfItem(new Schema().$ref(anyOfRef.getName()));
+                    composedSchema.addAnyOfItem(new Schema().$ref(Components.COMPONENTS_SCHEMAS_REF + anyOfRef.getName()));
                 } else {
                     composedSchema.addAnyOfItem(anyOfRef);
                 }
@@ -848,7 +852,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                     if (StringUtils.isBlank(oneOfRef.getName())) {
                         composedSchema.addOneOfItem(oneOfRef);
                     } else {
-                        composedSchema.addOneOfItem(new Schema().$ref(oneOfRef.getName()));
+                        composedSchema.addOneOfItem(new Schema().$ref(Components.COMPONENTS_SCHEMAS_REF + oneOfRef.getName()));
                     }
                     // remove shared properties defined in the parent
                     if (isSubtype(beanDesc.getClassInfo(), c)) {
@@ -903,6 +907,40 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         model = resolveWrapping(type, context, model);
 
         return model;
+    }
+
+    private Annotation[] addGenericTypeArgumentAnnotationsForOptionalField(BeanPropertyDefinition propDef, Annotation[] annotations) {
+
+        boolean isNotOptionalType = Optional.ofNullable(propDef)
+                                            .map(BeanPropertyDefinition::getField)
+                                            .map(AnnotatedField::getAnnotated)
+                                            .map(field -> !(field.getType().equals(Optional.class)))
+                                            .orElse(false);
+
+        if (isNotOptionalType) {
+            return annotations;
+        }
+
+        Stream<Annotation> genericTypeArgumentAnnotations = extractGenericTypeArgumentAnnotations(propDef);
+        return Stream.concat(Stream.of(annotations), genericTypeArgumentAnnotations).toArray(Annotation[]::new);
+    }
+
+    private Stream<Annotation> extractGenericTypeArgumentAnnotations(BeanPropertyDefinition propDef) {
+        return Optional.ofNullable(propDef)
+                       .map(BeanPropertyDefinition::getField)
+                       .map(AnnotatedField::getAnnotated)
+                       .map(this::getGenericTypeArgumentAnnotations)
+                       .orElseGet(Stream::of);
+    }
+
+    private Stream<Annotation> getGenericTypeArgumentAnnotations(Field field) {
+        return Optional.of(field.getAnnotatedType())
+                       .filter(annotatedType -> annotatedType instanceof AnnotatedParameterizedType)
+                       .map(annotatedType -> (AnnotatedParameterizedType) annotatedType)
+                       .map(AnnotatedParameterizedType::getAnnotatedActualTypeArguments)
+                       .map(types -> Stream.of(types)
+                                           .flatMap(type -> Stream.of(type.getAnnotations())))
+                       .orElseGet(Stream::of);
     }
 
     private boolean shouldResolveEnumAsRef(io.swagger.v3.oas.annotations.media.Schema resolvedSchemaAnnotation) {
@@ -1298,6 +1336,15 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         }
     }
 
+    protected void applyBeanValidatorAnnotations(BeanPropertyDefinition propDef, Schema property, Annotation[] annotations, Schema parent, boolean applyNotNullAnnotations) {
+        applyBeanValidatorAnnotations(property, annotations, parent, applyNotNullAnnotations);
+
+        if (Objects.nonNull(property.getItems())) {
+            Annotation[] genericTypeArgumentAnnotations = extractGenericTypeArgumentAnnotations(propDef).toArray(Annotation[]::new);
+            applyBeanValidatorAnnotations(property.getItems(), genericTypeArgumentAnnotations, property, applyNotNullAnnotations);
+        }
+    }
+
     protected void applyBeanValidatorAnnotations(Schema property, Annotation[] annotations, Schema parent, boolean applyNotNullAnnotations) {
         Map<String, Annotation> annos = new HashMap<>();
         if (annotations != null) {
@@ -1370,7 +1417,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         }
     }
 
-    private boolean resolveSubtypes(Schema model, BeanDescription bean, ModelConverterContext context) {
+    private boolean resolveSubtypes(Schema model, BeanDescription bean, ModelConverterContext context, JsonView jsonViewAnnotation) {
         final List<NamedType> types = _intr.findSubtypes(bean.getClassInfo());
         if (types == null) {
             return false;
@@ -1398,7 +1445,8 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 continue;
             }
 
-            final Schema subtypeModel = context.resolve(new AnnotatedType().type(subtypeType));
+            final Schema subtypeModel = context.resolve(new AnnotatedType().type(subtypeType)
+                .jsonViewAnnotation(jsonViewAnnotation));
 
             if (    StringUtils.isBlank(subtypeModel.getName()) ||
                     subtypeModel.getName().equals(model.getName())) {
