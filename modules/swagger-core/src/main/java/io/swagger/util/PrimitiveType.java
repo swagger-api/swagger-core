@@ -182,18 +182,18 @@ public enum PrimitiveType {
      * Allows to exclude specific classes from KEY_CLASSES mappings to primitive
      *
      */
-    private static Set<String> customExcludedClasses = ConcurrentHashMap.newKeySet();
+    private static Set<String> customExcludedClasses = Collections.newSetFromMap(new ConcurrentHashMap<String, Boolean>());
 
     /**
      * Allows to exclude specific classes from EXTERNAL_CLASSES mappings to primitive
      *
      */
-    private static Set<String> customExcludedExternalClasses = ConcurrentHashMap.newKeySet();
+    private static Set<String> customExcludedExternalClasses = Collections.newSetFromMap(new ConcurrentHashMap<String, Boolean>());
 
     /**
      * Adds support for custom mapping of classes to primitive types
      */
-    private static Map<String, PrimitiveType> customClasses = new ConcurrentHashMap<>();
+    private static Map<String, PrimitiveType> customClasses = new ConcurrentHashMap<String, PrimitiveType>();
 
     /**
      * Alternative names for primitive types that have to be supported for
