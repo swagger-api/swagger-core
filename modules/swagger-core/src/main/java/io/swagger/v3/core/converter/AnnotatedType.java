@@ -22,6 +22,7 @@ public class AnnotatedType {
     private Annotation[] ctxAnnotations;
     private boolean resolveAsRef;
     private JsonView jsonViewAnnotation;
+    private boolean includePropertiesWithoutJSONView = true;
     private boolean skipSchemaName;
     private boolean skipJsonIdentity;
     private String propertyName;
@@ -188,6 +189,19 @@ public class AnnotatedType {
 
     public AnnotatedType jsonViewAnnotation(JsonView jsonViewAnnotation) {
         this.jsonViewAnnotation = jsonViewAnnotation;
+        return this;
+    }
+
+    public boolean isIncludePropertiesWithoutJSONView() {
+        return includePropertiesWithoutJSONView;
+    }
+
+    public void setIncludePropertiesWithoutJSONView(boolean includePropertiesWithoutJSONView) {
+        this.includePropertiesWithoutJSONView = includePropertiesWithoutJSONView;
+    }
+
+    public AnnotatedType includePropertiesWithoutJSONView(boolean includePropertiesWithoutJSONView) {
+        this.includePropertiesWithoutJSONView = includePropertiesWithoutJSONView;
         return this;
     }
 

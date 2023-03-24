@@ -2879,7 +2879,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             return false;
 
         Class<?>[] filters = jsonView.value();
-        boolean containsJsonViewAnnotation = false;
+        boolean containsJsonViewAnnotation = !type.isIncludePropertiesWithoutJSONView();
         for (Annotation ant : annotations) {
             if (ant instanceof JsonView) {
                 containsJsonViewAnnotation = true;
