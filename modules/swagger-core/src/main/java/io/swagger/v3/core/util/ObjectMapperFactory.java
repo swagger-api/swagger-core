@@ -12,7 +12,9 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.ser.BeanSerializerModifier;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactoryBuilder;
 import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
+import com.fasterxml.jackson.dataformat.yaml.util.StringQuotingChecker;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.swagger.v3.core.jackson.ExampleSerializer;
 import io.swagger.v3.core.jackson.Schema31Serializer;
@@ -68,6 +70,7 @@ import io.swagger.v3.oas.models.servers.ServerVariable;
 import io.swagger.v3.oas.models.servers.ServerVariables;
 import io.swagger.v3.oas.models.tags.Tag;
 
+import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -78,7 +81,9 @@ public class ObjectMapperFactory {
     }
 
     protected static ObjectMapper createYaml(boolean openapi31) {
-        YAMLFactory factory = new YAMLFactory();
+        YAMLFactory factory = new YAMLFactoryBuilder(new YAMLFactory())
+                .stringQuotingChecker(new QuotingChecker())
+                .build();
         factory.disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER);
         factory.enable(YAMLGenerator.Feature.MINIMIZE_QUOTES);
         factory.enable(YAMLGenerator.Feature.SPLIT_LINES);
