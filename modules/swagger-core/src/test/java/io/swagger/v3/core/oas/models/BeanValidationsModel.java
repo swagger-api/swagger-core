@@ -8,6 +8,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.util.List;
+import java.util.Optional;
 
 public class BeanValidationsModel {
     @NotNull
@@ -36,7 +37,9 @@ public class BeanValidationsModel {
     protected Integer birthYear;
 
     @Size(min = 2, max = 10)
-    private List<String> items;
+    private List<@Size(min = 3, max = 4) String> items;
+
+    private Optional<@Size(min= 1, max=10) String> optionalValue;
 
     public Long getId() {
         return id;
@@ -117,4 +120,13 @@ public class BeanValidationsModel {
     public void setItems(List<String> items) {
         this.items = items;
     }
+
+    public Optional<String> getOptionalValue() {
+        return optionalValue;
+    }
+
+    public void setOptionalValue(Optional<String> optionalValue) {
+        this.optionalValue = optionalValue;
+    }
+
 }

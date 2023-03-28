@@ -1,5 +1,6 @@
 package io.swagger.v3.core.serialization;
 
+import com.fasterxml.jackson.core.util.DefaultIndenter;
 import io.swagger.v3.core.matchers.SerializationMatchers;
 import io.swagger.v3.core.util.Json;
 import io.swagger.v3.core.util.Json31;
@@ -32,6 +33,7 @@ import org.testng.annotations.Test;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertTrue;
 
 public class OpenAPI3_1SerializationTest {
 
@@ -1374,14 +1376,14 @@ public class OpenAPI3_1SerializationTest {
 
         System.out.println("--------- root ----------");
         Json31.prettyPrint(openAPI);
-        assertEquals(Json31.pretty(openAPI), "{\n" +
+        assertEquals(Json31.pretty(openAPI), withJacksonSystemLineSeparator("{\n" +
                 "  \"openapi\" : \"3.1.0\",\n" +
                 "  \"components\" : {\n" +
                 "    \"schemas\" : {\n" +
                 "      \"test\" : true\n" +
                 "    }\n" +
                 "  }\n" +
-                "}");
+                "}"));
         System.out.println("--------- schema ----------");
         Json31.prettyPrint(openAPI.getComponents().getSchemas().get("test"));
         assertEquals(Json31.pretty(openAPI.getComponents().getSchemas().get("test")), "true");
@@ -1396,14 +1398,14 @@ public class OpenAPI3_1SerializationTest {
         assertEquals(Yaml31.pretty(openAPI.getComponents().getSchemas().get("test")), "true\n");
         System.out.println("--------- root 3.0 ----------");
         Json.prettyPrint(openAPI);
-        assertEquals(Json.pretty(openAPI), "{\n" +
+        assertEquals(Json.pretty(openAPI), withJacksonSystemLineSeparator("{\n" +
                 "  \"openapi\" : \"3.1.0\",\n" +
                 "  \"components\" : {\n" +
                 "    \"schemas\" : {\n" +
                 "      \"test\" : { }\n" +
                 "    }\n" +
                 "  }\n" +
-                "}");
+                "}"));
         System.out.println("--------- schema 3.0 ----------");
         Json.prettyPrint(openAPI.getComponents().getSchemas().get("test"));
         assertEquals(Json.pretty(openAPI.getComponents().getSchemas().get("test")), "{ }");
@@ -1418,4 +1420,84 @@ public class OpenAPI3_1SerializationTest {
         assertEquals(Yaml.pretty(openAPI.getComponents().getSchemas().get("test")), "{}\n");
     }
 
+    @Test
+    public void testBooleanAdditionalPropertiesSerialization() throws Exception{
+        String expectedJson = "{\n" +
+                "  \"openapi\" : \"3.1.0\",\n" +
+                "  \"components\" : {\n" +
+                "    \"schemas\" : {\n" +
+                "      \"test\" : {\n" +
+                "        \"type\" : \"object\",\n" +
+                "        \"additionalProperties\" : true\n" +
+                "      }\n" +
+                "    }\n" +
+                "  }\n" +
+                "}";
+
+        String expectedYaml = "openapi: 3.1.0\n" +
+                "components:\n" +
+                "  schemas:\n" +
+                "    test:\n" +
+                "      type: object\n" +
+                "      additionalProperties: true\n";
+
+        OpenAPI openAPI = Json31.mapper().readValue(expectedJson, OpenAPI.class);
+        String ser = Json31.pretty(openAPI);
+        assertEquals(ser, withJacksonSystemLineSeparator(expectedJson));
+        assertTrue(Boolean.TRUE.equals(openAPI.getComponents().getSchemas().get("test").getAdditionalProperties()));
+        openAPI = Json.mapper().readValue(expectedJson, OpenAPI.class);
+        ser = Json.pretty(openAPI);
+        assertEquals(ser, withJacksonSystemLineSeparator(expectedJson));
+        assertTrue(Boolean.TRUE.equals(openAPI.getComponents().getSchemas().get("test").getAdditionalProperties()));
+
+        openAPI = Yaml31.mapper().readValue(expectedYaml, OpenAPI.class);
+        ser = Yaml31.pretty(openAPI);
+        assertEquals(ser, withJacksonSystemLineSeparator(expectedYaml));
+        assertTrue(Boolean.TRUE.equals(openAPI.getComponents().getSchemas().get("test").getAdditionalProperties()));
+        openAPI = Yaml.mapper().readValue(expectedYaml, OpenAPI.class);
+        ser = Yaml.pretty(openAPI);
+        assertEquals(ser, withJacksonSystemLineSeparator(expectedYaml));
+        assertTrue(Boolean.TRUE.equals(openAPI.getComponents().getSchemas().get("test").getAdditionalProperties()));
+
+        expectedJson = "{\n" +
+                "  \"openapi\" : \"3.0.0\",\n" +
+                "  \"components\" : {\n" +
+                "    \"schemas\" : {\n" +
+                "      \"test\" : {\n" +
+                "        \"type\" : \"object\",\n" +
+                "        \"additionalProperties\" : true\n" +
+                "      }\n" +
+                "    }\n" +
+                "  }\n" +
+                "}";
+
+        expectedYaml = "openapi: 3.0.0\n" +
+                "components:\n" +
+                "  schemas:\n" +
+                "    test:\n" +
+                "      type: object\n" +
+                "      additionalProperties: true\n";
+
+        openAPI = Json31.mapper().readValue(expectedJson, OpenAPI.class);
+        ser = Json31.pretty(openAPI);
+        assertEquals(ser, withJacksonSystemLineSeparator(expectedJson));
+        assertTrue(Boolean.TRUE.equals(openAPI.getComponents().getSchemas().get("test").getAdditionalProperties()));
+        openAPI = Json.mapper().readValue(expectedJson, OpenAPI.class);
+        ser = Json.pretty(openAPI);
+        assertEquals(ser, withJacksonSystemLineSeparator(expectedJson));
+        assertTrue(Boolean.TRUE.equals(openAPI.getComponents().getSchemas().get("test").getAdditionalProperties()));
+
+        openAPI = Yaml31.mapper().readValue(expectedYaml, OpenAPI.class);
+        ser = Yaml31.pretty(openAPI);
+        assertEquals(ser, withJacksonSystemLineSeparator(expectedYaml));
+        assertTrue(Boolean.TRUE.equals(openAPI.getComponents().getSchemas().get("test").getAdditionalProperties()));
+        openAPI = Yaml.mapper().readValue(expectedYaml, OpenAPI.class);
+        ser = Yaml.pretty(openAPI);
+        assertEquals(ser, withJacksonSystemLineSeparator(expectedYaml));
+        assertTrue(Boolean.TRUE.equals(openAPI.getComponents().getSchemas().get("test").getAdditionalProperties()));
+    }
+
+    private static String withJacksonSystemLineSeparator(String s) {
+        return s.replace("\n", DefaultIndenter.SYS_LF);
+    }
 }

@@ -125,7 +125,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionStage;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.stream.Collectors;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
@@ -714,6 +717,36 @@ public class ReaderTest {
         @io.swagger.v3.oas.annotations.Operation(tags = "/receiver/rest")
         //public void test1(@QueryParam("aa") String a) {
         public void test1(A a) {
+        }
+    }
+
+    @Test
+    public void testClassWithCompletableFuture() {
+        Reader reader = new Reader(new OpenAPI());
+        OpenAPI openAPI = reader.read(ClassWithCompletableFuture.class);
+        assertNotNull(openAPI);
+
+        assertEquals(
+            openAPI.getPaths()
+                    .get("/myApi")
+                    .getGet()
+                    .getResponses()
+                    .get("default")
+                    .getContent()
+                    .get("application/json")
+                    .getSchema()
+                    .get$ref(),
+                "#/components/schemas/Ret"
+        );
+    }
+
+    static class ClassWithCompletableFuture {
+        @Path("/myApi")
+        @Produces("application/json")
+        @Consumes("application/json")
+        @GET
+        public CompletableFuture<Ret> myApi(A a) {
+            return CompletableFuture.completedFuture(new Ret());
         }
     }
 

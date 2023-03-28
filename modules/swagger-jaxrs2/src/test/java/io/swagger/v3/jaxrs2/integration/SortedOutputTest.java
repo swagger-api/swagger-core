@@ -114,7 +114,7 @@ public class SortedOutputTest {
         @JsonIgnore
         public abstract boolean getExampleSetFlag();
 
-        @JsonInclude(JsonInclude.Include.CUSTOM)
+        @JsonInclude(value = JsonInclude.Include.NON_NULL, content = JsonInclude.Include.ALWAYS)
         public abstract Object getExample();
 
         @JsonIgnore

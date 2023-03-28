@@ -26,6 +26,8 @@ import java.util.Set;
 
 public class Schema<T> {
 
+    public static final String BIND_TYPE_AND_TYPES = "bind-type";
+
     protected T _default;
 
     private String name;
@@ -46,6 +48,7 @@ public class Schema<T> {
     private Integer maxProperties = null;
     private Integer minProperties = null;
     private List<String> required = null;
+    @OpenAPI30
     private String type = null;
     private Schema not = null;
     private Map<String, Schema> properties = null;
@@ -1110,6 +1113,10 @@ public class Schema<T> {
      **/
 
     public String getType() {
+        boolean bindTypes = Boolean.valueOf(System.getProperty(BIND_TYPE_AND_TYPES, "false"));
+        if (bindTypes && type == null && types != null && types.size() == 1) {
+            return types.iterator().next();
+        }
         return type;
     }
 

@@ -670,7 +670,7 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
         @JsonIgnore
         public abstract boolean getExampleSetFlag();
 
-        @JsonInclude(JsonInclude.Include.CUSTOM)
+        @JsonInclude(value = JsonInclude.Include.NON_NULL, content = JsonInclude.Include.ALWAYS)
         public abstract Object getExample();
 
         @JsonIgnore
@@ -753,7 +753,7 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
         @JsonIgnore
         public abstract boolean getExampleSetFlag();
 
-        @JsonInclude(JsonInclude.Include.CUSTOM)
+        @JsonInclude(value = JsonInclude.Include.NON_NULL, content = JsonInclude.Include.ALWAYS)
         public abstract Object getExample();
 
         @JsonIgnore
