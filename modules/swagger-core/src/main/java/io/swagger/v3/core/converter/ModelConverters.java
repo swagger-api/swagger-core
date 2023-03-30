@@ -8,15 +8,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Type;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.ServiceLoader;
-import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class ModelConverters {
@@ -65,10 +58,14 @@ public class ModelConverters {
         if (shouldProcess(type.getType())) {
             ModelConverterContextImpl context = new ModelConverterContextImpl(
                     converters);
-            Schema resolve = context.resolve(type);
+
+            Schema preResultSchema =    context.resolve(type);
+            resolveRecursivityIssues(context);
+            preResultSchema = context.resolve(type);
+
             for (Entry<String, Schema> entry : context.getDefinedModels()
                     .entrySet()) {
-                if (entry.getValue().equals(resolve)) {
+                if (entry.getValue().equals(preResultSchema)) {
                     modelMap.put(entry.getKey(), entry.getValue());
                 }
             }
@@ -86,7 +83,10 @@ public class ModelConverters {
                     converters);
 
             LOGGER.debug("ModelConverters readAll from {}", type);
-            context.resolve(type);
+            Schema preResultSchema =    context.resolve(type);
+            resolveRecursivityIssues(context);
+            preResultSchema = context.resolve(type);
+
             return context.getDefinedModels();
         }
         return new HashMap<>();
@@ -106,11 +106,37 @@ public class ModelConverters {
         ModelConverterContextImpl context = new ModelConverterContextImpl(
                 converters);
 
+        Schema preResultSchema =    context.resolve(type);
+        resolveRecursivityIssues(context);
+        preResultSchema = context.resolve(type);
+
         ResolvedSchema resolvedSchema = new ResolvedSchema();
-        resolvedSchema.schema = context.resolve(type);
+        resolvedSchema.schema = preResultSchema;
         resolvedSchema.referencedSchemas = context.getDefinedModels();
 
         return resolvedSchema;
+    }
+
+    public void resolveRecursivityIssues(ModelConverterContextImpl context)
+    {
+        Set<AnnotatedType> processedTypes = context.getProcessedTypes();
+        Set<AnnotatedType> processedTypesClone = new HashSet<>(processedTypes);
+        List<Schema> schemasList = new ArrayList<>();
+
+        //Initial iteration for all Schema objects to be created with all properties correctly
+        for(AnnotatedType processedType : processedTypesClone)
+        {
+            processedTypes.remove(processedType);
+            context.getModelByType().remove(processedType);
+            schemasList.add(context.resolve(processedType));
+        }
+        //Second iteration for all Schema object references to other Schema objects to be resolved to the newly created correct Schema objects with all properties
+        for(AnnotatedType processedType : processedTypesClone)
+        {
+            processedTypes.remove(processedType);
+            context.getModelByType().remove(processedType);
+            schemasList.add(context.resolve(processedType));
+        }
     }
 
     public boolean isRegisteredAsSkippedClass(String className) {
