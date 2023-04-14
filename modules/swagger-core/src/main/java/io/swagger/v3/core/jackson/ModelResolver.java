@@ -1064,6 +1064,11 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             for (Enum<?> en : enumConstants) {
                 String n;
 
+                Field enumField = ReflectionUtils.findField(en.name(), enumClass);
+                if (null != enumField && enumField.isAnnotationPresent(Hidden.class)) {
+                    continue;
+                }
+
                 String enumValue = enumValues[en.ordinal()];
                 String methodValue = jsonValueMethod.flatMap(m -> ReflectionUtils.safeInvoke(m, en)).map(Object::toString).orElse(null);
                 String fieldValue = jsonValueField.flatMap(f -> ReflectionUtils.safeGet(f, en)).map(Object::toString).orElse(null);
