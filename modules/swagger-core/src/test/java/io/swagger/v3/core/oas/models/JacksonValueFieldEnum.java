@@ -1,6 +1,7 @@
 package io.swagger.v3.core.oas.models;
 
 import com.fasterxml.jackson.annotation.JsonValue;
+import io.swagger.v3.oas.annotations.Hidden;
 
 /**
  * Enum holds values different from names.  Schema model will derive String value from jackson annotation JsonValue on private field.
@@ -8,7 +9,8 @@ import com.fasterxml.jackson.annotation.JsonValue;
 public enum JacksonValueFieldEnum {
     FIRST("one"),
     SECOND("two"),
-    THIRD("three");
+    THIRD("three"),
+    @Hidden HIDDEN("hidden");
 
     @JsonValue
     private final String value;

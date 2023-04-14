@@ -161,6 +161,24 @@ public class ReflectionUtils {
     }
 
     /**
+     * Searches the field name in given class cls. If the field is found returns it, else return null.
+     *
+     * @param name is the field to search
+     * @param cls  is the class or interface where to search
+     * @return field if it is found
+     */
+    public static Field findField(String name, Class<?> cls) {
+        if (cls == null) {
+            return null;
+        }
+        try {
+            return cls.getField(name);
+        } catch (NoSuchFieldException nsfe) {
+            return null;
+        }
+    }
+
+    /**
      * Searches the method methodToFind in given class cls. If the method is found returns it, else return null.
      *
      * @param methodToFind is the method to search
