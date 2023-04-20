@@ -67,6 +67,7 @@ import io.swagger.v3.oas.models.servers.Server;
 import io.swagger.v3.oas.models.servers.ServerVariable;
 import io.swagger.v3.oas.models.servers.ServerVariables;
 import io.swagger.v3.oas.models.tags.Tag;
+import org.yaml.snakeyaml.LoaderOptions;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -77,8 +78,12 @@ public class ObjectMapperFactory {
         return create(null, false);
     }
 
-    protected static ObjectMapper createYaml(boolean openapi31) {
-        YAMLFactory factory = new YAMLFactory();
+    protected static ObjectMapper createJson(JsonFactory jsonFactory) {
+        return create(jsonFactory, false);
+    }
+
+    protected static ObjectMapper createYaml(YAMLFactory yamlFactory, boolean openapi31) {
+        YAMLFactory factory = yamlFactory == null ? new YAMLFactory() : yamlFactory;
         factory.disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER);
         factory.enable(YAMLGenerator.Feature.MINIMIZE_QUOTES);
         factory.enable(YAMLGenerator.Feature.SPLIT_LINES);
@@ -88,16 +93,27 @@ public class ObjectMapperFactory {
     }
 
     protected static ObjectMapper createYaml() {
-        return createYaml(false);
+        return createYaml(null , false);
+    }
+
+    protected static ObjectMapper createYaml(YAMLFactory yamlFactory) {
+        return createYaml(yamlFactory, false);
     }
 
     protected static ObjectMapper createJson31() {
         return create(null, true);
     }
 
+    protected static ObjectMapper createJson31(JsonFactory jsonFactory) {
+        return create(jsonFactory, true);
+    }
 
     protected static ObjectMapper createYaml31() {
-        return createYaml(true);
+        return createYaml(null, true);
+    }
+
+    protected static ObjectMapper createYaml31(YAMLFactory yamlFactory) {
+        return createYaml(yamlFactory, true);
     }
 
     private static ObjectMapper create(JsonFactory jsonFactory, boolean openapi31) {

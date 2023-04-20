@@ -1,5 +1,6 @@
 package io.swagger.v3.core.util;
 
+import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
@@ -11,6 +12,13 @@ public class Json {
     public static ObjectMapper mapper() {
         if (mapper == null) {
             mapper = ObjectMapperFactory.createJson();
+        }
+        return mapper;
+    }
+
+    public static ObjectMapper mapper(JsonFactory jsonFactory) {
+        if (mapper == null) {
+            mapper = ObjectMapperFactory.createJson(jsonFactory);
         }
         return mapper;
     }

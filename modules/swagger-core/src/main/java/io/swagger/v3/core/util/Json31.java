@@ -1,5 +1,6 @@
 package io.swagger.v3.core.util;
 
+import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -21,6 +22,13 @@ public class Json31 {
     public static ObjectMapper mapper() {
         if (mapper == null) {
             mapper = ObjectMapperFactory.createJson31();
+        }
+        return mapper;
+    }
+
+    public static ObjectMapper mapper(JsonFactory jsonFactory) {
+        if (mapper == null) {
+            mapper = ObjectMapperFactory.createJson31(jsonFactory);
         }
         return mapper;
     }
