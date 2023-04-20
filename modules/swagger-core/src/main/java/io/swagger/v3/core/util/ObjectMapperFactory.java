@@ -67,7 +67,6 @@ import io.swagger.v3.oas.models.servers.Server;
 import io.swagger.v3.oas.models.servers.ServerVariable;
 import io.swagger.v3.oas.models.servers.ServerVariables;
 import io.swagger.v3.oas.models.tags.Tag;
-import org.yaml.snakeyaml.LoaderOptions;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
