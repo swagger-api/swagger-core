@@ -23,12 +23,19 @@ import io.swagger.models.properties.Property;
 
 public class ObjectMapperFactory {
 
+    public static ObjectMapper createJson(JsonFactory jsonFactory) {
+        return create(jsonFactory, true, true);
+    }
     protected static ObjectMapper createJson() {
         return createJson(true, true);
     }
 
     protected static ObjectMapper createJson(boolean includePathDeserializer, boolean includeResponseDeserializer) {
         return create(null, includePathDeserializer, includeResponseDeserializer);
+    }
+
+    public static ObjectMapper createYaml(YAMLFactory yamlFactory) {
+        return create(yamlFactory, true, true);
     }
 
     protected static ObjectMapper createYaml() {

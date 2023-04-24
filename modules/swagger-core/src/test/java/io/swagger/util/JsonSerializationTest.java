@@ -1,6 +1,8 @@
 package io.swagger.util;
 
 
+import com.fasterxml.jackson.core.JsonFactory;
+import io.swagger.matchers.SerializationMatchers;
 import io.swagger.models.*;
 import org.testng.annotations.Test;
 
@@ -65,5 +67,19 @@ public class JsonSerializationTest {
                 .security(new SecurityRequirement().requirement("oauth2", Arrays.asList("hello", "world")));
         json = Json.mapper().writeValueAsString(swagger);
         assertEquals(json, "{\"swagger\":\"2.0\",\"security\":[{\"api_key\":[],\"basic_auth\":[]},{\"oauth2\":[\"hello\",\"world\"]}]}");
+    }
+
+    @Test
+    public void testSerializeWithCustomFactory() throws Exception {
+        // given
+        JsonFactory jsonFactory = new JsonFactory();
+        final String json = ResourceUtils.loadClassResource(getClass(), "specFiles/petstore.json");
+        final String expectedJson = ResourceUtils.loadClassResource(getClass(), "specFiles/jsonSerialization-expected-petstore.json");
+
+        // when
+        Swagger deser = ObjectMapperFactory.createJson(jsonFactory).readValue(json, Swagger.class);
+
+        // then
+        SerializationMatchers.assertEqualsToJson(deser, expectedJson);
     }
 }
