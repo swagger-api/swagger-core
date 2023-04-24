@@ -73,16 +73,24 @@ import java.util.Map;
 
 public class ObjectMapperFactory {
 
+    public static ObjectMapper createJson(JsonFactory jsonFactory) {
+        return create(jsonFactory, false);
+    }
+
     protected static ObjectMapper createJson() {
         return create(null, false);
     }
 
-    protected static ObjectMapper createJson(JsonFactory jsonFactory) {
-        return create(jsonFactory, false);
+    public static ObjectMapper createYaml(YAMLFactory yamlFactory) {
+        return create(yamlFactory, false);
     }
 
-    protected static ObjectMapper createYaml(YAMLFactory yamlFactory, boolean openapi31) {
-        YAMLFactory factory = yamlFactory == null ? new YAMLFactory() : yamlFactory;
+    protected static ObjectMapper createYaml() {
+        return createYaml( false);
+    }
+
+    protected static ObjectMapper createYaml(boolean openapi31) {
+        YAMLFactory factory = new YAMLFactory();
         factory.disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER);
         factory.enable(YAMLGenerator.Feature.MINIMIZE_QUOTES);
         factory.enable(YAMLGenerator.Feature.SPLIT_LINES);
@@ -91,28 +99,20 @@ public class ObjectMapperFactory {
         return create(factory, openapi31);
     }
 
-    protected static ObjectMapper createYaml() {
-        return createYaml(null , false);
-    }
-
-    protected static ObjectMapper createYaml(YAMLFactory yamlFactory) {
-        return createYaml(yamlFactory, false);
+    public static ObjectMapper createJson31(JsonFactory jsonFactory) {
+        return create(jsonFactory, true);
     }
 
     protected static ObjectMapper createJson31() {
         return create(null, true);
     }
 
-    protected static ObjectMapper createJson31(JsonFactory jsonFactory) {
-        return create(jsonFactory, true);
+    public static ObjectMapper createYaml31(YAMLFactory yamlFactory) {
+        return create(yamlFactory, true);
     }
 
     protected static ObjectMapper createYaml31() {
-        return createYaml(null, true);
-    }
-
-    protected static ObjectMapper createYaml31(YAMLFactory yamlFactory) {
-        return createYaml(yamlFactory, true);
+        return createYaml( true);
     }
 
     private static ObjectMapper create(JsonFactory jsonFactory, boolean openapi31) {

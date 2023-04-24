@@ -3,7 +3,6 @@ package io.swagger.v3.core.util;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
 public class Yaml {
     static ObjectMapper mapper;
@@ -11,13 +10,6 @@ public class Yaml {
     public static ObjectMapper mapper() {
         if (mapper == null) {
             mapper = ObjectMapperFactory.createYaml();
-        }
-        return mapper;
-    }
-
-    public static ObjectMapper mapper(YAMLFactory yamlFactory) {
-        if (mapper == null) {
-            mapper = ObjectMapperFactory.createYaml(yamlFactory);
         }
         return mapper;
     }

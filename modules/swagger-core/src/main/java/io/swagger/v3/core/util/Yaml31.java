@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import io.swagger.v3.oas.models.media.Schema;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,13 +18,6 @@ public class Yaml31 {
     public static ObjectMapper mapper() {
         if (mapper == null) {
             mapper = ObjectMapperFactory.createYaml31();
-        }
-        return mapper;
-    }
-
-    public static ObjectMapper mapper(YAMLFactory yamlFactory) {
-        if (mapper == null) {
-            mapper = ObjectMapperFactory.createYaml31(yamlFactory);
         }
         return mapper;
     }
