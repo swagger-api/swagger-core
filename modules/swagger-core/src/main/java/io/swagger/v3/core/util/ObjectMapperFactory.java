@@ -86,7 +86,7 @@ public class ObjectMapperFactory {
     }
 
     protected static ObjectMapper createYaml() {
-        return createYaml( false);
+        return createYaml(false);
     }
 
     protected static ObjectMapper createYaml(boolean openapi31) {
@@ -112,7 +112,7 @@ public class ObjectMapperFactory {
     }
 
     protected static ObjectMapper createYaml31() {
-        return createYaml( true);
+        return createYaml(true);
     }
 
     private static ObjectMapper create(JsonFactory jsonFactory, boolean openapi31) {
