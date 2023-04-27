@@ -26,11 +26,11 @@ public class ObjectMapperFactory {
     public static ObjectMapper createJson(JsonFactory jsonFactory) {
         return create(jsonFactory, true, true);
     }
-    protected static ObjectMapper createJson() {
+    public static ObjectMapper createJson() {
         return createJson(true, true);
     }
 
-    protected static ObjectMapper createJson(boolean includePathDeserializer, boolean includeResponseDeserializer) {
+    public static ObjectMapper createJson(boolean includePathDeserializer, boolean includeResponseDeserializer) {
         return create(null, includePathDeserializer, includeResponseDeserializer);
     }
 
@@ -38,15 +38,15 @@ public class ObjectMapperFactory {
         return create(yamlFactory, true, true);
     }
 
-    protected static ObjectMapper createYaml() {
+    public static ObjectMapper createYaml() {
         return createYaml(true, true);
     }
 
-    protected static ObjectMapper createYaml(boolean includePathDeserializer, boolean includeResponseDeserializer) {
+    public static ObjectMapper createYaml(boolean includePathDeserializer, boolean includeResponseDeserializer) {
         return create(new YAMLFactory(), includePathDeserializer, includeResponseDeserializer);
     }
 
-    private static ObjectMapper create(JsonFactory jsonFactory, boolean includePathDeserializer, boolean includeResponseDeserializer) {
+    public static ObjectMapper create(JsonFactory jsonFactory, boolean includePathDeserializer, boolean includeResponseDeserializer) {
         ObjectMapper mapper = jsonFactory == null ? new ObjectMapper() : new ObjectMapper(jsonFactory);
 
         mapper.registerModule(new SimpleModule() {
