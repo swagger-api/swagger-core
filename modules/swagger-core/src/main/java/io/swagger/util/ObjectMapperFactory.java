@@ -23,23 +23,30 @@ import io.swagger.models.properties.Property;
 
 public class ObjectMapperFactory {
 
-    protected static ObjectMapper createJson() {
+    public static ObjectMapper createJson(JsonFactory jsonFactory) {
+        return create(jsonFactory, true, true);
+    }
+    public static ObjectMapper createJson() {
         return createJson(true, true);
     }
 
-    protected static ObjectMapper createJson(boolean includePathDeserializer, boolean includeResponseDeserializer) {
+    public static ObjectMapper createJson(boolean includePathDeserializer, boolean includeResponseDeserializer) {
         return create(null, includePathDeserializer, includeResponseDeserializer);
     }
 
-    protected static ObjectMapper createYaml() {
+    public static ObjectMapper createYaml(YAMLFactory yamlFactory) {
+        return create(yamlFactory, true, true);
+    }
+
+    public static ObjectMapper createYaml() {
         return createYaml(true, true);
     }
 
-    protected static ObjectMapper createYaml(boolean includePathDeserializer, boolean includeResponseDeserializer) {
+    public static ObjectMapper createYaml(boolean includePathDeserializer, boolean includeResponseDeserializer) {
         return create(new YAMLFactory(), includePathDeserializer, includeResponseDeserializer);
     }
 
-    private static ObjectMapper create(JsonFactory jsonFactory, boolean includePathDeserializer, boolean includeResponseDeserializer) {
+    public static ObjectMapper create(JsonFactory jsonFactory, boolean includePathDeserializer, boolean includeResponseDeserializer) {
         ObjectMapper mapper = jsonFactory == null ? new ObjectMapper() : new ObjectMapper(jsonFactory);
 
         mapper.registerModule(new SimpleModule() {
