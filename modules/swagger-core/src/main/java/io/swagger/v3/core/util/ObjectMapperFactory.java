@@ -73,11 +73,23 @@ import java.util.Map;
 
 public class ObjectMapperFactory {
 
-    protected static ObjectMapper createJson() {
+    public static ObjectMapper createJson(JsonFactory jsonFactory) {
+        return create(jsonFactory, false);
+    }
+
+    public static ObjectMapper createJson() {
         return create(null, false);
     }
 
-    protected static ObjectMapper createYaml(boolean openapi31) {
+    public static ObjectMapper createYaml(YAMLFactory yamlFactory) {
+        return create(yamlFactory, false);
+    }
+
+    public static ObjectMapper createYaml() {
+        return createYaml(false);
+    }
+
+    public static ObjectMapper createYaml(boolean openapi31) {
         YAMLFactory factory = new YAMLFactory();
         factory.disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER);
         factory.enable(YAMLGenerator.Feature.MINIMIZE_QUOTES);
@@ -87,20 +99,23 @@ public class ObjectMapperFactory {
         return create(factory, openapi31);
     }
 
-    protected static ObjectMapper createYaml() {
-        return createYaml(false);
+    public static ObjectMapper createJson31(JsonFactory jsonFactory) {
+        return create(jsonFactory, true);
     }
 
-    protected static ObjectMapper createJson31() {
+    public static ObjectMapper createJson31() {
         return create(null, true);
     }
 
+    public static ObjectMapper createYaml31(YAMLFactory yamlFactory) {
+        return create(yamlFactory, true);
+    }
 
-    protected static ObjectMapper createYaml31() {
+    public static ObjectMapper createYaml31() {
         return createYaml(true);
     }
 
-    private static ObjectMapper create(JsonFactory jsonFactory, boolean openapi31) {
+    public static ObjectMapper create(JsonFactory jsonFactory, boolean openapi31) {
         ObjectMapper mapper = jsonFactory == null ? new ObjectMapper() : new ObjectMapper(jsonFactory);
 
         if (!openapi31) {
@@ -215,7 +230,7 @@ public class ObjectMapperFactory {
         return mapper;
     }
 
-    protected static ObjectMapper createJsonConverter() {
+    public static ObjectMapper createJsonConverter() {
 
         ObjectMapper mapper = new ObjectMapper();
 
