@@ -65,7 +65,8 @@ Swagger core Version      | Release Date | OpenAPI Spec compatibility | Notes   
 2.0.5                     | 2018-09-19   | 3.0           | [tag v2.0.5](https://github.com/swagger-api/swagger-core/tree/v2.0.5)                                             | Supported
 2.0.4                     | 2018-09-05   | 3.0           | [tag v2.0.4](https://github.com/swagger-api/swagger-core/tree/v2.0.4)                                             | Supported
 2.0.3                     | 2018-08-09   | 3.0           | [tag v2.0.3](https://github.com/swagger-api/swagger-core/tree/v2.0.3)                                             | Supported
-1.6.10 (**current stable**)| 2023-03-21   | 2.0           | [tag v1.6.10](https://github.com/swagger-api/swagger-core/tree/v1.6.10)                                           | Supported
+1.6.11 (**current stable**)| 2023-05-15   | 2.0           | [tag v1.6.11](https://github.com/swagger-api/swagger-core/tree/v1.6.11)                                           | Supported
+1.6.10                    | 2023-03-21   | 2.0           | [tag v1.6.10](https://github.com/swagger-api/swagger-core/tree/v1.6.10)                                           | Supported
 1.6.9                     | 2022-11-15   | 2.0           | [tag v1.6.9](https://github.com/swagger-api/swagger-core/tree/v1.6.9)                                             | Supported
 1.6.8                     | 2022-10-16   | 2.0           | [tag v1.6.8](https://github.com/swagger-api/swagger-core/tree/v1.6.8)                                             | Supported
 1.6.7                     | 2022-09-27   | 2.0           | [tag v1.6.7](https://github.com/swagger-api/swagger-core/tree/v1.6.7)                                             | Supported
@@ -119,7 +120,7 @@ You need the following installed and available in your $PATH:
 * Apache maven 3.0.4 or greater (http://maven.apache.org/)
 
 
-### To build from source (currently 1.6.11-SNAPSHOT)
+### To build from source (currently 1.6.12-SNAPSHOT)
 ```
 # first time building locally
 mvn -N
