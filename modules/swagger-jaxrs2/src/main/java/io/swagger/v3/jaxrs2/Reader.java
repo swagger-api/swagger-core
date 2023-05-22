@@ -639,7 +639,7 @@ public class Reader implements OpenApiReader {
                         continue;
                     }
                     setPathItemOperation(pathItemObject, httpMethod, operation);
-
+                    applyPathParamsPatterns(operation, regexMap);
                     paths.addPathItem(operationPath, pathItemObject);
                     if (openAPI.getPaths() != null) {
                         this.paths.putAll(openAPI.getPaths());
@@ -680,6 +680,19 @@ public class Reader implements OpenApiReader {
         return openAPI;
     }
 
+    protected void applyPathParamsPatterns(Operation operation, Map<String, String> patternsMap) {
+        if (operation.getParameters() == null) {
+            return;
+        }
+        operation.getParameters().stream()
+                .filter(p -> patternsMap.containsKey(p.getName()))
+                .filter(p -> "path".equals(p.getIn()))
+                .filter(p -> p.getSchema() != null)
+                .filter(p -> StringUtils.isBlank(p.getSchema().getPattern()))
+                .filter(p -> !Parameter.StyleEnum.MATRIX.equals(p.getStyle()))
+                .filter(p -> "string" == p.getSchema().getType() || (p.getSchema().getTypes() != null && p.getSchema().getTypes().contains("string")))
+                .forEach(p -> p.getSchema().setPattern(patternsMap.get(p.getName())));
+    }
     protected Content processContent(Content content, Schema schema, Consumes methodConsumes, Consumes classConsumes) {
         if (content == null) {
             content = new Content();
