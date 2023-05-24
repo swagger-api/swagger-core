@@ -2146,20 +2146,23 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         Set<String> propertiesToIgnore = new HashSet<>();
         JsonIgnoreProperties ignoreProperties = a.get(JsonIgnoreProperties.class);
         if (ignoreProperties != null) {
-            propertiesToIgnore.addAll(Arrays.asList(ignoreProperties.value()));
+        	if(!ignoreProperties.allowGetters()) {
+        		propertiesToIgnore.addAll(Arrays.asList(ignoreProperties.value()));
+        	}
         }
-        propertiesToIgnore.addAll(resolveIgnoredProperties(annotations));
         return propertiesToIgnore;
     }
-
+    
     protected Set<String> resolveIgnoredProperties(Annotation[] annotations) {
 
         Set<String> propertiesToIgnore = new HashSet<>();
         if (annotations != null) {
             for (Annotation annotation : annotations) {
                 if (annotation instanceof JsonIgnoreProperties) {
-                    propertiesToIgnore.addAll(Arrays.asList(((JsonIgnoreProperties) annotation).value()));
-                    break;
+                    if (!((JsonIgnoreProperties) annotation).allowGetters()) {
+                        propertiesToIgnore.addAll(Arrays.asList(((JsonIgnoreProperties) annotation).value()));
+                        break;
+                    }
                 }
             }
         }
