@@ -50,6 +50,7 @@ import io.swagger.v3.jaxrs2.resources.SimpleMethods;
 import io.swagger.v3.jaxrs2.resources.SimpleParameterResource;
 import io.swagger.v3.jaxrs2.resources.SimpleRequestBodyResource;
 import io.swagger.v3.jaxrs2.resources.SimpleResponsesResource;
+import io.swagger.v3.jaxrs2.resources.StatusResource;
 import io.swagger.v3.jaxrs2.resources.SubResourceHead;
 import io.swagger.v3.jaxrs2.resources.TagsResource;
 import io.swagger.v3.jaxrs2.resources.Test2607;
@@ -66,6 +67,7 @@ import io.swagger.v3.jaxrs2.resources.Ticket3015Resource;
 import io.swagger.v3.jaxrs2.resources.Ticket3587Resource;
 import io.swagger.v3.jaxrs2.resources.Ticket3731BisResource;
 import io.swagger.v3.jaxrs2.resources.Ticket3731Resource;
+import io.swagger.v3.jaxrs2.resources.Ticket4283Resource;
 import io.swagger.v3.jaxrs2.resources.Ticket4412Resource;
 import io.swagger.v3.jaxrs2.resources.UploadResource;
 import io.swagger.v3.jaxrs2.resources.UrlEncodedResourceWithEncodings;
@@ -3091,6 +3093,75 @@ public class ReaderTest {
                 "                type: array\n" +
                 "                items:\n" +
                 "                  type: string";
+        SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
+    }
+
+    @Test
+    public void test4283SubResource() {
+        Reader reader = new Reader(new OpenAPI());
+
+        OpenAPI openAPI = reader.read(Ticket4283Resource.class);
+        String yaml = "openapi: 3.0.1\n" +
+                "paths:\n" +
+                "  /item:\n" +
+                "    get:\n" +
+                "      operationId: get\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            application/xml:\n" +
+                "              schema:\n" +
+                "                $ref: '#/components/schemas/Item'\n" +
+                "  /item/content:\n" +
+                "    get:\n" +
+                "      operationId: get_1\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*': {}\n" +
+                "components:\n" +
+                "  schemas:\n" +
+                "    Item:\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        foo:\n" +
+                "          type: string";
+        SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
+
+        reader = new Reader(new OpenAPI());
+        openAPI = reader.read(StatusResource.class);
+        yaml = "openapi: 3.0.1\n" +
+                "paths:\n" +
+                "  /test/status:\n" +
+                "    get:\n" +
+                "      description: Get status\n" +
+                "      operationId: getStatus\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            application/json:\n" +
+                "              schema:\n" +
+                "                type: string\n" +
+                "  /test/more/otherStatus:\n" +
+                "    get:\n" +
+                "      description: Get the other status!\n" +
+                "      operationId: otherStatus\n" +
+                "      parameters:\n" +
+                "      - name: qp\n" +
+                "        in: query\n" +
+                "        schema:\n" +
+                "          type: integer\n" +
+                "          format: int32\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            application/json:\n" +
+                "              schema:\n" +
+                "                type: string";
         SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
     }
 }
