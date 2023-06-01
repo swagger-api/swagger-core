@@ -2150,6 +2150,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         		propertiesToIgnore.addAll(Arrays.asList(ignoreProperties.value()));
         	}
         }
+        propertiesToIgnore.addAll(resolveIgnoredProperties(annotations));
         return propertiesToIgnore;
     }
     
