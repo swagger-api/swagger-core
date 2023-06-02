@@ -2243,6 +2243,10 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         if (StringUtils.isNotBlank(format) && StringUtils.isBlank(schema.getFormat())) {
             schema.format(format);
         }
+        Boolean nullable = resolveNullable(a, annotations, schemaAnnotation);
+        if (nullable != null) {
+            schema.nullable(nullable);
+        }
         Object defaultValue = resolveDefaultValue(a, annotations, schemaAnnotation);
         if (defaultValue != null) {
             schema.setDefault(defaultValue);
@@ -2254,10 +2258,6 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         Boolean readOnly = resolveReadOnly(a, annotations, schemaAnnotation);
         if (readOnly != null) {
             schema.readOnly(readOnly);
-        }
-        Boolean nullable = resolveNullable(a, annotations, schemaAnnotation);
-        if (nullable != null) {
-            schema.nullable(nullable);
         }
         BigDecimal multipleOf = resolveMultipleOf(a, annotations, schemaAnnotation);
         if (multipleOf != null) {

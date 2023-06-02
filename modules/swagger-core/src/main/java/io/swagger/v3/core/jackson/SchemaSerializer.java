@@ -32,10 +32,15 @@ public class SchemaSerializer extends JsonSerializer<Schema> implements Resolvab
 
         if (StringUtils.isBlank(value.get$ref())) {
 
-            if (value.getExampleSetFlag() && value.getExample() == null) {
+            if (value.getExampleSetFlag() && value.getExample() == null || value.getDefaultSetFlag() && value.getDefault() == null) {
                 jgen.writeStartObject();
                 defaultSerializer.unwrappingSerializer(null).serialize(value, jgen, provider);
-                jgen.writeNullField("example");
+                if (value.getExampleSetFlag() && value.getExample() == null) {
+                    jgen.writeNullField("example");
+                }
+                if (value.getDefaultSetFlag() && value.getDefault() == null) {
+                    jgen.writeNullField("default");
+                }
                 jgen.writeEndObject();
             } else {
                 defaultSerializer.serialize(value, jgen, provider);

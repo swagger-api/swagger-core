@@ -436,6 +436,9 @@ public abstract class AnnotationsUtils {
         if (StringUtils.isNotBlank(schema.type())) {
             schemaObject.setType(schema.type());
         }
+        if (schema.nullable()) {
+            schemaObject.setNullable(schema.nullable());
+        }
         if (StringUtils.isNotBlank(schema.defaultValue())) {
             schemaObject.setDefault(schema.defaultValue());
         }
@@ -486,9 +489,6 @@ public abstract class AnnotationsUtils {
         if (NumberUtils.isCreatable(schema.minimum())) {
             String filteredMinimum = schema.minimum().replace(Constants.COMMA, StringUtils.EMPTY);
             schemaObject.setMinimum(new BigDecimal(filteredMinimum));
-        }
-        if (schema.nullable()) {
-            schemaObject.setNullable(schema.nullable());
         }
         if (StringUtils.isNotBlank(schema.title())) {
             schemaObject.setTitle(schema.title());

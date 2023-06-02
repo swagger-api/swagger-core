@@ -69,6 +69,7 @@ public class Schema<T> {
     private Discriminator discriminator = null;
 
     private boolean exampleSetFlag;
+    private boolean defaultSetFlag;
 
     /**
      * @since 2.2.0 (OpenAPI 3.1.0)
@@ -778,7 +779,15 @@ public class Schema<T> {
     }
 
     public void setDefault(Object _default) {
-        this._default = cast(_default);
+        if (SpecVersion.V30.equals(specVersion) && Boolean.TRUE.equals(nullable) && (_default == null || "null".equals(_default.toString()))) {
+            this._default = null;
+            defaultSetFlag = true;
+        } else {
+            this._default = cast(_default);
+            if (!(_default != null && this._default == null)) {
+                defaultSetFlag = true;
+            }
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -1341,9 +1350,14 @@ public class Schema<T> {
     }
 
     public void setExample(Object example) {
-        this.example = cast(example);
-        if (!(example != null && this.example == null)) {
+        if (SpecVersion.V30.equals(specVersion) && Boolean.TRUE.equals(nullable) && (example == null || "null".equals(example.toString()))) {
+            this.example = null;
             exampleSetFlag = true;
+        } else {
+            this.example = cast(example);
+            if (!(example != null && this.example == null)) {
+                exampleSetFlag = true;
+            }
         }
     }
 
@@ -1425,7 +1439,20 @@ public class Schema<T> {
     }
 
     /**
+     * returns true if default setter has been invoked
+     * Used to flag explicit setting to null of default (vs missing field) while deserializing from json/yaml string
      *
+     * @return boolean defaultSetFlag
+     **/
+    public boolean getDefaultSetFlag() {
+        return defaultSetFlag;
+    }
+
+    public void setDefaultSetFlag(boolean defaultSetFlag) {
+        this.defaultSetFlag = defaultSetFlag;
+    }
+
+    /**
      * @since 2.2.0 (OpenAPI 3.1.0)
      */
     @OpenAPI31
@@ -2100,7 +2127,7 @@ public class Schema<T> {
     }
 
     public Schema _default(T _default) {
-        this._default = _default;
+        setDefault(_default);
         return this;
     }
 
