@@ -39,7 +39,6 @@ import io.swagger.v3.core.util.ObjectMapperFactory;
 import io.swagger.v3.core.util.ReferenceTypeUtils;
 import io.swagger.v3.core.util.PrimitiveType;
 import io.swagger.v3.core.util.ReflectionUtils;
-import io.swagger.v3.core.util.Yaml31;
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.StringToClassMapItem;
 import io.swagger.v3.oas.annotations.media.DependentRequired;

@@ -336,7 +336,7 @@ public class ResolveTask extends DefaultTask {
     }
 
     /**
-     * @since 2.2.4
+     * @since 2.2.12
      */
     @Input
     @Optional

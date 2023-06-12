@@ -2158,6 +2158,14 @@ public abstract class AnnotationsUtils {
             }
 
             @Override
+            public Class<?>[] prefixItems() {
+                if (master.prefixItems().length > 0 || patch.prefixItems().length == 0) {
+                    return master.prefixItems();
+                }
+                return patch.prefixItems();
+            }
+
+            @Override
             public String[] types() {
                 if (master.types().length > 0 || patch.types().length == 0) {
                     return master.types();
@@ -2179,6 +2187,14 @@ public abstract class AnnotationsUtils {
                     return master.exclusiveMaximumValue();
                 }
                 return patch.exclusiveMinimumValue();
+            }
+
+            @Override
+            public Class<?> contains() {
+                if (!master.contains().equals(Void.class) || patch.contains().equals(Void.class)) {
+                    return master.contains();
+                }
+                return patch.contains();
             }
 
             @Override
@@ -2238,6 +2254,38 @@ public abstract class AnnotationsUtils {
             }
 
             @Override
+            public int maxContains() {
+                if (master.maxContains() != 0 || patch.maxContains() == 0) {
+                    return master.maxContains();
+                }
+                return patch.maxContains();
+            }
+
+            @Override
+            public int minContains() {
+                if (master.minContains() != 0 || patch.minContains() == 0) {
+                    return master.minContains();
+                }
+                return patch.minContains();
+            }
+
+            @Override
+            public Class<?> additionalItems() {
+                if (!master.additionalItems().equals(Void.class) || patch.additionalItems().equals(Void.class)) {
+                    return master.additionalItems();
+                }
+                return patch.additionalItems();
+            }
+
+            @Override
+            public Class<?> unevaluatedItems() {
+                if (!master.unevaluatedItems().equals(Void.class) || patch.unevaluatedItems().equals(Void.class)) {
+                    return master.unevaluatedItems();
+                }
+                return patch.unevaluatedItems();
+            }
+
+            @Override
             public Class<?> _if() {
                 if (!master._if().equals(Void.class) || patch._if().equals(Void.class)) {
                     return master._if();
@@ -2275,6 +2323,14 @@ public abstract class AnnotationsUtils {
                     return master.examples();
                 }
                 return patch.examples();
+            }
+
+            @Override
+            public Class[] exampleClasses() {
+                if (master.exampleClasses().length > 0 || patch.exampleClasses().length == 0) {
+                    return master.exampleClasses();
+                }
+                return patch.exampleClasses();
             }
 
             @Override

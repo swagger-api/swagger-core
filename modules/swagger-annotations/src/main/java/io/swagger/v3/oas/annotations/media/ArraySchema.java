@@ -37,7 +37,7 @@ public @interface ArraySchema {
     /**
      * The schemas of the items in the array
      *
-     * @since 2.2.4
+     * @since 2.2.12
      *
      * @return items
      */
@@ -92,7 +92,7 @@ public @interface ArraySchema {
     /**
      * Specifies contains constrictions expressions.
      *
-     * @since 2.2.4 / OpenAPI 3.1
+     * @since 2.2.12 / OpenAPI 3.1
      * @return contains expression.
      */
     @OpenAPI31
@@ -101,7 +101,7 @@ public @interface ArraySchema {
     /**
      * Provides max contains related to this schema
      *
-     * @since 2.2.4 / OpenAPI 3.1
+     * @since 2.2.12 / OpenAPI 3.1
      * @return max contains
      */
     @OpenAPI31
@@ -110,7 +110,7 @@ public @interface ArraySchema {
     /**
      * Provides min contains related to this schema
      *
-     * @since 2.2.4 / OpenAPI 3.1
+     * @since 2.2.12 / OpenAPI 3.1
      * @return min contains
      */
     @OpenAPI31
@@ -119,7 +119,7 @@ public @interface ArraySchema {
     /**
      * Provides unevaluted items to this schema
      *
-     * @since 2.2.4 / OpenAPI 3.1
+     * @since 2.2.12 / OpenAPI 3.1
      * @return unevaluated items
      */
     @OpenAPI31
@@ -128,7 +128,7 @@ public @interface ArraySchema {
     /**
      * Provides prefix items to this schema
      *
-     * @since 2.2.4 / OpenAPI 3.1
+     * @since 2.2.12 / OpenAPI 3.1
      * @return prefixItems
      */
     @OpenAPI31

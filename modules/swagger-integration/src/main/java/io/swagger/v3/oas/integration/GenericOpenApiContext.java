@@ -305,14 +305,14 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
     }
 
     /**
-     * @since 2.2.4
+     * @since 2.2.12
      */
     public Boolean isConvertToOpenAPI31() {
         return convertToOpenAPI31;
     }
 
     /**
-     * @since 2.2.4
+     * @since 2.2.12
      */
     public void setConvertToOpenAPI31(Boolean convertToOpenAPI31) {
         this.convertToOpenAPI31 = convertToOpenAPI31;
@@ -322,7 +322,7 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
     }
 
     /**
-     * @since 2.2.4
+     * @since 2.2.12
      */
     public T convertToOpenAPI31(Boolean convertToOpenAPI31) {
         this.setConvertToOpenAPI31(convertToOpenAPI31);

@@ -13,6 +13,7 @@ import io.swagger.v3.core.jackson.ModelResolver;
 import io.swagger.v3.core.model.ApiDescription;
 import io.swagger.v3.core.util.PrimitiveType;
 import io.swagger.v3.jaxrs2.matchers.SerializationMatchers;
+import io.swagger.v3.jaxrs2.petstore31.PetResource;
 import io.swagger.v3.jaxrs2.resources.ResponseReturnTypeResource;
 import io.swagger.v3.jaxrs2.resources.SchemaPropertiesResource;
 import io.swagger.v3.jaxrs2.resources.SingleExampleResource;
@@ -84,6 +85,7 @@ import io.swagger.v3.jaxrs2.resources.generics.ticket3694.Ticket3694ResourceSimp
 import io.swagger.v3.jaxrs2.resources.rs.ProcessTokenRestService;
 import io.swagger.v3.jaxrs2.resources.ticket3624.Service;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.integration.SwaggerConfiguration;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.ExternalDocumentation;
 import io.swagger.v3.oas.models.OpenAPI;
@@ -3092,5 +3094,268 @@ public class ReaderTest {
                 "                items:\n" +
                 "                  type: string";
         SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
+    }
+
+    @Test
+    public void testOas31Petstore() {
+        SwaggerConfiguration config = new SwaggerConfiguration().openAPI31(true).openAPI(new OpenAPI());
+        Reader reader = new Reader(config);
+
+        OpenAPI openAPI = reader.read(PetResource.class);
+        String yaml = "openapi: 3.1.0\n" +
+                "paths:\n" +
+                "  /pet:\n" +
+                "    put:\n" +
+                "      summary: Update an existing pet\n" +
+                "      operationId: updatePet\n" +
+                "      requestBody:\n" +
+                "        description: Pet object that needs to be added to the store\n" +
+                "        content:\n" +
+                "          application/json:\n" +
+                "            schema:\n" +
+                "              $ref: '#/components/schemas/Pet'\n" +
+                "        required: true\n" +
+                "      responses:\n" +
+                "        \"400\":\n" +
+                "          description: Invalid ID supplied\n" +
+                "        \"404\":\n" +
+                "          description: Pet not found\n" +
+                "        \"405\":\n" +
+                "          description: Validation exception\n" +
+                "    post:\n" +
+                "      summary: Add a new pet to the store\n" +
+                "      operationId: addPet\n" +
+                "      requestBody:\n" +
+                "        description: Pet object that needs to be added to the store\n" +
+                "        content:\n" +
+                "          application/json:\n" +
+                "            schema:\n" +
+                "              $ref: '#/components/schemas/Pet'\n" +
+                "          application/xml:\n" +
+                "            schema:\n" +
+                "              $ref: '#/components/schemas/Pet'\n" +
+                "        required: true\n" +
+                "      responses:\n" +
+                "        \"405\":\n" +
+                "          description: Invalid input\n" +
+                "  /pet/bodyid:\n" +
+                "    post:\n" +
+                "      summary: Add a new pet to the store passing an integer with generic parameter\n" +
+                "        annotation\n" +
+                "      operationId: addPetByInteger\n" +
+                "      requestBody:\n" +
+                "        description: Pet object that needs to be added to the store\n" +
+                "        content:\n" +
+                "          application/json:\n" +
+                "            schema:\n" +
+                "              type: integer\n" +
+                "              format: int32\n" +
+                "          application/xml:\n" +
+                "            schema:\n" +
+                "              type: integer\n" +
+                "              format: int32\n" +
+                "        required: true\n" +
+                "      responses:\n" +
+                "        \"405\":\n" +
+                "          description: Invalid input\n" +
+                "  /pet/bodyidnoannotation:\n" +
+                "    post:\n" +
+                "      summary: Add a new pet to the store passing an integer without parameter annotation\n" +
+                "      operationId: addPetByIntegerNoAnnotation\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          application/json:\n" +
+                "            schema:\n" +
+                "              type: integer\n" +
+                "              format: int32\n" +
+                "          application/xml:\n" +
+                "            schema:\n" +
+                "              type: integer\n" +
+                "              format: int32\n" +
+                "      responses:\n" +
+                "        \"405\":\n" +
+                "          description: Invalid input\n" +
+                "  /pet/bodynoannotation:\n" +
+                "    post:\n" +
+                "      summary: Add a new pet to the store no annotation\n" +
+                "      operationId: addPetNoAnnotation\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          application/json:\n" +
+                "            schema:\n" +
+                "              $ref: '#/components/schemas/Pet'\n" +
+                "          application/xml:\n" +
+                "            schema:\n" +
+                "              $ref: '#/components/schemas/Pet'\n" +
+                "      responses:\n" +
+                "        \"405\":\n" +
+                "          description: Invalid input\n" +
+                "  /pet/findByStatus:\n" +
+                "    get:\n" +
+                "      summary: Finds Pets by status\n" +
+                "      description: Multiple status values can be provided with comma separated strings\n" +
+                "      operationId: findPetsByStatus\n" +
+                "      parameters:\n" +
+                "      - name: status\n" +
+                "        in: query\n" +
+                "        description: Status values that need to be considered for filter\n" +
+                "        required: true\n" +
+                "        schema:\n" +
+                "          type: string\n" +
+                "      - name: skip\n" +
+                "        in: query\n" +
+                "        schema:\n" +
+                "          type: integer\n" +
+                "          format: int32\n" +
+                "      - name: limit\n" +
+                "        in: query\n" +
+                "        schema:\n" +
+                "          type: integer\n" +
+                "          format: int32\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          content:\n" +
+                "            application/json:\n" +
+                "              schema:\n" +
+                "                $ref: '#/components/schemas/Pet'\n" +
+                "        \"400\":\n" +
+                "          description: Invalid status value\n" +
+                "  /pet/findByTags:\n" +
+                "    get:\n" +
+                "      summary: Finds Pets by tags\n" +
+                "      description: \"Multiple tags can be provided with comma separated strings. Use\\\n" +
+                "        \\ tag1, tag2, tag3 for testing.\"\n" +
+                "      operationId: findPetsByTags\n" +
+                "      parameters:\n" +
+                "      - name: tags\n" +
+                "        in: query\n" +
+                "        description: Tags to filter by\n" +
+                "        required: true\n" +
+                "        schema:\n" +
+                "          type: string\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: Pets matching criteria\n" +
+                "          content:\n" +
+                "            application/json:\n" +
+                "              schema:\n" +
+                "                $ref: '#/components/schemas/Pet'\n" +
+                "        \"400\":\n" +
+                "          description: Invalid tag value\n" +
+                "      deprecated: true\n" +
+                "  /pet/{petId}:\n" +
+                "    get:\n" +
+                "      summary: Find pet by ID\n" +
+                "      description: Returns a pet when 0 < ID <= 10.  ID > 10 or nonintegers will simulate\n" +
+                "        API error conditions\n" +
+                "      operationId: getPetById\n" +
+                "      parameters:\n" +
+                "      - name: petId\n" +
+                "        in: path\n" +
+                "        description: ID of pet that needs to be fetched\n" +
+                "        required: true\n" +
+                "        schema:\n" +
+                "          type: integer\n" +
+                "          format: int64\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: The pet\n" +
+                "          content:\n" +
+                "            application/json:\n" +
+                "              schema:\n" +
+                "                $ref: '#/components/schemas/Pet'\n" +
+                "            application/xml:\n" +
+                "              schema:\n" +
+                "                $ref: '#/components/schemas/Pet'\n" +
+                "        \"400\":\n" +
+                "          description: Invalid ID supplied\n" +
+                "        \"404\":\n" +
+                "          description: Pet not found\n" +
+                "components:\n" +
+                "  schemas:\n" +
+                "    Category:\n" +
+                "      properties:\n" +
+                "        id:\n" +
+                "          type: integer\n" +
+                "          format: int64\n" +
+                "        name:\n" +
+                "          type: string\n" +
+                "      xml:\n" +
+                "        name: Category\n" +
+                "    IfSchema:\n" +
+                "      deprecated: true\n" +
+                "      description: if schema\n" +
+                "      properties:\n" +
+                "        foo:\n" +
+                "          type: string\n" +
+                "          const: foo\n" +
+                "        bar:\n" +
+                "          type: integer\n" +
+                "          format: int32\n" +
+                "          exclusiveMaximum: 2\n" +
+                "        foobar:\n" +
+                "          type:\n" +
+                "          - integer\n" +
+                "          - string\n" +
+                "          - object\n" +
+                "          format: int32\n" +
+                "    Pet:\n" +
+                "      properties:\n" +
+                "        id:\n" +
+                "          type: integer\n" +
+                "          format: int64\n" +
+                "        category:\n" +
+                "          $ref: '#/components/schemas/Category'\n" +
+                "        name:\n" +
+                "          type: string\n" +
+                "        photoUrls:\n" +
+                "          type: array\n" +
+                "          items:\n" +
+                "            type: string\n" +
+                "            xml:\n" +
+                "              name: photoUrl\n" +
+                "          xml:\n" +
+                "            wrapped: true\n" +
+                "        tags:\n" +
+                "          type: array\n" +
+                "          items:\n" +
+                "            $ref: '#/components/schemas/Tag'\n" +
+                "          xml:\n" +
+                "            wrapped: true\n" +
+                "        status:\n" +
+                "          type: string\n" +
+                "          if:\n" +
+                "            deprecated: true\n" +
+                "            description: if schema\n" +
+                "            properties:\n" +
+                "              foo:\n" +
+                "                type: string\n" +
+                "                const: foo\n" +
+                "              bar:\n" +
+                "                type: integer\n" +
+                "                format: int32\n" +
+                "                exclusiveMaximum: 2\n" +
+                "              foobar:\n" +
+                "                type:\n" +
+                "                - integer\n" +
+                "                - string\n" +
+                "                - object\n" +
+                "                format: int32\n" +
+                "          $id: idtest\n" +
+                "          description: pet status in the store\n" +
+                "          enum:\n" +
+                "          - \"available,pending,sold\"\n" +
+                "      xml:\n" +
+                "        name: Pet\n" +
+                "    Tag:\n" +
+                "      properties:\n" +
+                "        id:\n" +
+                "          type: integer\n" +
+                "          format: int64\n" +
+                "        name:\n" +
+                "          type: string\n" +
+                "      xml:\n" +
+                "        name: Tag\n";
+        SerializationMatchers.assertEqualsToYaml31(openAPI, yaml);
     }
 }

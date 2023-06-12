@@ -1,6 +1,5 @@
 package io.swagger.v3.jaxrs2;
 
-import io.swagger.v3.core.util.Yaml31;
 import io.swagger.v3.jaxrs2.annotations.AbstractAnnotationTest;
 import io.swagger.v3.jaxrs2.matchers.SerializationMatchers;
 import io.swagger.v3.jaxrs2.petstore.EmptyPetResource;

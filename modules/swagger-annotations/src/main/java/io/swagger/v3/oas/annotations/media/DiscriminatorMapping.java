@@ -41,7 +41,7 @@ public @interface DiscriminatorMapping {
     /**
      * The list of optional extensions
      *
-     * @since 2.2.4 / OpenAPI 3.1
+     * @since 2.2.12 / OpenAPI 3.1
      * @return an optional array of extensions
      */
     @OpenAPI31
