@@ -213,7 +213,7 @@ public class SwaggerLoader {
     }
 
     /**
-     *  @since 2.2.4
+     *  @since 2.2.12
      */
     public void setConvertToOpenAPI31(Boolean convertToOpenAPI31) {
         this.convertToOpenAPI31 = convertToOpenAPI31;

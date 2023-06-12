@@ -422,7 +422,7 @@ public class SwaggerMojo extends AbstractMojo {
     private Boolean openapi31;
 
     /**
-     * @since 2.2.4
+     * @since 2.2.12
      */
     @Parameter(property = "resolve.convertToOpenAPI31")
     private Boolean convertToOpenAPI31;

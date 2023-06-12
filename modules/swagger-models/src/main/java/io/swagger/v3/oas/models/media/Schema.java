@@ -1454,7 +1454,7 @@ public class Schema<T> {
 
     /**
      *
-     * @since 2.2.4 (OpenAPI 3.1.0)
+     * @since 2.2.12 (OpenAPI 3.1.0)
      */
     @OpenAPI31
     public Schema addPrefixItem(Schema prefixItem) {

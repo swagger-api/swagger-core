@@ -88,7 +88,7 @@ public @interface Content {
     /**
      * Subschemas to be applied for a given condition.
      *
-     * @since 2.2.4 / OpenAPI 3.1
+     * @since 2.2.12 / OpenAPI 3.1
      * @return list of dependent schemas.
      */
     @OpenAPI31
@@ -97,7 +97,7 @@ public @interface Content {
     /**
      * Provides the content schema related to this schema
      *
-     * @since 2.2.4 / OpenAPI 3.1
+     * @since 2.2.12 / OpenAPI 3.1
      * @return content schema
      */
     @OpenAPI31
@@ -106,7 +106,7 @@ public @interface Content {
     /**
      * Provides property names related to this schema
      *
-     * @since 2.2.4 / OpenAPI 3.1
+     * @since 2.2.12 / OpenAPI 3.1
      * @return proeprty names
      */
     @OpenAPI31
@@ -115,7 +115,7 @@ public @interface Content {
     /**
      * Provides the if sub schema related to this schema
      *
-     * @since 2.2.4 / OpenAPI 3.1
+     * @since 2.2.12 / OpenAPI 3.1
      * @return if schema
      */
     @OpenAPI31
@@ -124,7 +124,7 @@ public @interface Content {
     /**
      * Provides the then sub schema related to this schema
      *
-     * @since 2.2.4 / OpenAPI 3.1
+     * @since 2.2.12 / OpenAPI 3.1
      * @return then schema
      */
     @OpenAPI31
@@ -133,7 +133,7 @@ public @interface Content {
     /**
      * Provides the else sub schema related to this schema
      *
-     * @since 2.2.4 / OpenAPI 3.1
+     * @since 2.2.12 / OpenAPI 3.1
      * @return else schema
      */
     @OpenAPI31
@@ -142,7 +142,7 @@ public @interface Content {
     /**
      * Set schemas to validate according a given condition.
      *
-     * @since 2.2.4 / OpenAPI 3.1
+     * @since 2.2.12 / OpenAPI 3.1
      * @return not schema to be validated
      **/
     Schema not() default @Schema();
@@ -150,7 +150,7 @@ public @interface Content {
     /**
      * Provides the oneOf sub schemas related to this schema.
      *
-     * @since 2.2.4 / OpenAPI 3.1
+     * @since 2.2.12 / OpenAPI 3.1
      * @return oneOf sub schemas
      **/
     Schema[] oneOf() default {};
@@ -158,7 +158,7 @@ public @interface Content {
     /**
      * Provides the anyOf sub schemas related to this schema.
      *
-     * @since 2.2.4 / OpenAPI 3.1
+     * @since 2.2.12 / OpenAPI 3.1
      * @return anyOf sub schemas
      **/
     Schema[] anyOf() default {};
@@ -166,7 +166,7 @@ public @interface Content {
     /**
      * Provides the allOf sub schemas related to this schema..
      *
-     * @since 2.2.4 / OpenAPI 3.1
+     * @since 2.2.12 / OpenAPI 3.1
      * @return allOf sub schemas
      **/
     Schema[] allOf() default {};
