@@ -2,6 +2,7 @@ package io.swagger.v3.jaxrs2.integration.servlet;
 
 import io.swagger.v3.jaxrs2.integration.JaxrsOpenApiContextBuilder;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.Webhooks;
 import io.swagger.v3.oas.integration.IgnoredPackages;
 import io.swagger.v3.oas.integration.OpenApiConfigurationException;
 import io.swagger.v3.oas.integration.SwaggerConfiguration;
@@ -21,7 +22,7 @@ import java.util.stream.Collectors;
  *
  * @since 2.1.2
  */
-@HandlesTypes({Path.class, OpenAPIDefinition.class, ApplicationPath.class})
+@HandlesTypes({Path.class, OpenAPIDefinition.class, ApplicationPath.class, Webhooks.class})
 public class SwaggerServletInitializer implements ServletContainerInitializer {
 
     static final Set<String> ignored = new HashSet();

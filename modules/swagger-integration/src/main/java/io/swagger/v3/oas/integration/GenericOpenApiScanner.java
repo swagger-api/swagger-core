@@ -3,6 +3,7 @@ package io.swagger.v3.oas.integration;
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ScanResult;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.Webhooks;
 import io.swagger.v3.oas.integration.api.OpenAPIConfiguration;
 import io.swagger.v3.oas.integration.api.OpenApiScanner;
 import org.apache.commons.lang3.StringUtils;
@@ -70,6 +71,7 @@ public class GenericOpenApiScanner implements OpenApiScanner {
         final Set<Class<?>> classes;
         try (ScanResult scanResult = graph.scan()) {
             classes = new HashSet<>(scanResult.getClassesWithAnnotation(OpenAPIDefinition.class.getName()).loadClasses());
+            classes.addAll(new HashSet<>(scanResult.getClassesWithAnnotation(Webhooks.class.getName()).loadClasses()));
         }
 
 
