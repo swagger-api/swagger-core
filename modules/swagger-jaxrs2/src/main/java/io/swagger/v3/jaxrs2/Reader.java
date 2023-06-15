@@ -101,6 +101,7 @@ public class Reader implements OpenApiReader {
         paths = new Paths();
         openApiTags = new LinkedHashSet<>();
         components = new Components();
+        setConfiguration(new SwaggerConfiguration().openAPI(openAPI));
 
     }
 
@@ -1120,7 +1121,7 @@ public class Reader implements OpenApiReader {
         final Class<?> subResource = getSubResourceWithJaxRsSubresourceLocatorSpecs(method);
         Schema returnTypeSchema = null;
         if (!shouldIgnoreClass(returnType.getTypeName()) && !method.getGenericReturnType().equals(subResource)) {
-            ResolvedSchema resolvedSchema = ModelConverters.getInstance().resolveAsResolvedSchema(new AnnotatedType(returnType).resolveAsRef(true).jsonViewAnnotation(jsonViewAnnotation));
+            ResolvedSchema resolvedSchema = ModelConverters.getInstance(config.isOpenAPI31()).resolveAsResolvedSchema(new AnnotatedType(returnType).resolveAsRef(true).jsonViewAnnotation(jsonViewAnnotation));
             if (resolvedSchema.schema != null) {
                 returnTypeSchema = resolvedSchema.schema;
                 Content content = new Content();
@@ -1231,7 +1232,7 @@ public class Reader implements OpenApiReader {
         }
         ignore = rawClassName.startsWith("javax.ws.rs.");
         ignore = ignore || rawClassName.equalsIgnoreCase("void");
-        ignore = ignore || ModelConverters.getInstance().isRegisteredAsSkippedClass(rawClassName);
+        ignore = ignore || ModelConverters.getInstance(config.isOpenAPI31()).isRegisteredAsSkippedClass(rawClassName);
         return ignore;
     }
 

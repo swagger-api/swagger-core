@@ -524,7 +524,7 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
             if (objectMapperProcessor != null) {
                 ObjectMapper mapper = IntegrationObjectMapperFactory.createJson();
                 objectMapperProcessor.processJsonObjectMapper(mapper);
-                ModelConverters.getInstance().addConverter(new ModelResolver(mapper));
+                ModelConverters.getInstance(Boolean.TRUE.equals(openApiConfiguration.isOpenAPI31())).addConverter(new ModelResolver(mapper));
 
                 objectMapperProcessor.processOutputJsonObjectMapper(outputJsonMapper);
                 objectMapperProcessor.processOutputYamlObjectMapper(outputYamlMapper);
@@ -537,7 +537,7 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
         try {
             if (modelConverters != null && !modelConverters.isEmpty()) {
                 for (ModelConverter converter: modelConverters) {
-                    ModelConverters.getInstance().addConverter(converter);
+                    ModelConverters.getInstance(Boolean.TRUE.equals(openApiConfiguration.isOpenAPI31())).addConverter(converter);
                 }
             }
         } catch (Exception e) {

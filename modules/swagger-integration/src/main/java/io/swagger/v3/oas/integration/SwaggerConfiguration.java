@@ -34,7 +34,7 @@ public class SwaggerConfiguration implements OpenAPIConfiguration {
 
     private Boolean alwaysResolveAppPath;
 
-    private Boolean openAPI31;
+    private Boolean openAPI31 = false;
 
     private Boolean convertToOpenAPI31;
 

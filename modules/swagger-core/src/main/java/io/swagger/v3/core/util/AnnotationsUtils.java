@@ -795,12 +795,7 @@ public abstract class AnnotationsUtils {
             schemaObject = primitiveType.createProperty();
         } else {
             schemaObject = new Schema();
-            ResolvedSchema resolvedSchema;
-            if (openapi31) {
-                resolvedSchema = new ModelConverters(true).readAllAsResolvedSchema(new AnnotatedType().type(schemaImplementation).jsonViewAnnotation(jsonViewAnnotation));
-            } else {
-                resolvedSchema = ModelConverters.getInstance().readAllAsResolvedSchema(new AnnotatedType().type(schemaImplementation).jsonViewAnnotation(jsonViewAnnotation));
-            }
+            ResolvedSchema resolvedSchema = ModelConverters.getInstance(openapi31).readAllAsResolvedSchema(new AnnotatedType().type(schemaImplementation).jsonViewAnnotation(jsonViewAnnotation));
             Map<String, Schema> schemaMap;
             if (resolvedSchema != null) {
                 schemaMap = resolvedSchema.referencedSchemas;
