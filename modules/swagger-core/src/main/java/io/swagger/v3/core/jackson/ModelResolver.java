@@ -55,6 +55,7 @@ import io.swagger.v3.oas.models.media.ArraySchema;
 import io.swagger.v3.oas.models.media.ComposedSchema;
 import io.swagger.v3.oas.models.media.Discriminator;
 import io.swagger.v3.oas.models.media.IntegerSchema;
+import io.swagger.v3.oas.models.media.JsonSchema;
 import io.swagger.v3.oas.models.media.MapSchema;
 import io.swagger.v3.oas.models.media.NumberSchema;
 import io.swagger.v3.oas.models.media.ObjectSchema;
@@ -205,11 +206,15 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
         name = decorateModelName(annotatedType, name);
 
-        // if we have a ref we don't consider anything else
+        // if we have a ref, for OAS 3.0 we don't consider anything else, while for OAS 3.1 we store the ref and add it later
+        String schemaRefFromAnnotation = null;
         if (resolvedSchemaAnnotation != null &&
                 StringUtils.isNotEmpty(resolvedSchemaAnnotation.ref())) {
             if (resolvedArrayAnnotation == null) {
-                return new Schema().$ref(resolvedSchemaAnnotation.ref()).name(name);
+                schemaRefFromAnnotation = resolvedSchemaAnnotation.ref();
+                if (!openapi31) {
+                    return new JsonSchema().$ref(resolvedSchemaAnnotation.ref()).name(name);
+                }
             } else {
                 ArraySchema schema = new ArraySchema();
                 resolveArraySchema(annotatedType, schema, resolvedArrayAnnotation);
@@ -336,7 +341,11 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         }
 
         if ("Object".equals(name)) {
-            return new Schema();
+            Schema schema = new Schema();
+            if (schemaRefFromAnnotation != null) {
+                schema.raw$ref(schemaRefFromAnnotation);
+            }
+            return schema;
         }
 
         List<Class<?>> composedSchemaReferencedClasses = getComposedSchemaReferencedClasses(type.getRawClass(), annotatedType.getCtxAnnotations(), resolvedSchemaAnnotation);
@@ -362,6 +371,9 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 model = new Schema().$ref(Components.COMPONENTS_SCHEMAS_REF + name);
             }
             if (!isComposedSchema) {
+                if (schemaRefFromAnnotation != null && model != null) {
+                    model.raw$ref(schemaRefFromAnnotation);
+                }
                 return model;
             }
         }
@@ -712,7 +724,13 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                                 property = new Schema().$ref(constructRef(pName));
                             }
                         } else if (property.get$ref() != null) {
-                            property = new Schema().$ref(StringUtils.isNotEmpty(property.get$ref()) ? property.get$ref() : property.getName());
+                            if (!openapi31) {
+                                property = new Schema().$ref(StringUtils.isNotEmpty(property.get$ref()) ? property.get$ref() : property.getName());
+                            } else {
+                                if (StringUtils.isEmpty(property.get$ref())) {
+                                    property.$ref(property.getName());
+                                }
+                            }
                         }
                     }
                     property.setName(propName);

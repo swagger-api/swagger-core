@@ -12,8 +12,10 @@ import io.swagger.v3.core.filter.SpecFilter;
 import io.swagger.v3.core.jackson.ModelResolver;
 import io.swagger.v3.core.model.ApiDescription;
 import io.swagger.v3.core.util.PrimitiveType;
+import io.swagger.v3.core.util.Yaml;
 import io.swagger.v3.jaxrs2.matchers.SerializationMatchers;
 import io.swagger.v3.jaxrs2.petstore31.PetResource;
+import io.swagger.v3.jaxrs2.petstore31.TagResource;
 import io.swagger.v3.jaxrs2.resources.ResponseReturnTypeResource;
 import io.swagger.v3.jaxrs2.resources.SchemaPropertiesResource;
 import io.swagger.v3.jaxrs2.resources.SingleExampleResource;
@@ -3273,6 +3275,22 @@ public class ReaderTest {
                 "          description: Pet not found\n" +
                 "components:\n" +
                 "  schemas:\n" +
+                "    Bar:\n" +
+                "      deprecated: true\n" +
+                "      description: Bar\n" +
+                "      properties:\n" +
+                "        foo:\n" +
+                "          type: string\n" +
+                "          const: bar\n" +
+                "        bar:\n" +
+                "          type: integer\n" +
+                "          format: int32\n" +
+                "          exclusiveMaximum: 4\n" +
+                "        foobar:\n" +
+                "          type:\n" +
+                "          - integer\n" +
+                "          - string\n" +
+                "          format: int32\n" +
                 "    Category:\n" +
                 "      properties:\n" +
                 "        id:\n" +
@@ -3282,6 +3300,23 @@ public class ReaderTest {
                 "          type: string\n" +
                 "      xml:\n" +
                 "        name: Category\n" +
+                "    Foo:\n" +
+                "      deprecated: true\n" +
+                "      description: Foo\n" +
+                "      properties:\n" +
+                "        foo:\n" +
+                "          type: string\n" +
+                "          const: foo\n" +
+                "        bar:\n" +
+                "          type: integer\n" +
+                "          format: int32\n" +
+                "          exclusiveMaximum: 2\n" +
+                "        foobar:\n" +
+                "          type:\n" +
+                "          - integer\n" +
+                "          - string\n" +
+                "          - object\n" +
+                "          format: int32\n" +
                 "    IfSchema:\n" +
                 "      deprecated: true\n" +
                 "      description: if schema\n" +
@@ -3354,8 +3389,109 @@ public class ReaderTest {
                 "          format: int64\n" +
                 "        name:\n" +
                 "          type: string\n" +
+                "        annotated:\n" +
+                "          $ref: '#/components/schemas/Category'\n" +
+                "          description: child description\n" +
+                "          properties:\n" +
+                "            bar:\n" +
+                "              deprecated: true\n" +
+                "              description: Bar\n" +
+                "              properties:\n" +
+                "                foo:\n" +
+                "                  type: string\n" +
+                "                  const: bar\n" +
+                "                bar:\n" +
+                "                  type: integer\n" +
+                "                  format: int32\n" +
+                "                  exclusiveMaximum: 4\n" +
+                "                foobar:\n" +
+                "                  type:\n" +
+                "                  - integer\n" +
+                "                  - string\n" +
+                "                  format: int32\n" +
+                "            foo:\n" +
+                "              deprecated: true\n" +
+                "              description: Foo\n" +
+                "              properties:\n" +
+                "                foo:\n" +
+                "                  type: string\n" +
+                "                  const: foo\n" +
+                "                bar:\n" +
+                "                  type: integer\n" +
+                "                  format: int32\n" +
+                "                  exclusiveMaximum: 2\n" +
+                "                foobar:\n" +
+                "                  type:\n" +
+                "                  - integer\n" +
+                "                  - string\n" +
+                "                  - object\n" +
+                "                  format: int32\n" +
                 "      xml:\n" +
                 "        name: Tag\n";
+        SerializationMatchers.assertEqualsToYaml31(openAPI, yaml);
+    }
+
+    @Test
+    public void test31RefSiblings() {
+        SwaggerConfiguration config = new SwaggerConfiguration().openAPI31(true).openAPI(new OpenAPI());
+        Reader reader = new Reader(config);
+
+        OpenAPI openAPI = reader.read(TagResource.class);
+        String yaml = "openapi: 3.1.0\n" +
+                "paths:\n" +
+                "  /tag/tag:\n" +
+                "    get:\n" +
+                "      operationId: getTag\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*':\n" +
+                "              schema:\n" +
+                "                $ref: '#/components/schemas/SimpleTag'\n" +
+                "components:\n" +
+                "  schemas:\n" +
+                "    Foo:\n" +
+                "      deprecated: true\n" +
+                "      description: Foo\n" +
+                "      properties:\n" +
+                "        foo:\n" +
+                "          type: string\n" +
+                "          const: foo\n" +
+                "        bar:\n" +
+                "          type: integer\n" +
+                "          format: int32\n" +
+                "          exclusiveMaximum: 2\n" +
+                "        foobar:\n" +
+                "          type:\n" +
+                "          - integer\n" +
+                "          - string\n" +
+                "          - object\n" +
+                "          format: int32\n" +
+                "    SimpleTag:\n" +
+                "      properties:\n" +
+                "        annotated:\n" +
+                "          $ref: '#/components/schemas/SimpleCategory'\n" +
+                "          description: child description\n" +
+                "          properties:\n" +
+                "            foo:\n" +
+                "              deprecated: true\n" +
+                "              description: Foo\n" +
+                "              properties:\n" +
+                "                foo:\n" +
+                "                  type: string\n" +
+                "                  const: foo\n" +
+                "                bar:\n" +
+                "                  type: integer\n" +
+                "                  format: int32\n" +
+                "                  exclusiveMaximum: 2\n" +
+                "                foobar:\n" +
+                "                  type:\n" +
+                "                  - integer\n" +
+                "                  - string\n" +
+                "                  - object\n" +
+                "                  format: int32\n" +
+                "    SimpleCategory: {}\n";
         SerializationMatchers.assertEqualsToYaml31(openAPI, yaml);
     }
 }

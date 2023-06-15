@@ -66,12 +66,7 @@ public class ParameterProcessor {
                 .jsonViewAnnotation(jsonViewAnnotation)
                 .ctxAnnotations(reworkedAnnotations.toArray(new Annotation[reworkedAnnotations.size()]));
 
-        final ResolvedSchema resolvedSchema;
-        if (openapi31) {
-            resolvedSchema = new ModelConverters(true).resolveAsResolvedSchema(annotatedType);
-        } else {
-            resolvedSchema = ModelConverters.getInstance().resolveAsResolvedSchema(annotatedType);
-        }
+        final ResolvedSchema resolvedSchema = ModelConverters.getInstance(openapi31).resolveAsResolvedSchema(annotatedType);
 
         if (resolvedSchema.schema != null) {
             parameter.setSchema(resolvedSchema.schema);
