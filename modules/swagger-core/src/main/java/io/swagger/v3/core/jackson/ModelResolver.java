@@ -411,10 +411,18 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 BeanDescription valueTypeBeanDesc = _mapper.getSerializationConfig().introspect(valueType);
                 pName = _typeName(valueType, valueTypeBeanDesc);
             }
-            Annotation[] schemaAnnotations = null;
+            List<Annotation> strippedCtxAnnotations = new ArrayList<>();
             if (resolvedSchemaAnnotation != null) {
-                schemaAnnotations = new Annotation[]{resolvedSchemaAnnotation};
+                strippedCtxAnnotations.add(0, resolvedSchemaAnnotation);
             }
+            if (annotatedType.getCtxAnnotations() != null) {
+                strippedCtxAnnotations.addAll(Arrays.stream(
+                        annotatedType.getCtxAnnotations()).filter(
+                        ass -> !ass.annotationType().getName().startsWith("io.swagger")
+                ).collect(Collectors.toList()));
+            }
+
+
             if (keyType != null && valueType != null) {
                 if (ReflectionUtils.isSystemType(type) && !annotatedType.isSchemaProperty() && !annotatedType.isResolveAsRef()) {
                     context.resolve(new AnnotatedType().type(valueType).jsonViewAnnotation(annotatedType.getJsonViewAnnotation()));
@@ -424,7 +432,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                         new AnnotatedType()
                                 .type(valueType)
                                 .schemaProperty(annotatedType.isSchemaProperty())
-                                .ctxAnnotations(schemaAnnotations)
+                                .ctxAnnotations(strippedCtxAnnotations.toArray(new Annotation[0]))
                                 .skipSchemaName(true)
                                 .resolveAsRef(annotatedType.isResolveAsRef())
                                 .jsonViewAnnotation(annotatedType.getJsonViewAnnotation())
@@ -454,7 +462,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 Schema items = context.resolve(new AnnotatedType()
                         .type(valueType)
                         .schemaProperty(annotatedType.isSchemaProperty())
-                        .ctxAnnotations(schemaAnnotations)
+                        .ctxAnnotations(strippedCtxAnnotations.toArray(new Annotation[0]))
                         .skipSchemaName(true)
                         .resolveAsRef(annotatedType.isResolveAsRef())
                         .propertyName(annotatedType.getPropertyName())
