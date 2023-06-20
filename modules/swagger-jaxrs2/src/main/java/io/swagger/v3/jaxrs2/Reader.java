@@ -98,6 +98,7 @@ public class Reader implements OpenApiReader {
 
     public Reader() {
         this(new OpenAPI(), new Paths(), new LinkedHashSet<>(), new Components());
+        setConfiguration(new SwaggerConfiguration().openAPI(openAPI));
     }
 
     public Reader(OpenAPI openAPI) {
@@ -1311,7 +1312,7 @@ public class Reader implements OpenApiReader {
         }
     }
 
-    private void setOperationObjectFromApiOperationAnnotation(
+    protected void setOperationObjectFromApiOperationAnnotation(
             Operation operation,
             io.swagger.v3.oas.annotations.Operation apiOperation,
             Produces methodProduces,
