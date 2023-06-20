@@ -97,11 +97,7 @@ public class Reader implements OpenApiReader {
     private static final String OPTIONS_METHOD = "options";
 
     public Reader() {
-        this.openAPI = new OpenAPI();
-        paths = new Paths();
-        openApiTags = new LinkedHashSet<>();
-        components = new Components();
-
+        this(new OpenAPI(), new Paths(), new LinkedHashSet<>(), new Components());
     }
 
     public Reader(OpenAPI openAPI) {
@@ -114,9 +110,19 @@ public class Reader implements OpenApiReader {
         setConfiguration(openApiConfiguration);
     }
 
+    protected Reader(OpenAPI openAPI, Paths paths, Set<Tag> openApiTags, Components components) {
+        this.openAPI = openAPI;
+        this.paths = paths;
+        this.openApiTags = openApiTags;
+        this.components = components;
+    }
+
     public OpenAPI getOpenAPI() {
         return openAPI;
     }
+    protected Set<Tag> getOpenApiTags() { return openApiTags; }
+    protected  Components getComponents() { return components; }
+    protected Paths getPaths() { return paths; }
 
     /**
      * Scans a single class for Swagger annotations - does not invoke ReaderListeners
