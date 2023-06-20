@@ -97,27 +97,36 @@ public class Reader implements OpenApiReader {
     private static final String OPTIONS_METHOD = "options";
 
     public Reader() {
-        this.openAPI = new OpenAPI();
-        paths = new Paths();
-        openApiTags = new LinkedHashSet<>();
-        components = new Components();
-        setConfiguration(new SwaggerConfiguration().openAPI(openAPI));
-
+        this(new OpenAPI(), new Paths(), new LinkedHashSet<>(), new Components());
     }
 
     public Reader(OpenAPI openAPI) {
-        this();
-        setConfiguration(new SwaggerConfiguration().openAPI(openAPI));
+        this(openAPI, new Paths(), new LinkedHashSet<>(), new Components());
     }
 
     public Reader(OpenAPIConfiguration openApiConfiguration) {
-        this();
+        this(new OpenAPI(), new Paths(), new LinkedHashSet<>(), new Components(), openApiConfiguration);
+    }
+
+    protected Reader(OpenAPI openAPI, Paths paths, Set<Tag> openApiTags, Components components) {
+        this(openAPI, paths, openApiTags, components, new SwaggerConfiguration().openAPI(openAPI));
+    }
+
+    protected Reader(OpenAPI openAPI, Paths paths, Set<Tag> openApiTags, Components components, OpenAPIConfiguration openApiConfiguration) {
+        this.openAPI = openAPI;
+        this.paths = paths;
+        this.openApiTags = openApiTags;
+        this.components = components;
         setConfiguration(openApiConfiguration);
     }
+
 
     public OpenAPI getOpenAPI() {
         return openAPI;
     }
+    protected Set<Tag> getOpenApiTags() { return openApiTags; }
+    protected  Components getComponents() { return components; }
+    protected Paths getPaths() { return paths; }
 
     /**
      * Scans a single class for Swagger annotations - does not invoke ReaderListeners
