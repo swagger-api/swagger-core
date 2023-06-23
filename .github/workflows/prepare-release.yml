@@ -8,6 +8,8 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
+    container:
+      image: python:2.7.18-buster
 
     steps:
     - uses: actions/checkout@v2
