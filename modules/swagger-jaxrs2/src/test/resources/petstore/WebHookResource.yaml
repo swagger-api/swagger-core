@@ -49,17 +49,11 @@ webhooks:
               - string
               - number
             if:
-              properties:
-                subscriptionId:
-                  type: string
+              $ref: '#/components/schemas/SubscriptionResponse'
             then:
-              properties:
-                subscriptionId:
-                  type: string
+              $ref: '#/components/schemas/SubscriptionResponse'
             else:
-              properties:
-                subscriptionId:
-                  type: string
+              $ref: '#/components/schemas/SubscriptionResponse'
             $anchor: parameter $anchor
             $schema: parameter $schema
             exclusiveMaximum: 100

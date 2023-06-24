@@ -29,6 +29,7 @@ import io.swagger.v3.oas.models.media.ArraySchema;
 import io.swagger.v3.oas.models.media.ComposedSchema;
 import io.swagger.v3.oas.models.media.Content;
 import io.swagger.v3.oas.models.media.Encoding;
+import io.swagger.v3.oas.models.media.JsonSchema;
 import io.swagger.v3.oas.models.media.MediaType;
 import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.servers.Server;
@@ -538,16 +539,36 @@ public abstract class AnnotationsUtils {
     }
 
     public static Optional<Schema> getSchemaFromAnnotation(io.swagger.v3.oas.annotations.media.Schema schema, Components components, JsonView jsonViewAnnotation, boolean openapi31) {
+        return getSchemaFromAnnotation(schema, components, jsonViewAnnotation, openapi31, null);
+    }
+    public static Optional<Schema> getSchemaFromAnnotation(
+            io.swagger.v3.oas.annotations.media.Schema schema,
+            Components components,
+            JsonView jsonViewAnnotation,
+            boolean openapi31,
+            Schema existingSchema) {
         if (schema == null || !hasSchemaAnnotation(schema)) {
-            return Optional.empty();
+            if (existingSchema == null || !openapi31) {
+                return Optional.empty();
+            } else if (existingSchema != null && openapi31) {
+                return Optional.of(existingSchema);
+            }
         }
         Schema schemaObject = null;
-        if (schema.oneOf().length > 0 ||
-            schema.allOf().length > 0 ||
-            schema.anyOf().length > 0) {
-            schemaObject = new ComposedSchema();
+        if (!openapi31) {
+            if (schema.oneOf().length > 0 ||
+                    schema.allOf().length > 0 ||
+                    schema.anyOf().length > 0) {
+                schemaObject = new ComposedSchema();
+            } else {
+                schemaObject = new Schema();
+            }
         } else {
-            schemaObject = new Schema();
+            if (existingSchema == null) {
+                schemaObject = new JsonSchema();
+            } else {
+                schemaObject = existingSchema;
+            }
         }
         if (StringUtils.isNotBlank(schema.description())) {
             schemaObject.setDescription(schema.description());

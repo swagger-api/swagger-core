@@ -23,17 +23,11 @@ paths:
               - string
               - number
             if:
-              properties:
-                subscriptionId:
-                  type: string
+              $ref: '#/components/schemas/SubscriptionResponse'
             then:
-              properties:
-                subscriptionId:
-                  type: string
+              $ref: '#/components/schemas/SubscriptionResponse'
             else:
-              properties:
-                subscriptionId:
-                  type: string
+              $ref: '#/components/schemas/SubscriptionResponse'
             $anchor: parameter $anchor
             $schema: parameter $schema
             exclusiveMaximum: 100
@@ -118,14 +112,7 @@ components:
           type: integer
           format: int64
         category:
-          properties:
-            id:
-              type: integer
-              format: int64
-            name:
-              type: string
-          xml:
-            name: Category
+          $ref: '#/components/schemas/Category'
         name:
           type: string
         photoUrls:

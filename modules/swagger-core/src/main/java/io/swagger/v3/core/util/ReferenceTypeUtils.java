@@ -50,6 +50,7 @@ public abstract class ReferenceTypeUtils {
                         .jsonViewAnnotation(type.getJsonViewAnnotation())
                         .skipSchemaName(type.isSkipSchemaName())
                         .skipJsonIdentity(type.isSkipJsonIdentity())
+                        .components(type.getComponents())
                         .propertyName(type.getPropertyName());
                 return aType;
             } else {
