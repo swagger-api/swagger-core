@@ -1130,7 +1130,7 @@ public class Reader implements OpenApiReader {
         final Class<?> subResource = getSubResourceWithJaxRsSubresourceLocatorSpecs(method);
         Schema returnTypeSchema = null;
         if (!shouldIgnoreClass(returnType.getTypeName()) && !method.getGenericReturnType().equals(subResource)) {
-            ResolvedSchema resolvedSchema = ModelConverters.getInstance(config.isOpenAPI31()).resolveAsResolvedSchema(new AnnotatedType(returnType).resolveAsRef(true).jsonViewAnnotation(jsonViewAnnotation));
+            ResolvedSchema resolvedSchema = ModelConverters.getInstance(config.isOpenAPI31()).resolveAsResolvedSchema(new AnnotatedType(returnType).resolveAsRef(true).jsonViewAnnotation(jsonViewAnnotation).components(components));
             if (resolvedSchema.schema != null) {
                 returnTypeSchema = resolvedSchema.schema;
                 Content content = new Content();

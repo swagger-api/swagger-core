@@ -18,6 +18,7 @@ import io.swagger.v3.jaxrs2.petstore31.PetResource;
 import io.swagger.v3.jaxrs2.petstore31.TagResource;
 import io.swagger.v3.jaxrs2.resources.ResponseReturnTypeResource;
 import io.swagger.v3.jaxrs2.resources.SchemaPropertiesResource;
+import io.swagger.v3.jaxrs2.resources.SiblingsResource;
 import io.swagger.v3.jaxrs2.resources.SingleExampleResource;
 import io.swagger.v3.jaxrs2.resources.BasicFieldsResource;
 import io.swagger.v3.jaxrs2.resources.BookStoreTicket2646;
@@ -3360,22 +3361,7 @@ public class ReaderTest {
                 "        status:\n" +
                 "          type: string\n" +
                 "          if:\n" +
-                "            deprecated: true\n" +
-                "            description: if schema\n" +
-                "            properties:\n" +
-                "              foo:\n" +
-                "                type: string\n" +
-                "                const: foo\n" +
-                "              bar:\n" +
-                "                type: integer\n" +
-                "                format: int32\n" +
-                "                exclusiveMaximum: 2\n" +
-                "              foobar:\n" +
-                "                type:\n" +
-                "                - integer\n" +
-                "                - string\n" +
-                "                - object\n" +
-                "                format: int32\n" +
+                "            $ref: '#/components/schemas/IfSchema'\n" +
                 "          $id: idtest\n" +
                 "          description: pet status in the store\n" +
                 "          enum:\n" +
@@ -3393,39 +3379,10 @@ public class ReaderTest {
                 "          $ref: '#/components/schemas/Category'\n" +
                 "          description: child description\n" +
                 "          properties:\n" +
-                "            bar:\n" +
-                "              deprecated: true\n" +
-                "              description: Bar\n" +
-                "              properties:\n" +
-                "                foo:\n" +
-                "                  type: string\n" +
-                "                  const: bar\n" +
-                "                bar:\n" +
-                "                  type: integer\n" +
-                "                  format: int32\n" +
-                "                  exclusiveMaximum: 4\n" +
-                "                foobar:\n" +
-                "                  type:\n" +
-                "                  - integer\n" +
-                "                  - string\n" +
-                "                  format: int32\n" +
                 "            foo:\n" +
-                "              deprecated: true\n" +
-                "              description: Foo\n" +
-                "              properties:\n" +
-                "                foo:\n" +
-                "                  type: string\n" +
-                "                  const: foo\n" +
-                "                bar:\n" +
-                "                  type: integer\n" +
-                "                  format: int32\n" +
-                "                  exclusiveMaximum: 2\n" +
-                "                foobar:\n" +
-                "                  type:\n" +
-                "                  - integer\n" +
-                "                  - string\n" +
-                "                  - object\n" +
-                "                  format: int32\n" +
+                "              $ref: '#/components/schemas/Foo'\n" +
+                "            bar:\n" +
+                "              $ref: '#/components/schemas/Bar'\n" +
                 "      xml:\n" +
                 "        name: Tag\n";
         SerializationMatchers.assertEqualsToYaml31(openAPI, yaml);
@@ -3475,23 +3432,41 @@ public class ReaderTest {
                 "          description: child description\n" +
                 "          properties:\n" +
                 "            foo:\n" +
-                "              deprecated: true\n" +
-                "              description: Foo\n" +
-                "              properties:\n" +
-                "                foo:\n" +
-                "                  type: string\n" +
-                "                  const: foo\n" +
-                "                bar:\n" +
-                "                  type: integer\n" +
-                "                  format: int32\n" +
-                "                  exclusiveMaximum: 2\n" +
-                "                foobar:\n" +
-                "                  type:\n" +
-                "                  - integer\n" +
-                "                  - string\n" +
-                "                  - object\n" +
-                "                  format: int32\n" +
+                "              $ref: '#/components/schemas/Foo'\n" +
                 "    SimpleCategory: {}\n";
+        SerializationMatchers.assertEqualsToYaml31(openAPI, yaml);
+    }
+
+    @Test
+    public void testSiblings() {
+        Reader reader = new Reader(new SwaggerConfiguration().openAPI(new OpenAPI()).openAPI31(true));
+
+        OpenAPI openAPI = reader.read(SiblingsResource.class);
+        String yaml = "openapi: 3.1.0\n" +
+                "paths:\n" +
+                "  /test:\n" +
+                "    get:\n" +
+                "      operationId: getCart\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*':\n" +
+                "              schema:\n" +
+                "                $ref: '#/components/schemas/Pet'\n" +
+                "components:\n" +
+                "  schemas:\n" +
+                "    Category:\n" +
+                "      description: parent\n" +
+                "      properties:\n" +
+                "        id:\n" +
+                "          type: integer\n" +
+                "          format: int64\n" +
+                "    Pet:\n" +
+                "      properties:\n" +
+                "        category:\n" +
+                "          $ref: '#/components/schemas/Category'\n" +
+                "          description: child\n";
         SerializationMatchers.assertEqualsToYaml31(openAPI, yaml);
     }
 }

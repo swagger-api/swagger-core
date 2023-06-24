@@ -1,6 +1,7 @@
 package io.swagger.v3.core.converter;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.media.Schema;
 
 import java.lang.annotation.Annotation;
@@ -24,6 +25,8 @@ public class AnnotatedType {
     private boolean skipSchemaName;
     private boolean skipJsonIdentity;
     private String propertyName;
+
+    private Components components;
 
     public AnnotatedType() {
     }
@@ -146,6 +149,19 @@ public class AnnotatedType {
 
     public AnnotatedType ctxAnnotations(Annotation[] ctxAnnotations) {
         setCtxAnnotations(ctxAnnotations);
+        return this;
+    }
+
+    public Components getComponents() {
+        return components;
+    }
+
+    public void setComponents(Components components) {
+        this.components = components;
+    }
+
+    public AnnotatedType components(Components components) {
+        setComponents(components);
         return this;
     }
 
