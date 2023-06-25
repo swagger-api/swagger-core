@@ -12,7 +12,6 @@ import io.swagger.v3.core.filter.SpecFilter;
 import io.swagger.v3.core.jackson.ModelResolver;
 import io.swagger.v3.core.model.ApiDescription;
 import io.swagger.v3.core.util.PrimitiveType;
-import io.swagger.v3.core.util.Yaml;
 import io.swagger.v3.jaxrs2.matchers.SerializationMatchers;
 import io.swagger.v3.jaxrs2.petstore31.PetResource;
 import io.swagger.v3.jaxrs2.petstore31.TagResource;
@@ -3463,6 +3462,7 @@ public class ReaderTest {
                 "          type: integer\n" +
                 "          format: int64\n" +
                 "    Pet:\n" +
+                "      description: Pet\n" +
                 "      properties:\n" +
                 "        category:\n" +
                 "          $ref: '#/components/schemas/Category'\n" +

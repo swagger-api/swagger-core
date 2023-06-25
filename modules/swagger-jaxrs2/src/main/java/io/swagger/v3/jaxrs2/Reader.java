@@ -978,6 +978,11 @@ public class Reader implements OpenApiReader {
         io.swagger.v3.oas.annotations.parameters.RequestBody apiRequestBody =
                 ReflectionUtils.getAnnotation(method, io.swagger.v3.oas.annotations.parameters.RequestBody.class);
 
+        io.swagger.v3.oas.annotations.responses.ApiResponse[] operationApiResponses = new io.swagger.v3.oas.annotations.responses.ApiResponse[] {};
+        if (apiOperation != null) {
+            operationApiResponses = apiOperation.responses();
+        }
+
         ExternalDocumentation apiExternalDocumentation = ReflectionUtils.getAnnotation(method, ExternalDocumentation.class);
 
         // callbacks
@@ -1176,6 +1181,13 @@ public class Reader implements OpenApiReader {
                 resolveResponseSchemaFromReturnType(
                         operation,
                         apiResponses.stream().toArray(io.swagger.v3.oas.annotations.responses.ApiResponse[]::new),
+                        returnTypeSchema,
+                        classProduces,
+                        methodProduces);
+            } else if (operationApiResponses != null && operationApiResponses.length > 0) {
+                resolveResponseSchemaFromReturnType(
+                        operation,
+                        operationApiResponses,
                         returnTypeSchema,
                         classProduces,
                         methodProduces);
