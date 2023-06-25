@@ -556,6 +556,9 @@ public abstract class AnnotationsUtils {
         }
         Schema schemaObject = null;
         if (!openapi31) {
+            if (existingSchema != null) {
+                return Optional.of(existingSchema);
+            }
             if (schema.oneOf().length > 0 ||
                     schema.allOf().length > 0 ||
                     schema.anyOf().length > 0) {
@@ -596,6 +599,12 @@ public abstract class AnnotationsUtils {
         }
         if (StringUtils.isNotBlank(schema.$anchor())) {
             schemaObject.set$anchor(schema.$anchor());
+        }
+        if (StringUtils.isNotBlank(schema.$vocabulary())) {
+            schemaObject.set$vocabulary(schema.$vocabulary());
+        }
+        if (StringUtils.isNotBlank(schema.$dynamicAnchor())) {
+            schemaObject.set$dynamicAnchor(schema.$dynamicAnchor());
         }
         if (StringUtils.isNotBlank(schema.contentEncoding())) {
             schemaObject.setContentEncoding(schema.contentEncoding());
@@ -810,6 +819,9 @@ public abstract class AnnotationsUtils {
     }
 
     public static Schema resolveSchemaFromType(Class<?> schemaImplementation, Components components, JsonView jsonViewAnnotation, boolean openapi31) {
+        return resolveSchemaFromType(schemaImplementation, components, jsonViewAnnotation, openapi31, null, null);
+    }
+    public static Schema resolveSchemaFromType(Class<?> schemaImplementation, Components components, JsonView jsonViewAnnotation, boolean openapi31, io.swagger.v3.oas.annotations.media.Schema schemaAnnotation, io.swagger.v3.oas.annotations.media.ArraySchema arrayAnnotation) {
         Schema schemaObject;
         PrimitiveType primitiveType = PrimitiveType.fromType(schemaImplementation);
         if (primitiveType != null) {
@@ -835,6 +847,10 @@ public abstract class AnnotationsUtils {
                     }
                 }
             }
+        }
+        Optional<Schema> reResolvedSchema = getSchemaFromAnnotation(schemaAnnotation, components, jsonViewAnnotation, openapi31, schemaObject);
+        if (reResolvedSchema.isPresent()) {
+            schemaObject = reResolvedSchema.get();
         }
         if (StringUtils.isBlank(schemaObject.get$ref()) && StringUtils.isBlank(schemaObject.getType())) {
             // default to string
@@ -1531,7 +1547,7 @@ public abstract class AnnotationsUtils {
                                                        JsonView jsonViewAnnotation,
                                                        boolean openapi31) {
         if (schemaImplementation != Void.class) {
-            Schema schemaObject = resolveSchemaFromType(schemaImplementation, components, jsonViewAnnotation, openapi31);
+            Schema schemaObject = resolveSchemaFromType(schemaImplementation, components, jsonViewAnnotation, openapi31, schemaAnnotation, arrayAnnotation);
             if (StringUtils.isNotBlank(schemaAnnotation.format())) {
                schemaObject.setFormat(schemaAnnotation.format());
             }
@@ -2235,6 +2251,22 @@ public abstract class AnnotationsUtils {
                     return master.$anchor();
                 }
                 return patch.$anchor();
+            }
+
+            @Override
+            public String $vocabulary() {
+                if (StringUtils.isNotBlank(master.$vocabulary()) || StringUtils.isBlank(patch.$vocabulary())) {
+                    return master.$vocabulary();
+                }
+                return patch.$vocabulary();
+            }
+
+            @Override
+            public String $dynamicAnchor() {
+                if (StringUtils.isNotBlank(master.$dynamicAnchor()) || StringUtils.isBlank(patch.$dynamicAnchor())) {
+                    return master.$dynamicAnchor();
+                }
+                return patch.$dynamicAnchor();
             }
 
             @Override

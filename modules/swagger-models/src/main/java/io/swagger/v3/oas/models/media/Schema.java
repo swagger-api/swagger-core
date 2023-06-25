@@ -153,13 +153,13 @@ public class Schema<T> {
     private String $anchor;
 
     /**
-     * @since 2.2.8 (OpenAPI 3.1.0)
+     * @since 2.2.14 (OpenAPI 3.1.0)
      */
     @OpenAPI31
     private String $vocabulary;
 
     /**
-     * @since 2.2.8 (OpenAPI 3.1.0)
+     * @since 2.2.14 (OpenAPI 3.1.0)
      */
     @OpenAPI31
     private String $dynamicAnchor;
