@@ -400,6 +400,24 @@ public @interface Schema {
     String $anchor() default "";
 
     /**
+     * Provides the $vocabulary related to schema
+     *
+     * @since 2.2.14 / OpenAPI 3.1
+     * @return $vocabulary schema
+     */
+    @OpenAPI31
+    String $vocabulary() default "";
+
+    /**
+     * Provides the $dynamicAnchor related to schema
+     *
+     * @since 2.2.14 / OpenAPI 3.1
+     * @return $dynamicAnchor schema
+     */
+    @OpenAPI31
+    String $dynamicAnchor() default "";
+
+    /**
      * Provides the content encoding related to this schema
      *
      * @since 2.2.12 / OpenAPI 3.1

@@ -2386,6 +2386,20 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         return null;
     }
 
+    protected String resolve$vocabulary(Annotated a, Annotation[] annotations, io.swagger.v3.oas.annotations.media.Schema schema) {
+        if (schema != null && StringUtils.isNotBlank(schema.$vocabulary())) {
+            return schema.$vocabulary();
+        }
+        return null;
+    }
+
+    protected String resolve$dynamicAnchor(Annotated a, Annotation[] annotations, io.swagger.v3.oas.annotations.media.Schema schema) {
+        if (schema != null && StringUtils.isNotBlank(schema.$dynamicAnchor())) {
+            return schema.$dynamicAnchor();
+        }
+        return null;
+    }
+
     protected String resolveContentEncoding(Annotated a, Annotation[] annotations, io.swagger.v3.oas.annotations.media.Schema schema) {
         if (schema != null && StringUtils.isNotBlank(schema.contentEncoding())) {
             return schema.contentEncoding();
@@ -2567,16 +2581,24 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 thenSchema = buildRefSchemaIfObject(thenSchema, context);
                 schema.setThen(thenSchema);
             }
-            if (!Void.class.equals(schemaAnnotation.contentSchema())) {
-                Schema contentSchema = resolve(new AnnotatedType(schemaAnnotation.contentSchema()), context, next);
-                contentSchema = buildRefSchemaIfObject(contentSchema, context);
-                schema.setContentSchema(contentSchema);
-            }
             if (!Void.class.equals(schemaAnnotation.unevaluatedProperties())) {
                 Schema unevaluatedProperties = resolve(new AnnotatedType(schemaAnnotation.unevaluatedProperties()), context, next);
                 unevaluatedProperties = buildRefSchemaIfObject(unevaluatedProperties, context);
                 schema.setUnevaluatedProperties(unevaluatedProperties);
             }
+
+            if (schemaAnnotation.additionalProperties().equals(io.swagger.v3.oas.annotations.media.Schema.AdditionalPropertiesValue.TRUE)) {
+                schema.additionalProperties(true);
+            } else if (schemaAnnotation.additionalProperties().equals(io.swagger.v3.oas.annotations.media.Schema.AdditionalPropertiesValue.FALSE)) {
+                schema.additionalProperties(false);
+            } else {
+                if (!schemaAnnotation.additionalPropertiesSchema().equals(Void.class)) {
+                    Schema additionalPropertiesSchema = resolve(new AnnotatedType(schemaAnnotation.additionalPropertiesSchema()), context, next);
+                    additionalPropertiesSchema = buildRefSchemaIfObject(additionalPropertiesSchema, context);
+                    schema.additionalProperties(additionalPropertiesSchema);
+                }
+            }
+
             final Map<String, List<String>> dependentRequired =  resolveDependentRequired(a, annotations, schemaAnnotation);
             if (dependentRequired != null && !dependentRequired.isEmpty()) {
                 schema.setDependentRequired(dependentRequired);
@@ -2738,6 +2760,14 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             String $comment = resolve$comment(a, annotations, schemaAnnotation);
             if ($comment != null) {
                 schema.set$comment($comment);
+            }
+            String $vocabulary = resolve$vocabulary(a, annotations, schemaAnnotation);
+            if ($vocabulary != null) {
+                schema.set$vocabulary($vocabulary);
+            }
+            String $dynamicAnchor = resolve$dynamicAnchor(a, annotations, schemaAnnotation);
+            if ($dynamicAnchor != null) {
+                schema.$dynamicAnchor($dynamicAnchor);
             }
             String contentEncoding = resolveContentEncoding(a, annotations, schemaAnnotation);
             if (contentEncoding != null) {

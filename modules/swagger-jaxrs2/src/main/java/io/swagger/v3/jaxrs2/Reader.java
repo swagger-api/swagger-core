@@ -1225,7 +1225,15 @@ public class Reader implements OpenApiReader {
                     ApiResponse opResponse = operation.getResponses().get(response.responseCode());
                     if (opResponse != null) {
                         if (opResponse.getContent() != null) {
-                            for (MediaType mediaType : opResponse.getContent().values()) {
+                            for (String key : opResponse.getContent().keySet()) {
+                                MediaType mediaType = opResponse.getContent().get(key);
+                                Optional<io.swagger.v3.oas.annotations.media.Content> content = Arrays.stream(response.content()).filter(c -> c.mediaType().equals(key)).findFirst();
+                                if (content.isPresent()) {
+                                    Optional<Schema> reResolvedSchema = AnnotationsUtils.getSchemaFromAnnotation(content.get().schema(), components, null, config.isOpenAPI31(), schema);
+                                    if (reResolvedSchema.isPresent()) {
+                                        schema = reResolvedSchema.get();
+                                    }
+                                }
                                 mediaType.schema(schema);
                             }
                         } else {

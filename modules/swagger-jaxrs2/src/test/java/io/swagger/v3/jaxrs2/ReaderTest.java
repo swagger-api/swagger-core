@@ -18,6 +18,7 @@ import io.swagger.v3.jaxrs2.petstore31.TagResource;
 import io.swagger.v3.jaxrs2.resources.ResponseReturnTypeResource;
 import io.swagger.v3.jaxrs2.resources.SchemaPropertiesResource;
 import io.swagger.v3.jaxrs2.resources.SiblingsResource;
+import io.swagger.v3.jaxrs2.resources.SiblingsResourceSimple;
 import io.swagger.v3.jaxrs2.resources.SingleExampleResource;
 import io.swagger.v3.jaxrs2.resources.BasicFieldsResource;
 import io.swagger.v3.jaxrs2.resources.BookStoreTicket2646;
@@ -3467,6 +3468,44 @@ public class ReaderTest {
                 "        category:\n" +
                 "          $ref: '#/components/schemas/Category'\n" +
                 "          description: child\n";
+        SerializationMatchers.assertEqualsToYaml31(openAPI, yaml);
+    }
+
+    @Test
+    public void testSiblingsOnResource() {
+        Reader reader = new Reader(new SwaggerConfiguration().openAPI(new OpenAPI()).openAPI31(true));
+
+        OpenAPI openAPI = reader.read(SiblingsResourceSimple.class);
+        String yaml = "openapi: 3.1.0\n" +
+                "paths:\n" +
+                "  /test:\n" +
+                "    get:\n" +
+                "      operationId: getCart\n" +
+                "      responses:\n" +
+                "        \"300\":\n" +
+                "          description: aaa\n" +
+                "          content:\n" +
+                "            '*/*':\n" +
+                "              schema:\n" +
+                "                $ref: '#/components/schemas/PetSimple'\n" +
+                "                description: resource pet\n" +
+                "                readOnly: true\n" +
+                "  /test/impl:\n" +
+                "    get:\n" +
+                "      operationId: getCartImpl\n" +
+                "      responses:\n" +
+                "        \"300\":\n" +
+                "          description: aaa\n" +
+                "          content:\n" +
+                "            '*/*':\n" +
+                "              schema:\n" +
+                "                $ref: '#/components/schemas/PetSimple'\n" +
+                "                description: resource pet\n" +
+                "                readOnly: true\n" +
+                "components:\n" +
+                "  schemas:\n" +
+                "    PetSimple:\n" +
+                "      description: Pet\n";
         SerializationMatchers.assertEqualsToYaml31(openAPI, yaml);
     }
 }
