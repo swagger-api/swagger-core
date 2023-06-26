@@ -18,6 +18,7 @@ import io.swagger.v3.jaxrs2.petstore31.TagResource;
 import io.swagger.v3.jaxrs2.resources.ResponseReturnTypeResource;
 import io.swagger.v3.jaxrs2.resources.SchemaPropertiesResource;
 import io.swagger.v3.jaxrs2.resources.SiblingsResource;
+import io.swagger.v3.jaxrs2.resources.SiblingsResourceRequestBody;
 import io.swagger.v3.jaxrs2.resources.SiblingsResourceSimple;
 import io.swagger.v3.jaxrs2.resources.SingleExampleResource;
 import io.swagger.v3.jaxrs2.resources.BasicFieldsResource;
@@ -3502,6 +3503,51 @@ public class ReaderTest {
                 "                $ref: '#/components/schemas/PetSimple'\n" +
                 "                description: resource pet\n" +
                 "                readOnly: true\n" +
+                "components:\n" +
+                "  schemas:\n" +
+                "    PetSimple:\n" +
+                "      description: Pet\n";
+        SerializationMatchers.assertEqualsToYaml31(openAPI, yaml);
+    }
+
+    @Test
+    public void testSiblingsOnResourceRequestBody() {
+        Reader reader = new Reader(new SwaggerConfiguration().openAPI(new OpenAPI()).openAPI31(true));
+
+        OpenAPI openAPI = reader.read(SiblingsResourceRequestBody.class);
+        String yaml = "openapi: 3.1.0\n" +
+                "paths:\n" +
+                "  /test/bodyimpl:\n" +
+                "    get:\n" +
+                "      operationId: getBodyImpl\n" +
+                "      requestBody:\n" +
+                "        description: aaa\n" +
+                "        content:\n" +
+                "          application/json:\n" +
+                "            schema:\n" +
+                "              $ref: '#/components/schemas/PetSimple'\n" +
+                "              description: resource pet\n" +
+                "              writeOnly: true\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*': {}\n" +
+                "  /test/bodyimplparam:\n" +
+                "    get:\n" +
+                "      operationId: getBodyImplParam\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          '*/*':\n" +
+                "            schema:\n" +
+                "              $ref: '#/components/schemas/PetSimple'\n" +
+                "              description: resource pet\n" +
+                "              writeOnly: true\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*': {}\n" +
                 "components:\n" +
                 "  schemas:\n" +
                 "    PetSimple:\n" +

@@ -704,7 +704,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                             addRequiredItem(model, propName);
                         }
                     }
-                    if (property.get$ref() == null) {
+                    if (property.get$ref() == null || openapi31) {
                         if (accessMode != null) {
                             switch (accessMode) {
                                 case AUTO:

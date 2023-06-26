@@ -753,8 +753,8 @@ public abstract class AnnotationsUtils {
             schemaObject.setReadOnly(true);
             schemaObject.setWriteOnly(null);
         } else if (schema.accessMode().equals(io.swagger.v3.oas.annotations.media.Schema.AccessMode.WRITE_ONLY)) {
-            schemaObject.setReadOnly(false);
-            schemaObject.setWriteOnly(null);
+            schemaObject.setReadOnly(null);
+            schemaObject.setWriteOnly(true);
         } else if (schema.accessMode().equals(io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE)) {
             schemaObject.setReadOnly(null);
             schemaObject.setWriteOnly(null);
