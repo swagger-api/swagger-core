@@ -1,6 +1,5 @@
 package io.swagger.v3.jaxrs2.resources;
 
-import io.swagger.v3.jaxrs2.resources.siblings.Pet;
 import io.swagger.v3.jaxrs2.resources.siblings.PetSimple;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -48,4 +47,5 @@ public class SiblingsResourceSimple {
     public PetSimple getCartImpl() {
         return null;
     }
+
 }

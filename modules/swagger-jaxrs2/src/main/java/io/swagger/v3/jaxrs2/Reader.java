@@ -759,7 +759,7 @@ public class Reader implements OpenApiReader {
 
         io.swagger.v3.oas.annotations.parameters.RequestBody requestBodyAnnotation = getRequestBody(Arrays.asList(paramAnnotations));
         if (requestBodyAnnotation != null) {
-            Optional<RequestBody> optionalRequestBody = OperationParser.getRequestBody(requestBodyAnnotation, classConsumes, methodConsumes, components, jsonViewAnnotation);
+            Optional<RequestBody> optionalRequestBody = OperationParser.getRequestBody(requestBodyAnnotation, classConsumes, methodConsumes, components, jsonViewAnnotation, config.isOpenAPI31());
             if (optionalRequestBody.isPresent()) {
                 RequestBody requestBody = optionalRequestBody.get();
                 if (StringUtils.isBlank(requestBody.get$ref()) &&
@@ -1047,7 +1047,7 @@ public class Reader implements OpenApiReader {
 
         // RequestBody in Method
         if (apiRequestBody != null && operation.getRequestBody() == null){
-            OperationParser.getRequestBody(apiRequestBody, classConsumes, methodConsumes, components, jsonViewAnnotation).ifPresent(
+            OperationParser.getRequestBody(apiRequestBody, classConsumes, methodConsumes, components, jsonViewAnnotation, config.isOpenAPI31()).ifPresent(
                     operation::setRequestBody);
         }
 
@@ -1393,7 +1393,7 @@ public class Reader implements OpenApiReader {
 
         // RequestBody in Operation
         if (apiOperation.requestBody() != null && operation.getRequestBody() == null) {
-            OperationParser.getRequestBody(apiOperation.requestBody(), classConsumes, methodConsumes, components, jsonViewAnnotation).ifPresent(
+            OperationParser.getRequestBody(apiOperation.requestBody(), classConsumes, methodConsumes, components, jsonViewAnnotation, config.isOpenAPI31()).ifPresent(
                     operation::setRequestBody);
         }
 
