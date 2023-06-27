@@ -170,7 +170,7 @@ public class Reader implements OpenApiReader {
                     LOGGER.error("Failed to create ReaderListener", e);
                 }
             }
-            if (config != null && Boolean.TRUE.equals(config.isAlwaysResolveAppPath())) {
+            if (config != null && Boolean.TRUE.equals(config.isAlwaysResolveAppPath()) && !Boolean.TRUE.equals(config.isSkipResolveAppPath())) {
                 if (Application.class.isAssignableFrom(cls)) {
                     ApplicationPath appPathAnnotation = ReflectionUtils.getAnnotation(cls, ApplicationPath.class);
                     if (appPathAnnotation != null) {
@@ -225,7 +225,7 @@ public class Reader implements OpenApiReader {
     }
 
     protected String resolveApplicationPath() {
-        if (application != null) {
+        if (application != null && !Boolean.TRUE.equals(config.isSkipResolveAppPath())) {
             Class<?> applicationToScan = this.application.getClass();
             ApplicationPath applicationPath;
             //search up in the hierarchy until we find one with the annotation, this is needed because for example Weld proxies will not have the annotation and the right class will be the superClass
@@ -773,18 +773,36 @@ public class Reader implements OpenApiReader {
                         requestBody.getContent() != null &&
                         !requestBody.getContent().isEmpty()) {
                     if (requestBodyParameter.getSchema() != null) {
-                        for (MediaType mediaType : requestBody.getContent().values()) {
+                        Map<String, MediaType> reresolvedMediaTypes = new LinkedHashMap<>();
+                        for (String key: requestBody.getContent().keySet()) {
+                            MediaType mediaType = requestBody.getContent().get(key);
                             if (mediaType.getSchema() == null) {
                                 if (requestBodyParameter.getSchema() == null) {
                                     mediaType.setSchema(new Schema());
                                 } else {
                                     mediaType.setSchema(requestBodyParameter.getSchema());
                                 }
+                            } else if (mediaType.getSchema() != null && requestBodyAnnotation.useParameterTypeSchema()) {
+                                if (requestBodyParameter.getSchema() != null) {
+                                    MediaType newMediaType = clone(mediaType);
+                                    Schema parameterSchema = clone(requestBodyParameter.getSchema());
+                                    Optional<io.swagger.v3.oas.annotations.media.Content> content = Arrays.stream(requestBodyAnnotation.content()).filter(c -> c.mediaType().equals(key)).findFirst();
+                                    if (content.isPresent()) {
+                                        Optional<Schema> reResolvedSchema = AnnotationsUtils.getSchemaFromAnnotation(content.get().schema(), components, null, config.isOpenAPI31(), parameterSchema);
+                                        if (reResolvedSchema.isPresent()) {
+                                            parameterSchema = reResolvedSchema.get();
+                                        }
+
+                                    }
+                                    newMediaType.schema(parameterSchema);
+                                    reresolvedMediaTypes.put(key, newMediaType);
+                                }
                             }
-                            if (StringUtils.isBlank(mediaType.getSchema().getType())) {
+                            if (StringUtils.isBlank(mediaType.getSchema().getType()) || requestBodyAnnotation.useParameterTypeSchema()) {
                                 mediaType.getSchema().setType(requestBodyParameter.getSchema().getType());
                             }
                         }
+                        requestBody.getContent().putAll(reresolvedMediaTypes);
                     }
                 }
                 operation.setRequestBody(requestBody);

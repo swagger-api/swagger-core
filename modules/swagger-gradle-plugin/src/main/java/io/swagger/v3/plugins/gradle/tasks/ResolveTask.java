@@ -68,6 +68,7 @@ public class ResolveTask extends DefaultTask {
 
     private Boolean sortOutput = Boolean.FALSE;
     private Boolean alwaysResolveAppPath = Boolean.FALSE;
+    private Boolean skipResolveAppPath = Boolean.FALSE;
 
 
     private String contextId;
@@ -323,6 +324,22 @@ public class ResolveTask extends DefaultTask {
     }
 
     /**
+     * @since 2.2.15
+     */
+    @Input
+    @Optional
+    public Boolean getSkipResolveAppPath() {
+        return skipResolveAppPath;
+    }
+
+    /**
+     * @since 2.2.15
+     */
+    public void setSkipResolveAppPath(Boolean skipResolveAppPath) {
+        this.skipResolveAppPath = skipResolveAppPath;
+    }
+
+    /**
      * @since 2.2.0
      */
     @Input
@@ -452,6 +469,9 @@ public class ResolveTask extends DefaultTask {
 
             method=swaggerLoaderClass.getDeclaredMethod("setAlwaysResolveAppPath", Boolean.class);
             method.invoke(swaggerLoader, alwaysResolveAppPath);
+
+            method=swaggerLoaderClass.getDeclaredMethod("setSkipResolveAppPath", Boolean.class);
+            method.invoke(swaggerLoader, skipResolveAppPath);
 
             method=swaggerLoaderClass.getDeclaredMethod("setReadAllResources", Boolean.class);
             method.invoke(swaggerLoader, readAllResources);

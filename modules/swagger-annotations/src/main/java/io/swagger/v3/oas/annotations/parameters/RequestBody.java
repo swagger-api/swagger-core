@@ -60,4 +60,11 @@ public @interface RequestBody {
      **/
     String ref() default "";
 
+    /**
+     * Set to true to resolve the request body schema from parameter type
+     *
+     * @since 2.2.15
+     **/
+    boolean useParameterTypeSchema() default false;
+
 }

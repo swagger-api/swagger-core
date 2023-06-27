@@ -23,6 +23,7 @@ import static io.swagger.v3.jaxrs2.integration.ServletConfigContextUtils.OPENAPI
 import static io.swagger.v3.jaxrs2.integration.ServletConfigContextUtils.OPENAPI_CONFIGURATION_READALLRESOURCES_KEY;
 import static io.swagger.v3.jaxrs2.integration.ServletConfigContextUtils.OPENAPI_CONFIGURATION_READER_KEY;
 import static io.swagger.v3.jaxrs2.integration.ServletConfigContextUtils.OPENAPI_CONFIGURATION_SCANNER_KEY;
+import static io.swagger.v3.jaxrs2.integration.ServletConfigContextUtils.OPENAPI_CONFIGURATION_SKIPRESOLVEAPPPATH_KEY;
 import static io.swagger.v3.jaxrs2.integration.ServletConfigContextUtils.OPENAPI_CONFIGURATION_SORTOUTPUT_KEY;
 import static io.swagger.v3.jaxrs2.integration.ServletConfigContextUtils.OPENAPI_CONFIGURATION_ALWAYSRESOLVEAPPPATH_KEY;
 import static io.swagger.v3.jaxrs2.integration.ServletConfigContextUtils.getBooleanInitParam;
@@ -59,6 +60,7 @@ public class ServletOpenApiConfigurationLoader implements OpenApiConfigurationLo
                     .prettyPrint(getBooleanInitParam(servletConfig, OPENAPI_CONFIGURATION_PRETTYPRINT_KEY))
                     .sortOutput(getBooleanInitParam(servletConfig, OPENAPI_CONFIGURATION_SORTOUTPUT_KEY))
                     .alwaysResolveAppPath(getBooleanInitParam(servletConfig, OPENAPI_CONFIGURATION_ALWAYSRESOLVEAPPPATH_KEY))
+                    .skipResolveAppPath(getBooleanInitParam(servletConfig, OPENAPI_CONFIGURATION_SKIPRESOLVEAPPPATH_KEY))
                     .readerClass(getInitParam(servletConfig, OPENAPI_CONFIGURATION_READER_KEY))
                     .cacheTTL(getLongInitParam(servletConfig, OPENAPI_CONFIGURATION_CACHE_TTL_KEY))
                     .scannerClass(getInitParam(servletConfig, OPENAPI_CONFIGURATION_SCANNER_KEY))
@@ -119,6 +121,9 @@ public class ServletOpenApiConfigurationLoader implements OpenApiConfigurationLo
                 return true;
             }
             if (getBooleanInitParam(servletConfig, OPENAPI_CONFIGURATION_ALWAYSRESOLVEAPPPATH_KEY) != null) {
+                return true;
+            }
+            if (getBooleanInitParam(servletConfig, OPENAPI_CONFIGURATION_SKIPRESOLVEAPPPATH_KEY) != null) {
                 return true;
             }
             if (getInitParam(servletConfig, OPENAPI_CONFIGURATION_READER_KEY) != null) {

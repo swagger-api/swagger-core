@@ -55,4 +55,26 @@ public class SiblingsResourceRequestBodyMultiple {
             }) Object body) {
         return null;
     }
+
+    @Path("/bodyparam")
+    @GET
+    public Response getBodyParam(
+            @RequestBody(
+                    description = "test",
+                    useParameterTypeSchema = true,
+                    content = {
+                            @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(
+                                            description = "resource pet",
+                                            accessMode = Schema.AccessMode.WRITE_ONLY)),
+                            @Content(
+                                    mediaType = "application/xml",
+                                    schema = @Schema(
+                                            description = "resource pet xml",
+                                            accessMode = Schema.AccessMode.WRITE_ONLY))
+                    }
+            ) PetSimple pet) {
+        return null;
+    }
 }

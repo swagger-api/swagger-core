@@ -2,7 +2,6 @@ openapi: 3.0.1
 servers:
 - url: http://foo
   description: server 1
-  variables: {}
 paths:
   /serversoperation:
     get:
@@ -18,7 +17,6 @@ paths:
       servers:
       - url: http://foo2
         description: server 2
-        variables: {}
 components:
   schemas:
     Category:
