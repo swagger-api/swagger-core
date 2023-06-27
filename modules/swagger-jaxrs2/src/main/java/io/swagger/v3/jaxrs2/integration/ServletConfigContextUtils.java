@@ -37,6 +37,11 @@ public class ServletConfigContextUtils {
     public static final String OPENAPI_CONFIGURATION_ALWAYSRESOLVEAPPPATH_KEY = "openApi.configuration.alwaysResolveAppPath";
 
     /**
+     * @since 2.1.15
+     */
+    public static final String OPENAPI_CONFIGURATION_SKIPRESOLVEAPPPATH_KEY = "openApi.configuration.skipResolveAppPath";
+
+    /**
      * @since 2.0.6
      */
     public static final String OPENAPI_CONFIGURATION_OBJECT_MAPPER_PROCESSOR_KEY = "openApi.configuration.objectMapperProcessorClass";

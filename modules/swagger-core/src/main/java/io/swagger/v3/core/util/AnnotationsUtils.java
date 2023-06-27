@@ -934,29 +934,31 @@ public abstract class AnnotationsUtils {
             return Optional.empty();
         }
         io.swagger.v3.oas.annotations.servers.ServerVariable[] serverVariables = server.variables();
-        ServerVariables serverVariablesObject = new ServerVariables();
-        for (io.swagger.v3.oas.annotations.servers.ServerVariable serverVariable : serverVariables) {
-            ServerVariable serverVariableObject = new ServerVariable();
-            if (StringUtils.isNotBlank(serverVariable.description())) {
-                serverVariableObject.setDescription(serverVariable.description());
-            }
-            if (StringUtils.isNotBlank(serverVariable.defaultValue())) {
-                serverVariableObject.setDefault(serverVariable.defaultValue());
-            }
-            if (serverVariable.allowableValues() != null && serverVariable.allowableValues().length > 0) {
-                if (StringUtils.isNotBlank(serverVariable.allowableValues()[0])) {
-                    serverVariableObject.setEnum(Arrays.asList(serverVariable.allowableValues()));
+        if (serverVariables.length > 0) {
+            ServerVariables serverVariablesObject = new ServerVariables();
+            for (io.swagger.v3.oas.annotations.servers.ServerVariable serverVariable : serverVariables) {
+                ServerVariable serverVariableObject = new ServerVariable();
+                if (StringUtils.isNotBlank(serverVariable.description())) {
+                    serverVariableObject.setDescription(serverVariable.description());
                 }
-            }
-            if (serverVariable.extensions() != null && serverVariable.extensions().length > 0) {
-                Map<String, Object> extensions = AnnotationsUtils.getExtensions(serverVariable.extensions());
-                if (extensions != null) {
-                    extensions.forEach(serverVariableObject::addExtension);
+                if (StringUtils.isNotBlank(serverVariable.defaultValue())) {
+                    serverVariableObject.setDefault(serverVariable.defaultValue());
                 }
+                if (serverVariable.allowableValues() != null && serverVariable.allowableValues().length > 0) {
+                    if (StringUtils.isNotBlank(serverVariable.allowableValues()[0])) {
+                        serverVariableObject.setEnum(Arrays.asList(serverVariable.allowableValues()));
+                    }
+                }
+                if (serverVariable.extensions() != null && serverVariable.extensions().length > 0) {
+                    Map<String, Object> extensions = AnnotationsUtils.getExtensions(serverVariable.extensions());
+                    if (extensions != null) {
+                        extensions.forEach(serverVariableObject::addExtension);
+                    }
+                }
+                serverVariablesObject.addServerVariable(serverVariable.name(), serverVariableObject);
             }
-            serverVariablesObject.addServerVariable(serverVariable.name(), serverVariableObject);
+            serverObject.setVariables(serverVariablesObject);
         }
-        serverObject.setVariables(serverVariablesObject);
 
         return Optional.of(serverObject);
     }

@@ -1,5 +1,6 @@
 package io.swagger.v3.plugin.maven;
 
+import io.swagger.v3.oas.models.OpenAPI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,6 +13,26 @@ public class SwaggerResolveTest extends ASwaggerMavenIntegrationTest {
     public void testResolve() throws Exception {
         File pom = getTestFile("src/test/resources/pom.resolveToFile.xml");
         checkOutput(runTest(pom));
+    }
+
+    public void testResolve31() throws Exception {
+        File pom = getTestFile("src/test/resources/pom.resolveToFile31.xml");
+        checkOutput(runTest(pom, this::validateOpenApi31Content));
+    }
+
+    void validateOpenApi31Content(OpenAPI openAPI) {
+        assertEquals(
+                Boolean.TRUE,
+                openAPI
+                        .getPaths()
+                        .get("/pet31")
+                        .getPut()
+                        .getResponses()
+                        .get("200")
+                        .getContent()
+                        .get("application/xml")
+                        .getSchema()
+                        .getReadOnly());
     }
 
     public void testResolveWithFilter() throws Exception {

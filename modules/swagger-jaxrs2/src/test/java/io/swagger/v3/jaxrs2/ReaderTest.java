@@ -3653,6 +3653,27 @@ public class ReaderTest {
                 "          description: default response\n" +
                 "          content:\n" +
                 "            '*/*': {}\n" +
+                "  /test/bodyparam:\n" +
+                "    get:\n" +
+                "      operationId: getBodyParam\n" +
+                "      requestBody:\n" +
+                "        description: test\n" +
+                "        content:\n" +
+                "          application/json:\n" +
+                "            schema:\n" +
+                "              $ref: '#/components/schemas/PetSimple'\n" +
+                "              description: resource pet\n" +
+                "              writeOnly: true\n" +
+                "          application/xml:\n" +
+                "            schema:\n" +
+                "              $ref: '#/components/schemas/PetSimple'\n" +
+                "              description: resource pet xml\n" +
+                "              writeOnly: true\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*': {}\n" +
                 "components:\n" +
                 "  schemas:\n" +
                 "    PetSimple:\n" +

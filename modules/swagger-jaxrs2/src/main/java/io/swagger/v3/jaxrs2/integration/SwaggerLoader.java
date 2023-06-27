@@ -42,6 +42,8 @@ public class SwaggerLoader {
 
     private Boolean alwaysResolveAppPath = false;
 
+    private Boolean skipResolveAppPath = false;
+
     private Boolean openAPI31 = false;
 
     private Boolean convertToOpenAPI31 = false;
@@ -197,6 +199,20 @@ public class SwaggerLoader {
         this.alwaysResolveAppPath = alwaysResolveAppPath;
     }
 
+    /**
+     * @since 2.1.15
+     */
+    public Boolean getSkipResolveAppPath() {
+        return skipResolveAppPath;
+    }
+
+    /**
+     * @since 2.1.15
+     */
+    public void setSkipResolveAppPath(Boolean skipResolveAppPath) {
+        this.skipResolveAppPath = skipResolveAppPath;
+    }
+
     public Boolean getOpenAPI31() {
         return openAPI31;
     }
@@ -266,6 +282,7 @@ public class SwaggerLoader {
                 .modelConverterClasses(modelConverterSet)
                 .sortOutput(sortOutput)
                 .alwaysResolveAppPath(alwaysResolveAppPath)
+                .skipResolveAppPath(skipResolveAppPath)
                 .openAPI31(openAPI31)
                 .convertToOpenAPI31(convertToOpenAPI31);
         try {

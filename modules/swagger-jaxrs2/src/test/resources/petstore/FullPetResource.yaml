@@ -16,7 +16,6 @@ externalDocs:
 servers:
 - url: http://foo
   description: server 1
-  variables: {}
 security:
 - req 1:
   - a
@@ -622,7 +621,6 @@ paths:
       servers:
       - url: http://foo2
         description: server 2
-        variables: {}
   /arrayschema:
     post:
       description: "subscribes a client to updates relevant to the requestor's account,\

@@ -612,6 +612,9 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
         if (merged.isAlwaysResolveAppPath() == null) {
             merged.setAlwaysResolveAppPath(parentConfig.isAlwaysResolveAppPath());
         }
+        if (merged.isSkipResolveAppPath() == null) {
+            merged.setSkipResolveAppPath(parentConfig.isSkipResolveAppPath());
+        }
         if (merged.isReadAllResources() == null) {
             merged.setReadAllResources(parentConfig.isReadAllResources());
         }

@@ -154,6 +154,9 @@ public class SwaggerMojo extends AbstractMojo {
         if (alwaysResolveAppPath == null) {
             alwaysResolveAppPath = Boolean.FALSE;
         }
+        if (skipResolveAppPath == null) {
+            skipResolveAppPath = Boolean.FALSE;
+        }
         if (openapi31 == null) {
             openapi31 = Boolean.FALSE;
         }
@@ -171,6 +174,9 @@ public class SwaggerMojo extends AbstractMojo {
         }
         if (config.isAlwaysResolveAppPath() == null) {
             config.alwaysResolveAppPath(alwaysResolveAppPath);
+        }
+        if (config.isSkipResolveAppPath() == null) {
+            config.skipResolveAppPath(skipResolveAppPath);
         }
         if (config.isOpenAPI31() == null) {
             config.setOpenAPI31(openapi31);
@@ -315,6 +321,9 @@ public class SwaggerMojo extends AbstractMojo {
         if (alwaysResolveAppPath != null) {
             config.alwaysResolveAppPath(alwaysResolveAppPath);
         }
+        if (skipResolveAppPath != null) {
+            config.skipResolveAppPath(skipResolveAppPath);
+        }
         if (readAllResources != null) {
             config.readAllResources(readAllResources);
         }
@@ -338,6 +347,9 @@ public class SwaggerMojo extends AbstractMojo {
         }
         if (isCollectionNotBlank(modelConverterClasses)) {
             config.modelConverterClasses(modelConverterClasses);
+        }
+        if (openapi31 != null) {
+            config.openAPI31(openapi31);
         }
 
         return config;
@@ -414,6 +426,12 @@ public class SwaggerMojo extends AbstractMojo {
      */
     @Parameter(property = "resolve.alwaysResolveAppPath")
     private Boolean alwaysResolveAppPath;
+
+    /**
+     * @since 2.1.15
+     */
+    @Parameter(property = "resolve.skipResolveAppPath")
+    private Boolean skipResolveAppPath;
 
     /**
      * @since 2.2.0

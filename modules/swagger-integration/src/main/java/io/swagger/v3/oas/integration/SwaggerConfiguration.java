@@ -34,6 +34,8 @@ public class SwaggerConfiguration implements OpenAPIConfiguration {
 
     private Boolean alwaysResolveAppPath;
 
+    private Boolean skipResolveAppPath;
+
     private Boolean openAPI31 = false;
 
     private Boolean convertToOpenAPI31;
@@ -283,6 +285,29 @@ public class SwaggerConfiguration implements OpenAPIConfiguration {
      */
     public SwaggerConfiguration alwaysResolveAppPath(Boolean alwaysResolveAppPath) {
         setAlwaysResolveAppPath(alwaysResolveAppPath);
+        return this;
+    }
+
+    /**
+     * @since 2.1.15
+     */
+    @Override
+    public Boolean isSkipResolveAppPath() {
+        return skipResolveAppPath;
+    }
+
+    /**
+     * @since 2.1.15
+     */
+    public void setSkipResolveAppPath(Boolean skipResolveAppPath) {
+        this.skipResolveAppPath = skipResolveAppPath;
+    }
+
+    /**
+     * @since 2.1.15
+     */
+    public SwaggerConfiguration skipResolveAppPath(Boolean skipResolveAppPath) {
+        setAlwaysResolveAppPath(skipResolveAppPath);
         return this;
     }
 
