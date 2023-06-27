@@ -52,6 +52,7 @@ import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Application;
+import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
@@ -1214,6 +1215,37 @@ public class Reader implements OpenApiReader {
         return content;
     }
 
+    private MediaType clone(MediaType mediaType) {
+        if(mediaType == null)
+            return mediaType;
+        try {
+            if(config.isOpenAPI31()) {
+                mediaType = Json31.mapper().readValue(Json31.pretty(mediaType), MediaType.class);
+            } else {
+                mediaType = Json.mapper().readValue(Json.pretty(mediaType), MediaType.class);
+            }
+        } catch (IOException e) {
+            LOGGER.error("Could not clone mediaType", e);
+        }
+        return mediaType;
+    }
+    private Schema clone(Schema schema) {
+        if(schema == null)
+            return schema;
+        try {
+            String cloneName = schema.getName();
+            if(config.isOpenAPI31()) {
+                schema = Json31.mapper().readValue(Json31.pretty(schema), Schema.class);
+            } else {
+                schema = Json.mapper().readValue(Json.pretty(schema), Schema.class);
+            }
+            schema.setName(cloneName);
+        } catch (IOException e) {
+            LOGGER.error("Could not clone schema", e);
+        }
+        return schema;
+    }
+
     protected void resolveResponseSchemaFromReturnType(
             Operation operation,
             io.swagger.v3.oas.annotations.responses.ApiResponse[] responses,
@@ -1221,20 +1253,23 @@ public class Reader implements OpenApiReader {
             Produces classProduces, Produces methodProduces) {
         if (responses != null) {
             for (io.swagger.v3.oas.annotations.responses.ApiResponse response: responses) {
+                Map<String, MediaType> reresolvedMediaTypes = new LinkedHashMap<>();
                 if (response.useReturnTypeSchema()) {
                     ApiResponse opResponse = operation.getResponses().get(response.responseCode());
                     if (opResponse != null) {
                         if (opResponse.getContent() != null) {
                             for (String key : opResponse.getContent().keySet()) {
-                                MediaType mediaType = opResponse.getContent().get(key);
+                                MediaType mediaType = clone(opResponse.getContent().get(key));
+                                Schema existingSchema = clone(schema);
                                 Optional<io.swagger.v3.oas.annotations.media.Content> content = Arrays.stream(response.content()).filter(c -> c.mediaType().equals(key)).findFirst();
                                 if (content.isPresent()) {
-                                    Optional<Schema> reResolvedSchema = AnnotationsUtils.getSchemaFromAnnotation(content.get().schema(), components, null, config.isOpenAPI31(), schema);
+                                    Optional<Schema> reResolvedSchema = AnnotationsUtils.getSchemaFromAnnotation(content.get().schema(), components, null, config.isOpenAPI31(), existingSchema);
                                     if (reResolvedSchema.isPresent()) {
-                                        schema = reResolvedSchema.get();
+                                        existingSchema = reResolvedSchema.get();
                                     }
                                 }
-                                mediaType.schema(schema);
+                                mediaType.schema(existingSchema);
+                                reresolvedMediaTypes.put(key, mediaType);
                             }
                         } else {
                             Content content = resolveEmptyContent(classProduces, methodProduces);
@@ -1244,6 +1279,7 @@ public class Reader implements OpenApiReader {
                             opResponse.content(content);
                         }
                     }
+                    opResponse.getContent().putAll(reresolvedMediaTypes);
                 }
             }
         }
