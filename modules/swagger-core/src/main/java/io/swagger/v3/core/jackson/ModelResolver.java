@@ -638,8 +638,8 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                         propSchemaName = ctxSchema.name();
                     }
                 }
+                io.swagger.v3.oas.annotations.media.ArraySchema ctxArraySchema = AnnotationsUtils.getArraySchemaAnnotation(annotations);
                 if (propSchemaName == null) {
-                    io.swagger.v3.oas.annotations.media.ArraySchema ctxArraySchema = AnnotationsUtils.getArraySchemaAnnotation(annotations);
                     if (AnnotationsUtils.hasArrayAnnotation(ctxArraySchema)) {
                         if (AnnotationsUtils.hasSchemaAnnotation(ctxArraySchema.schema())) {
                             if (!StringUtils.isBlank(ctxArraySchema.schema().name())) {
@@ -662,10 +662,25 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 io.swagger.v3.oas.annotations.media.Schema.AccessMode accessMode = resolveAccessMode(propDef, type, propResolvedSchemaAnnotation);
                 io.swagger.v3.oas.annotations.media.Schema.RequiredMode requiredMode = resolveRequiredMode(propResolvedSchemaAnnotation);
 
+                Annotation[] ctxAnnotation31 = null;
+
+                if (openapi31) {
+                    List<Annotation> ctxAnnotations31List = new ArrayList<>();
+                    if (annotations != null) {
+                        for (Annotation a : annotations) {
+                            if (
+                                    !(a instanceof io.swagger.v3.oas.annotations.media.Schema) &&
+                                            !(a instanceof io.swagger.v3.oas.annotations.media.ArraySchema)) {
+                                ctxAnnotations31List.add(a);
+                            }
+                        }
+                        ctxAnnotation31 = ctxAnnotations31List.toArray(new Annotation[ctxAnnotations31List.size()]);
+                    }
+                }
 
                 AnnotatedType aType = new AnnotatedType()
                         .type(propType)
-                        .ctxAnnotations(annotations)
+                        .ctxAnnotations(openapi31 ? ctxAnnotation31 : annotations)
                         .parent(model)
                         .resolveAsRef(annotatedType.isResolveAsRef())
                         .jsonViewAnnotation(annotatedType.getJsonViewAnnotation())
@@ -688,12 +703,18 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                         return new Schema();
                     }
                 });
-                property = clone(context.resolve(aType));
+                property = context.resolve(aType);
+                property = clone(property);
                 if (openapi31) {
-                    Optional<Schema> reResolvedProperty = AnnotationsUtils.getSchemaFromAnnotation(ctxSchema, annotatedType.getComponents(), null, openapi31, property);
+                    Optional<Schema> reResolvedProperty = AnnotationsUtils.getSchemaFromAnnotation(ctxSchema, annotatedType.getComponents(), null, openapi31, property, context);
                     if (reResolvedProperty.isPresent()) {
                         property = reResolvedProperty.get();
                     }
+                    reResolvedProperty = AnnotationsUtils.getArraySchema(ctxArraySchema, annotatedType.getComponents(), null, openapi31, property);
+                    if (reResolvedProperty.isPresent()) {
+                        property = reResolvedProperty.get();
+                    }
+
                 }
                 if (property != null) {
                     Boolean required = md.getRequired();
@@ -732,6 +753,17 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
                             if (context.getDefinedModels().containsKey(pName)) {
                                 property = new Schema().$ref(constructRef(pName));
+                                property = clone(property);
+                                if (openapi31) {
+                                    Optional<Schema> reResolvedProperty = AnnotationsUtils.getSchemaFromAnnotation(ctxSchema, annotatedType.getComponents(), null, openapi31, property, context);
+                                    if (reResolvedProperty.isPresent()) {
+                                        property = reResolvedProperty.get();
+                                    }
+                                    reResolvedProperty = AnnotationsUtils.getArraySchema(ctxArraySchema, annotatedType.getComponents(), null, openapi31, property);
+                                    if (reResolvedProperty.isPresent()) {
+                                        property = reResolvedProperty.get();
+                                    }
+                                }
                             }
                         } else if (property.get$ref() != null) {
                             if (!openapi31) {
@@ -844,7 +876,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         }
 
         if (openapi31) {
-            Map<String, Schema> dependentSchemas = resolveDependentSchemas(type, annotatedType.getCtxAnnotations(), context);
+            Map<String, Schema> dependentSchemas = resolveDependentSchemas(type, annotatedType.getCtxAnnotations(), context, annotatedType.getComponents(), annotatedType.getJsonViewAnnotation(), openapi31);
             if (model != null && dependentSchemas != null && !dependentSchemas.isEmpty()) {
                 if (model.getDependentSchemas() == null) {
                     model.dependentSchemas(dependentSchemas);
@@ -1029,20 +1061,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
     }
 
     private Schema clone(Schema property) {
-        if(property == null)
-            return property;
-        try {
-            String cloneName = property.getName();
-            if(openapi31) {
-                property = Json31.mapper().readValue(Json31.pretty(property), Schema.class);
-            } else {
-                property = Json.mapper().readValue(Json.pretty(property), Schema.class);
-            }
-            property.setName(cloneName);
-        } catch (IOException e) {
-            LOGGER.error("Could not clone property", e);
-        }
-        return property;
+        return AnnotationsUtils.clone(property, openapi31);
     }
 
     private boolean isSubtype(AnnotatedClass childClass, Class<?> parentClass) {
@@ -1788,7 +1807,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         return schemaProperties;
     }
 
-    protected Map<String, Schema> resolveDependentSchemas(JavaType a, Annotation[] annotations, ModelConverterContext context) {
+    protected Map<String, Schema> resolveDependentSchemas(JavaType a, Annotation[] annotations, ModelConverterContext context, Components components, JsonView jsonViewAnnotation, boolean openapi31) {
         final Map<String, DependentSchema> dependentSchemaMap = new LinkedHashMap<>();
 
         DependentSchemas dependentSchemasAnnotation = a.getRawClass().getAnnotation(DependentSchemas.class);
@@ -1827,13 +1846,15 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 continue;
             }
             Annotation[] propAnnotations = new Annotation[]{dependentSchemaAnnotation.schema(), dependentSchemaAnnotation.array()};
-            AnnotatedType propType = new AnnotatedType()
-                    .type(Object.class)
-                    .ctxAnnotations(propAnnotations)
-                    .resolveAsRef(true);
-            Schema resolvedPropSchema = context.resolve(propType);
-            if (resolvedPropSchema != null) {
-                dependentSchemas.put(name, resolvedPropSchema);
+            Schema existingSchema = null;
+            Optional<Schema> resolvedPropSchema = AnnotationsUtils.getSchemaFromAnnotation(dependentSchemaAnnotation.schema(), components, jsonViewAnnotation, openapi31, null, context);
+            if (resolvedPropSchema.isPresent()) {
+                existingSchema = resolvedPropSchema.get();
+                dependentSchemas.put(name, existingSchema);
+            }
+            resolvedPropSchema = AnnotationsUtils.getArraySchema(dependentSchemaAnnotation.array(), components, jsonViewAnnotation, openapi31, existingSchema);
+            if (resolvedPropSchema.isPresent()) {
+                dependentSchemas.put(name, resolvedPropSchema.get());
             }
         }
 

@@ -63,14 +63,7 @@ public class ModelResolverOAS31Test extends SwaggerTestBase {
                 "    country:\n" +
                 "      const: United States\n" +
                 "Client:\n" +
-                "  dependentSchemas:\n" +
-                "    creditCard:\n" +
-                "      $ref: '#/components/schemas/CreditCard'\n" +
-                "  patternProperties:\n" +
-                "    creditCard:\n" +
-                "      $ref: '#/components/schemas/CreditCard'\n" +
                 "  properties:\n" +
-                "    extraObject: {}\n" +
                 "    name:\n" +
                 "      type: string\n" +
                 "    creditCard:\n" +
@@ -122,6 +115,14 @@ public class ModelResolverOAS31Test extends SwaggerTestBase {
                 "      $ref: '#/components/schemas/Address'\n" +
                 "    client:\n" +
                 "      $ref: '#/components/schemas/Client'\n" +
+                "      dependentSchemas:\n" +
+                "        creditCard:\n" +
+                "          $ref: '#/components/schemas/CreditCard'\n" +
+                "      patternProperties:\n" +
+                "        creditCard:\n" +
+                "          $ref: '#/components/schemas/CreditCard'\n" +
+                "      properties:\n" +
+                "        extraObject: {}\n" +
                 "MultipleBaseBean:\n" +
                 "  description: MultipleBaseBean\n" +
                 "  properties:\n" +
@@ -159,7 +160,7 @@ public class ModelResolverOAS31Test extends SwaggerTestBase {
                 "    postalCode:\n" +
                 "      pattern: \"[A-Z][0-9][A-Z] [0-9][A-Z][0-9]\"\n" +
                 "PropertyNamesPattern:\n" +
-                "  pattern: \"^[A-Za-z_][A-Za-z0-9_]*$\"");
+                "  pattern: \"^[A-Za-z_][A-Za-z0-9_]*$\"\n");
     }
 
     @Test

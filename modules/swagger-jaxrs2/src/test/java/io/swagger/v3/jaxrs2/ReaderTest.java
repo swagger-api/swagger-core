@@ -15,8 +15,10 @@ import io.swagger.v3.core.util.PrimitiveType;
 import io.swagger.v3.jaxrs2.matchers.SerializationMatchers;
 import io.swagger.v3.jaxrs2.petstore31.PetResource;
 import io.swagger.v3.jaxrs2.petstore31.TagResource;
+import io.swagger.v3.jaxrs2.resources.Misc31Resource;
 import io.swagger.v3.jaxrs2.resources.ResponseReturnTypeResource;
 import io.swagger.v3.jaxrs2.resources.SchemaPropertiesResource;
+import io.swagger.v3.jaxrs2.resources.SiblingPropResource;
 import io.swagger.v3.jaxrs2.resources.SiblingsResource;
 import io.swagger.v3.jaxrs2.resources.SiblingsResourceRequestBody;
 import io.swagger.v3.jaxrs2.resources.SiblingsResourceRequestBodyMultiple;
@@ -74,9 +76,11 @@ import io.swagger.v3.jaxrs2.resources.Ticket3587Resource;
 import io.swagger.v3.jaxrs2.resources.Ticket3731BisResource;
 import io.swagger.v3.jaxrs2.resources.Ticket3731Resource;
 import io.swagger.v3.jaxrs2.resources.Ticket4412Resource;
+import io.swagger.v3.jaxrs2.resources.Ticket4446Resource;
 import io.swagger.v3.jaxrs2.resources.UploadResource;
 import io.swagger.v3.jaxrs2.resources.UrlEncodedResourceWithEncodings;
 import io.swagger.v3.jaxrs2.resources.UserAnnotationResource;
+import io.swagger.v3.jaxrs2.resources.WebHookResource;
 import io.swagger.v3.jaxrs2.resources.extensions.ExtensionsResource;
 import io.swagger.v3.jaxrs2.resources.extensions.OperationExtensionsResource;
 import io.swagger.v3.jaxrs2.resources.extensions.ParameterExtensionsResource;
@@ -3679,5 +3683,261 @@ public class ReaderTest {
                 "    PetSimple:\n" +
                 "      description: Pet\n";
         SerializationMatchers.assertEqualsToYaml31(openAPI, yaml);
+    }
+
+    @Test
+    public void testSiblingsOnProperty() {
+        Reader reader = new Reader(new SwaggerConfiguration().openAPI(new OpenAPI()).openAPI31(true));
+        Set<Class<?>> classes = new HashSet<>(Arrays.asList(SiblingPropResource.class, WebHookResource.class));
+        OpenAPI openAPI = reader.read(classes);
+        String yaml = "openapi: 3.1.0\n" +
+                "paths:\n" +
+                "  /pet:\n" +
+                "    put:\n" +
+                "      tags:\n" +
+                "      - pet\n" +
+                "      summary: Update an existing pet\n" +
+                "      operationId: updatePet\n" +
+                "      requestBody:\n" +
+                "        description: Pet object that needs to be updated in the store\n" +
+                "        content:\n" +
+                "          application/json:\n" +
+                "            schema:\n" +
+                "              $ref: '#/components/schemas/Pet'\n" +
+                "              description: A Pet in JSON Format\n" +
+                "              required:\n" +
+                "              - id\n" +
+                "              writeOnly: true\n" +
+                "          application/xml:\n" +
+                "            schema:\n" +
+                "              $ref: '#/components/schemas/Pet'\n" +
+                "              description: A Pet in XML Format\n" +
+                "              required:\n" +
+                "              - id\n" +
+                "              writeOnly: true\n" +
+                "        required: true\n" +
+                "      responses:\n" +
+                "        \"200\":\n" +
+                "          description: Successful operation\n" +
+                "          content:\n" +
+                "            application/xml:\n" +
+                "              schema:\n" +
+                "                $ref: '#/components/schemas/Pet'\n" +
+                "                description: A Pet in XML Format\n" +
+                "                readOnly: true\n" +
+                "            application/json:\n" +
+                "              schema:\n" +
+                "                $ref: '#/components/schemas/Pet'\n" +
+                "                description: A Pet in JSON Format\n" +
+                "                readOnly: true\n" +
+                "        \"400\":\n" +
+                "          description: Invalid ID supplied\n" +
+                "        \"404\":\n" +
+                "          description: Pet not found\n" +
+                "        \"405\":\n" +
+                "          description: Validation exception\n" +
+                "      security:\n" +
+                "      - petstore_auth:\n" +
+                "        - write:pets\n" +
+                "        - read:pets\n" +
+                "      - mutual_tls: []\n" +
+                "components:\n" +
+                "  schemas:\n" +
+                "    Category:\n" +
+                "      description: parent\n" +
+                "      properties:\n" +
+                "        id:\n" +
+                "          type: integer\n" +
+                "          format: int64\n" +
+                "    Pet:\n" +
+                "      description: Pet\n" +
+                "      properties:\n" +
+                "        category:\n" +
+                "          $ref: '#/components/schemas/Category'\n" +
+                "          description: child\n" +
+                "webhooks:\n" +
+                "  newPet:\n" +
+                "    post:\n" +
+                "      requestBody:\n" +
+                "        description: Information about a new pet in the system\n" +
+                "        content:\n" +
+                "          application/json:\n" +
+                "            schema:\n" +
+                "              $ref: '#/components/schemas/Pet'\n" +
+                "              description: Webhook Pet\n" +
+                "      responses:\n" +
+                "        \"200\":\n" +
+                "          description: Return a 200 status to indicate that the data was received\n" +
+                "            successfully\n";
+        SerializationMatchers.assertEqualsToYaml31(openAPI, yaml);
+    }
+
+    @Test
+    public void testMisc31() {
+        Reader reader = new Reader(new SwaggerConfiguration().openAPI(new OpenAPI()).openAPI31(true));
+        Set<Class<?>> classes = new HashSet<>(Arrays.asList(Misc31Resource.class));
+        OpenAPI openAPI = reader.read(classes);
+        String yaml = "openapi: 3.1.0\n" +
+                "paths:\n" +
+                "  /pet:\n" +
+                "    put:\n" +
+                "      operationId: updatePet\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            application/json:\n" +
+                "              schema:\n" +
+                "                $ref: '#/components/schemas/ModelWithOAS31Stuff'\n" +
+                "            application/xml:\n" +
+                "              schema:\n" +
+                "                $ref: '#/components/schemas/ModelWithOAS31Stuff'\n" +
+                "components:\n" +
+                "  schemas:\n" +
+                "    ModelWithOAS31Stuff:\n" +
+                "      type: object\n" +
+                "      $comment: Random comment at schema level\n" +
+                "      $id: http://yourdomain.com/schemas/myschema.json\n" +
+                "      description: this is model for testing OAS 3.1 resolving\n" +
+                "      properties:\n" +
+                "        randomList:\n" +
+                "          type: array\n" +
+                "          contains:\n" +
+                "            type: string\n" +
+                "          items:\n" +
+                "            type: string\n" +
+                "          maxContains: 10\n" +
+                "          minContains: 1\n" +
+                "          prefixItems:\n" +
+                "          - type: string\n" +
+                "          unevaluatedItems:\n" +
+                "            type: number\n" +
+                "        status:\n" +
+                "          type:\n" +
+                "          - string\n" +
+                "          - number\n" +
+                "        intValue:\n" +
+                "          type: integer\n" +
+                "          format: int32\n" +
+                "          $anchor: intValue\n" +
+                "          $comment: comment at schema property level\n" +
+                "          exclusiveMaximum: 100\n" +
+                "          exclusiveMinimum: 1\n" +
+                "        text:\n" +
+                "          type: string\n" +
+                "          contentEncoding: plan/text\n" +
+                "          contentMediaType: base64\n" +
+                "        encodedString:\n" +
+                "          type: string\n" +
+                "          contentMediaType: application/jwt\n" +
+                "          contentSchema:\n" +
+                "            $ref: '#/components/schemas/MultipleBaseBean'\n" +
+                "        address:\n" +
+                "          $ref: '#/components/schemas/Address'\n" +
+                "        client:\n" +
+                "          type: string\n" +
+                "          dependentSchemas:\n" +
+                "            creditCard:\n" +
+                "              $ref: '#/components/schemas/CreditCard'\n" +
+                "    MultipleBaseBean:\n" +
+                "      description: MultipleBaseBean\n" +
+                "      properties:\n" +
+                "        beanType:\n" +
+                "          type: string\n" +
+                "        a:\n" +
+                "          type: integer\n" +
+                "          format: int32\n" +
+                "        b:\n" +
+                "          type: string\n" +
+                "    MultipleSub1Bean:\n" +
+                "      allOf:\n" +
+                "      - $ref: '#/components/schemas/MultipleBaseBean'\n" +
+                "      - type: object\n" +
+                "        properties:\n" +
+                "          c:\n" +
+                "            type: integer\n" +
+                "            format: int32\n" +
+                "      description: MultipleSub1Bean\n" +
+                "    MultipleSub2Bean:\n" +
+                "      allOf:\n" +
+                "      - $ref: '#/components/schemas/MultipleBaseBean'\n" +
+                "      - type: object\n" +
+                "        properties:\n" +
+                "          d:\n" +
+                "            type: integer\n" +
+                "            format: int32\n" +
+                "      description: MultipleSub2Bean\n" +
+                "    Address:\n" +
+                "      if:\n" +
+                "        $ref: '#/components/schemas/AnnotatedCountry'\n" +
+                "      then:\n" +
+                "        $ref: '#/components/schemas/PostalCodeNumberPattern'\n" +
+                "      else:\n" +
+                "        $ref: '#/components/schemas/PostalCodePattern'\n" +
+                "      dependentRequired:\n" +
+                "        street:\n" +
+                "        - country\n" +
+                "      properties:\n" +
+                "        street:\n" +
+                "          type: string\n" +
+                "        country:\n" +
+                "          type: string\n" +
+                "          enum:\n" +
+                "          - United States of America\n" +
+                "          - Canada\n" +
+                "      propertyNames:\n" +
+                "        $ref: '#/components/schemas/PropertyNamesPattern'\n" +
+                "    AnnotatedCountry:\n" +
+                "      properties:\n" +
+                "        country:\n" +
+                "          const: United States\n" +
+                "    CreditCard:\n" +
+                "      properties:\n" +
+                "        billingAddress:\n" +
+                "          type: string\n" +
+                "    PostalCodeNumberPattern:\n" +
+                "      properties:\n" +
+                "        postalCode:\n" +
+                "          pattern: \"[0-9]{5}(-[0-9]{4})?\"\n" +
+                "    PostalCodePattern:\n" +
+                "      properties:\n" +
+                "        postalCode:\n" +
+                "          pattern: \"[A-Z][0-9][A-Z] [0-9][A-Z][0-9]\"\n" +
+                "    PropertyNamesPattern:\n" +
+                "      pattern: \"^[A-Za-z_][A-Za-z0-9_]*$\"\n";
+        SerializationMatchers.assertEqualsToYaml31(openAPI, yaml);
+    }
+
+    @Test
+    public void test4446CyclicProp() {
+        Reader reader = new Reader(new OpenAPI());
+
+        OpenAPI openAPI = reader.read(Ticket4446Resource.class);
+        String yaml = "openapi: 3.0.1\n" +
+                "paths:\n" +
+                "  /test/test:\n" +
+                "    get:\n" +
+                "      operationId: getCart\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*':\n" +
+                "              schema:\n" +
+                "                $ref: '#/components/schemas/MyPojo'\n" +
+                "components:\n" +
+                "  schemas:\n" +
+                "    MyPojo:\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        someStrings:\n" +
+                "          type: array\n" +
+                "          items:\n" +
+                "            type: string\n" +
+                "        morePojos:\n" +
+                "          type: array\n" +
+                "          items:\n" +
+                "            $ref: '#/components/schemas/MyPojo'\n";
+        SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
     }
 }
