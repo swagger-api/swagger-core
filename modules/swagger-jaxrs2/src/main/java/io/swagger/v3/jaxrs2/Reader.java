@@ -792,7 +792,10 @@ public class Reader implements OpenApiReader {
                                         if (reResolvedSchema.isPresent()) {
                                             parameterSchema = reResolvedSchema.get();
                                         }
-
+                                        reResolvedSchema = AnnotationsUtils.getArraySchema(content.get().array(), components, null, config.isOpenAPI31(), parameterSchema);
+                                        if (reResolvedSchema.isPresent()) {
+                                            parameterSchema = reResolvedSchema.get();
+                                        }
                                     }
                                     newMediaType.schema(parameterSchema);
                                     reresolvedMediaTypes.put(key, newMediaType);
@@ -1248,20 +1251,7 @@ public class Reader implements OpenApiReader {
         return mediaType;
     }
     private Schema clone(Schema schema) {
-        if(schema == null)
-            return schema;
-        try {
-            String cloneName = schema.getName();
-            if(config.isOpenAPI31()) {
-                schema = Json31.mapper().readValue(Json31.pretty(schema), Schema.class);
-            } else {
-                schema = Json.mapper().readValue(Json.pretty(schema), Schema.class);
-            }
-            schema.setName(cloneName);
-        } catch (IOException e) {
-            LOGGER.error("Could not clone schema", e);
-        }
-        return schema;
+        return AnnotationsUtils.clone(schema, config.isOpenAPI31());
     }
 
     protected void resolveResponseSchemaFromReturnType(
@@ -1282,6 +1272,10 @@ public class Reader implements OpenApiReader {
                                 Optional<io.swagger.v3.oas.annotations.media.Content> content = Arrays.stream(response.content()).filter(c -> c.mediaType().equals(key)).findFirst();
                                 if (content.isPresent()) {
                                     Optional<Schema> reResolvedSchema = AnnotationsUtils.getSchemaFromAnnotation(content.get().schema(), components, null, config.isOpenAPI31(), existingSchema);
+                                    if (reResolvedSchema.isPresent()) {
+                                        existingSchema = reResolvedSchema.get();
+                                    }
+                                    reResolvedSchema = AnnotationsUtils.getArraySchema(content.get().array(), components, null, config.isOpenAPI31(), existingSchema);
                                     if (reResolvedSchema.isPresent()) {
                                         existingSchema = reResolvedSchema.get();
                                     }
