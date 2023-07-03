@@ -154,7 +154,7 @@ public class ParameterProcessor {
                 }
 
                 if (p.extensions().length > 0) {
-                    Map<String, Object> extensionMap = AnnotationsUtils.getExtensions(p.extensions());
+                    Map<String, Object> extensionMap = AnnotationsUtils.getExtensions(openapi31, p.extensions());
                     if (extensionMap != null && ! extensionMap.isEmpty()) {
                         extensionMap.forEach(parameter::addExtension);
                     }

@@ -802,7 +802,7 @@ public abstract class AnnotationsUtils {
         }
 
         if (schema.extensions().length > 0) {
-            Map<String, Object> extensions = AnnotationsUtils.getExtensions(schema.extensions());
+            Map<String, Object> extensions = AnnotationsUtils.getExtensions(openapi31, schema.extensions());
             if (extensions != null) {
                 extensions.forEach(schemaObject::addExtension);
             }
@@ -1739,7 +1739,8 @@ public abstract class AnnotationsUtils {
         final Map<String, Object> map = new HashMap<>();
         for (Extension extension : extensions) {
             final String name = extension.name();
-            final String key = name.length() > 0 ? StringUtils.prependIfMissing(name, "x-") : name;
+            String decoratedName = openapi31 ? name : StringUtils.prependIfMissing(name, "x-");
+            final String key = name.length() > 0 ? decoratedName : name;
 
             for (ExtensionProperty property : extension.properties()) {
                 final String propertyName = property.name();
@@ -1755,12 +1756,15 @@ public abstract class AnnotationsUtils {
                                 } else {
                                     processedValue = Json.mapper().readTree(propertyValue);
                                 }
-                                map.put(StringUtils.prependIfMissing(propertyName, "x-"), processedValue);
+                                decoratedName = openapi31 ? propertyName : StringUtils.prependIfMissing(propertyName, "x-");
+                                map.put(decoratedName, processedValue);
                             } catch (Exception e) {
-                                map.put(StringUtils.prependIfMissing(propertyName, "x-"), propertyValue);
+                                decoratedName = openapi31 ? propertyName : StringUtils.prependIfMissing(propertyName, "x-");
+                                map.put(decoratedName, propertyValue);
                             }
                         } else {
-                            map.put(StringUtils.prependIfMissing(propertyName, "x-"), propertyValue);
+                            decoratedName = openapi31 ? propertyName : StringUtils.prependIfMissing(propertyName, "x-");
+                            map.put(decoratedName, propertyValue);
                         }
                     } else {
                         Object value = map.get(key);

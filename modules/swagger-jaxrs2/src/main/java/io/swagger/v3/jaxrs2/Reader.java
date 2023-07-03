@@ -335,7 +335,7 @@ public class Reader implements OpenApiReader {
             // OpenApiDefinition extensions
             if (openAPIDefinition.extensions().length > 0) {
                 openAPI.setExtensions(AnnotationsUtils
-                        .getExtensions(openAPIDefinition.extensions()));
+                        .getExtensions(config.isOpenAPI31(), openAPIDefinition.extensions()));
             }
 
         }

@@ -42,7 +42,7 @@ public class OperationParser {
             isEmpty = false;
         }
         if (requestBody.extensions().length > 0) {
-            Map<String, Object> extensions = AnnotationsUtils.getExtensions(requestBody.extensions());
+            Map<String, Object> extensions = AnnotationsUtils.getExtensions(openapi31, requestBody.extensions());
             if (extensions != null) {
                 extensions.forEach(requestBodyObject::addExtension);
             }
@@ -85,7 +85,7 @@ public class OperationParser {
                 apiResponseObject.setDescription(response.description());
             }
             if (response.extensions().length > 0) {
-                Map<String, Object> extensions = AnnotationsUtils.getExtensions(response.extensions());
+                Map<String, Object> extensions = AnnotationsUtils.getExtensions(openapi31, response.extensions());
                 if (extensions != null) {
                     extensions.forEach(apiResponseObject::addExtension);
                 }

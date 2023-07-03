@@ -2152,7 +2152,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         if (schema != null &&
                 schema.extensions() != null &&
                 schema.extensions().length > 0) {
-            return AnnotationsUtils.getExtensions(schema.extensions());
+            return AnnotationsUtils.getExtensions(openapi31, schema.extensions());
         }
         return null;
     }
@@ -2346,7 +2346,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         if (arraySchema != null &&
                 arraySchema.extensions() != null &&
                 arraySchema.extensions().length > 0) {
-            return AnnotationsUtils.getExtensions(arraySchema.extensions());
+            return AnnotationsUtils.getExtensions(openapi31, arraySchema.extensions());
         }
         return null;
     }
