@@ -16,6 +16,7 @@ import io.swagger.v3.jaxrs2.matchers.SerializationMatchers;
 import io.swagger.v3.jaxrs2.petstore31.PetResource;
 import io.swagger.v3.jaxrs2.petstore31.TagResource;
 import io.swagger.v3.jaxrs2.resources.Misc31Resource;
+import io.swagger.v3.jaxrs2.resources.ParameterMaximumValueResource;
 import io.swagger.v3.jaxrs2.resources.ResponseReturnTypeResource;
 import io.swagger.v3.jaxrs2.resources.SchemaPropertiesResource;
 import io.swagger.v3.jaxrs2.resources.SiblingPropResource;
@@ -3939,5 +3940,33 @@ public class ReaderTest {
                 "          items:\n" +
                 "            $ref: '#/components/schemas/MyPojo'\n";
         SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
+    }
+
+    @Test
+    public void testParameterMaximumValue() {
+        Reader reader = new Reader(new SwaggerConfiguration().openAPI(new OpenAPI()).openAPI31(true));
+
+        OpenAPI openAPI = reader.read(ParameterMaximumValueResource.class);
+        String yaml = "openapi: 3.1.0\n" +
+                "paths:\n" +
+                "  /test/{petId}:\n" +
+                "    get:\n" +
+                "      operationId: getPetById\n" +
+                "      parameters:\n" +
+                "      - name: petId\n" +
+                "        in: path\n" +
+                "        description: ID of pet that needs to be fetched\n" +
+                "        required: true\n" +
+                "        schema:\n" +
+                "          type: integer\n" +
+                "          format: int64\n" +
+                "          exclusiveMaximum: 10\n" +
+                "          exclusiveMinimum: 1\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*': {}\n";
+        SerializationMatchers.assertEqualsToYaml31(openAPI, yaml);
     }
 }
