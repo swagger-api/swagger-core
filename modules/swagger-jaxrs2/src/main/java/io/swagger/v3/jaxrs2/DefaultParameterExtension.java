@@ -140,7 +140,8 @@ public class DefaultParameterExtension extends AbstractOpenAPIExtension {
                     components,
                     classConsumes == null ? new String[0] : classConsumes.value(),
                     methodConsumes == null ? new String[0] : methodConsumes.value(),
-                    jsonViewAnnotation);
+                    jsonViewAnnotation,
+                    openapi31);
             if (processedParameter != null) {
                 extractParametersResult.parameters.add(processedParameter);
             }
