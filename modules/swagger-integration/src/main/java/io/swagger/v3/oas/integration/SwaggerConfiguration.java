@@ -307,7 +307,7 @@ public class SwaggerConfiguration implements OpenAPIConfiguration {
      * @since 2.1.15
      */
     public SwaggerConfiguration skipResolveAppPath(Boolean skipResolveAppPath) {
-        setAlwaysResolveAppPath(skipResolveAppPath);
+        setSkipResolveAppPath(skipResolveAppPath);
         return this;
     }
 
