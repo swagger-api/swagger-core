@@ -34,6 +34,7 @@ import io.swagger.models.properties.Property;
 import io.swagger.models.properties.RefProperty;
 import io.swagger.servlet.ReaderContext;
 import io.swagger.util.BaseReaderUtils;
+import io.swagger.util.KotlinDetector;
 import io.swagger.util.ParameterProcessor;
 import io.swagger.util.PathUtils;
 import io.swagger.util.ReflectionUtils;
@@ -271,7 +272,8 @@ public class ServletReaderExtension implements ReaderExtension {
 
     @Override
     public void setDeprecated(Operation operation, Method method) {
-        if (ReflectionUtils.getAnnotation(method, Deprecated.class) != null) {
+        if (ReflectionUtils.getAnnotation(method, Deprecated.class) != null
+                || (KotlinDetector.isKotlinPresent() && ReflectionUtils.getAnnotation(method, KotlinDetector.getKotlinDeprecated()) != null)) {
             operation.deprecated(true);
         }
     }
