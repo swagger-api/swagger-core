@@ -12,6 +12,7 @@ import io.swagger.v3.core.converter.ResolvedSchema;
 import io.swagger.v3.core.util.AnnotationsUtils;
 import io.swagger.v3.core.util.Json;
 import io.swagger.v3.core.util.Json31;
+import io.swagger.v3.core.util.KotlinDetector;
 import io.swagger.v3.core.util.ParameterProcessor;
 import io.swagger.v3.core.util.PathUtils;
 import io.swagger.v3.core.util.ReflectionUtils;
@@ -305,7 +306,8 @@ public class Reader implements OpenApiReader {
         javax.ws.rs.Consumes classConsumes = ReflectionUtils.getAnnotation(cls, javax.ws.rs.Consumes.class);
         javax.ws.rs.Produces classProduces = ReflectionUtils.getAnnotation(cls, javax.ws.rs.Produces.class);
 
-        boolean classDeprecated = ReflectionUtils.getAnnotation(cls, Deprecated.class) != null;
+        boolean classDeprecated = ReflectionUtils.getAnnotation(cls, Deprecated.class) != null
+                || (KotlinDetector.isKotlinPresent() && ReflectionUtils.getAnnotation(cls, KotlinDetector.getKotlinDeprecated()) != null);
 
         // OpenApiDefinition
         OpenAPIDefinition openAPIDefinition = ReflectionUtils.getAnnotation(cls, OpenAPIDefinition.class);
@@ -434,7 +436,8 @@ public class Reader implements OpenApiReader {
                 continue;
             }
 
-            boolean methodDeprecated = ReflectionUtils.getAnnotation(method, Deprecated.class) != null;
+            boolean methodDeprecated = ReflectionUtils.getAnnotation(method, Deprecated.class) != null
+                    || (KotlinDetector.isKotlinPresent() && ReflectionUtils.getAnnotation(method, KotlinDetector.getKotlinDeprecated()) != null);
 
             javax.ws.rs.Path methodPath = ReflectionUtils.getAnnotation(method, javax.ws.rs.Path.class);
 
