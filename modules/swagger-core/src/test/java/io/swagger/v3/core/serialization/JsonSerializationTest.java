@@ -18,6 +18,9 @@ import io.swagger.v3.oas.models.servers.Server;
 import org.testng.annotations.Test;
 import org.yaml.snakeyaml.LoaderOptions;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 
@@ -53,6 +56,19 @@ public class JsonSerializationTest {
         assertEquals(rebuilt.getExtensions().values().iterator().next(), "foo bar");
         assertEquals(rebuilt.getInfo().getExtensions().values().iterator().next(), "foo bar");
 
+    }
+
+    @Test
+    public void testExtensionObjectWithProperties() throws Exception {
+        final Map<String, Object> extensionObjectProps = new HashMap<>();
+        extensionObjectProps.put("x-foo-bar", "foo bar");
+        extensionObjectProps.put("x-bar-foo", null);
+
+        OpenAPI swagger = new OpenAPI();
+        swagger.addExtension("x-extension-with-properties", extensionObjectProps);
+
+        String swaggerJson = Json.mapper().writeValueAsString(swagger);
+        assertEquals(swaggerJson, "{\"openapi\":\"3.0.1\",\"x-extension-with-properties\":{\"x-foo-bar\":\"foo bar\",\"x-bar-foo\":null}}");
     }
 
     @Test
