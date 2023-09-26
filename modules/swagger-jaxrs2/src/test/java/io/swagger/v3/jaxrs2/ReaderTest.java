@@ -15,6 +15,7 @@ import io.swagger.v3.core.util.PrimitiveType;
 import io.swagger.v3.jaxrs2.matchers.SerializationMatchers;
 import io.swagger.v3.jaxrs2.petstore31.PetResource;
 import io.swagger.v3.jaxrs2.petstore31.TagResource;
+import io.swagger.v3.jaxrs2.resources.DefaultResponseResource;
 import io.swagger.v3.jaxrs2.resources.Misc31Resource;
 import io.swagger.v3.jaxrs2.resources.ParameterMaximumValueResource;
 import io.swagger.v3.jaxrs2.resources.ResponseReturnTypeResource;
@@ -3145,6 +3146,27 @@ public class ReaderTest {
                 "      properties:\n" +
                 "        foo:\n" +
                 "          type: string";
+        SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
+    }
+
+    @Test(description = "Responses Default Status")
+    public void testResponseDefaultStatus() {
+        SwaggerConfiguration config = new SwaggerConfiguration().defaultResponseCode("200");
+        Reader reader = new Reader(config);
+
+        OpenAPI openAPI = reader.read(DefaultResponseResource.class);
+        String yaml = "openapi: 3.0.1\n" +
+                "paths:\n" +
+                "  /:\n" +
+                "    get:\n" +
+                "      operationId: test\n" +
+                "      responses:\n" +
+                "        \"200\":\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*':\n" +
+                "              schema:\n" +
+                "                type: string\n";
         SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
     }
 

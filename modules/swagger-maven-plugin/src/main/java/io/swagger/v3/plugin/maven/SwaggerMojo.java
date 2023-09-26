@@ -345,6 +345,9 @@ public class SwaggerMojo extends AbstractMojo {
         if (StringUtils.isNotBlank(objectMapperProcessorClass)) {
             config.objectMapperProcessorClass(objectMapperProcessorClass);
         }
+        if (StringUtils.isNotBlank(defaultResponseCode)) {
+            config.defaultResponseCode(defaultResponseCode);
+        }
         if (isCollectionNotBlank(modelConverterClasses)) {
             config.modelConverterClasses(modelConverterClasses);
         }
@@ -385,6 +388,11 @@ public class SwaggerMojo extends AbstractMojo {
      */
     @Parameter( property = "resolve.objectMapperProcessorClass" )
     private String objectMapperProcessorClass;
+    /**
+     * @since 2.2.17
+     */
+    @Parameter( property = "resolve.defaultResponseCode" )
+    private String defaultResponseCode;
     @Parameter(property = "resolve.prettyPrint")
     private Boolean prettyPrint;
     @Parameter(property = "resolve.readAllResources")

@@ -40,6 +40,22 @@ public class SwaggerConfiguration implements OpenAPIConfiguration {
 
     private Boolean convertToOpenAPI31;
 
+    @Override
+    public String getDefaultResponseCode() {
+        return defaultResponseCode;
+    }
+
+    public void setDefaultResponseCode(String defaultResponseCode) {
+        this.defaultResponseCode = defaultResponseCode;
+    }
+
+    public SwaggerConfiguration defaultResponseCode(String defaultResponseCode) {
+        this.defaultResponseCode = defaultResponseCode;
+        return this;
+    }
+
+    private String defaultResponseCode;
+
     public Long getCacheTTL() {
         return cacheTTL;
     }

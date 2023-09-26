@@ -47,6 +47,11 @@ public class ServletConfigContextUtils {
     public static final String OPENAPI_CONFIGURATION_OBJECT_MAPPER_PROCESSOR_KEY = "openApi.configuration.objectMapperProcessorClass";
 
     /**
+     * @since 2.2.17
+     */
+    public static final String OPENAPI_CONFIGURATION_DEFAULT_RESPONSE_CODE_KEY = "openApi.configuration.defaultResponseCode";
+
+    /**
      * @since 2.0.6
      */
     public static final String OPENAPI_CONFIGURATION_MODEL_CONVERTERS_KEY = "openApi.configuration.modelConverterClasses";

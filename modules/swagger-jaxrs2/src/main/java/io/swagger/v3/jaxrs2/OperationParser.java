@@ -62,10 +62,10 @@ public class OperationParser {
     }
 
     public static Optional<ApiResponses> getApiResponses(final io.swagger.v3.oas.annotations.responses.ApiResponse[] responses, Produces classProduces, Produces methodProduces, Components components, JsonView jsonViewAnnotation) {
-        return getApiResponses(responses, classProduces, methodProduces, components, jsonViewAnnotation, false);
+        return getApiResponses(responses, classProduces, methodProduces, components, jsonViewAnnotation, false, ApiResponses.DEFAULT);
     }
 
-    public static Optional<ApiResponses> getApiResponses(final io.swagger.v3.oas.annotations.responses.ApiResponse[] responses, Produces classProduces, Produces methodProduces, Components components, JsonView jsonViewAnnotation, boolean openapi31) {
+    public static Optional<ApiResponses> getApiResponses(final io.swagger.v3.oas.annotations.responses.ApiResponse[] responses, Produces classProduces, Produces methodProduces, Components components, JsonView jsonViewAnnotation, boolean openapi31, String defaultResponseKey) {
         if (responses == null) {
             return Optional.empty();
         }
@@ -103,7 +103,7 @@ public class OperationParser {
                 if (StringUtils.isNotBlank(response.responseCode())) {
                     apiResponsesObject.addApiResponse(response.responseCode(), apiResponseObject);
                 } else {
-                    apiResponsesObject._default(apiResponseObject);
+                    apiResponsesObject.addApiResponse(defaultResponseKey, apiResponseObject);
                 }
             }
         }
