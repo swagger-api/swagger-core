@@ -489,6 +489,9 @@ public abstract class AnnotationsUtils {
         return Optional.empty();
     }
     public static Optional<Schema> getArraySchema(io.swagger.v3.oas.annotations.media.ArraySchema arraySchema, Components components, JsonView jsonViewAnnotation, boolean openapi31, Schema existingSchema) {
+        return getArraySchema(arraySchema, components, jsonViewAnnotation, openapi31, existingSchema, false);
+    }
+    public static Optional<Schema> getArraySchema(io.swagger.v3.oas.annotations.media.ArraySchema arraySchema, Components components, JsonView jsonViewAnnotation, boolean openapi31, Schema existingSchema, boolean processSchemaImplementation) {
         if (arraySchema == null || !hasArrayAnnotation(arraySchema)) {
             if (existingSchema == null) {
                 return Optional.empty();
@@ -546,7 +549,9 @@ public abstract class AnnotationsUtils {
         if (arraySchema.schema() != null) {
             if (arraySchema.schema().implementation().equals(Void.class)) {
                 getSchemaFromAnnotation(arraySchema.schema(), components, jsonViewAnnotation, openapi31).ifPresent(arraySchemaObject::setItems);
-            } // if present, schema implementation handled upstream
+            } else if (processSchemaImplementation) {
+                getSchema(arraySchema.schema(), arraySchema, false, arraySchema.schema().implementation(), components, jsonViewAnnotation, openapi31).ifPresent(arraySchemaObject::setItems);
+            }
         }
 
         return Optional.of(arraySchemaObject);
@@ -1500,7 +1505,15 @@ public abstract class AnnotationsUtils {
 
                     }
                 }
-                if (
+                Optional<Schema> arraySchemaResult = getArraySchema(annotationContent.additionalPropertiesArraySchema(), components, jsonViewAnnotation, openapi31, null, true);
+                if (arraySchemaResult.isPresent()) {
+                    if ("array".equals(mediaType.getSchema().getType())) {
+                        mediaType.getSchema().getItems().additionalProperties(arraySchemaResult.get());
+                    } else {
+                        mediaType.getSchema().additionalProperties(arraySchemaResult.get());
+                    }
+                } else {
+                    if (
                         hasSchemaAnnotation(annotationContent.additionalPropertiesSchema()) &&
                         mediaType.getSchema() != null &&
                         !Boolean.TRUE.equals(mediaType.getSchema().getAdditionalProperties()) &&
@@ -1514,6 +1527,7 @@ public abstract class AnnotationsUtils {
                                             }
                                         }
                                 );
+                    }
                 }
             } else {
                 mediaType.setSchema(schema);

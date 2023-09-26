@@ -7,7 +7,7 @@ on:
 jobs:
   build:
 
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
 
     steps:
     - uses: actions/checkout@v2
@@ -16,10 +16,10 @@ jobs:
       with:
         app_id: ${{ secrets.APP_ID }}
         private_key: ${{ secrets.APP_PRIVATE_KEY }}
-    - name: Set up Python 2.7
+    - name: Set up Python 2.7.18
       uses: MatteoH2O1999/setup-python@v1
       with:
-        python-version: 2.7
+        python-version: 2.7.18
     - name: Set up Java 11
       uses: actions/setup-java@v1
       with:

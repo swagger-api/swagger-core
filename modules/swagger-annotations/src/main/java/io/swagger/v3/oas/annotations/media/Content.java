@@ -56,12 +56,22 @@ public @interface Content {
     SchemaProperty[] schemaProperties() default {};
 
     /**
-     * The schema properties defined for schema provided in @Schema
+     * The additionalProperties schema defined for schema provided in @Schema
+     * If the additionalProperties schema is an array, use additionalPropertiesArraySchema
      *
      * @since 2.2.0
-     * @return the schema properties
+     * @return the additionalProperties schema
      */
     Schema additionalPropertiesSchema() default @Schema();
+
+    /**
+     * The additionalProperties array schema defined for schema provided in @Schema
+     * If the additionalProperties schema is not an array, use additionalPropertiesSchema
+     *
+     * @since 2.2.16
+     * @return the additionalProperties array schema
+     */
+    ArraySchema additionalPropertiesArraySchema() default @ArraySchema();
 
     /**
      * The schema of the array that defines the type used for the content.

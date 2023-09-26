@@ -18,6 +18,7 @@ import io.swagger.v3.jaxrs2.petstore31.TagResource;
 import io.swagger.v3.jaxrs2.resources.Misc31Resource;
 import io.swagger.v3.jaxrs2.resources.ParameterMaximumValueResource;
 import io.swagger.v3.jaxrs2.resources.ResponseReturnTypeResource;
+import io.swagger.v3.jaxrs2.resources.SchemaAdditionalPropertiesResource;
 import io.swagger.v3.jaxrs2.resources.SchemaPropertiesResource;
 import io.swagger.v3.jaxrs2.resources.SiblingPropResource;
 import io.swagger.v3.jaxrs2.resources.SiblingsResource;
@@ -3008,6 +3009,75 @@ public class ReaderTest {
                 "          d:\n" +
                 "            type: integer\n" +
                 "            format: int32\n";
+        SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
+    }
+
+    @Test(description = "Test Schema AdditionalProperties annotations")
+    public void testSchemaAdditionalProperties() {
+        Reader reader = new Reader(new OpenAPI());
+
+        OpenAPI openAPI = reader.read(SchemaAdditionalPropertiesResource.class);
+        String yaml = "openapi: 3.0.1\n" +
+                "paths:\n" +
+                "  /arraySchemaImpl:\n" +
+                "    get:\n" +
+                "      operationId: arraySchemaImpl\n" +
+                "      responses:\n" +
+                "        \"200\":\n" +
+                "          description: voila!\n" +
+                "          content:\n" +
+                "            application/json:\n" +
+                "              schema:\n" +
+                "                type: object\n" +
+                "                additionalProperties:\n" +
+                "                  type: array\n" +
+                "                  items:\n" +
+                "                    $ref: '#/components/schemas/Pet'\n" +
+                "  /fromtResponseType:\n" +
+                "    get:\n" +
+                "      operationId: fromtResponseType\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*':\n" +
+                "              schema:\n" +
+                "                type: object\n" +
+                "                additionalProperties:\n" +
+                "                  type: array\n" +
+                "                  items:\n" +
+                "                    $ref: '#/components/schemas/Pet'\n" +
+                "  /schemaImpl:\n" +
+                "    get:\n" +
+                "      operationId: schemaImpl\n" +
+                "      responses:\n" +
+                "        \"200\":\n" +
+                "          description: voila!\n" +
+                "          content:\n" +
+                "            application/json:\n" +
+                "              schema:\n" +
+                "                type: object\n" +
+                "                additionalProperties:\n" +
+                "                  $ref: '#/components/schemas/Pet'\n" +
+                "  /schemaNotImpl:\n" +
+                "    get:\n" +
+                "      operationId: schemaNotImpl\n" +
+                "      responses:\n" +
+                "        \"200\":\n" +
+                "          description: voila!\n" +
+                "          content:\n" +
+                "            application/json:\n" +
+                "              schema:\n" +
+                "                type: object\n" +
+                "                additionalProperties:\n" +
+                "                  $ref: '#/components/schemas/Pet'\n" +
+                "components:\n" +
+                "  schemas:\n" +
+                "    Pet:\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        foo:\n" +
+                "          type: string\n";
         SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
     }
 
