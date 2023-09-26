@@ -77,6 +77,8 @@ public class ResolveTask extends DefaultTask {
 
     private Boolean convertToOpenAPI31 = false;
 
+    private String defaultResponseCode;
+
     @Input
     @Optional
     public String getOutputFileName() {
@@ -225,6 +227,22 @@ public class ResolveTask extends DefaultTask {
      */
     public void setObjectMapperProcessorClass(String objectMapperProcessorClass) {
         this.objectMapperProcessorClass = objectMapperProcessorClass;
+    }
+
+    /**
+     * @since 2.2.17
+     */
+    @Input
+    @Optional
+    public String getDefaultResponseCode() {
+        return defaultResponseCode;
+    }
+
+    /**
+     * @since 2.2.17
+     */
+    public void setDefaultResponseCode(String defaultResponseCode) {
+        this.defaultResponseCode = defaultResponseCode;
     }
 
     /**
@@ -459,6 +477,11 @@ public class ResolveTask extends DefaultTask {
             if (StringUtils.isNotBlank(objectMapperProcessorClass)) {
                 method=swaggerLoaderClass.getDeclaredMethod("setObjectMapperProcessorClass",String.class);
                 method.invoke(swaggerLoader, objectMapperProcessorClass);
+            }
+
+            if (StringUtils.isNotBlank(defaultResponseCode)) {
+                method=swaggerLoaderClass.getDeclaredMethod("setDefaultResponseCode",String.class);
+                method.invoke(swaggerLoader, defaultResponseCode);
             }
 
             method=swaggerLoaderClass.getDeclaredMethod("setPrettyPrint", Boolean.class);

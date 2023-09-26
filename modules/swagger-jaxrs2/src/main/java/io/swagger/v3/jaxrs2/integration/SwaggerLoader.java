@@ -36,6 +36,7 @@ public class SwaggerLoader {
     private String openapiAsString;
 
     private String objectMapperProcessorClass;
+    private String defaultResponseCode;
     private String modelConverterClasses;
 
     private Boolean sortOutput = false;
@@ -60,6 +61,20 @@ public class SwaggerLoader {
      */
     public void setObjectMapperProcessorClass(String objectMapperProcessorClass) {
         this.objectMapperProcessorClass = objectMapperProcessorClass;
+    }
+
+    /**
+     * @since 2.2.17
+     */
+    public String getDefaultResponseCode() {
+        return defaultResponseCode;
+    }
+
+    /**
+     * @since 2.2.17
+     */
+    public void setDefaultResponseCode(String defaultResponseCode) {
+        this.defaultResponseCode = defaultResponseCode;
     }
 
     /**
@@ -279,6 +294,7 @@ public class SwaggerLoader {
                 .resourceClasses(resourceClassesSet)
                 .resourcePackages(resourcePackagesSet)
                 .objectMapperProcessorClass(objectMapperProcessorClass)
+                .defaultResponseCode(defaultResponseCode)
                 .modelConverterClasses(modelConverterSet)
                 .sortOutput(sortOutput)
                 .alwaysResolveAppPath(alwaysResolveAppPath)

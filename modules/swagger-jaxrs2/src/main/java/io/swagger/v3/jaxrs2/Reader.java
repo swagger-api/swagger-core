@@ -88,6 +88,8 @@ public class Reader implements OpenApiReader {
     private Paths paths;
     private Set<Tag> openApiTags;
 
+    private String defaultResponseKey = ApiResponses.DEFAULT;
+
     private static final String GET_METHOD = "get";
     private static final String POST_METHOD = "post";
     private static final String PUT_METHOD = "put";
@@ -216,6 +218,7 @@ public class Reader implements OpenApiReader {
                     this.components = this.openAPI.getComponents();
                 }
             }
+            this.defaultResponseKey = StringUtils.isBlank(config.getDefaultResponseCode()) ? ApiResponses.DEFAULT : config.getDefaultResponseCode();
         }
     }
 
@@ -1083,7 +1086,9 @@ public class Reader implements OpenApiReader {
                     classProduces,
                     methodProduces,
                     components,
-                    jsonViewAnnotation
+                    jsonViewAnnotation,
+                    config.isOpenAPI31(),
+                    defaultResponseKey
             ).ifPresent(responses -> {
                 if (operation.getResponses() == null) {
                     operation.setResponses(responses);
@@ -1104,7 +1109,9 @@ public class Reader implements OpenApiReader {
                     classProduces,
                     methodProduces,
                     components,
-                    jsonViewAnnotation
+                    jsonViewAnnotation,
+                    config.isOpenAPI31(),
+                    defaultResponseKey
             ).ifPresent(responses -> {
                 if (operation.getResponses() == null) {
                     operation.setResponses(responses);
@@ -1164,20 +1171,20 @@ public class Reader implements OpenApiReader {
                         methodProduces == null ? new String[0] : methodProduces.value(), content, mediaType);
                 if (operation.getResponses() == null) {
                     operation.responses(
-                            new ApiResponses()._default(
+                            new ApiResponses().addApiResponse(defaultResponseKey,
                                     new ApiResponse().description(DEFAULT_DESCRIPTION)
                                             .content(content)
                             )
                     );
                 }
-                if (operation.getResponses().getDefault() != null &&
-                        StringUtils.isBlank(operation.getResponses().getDefault().get$ref())) {
-                    if (operation.getResponses().getDefault().getContent() == null) {
-                        operation.getResponses().getDefault().content(content);
+                if (operation.getResponses().get(defaultResponseKey) != null &&
+                        StringUtils.isBlank(operation.getResponses().get(defaultResponseKey).get$ref())) {
+                    if (operation.getResponses().get(defaultResponseKey).getContent() == null) {
+                        operation.getResponses().get(defaultResponseKey).content(content);
                     } else {
-                        for (String key : operation.getResponses().getDefault().getContent().keySet()) {
-                            if (operation.getResponses().getDefault().getContent().get(key).getSchema() == null) {
-                                operation.getResponses().getDefault().getContent().get(key).setSchema(returnTypeSchema);
+                        for (String key : operation.getResponses().get(defaultResponseKey).getContent().keySet()) {
+                            if (operation.getResponses().get(defaultResponseKey).getContent().get(key).getSchema() == null) {
+                                operation.getResponses().get(defaultResponseKey).getContent().get(key).setSchema(returnTypeSchema);
                             }
                         }
                     }
@@ -1414,7 +1421,7 @@ public class Reader implements OpenApiReader {
             AnnotationsUtils.getExternalDocumentation(apiOperation.externalDocs(), openapi31).ifPresent(operation::setExternalDocs);
         }
 
-        OperationParser.getApiResponses(apiOperation.responses(), classProduces, methodProduces, components, jsonViewAnnotation, openapi31).ifPresent(responses -> {
+        OperationParser.getApiResponses(apiOperation.responses(), classProduces, methodProduces, components, jsonViewAnnotation, openapi31, defaultResponseKey).ifPresent(responses -> {
             if (operation.getResponses() == null) {
                 operation.setResponses(responses);
             } else {

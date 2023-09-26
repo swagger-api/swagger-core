@@ -63,4 +63,9 @@ public interface OpenAPIConfiguration {
      * @since 2.2.12
      */
     Boolean isConvertToOpenAPI31();
+
+    /**
+     * @since 2.2.17
+     */
+    public String getDefaultResponseCode();
 }

@@ -630,6 +630,9 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
         if (merged.isConvertToOpenAPI31() == null) {
             merged.setConvertToOpenAPI31(parentConfig.isConvertToOpenAPI31());
         }
+        if (merged.getDefaultResponseCode() == null) {
+            merged.setDefaultResponseCode(parentConfig.getDefaultResponseCode());
+        }
 
         return merged;
     }

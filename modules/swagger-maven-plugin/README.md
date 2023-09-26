@@ -197,6 +197,7 @@ Parameter | Description | Required | Default
 `readAllResources`|see [configuration property](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)|false|
 `ignoredRoutes`|see [configuration property](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)|false|
 `objectMapperProcessorClass`|see [configuration property](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)|false|
+`defaultResponseCode`|see [configuration property](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)|false|
 `modelConverterClasses`|see [configuration property](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)|false|
 `contextId`|see [Context](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#context)|false|${project.artifactId}
 
@@ -208,3 +209,4 @@ Since version 2.1.6, `sortOutput` parameter is available, allowing to sort objec
 Since version 2.1.6, `objectMapperProcessorClass` allows to configure also the ObjectMapper instance used to serialize the resolved OpenAPI
 Since version 2.1.9, `alwaysResolveAppPath` parameter is available, allowing to trigger resolving of Application Path from annotaion also not in runtime (e.g. using servlet in separate application, or in maven plugin at build time, etc)
 Since version 2.1.15, `skipResolveAppPath` parameter is available, allowing to skip resolving of Application Path from annotation
+Since version 2.2.17, `defaultResponseCode` parameter is available, allowing to set the code used when resolving responses with no http status code annotation

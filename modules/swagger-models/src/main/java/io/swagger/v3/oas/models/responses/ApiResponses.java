@@ -28,15 +28,17 @@ public class ApiResponses extends LinkedHashMap<String, ApiResponse> {
      *
      * @return ApiResponse _default
      **/
-
+    @Deprecated
     public ApiResponse getDefault() {
         return this.get(DEFAULT);
     }
 
+    @Deprecated
     public void setDefault(ApiResponse _default) {
         addApiResponse(DEFAULT, _default);
     }
 
+    @Deprecated
     public ApiResponses _default(ApiResponse _default) {
         setDefault(_default);
         return this;
