@@ -132,7 +132,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.1.1</version>
+                <version>3.5.0</version>
                 <configuration>
                     <aggregate>true</aggregate>
                     <source>1.8</source>
@@ -156,7 +156,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>3.2.0</version>
+                <version>3.3.0</version>
                 <executions>
                     <execution>
                         <id>empty-javadoc-jar</id>
@@ -335,7 +335,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.0.0</version>
+                <version>3.5.0</version>
                 <configuration>
                     <aggregate>true</aggregate>
                     <source>1.8</source>
@@ -562,35 +562,35 @@
     </dependencyManagement>
     <properties>
         <maven.compiler.release>8</maven.compiler.release>
-        <joda-version>1.9.2</joda-version>
-        <joda-time-version>2.12.2</joda-time-version>
-        <snakeyaml-version>2.0</snakeyaml-version>
+        <joda-version>2.2.3</joda-version>
+        <joda-time-version>2.12.5</joda-time-version>
+        <snakeyaml-version>2.2</snakeyaml-version>
         <jakarta.ws-version>3.1.0</jakarta.ws-version>
         <jakarta.validation-version>3.0.2</jakarta.validation-version>
         <jakarta.xml.bind-api-version>3.0.0</jakarta.xml.bind-api-version>
-        <jakarta.activation-api-version>2.1.1</jakarta.activation-api-version>
-        <bnd-version>5.2.0</bnd-version>
+        <jakarta.activation-api-version>2.1.2</jakarta.activation-api-version>
+        <bnd-version>6.4.0</bnd-version>
         <servlet-api-version>5.0.0</servlet-api-version>
-        <jersey2-version>3.0.1</jersey2-version>
+        <jersey2-version>3.1.3</jersey2-version>
         <junit-version>4.13.2</junit-version>
-        <jackson-version>2.15.1</jackson-version>
-        <jackson-databind-version>2.15.1</jackson-databind-version>
-        <logback-version>1.4.5</logback-version>
-        <classgraph-version>4.8.154</classgraph-version>
-        <guava-version>31.1-jre</guava-version>
+        <jackson-version>2.15.2</jackson-version>
+        <jackson-databind-version>2.15.2</jackson-databind-version>
+        <logback-version>1.4.11</logback-version>
+        <classgraph-version>4.8.162</classgraph-version>
+        <guava-version>32.1.3-jre</guava-version>
         <ant-version>1.10.13</ant-version>
-        <commons-lang-version>3.12.0</commons-lang-version>
-        <commons-io-version>2.11.0</commons-io-version>
-        <slf4j-version>1.7.35</slf4j-version>
-        <jetty-version>9.4.49.v20220914</jetty-version>
-        <testng-version>7.7.1</testng-version>
+        <commons-lang-version>3.13.0</commons-lang-version>
+        <commons-io-version>2.14.0</commons-io-version>
+        <slf4j-version>2.0.9</slf4j-version>
+        <jetty-version>9.4.53.v20231009</jetty-version>
+        <testng-version>7.8.0</testng-version>
         <mockito-version>2.28.2</mockito-version>
         <rest-assured-version>4.3.2</rest-assured-version>
         <httpcomponents-version>4.5.14</httpcomponents-version>
-        <commons-codec-version>1.15</commons-codec-version>
+        <commons-codec-version>1.16.0</commons-codec-version>
 
         <surefire-version>2.22.2</surefire-version>
-        <enforcer-plugin-version>3.0.0-M2</enforcer-plugin-version>
+        <enforcer-plugin-version>3.2.1</enforcer-plugin-version>
         <failsafe-plugin-version>2.22.2</failsafe-plugin-version>
 
         <coverage.complexity.minimum>0.90</coverage.complexity.minimum>
