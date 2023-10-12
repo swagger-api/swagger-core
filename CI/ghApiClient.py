@@ -39,7 +39,8 @@ def postUrl(name, body):
         request = urllib.request.Request(GH_BASE_URL + name)
         request.add_header("Authorization", GH_AUTH)
         request.add_header("Accept", "application/vnd.github.v3+json")
-        content = urllib.request.urlopen(request, body).read()
+        data = urllib.parse.urlencode(body).encode("utf-8")
+        content = urllib.request.urlopen(request, data).read()
         jcont = json.loads(content)
         return jcont
     except urllib.error.HTTPError as e:
@@ -56,4 +57,3 @@ def postUrl(name, body):
         import traceback
         print(('generic exception: ' + traceback.format_exc()))
         raise IOError
-
