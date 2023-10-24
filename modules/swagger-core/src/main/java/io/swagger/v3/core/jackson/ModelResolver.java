@@ -432,7 +432,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             if (annotatedType.getCtxAnnotations() != null) {
                 strippedCtxAnnotations.addAll(Arrays.stream(
                         annotatedType.getCtxAnnotations()).filter(
-                        ass -> !ass.annotationType().getName().startsWith("io.swagger")
+                        ass -> !ass.annotationType().getName().startsWith("io.swagger") && !ass.annotationType().getName().startsWith("javax.validation.constraints")
                 ).collect(Collectors.toList()));
             }
 
