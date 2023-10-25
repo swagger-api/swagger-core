@@ -1200,7 +1200,7 @@ public class Reader implements OpenApiReader {
             Content content = resolveEmptyContent(classProduces, methodProduces);
 
             ApiResponse apiResponseObject = new ApiResponse().description(DEFAULT_DESCRIPTION).content(content);
-            operation.setResponses(new ApiResponses()._default(apiResponseObject));
+            operation.setResponses(new ApiResponses().addApiResponse(defaultResponseKey, apiResponseObject));
         }
         if (returnTypeSchema != null) {
             resolveResponseSchemaFromReturnType(operation, classResponses, returnTypeSchema, classProduces, methodProduces);
@@ -1296,8 +1296,8 @@ public class Reader implements OpenApiReader {
                             }
                             opResponse.content(content);
                         }
+                        opResponse.getContent().putAll(reresolvedMediaTypes);
                     }
-                    opResponse.getContent().putAll(reresolvedMediaTypes);
                 }
             }
         }
