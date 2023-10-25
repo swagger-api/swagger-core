@@ -80,6 +80,7 @@ import io.swagger.v3.jaxrs2.resources.Ticket3731BisResource;
 import io.swagger.v3.jaxrs2.resources.Ticket3731Resource;
 import io.swagger.v3.jaxrs2.resources.Ticket4412Resource;
 import io.swagger.v3.jaxrs2.resources.Ticket4446Resource;
+import io.swagger.v3.jaxrs2.resources.Ticket4483Resource;
 import io.swagger.v3.jaxrs2.resources.UploadResource;
 import io.swagger.v3.jaxrs2.resources.UrlEncodedResourceWithEncodings;
 import io.swagger.v3.jaxrs2.resources.UserAnnotationResource;
@@ -4060,5 +4061,86 @@ public class ReaderTest {
                 "          content:\n" +
                 "            '*/*': {}\n";
         SerializationMatchers.assertEqualsToYaml31(openAPI, yaml);
+    }
+
+    @Test
+    public void test4483Response() {
+        Reader reader = new Reader(new OpenAPI());
+
+        OpenAPI openAPI = reader.read(Ticket4483Resource.class);
+        String yaml = "openapi: 3.0.1\n" +
+                "tags:\n" +
+                "- name: Dummy\n" +
+                "  description: Dummy resource for testing setup\n" +
+                "paths:\n" +
+                "  /test:\n" +
+                "    get:\n" +
+                "      tags:\n" +
+                "      - Dummy\n" +
+                "      description: Dummy GET\n" +
+                "      operationId: dummy\n" +
+                "      responses:\n" +
+                "        \"401\":\n" +
+                "          description: Authentication is required\n" +
+                "          content:\n" +
+                "            application/json:\n" +
+                "              schema:\n" +
+                "                type: array\n" +
+                "                items:\n" +
+                "                  $ref: '#/components/schemas/LocalizedError'\n" +
+                "        \"200\":\n" +
+                "          description: test\n" +
+                "          content:\n" +
+                "            application/json:\n" +
+                "              schema:\n" +
+                "                type: object\n" +
+                "                additionalProperties:\n" +
+                "                  type: boolean\n" +
+                "  /test/opresp:\n" +
+                "    get:\n" +
+                "      tags:\n" +
+                "      - Dummy\n" +
+                "      operationId: dummyopresp\n" +
+                "      responses:\n" +
+                "        \"401\":\n" +
+                "          description: Authentication is required\n" +
+                "          content:\n" +
+                "            application/json:\n" +
+                "              schema:\n" +
+                "                type: array\n" +
+                "                items:\n" +
+                "                  $ref: '#/components/schemas/LocalizedError'\n" +
+                "        \"200\":\n" +
+                "          description: Dummy GET opresp\n" +
+                "          content:\n" +
+                "            application/json:\n" +
+                "              schema:\n" +
+                "                type: object\n" +
+                "                additionalProperties:\n" +
+                "                  type: boolean\n" +
+                "  /test/oprespnodesc:\n" +
+                "    get:\n" +
+                "      tags:\n" +
+                "      - Dummy\n" +
+                "      operationId: oprespnodesc\n" +
+                "      responses:\n" +
+                "        \"401\":\n" +
+                "          description: Authentication is required\n" +
+                "          content:\n" +
+                "            application/json:\n" +
+                "              schema:\n" +
+                "                type: array\n" +
+                "                items:\n" +
+                "                  $ref: '#/components/schemas/LocalizedError'\n" +
+                "components:\n" +
+                "  schemas:\n" +
+                "    LocalizedError:\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        code:\n" +
+                "          type: string\n" +
+                "        message:\n" +
+                "          type: string\n";
+        SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
     }
 }
