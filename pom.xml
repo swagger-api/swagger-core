@@ -163,7 +163,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.5.0</version>
+                <version>3.6.2</version>
                 <configuration>
                     <aggregate>true</aggregate>
                     <source>1.8</source>
@@ -205,7 +205,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-site-plugin</artifactId>
-                <version>3.12.0</version>
+                <version>3.12.1</version>
             </plugin>
             <plugin>
                 <groupId>org.sonatype.plugins</groupId>
@@ -434,7 +434,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.5.0</version>
+                <version>3.6.2</version>
                 <configuration>
                     <aggregate>true</aggregate>
                     <source>1.8</source>
@@ -655,7 +655,7 @@
         <jakarta.activation-api-version>1.2.2</jakarta.activation-api-version>
         <bnd-version>6.4.0</bnd-version>
         <servlet-api-version>4.0.3</servlet-api-version>
-        <jersey2-version>2.39</jersey2-version>
+        <jersey2-version>2.41</jersey2-version>
         <junit-version>4.13.2</junit-version>
         <jackson-version>2.15.2</jackson-version>
         <jackson-databind-version>2.15.2</jackson-databind-version>

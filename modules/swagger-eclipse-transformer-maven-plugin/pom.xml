@@ -13,7 +13,7 @@
     <description>swagger-eclipse-transformer-maven-plugin</description>
     <packaging>maven-plugin</packaging>
     <properties>
-        <maven.target.version>3.8.4</maven.target.version>
+        <maven.target.version>3.9.5</maven.target.version>
         <eclipse.transformer.version>0.20</eclipse.transformer.version>
         <maven-test-harness.version>3.3.0</maven-test-harness.version>
         <shrinkwrap.version>1.2.6</shrinkwrap.version>
