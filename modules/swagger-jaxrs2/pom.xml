@@ -233,7 +233,7 @@
         <dependency>
             <groupId>org.jboss.weld</groupId>
             <artifactId>weld-core-impl</artifactId>
-            <version>3.1.6.Final</version>
+            <version>3.1.9.Final</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -245,7 +245,7 @@
         <dependency>
             <groupId>org.jboss.arquillian.container</groupId>
             <artifactId>arquillian-weld-embedded</artifactId>
-            <version>2.0.0.Final</version>
+            <version>2.1.0.Final</version>
             <scope>test</scope>
             <exclusions>
                 <exclusion>

@@ -90,7 +90,7 @@
             <extension>
                 <groupId>org.apache.maven.wagon</groupId>
                 <artifactId>wagon-ssh-external</artifactId>
-                <version>3.5.2</version>
+                <version>3.5.3</version>
             </extension>
             <extension>
                 <groupId>org.apache.maven.wagon</groupId>
@@ -654,7 +654,7 @@
         <jakarta.xml.bind-api-version>2.3.3</jakarta.xml.bind-api-version>
         <jakarta.activation-api-version>1.2.2</jakarta.activation-api-version>
         <bnd-version>6.4.0</bnd-version>
-        <servlet-api-version>4.0.3</servlet-api-version>
+        <servlet-api-version>4.0.4</servlet-api-version>
         <jersey2-version>2.41</jersey2-version>
         <junit-version>4.13.2</junit-version>
         <jackson-version>2.15.2</jackson-version>
@@ -669,7 +669,7 @@
         <jetty-version>9.4.53.v20231009</jetty-version>
         <testng-version>7.8.0</testng-version>
         <mockito-version>2.28.2</mockito-version>
-        <rest-assured-version>4.3.2</rest-assured-version>
+        <rest-assured-version>4.5.1</rest-assured-version>
         <httpcomponents-version>4.5.14</httpcomponents-version>
         <commons-codec-version>1.16.0</commons-codec-version>
 
