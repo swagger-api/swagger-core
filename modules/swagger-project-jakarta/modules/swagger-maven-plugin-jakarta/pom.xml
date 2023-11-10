@@ -37,7 +37,8 @@
             </plugin>
             <plugin>
                 <artifactId>maven-resources-plugin</artifactId>
-                <version>3.2.0</version>
+                <!-- keep 3.1.0 until root cause of error is identified. see https://issues.apache.org/jira/browse/MRESOURCES-265 -->
+                <version>3.1.0</version>
                 <executions>
                     <execution>
                         <id>copy-resources</id>
