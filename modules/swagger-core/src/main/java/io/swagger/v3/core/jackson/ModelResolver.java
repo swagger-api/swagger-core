@@ -718,11 +718,13 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 }
                 if (property != null) {
                     Boolean required = md.getRequired();
-                    if (required != null && !Boolean.FALSE.equals(required)) {
-                        addRequiredItem(model, propName);
-                    } else {
-                        if (propDef.isRequired()) {
+                    if (!io.swagger.v3.oas.annotations.media.Schema.RequiredMode.NOT_REQUIRED.equals(requiredMode)) {
+                        if (required != null && !Boolean.FALSE.equals(required)) {
                             addRequiredItem(model, propName);
+                        } else {
+                            if (propDef.isRequired()) {
+                                addRequiredItem(model, propName);
+                            }
                         }
                     }
                     if (property.get$ref() == null || openapi31) {
@@ -801,6 +803,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             }
 
             for(String propName : requiredProps) {
+                System.err.println("XXX PROPS " + propName);
                 addRequiredItem(model, propName);
             }
         }
