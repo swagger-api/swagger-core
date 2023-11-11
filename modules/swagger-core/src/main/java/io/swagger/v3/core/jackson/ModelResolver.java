@@ -803,7 +803,6 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             }
 
             for(String propName : requiredProps) {
-                System.err.println("XXX PROPS " + propName);
                 addRequiredItem(model, propName);
             }
         }
