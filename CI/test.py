@@ -44,6 +44,14 @@ def getReleases():
 
 # main
 def main(last_release, release_title, tag):
+    baseurl = "https://api.github.com/repos/swagger-api/swagger-core/pulls/"
+    payload = "{\"tag_name\":\"" + tag + "\", "
+    payload += "\"name\":" + json.dumps(release_title) + ", "
+    payload += "\"body\":" + json.dumps(content) + ", "
+    payload += "\"draft\":" + "true" + ", "
+    payload += "\"prerelease\":" + "false" + ", "
+    payload += "\"target_commitish\":\"" + "master" + "\"}"
+    content = ghApiClient.postUrl('repos/swagger-api/swagger-core/releases', payload)
     result = allPulls(lastReleaseDate('v' + last_release))
     addRelease (release_title, tag, result)
 

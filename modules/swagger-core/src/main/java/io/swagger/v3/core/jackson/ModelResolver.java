@@ -432,7 +432,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             if (annotatedType.getCtxAnnotations() != null) {
                 strippedCtxAnnotations.addAll(Arrays.stream(
                         annotatedType.getCtxAnnotations()).filter(
-                        ass -> !ass.annotationType().getName().startsWith("io.swagger")
+                        ass -> !ass.annotationType().getName().startsWith("io.swagger") && !ass.annotationType().getName().startsWith("javax.validation.constraints")
                 ).collect(Collectors.toList()));
             }
 
@@ -718,11 +718,13 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 }
                 if (property != null) {
                     Boolean required = md.getRequired();
-                    if (required != null && !Boolean.FALSE.equals(required)) {
-                        addRequiredItem(model, propName);
-                    } else {
-                        if (propDef.isRequired()) {
+                    if (!io.swagger.v3.oas.annotations.media.Schema.RequiredMode.NOT_REQUIRED.equals(requiredMode)) {
+                        if (required != null && !Boolean.FALSE.equals(required)) {
                             addRequiredItem(model, propName);
+                        } else {
+                            if (propDef.isRequired()) {
+                                addRequiredItem(model, propName);
+                            }
                         }
                     }
                     if (property.get$ref() == null || openapi31) {
