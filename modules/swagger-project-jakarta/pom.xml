@@ -568,7 +568,7 @@
         <snakeyaml-version>2.2</snakeyaml-version>
         <jakarta.ws-version>3.1.0</jakarta.ws-version>
         <jakarta.validation-version>3.0.2</jakarta.validation-version>
-        <jakarta.xml.bind-api-version>3.0.0</jakarta.xml.bind-api-version>
+        <jakarta.xml.bind-api-version>2.3.3</jakarta.xml.bind-api-version>
         <jakarta.activation-api-version>2.1.2</jakarta.activation-api-version>
         <bnd-version>6.4.0</bnd-version>
         <servlet-api-version>5.0.0</servlet-api-version>
