@@ -601,7 +601,7 @@
         <coverage.complexity.minimum>0.90</coverage.complexity.minimum>
         <coverage.line.minimum>0.90</coverage.line.minimum>
         <coverage.missed.classes>0</coverage.missed.classes>
-        <commons-io-version>2.11.0</commons-io-version>
+        <commons-io-version>2.15.0</commons-io-version>
         <enforcer-plugin-version>3.4.1</enforcer-plugin-version>
         <failsafe-plugin-version>2.22.2</failsafe-plugin-version>
         <validation-api-version>1.1.0.Final</validation-api-version>
