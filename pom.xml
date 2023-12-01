@@ -657,7 +657,7 @@
         <servlet-api-version>4.0.4</servlet-api-version>
         <jersey2-version>2.41</jersey2-version>
         <junit-version>4.13.2</junit-version>
-        <jackson-version>2.15.2</jackson-version>
+        <jackson-version>2.16.0</jackson-version>
         <jackson-databind-version>2.15.2</jackson-databind-version>
         <logback-version>1.4.13</logback-version>
         <classgraph-version>4.8.162</classgraph-version>
