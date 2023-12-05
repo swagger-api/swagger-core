@@ -6,6 +6,9 @@ package io.swagger.v3.oas.models.media;
 
 public class ComposedSchema extends Schema<Object> {
 
+    public ComposedSchema() {
+        super("object", null);
+    }
 
     @Override
     public String toString() {
