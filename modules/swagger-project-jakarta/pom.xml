@@ -112,95 +112,6 @@
                 </executions>
             </plugin>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-source-plugin</artifactId>
-                <version>3.3.0</version>
-                <configuration>
-                    <forceCreation>true</forceCreation>
-                    <includePom>true</includePom>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>attach-sources</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>jar-no-fork</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.6.2</version>
-                <configuration>
-                    <aggregate>true</aggregate>
-                    <source>1.8</source>
-                    <encoding>UTF-8</encoding>
-                    <maxmemory>1g</maxmemory>
-                    <links>
-                        <link>http://docs.oracle.com/javase/8/docs/api</link>
-                    </links>
-                    <excludePackageNames>${javadoc.package.exclude}</excludePackageNames>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>attach-javadocs</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>3.3.0</version>
-                <executions>
-                    <execution>
-                        <id>empty-javadoc-jar</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                        <configuration>
-                            <classifier>javadoc</classifier>
-                            <classesDirectory>${basedir}/javadoc</classesDirectory>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <artifactId>maven-resources-plugin</artifactId>
-                <!-- keep 3.1.0 until root cause of error is identified. see https://issues.apache.org/jira/browse/MRESOURCES-265 -->
-                <version>3.1.0</version>
-                <executions>
-                    <execution>
-                        <id>copy-resources</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${project.build.directory}</outputDirectory>
-                            <overwrite>true</overwrite>
-                            <resources>
-                                <resource>
-                                    <directory>transformed</directory>
-                                    <filtering>false</filtering>
-                                    <includes>
-                                        <include>${project.artifactId}-${project.version}.jar</include>
-                                        <!-- for swagger-maven-plugin-jakarta as transformed artifact has `maven-plugin` ext -->
-                                        <!--<include>${project.artifactId}-${project.version}.maven-plugin</include>-->
-                                    </includes>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
                 <groupId>org.sonatype.plugins</groupId>
                 <artifactId>nexus-staging-maven-plugin</artifactId>
                 <version>1.6.13</version>
@@ -568,7 +479,7 @@
         <snakeyaml-version>2.2</snakeyaml-version>
         <jakarta.ws-version>3.1.0</jakarta.ws-version>
         <jakarta.validation-version>3.0.2</jakarta.validation-version>
-        <jakarta.xml.bind-api-version>2.3.3</jakarta.xml.bind-api-version>
+        <jakarta.xml.bind-api-version>3.0.1</jakarta.xml.bind-api-version>
         <jakarta.activation-api-version>2.1.2</jakarta.activation-api-version>
         <bnd-version>6.4.0</bnd-version>
         <servlet-api-version>5.0.0</servlet-api-version>
@@ -600,7 +511,7 @@
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <sonatypeOssDistMgmtSnapshotsUrl>https://oss.sonatype.org/content/repositories/snapshots/</sonatypeOssDistMgmtSnapshotsUrl>
-
+        <transformer-maven-plugin-version>0.5.0</transformer-maven-plugin-version>
         <maven.version>3.9.6</maven.version>
         <commons-compress-version>1.25.0</commons-compress-version>
     </properties>

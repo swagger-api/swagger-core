@@ -118,25 +118,6 @@
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
-                <groupId>io.swagger.core.v3</groupId>
-                <artifactId>swagger-eclipse-transformer-maven-plugin</artifactId>
-                <version>${project.version}</version>
-                <configuration>
-                    <attach>false</attach>
-                    <classifier>jakarta</classifier>
-                    <outputDirectory>${project.basedir}/../swagger-project-jakarta/modules/${project.artifactId}-jakarta/transformed</outputDirectory>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>transform-jakarta</id>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                        <phase>package</phase>
-                    </execution>
-                </executions>
-            </plugin>
         </plugins>
     </build>
 
