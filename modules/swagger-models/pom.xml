@@ -98,6 +98,6 @@
         <coverage.complexity.minimum>0.07</coverage.complexity.minimum>
         <coverage.line.minimum>0.0</coverage.line.minimum>
         <jmockit-version>1.49</jmockit-version>
-        <mockito-version>2.16.0</mockito-version>
+        <mockito-version>2.28.2</mockito-version>
     </properties>
 </project>

@@ -88,7 +88,7 @@
         <dependency>
             <groupId>org.apache.maven.plugin-tools</groupId>
             <artifactId>maven-plugin-annotations</artifactId>
-            <version>3.9.0</version>
+            <version>3.10.2</version>
             <scope>provided</scope>
             <exclusions>
                 <exclusion>
@@ -100,7 +100,7 @@
         <dependency>
             <groupId>org.codehaus.plexus</groupId>
             <artifactId>plexus-archiver</artifactId>
-            <version>4.8.0</version>
+            <version>4.9.0</version>
             <scope>test</scope>
             <exclusions>
                 <exclusion>
@@ -290,9 +290,9 @@
     </dependencies>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.version>3.9.5</maven.version>
+        <maven.version>3.9.6</maven.version>
         <junit.version>4.13.2</junit.version>
         <wiremock-jetty-version>9.4.53.v20231009</wiremock-jetty-version>
-        <commons-compress-version>1.24.0</commons-compress-version>
+        <commons-compress-version>1.25.0</commons-compress-version>
     </properties>
 </project>

@@ -174,7 +174,7 @@
         <dependency>
             <groupId>org.javassist</groupId>
             <artifactId>javassist</artifactId>
-            <version>3.29.2-GA</version>
+            <version>3.30.1-GA</version>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>
@@ -239,7 +239,7 @@
         <dependency>
             <groupId>org.jboss.arquillian.testng</groupId>
             <artifactId>arquillian-testng-container</artifactId>
-            <version>1.7.1.Final</version>
+            <version>1.8.0.Final</version>
             <scope>test</scope>
         </dependency>
         <dependency>
