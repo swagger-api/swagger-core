@@ -383,6 +383,14 @@ public class ModelConverterTest {
         assertEquals(model.getProperties().size(), 1);
     }
 
+    @Test
+    public void checkDefaultSkippedPackages(){
+        ModelConverters modelConverters = ModelConverters.getInstance();
+
+        assertTrue(modelConverters.skippedPackages.contains("java.lang"));
+        assertTrue(modelConverters.skippedPackages.contains("groovy.lang"));
+    }
+
     @JsonSerialize(as = AnnotatedImplementationClass.class)
     abstract class BaseClass {
         public abstract String field();
@@ -405,6 +413,7 @@ public class ModelConverterTest {
         assertNotNull(model.getProperties());
         assertEquals(model.getProperties().size(), 1);
     }
+
 
     abstract class AnnotatedBaseClass {
         @JsonProperty

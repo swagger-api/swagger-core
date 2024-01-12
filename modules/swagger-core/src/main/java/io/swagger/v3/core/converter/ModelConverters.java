@@ -25,7 +25,7 @@ public class ModelConverters {
     private static ModelConverters SINGLETON31 = null;
     static Logger LOGGER = LoggerFactory.getLogger(ModelConverters.class);
     private final List<ModelConverter> converters;
-    private final Set<String> skippedPackages = new HashSet<>();
+    public final Set<String> skippedPackages = new HashSet<>();
     private final Set<String> skippedClasses = new HashSet<>();
 
     public ModelConverters() {
@@ -58,7 +58,8 @@ public class ModelConverters {
     }
 
     private static void init(ModelConverters converter) {
-        converter.skippedPackages.add("java.lang");
+        converter.addPackageToSkip("java.lang");
+        converter.addPackageToSkip("groovy.lang");
 
         ServiceLoader<ModelConverter> loader = ServiceLoader.load(ModelConverter.class);
         Iterator<ModelConverter> itr = loader.iterator();
