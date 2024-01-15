@@ -25,7 +25,7 @@ public class ModelConverters {
     private static ModelConverters SINGLETON31 = null;
     static Logger LOGGER = LoggerFactory.getLogger(ModelConverters.class);
     private final List<ModelConverter> converters;
-    public final Set<String> skippedPackages = new HashSet<>();
+    private final Set<String> skippedPackages = new HashSet<>();
     private final Set<String> skippedClasses = new HashSet<>();
 
     public ModelConverters() {
@@ -40,6 +40,10 @@ public class ModelConverters {
         } else {
             converters.add(new ModelResolver(Json.mapper()));
         }
+    }
+
+    public Set<String> getSkippedPackages() {
+        return skippedPackages;
     }
 
     public static ModelConverters getInstance(boolean openapi31) {

@@ -387,8 +387,8 @@ public class ModelConverterTest {
     public void checkDefaultSkippedPackages(){
         ModelConverters modelConverters = ModelConverters.getInstance();
 
-        assertTrue(modelConverters.skippedPackages.contains("java.lang"));
-        assertTrue(modelConverters.skippedPackages.contains("groovy.lang"));
+        assertTrue(modelConverters.getSkippedPackages().contains("java.lang"));
+        assertTrue(modelConverters.getSkippedPackages().contains("groovy.lang"));
     }
 
     @Test(description = "It should not process skipped package")
