@@ -10,6 +10,7 @@ import io.swagger.v3.core.converter.ModelConverterContext;
 import io.swagger.v3.core.converter.ModelConverters;
 import io.swagger.v3.core.converter.ResolvedSchema;
 import io.swagger.v3.oas.annotations.StringToClassMapItem;
+import io.swagger.v3.oas.annotations.enums.Explode;
 import io.swagger.v3.oas.annotations.extensions.Extension;
 import io.swagger.v3.oas.annotations.extensions.ExtensionProperty;
 import io.swagger.v3.oas.annotations.links.LinkParameter;
@@ -33,6 +34,7 @@ import io.swagger.v3.oas.models.media.Encoding;
 import io.swagger.v3.oas.models.media.JsonSchema;
 import io.swagger.v3.oas.models.media.MediaType;
 import io.swagger.v3.oas.models.media.Schema;
+import io.swagger.v3.oas.models.parameters.Parameter;
 import io.swagger.v3.oas.models.servers.Server;
 import io.swagger.v3.oas.models.servers.ServerVariable;
 import io.swagger.v3.oas.models.servers.ServerVariables;
@@ -1335,6 +1337,7 @@ public abstract class AnnotationsUtils {
             isEmpty = false;
         }
         headerObject.setStyle(Header.StyleEnum.SIMPLE);
+        setHeaderExplode(headerObject, header);
 
         if (header.schema() != null) {
             if (header.schema().implementation().equals(Void.class)) {
@@ -1348,6 +1351,30 @@ public abstract class AnnotationsUtils {
         }
 
         return Optional.of(headerObject);
+    }
+
+    public static void setHeaderExplode (Header header, io.swagger.v3.oas.annotations.headers.Header h) {
+        if (isExplodable(h, header)) {
+            if (Explode.TRUE.equals(h.explode())) {
+                header.setExplode(Boolean.TRUE);
+            } else if (Explode.FALSE.equals(h.explode())) {
+                header.setExplode(Boolean.FALSE);
+            }
+        }
+    }
+
+    private static boolean isExplodable(io.swagger.v3.oas.annotations.headers.Header h, Header header) {
+        io.swagger.v3.oas.annotations.media.Schema schema = h.schema();
+        boolean explode = true;
+        if (schema != null) {
+            Class implementation = schema.implementation();
+            if (implementation == Void.class) {
+                if (!schema.type().equals("object") && !schema.type().equals("array")) {
+                    explode = false;
+                }
+            }
+        }
+        return explode;
     }
 
     public static void addEncodingToMediaType(MediaType mediaType, io.swagger.v3.oas.annotations.media.Encoding encoding, JsonView jsonViewAnnotation) {
