@@ -298,11 +298,6 @@ public enum PrimitiveType {
             return custom;
         }
 
-        final PrimitiveType custom = customClasses.get(raw.getName());
-        if (custom != null) {
-            return custom;
-        }
-
         final PrimitiveType external = EXTERNAL_CLASSES.get(raw.getName());
         if (external != null) {
             if (!customExcludedExternalClasses().contains(raw.getName())) {
