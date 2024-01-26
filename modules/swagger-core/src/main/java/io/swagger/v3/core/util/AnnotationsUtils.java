@@ -1315,7 +1315,7 @@ public abstract class AnnotationsUtils {
 
     public static Optional<Header> getHeader(io.swagger.v3.oas.annotations.headers.Header header, JsonView jsonViewAnnotation, boolean openapi31) {
 
-        if (header == null) {
+        if (header == null || header.hidden()) {
             return Optional.empty();
         }
 
