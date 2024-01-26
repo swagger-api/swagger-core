@@ -128,6 +128,17 @@ public class RefModel implements Model {
     }
 
     @Override
+    @JsonIgnore
+    public Boolean getBooleanValue() {
+        return null;
+    }
+
+    @Override
+    public void setBooleanValue(Boolean booleanValue) {
+
+    }
+
+    @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;

@@ -1,5 +1,6 @@
 package io.swagger.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.models.properties.Property;
 
 import java.util.Map;
@@ -30,4 +31,9 @@ public interface Model {
     Object clone();
 
     Map<String, Object> getVendorExtensions();
+
+    @JsonIgnore
+    Boolean getBooleanValue();
+
+    void setBooleanValue(Boolean booleanValue);
 }

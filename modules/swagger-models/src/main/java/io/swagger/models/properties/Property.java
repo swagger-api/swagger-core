@@ -76,4 +76,10 @@ public interface Property {
      * @return new shallow copy of the property
      */
     Property rename(String newName);
+
+    @JsonIgnore
+    Boolean getBooleanValue();
+
+    void setBooleanValue(Boolean booleanValue);
+
 }

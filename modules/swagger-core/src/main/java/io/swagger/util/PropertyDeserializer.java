@@ -17,6 +17,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import io.swagger.models.Xml;
 import io.swagger.models.properties.ArrayProperty;
+import io.swagger.models.properties.BooleanValueProperty;
 import io.swagger.models.properties.ComposedProperty;
 import io.swagger.models.properties.MapProperty;
 import io.swagger.models.properties.ObjectProperty;
@@ -201,6 +202,10 @@ public class PropertyDeserializer extends JsonDeserializer<Property> {
     }
 
     Property propertyFromNode(JsonNode node) {
+
+        if (node.isBoolean()) {
+            return new BooleanValueProperty(node.asBoolean());
+        }
         final String type = getString(node, PropertyBuilder.PropertyId.TYPE);
         final String title = getString(node, PropertyBuilder.PropertyId.TITLE);
         final String format = getString(node, PropertyBuilder.PropertyId.FORMAT);
@@ -237,6 +242,18 @@ public class PropertyDeserializer extends JsonDeserializer<Property> {
                     mapProperty.setReadOnly(readOnly);
                     return mapProperty;
                 }
+            } else if (detailNode != null && detailNode.getNodeType().equals(JsonNodeType.BOOLEAN)) {
+                Property items = new BooleanValueProperty(detailNode.asBoolean());
+                MapProperty mapProperty = new MapProperty(items)
+                        .description(description)
+                        .title(title)
+                        .xml(xml);
+                mapProperty.setExample(example);
+                mapProperty.setMinProperties(getInteger(node, PropertyBuilder.PropertyId.MIN_PROPERTIES));
+                mapProperty.setMaxProperties(getInteger(node, PropertyBuilder.PropertyId.MAX_PROPERTIES));
+                mapProperty.setVendorExtensionMap(getVendorExtensions(node));
+                mapProperty.setReadOnly(readOnly);
+                return mapProperty;
             } else {
                 JsonNode allOfNode = node.get("allOf");
                 detailNode = node.get("properties");

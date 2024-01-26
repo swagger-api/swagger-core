@@ -4,7 +4,7 @@
     <parent>
         <groupId>io.swagger</groupId>
         <artifactId>swagger-project</artifactId>
-        <version>1.6.7-SNAPSHOT</version>
+        <version>1.6.13-SNAPSHOT</version>
         <relativePath>../..</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -33,6 +33,11 @@
             <groupId>io.swagger</groupId>
             <artifactId>swagger-core</artifactId>
             <version>${project.parent.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.yaml</groupId>
+            <artifactId>snakeyaml</artifactId>
+            <version>${snakeyaml-version}</version>
         </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>

@@ -30,6 +30,17 @@ public abstract class AbstractModel implements Model {
     protected Map<String, Property> properties;
     protected List<String> required;
 
+    protected Boolean booleanValue;
+
+    @JsonIgnore
+    public Boolean getBooleanValue() {
+        return booleanValue;
+    }
+
+    public void setBooleanValue(Boolean booleanValue) {
+        this.booleanValue = booleanValue;
+    }
+
     @Override
     public ExternalDocs getExternalDocs() {
         return externalDocs;
@@ -128,7 +139,7 @@ public abstract class AbstractModel implements Model {
     public void setVendorExtensions(Map<String, Object> vendorExtensions) {
         this.vendorExtensions = vendorExtensions;
     }
-    
+
     public Map<String, Property> getProperties() {
         return properties;
     }
@@ -140,7 +151,7 @@ public abstract class AbstractModel implements Model {
             }
         }
     }
-    
+
     public void addProperty(String key, Property property) {
         if (property == null) {
             return;
@@ -157,7 +168,7 @@ public abstract class AbstractModel implements Model {
         }
         properties.put(key, property);
     }
-    
+
     public List<String> getRequired() {
         List<String> output = new ArrayList<String>();
         if (properties != null) {
@@ -216,6 +227,7 @@ public abstract class AbstractModel implements Model {
         } else {
             cloned.xml = (Xml) xml.clone();
         }
+        cloned.booleanValue = booleanValue;
     }
 
     public Object clone() {
@@ -242,6 +254,7 @@ public abstract class AbstractModel implements Model {
         result = prime * result + (pattern != null ? pattern.hashCode() : 0);
         result = prime * result + (properties != null ? properties.hashCode() : 0);
         result = prime * result + (required != null ? required.hashCode() : 0);
+        result = prime * result + (booleanValue != null ? booleanValue.hashCode() : 0);
         return result;
     }
 
@@ -315,7 +328,7 @@ public abstract class AbstractModel implements Model {
         }
         if (pattern != null ? !pattern.equals(other.pattern) : other.pattern != null) {
             return false;
-        }        
+        }
         if (required != null ? !required.equals(other.required) : other.required != null) {
             return false;
         }
@@ -323,7 +336,12 @@ public abstract class AbstractModel implements Model {
             return false;
         }
 
+        if (booleanValue != null ? !booleanValue.equals(other.booleanValue) : other.booleanValue != null) {
+            return false;
+        }
+
         return maximum != null ? maximum.equals(other.maximum) : other.maximum == null;
+
     }
 
     @JsonIgnore

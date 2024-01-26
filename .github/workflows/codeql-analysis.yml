@@ -30,7 +30,7 @@ jobs:
     - name: Setup Java JDK
       uses: actions/setup-java@v1
       with:
-        java-version: 8
+        java-version: 11
 
     # Initializes the CodeQL tools for scanning.
     - name: Initialize CodeQL

@@ -2,6 +2,7 @@ package io.swagger.models.properties;
 
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.models.Xml;
 
 import java.util.LinkedHashMap;
@@ -21,6 +22,7 @@ public abstract class AbstractProperty implements Property, Cloneable {
     protected Boolean allowEmptyValue;
     protected String access;
     protected Map<String, Object> vendorExtensions = new LinkedHashMap<String, Object>();
+    protected Boolean booleanValue;
 
     @Override
     public Property rename(String newName) {
@@ -31,6 +33,15 @@ public abstract class AbstractProperty implements Property, Cloneable {
         } catch (CloneNotSupportedException ex) {
             throw new InternalError("Clone is not supported!?");
         }
+    }
+
+    @JsonIgnore
+    public Boolean getBooleanValue() {
+        return booleanValue;
+    }
+
+    public void setBooleanValue(Boolean booleanValue) {
+        this.booleanValue = booleanValue;
     }
 
     public Property title(String title) {
@@ -96,6 +107,10 @@ public abstract class AbstractProperty implements Property, Cloneable {
             return false;
         }
 
+        if (booleanValue != null ? !booleanValue.equals(that.booleanValue) : that.booleanValue != null) {
+            return false;
+        }
+
         return vendorExtensions != null ? vendorExtensions.equals(that.vendorExtensions) : that.vendorExtensions == null;
 
     }
@@ -115,6 +130,7 @@ public abstract class AbstractProperty implements Property, Cloneable {
         result = 31 * result + (allowEmptyValue != null ? allowEmptyValue.hashCode() : 0);
         result = 31 * result + (access != null ? access.hashCode() : 0);
         result = 31 * result + (vendorExtensions != null ? vendorExtensions.hashCode() : 0);
+        result = 31 * result + (booleanValue != null ? booleanValue.hashCode() : 0);
         return result;
     }
 

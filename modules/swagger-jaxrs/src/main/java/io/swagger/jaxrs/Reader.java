@@ -70,6 +70,7 @@ import io.swagger.models.properties.Property;
 import io.swagger.models.properties.RefProperty;
 import io.swagger.util.BaseReaderUtils;
 import io.swagger.util.Json;
+import io.swagger.util.KotlinDetector;
 import io.swagger.util.ParameterProcessor;
 import io.swagger.util.PathUtils;
 import io.swagger.util.ReflectionUtils;
@@ -917,7 +918,8 @@ public class Reader {
             addResponse(operation, apiResponse, jsonViewAnnotation);
         }
 
-        if (ReflectionUtils.getAnnotation(method, Deprecated.class) != null) {
+        if (ReflectionUtils.getAnnotation(method, Deprecated.class) != null
+                || (KotlinDetector.isKotlinPresent() && ReflectionUtils.getAnnotation(method, KotlinDetector.getKotlinDeprecated()) != null)) {
             operation.setDeprecated(true);
         }
 

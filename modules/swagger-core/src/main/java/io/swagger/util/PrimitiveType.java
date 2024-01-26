@@ -4,7 +4,11 @@ import com.fasterxml.jackson.databind.type.TypeFactory;
 import io.swagger.models.properties.*;
 
 import java.lang.reflect.Type;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -175,6 +179,18 @@ public enum PrimitiveType {
     private static final Map<String, PrimitiveType> EXTERNAL_CLASSES;
 
     /**
+     * Allows to exclude specific classes from KEY_CLASSES mappings to primitive
+     *
+     */
+    private static Set<String> customExcludedClasses = Collections.newSetFromMap(new ConcurrentHashMap<String, Boolean>());
+
+    /**
+     * Allows to exclude specific classes from EXTERNAL_CLASSES mappings to primitive
+     *
+     */
+    private static Set<String> customExcludedExternalClasses = Collections.newSetFromMap(new ConcurrentHashMap<String, Boolean>());
+
+    /**
      * Adds support for custom mapping of classes to primitive types
      */
     private static Map<String, PrimitiveType> customClasses = new ConcurrentHashMap<String, PrimitiveType>();
@@ -216,7 +232,7 @@ public enum PrimitiveType {
         addKeys(externalClasses, DATE_TIME, "org.joda.time.DateTime", "org.joda.time.ReadableDateTime",
                 "javax.xml.datatype.XMLGregorianCalendar", "java.time.LocalDateTime", "java.time.ZonedDateTime",
                 "java.time.OffsetDateTime");
-        addKeys(externalClasses, LONG, "java.time.Instant");                
+        addKeys(externalClasses, LONG, "java.time.Instant");
         EXTERNAL_CLASSES = Collections.unmodifiableMap(externalClasses);
 
         final Map<String, PrimitiveType> names = new TreeMap<String, PrimitiveType>(String.CASE_INSENSITIVE_ORDER);
@@ -241,10 +257,29 @@ public enum PrimitiveType {
     }
 
     /**
+     * Adds support for custom excluded classes
+     *
+     * @since 1.6.6
+     * @return Set of custom excluded classes
+     */
+    public static Set<String> customExcludedClasses() {
+        return customExcludedClasses;
+    }
+
+    /**
+     * Adds support for custom excluded external classes
+     *
+     * @return Set of custom excluded external classes
+     */
+    public static Set<String> customExcludedExternalClasses() {
+        return customExcludedExternalClasses;
+    }
+
+    /**
      * Adds support for custom mapping of classes to primitive types
      *
+     * @since 1.6.13
      * @return Map of custom classes to primitive type
-     * @since 1.6.6
      */
     public static Map<String, PrimitiveType> customClasses() {
         return customClasses;
@@ -254,7 +289,13 @@ public enum PrimitiveType {
         final Class<?> raw = TypeFactory.defaultInstance().constructType(type).getRawClass();
         final PrimitiveType key = KEY_CLASSES.get(raw);
         if (key != null) {
-            return key;
+            if (!customExcludedClasses.contains(raw.getName())) {
+                return key;
+            }
+        }
+        final PrimitiveType custom = customClasses.get(raw.getName());
+        if (custom != null) {
+            return custom;
         }
 
         final PrimitiveType custom = customClasses.get(raw.getName());
@@ -264,7 +305,9 @@ public enum PrimitiveType {
 
         final PrimitiveType external = EXTERNAL_CLASSES.get(raw.getName());
         if (external != null) {
-            return external;
+            if (!customExcludedExternalClasses().contains(raw.getName())) {
+                return external;
+            }
         }
         for (Map.Entry<Class<?>, PrimitiveType> entry : BASE_CLASSES.entrySet()) {
             if (entry.getKey().isAssignableFrom(raw)) {
