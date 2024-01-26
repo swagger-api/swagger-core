@@ -257,18 +257,19 @@ public enum PrimitiveType {
     }
 
     /**
-     * Adds support for custom mapping of classes to primitive types
+     * Adds support for custom excluded classes
      *
-     * @return Set of custom classes to primitive type
+     * @since 1.6.6
+     * @return Set of custom excluded classes
      */
     public static Set<String> customExcludedClasses() {
         return customExcludedClasses;
     }
 
     /**
-     * Adds support for custom mapping of classes to primitive types
+     * Adds support for custom excluded external classes
      *
-     * @return Set of custom classes to primitive type
+     * @return Set of custom excluded external classes
      */
     public static Set<String> customExcludedExternalClasses() {
         return customExcludedExternalClasses;
@@ -277,6 +278,7 @@ public enum PrimitiveType {
     /**
      * Adds support for custom mapping of classes to primitive types
      *
+     * @since 1.6.13
      * @return Map of custom classes to primitive type
      */
     public static Map<String, PrimitiveType> customClasses() {
@@ -295,6 +297,7 @@ public enum PrimitiveType {
         if (custom != null) {
             return custom;
         }
+
         final PrimitiveType external = EXTERNAL_CLASSES.get(raw.getName());
         if (external != null) {
             if (!customExcludedExternalClasses().contains(raw.getName())) {
