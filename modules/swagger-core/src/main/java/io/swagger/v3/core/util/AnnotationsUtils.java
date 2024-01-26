@@ -1364,6 +1364,10 @@ public abstract class AnnotationsUtils {
                     headerObject::setSchema);
             }
         }
+        if (hasArrayAnnotation(header.array())){
+            AnnotationsUtils.getArraySchema(header.array(), null, jsonViewAnnotation, openapi31).ifPresent(
+                    headerObject::setSchema);
+        }
 
         if (isEmpty) {
             return Optional.empty();
