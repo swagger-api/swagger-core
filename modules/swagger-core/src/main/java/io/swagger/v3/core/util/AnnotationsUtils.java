@@ -1329,12 +1329,31 @@ public abstract class AnnotationsUtils {
             headerObject.set$ref(header.ref());
             isEmpty = false;
         }
+        if (StringUtils.isNotBlank(header.example())) {
+            try {
+                headerObject.setExample(Json.mapper().readTree(header.example()));
+            } catch (IOException e) {
+                headerObject.setExample(header.example());
+            }
+        }
         if (header.deprecated()) {
             headerObject.setDeprecated(header.deprecated());
         }
         if (header.required()) {
             headerObject.setRequired(header.required());
             isEmpty = false;
+        }
+        Map<String, Example> exampleMap = new LinkedHashMap<>();
+        if (header.examples().length == 1 && StringUtils.isBlank(header.examples()[0].name())) {
+            Optional<Example> exampleOptional = AnnotationsUtils.getExample(header.examples()[0], true);
+            exampleOptional.ifPresent(headerObject::setExample);
+        } else {
+            for (ExampleObject exampleObject : header.examples()) {
+                AnnotationsUtils.getExample(exampleObject).ifPresent(example -> exampleMap.put(exampleObject.name(), example));
+            }
+        }
+        if (!exampleMap.isEmpty()) {
+            headerObject.setExamples(exampleMap);
         }
         headerObject.setStyle(Header.StyleEnum.SIMPLE);
         setHeaderExplode(headerObject, header);
