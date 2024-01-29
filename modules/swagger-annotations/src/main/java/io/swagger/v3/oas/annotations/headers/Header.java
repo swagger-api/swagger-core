@@ -1,5 +1,8 @@
 package io.swagger.v3.oas.annotations.headers;
 
+import io.swagger.v3.oas.annotations.enums.Explode;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.lang.annotation.Inherited;
@@ -63,5 +66,41 @@ public @interface Header {
      * @return the reference
      **/
     String ref() default "";
+
+
+    /**
+     * When this is true, parameter values of type array or object generate separate parameters for each value of the array or key-value pair of the map. For other types of parameters this property has no effect. When style is form, the default value is true. For all other styles, the default value is false.  Ignored if the properties content or array are specified.
+     *
+     * @return whether or not to expand individual array members
+     **/
+    Explode explode() default Explode.DEFAULT;
+
+    /**
+     * Allows this header to be marked as hidden
+     *
+     * @return whether or not this header is hidden
+     */
+    boolean hidden() default false;
+
+    /**
+     * Provides an example of the schema.  When associated with a specific media type, the example string shall be parsed by the consumer to be treated as an object or an array.  Ignored if the properties examples, content or array are specified.
+     *
+     * @return an example of the header
+     **/
+    String example() default "";
+
+    /**
+     * An array of examples  of the schema used to show the use of the associated schema.
+     *
+     * @return array of examples of the header
+     **/
+    ExampleObject[] examples() default {};
+
+    /**
+     * The schema of the array that defines this header.  Ignored if the property content is specified.
+     *
+     * @return the schema of the array
+     */
+    ArraySchema array() default @ArraySchema();
 
 }
