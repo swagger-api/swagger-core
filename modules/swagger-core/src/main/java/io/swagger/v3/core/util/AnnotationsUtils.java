@@ -1356,7 +1356,6 @@ public abstract class AnnotationsUtils {
             headerObject.setExamples(exampleMap);
         }
         headerObject.setStyle(Header.StyleEnum.SIMPLE);
-        setHeaderExplode(headerObject, header);
 
         if (header.schema() != null) {
             if (header.schema().implementation().equals(Void.class)) {
@@ -1369,6 +1368,7 @@ public abstract class AnnotationsUtils {
                     headerObject::setSchema);
         }
 
+        setHeaderExplode(headerObject, header);
         if (isEmpty) {
             return Optional.empty();
         }
@@ -1377,7 +1377,7 @@ public abstract class AnnotationsUtils {
     }
 
     public static void setHeaderExplode (Header header, io.swagger.v3.oas.annotations.headers.Header h) {
-        if (isExplodable(h, header)) {
+        if (isHeaderExplodable(h, header)) {
             if (Explode.TRUE.equals(h.explode())) {
                 header.setExplode(Boolean.TRUE);
             } else if (Explode.FALSE.equals(h.explode())) {
@@ -1386,7 +1386,7 @@ public abstract class AnnotationsUtils {
         }
     }
 
-    private static boolean isExplodable(io.swagger.v3.oas.annotations.headers.Header h, Header header) {
+    private static boolean isHeaderExplodable(io.swagger.v3.oas.annotations.headers.Header h, Header header) {
         io.swagger.v3.oas.annotations.media.Schema schema = h.schema();
         boolean explode = true;
         if (schema != null) {
