@@ -385,7 +385,6 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
                 "                items:\n" +
                 "                  type: integer\n" +
                 "      deprecated: true\n";
-        System.out.println(extractedYAML);
         assertEquals(expectedYAML, extractedYAML);
     }
     static class GetOperationResponseHeaderWithArraySchema {
