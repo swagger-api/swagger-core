@@ -173,6 +173,9 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
         @Schema(description = "the user id")
         public String id;
     }
+    static class SampleHeaderSchema {
+        public String id;
+    }
 
     static class GenericError {
         public int code;
@@ -349,6 +352,7 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
                                 responseCode = "200",
                                 description = "voila!",
                                 headers = {@Header(
+                                        explode = Explode.TRUE,
                                         name = "Rate-Limit-Limit",
                                         description = "The number of allowed requests in the current period",
                                         schema = @Schema(type = "integer")),
@@ -362,6 +366,7 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
         public void simpleGet() {
         }
     }
+
     @Test
     public void testOperationWithResponseArraySchema() {
         String openApiYAML = readIntoYaml(GetOperationResponseHeaderWithArraySchema.class);
@@ -520,6 +525,72 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
                 "              schema:\n" +
                 "                type: integer\n" +
                 "      deprecated: true\n";
+        assertEquals(expectedYAML, extractedYAML);
+    }
+    static class GetOperationWithResponseMultipleHeadersWithImplementationSchema {
+        @Operation(
+                summary = "Simple get operation",
+                description = "Defines a simple get operation with no inputs and a complex output",
+                operationId = "getWithPayloadResponse",
+                deprecated = true,
+                responses = {
+                        @ApiResponse(
+                                responseCode = "200",
+                                description = "voila!",
+                                headers = {@Header(
+                                        explode = Explode.TRUE,
+                                        name = "Rate-Limit-Limit",
+                                        description = "The number of allowed requests in the current period",
+                                        array = @ArraySchema(maxItems = 10, minItems = 1,schema = @Schema(implementation = SampleHeaderSchema.class))),
+                                        @Header(
+                                                explode = Explode.TRUE,
+                                                name = "X-Rate-Limit-Desc",
+                                                description = "The description of rate limit",
+                                                schema = @Schema(type = "integer"))})})
+
+
+
+        @GET
+        @Path("/path")
+        public void simpleGet() {
+        }
+    }
+    @Test
+    public void testOperationWithResponseMultipleHeadersImplementationSchema() {
+        String openApiYAML = readIntoYaml(GetOperationWithResponseMultipleHeadersWithImplementationSchema.class);
+        int start = openApiYAML.indexOf("get:");
+        String extractedYAML = openApiYAML.substring(start);
+        String expectedYAML = "get:\n" +
+                "      summary: Simple get operation\n" +
+                "      description: Defines a simple get operation with no inputs and a complex output\n" +
+                "      operationId: getWithPayloadResponse\n" +
+                "      responses:\n" +
+                "        \"200\":\n" +
+                "          description: voila!\n" +
+                "          headers:\n" +
+                "            X-Rate-Limit-Desc:\n" +
+                "              description: The description of rate limit\n" +
+                "              style: simple\n" +
+                "              schema:\n" +
+                "                type: integer\n" +
+                "            Rate-Limit-Limit:\n" +
+                "              description: The number of allowed requests in the current period\n" +
+                "              style: simple\n" +
+                "              schema:\n" +
+                "                maxItems: 10\n" +
+                "                minItems: 1\n" +
+                "                type: array\n" +
+                "                items:\n" +
+                "                  $ref: '#/components/schemas/SampleHeaderSchema'\n" +
+                "      deprecated: true\n" +
+                "components:\n" +
+                "  schemas:\n" +
+                "    SampleHeaderSchema:\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        id:\n" +
+                "          type: string\n";
+        System.out.println(extractedYAML);
         assertEquals(expectedYAML, extractedYAML);
     }
     @Test

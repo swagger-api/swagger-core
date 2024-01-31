@@ -1289,18 +1289,18 @@ public abstract class AnnotationsUtils {
         return linkParametersMap;
     }
 
-    public static Optional<Map<String, Header>> getHeaders(io.swagger.v3.oas.annotations.headers.Header[] annotationHeaders, JsonView jsonViewAnnotation) {
-        return getHeaders(annotationHeaders, jsonViewAnnotation, false);
+    public static Optional<Map<String, Header>> getHeaders(io.swagger.v3.oas.annotations.headers.Header[] annotationHeaders, Components components, JsonView jsonViewAnnotation) {
+        return getHeaders(annotationHeaders, components, jsonViewAnnotation, false);
     }
 
-    public static Optional<Map<String, Header>> getHeaders(io.swagger.v3.oas.annotations.headers.Header[] annotationHeaders, JsonView jsonViewAnnotation, boolean openapi31) {
+    public static Optional<Map<String, Header>> getHeaders(io.swagger.v3.oas.annotations.headers.Header[] annotationHeaders, Components components, JsonView jsonViewAnnotation, boolean openapi31) {
         if (annotationHeaders == null) {
             return Optional.empty();
         }
 
         Map<String, Header> headers = new HashMap<>();
         for (io.swagger.v3.oas.annotations.headers.Header header : annotationHeaders) {
-            getHeader(header, jsonViewAnnotation).ifPresent(headerResult -> headers.put(header.name(), headerResult));
+            getHeader(header, components, jsonViewAnnotation).ifPresent(headerResult -> headers.put(header.name(), headerResult));
         }
 
         if (headers.size() == 0) {
@@ -1309,11 +1309,11 @@ public abstract class AnnotationsUtils {
         return Optional.of(headers);
     }
 
-    public static Optional<Header> getHeader(io.swagger.v3.oas.annotations.headers.Header header, JsonView jsonViewAnnotation) {
-        return getHeader(header, jsonViewAnnotation, false);
+    public static Optional<Header> getHeader(io.swagger.v3.oas.annotations.headers.Header header, Components components, JsonView jsonViewAnnotation) {
+        return getHeader(header, components, jsonViewAnnotation, false);
     }
 
-    public static Optional<Header> getHeader(io.swagger.v3.oas.annotations.headers.Header header, JsonView jsonViewAnnotation, boolean openapi31) {
+    public static Optional<Header> getHeader(io.swagger.v3.oas.annotations.headers.Header header, Components components, JsonView jsonViewAnnotation, boolean openapi31) {
 
         if (header == null || header.hidden()) {
             return Optional.empty();
@@ -1361,10 +1361,24 @@ public abstract class AnnotationsUtils {
             if (header.schema().implementation().equals(Void.class)) {
                 AnnotationsUtils.getSchemaFromAnnotation(header.schema(), jsonViewAnnotation, openapi31).ifPresent(
                     headerObject::setSchema);
+            }else {
+                AnnotatedType annotatedType = new AnnotatedType()
+                        .type(getSchemaType(header.schema()))
+                        .resolveAsRef(true)
+                        .skipOverride(true)
+                        .jsonViewAnnotation(jsonViewAnnotation);
+
+
+                final ResolvedSchema resolvedSchema = ModelConverters.getInstance(openapi31).resolveAsResolvedSchema(annotatedType);
+
+                if (resolvedSchema.schema != null) {
+                    headerObject.setSchema(resolvedSchema.schema);
+                }
+                resolvedSchema.referencedSchemas.forEach(components::addSchemas);
             }
         }
         if (hasArrayAnnotation(header.array())){
-            AnnotationsUtils.getArraySchema(header.array(), null, jsonViewAnnotation, openapi31).ifPresent(
+            AnnotationsUtils.getArraySchema(header.array(), components, jsonViewAnnotation, openapi31,null, true).ifPresent(
                     headerObject::setSchema);
         }
 
@@ -1426,7 +1440,7 @@ public abstract class AnnotationsUtils {
             }
 
             if (encoding.headers() != null) {
-                getHeaders(encoding.headers(), jsonViewAnnotation, openapi31).ifPresent(encodingObject::headers);
+                getHeaders(encoding.headers(), null, jsonViewAnnotation, openapi31).ifPresent(encodingObject::headers);
             }
             if (encoding.extensions() != null && encoding.extensions().length > 0) {
                 Map<String, Object> extensions = AnnotationsUtils.getExtensions(openapi31, encoding.extensions());
