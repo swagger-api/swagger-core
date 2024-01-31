@@ -1,7 +1,6 @@
 package io.swagger.v3.jaxrs2.annotations.operations;
 
 import io.swagger.v3.jaxrs2.annotations.AbstractAnnotationTest;
-import io.swagger.v3.jaxrs2.petstore31.User;
 import io.swagger.v3.jaxrs2.resources.GenericResponsesResource;
 import io.swagger.v3.jaxrs2.resources.HiddenAnnotatedUserResource;
 import io.swagger.v3.jaxrs2.resources.HiddenUserResource;
@@ -21,7 +20,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.testng.annotations.Test;
-
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import java.io.IOException;
@@ -173,6 +171,7 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
         @Schema(description = "the user id")
         public String id;
     }
+
     static class SampleHeaderSchema {
         public String id;
     }
@@ -392,6 +391,7 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
                 "      deprecated: true\n";
         assertEquals(expectedYAML, extractedYAML);
     }
+
     static class GetOperationResponseHeaderWithArraySchema {
         @Operation(
                 summary = "Simple get operation",
@@ -411,6 +411,7 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
         public void simpleGet() {
         }
     }
+
     static class GetOperationResponseWithoutHiddenHeader {
         @Operation(
                 summary = "Simple get operation",
@@ -436,6 +437,7 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
         public void simpleGet() {
         }
     }
+
     static class GetOperationWithResponseMultipleHeadersAndExamples {
         @Operation(
                 summary = "Simple get operation",
@@ -474,6 +476,7 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
         public void simpleGet() {
         }
     }
+
     static class GetOperationResponseWithHeaderExplodeAttribute {
         @Operation(
                 summary = "Simple get operation",
@@ -527,6 +530,7 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
                 "      deprecated: true\n";
         assertEquals(expectedYAML, extractedYAML);
     }
+
     static class GetOperationWithResponseMultipleHeadersWithImplementationSchema {
         @Operation(
                 summary = "Simple get operation",
@@ -543,7 +547,6 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
                                         description = "The number of allowed requests in the current period",
                                         array = @ArraySchema(maxItems = 10, minItems = 1,schema = @Schema(implementation = SampleHeaderSchema.class))),
                                         @Header(
-                                                explode = Explode.TRUE,
                                                 name = "X-Rate-Limit-Desc",
                                                 description = "The description of rate limit",
                                                 schema = @Schema(type = "integer"))})})
@@ -555,6 +558,7 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
         public void simpleGet() {
         }
     }
+
     @Test
     public void testOperationWithResponseMultipleHeadersImplementationSchema() {
         String openApiYAML = readIntoYaml(GetOperationWithResponseMultipleHeadersWithImplementationSchema.class);
@@ -590,9 +594,9 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
                 "      properties:\n" +
                 "        id:\n" +
                 "          type: string\n";
-        System.out.println(extractedYAML);
         assertEquals(expectedYAML, extractedYAML);
     }
+
     @Test
     public void testOperationWithResponseMultipleHeadersAndExplodeAttribute() {
         String openApiYAML = readIntoYaml(GetOperationResponseWithHeaderExplodeAttribute.class);
@@ -621,6 +625,7 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
                 "      deprecated: true\n";
         assertEquals(expectedYAML, extractedYAML);
     }
+
     @Test
     public void testOperationResponseWithoutHiddenHeader() {
         String openApiYAML = readIntoYaml(GetOperationResponseWithoutHiddenHeader.class);
@@ -642,6 +647,7 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
                 "      deprecated: true\n";
         assertEquals(expectedYAML, extractedYAML);
     }
+
     @Test
     public void testOperationWithResponseMultipleHeadersAndExamples() {
         String openApiYAML = readIntoYaml(GetOperationWithResponseMultipleHeadersAndExamples.class);

@@ -34,7 +34,6 @@ import io.swagger.v3.oas.models.media.Encoding;
 import io.swagger.v3.oas.models.media.JsonSchema;
 import io.swagger.v3.oas.models.media.MediaType;
 import io.swagger.v3.oas.models.media.Schema;
-import io.swagger.v3.oas.models.parameters.Parameter;
 import io.swagger.v3.oas.models.servers.Server;
 import io.swagger.v3.oas.models.servers.ServerVariable;
 import io.swagger.v3.oas.models.servers.ServerVariables;
@@ -43,7 +42,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -1367,7 +1365,6 @@ public abstract class AnnotationsUtils {
                         .resolveAsRef(true)
                         .skipOverride(true)
                         .jsonViewAnnotation(jsonViewAnnotation);
-
 
                 final ResolvedSchema resolvedSchema = ModelConverters.getInstance(openapi31).resolveAsResolvedSchema(annotatedType);
 
