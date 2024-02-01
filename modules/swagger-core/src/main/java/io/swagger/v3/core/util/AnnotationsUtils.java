@@ -1311,7 +1311,7 @@ public abstract class AnnotationsUtils {
     }
 
     public static Optional<Header> getHeader(io.swagger.v3.oas.annotations.headers.Header header, JsonView jsonViewAnnotation) {
-        return getHeader(header,null, jsonViewAnnotation);
+        return getHeader(header, null, jsonViewAnnotation);
     }
     public static Optional<Header> getHeader(io.swagger.v3.oas.annotations.headers.Header header, Components components, JsonView jsonViewAnnotation) {
         return getHeader(header, components, jsonViewAnnotation, false);
