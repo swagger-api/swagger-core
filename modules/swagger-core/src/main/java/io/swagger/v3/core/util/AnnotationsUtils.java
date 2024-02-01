@@ -1287,6 +1287,9 @@ public abstract class AnnotationsUtils {
         return linkParametersMap;
     }
 
+    public static Optional<Map<String, Header>> getHeaders(io.swagger.v3.oas.annotations.headers.Header[] annotationHeaders, JsonView jsonViewAnnotation) {
+        return getHeaders(annotationHeaders, null, jsonViewAnnotation);
+    }
     public static Optional<Map<String, Header>> getHeaders(io.swagger.v3.oas.annotations.headers.Header[] annotationHeaders, Components components, JsonView jsonViewAnnotation) {
         return getHeaders(annotationHeaders, components, jsonViewAnnotation, false);
     }
@@ -1298,7 +1301,7 @@ public abstract class AnnotationsUtils {
 
         Map<String, Header> headers = new HashMap<>();
         for (io.swagger.v3.oas.annotations.headers.Header header : annotationHeaders) {
-            getHeader(header, components, jsonViewAnnotation).ifPresent(headerResult -> headers.put(header.name(), headerResult));
+            getHeader(header, components, jsonViewAnnotation, openapi31).ifPresent(headerResult -> headers.put(header.name(), headerResult));
         }
 
         if (headers.size() == 0) {
@@ -1307,6 +1310,9 @@ public abstract class AnnotationsUtils {
         return Optional.of(headers);
     }
 
+    public static Optional<Header> getHeader(io.swagger.v3.oas.annotations.headers.Header header, JsonView jsonViewAnnotation) {
+        return getHeader(header,null, jsonViewAnnotation);
+    }
     public static Optional<Header> getHeader(io.swagger.v3.oas.annotations.headers.Header header, Components components, JsonView jsonViewAnnotation) {
         return getHeader(header, components, jsonViewAnnotation, false);
     }
@@ -1375,7 +1381,7 @@ public abstract class AnnotationsUtils {
             }
         }
         if (hasArrayAnnotation(header.array())){
-            AnnotationsUtils.getArraySchema(header.array(), components, jsonViewAnnotation, openapi31,null, true).ifPresent(
+            AnnotationsUtils.getArraySchema(header.array(), components, jsonViewAnnotation, openapi31, null, true).ifPresent(
                     headerObject::setSchema);
         }
 
