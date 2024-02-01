@@ -1294,6 +1294,10 @@ public abstract class AnnotationsUtils {
         return getHeaders(annotationHeaders, components, jsonViewAnnotation, false);
     }
 
+    public static Optional<Map<String, Header>> getHeaders(io.swagger.v3.oas.annotations.headers.Header[] annotationHeaders, JsonView jsonViewAnnotation, boolean openapi31) {
+        return getHeaders(annotationHeaders, null, jsonViewAnnotation, openapi31);
+    }
+
     public static Optional<Map<String, Header>> getHeaders(io.swagger.v3.oas.annotations.headers.Header[] annotationHeaders, Components components, JsonView jsonViewAnnotation, boolean openapi31) {
         if (annotationHeaders == null) {
             return Optional.empty();
@@ -1317,6 +1321,9 @@ public abstract class AnnotationsUtils {
         return getHeader(header, components, jsonViewAnnotation, false);
     }
 
+    public static Optional<Header> getHeader(io.swagger.v3.oas.annotations.headers.Header header, JsonView jsonViewAnnotation, boolean openapi31) {
+        return getHeader(header, null, jsonViewAnnotation, openapi31);
+    }
     public static Optional<Header> getHeader(io.swagger.v3.oas.annotations.headers.Header header, Components components, JsonView jsonViewAnnotation, boolean openapi31) {
 
         if (header == null || header.hidden()) {
