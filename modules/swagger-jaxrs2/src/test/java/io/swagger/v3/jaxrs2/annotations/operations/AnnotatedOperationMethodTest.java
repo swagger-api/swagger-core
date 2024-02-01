@@ -547,9 +547,10 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
                                         description = "The number of allowed requests in the current period",
                                         array = @ArraySchema(maxItems = 10, minItems = 1,schema = @Schema(implementation = SampleHeaderSchema.class))),
                                         @Header(
+                                                explode = Explode.TRUE,
                                                 name = "X-Rate-Limit-Desc",
                                                 description = "The description of rate limit",
-                                                schema = @Schema(type = "integer"))})})
+                                                schema = @Schema(implementation = SampleHeaderSchema.class))})})
 
 
 
@@ -575,8 +576,9 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
                 "            X-Rate-Limit-Desc:\n" +
                 "              description: The description of rate limit\n" +
                 "              style: simple\n" +
+                "              explode: true\n" +
                 "              schema:\n" +
-                "                type: integer\n" +
+                "                $ref: '#/components/schemas/SampleHeaderSchema'\n" +
                 "            Rate-Limit-Limit:\n" +
                 "              description: The number of allowed requests in the current period\n" +
                 "              style: simple\n" +
