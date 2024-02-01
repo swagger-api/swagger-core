@@ -93,7 +93,7 @@ public class OperationParser {
 
             AnnotationsUtils.getContent(response.content(), classProduces == null ? new String[0] : classProduces.value(),
                     methodProduces == null ? new String[0] : methodProduces.value(), null, components, jsonViewAnnotation, openapi31).ifPresent(apiResponseObject::content);
-            AnnotationsUtils.getHeaders(response.headers(), jsonViewAnnotation).ifPresent(apiResponseObject::headers);
+            AnnotationsUtils.getHeaders(response.headers(), components, jsonViewAnnotation).ifPresent(apiResponseObject::headers);
             if (StringUtils.isNotBlank(apiResponseObject.getDescription()) || apiResponseObject.getContent() != null || apiResponseObject.getHeaders() != null) {
 
                 Map<String, Link> links = AnnotationsUtils.getLinks(response.links());
