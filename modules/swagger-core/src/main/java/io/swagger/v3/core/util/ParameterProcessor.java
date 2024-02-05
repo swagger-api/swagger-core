@@ -234,7 +234,7 @@ public class ParameterProcessor {
     }
 
     private static boolean isExplodable(io.swagger.v3.oas.annotations.Parameter p, Parameter parameter) {
-        io.swagger.v3.oas.annotations.media.Schema schema = p.schema();
+        io.swagger.v3.oas.annotations.media.Schema schema = AnnotationsUtils.hasArrayAnnotation(p.array()) ? p.array().schema() : p.schema();
         boolean explode = true;
         if ("form".equals(parameter.getIn())){
             return true;

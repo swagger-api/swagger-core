@@ -582,6 +582,7 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
                 "            Rate-Limit-Limit:\n" +
                 "              description: The number of allowed requests in the current period\n" +
                 "              style: simple\n" +
+                "              explode: true\n" +
                 "              schema:\n" +
                 "                maxItems: 10\n" +
                 "                minItems: 1\n" +

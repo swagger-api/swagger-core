@@ -44,6 +44,7 @@ paths:
         - name: arrayParameter
           in: query
           required: true
+          explode: true
           content:
             application/json:
               schema:
@@ -58,6 +59,7 @@ paths:
         - name: arrayParameterImplementation
           in: query
           required: true
+          explode: true
           schema:
             type: array
             contains: {}

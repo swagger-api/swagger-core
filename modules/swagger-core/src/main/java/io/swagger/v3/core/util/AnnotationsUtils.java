@@ -1411,7 +1411,7 @@ public abstract class AnnotationsUtils {
     }
 
     private static boolean isHeaderExplodable(io.swagger.v3.oas.annotations.headers.Header h, Header header) {
-        io.swagger.v3.oas.annotations.media.Schema schema = h.schema();
+        io.swagger.v3.oas.annotations.media.Schema schema = hasArrayAnnotation(h.array()) ? h.array().schema() : h.schema();
         boolean explode = true;
         if (schema != null) {
             Class implementation = schema.implementation();
