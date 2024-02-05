@@ -631,6 +631,7 @@ paths:
       - name: arrayParameter
         in: query
         required: true
+        explode: true
         schema:
           maxItems: 10
           minItems: 1
@@ -787,6 +788,7 @@ paths:
       - name: arrayParameter
         in: query
         required: true
+        explode: true
         content:
           application/json:
             schema:
@@ -801,6 +803,7 @@ paths:
       - name: arrayParameterImplementation
         in: query
         required: true
+        explode: true
         schema:
           maxItems: 10
           minItems: 1
@@ -868,6 +871,7 @@ paths:
       - name: arrayParameter
         in: query
         required: true
+        explode: true
         content:
           application/json:
             schema:
@@ -882,6 +886,7 @@ paths:
       - name: arrayParameterImplementation
         in: query
         required: true
+        explode: true
         schema:
           maxItems: 10
           minItems: 1
