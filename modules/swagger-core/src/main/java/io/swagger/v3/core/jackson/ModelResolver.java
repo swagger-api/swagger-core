@@ -2936,8 +2936,14 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                         schema.addPrefixItem(prefixItem);
                     }
                 }
+                // TODO `ArraySchema.items` is deprecated, when removed, remove this block
                 if (schema.getItems() != null && AnnotationsUtils.hasSchemaAnnotation(resolvedArrayAnnotation.items())) {
                     for (String type : resolvedArrayAnnotation.items().types()) {
+                        schema.getItems().addType(type);
+                    }
+                }
+                if (schema.getItems() != null && AnnotationsUtils.hasSchemaAnnotation(resolvedArrayAnnotation.schema())) {
+                    for (String type : resolvedArrayAnnotation.schema().types()) {
                         schema.getItems().addType(type);
                     }
                 }
