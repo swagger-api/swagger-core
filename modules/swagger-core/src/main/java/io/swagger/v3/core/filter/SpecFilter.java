@@ -308,6 +308,8 @@ public class SpecFilter {
         if (schema instanceof ArraySchema &&
                 ((ArraySchema) schema).getItems() != null) {
             addSchemaRef(((ArraySchema) schema).getItems(), referencedDefinitions);
+        } else if (schema.getTypes() != null && schema.getTypes().contains("array") && schema.getItems() != null) {
+            addSchemaRef(schema.getItems(), referencedDefinitions);
         } else if (schema instanceof ComposedSchema) {
             ComposedSchema composedSchema = (ComposedSchema) schema;
             if (composedSchema.getAllOf() != null) {
