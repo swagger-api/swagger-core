@@ -28,7 +28,7 @@ public class OpenAPIExtensions {
 
     static {
         extensions = new ArrayList<>();
-        ServiceLoader<OpenAPIExtension> loader = ServiceLoader.load(OpenAPIExtension.class);
+        ServiceLoader<OpenAPIExtension> loader = ServiceLoader.load(OpenAPIExtension.class, OpenAPIExtensions.class.getClassLoader());
         for (OpenAPIExtension ext : loader) {
             LOGGER.debug("adding extension {}", ext);
             extensions.add(ext);
