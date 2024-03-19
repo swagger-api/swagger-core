@@ -237,7 +237,7 @@ public @interface Schema {
     boolean writeOnly() default false;
 
     /**
-     * Allows to specify the access mode (AccessMode.READ_ONLY, READ_WRITE)
+     * Allows to specify the access mode (AccessMode.READ_ONLY, WRITE_ONLY, READ_WRITE)
      *
      * AccessMode.READ_ONLY: value will not be written to during a request but may be returned during a response.
      * AccessMode.WRITE_ONLY: value will only be written to during a request but not returned during a response.
@@ -246,7 +246,7 @@ public @interface Schema {
      * @return the accessMode for this schema (property)
      *
      */
-     AccessMode accessMode() default AccessMode.AUTO;
+    AccessMode accessMode() default AccessMode.AUTO;
 
     /**
      * Provides an example of the schema.  When associated with a specific media type, the example string shall be parsed by the consumer to be treated as an object or an array.
