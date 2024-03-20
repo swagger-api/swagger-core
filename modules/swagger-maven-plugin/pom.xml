@@ -293,6 +293,6 @@
         <maven.version>3.9.6</maven.version>
         <junit.version>4.13.2</junit.version>
         <wiremock-jetty-version>9.4.53.v20231009</wiremock-jetty-version>
-        <commons-compress-version>1.25.0</commons-compress-version>
+        <commons-compress-version>1.26.1</commons-compress-version>
     </properties>
 </project>
