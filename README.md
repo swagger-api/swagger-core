@@ -21,19 +21,19 @@ The [github wiki](https://github.com/swagger-api/swagger-core/wiki) contains doc
 ## Compatibility
 The OpenAPI Specification has undergone several revisions since initial creation in 2010.  The Swagger Core project has the following compatibilities with the OpenAPI Specification:
 
-Swagger core Version      | Release Date | OpenAPI Spec compatibility | Notes | Status
-------------------------- | ------------ | -------------------------- | ----- | ----
-2.2.20 (**current stable**)| 2023-12-19   | 3.x           | [tag v2.2.20](https://github.com/swagger-api/swagger-core/tree/v2.2.20) | Supported
-2.2.19                     | 2023-11-10   | 3.x           | [tag v2.2.19](https://github.com/swagger-api/swagger-core/tree/v2.2.19) | Supported
-2.2.18                     | 2023-10-25   | 3.x           | [tag v2.2.18](https://github.com/swagger-api/swagger-core/tree/v2.2.18) | Supported
-2.2.17                     | 2023-10-12   | 3.x           | [tag v2.2.17](https://github.com/swagger-api/swagger-core/tree/v2.2.17) | Supported
-2.2.16                     | 2023-09-18   | 3.x           | [tag v2.2.16](https://github.com/swagger-api/swagger-core/tree/v2.2.16) | Supported
-2.2.15                     | 2023-07-08   | 3.x           | [tag v2.2.15](https://github.com/swagger-api/swagger-core/tree/v2.2.15) | Supported
-2.2.14                     | 2023-06-26   | 3.x           | [tag v2.2.14](https://github.com/swagger-api/swagger-core/tree/v2.2.14) | Supported
-2.2.13                     | 2023-06-24   | 3.x           | [tag v2.2.13](https://github.com/swagger-api/swagger-core/tree/v2.2.13) | Supported
-2.2.12                     | 2023-06-13   | 3.x           | [tag v2.2.12](https://github.com/swagger-api/swagger-core/tree/v2.2.12) | Supported
-2.2.11                     | 2023-06-01   | 3.x           | [tag v2.2.11](https://github.com/swagger-api/swagger-core/tree/v2.2.11) | Supported
-2.2.10                     | 2023-05-15   | 3.x           | [tag v2.2.10](https://github.com/swagger-api/swagger-core/tree/v2.2.10) | Supported
+Swagger core Version      | Release Date | OpenAPI Spec compatibility | Notes                                                                                                             | Status
+------------------------- | ------------ | -------------------------- |-------------------------------------------------------------------------------------------------------------------| ----
+2.2.20 (**current stable**)| 2023-12-19   | 3.x           | [tag v2.2.20](https://github.com/swagger-api/swagger-core/tree/v2.2.20)                                           | Supported
+2.2.19                     | 2023-11-10   | 3.x           | [tag v2.2.19](https://github.com/swagger-api/swagger-core/tree/v2.2.19)                                           | Supported
+2.2.18                     | 2023-10-25   | 3.x           | [tag v2.2.18](https://github.com/swagger-api/swagger-core/tree/v2.2.18)                                           | Supported
+2.2.17                     | 2023-10-12   | 3.x           | [tag v2.2.17](https://github.com/swagger-api/swagger-core/tree/v2.2.17)                                           | Supported
+2.2.16                     | 2023-09-18   | 3.x           | [tag v2.2.16](https://github.com/swagger-api/swagger-core/tree/v2.2.16)                                           | Supported
+2.2.15                     | 2023-07-08   | 3.x           | [tag v2.2.15](https://github.com/swagger-api/swagger-core/tree/v2.2.15)                                           | Supported
+2.2.14                     | 2023-06-26   | 3.x           | [tag v2.2.14](https://github.com/swagger-api/swagger-core/tree/v2.2.14)                                           | Supported
+2.2.13                     | 2023-06-24   | 3.x           | [tag v2.2.13](https://github.com/swagger-api/swagger-core/tree/v2.2.13)                                           | Supported
+2.2.12                     | 2023-06-13   | 3.x           | [tag v2.2.12](https://github.com/swagger-api/swagger-core/tree/v2.2.12)                                           | Supported
+2.2.11                     | 2023-06-01   | 3.x           | [tag v2.2.11](https://github.com/swagger-api/swagger-core/tree/v2.2.11)                                           | Supported
+2.2.10                     | 2023-05-15   | 3.x           | [tag v2.2.10](https://github.com/swagger-api/swagger-core/tree/v2.2.10)                                           | Supported
 2.2.9                     | 2023-03-20  | 3.x           | [tag v2.2.9](https://github.com/swagger-api/swagger-core/tree/v2.2.9)                                             | Supported
 2.2.8                     | 2023-01-06  | 3.x           | [tag v2.2.8](https://github.com/swagger-api/swagger-core/tree/v2.2.8)                                             | Supported
 2.2.7                     | 2022-11-15  | 3.0           | [tag v2.2.7](https://github.com/swagger-api/swagger-core/tree/v2.2.7)                                             | Supported
@@ -66,7 +66,9 @@ Swagger core Version      | Release Date | OpenAPI Spec compatibility | Notes | 
 2.0.5                     | 2018-09-19  | 3.0           | [tag v2.0.5](https://github.com/swagger-api/swagger-core/tree/v2.0.5)                                             | Supported
 2.0.4                     | 2018-09-05  | 3.0           | [tag v2.0.4](https://github.com/swagger-api/swagger-core/tree/v2.0.4)                                             | Supported
 2.0.3                     | 2018-08-09  | 3.0           | [tag v2.0.3](https://github.com/swagger-api/swagger-core/tree/v2.0.3)                                             | Supported
-1.6.12 (**current stable**)| 2023-10-14  | 2.0           | [tag v1.6.12](https://github.com/swagger-api/swagger-core/tree/v1.6.12)                                           | Supported
+1.6.14 (**current stable**)| 2024-03-19   | 2.0           | [tag v1.6.14](https://github.com/swagger-api/swagger-core/tree/v1.6.14)                                           | Supported
+1.6.13                    | 2024-01-26   | 2.0           | [tag v1.6.13](https://github.com/swagger-api/swagger-core/tree/v1.6.13)                                           | Supported
+1.6.12                    | 2023-10-14   | 2.0           | [tag v1.6.12](https://github.com/swagger-api/swagger-core/tree/v1.6.12)                                           | Supported
 1.6.11                    | 2023-05-15  | 2.0           | [tag v1.6.11](https://github.com/swagger-api/swagger-core/tree/v1.6.11)                                           | Supported
 1.6.10                    | 2023-03-21  | 2.0           | [tag v1.6.10](https://github.com/swagger-api/swagger-core/tree/v1.6.10)                                           | Supported
 1.6.9                     | 2022-11-15  | 2.0           | [tag v1.6.9](https://github.com/swagger-api/swagger-core/tree/v1.6.9)                                             | Supported
