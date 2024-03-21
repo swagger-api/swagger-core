@@ -50,7 +50,7 @@
         <dependency>
             <groupId>org.eclipse.transformer</groupId>
             <artifactId>org.eclipse.transformer.cli</artifactId>
-            <version>0.2.0</version>
+            <version>0.5.0</version>
         </dependency>
         <dependency>
             <groupId>javax.inject</groupId>
