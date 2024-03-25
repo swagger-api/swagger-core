@@ -1,5 +1,6 @@
 package io.swagger.v3.oas.models.media;
 
+import java.util.Base64;
 import java.util.List;
 import java.util.Objects;
 
@@ -36,6 +37,8 @@ public class BinarySchema extends Schema<byte[]> {
             try {
                 if (value instanceof byte[]) {
                     return (byte[]) value;
+                } else if (value instanceof String) {
+                    return Base64.getDecoder().decode((String) value);
                 } else {
                     return value.toString().getBytes();
                 }
