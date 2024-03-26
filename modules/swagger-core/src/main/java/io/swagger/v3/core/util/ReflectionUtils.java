@@ -440,6 +440,10 @@ public class ReflectionUtils {
     }
 
     public static boolean isSystemType(JavaType type) {
+        return isSystemTypeNotArray(type) ? true : type.isArrayType();
+    }
+
+    public static boolean isSystemTypeNotArray(JavaType type) {
         // used while resolving container types to skip resolving system types; possibly extend by checking classloader
         // and/or other packages
         for (String systemPrefix: PrimitiveType.systemPrefixes()) {
@@ -450,7 +454,7 @@ public class ReflectionUtils {
                 }
             }
         }
-        return type.isArrayType();
+        return false;
     }
 
     /**
