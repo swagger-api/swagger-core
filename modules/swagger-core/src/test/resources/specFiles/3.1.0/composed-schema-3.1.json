@@ -1,0 +1,85 @@
+{
+  "components": {
+    "schemas": {
+      "SomeChild1ImplObject": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/SomeChildObject"
+          }
+        ]
+      },
+      "SomeChild2ImplObject": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/SomeChildObject"
+          }
+        ]
+      },
+      "SomeChildObject": {
+        "description": "Some child object"
+      },
+      "SomeParentObject": {
+        "description": "Some parent object",
+        "properties": {
+          "id": {
+            "description": "id",
+            "format": "int64",
+            "type": "integer"
+          },
+          "other": {
+            "description": "other",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/SomeChild1ImplObject"
+              },
+              {
+                "$ref": "#/components/schemas/SomeChild2ImplObject"
+              }
+            ]
+          }
+        }
+      }
+    }
+  },
+  "info": {
+    "title": "OpenAPI definition",
+    "version": "v0"
+  },
+  "openapi": "3.1.0",
+  "paths": {
+    "/some/call": {
+      "get": {
+        "description": "Some operation description",
+        "operationId": "getSome",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SomeParentObject"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "summary": "Some summary",
+        "tags": [
+          "Some"
+        ]
+      }
+    }
+  },
+  "servers": [
+    {
+      "description": "Generated server url",
+      "url": "http://localhost:8080"
+    }
+  ],
+  "tags": [
+    {
+      "description": "some actions",
+      "name": "Some"
+    }
+  ]
+}
