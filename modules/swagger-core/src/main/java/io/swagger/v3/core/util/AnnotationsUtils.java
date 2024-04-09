@@ -1384,7 +1384,10 @@ public abstract class AnnotationsUtils {
                 if (resolvedSchema.schema != null) {
                     headerObject.setSchema(resolvedSchema.schema);
                 }
-                resolvedSchema.referencedSchemas.forEach(components::addSchemas);
+                if (resolvedSchema.referencedSchemas != null && components != null) {
+                    resolvedSchema.referencedSchemas.forEach(components::addSchemas);
+                }
+
             }
         }
         if (hasArrayAnnotation(header.array())){
