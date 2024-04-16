@@ -63,6 +63,13 @@ public @interface ArraySchema {
     Schema arraySchema() default @Schema;
 
     /**
+     * Sets the dimension of an array.
+     *
+     * @return integer representing dimension of array
+     **/
+    int dimension() default 1;
+
+    /**
      * sets the maximum number of items in an array.  Ignored if value is Integer.MIN_VALUE.
      *
      * @return integer representing maximum number of items in array
