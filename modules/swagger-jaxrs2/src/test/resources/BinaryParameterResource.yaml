@@ -37,4 +37,6 @@ components:
           type: string
           format: binary
           example: YmluYXJ5
-          
+        byteNoAnnotation:
+          type: string
+          format: byte
