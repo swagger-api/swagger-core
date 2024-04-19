@@ -34,7 +34,27 @@ public class SwaggerConfiguration implements OpenAPIConfiguration {
 
     private Boolean alwaysResolveAppPath;
 
-    private Boolean openAPI31;
+    private Boolean skipResolveAppPath;
+
+    private Boolean openAPI31 = false;
+
+    private Boolean convertToOpenAPI31;
+
+    @Override
+    public String getDefaultResponseCode() {
+        return defaultResponseCode;
+    }
+
+    public void setDefaultResponseCode(String defaultResponseCode) {
+        this.defaultResponseCode = defaultResponseCode;
+    }
+
+    public SwaggerConfiguration defaultResponseCode(String defaultResponseCode) {
+        this.defaultResponseCode = defaultResponseCode;
+        return this;
+    }
+
+    private String defaultResponseCode;
 
     public Long getCacheTTL() {
         return cacheTTL;
@@ -285,6 +305,29 @@ public class SwaggerConfiguration implements OpenAPIConfiguration {
     }
 
     /**
+     * @since 2.1.15
+     */
+    @Override
+    public Boolean isSkipResolveAppPath() {
+        return skipResolveAppPath;
+    }
+
+    /**
+     * @since 2.1.15
+     */
+    public void setSkipResolveAppPath(Boolean skipResolveAppPath) {
+        this.skipResolveAppPath = skipResolveAppPath;
+    }
+
+    /**
+     * @since 2.1.15
+     */
+    public SwaggerConfiguration skipResolveAppPath(Boolean skipResolveAppPath) {
+        setSkipResolveAppPath(skipResolveAppPath);
+        return this;
+    }
+
+    /**
      * @since 2.1.9
      */
     public Boolean isOpenAPI31() {
@@ -303,6 +346,31 @@ public class SwaggerConfiguration implements OpenAPIConfiguration {
      */
     public SwaggerConfiguration openAPI31(Boolean openAPI31) {
         this.openAPI31 = openAPI31;
+        return this;
+    }
+
+    /**
+     * @since 2.2.12
+     */
+    public Boolean isConvertToOpenAPI31() {
+        return convertToOpenAPI31;
+    }
+
+    /**
+     * @since 2.2.12
+     */
+    public void setConvertToOpenAPI31(Boolean convertToOpenAPI31) {
+        this.convertToOpenAPI31 = convertToOpenAPI31;
+        if (Boolean.TRUE.equals(convertToOpenAPI31)) {
+            this.openAPI31 = true;
+        }
+    }
+
+    /**
+     * @since 2.2.12
+     */
+    public SwaggerConfiguration convertToOpenAPI31(Boolean convertToOpenAPI31) {
+        this.setConvertToOpenAPI31(convertToOpenAPI31);
         return this;
     }
 }

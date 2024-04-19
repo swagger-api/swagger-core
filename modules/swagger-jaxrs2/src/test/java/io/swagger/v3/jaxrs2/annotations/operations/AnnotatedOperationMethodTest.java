@@ -10,15 +10,16 @@ import io.swagger.v3.jaxrs2.resources.SimpleUserResource;
 import io.swagger.v3.jaxrs2.resources.UserResource;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.Explode;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.headers.Header;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.testng.annotations.Test;
-
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import java.io.IOException;
@@ -168,6 +169,10 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
 
     static class SampleResponseSchema {
         @Schema(description = "the user id")
+        public String id;
+    }
+
+    static class SampleHeaderSchema {
         public String id;
     }
 
@@ -346,6 +351,7 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
                                 responseCode = "200",
                                 description = "voila!",
                                 headers = {@Header(
+                                        explode = Explode.TRUE,
                                         name = "Rate-Limit-Limit",
                                         description = "The number of allowed requests in the current period",
                                         schema = @Schema(type = "integer")),
@@ -353,6 +359,144 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
                                                 name = "X-Rate-Limit-Desc",
                                                 description = "The description of rate limit",
                                                 schema = @Schema(type = "string"))})
+                })
+        @GET
+        @Path("/path")
+        public void simpleGet() {
+        }
+    }
+
+    @Test
+    public void testOperationWithResponseArraySchema() {
+        String openApiYAML = readIntoYaml(GetOperationResponseHeaderWithArraySchema.class);
+        int start = openApiYAML.indexOf("get:");
+        String extractedYAML = openApiYAML.substring(start);
+        String expectedYAML = "get:\n" +
+                "      summary: Simple get operation\n" +
+                "      description: Defines a simple get operation with no inputs and a complex output\n" +
+                "      operationId: getWithPayloadResponse\n" +
+                "      responses:\n" +
+                "        \"200\":\n" +
+                "          description: voila!\n" +
+                "          headers:\n" +
+                "            Rate-Limit-Limit:\n" +
+                "              description: The number of allowed requests in the current period\n" +
+                "              style: simple\n" +
+                "              schema:\n" +
+                "                maxItems: 10\n" +
+                "                minItems: 1\n" +
+                "                type: array\n" +
+                "                items:\n" +
+                "                  type: integer\n" +
+                "      deprecated: true\n";
+        assertEquals(expectedYAML, extractedYAML);
+    }
+
+    static class GetOperationResponseHeaderWithArraySchema {
+        @Operation(
+                summary = "Simple get operation",
+                description = "Defines a simple get operation with no inputs and a complex output",
+                operationId = "getWithPayloadResponse",
+                deprecated = true,
+                responses = {
+                        @ApiResponse(
+                                responseCode = "200",
+                                description = "voila!",
+                                headers = {@Header(
+                                        name = "Rate-Limit-Limit",
+                                        description = "The number of allowed requests in the current period",
+                                        array = @ArraySchema(maxItems = 10, minItems = 1,schema = @Schema(type = "integer")))})})
+        @GET
+        @Path("/path")
+        public void simpleGet() {
+        }
+    }
+
+    static class GetOperationResponseWithoutHiddenHeader {
+        @Operation(
+                summary = "Simple get operation",
+                description = "Defines a simple get operation with no inputs and a complex output",
+                operationId = "getWithPayloadResponse",
+                deprecated = true,
+                responses = {
+                        @ApiResponse(
+                                responseCode = "200",
+                                description = "voila!",
+                                headers = {@Header(
+                                        hidden = true,
+                                        name = "Rate-Limit-Limit",
+                                        description = "The number of allowed requests in the current period",
+                                        schema = @Schema(type = "integer")),
+                                        @Header(
+                                                name = "X-Rate-Limit-Desc",
+                                                description = "The description of rate limit",
+                                                schema = @Schema(type = "string"))})
+                })
+        @GET
+        @Path("/path")
+        public void simpleGet() {
+        }
+    }
+
+    static class GetOperationWithResponseMultipleHeadersAndExamples {
+        @Operation(
+                summary = "Simple get operation",
+                description = "Defines a simple get operation with no inputs and a complex output",
+                operationId = "getWithPayloadResponse",
+                deprecated = true,
+                responses = {
+                        @ApiResponse(
+                                responseCode = "200",
+                                description = "voila!",
+                                headers = {@Header(
+                                        examples = {
+                                                @ExampleObject(
+                                                        name = "ex 1",
+                                                        description = "example description",
+                                                        value = "example value"
+                                                ),
+                                                @ExampleObject(
+                                                        name = "ex 2",
+                                                        description = "example description 2",
+                                                        value = "example value 2"
+                                                )
+                                        },
+                                        name = "Rate-Limit-Limit",
+                                        description = "The number of allowed requests in the current period",
+                                        schema = @Schema(type = "object")),
+                                        @Header(
+                                                name = "X-Rate-Limit-Desc",
+                                                description = "The description of rate limit",
+                                                array = @ArraySchema(schema = @Schema()),
+                                                example = "example1")})
+
+                })
+        @GET
+        @Path("/path")
+        public void simpleGet() {
+        }
+    }
+
+    static class GetOperationResponseWithHeaderExplodeAttribute {
+        @Operation(
+                summary = "Simple get operation",
+                description = "Defines a simple get operation with no inputs and a complex output",
+                operationId = "getWithPayloadResponse",
+                deprecated = true,
+                responses = {
+                        @ApiResponse(
+                                responseCode = "200",
+                                description = "voila!",
+                                headers = {@Header(
+                                        name = "Rate-Limit-Limit",
+                                        description = "The number of allowed requests in the current period",
+                                        explode = Explode.TRUE,
+                                        schema = @Schema(type = "object")),
+                                        @Header(
+                                                name = "X-Rate-Limit-Desc",
+                                                description = "The description of rate limit",
+                                                explode = Explode.FALSE,
+                                                schema = @Schema(type = "array"))})
                 })
         @GET
         @Path("/path")
@@ -383,6 +527,159 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
                 "              style: simple\n" +
                 "              schema:\n" +
                 "                type: integer\n" +
+                "      deprecated: true\n";
+        assertEquals(expectedYAML, extractedYAML);
+    }
+
+    static class GetOperationWithResponseMultipleHeadersWithImplementationSchema {
+        @Operation(
+                summary = "Simple get operation",
+                description = "Defines a simple get operation with no inputs and a complex output",
+                operationId = "getWithPayloadResponse",
+                deprecated = true,
+                responses = {
+                        @ApiResponse(
+                                responseCode = "200",
+                                description = "voila!",
+                                headers = {@Header(
+                                        explode = Explode.TRUE,
+                                        name = "Rate-Limit-Limit",
+                                        description = "The number of allowed requests in the current period",
+                                        array = @ArraySchema(maxItems = 10, minItems = 1,schema = @Schema(implementation = SampleHeaderSchema.class))),
+                                        @Header(
+                                                explode = Explode.TRUE,
+                                                name = "X-Rate-Limit-Desc",
+                                                description = "The description of rate limit",
+                                                schema = @Schema(implementation = SampleHeaderSchema.class))})})
+
+
+
+        @GET
+        @Path("/path")
+        public void simpleGet() {
+        }
+    }
+
+    @Test
+    public void testOperationWithResponseMultipleHeadersImplementationSchema() {
+        String openApiYAML = readIntoYaml(GetOperationWithResponseMultipleHeadersWithImplementationSchema.class);
+        int start = openApiYAML.indexOf("get:");
+        String extractedYAML = openApiYAML.substring(start);
+        String expectedYAML = "get:\n" +
+                "      summary: Simple get operation\n" +
+                "      description: Defines a simple get operation with no inputs and a complex output\n" +
+                "      operationId: getWithPayloadResponse\n" +
+                "      responses:\n" +
+                "        \"200\":\n" +
+                "          description: voila!\n" +
+                "          headers:\n" +
+                "            X-Rate-Limit-Desc:\n" +
+                "              description: The description of rate limit\n" +
+                "              style: simple\n" +
+                "              explode: true\n" +
+                "              schema:\n" +
+                "                $ref: '#/components/schemas/SampleHeaderSchema'\n" +
+                "            Rate-Limit-Limit:\n" +
+                "              description: The number of allowed requests in the current period\n" +
+                "              style: simple\n" +
+                "              explode: true\n" +
+                "              schema:\n" +
+                "                maxItems: 10\n" +
+                "                minItems: 1\n" +
+                "                type: array\n" +
+                "                items:\n" +
+                "                  $ref: '#/components/schemas/SampleHeaderSchema'\n" +
+                "      deprecated: true\n" +
+                "components:\n" +
+                "  schemas:\n" +
+                "    SampleHeaderSchema:\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        id:\n" +
+                "          type: string\n";
+        assertEquals(expectedYAML, extractedYAML);
+    }
+
+    @Test
+    public void testOperationWithResponseMultipleHeadersAndExplodeAttribute() {
+        String openApiYAML = readIntoYaml(GetOperationResponseWithHeaderExplodeAttribute.class);
+        int start = openApiYAML.indexOf("get:");
+        String extractedYAML = openApiYAML.substring(start);
+        String expectedYAML = "get:\n" +
+                "      summary: Simple get operation\n" +
+                "      description: Defines a simple get operation with no inputs and a complex output\n" +
+                "      operationId: getWithPayloadResponse\n" +
+                "      responses:\n" +
+                "        \"200\":\n" +
+                "          description: voila!\n" +
+                "          headers:\n" +
+                "            X-Rate-Limit-Desc:\n" +
+                "              description: The description of rate limit\n" +
+                "              style: simple\n" +
+                "              explode: false\n" +
+                "              schema:\n" +
+                "                type: array\n" +
+                "            Rate-Limit-Limit:\n" +
+                "              description: The number of allowed requests in the current period\n" +
+                "              style: simple\n" +
+                "              explode: true\n" +
+                "              schema:\n" +
+                "                type: object\n" +
+                "      deprecated: true\n";
+        assertEquals(expectedYAML, extractedYAML);
+    }
+
+    @Test
+    public void testOperationResponseWithoutHiddenHeader() {
+        String openApiYAML = readIntoYaml(GetOperationResponseWithoutHiddenHeader.class);
+        int start = openApiYAML.indexOf("get:");
+        String extractedYAML = openApiYAML.substring(start);
+        String expectedYAML = "get:\n" +
+                "      summary: Simple get operation\n" +
+                "      description: Defines a simple get operation with no inputs and a complex output\n" +
+                "      operationId: getWithPayloadResponse\n" +
+                "      responses:\n" +
+                "        \"200\":\n" +
+                "          description: voila!\n" +
+                "          headers:\n" +
+                "            X-Rate-Limit-Desc:\n" +
+                "              description: The description of rate limit\n" +
+                "              style: simple\n" +
+                "              schema:\n" +
+                "                type: string\n" +
+                "      deprecated: true\n";
+        assertEquals(expectedYAML, extractedYAML);
+    }
+
+    @Test
+    public void testOperationWithResponseMultipleHeadersAndExamples() {
+        String openApiYAML = readIntoYaml(GetOperationWithResponseMultipleHeadersAndExamples.class);
+        int start = openApiYAML.indexOf("get:");
+        String extractedYAML = openApiYAML.substring(start);
+        String expectedYAML = "get:\n" +
+                "      summary: Simple get operation\n" +
+                "      description: Defines a simple get operation with no inputs and a complex output\n" +
+                "      operationId: getWithPayloadResponse\n" +
+                "      responses:\n" +
+                "        \"200\":\n" +
+                "          description: voila!\n" +
+                "          headers:\n" +
+                "            X-Rate-Limit-Desc:\n" +
+                "              description: The description of rate limit\n" +
+                "              style: simple\n" +
+                "              example: example1\n" +
+                "            Rate-Limit-Limit:\n" +
+                "              description: The number of allowed requests in the current period\n" +
+                "              style: simple\n" +
+                "              schema:\n" +
+                "                type: object\n" +
+                "              examples:\n" +
+                "                ex 1:\n" +
+                "                  description: example description\n" +
+                "                  value: example value\n" +
+                "                ex 2:\n" +
+                "                  description: example description 2\n" +
+                "                  value: example value 2\n" +
                 "      deprecated: true\n";
         assertEquals(expectedYAML, extractedYAML);
     }

@@ -68,11 +68,16 @@ public class ResolveTask extends DefaultTask {
 
     private Boolean sortOutput = Boolean.FALSE;
     private Boolean alwaysResolveAppPath = Boolean.FALSE;
+    private Boolean skipResolveAppPath = Boolean.FALSE;
 
 
     private String contextId;
 
     private Boolean openAPI31 = false;
+
+    private Boolean convertToOpenAPI31 = false;
+
+    private String defaultResponseCode;
 
     @Input
     @Optional
@@ -225,6 +230,22 @@ public class ResolveTask extends DefaultTask {
     }
 
     /**
+     * @since 2.2.17
+     */
+    @Input
+    @Optional
+    public String getDefaultResponseCode() {
+        return defaultResponseCode;
+    }
+
+    /**
+     * @since 2.2.17
+     */
+    public void setDefaultResponseCode(String defaultResponseCode) {
+        this.defaultResponseCode = defaultResponseCode;
+    }
+
+    /**
      * @since 2.0.6
      */
     @Input
@@ -321,6 +342,22 @@ public class ResolveTask extends DefaultTask {
     }
 
     /**
+     * @since 2.2.15
+     */
+    @Input
+    @Optional
+    public Boolean getSkipResolveAppPath() {
+        return skipResolveAppPath;
+    }
+
+    /**
+     * @since 2.2.15
+     */
+    public void setSkipResolveAppPath(Boolean skipResolveAppPath) {
+        this.skipResolveAppPath = skipResolveAppPath;
+    }
+
+    /**
      * @since 2.2.0
      */
     @Input
@@ -331,6 +368,22 @@ public class ResolveTask extends DefaultTask {
 
     public void setOpenAPI31(Boolean openAPI31) {
         this.openAPI31 = openAPI31;
+    }
+
+    /**
+     * @since 2.2.12
+     */
+    @Input
+    @Optional
+    public Boolean getConvertToOpenAPI31() {
+        return convertToOpenAPI31;
+    }
+
+    public void setConvertToOpenAPI31(Boolean convertToOpenAPI31) {
+        this.convertToOpenAPI31 = convertToOpenAPI31;
+        if (Boolean.TRUE.equals(convertToOpenAPI31)) {
+            this.openAPI31 = true;
+        }
     }
 
     @TaskAction
@@ -426,6 +479,11 @@ public class ResolveTask extends DefaultTask {
                 method.invoke(swaggerLoader, objectMapperProcessorClass);
             }
 
+            if (StringUtils.isNotBlank(defaultResponseCode)) {
+                method=swaggerLoaderClass.getDeclaredMethod("setDefaultResponseCode",String.class);
+                method.invoke(swaggerLoader, defaultResponseCode);
+            }
+
             method=swaggerLoaderClass.getDeclaredMethod("setPrettyPrint", Boolean.class);
             method.invoke(swaggerLoader, prettyPrint);
 
@@ -435,11 +493,17 @@ public class ResolveTask extends DefaultTask {
             method=swaggerLoaderClass.getDeclaredMethod("setAlwaysResolveAppPath", Boolean.class);
             method.invoke(swaggerLoader, alwaysResolveAppPath);
 
+            method=swaggerLoaderClass.getDeclaredMethod("setSkipResolveAppPath", Boolean.class);
+            method.invoke(swaggerLoader, skipResolveAppPath);
+
             method=swaggerLoaderClass.getDeclaredMethod("setReadAllResources", Boolean.class);
             method.invoke(swaggerLoader, readAllResources);
 
             method=swaggerLoaderClass.getDeclaredMethod("setOpenAPI31", Boolean.class);
             method.invoke(swaggerLoader, openAPI31);
+
+            method=swaggerLoaderClass.getDeclaredMethod("setConvertToOpenAPI31", Boolean.class);
+            method.invoke(swaggerLoader, convertToOpenAPI31);
 
             method=swaggerLoaderClass.getDeclaredMethod("resolve");
             Map<String, String> specs = (Map<String, String>)method.invoke(swaggerLoader);

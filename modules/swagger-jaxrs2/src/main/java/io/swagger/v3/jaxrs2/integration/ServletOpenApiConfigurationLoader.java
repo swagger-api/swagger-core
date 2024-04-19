@@ -17,11 +17,14 @@ import static io.swagger.v3.jaxrs2.integration.ServletConfigContextUtils.OPENAPI
 import static io.swagger.v3.jaxrs2.integration.ServletConfigContextUtils.OPENAPI_CONFIGURATION_CACHE_TTL_KEY;
 import static io.swagger.v3.jaxrs2.integration.ServletConfigContextUtils.OPENAPI_CONFIGURATION_FILTER_KEY;
 import static io.swagger.v3.jaxrs2.integration.ServletConfigContextUtils.OPENAPI_CONFIGURATION_OBJECT_MAPPER_PROCESSOR_KEY;
+import static io.swagger.v3.jaxrs2.integration.ServletConfigContextUtils.OPENAPI_CONFIGURATION_DEFAULT_RESPONSE_CODE_KEY;
 import static io.swagger.v3.jaxrs2.integration.ServletConfigContextUtils.OPENAPI_CONFIGURATION_OPENAPI_31_KEY;
+import static io.swagger.v3.jaxrs2.integration.ServletConfigContextUtils.OPENAPI_CONFIGURATION_CONVERT_TO_OPENAPI_31_KEY;
 import static io.swagger.v3.jaxrs2.integration.ServletConfigContextUtils.OPENAPI_CONFIGURATION_PRETTYPRINT_KEY;
 import static io.swagger.v3.jaxrs2.integration.ServletConfigContextUtils.OPENAPI_CONFIGURATION_READALLRESOURCES_KEY;
 import static io.swagger.v3.jaxrs2.integration.ServletConfigContextUtils.OPENAPI_CONFIGURATION_READER_KEY;
 import static io.swagger.v3.jaxrs2.integration.ServletConfigContextUtils.OPENAPI_CONFIGURATION_SCANNER_KEY;
+import static io.swagger.v3.jaxrs2.integration.ServletConfigContextUtils.OPENAPI_CONFIGURATION_SKIPRESOLVEAPPPATH_KEY;
 import static io.swagger.v3.jaxrs2.integration.ServletConfigContextUtils.OPENAPI_CONFIGURATION_SORTOUTPUT_KEY;
 import static io.swagger.v3.jaxrs2.integration.ServletConfigContextUtils.OPENAPI_CONFIGURATION_ALWAYSRESOLVEAPPPATH_KEY;
 import static io.swagger.v3.jaxrs2.integration.ServletConfigContextUtils.getBooleanInitParam;
@@ -58,11 +61,14 @@ public class ServletOpenApiConfigurationLoader implements OpenApiConfigurationLo
                     .prettyPrint(getBooleanInitParam(servletConfig, OPENAPI_CONFIGURATION_PRETTYPRINT_KEY))
                     .sortOutput(getBooleanInitParam(servletConfig, OPENAPI_CONFIGURATION_SORTOUTPUT_KEY))
                     .alwaysResolveAppPath(getBooleanInitParam(servletConfig, OPENAPI_CONFIGURATION_ALWAYSRESOLVEAPPPATH_KEY))
+                    .skipResolveAppPath(getBooleanInitParam(servletConfig, OPENAPI_CONFIGURATION_SKIPRESOLVEAPPPATH_KEY))
                     .readerClass(getInitParam(servletConfig, OPENAPI_CONFIGURATION_READER_KEY))
                     .cacheTTL(getLongInitParam(servletConfig, OPENAPI_CONFIGURATION_CACHE_TTL_KEY))
                     .scannerClass(getInitParam(servletConfig, OPENAPI_CONFIGURATION_SCANNER_KEY))
                     .objectMapperProcessorClass(getInitParam(servletConfig, OPENAPI_CONFIGURATION_OBJECT_MAPPER_PROCESSOR_KEY))
+                    .defaultResponseCode(getInitParam(servletConfig, OPENAPI_CONFIGURATION_DEFAULT_RESPONSE_CODE_KEY))
                     .openAPI31(getBooleanInitParam(servletConfig, OPENAPI_CONFIGURATION_OPENAPI_31_KEY))
+                    .convertToOpenAPI31(getBooleanInitParam(servletConfig, OPENAPI_CONFIGURATION_CONVERT_TO_OPENAPI_31_KEY))
                     .modelConverterClasses(resolveModelConverterClasses(servletConfig));
 
             return configuration;
@@ -119,6 +125,9 @@ public class ServletOpenApiConfigurationLoader implements OpenApiConfigurationLo
             if (getBooleanInitParam(servletConfig, OPENAPI_CONFIGURATION_ALWAYSRESOLVEAPPPATH_KEY) != null) {
                 return true;
             }
+            if (getBooleanInitParam(servletConfig, OPENAPI_CONFIGURATION_SKIPRESOLVEAPPPATH_KEY) != null) {
+                return true;
+            }
             if (getInitParam(servletConfig, OPENAPI_CONFIGURATION_READER_KEY) != null) {
                 return true;
             }
@@ -131,7 +140,10 @@ public class ServletOpenApiConfigurationLoader implements OpenApiConfigurationLo
             if (getInitParam(servletConfig, OPENAPI_CONFIGURATION_OBJECT_MAPPER_PROCESSOR_KEY) != null) {
                 return true;
             }
-            if (getInitParam(servletConfig, OPENAPI_CONFIGURATION_OPENAPI_31_KEY) != null) {
+            if (getInitParam(servletConfig, OPENAPI_CONFIGURATION_DEFAULT_RESPONSE_CODE_KEY) != null) {
+                return true;
+            }
+            if (getInitParam(servletConfig, OPENAPI_CONFIGURATION_CONVERT_TO_OPENAPI_31_KEY) != null) {
                 return true;
             }
             return resolveModelConverterClasses(servletConfig) != null;

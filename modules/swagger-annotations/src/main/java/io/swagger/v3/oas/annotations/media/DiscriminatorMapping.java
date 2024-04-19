@@ -1,5 +1,8 @@
 package io.swagger.v3.oas.annotations.media;
 
+import io.swagger.v3.oas.annotations.OpenAPI31;
+import io.swagger.v3.oas.annotations.extensions.Extension;
+
 import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -13,6 +16,7 @@ import java.lang.annotation.Target;
  * <p>Use {@link Schema#discriminatorProperty()} to define a discriminator property.</p>
  *
  * @see <a target="_new" href="https://github.com/OAI/OpenAPI-Specification/blob/3.0.1/versions/3.0.1.md#discriminatorObject">Discriminator (OpenAPI specification)</a>
+ * @see <a target="_new" href="https://github.com/OAI/OpenAPI-Specification/blob/3.1.0/versions/3.1.0.md#discriminatorObject">Discriminator (OpenAPI specification)</a>
  * @see Schema
  **/
 @Target({})
@@ -33,5 +37,14 @@ public @interface DiscriminatorMapping {
      * @return the Schema reference
      **/
     Class<?> schema() default Void.class;
+
+    /**
+     * The list of optional extensions
+     *
+     * @since 2.2.12 / OpenAPI 3.1
+     * @return an optional array of extensions
+     */
+    @OpenAPI31
+    Extension[] extensions() default {};
 
 }

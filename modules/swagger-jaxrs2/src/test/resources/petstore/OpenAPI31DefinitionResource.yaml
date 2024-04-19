@@ -1,0 +1,16 @@
+openapi: 3.1.0
+info:
+  title: Pet Resource Example
+  description: API Definition
+  summary: API Summary
+  termsOfService: Terms of service
+  contact:
+    name: Fred
+    url: http://gigantic-server.com
+    email: Fred@gigagantic-server.com
+  license:
+    name: Apache 2.0
+    url: http://foo.bar
+    identifier: Apache
+  version: "2.0"
+

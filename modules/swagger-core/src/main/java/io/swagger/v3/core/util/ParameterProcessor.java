@@ -29,6 +29,10 @@ import java.util.Optional;
 public class ParameterProcessor {
     static Logger LOGGER = LoggerFactory.getLogger(ParameterProcessor.class);
 
+    public static Parameter applyAnnotations(Parameter parameter, Type type, List<Annotation> annotations, Components components, String[] classTypes, String[] methodTypes, JsonView jsonViewAnnotation) {
+        return applyAnnotations(parameter, type, annotations, components, classTypes, methodTypes, jsonViewAnnotation, false);
+    }
+
     public static Parameter applyAnnotations(
             Parameter parameter,
             Type type,
@@ -36,7 +40,8 @@ public class ParameterProcessor {
             Components components,
             String[] classTypes,
             String[] methodTypes,
-            JsonView jsonViewAnnotation) {
+            JsonView jsonViewAnnotation,
+            boolean openapi31) {
 
         final AnnotationsHelper helper = new AnnotationsHelper(annotations, type);
         if (helper.isContext()) {
@@ -60,7 +65,8 @@ public class ParameterProcessor {
                 .skipOverride(true)
                 .jsonViewAnnotation(jsonViewAnnotation)
                 .ctxAnnotations(reworkedAnnotations.toArray(new Annotation[reworkedAnnotations.size()]));
-        ResolvedSchema resolvedSchema = ModelConverters.getInstance().resolveAsResolvedSchema(annotatedType);
+
+        final ResolvedSchema resolvedSchema = ModelConverters.getInstance(openapi31).resolveAsResolvedSchema(annotatedType);
 
         if (resolvedSchema.schema != null) {
             parameter.setSchema(resolvedSchema.schema);
@@ -148,7 +154,7 @@ public class ParameterProcessor {
                 }
 
                 if (p.extensions().length > 0) {
-                    Map<String, Object> extensionMap = AnnotationsUtils.getExtensions(p.extensions());
+                    Map<String, Object> extensionMap = AnnotationsUtils.getExtensions(openapi31, p.extensions());
                     if (extensionMap != null && ! extensionMap.isEmpty()) {
                         extensionMap.forEach(parameter::addExtension);
                     }
@@ -228,7 +234,7 @@ public class ParameterProcessor {
     }
 
     private static boolean isExplodable(io.swagger.v3.oas.annotations.Parameter p, Parameter parameter) {
-        io.swagger.v3.oas.annotations.media.Schema schema = p.schema();
+        io.swagger.v3.oas.annotations.media.Schema schema = AnnotationsUtils.hasArrayAnnotation(p.array()) ? p.array().schema() : p.schema();
         boolean explode = true;
         if ("form".equals(parameter.getIn())){
             return true;

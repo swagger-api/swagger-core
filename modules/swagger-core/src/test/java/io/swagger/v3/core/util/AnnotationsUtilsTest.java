@@ -71,7 +71,7 @@ public class AnnotationsUtilsTest {
     public void getSchema(String methodName, Map<String, Object> expected) throws NoSuchMethodException {
         final Method method = getClass().getDeclaredMethod(methodName);
         Content annotationContent = method.getAnnotation(ApiResponse.class).content()[0];
-        Optional<? extends Schema> schema = AnnotationsUtils.getSchema(annotationContent, new Components(), null);
+        Optional<? extends Schema> schema = AnnotationsUtils.getSchema(annotationContent, new Components(), null, false);
 
         Assert.assertTrue(schema.isPresent());
         Assert.assertEquals(schema.get().getType(), expected.get("type"));

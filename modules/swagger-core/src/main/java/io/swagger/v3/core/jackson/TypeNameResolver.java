@@ -22,6 +22,10 @@ public class TypeNameResolver {
     protected TypeNameResolver() {
     }
 
+    public boolean getUseFqn() {
+        return this.useFqn;
+    }
+
     public void setUseFqn(boolean useFqn) {
         this.useFqn = useFqn;
     }

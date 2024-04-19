@@ -26,7 +26,7 @@ Alternatively provide as value a classpath with the following dependencies (repl
 
 ```
 plugins {
-  id "io.swagger.core.v3.swagger-gradle-plugin" version "2.2.9"
+  id "io.swagger.core.v3.swagger-gradle-plugin" version "2.2.21"
 }
 ```
 ### Gradle 1.x and 2.0
@@ -43,7 +43,7 @@ buildscript {
     }
   }
   dependencies {
-    classpath "io.swagger.core.v3:swagger-gradle-plugin:2.2.9"
+    classpath "io.swagger.core.v3:swagger-gradle-plugin:2.2.21"
   }
 }
 
@@ -85,6 +85,7 @@ Parameter | Description | Required | Default
 `prettyPrint`|see [configuration property](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)|false|`TRUE`
 `sortOutput`|see [configuration property](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)|false|`FALSE`
 `alwaysResolveAppPath`|see [configuration property](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)|false|`FALSE`
+`skipResolveAppPath`|see [configuration property](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)|false|`FALSE`
 `openApiFile`|openapi file to be merged with resolved specification, equivalent to [config](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties) openAPI|false|
 `filterClass`|see [configuration property](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)|false|
 `readerClass`|see [configuration property](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)|false|
@@ -95,7 +96,7 @@ Parameter | Description | Required | Default
 `modelConverterClasses`|see [configuration property](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)|false|
 `contextId`|see [Context](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#context)|false|
 `outputPath`|**DEPRECATED** output path where file(s) are saved|false|
-
+`defaultResponseCode`|see [configuration property](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)|false|
 
 **Note** parameter `openApiFile` corresponds to [config](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties) openAPI. It points to a location of a file in YAML or JSON format representing the input spec that will be merged with the resolved spec. Typically used to add Info section, or any other meta data.
 An example of such file:
@@ -119,5 +120,6 @@ info:
 
 Since version 2.1.6, `sortOutput` parameter is available, allowing to sort object properties and map keys alphabetically.
 Since version 2.1.6, `objectMapperProcessorClass` allows to configure also the ObjectMapper instance used to serialize the resolved OpenAPI
-Since version 2.1.9, `alwaysResolveAppPath` parameter is available, allowing to trigger resolving of Application Path from annotaion also not in runtime (e.g. using servlet in separate application, or in maven plugin at build time, etc)
-
+Since version 2.1.9, `alwaysResolveAppPath` parameter is available, allowing to trigger resolving of Application Path from annotation also not in runtime (e.g. using servlet in separate application, or in maven plugin at build time, etc)
+Since version 2.1.15, `skipResolveAppPath` parameter is available, allowing to skip resolving of Application Path from annotation
+Since version 2.2.17, `defaultResponseCode` parameter is available, allowing to set the code used when resolving responses with no http status code annotation

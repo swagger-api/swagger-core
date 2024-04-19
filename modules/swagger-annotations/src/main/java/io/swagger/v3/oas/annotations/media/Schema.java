@@ -1,6 +1,8 @@
 package io.swagger.v3.oas.annotations.media;
 
 import io.swagger.v3.oas.annotations.ExternalDocumentation;
+import io.swagger.v3.oas.annotations.OpenAPI31;
+import io.swagger.v3.oas.annotations.StringToClassMapItem;
 import io.swagger.v3.oas.annotations.extensions.Extension;
 
 import java.lang.annotation.Inherited;
@@ -29,6 +31,7 @@ import static java.lang.annotation.ElementType.PARAMETER;
  * coexist</p>
  *
  * @see <a target="_new" href="https://github.com/OAI/OpenAPI-Specification/blob/3.0.1/versions/3.0.1.md#schemaObject">Schema (OpenAPI specification)</a>
+ * @see <a target="_new" href="https://github.com/OAI/OpenAPI-Specification/blob/3.1.0/versions/3.1.0.md#schemaObject">Schema (OpenAPI specification)</a>
  * @see ArraySchema
  **/
 @Target({FIELD, METHOD, PARAMETER, TYPE, ANNOTATION_TYPE})
@@ -329,11 +332,202 @@ public @interface Schema {
     Extension[] extensions() default {};
 
     /**
+     * List of optional items positionally defines before normal items.
+     * @return optional array of items
+     */
+    Class<?>[] prefixItems() default {};
+
+    /**
+     * List of schema types
+     *
+     * @since 2.2.12 / OpenAPI 3.1
+     * @return array of types
+     */
+    @OpenAPI31
+    String[] types() default {};
+
+    /**
+     * @since 2.2.12 / OpenAPI 3.1
+     *
+     * OAS 3.1 version of `exclusiveMaximum`, accepting a numeric value
+     *
+     * @return the exclusive maximum value for this schema
+     **/
+    @OpenAPI31
+    int exclusiveMaximumValue() default 0;
+
+    /**
+     * Provides an exclusive minimum for a expressing exclusive range.
+     *
+     * @since 2.2.12 / OpenAPI 3.1
+     * @return an exclusive minimum.
+     */
+    @OpenAPI31
+    int exclusiveMinimumValue() default 0;
+
+    /**
+     * Specifies contains constrictions expressions.
+     * @return contains expression.
+     */
+    @OpenAPI31
+    Class<?> contains() default Void.class;
+
+    /**
+     * Provides the $id related to this schema.
+     *
+     * @since 2.2.12 / OpenAPI 3.1
+     * @return the $id of schema
+     */
+    @OpenAPI31
+    String $id() default "";
+
+    /**
+     * Provides Json Schema dialect where the schema is valid.
+     *
+     * @since 2.2.12 / OpenAPI 3.1
+     * @return json schema dialect
+     */
+    @OpenAPI31
+    String $schema() default "";
+
+    /**
+     * Provides the $anchor related to schema
+     *
+     * @since 2.2.12 / OpenAPI 3.1
+     * @return $anchor schema
+     */
+    @OpenAPI31
+    String $anchor() default "";
+
+    /**
+     * Provides the $vocabulary related to schema
+     *
+     * @since 2.2.14 / OpenAPI 3.1
+     * @return $vocabulary schema
+     */
+    @OpenAPI31
+    String $vocabulary() default "";
+
+    /**
+     * Provides the $dynamicAnchor related to schema
+     *
+     * @since 2.2.14 / OpenAPI 3.1
+     * @return $dynamicAnchor schema
+     */
+    @OpenAPI31
+    String $dynamicAnchor() default "";
+
+    /**
+     * Provides the content encoding related to this schema
+     *
+     * @since 2.2.12 / OpenAPI 3.1
+     * @return content encoding
+     */
+    @OpenAPI31
+    String contentEncoding() default "";
+
+    /**
+     * Provides the content media type related to this schema
+     *
+     * @since 2.2.12 / OpenAPI 3.1
+     * @return content media type
+     */
+    @OpenAPI31
+    String contentMediaType() default "";
+
+    /**
+     * Provides the content schema related to this schema
+     *
+     * @since 2.2.12 / OpenAPI 3.1
+     * @return content schema
+     */
+    @OpenAPI31
+    Class<?> contentSchema() default Void.class;
+
+    /**
+     * Provides property names related to this schema
+     *
+     * @since 2.2.12 / OpenAPI 3.1
+     * @return property names
+     */
+    @OpenAPI31
+    Class<?> propertyNames() default Void.class;
+
+    /**
+     * Provides max contains related to this schema
+     * @return max contains
+     */
+    @OpenAPI31
+    int maxContains() default Integer.MAX_VALUE;
+
+    /**
+     * Provides min contains related to this schema
+     * @return min contains
+     */
+    @OpenAPI31
+    int minContains() default 0;
+
+    /**
+     * Provides a list of additional items
+     * @return additional items
+     */
+    Class<?> additionalItems() default Void.class;
+
+    /**
+     * Provides a list of unevaluated items
+     * @return unevaluated items
+     */
+    Class<?> unevaluatedItems() default Void.class;
+
+    /**
+     * Provides the if sub schema related to this schema
+     *
+     * @since 2.2.12 / OpenAPI 3.1
+     * @return if sub schema
+     */
+    @OpenAPI31
+    Class<?> _if() default Void.class;
+
+    /**
+     * Provides the else sub schema related to this schema
+     *
+     * @since 2.2.12 / OpenAPI 3.1
+     * @return else sub schema
+     */
+    @OpenAPI31
+    Class<?> _else() default Void.class;
+
+    /**
+     * Provides the then sub schema related to this schema
+     *
+     * @since 2.2.12 / OpenAPI 3.1
+     * @return then sub schema
+     */
+    @OpenAPI31
+    Class<?> then() default Void.class;
+
+    /**
+     * Provides $comment related to this schema
+     *
+     * @since 2.2.12 / OpenAPI 3.1
+     * @return $comment related to schema
+     */
+    @OpenAPI31
+    String $comment() default "";
+
+    /**
+     * Provides a list of examples related to this schema
+     * @return list of examples
+     */
+    Class<?>[] exampleClasses() default {};
+
+    /**
      * Allows to specify the additionalProperties value
      *
      * AdditionalPropertiesValue.TRUE: set to TRUE
      * AdditionalPropertiesValue.FALSE: set to FALSE
      * AdditionalPropertiesValue.USE_ADDITIONAL_PROPERTIES_ANNOTATION: resolve from @Content.additionalPropertiesSchema
+     * or @Schema.additionalPropertiesSchema
      *
      * @since 2.2.0
      * @return the accessMode for this schema (property)
@@ -359,4 +553,67 @@ public @interface Schema {
         REQUIRED,
         NOT_REQUIRED;
     }
+
+    /**
+     * Allows to specify the dependentRequired value
+     **
+     * @since 2.2.12 / OpenAPI 3.1
+     * @return the list of DependentRequire annotations
+     *
+     */
+    @OpenAPI31
+    DependentRequired[] dependentRequiredMap() default {};
+
+    /**
+     * Allows to specify the dependentSchemas value providing a Class to be resolved into a Schema
+     *
+     * @since 2.2.12 / OpenAPI 3.1
+     * @return the list of dependentSchemas annotations
+     *
+     */
+    @OpenAPI31
+    StringToClassMapItem[] dependentSchemas() default {};
+
+    /**
+     * Provides pattern properties to this schema
+     *
+     * @since 2.2.12 / OpenAPI 3.1
+     * @return pattern properties
+     */
+    @OpenAPI31
+    StringToClassMapItem[] patternProperties() default {};
+
+    /**
+     * Provides properties related to this schema
+     *
+     * @return schema properties
+     */
+    StringToClassMapItem[] properties() default {};
+
+    /**
+     * Provides unevaluated properties to this schema
+     *
+     * @since 2.2.12 / OpenAPI 3.1
+     * @return unevaluated properties
+     */
+    @OpenAPI31
+    Class<?> unevaluatedProperties() default Void.class;
+    Class<?> additionalPropertiesSchema() default Void.class;
+
+    /**
+     * Provides an array of examples of the schema.  When associated with a specific media type, the example string shall be parsed by the consumer to be treated as an object or an array.
+     *
+     * @return an array of examples of this schema
+     **/
+    @OpenAPI31
+    String[] examples() default {};
+
+    /**
+     * Provides value restricted to this schema.
+     *
+     * @since 2.2.12 / OpenAPI 3.1
+     * @return const value
+     */
+    @OpenAPI31
+    String _const() default "";
 }

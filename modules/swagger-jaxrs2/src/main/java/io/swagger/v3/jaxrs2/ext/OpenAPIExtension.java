@@ -27,4 +27,8 @@ public interface OpenAPIExtension {
      * @param chain     the chain with swagger extensions to process
      */
     void decorateOperation(Operation operation, Method method, Iterator<OpenAPIExtension> chain);
+
+    default void setOpenAPI31(boolean openapi31) {
+        //todo: override me!
+    }
 }

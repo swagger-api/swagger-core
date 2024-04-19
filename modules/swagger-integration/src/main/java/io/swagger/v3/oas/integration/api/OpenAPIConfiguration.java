@@ -50,7 +50,22 @@ public interface OpenAPIConfiguration {
     Boolean isAlwaysResolveAppPath();
 
     /**
-     * @since 3.0.0
+     * @since 2.1.15
+     */
+    Boolean isSkipResolveAppPath();
+
+    /**
+     * @since 2.2.12
      */
     Boolean isOpenAPI31();
+
+    /**
+     * @since 2.2.12
+     */
+    Boolean isConvertToOpenAPI31();
+
+    /**
+     * @since 2.2.17
+     */
+    public String getDefaultResponseCode();
 }

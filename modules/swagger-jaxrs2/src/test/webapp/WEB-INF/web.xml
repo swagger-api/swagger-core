@@ -50,6 +50,11 @@
             <param-name>openApi.configuration.openAPI31</param-name>
             <param-value>true</param-value>
         </init-param>
+
+        <init-param>
+            <param-name>openApi.configuration.convertToOpenAPI31</param-name>
+            <param-value>true</param-value>
+        </init-param>
     </servlet>
 
     <servlet>

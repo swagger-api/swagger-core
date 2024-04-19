@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import io.swagger.v3.core.util.Yaml;
 import io.swagger.v3.jaxrs2.Reader;
 import io.swagger.v3.jaxrs2.matchers.SerializationMatchers;
+import io.swagger.v3.oas.integration.SwaggerConfiguration;
 import io.swagger.v3.oas.models.OpenAPI;
 import org.apache.commons.io.IOUtils;
 
@@ -63,5 +64,13 @@ public abstract class AbstractAnnotationTest {
         } finally {
             IOUtils.closeQuietly(in);
         }
+    }
+
+    public void compareAsYamlOAS31(final Class<?> cls, final String yaml) throws IOException {
+        Reader reader = new Reader(new SwaggerConfiguration()
+                .openAPI(new OpenAPI())
+                .openAPI31(true));
+        OpenAPI openAPI = reader.read(cls);
+        SerializationMatchers.assertEqualsToYaml31(openAPI, yaml);
     }
 }

@@ -19,6 +19,10 @@ public class Link {
     private String operationId = null;
     private Map<String, String> parameters = null;
     private Object requestBody = null;
+    /**
+     * @deprecated as it's not part of OpenAPI specification
+     */
+    @Deprecated
     private Map<String, Header> headers = null;
     private String description = null;
     private String $ref = null;
@@ -123,24 +127,34 @@ public class Link {
     }
 
     /**
-     * returns the headers property from a Link instance.
-     *
-     * @return Headers headers
-     **/
-
+     * @deprecated as it's not part of OpenAPI specification
+     */
+    @Deprecated
     public Map<String, Header> getHeaders() {
         return headers;
     }
 
+    /**
+     * @deprecated as it's not part of OpenAPI specification
+     */
+    @Deprecated
     public void setHeaders(Map<String, Header> headers) {
         this.headers = headers;
     }
 
+    /**
+     * @deprecated as it's not part of OpenAPI specification
+     */
+    @Deprecated
     public Link headers(Map<String, Header> headers) {
         this.headers = headers;
         return this;
     }
 
+    /**
+     * @deprecated as it's not part of OpenAPI specification
+     */
+    @Deprecated
     public Link addHeaderObject(String name, Header header) {
         if (this.headers == null) {
             headers = new LinkedHashMap<>();

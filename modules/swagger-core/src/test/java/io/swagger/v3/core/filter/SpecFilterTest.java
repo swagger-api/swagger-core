@@ -15,6 +15,7 @@ import io.swagger.v3.core.filter.resources.RemoveUnreferencedDefinitionsFilter;
 import io.swagger.v3.core.filter.resources.ReplaceGetOperationsFilter;
 import io.swagger.v3.core.matchers.SerializationMatchers;
 import io.swagger.v3.core.util.Json;
+import io.swagger.v3.core.util.Json31;
 import io.swagger.v3.core.util.ResourceUtils;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
@@ -37,6 +38,7 @@ import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
 
 public class SpecFilterTest {
@@ -44,6 +46,7 @@ public class SpecFilterTest {
     private static final String RESOURCE_RECURSIVE_MODELS = "specFiles/recursivemodels.json";
     private static final String RESOURCE_PATH = "specFiles/petstore-3.0-v2.json";
     private static final String RESOURCE_PATH_3303 = "specFiles/petstore-3.0-v2-ticket-3303.json";
+    private static final String RESOURCE_PATH_LIST = "specFiles/3.1.0/list-3.1.json";
     private static final String RESOURCE_REFERRED_SCHEMAS = "specFiles/petstore-3.0-referred-schemas.json";
     private static final String RESOURCE_PATH_WITHOUT_MODELS = "specFiles/petstore-3.0-v2_withoutModels.json";
     private static final String RESOURCE_DEPRECATED_OPERATIONS = "specFiles/deprecatedoperationmodel.json";
@@ -274,6 +277,16 @@ public class SpecFilterTest {
     }
 
     @Test
+    public void shouldRemoveBrokenNestedRefsKeepArray() throws IOException {
+        final OpenAPI openAPI = getOpenAPI31(RESOURCE_PATH_LIST);
+        final RemoveUnreferencedDefinitionsFilter remover = new RemoveUnreferencedDefinitionsFilter();
+        final OpenAPI filtered = new SpecFilter().filter(openAPI, remover, null, null, null);
+
+        assertEquals(filtered.getComponents().getSchemas().size(), 2, "Expected to have parent and child list schemas");
+        assertTrue(filtered.getComponents().getSchemas().containsKey("SomeChildObject"), "Schemas should contains child list");
+    }
+
+    @Test
     public void shouldNotRemoveGoodRefs() throws IOException {
         final OpenAPI openAPI = getOpenAPI(RESOURCE_PATH);
         assertNotNull(openAPI.getComponents().getSchemas().get("PetHeader"));
@@ -437,5 +450,10 @@ public class SpecFilterTest {
     private OpenAPI getOpenAPI(String path) throws IOException {
         final String json = ResourceUtils.loadClassResource(getClass(), path);
         return Json.mapper().readValue(json, OpenAPI.class);
+    }
+
+    private OpenAPI getOpenAPI31(String path) throws IOException {
+        final String json = ResourceUtils.loadClassResource(getClass(), path);
+        return Json31.mapper().readValue(json, OpenAPI.class);
     }
 }

@@ -153,6 +153,19 @@ public class Schema<T> {
     private String $anchor;
 
     /**
+     * @since 2.2.14 (OpenAPI 3.1.0)
+     */
+    @OpenAPI31
+    private String $vocabulary;
+
+    /**
+     * @since 2.2.14 (OpenAPI 3.1.0)
+     */
+    @OpenAPI31
+    private String $dynamicAnchor;
+
+
+    /**
      * @since 2.2.0 (OpenAPI 3.1.0)
      */
     @OpenAPI31
@@ -490,6 +503,62 @@ public class Schema<T> {
     @OpenAPI31
     public Schema $schema(String $schema) {
         this.$schema = $schema;
+        return this;
+    }
+
+    /**
+     *
+     * @since 2.2.8 (OpenAPI 3.1.0)
+     */
+    @OpenAPI31
+    public String get$vocabulary() {
+        return $vocabulary;
+    }
+
+    /**
+     *
+     * @since 2.2.8 (OpenAPI 3.1.0)
+     */
+    @OpenAPI31
+    public void set$vocabulary(String $vocabulary) {
+        this.$vocabulary = $vocabulary;
+    }
+
+    /**
+     *
+     * @since 2.2.8 (OpenAPI 3.1.0)
+     */
+    @OpenAPI31
+    public Schema $vocabulary(String $vocabulary) {
+        this.$vocabulary = $vocabulary;
+        return this;
+    }
+
+    /**
+     *
+     * @since 2.2.8 (OpenAPI 3.1.0)
+     */
+    @OpenAPI31
+    public String get$dynamicAnchor() {
+        return $dynamicAnchor;
+    }
+
+    /**
+     *
+     * @since 2.2.8 (OpenAPI 3.1.0)
+     */
+    @OpenAPI31
+    public void set$dynamicAnchor(String $dynamicAnchor) {
+        this.$dynamicAnchor = $dynamicAnchor;
+    }
+
+    /**
+     *
+     * @since 2.2.8 (OpenAPI 3.1.0)
+     */
+    @OpenAPI31
+    public Schema $dynamicAnchor(String $dynamicAnchor) {
+        this.$dynamicAnchor = $dynamicAnchor;
         return this;
     }
 
@@ -1454,6 +1523,19 @@ public class Schema<T> {
 
     /**
      *
+     * @since 2.2.12 (OpenAPI 3.1.0)
+     */
+    @OpenAPI31
+    public Schema addPrefixItem(Schema prefixItem) {
+        if (this.prefixItems == null) {
+            this.prefixItems = new ArrayList<>();
+        }
+        this.prefixItems.add(prefixItem);
+        return this;
+    }
+
+    /**
+     *
      * @since 2.2.0 (OpenAPI 3.1.0)
      */
     @OpenAPI31
@@ -1960,6 +2042,8 @@ public class Schema<T> {
                 Objects.equals(this.$id, schema.$id) &&
                 Objects.equals(this.$anchor, schema.$anchor) &&
                 Objects.equals(this.$schema, schema.$schema) &&
+                Objects.equals(this.$vocabulary, schema.$vocabulary) &&
+                Objects.equals(this.$dynamicAnchor, schema.$dynamicAnchor) &&
                 Objects.equals(this.types, schema.types) &&
                 Objects.equals(this.allOf, schema.allOf) &&
                 Objects.equals(this.anyOf, schema.anyOf) &&
@@ -1994,7 +2078,7 @@ public class Schema<T> {
                 exclusiveMinimum, exclusiveMinimumValue, maxLength, minLength, pattern, maxItems, minItems, uniqueItems,
                 maxProperties, minProperties, required, type, not, properties, additionalProperties, description,
                 format, $ref, nullable, readOnly, writeOnly, example, externalDocs, deprecated, xml, extensions,
-                discriminator, _enum, _default, patternProperties, $id, $anchor, $schema, types, allOf, anyOf, oneOf, _const,
+                discriminator, _enum, _default, patternProperties, $id, $anchor, $schema, $vocabulary, $dynamicAnchor, types, allOf, anyOf, oneOf, _const,
                 contentEncoding, contentMediaType, contentSchema, propertyNames, unevaluatedProperties, maxContains,
                 minContains, additionalItems, unevaluatedItems, _if, _else, then, dependentRequired, dependentSchemas,
                 $comment, examples, prefixItems, items);
@@ -2066,6 +2150,8 @@ public class Schema<T> {
             sb.append("    $id: ").append(toIndentedString($id)).append("\n");
             sb.append("    $anchor: ").append(toIndentedString($anchor)).append("\n");
             sb.append("    $schema: ").append(toIndentedString($schema)).append("\n");
+            sb.append("    $vocabulary: ").append(toIndentedString($vocabulary)).append("\n");
+            sb.append("    $dynamicAnchor: ").append(toIndentedString($dynamicAnchor)).append("\n");
             sb.append("    const: ").append(toIndentedString(_const)).append("\n");
             sb.append("    contentEncoding: ").append(toIndentedString(contentEncoding)).append("\n");
             sb.append("    contentMediaType: ").append(toIndentedString(contentMediaType)).append("\n");

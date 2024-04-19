@@ -1,6 +1,7 @@
 package io.swagger.v3.jaxrs2.integration;
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.Webhooks;
 import io.swagger.v3.oas.integration.IgnoredPackages;
 import io.swagger.v3.oas.integration.OpenApiConfigurationException;
 import io.swagger.v3.oas.integration.SwaggerConfiguration;
@@ -21,7 +22,7 @@ import java.util.stream.Collectors;
  * swagger-jaxrs2-servlet-initializer-v2
  */
 @Deprecated
-@HandlesTypes({Path.class, OpenAPIDefinition.class, ApplicationPath.class})
+@HandlesTypes({Path.class, OpenAPIDefinition.class, ApplicationPath.class, Webhooks.class})
 public class SwaggerServletInitializer implements ServletContainerInitializer {
 
     static final Set<String> ignored = new HashSet();

@@ -1,6 +1,7 @@
 package io.swagger.v3.core.converter;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.media.Schema;
 
 import java.lang.annotation.Annotation;
@@ -21,9 +22,12 @@ public class AnnotatedType {
     private Annotation[] ctxAnnotations;
     private boolean resolveAsRef;
     private JsonView jsonViewAnnotation;
+    private boolean includePropertiesWithoutJSONView = true;
     private boolean skipSchemaName;
     private boolean skipJsonIdentity;
     private String propertyName;
+
+    private Components components;
 
     public AnnotatedType() {
     }
@@ -149,6 +153,19 @@ public class AnnotatedType {
         return this;
     }
 
+    public Components getComponents() {
+        return components;
+    }
+
+    public void setComponents(Components components) {
+        this.components = components;
+    }
+
+    public AnnotatedType components(Components components) {
+        setComponents(components);
+        return this;
+    }
+
     public Type getType() {
         return type;
     }
@@ -172,6 +189,19 @@ public class AnnotatedType {
 
     public AnnotatedType jsonViewAnnotation(JsonView jsonViewAnnotation) {
         this.jsonViewAnnotation = jsonViewAnnotation;
+        return this;
+    }
+
+    public boolean isIncludePropertiesWithoutJSONView() {
+        return includePropertiesWithoutJSONView;
+    }
+
+    public void setIncludePropertiesWithoutJSONView(boolean includePropertiesWithoutJSONView) {
+        this.includePropertiesWithoutJSONView = includePropertiesWithoutJSONView;
+    }
+
+    public AnnotatedType includePropertiesWithoutJSONView(boolean includePropertiesWithoutJSONView) {
+        this.includePropertiesWithoutJSONView = includePropertiesWithoutJSONView;
         return this;
     }
 

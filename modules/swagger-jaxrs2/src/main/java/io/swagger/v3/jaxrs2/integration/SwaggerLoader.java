@@ -36,13 +36,18 @@ public class SwaggerLoader {
     private String openapiAsString;
 
     private String objectMapperProcessorClass;
+    private String defaultResponseCode;
     private String modelConverterClasses;
 
     private Boolean sortOutput = false;
 
     private Boolean alwaysResolveAppPath = false;
 
+    private Boolean skipResolveAppPath = false;
+
     private Boolean openAPI31 = false;
+
+    private Boolean convertToOpenAPI31 = false;
 
     /**
      * @since 2.0.6
@@ -56,6 +61,20 @@ public class SwaggerLoader {
      */
     public void setObjectMapperProcessorClass(String objectMapperProcessorClass) {
         this.objectMapperProcessorClass = objectMapperProcessorClass;
+    }
+
+    /**
+     * @since 2.2.17
+     */
+    public String getDefaultResponseCode() {
+        return defaultResponseCode;
+    }
+
+    /**
+     * @since 2.2.17
+     */
+    public void setDefaultResponseCode(String defaultResponseCode) {
+        this.defaultResponseCode = defaultResponseCode;
     }
 
     /**
@@ -195,8 +214,26 @@ public class SwaggerLoader {
         this.alwaysResolveAppPath = alwaysResolveAppPath;
     }
 
+    /**
+     * @since 2.1.15
+     */
+    public Boolean getSkipResolveAppPath() {
+        return skipResolveAppPath;
+    }
+
+    /**
+     * @since 2.1.15
+     */
+    public void setSkipResolveAppPath(Boolean skipResolveAppPath) {
+        this.skipResolveAppPath = skipResolveAppPath;
+    }
+
     public Boolean getOpenAPI31() {
         return openAPI31;
+    }
+
+    public Boolean getConvertToOpenAPI31() {
+        return convertToOpenAPI31;
     }
 
     /**
@@ -204,6 +241,13 @@ public class SwaggerLoader {
      */
     public void setOpenAPI31(Boolean openAPI31) {
         this.openAPI31 = openAPI31;
+    }
+
+    /**
+     *  @since 2.2.12
+     */
+    public void setConvertToOpenAPI31(Boolean convertToOpenAPI31) {
+        this.convertToOpenAPI31 = convertToOpenAPI31;
     }
 
     public Map<String, String> resolve() throws Exception{
@@ -250,10 +294,13 @@ public class SwaggerLoader {
                 .resourceClasses(resourceClassesSet)
                 .resourcePackages(resourcePackagesSet)
                 .objectMapperProcessorClass(objectMapperProcessorClass)
+                .defaultResponseCode(defaultResponseCode)
                 .modelConverterClasses(modelConverterSet)
                 .sortOutput(sortOutput)
                 .alwaysResolveAppPath(alwaysResolveAppPath)
-                .openAPI31(openAPI31);
+                .skipResolveAppPath(skipResolveAppPath)
+                .openAPI31(openAPI31)
+                .convertToOpenAPI31(convertToOpenAPI31);
         try {
             GenericOpenApiContextBuilder builder = new JaxrsOpenApiContextBuilder()
                     .openApiConfiguration(config);

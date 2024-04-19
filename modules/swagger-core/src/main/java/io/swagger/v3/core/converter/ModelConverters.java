@@ -3,6 +3,7 @@ package io.swagger.v3.core.converter;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import io.swagger.v3.core.jackson.ModelResolver;
 import io.swagger.v3.core.util.Json;
+import io.swagger.v3.core.util.Json31;
 import io.swagger.v3.oas.models.media.Schema;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,7 +21,8 @@ import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class ModelConverters {
-    private static final ModelConverters SINGLETON = new ModelConverters();
+    private static ModelConverters SINGLETON = null;
+    private static ModelConverters SINGLETON31 = null;
     static Logger LOGGER = LoggerFactory.getLogger(ModelConverters.class);
     private final List<ModelConverter> converters;
     private final Set<String> skippedPackages = new HashSet<>();
@@ -31,9 +33,55 @@ public class ModelConverters {
         converters.add(new ModelResolver(Json.mapper()));
     }
 
-    public static ModelConverters getInstance() {
+    public ModelConverters(boolean openapi31) {
+        converters = new CopyOnWriteArrayList<>();
+        if (openapi31) {
+            converters.add(new ModelResolver(Json31.mapper()).openapi31(true));
+        } else {
+            converters.add(new ModelResolver(Json.mapper()));
+        }
+    }
+
+    public Set<String> getSkippedPackages() {
+        return skippedPackages;
+    }
+
+    public static ModelConverters getInstance(boolean openapi31) {
+        if (openapi31) {
+            if (SINGLETON31 == null) {
+                SINGLETON31 = new ModelConverters(openapi31);
+                init(SINGLETON31);
+            }
+            return SINGLETON31;
+        }
+        if (SINGLETON == null) {
+            SINGLETON = new ModelConverters(openapi31);
+            init(SINGLETON);
+        }
         return SINGLETON;
     }
+
+    private static void init(ModelConverters converter) {
+        converter.addPackageToSkip("java.lang");
+        converter.addPackageToSkip("groovy.lang");
+
+        ServiceLoader<ModelConverter> loader = ServiceLoader.load(ModelConverter.class);
+        Iterator<ModelConverter> itr = loader.iterator();
+        while (itr.hasNext()) {
+            ModelConverter ext = itr.next();
+            if (ext == null) {
+                LOGGER.error("failed to load extension {}", ext);
+            } else {
+                converter.addConverter(ext);
+                LOGGER.debug("adding ModelConverter: {}", ext);
+            }
+        }
+
+    }
+    public static ModelConverters getInstance() {
+        return getInstance(false);
+    }
+
 
     public void addConverter(ModelConverter converter) {
         converters.add(0, converter);
@@ -129,21 +177,5 @@ public class ModelConverters {
             }
         }
         return !skippedClasses.contains(className);
-    }
-
-    static {
-        SINGLETON.skippedPackages.add("java.lang");
-
-        ServiceLoader<ModelConverter> loader = ServiceLoader.load(ModelConverter.class);
-        Iterator<ModelConverter> itr = loader.iterator();
-        while (itr.hasNext()) {
-            ModelConverter ext = itr.next();
-            if (ext == null) {
-                LOGGER.error("failed to load extension {}", ext);
-            } else {
-                SINGLETON.addConverter(ext);
-                LOGGER.debug("adding ModelConverter: {}", ext);
-            }
-        }
     }
 }

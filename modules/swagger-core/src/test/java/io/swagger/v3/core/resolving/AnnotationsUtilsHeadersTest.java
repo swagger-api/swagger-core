@@ -46,7 +46,7 @@ public class AnnotationsUtilsHeadersTest {
                         .flatMap(response -> Arrays.stream(response.headers())).toArray(Header[]::new);
 
         final Optional<Map<String, io.swagger.v3.oas.models.headers.Header>> optionalMap =
-                AnnotationsUtils.getHeaders(headers, null);
+                AnnotationsUtils.getHeaders(headers, null, null);
 
         Assert.assertEquals(optionalMap, expected);
     }
