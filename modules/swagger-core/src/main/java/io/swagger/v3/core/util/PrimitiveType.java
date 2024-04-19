@@ -43,13 +43,23 @@ public enum PrimitiveType {
     },
     BYTE(Byte.class, "byte") {
         @Override
-        public ByteArraySchema createProperty() {
+        public Schema createProperty() {
+            if (
+                    (System.getProperty(Schema.BINARY_STRING_CONVERSION_PROPERTY) != null && System.getProperty(Schema.BINARY_STRING_CONVERSION_PROPERTY).equals(Schema.BynaryStringConversion.BINARY_STRING_CONVERSION_STRING_SCHEMA.toString())) ||
+                    (System.getenv(Schema.BINARY_STRING_CONVERSION_PROPERTY) != null && System.getenv(Schema.BINARY_STRING_CONVERSION_PROPERTY).equals(Schema.BynaryStringConversion.BINARY_STRING_CONVERSION_STRING_SCHEMA.toString()))) {
+                return new StringSchema().format("byte");
+            }
             return new ByteArraySchema();
         }
     },
     BINARY(Byte.class, "binary") {
         @Override
-        public BinarySchema createProperty() {
+        public Schema createProperty() {
+            if (
+                    (System.getProperty(Schema.BINARY_STRING_CONVERSION_PROPERTY) != null && System.getProperty(Schema.BINARY_STRING_CONVERSION_PROPERTY).equals(Schema.BynaryStringConversion.BINARY_STRING_CONVERSION_STRING_SCHEMA.toString())) ||
+                    (System.getenv(Schema.BINARY_STRING_CONVERSION_PROPERTY) != null && System.getenv(Schema.BINARY_STRING_CONVERSION_PROPERTY).equals(Schema.BynaryStringConversion.BINARY_STRING_CONVERSION_STRING_SCHEMA.toString()))) {
+                return new StringSchema().format("binary");
+            }
             return new BinarySchema();
         }
     },

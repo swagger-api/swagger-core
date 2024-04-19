@@ -27,6 +27,22 @@ import java.util.Set;
 public class Schema<T> {
 
     public static final String BIND_TYPE_AND_TYPES = "bind-type";
+    public static final String BINARY_STRING_CONVERSION_PROPERTY = "binary-string-conversion";
+    public enum BynaryStringConversion {
+        BINARY_STRING_CONVERSION_BASE64("base64"),
+        BINARY_STRING_CONVERSION_DEFAULT_CHARSET("default"),
+        BINARY_STRING_CONVERSION_STRING_SCHEMA("string-schema");
+        private String value;
+
+        BynaryStringConversion(String value) {
+            this.value = value;
+        }
+
+        @Override
+        public String toString() {
+            return String.valueOf(value);
+        }
+    }
 
     protected T _default;
 

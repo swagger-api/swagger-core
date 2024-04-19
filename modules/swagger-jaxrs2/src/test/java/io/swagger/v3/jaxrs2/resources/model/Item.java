@@ -9,7 +9,9 @@ public class Item {
     private byte[] bytes;
     @Schema(format = "binary", example = "YmluYXJ5")
     private byte[] binary;
-    
+
+    private byte[] byteNoAnnotation;
+
     public Item() {
     }
     
@@ -43,5 +45,13 @@ public class Item {
     
     public byte[] getBytes() {
         return bytes;
+    }
+
+    public void setByteNoAnnotation(byte[] byteNoAnnotation) {
+        this.byteNoAnnotation = byteNoAnnotation;
+    }
+
+    public byte[] getByteNoAnnotation() {
+        return byteNoAnnotation;
     }
 }
