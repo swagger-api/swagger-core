@@ -643,7 +643,7 @@ public class Reader implements OpenApiReader {
                         // remove the sub resource so that it can visit it later in another path
                         // but we have a room for optimization in the future to reuse the scanned result
                         // by caching the scanned resources in the reader instance to avoid actual scanning
-                        // the the resources again
+                        // the resources again
                         scannedResources.remove(subResource);
                         // don't proceed with root resource operation, as it's handled by subresource
                         continue;
