@@ -118,11 +118,17 @@ public class Parameters31Resource {
             })
     @Consumes({"application/json", "application/xml"})
     public Parameters31Resource.SubscriptionResponse subscribe(@Parameter(description = "idParam")
-                                                             @QueryParam("id") final String id) {
+                                                               @QueryParam("id") final String id,
+                                                               @Parameter(schema = @Schema(implementation = SubscriptionType.class))
+                                                               @QueryParam("enumStringParameter") final String enumStringParameter) {
         return null;
     }
 
     public static class SubscriptionResponse {
         public String subscriptionId;
+    }
+
+    enum SubscriptionType {
+        EMAIL, SMS, PHONE_CALL
     }
 }
