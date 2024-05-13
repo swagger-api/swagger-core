@@ -47,6 +47,7 @@ public class SpecFilterTest {
     private static final String RESOURCE_PATH = "specFiles/petstore-3.0-v2.json";
     private static final String RESOURCE_PATH_3303 = "specFiles/petstore-3.0-v2-ticket-3303.json";
     private static final String RESOURCE_PATH_LIST = "specFiles/3.1.0/list-3.1.json";
+    private static final String RESOURCE_PATH_COMPOSED_SCHEMA = "specFiles/3.1.0/composed-schema-3.1.json";
     private static final String RESOURCE_REFERRED_SCHEMAS = "specFiles/petstore-3.0-referred-schemas.json";
     private static final String RESOURCE_PATH_WITHOUT_MODELS = "specFiles/petstore-3.0-v2_withoutModels.json";
     private static final String RESOURCE_DEPRECATED_OPERATIONS = "specFiles/deprecatedoperationmodel.json";
@@ -284,6 +285,18 @@ public class SpecFilterTest {
 
         assertEquals(filtered.getComponents().getSchemas().size(), 2, "Expected to have parent and child list schemas");
         assertTrue(filtered.getComponents().getSchemas().containsKey("SomeChildObject"), "Schemas should contains child list");
+    }
+
+    @Test
+    public void shouldRemoveBrokenNestedRefsKeepComposedSchemas() throws IOException {
+        final OpenAPI openAPI = getOpenAPI31(RESOURCE_PATH_COMPOSED_SCHEMA);
+        final RemoveUnreferencedDefinitionsFilter remover = new RemoveUnreferencedDefinitionsFilter();
+        final OpenAPI filtered = new SpecFilter().filter(openAPI, remover, null, null, null);
+
+        assertEquals(filtered.getComponents().getSchemas().size(), 4, "Expected to have parent and abstract child with both implementations schemas");
+        assertTrue(filtered.getComponents().getSchemas().containsKey("SomeChild1ImplObject"), "Schemas should contains child 1 implementation");
+        assertTrue(filtered.getComponents().getSchemas().containsKey("SomeChild2ImplObject"), "Schemas should contains child 2 implementation");
+        assertTrue(filtered.getComponents().getSchemas().containsKey("SomeChildObject"), "Schemas should contains child abstract parent");
     }
 
     @Test
