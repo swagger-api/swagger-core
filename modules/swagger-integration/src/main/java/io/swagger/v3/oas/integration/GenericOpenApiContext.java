@@ -16,6 +16,7 @@ import io.swagger.v3.core.filter.OpenAPI31SpecFilter;
 import io.swagger.v3.core.filter.SpecFilter;
 import io.swagger.v3.core.jackson.ModelResolver;
 import io.swagger.v3.core.jackson.PathsSerializer;
+import io.swagger.v3.core.jackson.mixin.Schema31Mixin;
 import io.swagger.v3.core.util.Json;
 import io.swagger.v3.core.util.Json31;
 import io.swagger.v3.core.util.Yaml;
@@ -739,7 +740,62 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
         @JsonIgnore
         public abstract Object getJsonSchemaImpl();
 
+        @JsonIgnore
+        public abstract List<Schema> getPrefixItems();
 
+        @JsonIgnore
+        public abstract String getContentEncoding();
+
+        @JsonIgnore
+        public abstract String getContentMediaType();
+
+        @JsonIgnore
+        public abstract Schema getContentSchema();
+
+        @JsonIgnore
+        public abstract Schema getPropertyNames();
+
+        @JsonIgnore
+        public abstract Object getUnevaluatedProperties();
+
+        @JsonIgnore
+        public abstract Integer getMaxContains();
+
+        @JsonIgnore
+        public abstract Integer getMinContains();
+
+        @JsonIgnore
+        public abstract Schema getAdditionalItems();
+
+        @JsonIgnore
+        public abstract Schema getUnevaluatedItems();
+
+        @JsonIgnore
+        public abstract Schema getIf();
+
+        @JsonIgnore
+        public abstract Schema getElse();
+
+        @JsonIgnore
+        public abstract Schema getThen();
+
+        @JsonIgnore
+        public abstract Map<String, Schema> getDependentSchemas();
+
+        @JsonIgnore
+        public abstract Map<String, List<String>> getDependentRequired();
+
+        @JsonIgnore
+        public abstract String get$comment();
+
+        @JsonIgnore
+        public abstract List<Object> getExamples();
+
+        @JsonIgnore
+        public abstract Object getConst();
+
+        @JsonIgnore
+        public abstract Boolean getBooleanSchemaValue();
     }
 
     @JsonPropertyOrder(value = {"openapi", "info", "externalDocs", "servers", "security", "tags", "paths", "components", "webhooks"}, alphabetic = true)
@@ -756,7 +812,7 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
         public abstract Paths getPaths();
     }
 
-    @JsonPropertyOrder(value = {"type", "format"}, alphabetic = true)
+    @JsonPropertyOrder(value = {"type", "format", "if", "then", "else"}, alphabetic = true)
     static abstract class SortedSchemaMixin31 {
 
         @JsonAnyGetter
@@ -785,6 +841,7 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
         public abstract String getType();
 
         @JsonProperty("type")
+        @JsonSerialize(using = Schema31Mixin.TypeSerializer.class)
         public abstract Set<String> getTypes();
 
         @JsonAnySetter
@@ -798,6 +855,9 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
 
         @JsonIgnore
         public abstract Object getJsonSchemaImpl();
+
+        @JsonIgnore
+        public abstract Boolean getBooleanSchemaValue();
 
     }
 
