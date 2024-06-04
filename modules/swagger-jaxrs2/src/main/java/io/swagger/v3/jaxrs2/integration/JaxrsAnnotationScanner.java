@@ -63,18 +63,20 @@ public class JaxrsAnnotationScanner<T extends JaxrsAnnotationScanner<T>> impleme
         Set<String> acceptablePackages = new HashSet<>();
         Set<Class<?>> output = new HashSet<>();
 
-        // if classes are passed, use them
         if (openApiConfiguration.getResourceClasses() != null && !openApiConfiguration.getResourceClasses().isEmpty()) {
             for (String className : openApiConfiguration.getResourceClasses()) {
                 if (!isIgnored(className)) {
                     try {
-                        output.add(Class.forName(className));
+                    	Class<?> resourceClass = Class.forName(className);
+                        if (resourceClass.isAnnotationPresent(OpenAPIDefinition.class) || 
+                        		resourceClass.isAnnotationPresent(javax.ws.rs.Path.class)) { 
+                        	output.add(resourceClass);
+                        }
                     } catch (ClassNotFoundException e) {
                         LOGGER.warn("error loading class from resourceClasses: " + e.getMessage(), e);
                     }
                 }
             }
-            return output;
         }
 
         boolean allowAllPackages = false;
