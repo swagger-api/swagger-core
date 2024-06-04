@@ -7,11 +7,14 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.POST;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
@@ -69,6 +72,27 @@ public class ResponsesResource {
                     required = true,
                     example = "1")
             @QueryParam("number") final int beanNumber) {
+
+        return null;
+    }
+
+    @POST
+    @Path("/")
+    @Operation(
+            summary = "Test inheritance / polymorphism with POST",
+            responses = { @ApiResponse(
+                    description = "bean answer",
+                    responseCode = "200",
+                    content = @Content(mediaType = MediaType.APPLICATION_JSON, schema = @Schema(oneOf = { MultipleSub1Bean.class, MultipleSub2Bean.class }))
+            ) }
+    )
+    @Produces({ MediaType.APPLICATION_JSON })
+    @Consumes({ MediaType.APPLICATION_JSON })
+    public MultipleBaseBean postOne(
+            @Context final HttpServletRequest req,
+            @RequestBody(content = @Content(schema = @Schema(implementation = MultipleBaseBean.class))) //
+            final MultipleBaseBean bean
+    ) {
 
         return null;
     }
