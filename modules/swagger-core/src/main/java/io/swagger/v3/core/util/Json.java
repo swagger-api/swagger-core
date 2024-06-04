@@ -6,13 +6,12 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 
 public class Json {
 
-    private static ObjectMapper mapper;
+    private static final class MapperHolder {
+        static final ObjectMapper mapper = ObjectMapperFactory.createJson();
+    }
 
     public static ObjectMapper mapper() {
-        if (mapper == null) {
-            mapper = ObjectMapperFactory.createJson();
-        }
-        return mapper;
+        return MapperHolder.mapper;
     }
 
     public static ObjectWriter pretty() {
