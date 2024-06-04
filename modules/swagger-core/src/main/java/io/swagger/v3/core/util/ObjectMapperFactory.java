@@ -3,6 +3,7 @@ package io.swagger.v3.core.util;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.module.SimpleModule;
@@ -188,6 +189,7 @@ public class ObjectMapperFactory {
             .configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)
             .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
             .configure(SerializationFeature.WRITE_ENUMS_USING_TO_STRING, true)
+            .configure(JsonParser.Feature.INCLUDE_SOURCE_IN_LOCATION, true)
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
             .configure(SerializationFeature.WRITE_NULL_MAP_VALUES, false)
             .configure(JsonGenerator.Feature.WRITE_BIGDECIMAL_AS_PLAIN, true)
@@ -249,6 +251,7 @@ public class ObjectMapperFactory {
             .configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)
             .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
             .configure(SerializationFeature.WRITE_ENUMS_USING_TO_STRING, true)
+            .configure(JsonParser.Feature.INCLUDE_SOURCE_IN_LOCATION, true)
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
             .configure(SerializationFeature.WRITE_NULL_MAP_VALUES, false);
         try {
@@ -259,5 +262,4 @@ public class ObjectMapperFactory {
 
         return mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
     }
-
 }
