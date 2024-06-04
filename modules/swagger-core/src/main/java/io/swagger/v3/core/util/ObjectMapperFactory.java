@@ -2,6 +2,7 @@ package io.swagger.v3.core.util;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.module.SimpleModule;
@@ -189,7 +190,7 @@ public class ObjectMapperFactory {
             .configure(SerializationFeature.WRITE_ENUMS_USING_TO_STRING, true)
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
             .configure(SerializationFeature.WRITE_NULL_MAP_VALUES, false)
-            .configure(SerializationFeature.WRITE_BIGDECIMAL_AS_PLAIN, true)
+            .configure(JsonGenerator.Feature.WRITE_BIGDECIMAL_AS_PLAIN, true)
             .setSerializationInclusion(JsonInclude.Include.NON_NULL);
     }
 
@@ -238,7 +239,7 @@ public class ObjectMapperFactory {
             .configure(SerializationFeature.WRITE_ENUMS_USING_TO_STRING, true)
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
             .configure(SerializationFeature.WRITE_NULL_MAP_VALUES, false)
-            .configure(SerializationFeature.WRITE_BIGDECIMAL_AS_PLAIN, true)
+            .configure(JsonGenerator.Feature.WRITE_BIGDECIMAL_AS_PLAIN, true)
             .setSerializationInclusion(JsonInclude.Include.NON_NULL);
     }
 
