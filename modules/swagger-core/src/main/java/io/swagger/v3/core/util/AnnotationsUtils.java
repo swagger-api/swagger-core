@@ -511,6 +511,7 @@ public abstract class AnnotationsUtils {
             } else {
                 arraySchemaObject = existingSchema;
             }
+            arraySchemaObject.addType("array");
         }
 
         if (arraySchema.uniqueItems()) {
