@@ -1,17 +1,19 @@
 package io.swagger.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import io.swagger.models.properties.Property;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+@JsonPropertyOrder({"description", "required", "minimum", "maximum", "multipleOf", "exclusiveMinimum", "exclusiveMaximum", "minLength", "maxLength", "pattern", "allOf", "example"})
 public class ComposedModel extends AbstractModel {
     private List<Model> allOf = new ArrayList<Model>();
     private Model parent;
     private Model child;
     private List<RefModel> interfaces;
+    private List<String> required;
     private String description;
     private Object example;
 
@@ -44,6 +46,13 @@ public class ComposedModel extends AbstractModel {
 
     public void setExample(Object example) {
         this.example = example;
+    }
+    public List<String> getRequired() {
+        return required;
+    }
+
+    public void setRequired(List<String> required) {
+        this.required = required;
     }
 
     public List<Model> getAllOf() {
@@ -103,6 +112,7 @@ public class ComposedModel extends AbstractModel {
         cloned.interfaces = this.interfaces;
         cloned.description = this.description;
         cloned.example = this.example;
+        cloned.required = this.required == null ? null : new ArrayList<String>(this.required);
 
         return cloned;
     }
@@ -119,6 +129,7 @@ public class ComposedModel extends AbstractModel {
         result = prime * result
                 + ((interfaces == null) ? 0 : interfaces.hashCode());
         result = prime * result + ((parent == null) ? 0 : parent.hashCode());
+        result = prime * result + ((required == null) ? 0 : required.hashCode());
         return result;
     }
 
@@ -174,6 +185,13 @@ public class ComposedModel extends AbstractModel {
                 return false;
             }
         } else if (!parent.equals(other.parent)) {
+            return false;
+        }
+        if (required == null) {
+            if (other.required != null) {
+                return false;
+            }
+        } else if (!required.equals(other.required)) {
             return false;
         }
         return true;
