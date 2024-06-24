@@ -507,7 +507,7 @@ public abstract class AnnotationsUtils {
             arraySchemaObject = new ArraySchema();
         } else {
             if (existingSchema == null) {
-                arraySchemaObject = new JsonSchema();
+                arraySchemaObject = new ArraySchema();
             } else {
                 arraySchemaObject = existingSchema;
             }
