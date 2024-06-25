@@ -1468,11 +1468,11 @@ public class OpenAPI3_1SerializationTest {
 
         openAPI = Yaml31.mapper().readValue(expectedYaml, OpenAPI.class);
         ser = Yaml31.pretty(openAPI);
-        assertEquals(ser, withJacksonSystemLineSeparator(expectedYaml));
+        assertEquals(ser, expectedYaml);
         assertTrue(Boolean.TRUE.equals(openAPI.getComponents().getSchemas().get("test").getAdditionalProperties()));
         openAPI = Yaml.mapper().readValue(expectedYaml, OpenAPI.class);
         ser = Yaml.pretty(openAPI);
-        assertEquals(ser, withJacksonSystemLineSeparator(expectedYaml));
+        assertEquals(ser, expectedYaml);
         assertTrue(Boolean.TRUE.equals(openAPI.getComponents().getSchemas().get("test").getAdditionalProperties()));
 
         expectedJson = "{\n" +
@@ -1505,11 +1505,11 @@ public class OpenAPI3_1SerializationTest {
 
         openAPI = Yaml31.mapper().readValue(expectedYaml, OpenAPI.class);
         ser = Yaml31.pretty(openAPI);
-        assertEquals(ser, withJacksonSystemLineSeparator(expectedYaml));
+        assertEquals(ser, expectedYaml);
         assertTrue(Boolean.TRUE.equals(openAPI.getComponents().getSchemas().get("test").getAdditionalProperties()));
         openAPI = Yaml.mapper().readValue(expectedYaml, OpenAPI.class);
         ser = Yaml.pretty(openAPI);
-        assertEquals(ser, withJacksonSystemLineSeparator(expectedYaml));
+        assertEquals(ser, expectedYaml);
         assertTrue(Boolean.TRUE.equals(openAPI.getComponents().getSchemas().get("test").getAdditionalProperties()));
     }
 
