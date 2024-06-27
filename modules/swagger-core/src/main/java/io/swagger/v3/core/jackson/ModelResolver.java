@@ -634,7 +634,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 }
 
                 JavaType propType = member.getType();
-                if(propType != null && "void".equals(propType.getRawClass().getName())) {
+                if (propType != null && ("void".equals(propType.getRawClass().getName()) || propDef.getGetter() == null)) {
                     if (member instanceof AnnotatedMethod) {
                         propType = ((AnnotatedMethod)member).getParameterType(0);
                     }
