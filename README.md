@@ -31,9 +31,10 @@ For 2.X see [getting started with swagger 2.X](https://github.com/frantuma/swagg
 ## Compatibility
 The OpenAPI Specification has undergone several revisions since initial creation in 2010.  The Swagger Core project has the following compatibilities with the OpenAPI Specification:
 
-Swagger core Version      | Release Date | OpenAPI Spec compatibility | Notes                                                                                                             | Status
-------------------------- |--------------| -------------------------- |-------------------------------------------------------------------------------------------------------------------| ----
-2.2.20 (**current stable**)| 2023-12-19   | 3.x           | [tag v2.2.20](https://github.com/swagger-api/swagger-core/tree/v2.2.20)                                           | Supported
+Swagger core Version      | Release Date | OpenAPI Spec compatibility | Notes | Status
+------------------------- |--------------| -------------------------- | ----- | ----
+2.2.21 (**current stable**)| 2024-03-20   | 3.x           | [tag v2.2.21](https://github.com/swagger-api/swagger-core/tree/v2.2.21) | Supported
+2.2.20                     | 2023-12-19   | 3.x           | [tag v2.2.20](https://github.com/swagger-api/swagger-core/tree/v2.2.20) | Supported
 2.2.19                     | 2023-11-10   | 3.x           | [tag v2.2.19](https://github.com/swagger-api/swagger-core/tree/v2.2.19)                                           | Supported
 2.2.18                     | 2023-10-25   | 3.x           | [tag v2.2.18](https://github.com/swagger-api/swagger-core/tree/v2.2.18)                                           | Supported
 2.2.17                     | 2023-10-12   | 3.x           | [tag v2.2.17](https://github.com/swagger-api/swagger-core/tree/v2.2.17)                                           | Supported
@@ -134,7 +135,7 @@ You need the following installed and available in your $PATH:
 * Apache maven 3.0.4 or greater (http://maven.apache.org/)
 
 
-### To build from source (currently 1.6.14-SNAPSHOT)
+### To build from source (currently 1.6.15-SNAPSHOT)
 ```
 # first time building locally
 mvn -N
