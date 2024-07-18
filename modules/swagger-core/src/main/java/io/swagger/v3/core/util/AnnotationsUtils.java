@@ -1720,6 +1720,9 @@ public abstract class AnnotationsUtils {
             if (StringUtils.isNotBlank(schemaAnnotation.format())) {
                schemaObject.setFormat(schemaAnnotation.format());
             }
+			if (schemaAnnotation.allowableValues().length != 0) {
+				schemaObject.setEnum(Arrays.asList(schemaAnnotation.allowableValues()));
+			}
             if (isArray) {
                 Optional<Schema> arraySchema = AnnotationsUtils.getArraySchema(arrayAnnotation, components, jsonViewAnnotation, openapi31, null);
                 if (arraySchema.isPresent()) {
