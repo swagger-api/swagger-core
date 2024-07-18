@@ -98,38 +98,38 @@ public class AnnotationsUtilsTest {
 
     class DummyClass implements Serializable {}
 
-	@DataProvider
-	private Object[][] expectedEnumSchema() {
-		return new Object[][]{
-				{"emptyImplementationSchemaEnum", ImmutableMap.of("type", "string", "enum", Arrays.asList("foo", "bar"))},
-				{"stringImplementationSchemaEnum", ImmutableMap.of("type", "string", "enum", Arrays.asList("foo", "bar"))},
-				{"enumSchema", ImmutableMap.of("type", "string", "enum", Arrays.asList("FOO", "BAR"))},
-		};
-	}
+    @DataProvider
+    private Object[][] expectedEnumSchema() {
+        return new Object[][]{
+                {"emptyImplementationSchemaEnum", ImmutableMap.of("type", "string", "enum", Arrays.asList("foo", "bar"))},
+                {"stringImplementationSchemaEnum", ImmutableMap.of("type", "string", "enum", Arrays.asList("foo", "bar"))},
+                {"enumSchema", ImmutableMap.of("type", "string", "enum", Arrays.asList("FOO", "BAR"))},
+        };
+    }
 
-	@Test(dataProvider = "expectedEnumSchema")
-	public void getEnumSchema(String methodName, Map<String, Object> expected) throws NoSuchMethodException {
+    @Test(dataProvider = "expectedEnumSchema")
+    public void getEnumSchema(String methodName, Map<String, Object> expected) throws NoSuchMethodException {
         final Method method = getClass().getDeclaredMethod(methodName);
-		Content annotationContent = method.getAnnotation(ApiResponse.class).content()[0];
-		Optional<? extends Schema> schema = AnnotationsUtils.getSchema(annotationContent, new Components(), null, false);
-		Assert.assertTrue(schema.isPresent());
-		Assert.assertEquals(schema.get().getType(), expected.get("type"));
-		Assert.assertEquals(schema.get().getEnum(), expected.get("enum"));
-	}
+        Content annotationContent = method.getAnnotation(ApiResponse.class).content()[0];
+        Optional<? extends Schema> schema = AnnotationsUtils.getSchema(annotationContent, new Components(), null, false);
+        Assert.assertTrue(schema.isPresent());
+        Assert.assertEquals(schema.get().getType(), expected.get("type"));
+        Assert.assertEquals(schema.get().getEnum(), expected.get("enum"));
+    }
 
     @ApiResponse(content = @Content(schema = @io.swagger.v3.oas.annotations.media.Schema(allowableValues = {"foo", "bar"})))
     private void emptyImplementationSchemaEnum() {
     }
 
-	@ApiResponse(content = @Content(schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = String.class, allowableValues = {"foo", "bar"})))
-	private void stringImplementationSchemaEnum() {
-	}
+    @ApiResponse(content = @Content(schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = String.class, allowableValues = {"foo", "bar"})))
+    private void stringImplementationSchemaEnum() {
+    }
 
-	@ApiResponse(content = @Content(schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = Foo.class)))
-	private void enumSchema() {
-	}
+    @ApiResponse(content = @Content(schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = Foo.class)))
+    private void enumSchema() {
+    }
 
-	enum Foo {
-		FOO, BAR;
-	}
+    enum Foo {
+        FOO, BAR;
+    }
 }
