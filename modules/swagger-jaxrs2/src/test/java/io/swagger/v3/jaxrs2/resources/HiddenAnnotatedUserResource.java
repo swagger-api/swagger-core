@@ -6,9 +6,11 @@ import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 
 @Path("/user")
@@ -48,6 +50,17 @@ public class HiddenAnnotatedUserResource {
         @Path("/2")
         public Response createUserWithHiddenBeanProperty(
                 @Parameter(description = "Created user object", required = true) UserResourceBean user) {
+            return Response.ok().entity("").build();
+        }
+
+        @GET
+        @Operation(summary = "Select user")
+        @Path("/3")
+        public Response selectUser(
+            @QueryParam("id") @Parameter(description = "User id", required = true) Integer id,
+            @QueryParam("name") @Parameter(hidden = true) String name,
+            @QueryParam("secondName") @Hidden String secondName
+        ) {
             return Response.ok().entity("").build();
         }
     }
