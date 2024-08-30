@@ -8,8 +8,6 @@ import io.swagger.v3.core.resolving.SwaggerTestBase;
 import io.swagger.v3.core.resolving.v31.model.AnnotatedArray;
 import io.swagger.v3.core.resolving.v31.model.ModelWithDependentSchema;
 import io.swagger.v3.core.resolving.v31.model.ModelWithOAS31Stuff;
-import io.swagger.v3.core.resolving.v31.model.ModelWithOAS31StuffMinimal;
-import io.swagger.v3.core.util.Yaml31;
 import io.swagger.v3.oas.models.media.Schema;
 import org.testng.annotations.Test;
 
@@ -69,6 +67,11 @@ public class ModelResolverOAS31Test extends SwaggerTestBase {
                 "    creditCard:\n" +
                 "      type: integer\n" +
                 "      format: int32\n" +
+                "CountryEnum:\n" +
+                "  type: string\n" +
+                "  enum:\n" +
+                "    - UNITED_STATES_OF_AMERICA\n" +
+                "    - CANADA\n" +
                 "CreditCard:\n" +
                 "  properties:\n" +
                 "    billingAddress:\n" +

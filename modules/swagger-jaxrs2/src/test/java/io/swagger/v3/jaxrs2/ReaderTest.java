@@ -1,7 +1,6 @@
 package io.swagger.v3.jaxrs2;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import io.swagger.v3.core.converter.AnnotatedType;
 import io.swagger.v3.core.converter.ModelConverter;
 import io.swagger.v3.core.converter.ModelConverterContextImpl;
@@ -15,32 +14,22 @@ import io.swagger.v3.core.util.PrimitiveType;
 import io.swagger.v3.jaxrs2.matchers.SerializationMatchers;
 import io.swagger.v3.jaxrs2.petstore31.PetResource;
 import io.swagger.v3.jaxrs2.petstore31.TagResource;
-import io.swagger.v3.jaxrs2.resources.DefaultResponseResource;
-import io.swagger.v3.jaxrs2.resources.Misc31Resource;
-import io.swagger.v3.jaxrs2.resources.ParameterMaximumValueResource;
-import io.swagger.v3.jaxrs2.resources.ResponseReturnTypeResource;
-import io.swagger.v3.jaxrs2.resources.SchemaAdditionalPropertiesResource;
-import io.swagger.v3.jaxrs2.resources.SchemaPropertiesResource;
-import io.swagger.v3.jaxrs2.resources.SiblingPropResource;
-import io.swagger.v3.jaxrs2.resources.SiblingsResource;
-import io.swagger.v3.jaxrs2.resources.SiblingsResourceRequestBody;
-import io.swagger.v3.jaxrs2.resources.SiblingsResourceRequestBodyMultiple;
-import io.swagger.v3.jaxrs2.resources.SiblingsResourceResponse;
-import io.swagger.v3.jaxrs2.resources.SiblingsResourceSimple;
-import io.swagger.v3.jaxrs2.resources.SingleExampleResource;
 import io.swagger.v3.jaxrs2.resources.BasicFieldsResource;
 import io.swagger.v3.jaxrs2.resources.BookStoreTicket2646;
 import io.swagger.v3.jaxrs2.resources.ClassPathParentResource;
 import io.swagger.v3.jaxrs2.resources.ClassPathSubResource;
 import io.swagger.v3.jaxrs2.resources.CompleteFieldsResource;
+import io.swagger.v3.jaxrs2.resources.DefaultResponseResource;
 import io.swagger.v3.jaxrs2.resources.DeprecatedFieldsResource;
 import io.swagger.v3.jaxrs2.resources.DuplicatedOperationIdResource;
 import io.swagger.v3.jaxrs2.resources.DuplicatedOperationMethodNameResource;
 import io.swagger.v3.jaxrs2.resources.DuplicatedSecurityResource;
 import io.swagger.v3.jaxrs2.resources.EnhancedResponsesResource;
 import io.swagger.v3.jaxrs2.resources.ExternalDocsReference;
+import io.swagger.v3.jaxrs2.resources.Misc31Resource;
 import io.swagger.v3.jaxrs2.resources.MyClass;
 import io.swagger.v3.jaxrs2.resources.MyOtherClass;
+import io.swagger.v3.jaxrs2.resources.ParameterMaximumValueResource;
 import io.swagger.v3.jaxrs2.resources.RefCallbackResource;
 import io.swagger.v3.jaxrs2.resources.RefExamplesResource;
 import io.swagger.v3.jaxrs2.resources.RefHeaderResource;
@@ -53,15 +42,25 @@ import io.swagger.v3.jaxrs2.resources.RefResponsesResource;
 import io.swagger.v3.jaxrs2.resources.RefSecurityResource;
 import io.swagger.v3.jaxrs2.resources.ResourceWithSubResource;
 import io.swagger.v3.jaxrs2.resources.ResponseContentWithArrayResource;
+import io.swagger.v3.jaxrs2.resources.ResponseReturnTypeResource;
 import io.swagger.v3.jaxrs2.resources.ResponsesResource;
+import io.swagger.v3.jaxrs2.resources.SchemaAdditionalPropertiesResource;
+import io.swagger.v3.jaxrs2.resources.SchemaPropertiesResource;
 import io.swagger.v3.jaxrs2.resources.SecurityResource;
 import io.swagger.v3.jaxrs2.resources.ServersResource;
+import io.swagger.v3.jaxrs2.resources.SiblingPropResource;
+import io.swagger.v3.jaxrs2.resources.SiblingsResource;
+import io.swagger.v3.jaxrs2.resources.SiblingsResourceRequestBody;
+import io.swagger.v3.jaxrs2.resources.SiblingsResourceRequestBodyMultiple;
+import io.swagger.v3.jaxrs2.resources.SiblingsResourceResponse;
+import io.swagger.v3.jaxrs2.resources.SiblingsResourceSimple;
 import io.swagger.v3.jaxrs2.resources.SimpleCallbackResource;
 import io.swagger.v3.jaxrs2.resources.SimpleExamplesResource;
 import io.swagger.v3.jaxrs2.resources.SimpleMethods;
 import io.swagger.v3.jaxrs2.resources.SimpleParameterResource;
 import io.swagger.v3.jaxrs2.resources.SimpleRequestBodyResource;
 import io.swagger.v3.jaxrs2.resources.SimpleResponsesResource;
+import io.swagger.v3.jaxrs2.resources.SingleExampleResource;
 import io.swagger.v3.jaxrs2.resources.SubResourceHead;
 import io.swagger.v3.jaxrs2.resources.TagsResource;
 import io.swagger.v3.jaxrs2.resources.Test2607;
@@ -143,9 +142,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CompletionStage;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.stream.Collectors;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
@@ -3985,6 +3982,11 @@ public class ReaderTest {
                 "      properties:\n" +
                 "        country:\n" +
                 "          const: United States\n" +
+                "    CountryEnum:\n" +
+                "      type: string\n" +
+                "      enum:\n" +
+                "        - United States of America\n" +
+                "        - Canada\n" +
                 "    CreditCard:\n" +
                 "      properties:\n" +
                 "        billingAddress:\n" +
