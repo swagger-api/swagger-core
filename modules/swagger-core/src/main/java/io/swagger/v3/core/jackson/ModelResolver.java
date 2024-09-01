@@ -1185,7 +1185,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
     private boolean isSubtype(AnnotatedClass childClass, Class<?> parentClass) {
         final BeanDescription parentDesc = _mapper.getSerializationConfig().introspectClassAnnotations(parentClass);
-        List<NamedType> subTypes =_intr.findSubtypes(parentDesc.getClassInfo());
+        List<NamedType> subTypes = _intr().findSubtypes(parentDesc.getClassInfo());
         if (subTypes == null) {
             return false;
         }
@@ -1232,7 +1232,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         Enum<?>[] enumConstants = enumClass.getEnumConstants();
 
         if (enumConstants != null) {
-            String[] enumValues = _intr.findEnumValues(propClass, enumConstants,
+            String[] enumValues = _intr().findEnumValues(propClass, enumConstants,
                 new String[enumConstants.length]);
 
             for (Enum<?> en : enumConstants) {
@@ -1258,7 +1258,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 } else if (useToString) {
                     n = en.toString();
                 } else {
-                    n = _intr.findEnumValue(en);
+                    n = _intr().findEnumValue(en);
                 }
                 if (property instanceof StringSchema) {
                     StringSchema sp = (StringSchema) property;
@@ -1635,7 +1635,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
     }
 
     private boolean resolveSubtypes(Schema model, BeanDescription bean, ModelConverterContext context, JsonView jsonViewAnnotation) {
-        final List<NamedType> types = _intr.findSubtypes(bean.getClassInfo());
+        final List<NamedType> types = _intr().findSubtypes(bean.getClassInfo());
         if (types == null) {
             return false;
         }
@@ -1771,7 +1771,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
     private void removeSuperSubTypes(List<NamedType> resultTypes, Class<?> superClass) {
         JavaType superType = _mapper.constructType(superClass);
         BeanDescription superBean = _mapper.getSerializationConfig().introspect(superType);
-        final List<NamedType> superTypes = _intr.findSubtypes(superBean.getClassInfo());
+        final List<NamedType> superTypes = _intr().findSubtypes(superBean.getClassInfo());
         if (superTypes != null) {
             resultTypes.removeAll(superTypes);
         }
