@@ -536,18 +536,24 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 }
             }
         } else if (isComposedSchema) {
-            model = new ComposedSchema()
-                    .type("object")
-                    .name(name);
+            model = new ComposedSchema().name(name);
+            if (openapi31 && resolvedArrayAnnotation == null){
+                model.addType("object");
+            }else{
+                model.type("object");
+            }
         } else {
             AnnotatedType aType = ReferenceTypeUtils.unwrapReference(annotatedType);
             if (aType != null) {
                 model = context.resolve(aType);
                 return model;
             } else {
-                model = new Schema()
-                        .type("object")
-                        .name(name);
+                model = new Schema().name(name);
+                if (openapi31 && resolvedArrayAnnotation == null){
+                    model.addType("object");
+                }else{
+                    model.type("object");
+                }
             }
         }
 
@@ -2980,7 +2986,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
     }
 
     protected boolean isObjectSchema(Schema schema) {
-        return "object".equals(schema.getType()) || (schema.getType() == null && schema.getProperties() != null && !schema.getProperties().isEmpty());
+        return (schema.getTypes() != null && schema.getTypes().contains("object")) || "object".equals(schema.getType()) || (schema.getType() == null && schema.getProperties() != null && !schema.getProperties().isEmpty());
     }
 
     protected Schema buildRefSchemaIfObject(Schema schema, ModelConverterContext context) {
