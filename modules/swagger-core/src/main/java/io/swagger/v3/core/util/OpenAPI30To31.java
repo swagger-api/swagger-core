@@ -10,7 +10,7 @@ public class OpenAPI30To31 {
 
     public void process(OpenAPI openAPI) {
         openAPI.openapi("3.1.0")
-                .jsonSchemaDialect("https://json-schema.org/draft/2020-12/schema")
+                .jsonSchemaDialect("https://spec.openapis.org/oas/3.1/dialect/base")
                 .specVersion(SpecVersion.V31);
 
         removeReservedExtensionsName(openAPI.getExtensions());
