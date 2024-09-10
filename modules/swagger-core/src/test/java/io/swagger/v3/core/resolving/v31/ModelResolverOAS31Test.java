@@ -5,6 +5,8 @@ import io.swagger.v3.core.converter.ModelConverterContextImpl;
 import io.swagger.v3.core.jackson.ModelResolver;
 import io.swagger.v3.core.matchers.SerializationMatchers;
 import io.swagger.v3.core.resolving.SwaggerTestBase;
+import io.swagger.v3.core.resolving.resources.TestArrayType;
+import io.swagger.v3.core.resolving.resources.TestObject4715;
 import io.swagger.v3.core.resolving.v31.model.AnnotatedArray;
 import io.swagger.v3.core.resolving.v31.model.ModelWithDependentSchema;
 import io.swagger.v3.core.resolving.v31.model.ModelWithOAS31Stuff;
@@ -39,6 +41,7 @@ public class ModelResolverOAS31Test extends SwaggerTestBase {
         final ModelConverterContextImpl context = new ModelConverterContextImpl(modelResolver);
         Schema model = context.resolve(new AnnotatedType(ModelWithOAS31Stuff.class));
         SerializationMatchers.assertEqualsToYaml31(context.getDefinedModels(), "Address:\n" +
+                "  type: object\n" +
                 "  if:\n" +
                 "    $ref: '#/components/schemas/AnnotatedCountry'\n" +
                 "  then:\n" +
@@ -59,10 +62,12 @@ public class ModelResolverOAS31Test extends SwaggerTestBase {
                 "  propertyNames:\n" +
                 "    $ref: '#/components/schemas/PropertyNamesPattern'\n" +
                 "AnnotatedCountry:\n" +
+                "  type: object\n" +
                 "  properties:\n" +
                 "    country:\n" +
                 "      const: United States\n" +
                 "Client:\n" +
+                "  type: object\n" +
                 "  properties:\n" +
                 "    name:\n" +
                 "      type: string\n" +
@@ -70,6 +75,7 @@ public class ModelResolverOAS31Test extends SwaggerTestBase {
                 "      type: integer\n" +
                 "      format: int32\n" +
                 "CreditCard:\n" +
+                "  type: object\n" +
                 "  properties:\n" +
                 "    billingAddress:\n" +
                 "      type: string\n" +
@@ -124,6 +130,7 @@ public class ModelResolverOAS31Test extends SwaggerTestBase {
                 "      properties:\n" +
                 "        extraObject: {}\n" +
                 "MultipleBaseBean:\n" +
+                "  type: object\n" +
                 "  description: MultipleBaseBean\n" +
                 "  properties:\n" +
                 "    beanType:\n" +
@@ -152,14 +159,17 @@ public class ModelResolverOAS31Test extends SwaggerTestBase {
                 "        format: int32\n" +
                 "  description: MultipleSub2Bean\n" +
                 "PostalCodeNumberPattern:\n" +
+                "  type: object\n" +
                 "  properties:\n" +
                 "    postalCode:\n" +
                 "      pattern: \"[0-9]{5}(-[0-9]{4})?\"\n" +
                 "PostalCodePattern:\n" +
+                "  type: object\n" +
                 "  properties:\n" +
                 "    postalCode:\n" +
                 "      pattern: \"[A-Z][0-9][A-Z] [0-9][A-Z][0-9]\"\n" +
                 "PropertyNamesPattern:\n" +
+                "  type: object\n" +
                 "  pattern: \"^[A-Za-z_][A-Za-z0-9_]*$\"\n");
     }
 
@@ -170,10 +180,12 @@ public class ModelResolverOAS31Test extends SwaggerTestBase {
         io.swagger.v3.oas.models.media.Schema model = context.resolve(new AnnotatedType(ModelWithDependentSchema.class));
 
         SerializationMatchers.assertEqualsToYaml31(context.getDefinedModels(), "BooleanFakeClass:\n" +
+                "  type: object\n" +
                 "  properties:\n" +
                 "    type:\n" +
                 "      type: boolean\n" +
                 "ModelWithDependentSchema:\n" +
+                "  type: object\n" +
                 "  dependentSchemas:\n" +
                 "    value:\n" +
                 "      properties:\n" +
@@ -187,4 +199,36 @@ public class ModelResolverOAS31Test extends SwaggerTestBase {
                 "      format: int32\n");
     }
 
+    @Test(description = "Top level type:object should appear in OAS31")
+    public void testObjectTypeSchemaOAS31(){
+        final ModelResolver modelResolver = new ModelResolver(mapper()).openapi31(true);
+        final ModelConverterContextImpl context = new ModelConverterContextImpl(modelResolver);
+        io.swagger.v3.oas.models.media.Schema model = context.resolve(new AnnotatedType(TestObject4715.class));
+        SerializationMatchers.assertEqualsToYaml31(model, "type: object\n" +
+                "properties:\n" +
+                "  foo:\n" +
+                "    type: string\n" +
+                "  bar:\n" +
+                "    type: string\n" +
+                "  id:\n" +
+                "    type: integer\n" +
+                "    format: int32");
+    }
+
+    @Test
+    public void testFieldArraySchemaAnnotation() {
+        final ModelResolver modelResolver = new ModelResolver(mapper()).openapi31(true);
+        final ModelConverterContextImpl context = new ModelConverterContextImpl(modelResolver);
+        io.swagger.v3.oas.models.media.Schema model = context.resolve(new AnnotatedType(TestArrayType.class));
+        SerializationMatchers.assertEqualsToYaml31(model, "  type: object\n" +
+                "  properties:\n" +
+                "    id:\n" +
+                "      type: integer\n" +
+                "      format: int32\n" +
+                "    names:\n" +
+                "      type: array\n" +
+                "      items:\n" +
+                "        type: string\n" +
+                "      maxItems: 10");
+    }
 }

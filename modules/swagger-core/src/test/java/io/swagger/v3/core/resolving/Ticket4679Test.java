@@ -15,6 +15,7 @@ public class Ticket4679Test extends SwaggerTestBase{
     public void testCustomSchemaImplementation() {
 
         String expectedYaml = "ModelWithCustomSchemaImplementationInProperty:\n" +
+                "  type: object\n" +
                 "  properties:\n" +
                 "    exampleField:\n" +
                 "      type: integer\n" +
