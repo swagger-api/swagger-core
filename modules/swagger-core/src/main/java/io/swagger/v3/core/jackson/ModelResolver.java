@@ -1511,43 +1511,38 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             if ("integer".equals(property.getType()) || "number".equals(property.getType())) {
                 property.setMinimum(new BigDecimal(size.min()));
                 property.setMaximum(new BigDecimal(size.max()));
-            } else if (property instanceof StringSchema) {
-                StringSchema sp = (StringSchema) property;
-                sp.minLength(Integer.valueOf(size.min()));
-                sp.maxLength(Integer.valueOf(size.max()));
-            } else if (property instanceof ArraySchema) {
-                ArraySchema sp = (ArraySchema) property;
-                sp.setMinItems(size.min());
-                sp.setMaxItems(size.max());
+            }
+            if (isStringSchema(property)) {
+                property.setMinLength(Integer.valueOf(size.min()));
+                property.setMaxLength(Integer.valueOf(size.max()));
+            }
+            if (isArraySchema(property)) {
+                property.setMinItems(size.min());
+                property.setMaxItems(size.max());
             }
         }
         if (annos.containsKey("javax.validation.constraints.DecimalMin")) {
             DecimalMin min = (DecimalMin) annos.get("javax.validation.constraints.DecimalMin");
-            if (property instanceof NumberSchema) {
-                NumberSchema ap = (NumberSchema) property;
-                ap.setMinimum(new BigDecimal(min.value()));
-                ap.setExclusiveMinimum(!min.inclusive());
+            if (isNumberSchema(property)) {
+                property.setMinimum(new BigDecimal(min.value()));
+                property.setExclusiveMinimum(!min.inclusive());
             }
         }
         if (annos.containsKey("javax.validation.constraints.DecimalMax")) {
             DecimalMax max = (DecimalMax) annos.get("javax.validation.constraints.DecimalMax");
-            if (property instanceof NumberSchema) {
-                NumberSchema ap = (NumberSchema) property;
-                ap.setMaximum(new BigDecimal(max.value()));
-                ap.setExclusiveMaximum(!max.inclusive());
+            if (isNumberSchema(property)) {
+                property.setMaximum(new BigDecimal(max.value()));
+                property.setExclusiveMaximum(!max.inclusive());
             }
         }
         if (annos.containsKey("javax.validation.constraints.Pattern")) {
             Pattern pattern = (Pattern) annos.get("javax.validation.constraints.Pattern");
-
-            if (property instanceof StringSchema) {
+            if (isStringSchema(property)) {
                 property.setPattern(pattern.regexp());
             }
-
-            if(property.getItems() != null && property.getItems() instanceof StringSchema) {
+            if(property.getItems() != null && isStringSchema(property.getItems())) {
                 property.getItems().setPattern(pattern.regexp());
             }
-
         }
     }
 
@@ -3007,6 +3002,18 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
     protected boolean isObjectSchema(Schema schema) {
         return (schema.getTypes() != null && schema.getTypes().contains("object")) || "object".equals(schema.getType()) || (schema.getType() == null && schema.getProperties() != null && !schema.getProperties().isEmpty());
+    }
+
+    protected boolean isArraySchema(Schema schema){
+        return "array".equals(schema.getType()) || (schema.getTypes() != null && schema.getTypes().contains("array"));
+    }
+
+    protected boolean isStringSchema(Schema schema){
+        return "string".equals(schema.getType()) || (schema.getTypes() != null && schema.getTypes().contains("string"));
+    }
+
+    protected boolean isNumberSchema(Schema schema){
+        return "number".equals(schema.getType()) || (schema.getTypes() != null && schema.getTypes().contains("number"));
     }
 
     protected Schema buildRefSchemaIfObject(Schema schema, ModelConverterContext context) {
