@@ -125,6 +125,8 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
     private boolean openapi31;
 
+    private Schema.SchemaResolution schemaResolution = Schema.SchemaResolution.DEFAULT;
+
     public ModelResolver(ObjectMapper mapper) {
         super(mapper);
     }
@@ -725,7 +727,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 property = context.resolve(aType);
                 property = clone(property);
                 if (openapi31) {
-                    Optional<Schema> reResolvedProperty = AnnotationsUtils.getSchemaFromAnnotation(ctxSchema, annotatedType.getComponents(), null, openapi31, property, context);
+                    Optional<Schema> reResolvedProperty = AnnotationsUtils.getSchemaFromAnnotation(ctxSchema, annotatedType.getComponents(), null, openapi31, property, schemaResolution, context);
                     if (reResolvedProperty.isPresent()) {
                         property = reResolvedProperty.get();
                     }
@@ -773,10 +775,14 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                             }
 
                             if (context.getDefinedModels().containsKey(pName)) {
-                                property = new Schema().$ref(constructRef(pName));
+                                if (Schema.SchemaResolution.INLINE.equals(this.schemaResolution)) {
+                                    property = context.getDefinedModels().get(pName);
+                                } else {
+                                    property = new Schema().$ref(constructRef(pName));
+                                }
                                 property = clone(property);
-                                if (openapi31) {
-                                    Optional<Schema> reResolvedProperty = AnnotationsUtils.getSchemaFromAnnotation(ctxSchema, annotatedType.getComponents(), null, openapi31, property, context);
+                                if (openapi31 || Schema.SchemaResolution.INLINE.equals(this.schemaResolution)) {
+                                    Optional<Schema> reResolvedProperty = AnnotationsUtils.getSchemaFromAnnotation(ctxSchema, annotatedType.getComponents(), null, openapi31, property, this.schemaResolution, context);
                                     if (reResolvedProperty.isPresent()) {
                                         property = reResolvedProperty.get();
                                     }
@@ -1000,7 +1006,9 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             StringUtils.isNotBlank(model.getName()))
         {
             if (context.getDefinedModels().containsKey(model.getName())) {
-                model = new Schema().$ref(constructRef(model.getName()));
+                if (!Schema.SchemaResolution.INLINE.equals(this.schemaResolution)) {
+                    model = new Schema().$ref(constructRef(model.getName()));
+                }
             }
         } else if (model != null && model.get$ref() != null) {
             model = new Schema().$ref(StringUtils.isNotEmpty(model.get$ref()) ? model.get$ref() : model.getName());
@@ -1255,6 +1263,18 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         }
     }
 
+    public Schema.SchemaResolution getSchemaResolution() {
+        return schemaResolution;
+    }
+
+    public void setSchemaResolution(Schema.SchemaResolution schemaResolution) {
+        this.schemaResolution = schemaResolution;
+    }
+
+    public ModelResolver schemaResolution(Schema.SchemaResolution schemaResolution) {
+        setSchemaResolution(schemaResolution);
+        return this;
+    }
 
     private class GeneratorWrapper {
 
@@ -1870,7 +1890,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             }
             Annotation[] propAnnotations = new Annotation[]{dependentSchemaAnnotation.schema(), dependentSchemaAnnotation.array()};
             Schema existingSchema = null;
-            Optional<Schema> resolvedPropSchema = AnnotationsUtils.getSchemaFromAnnotation(dependentSchemaAnnotation.schema(), components, jsonViewAnnotation, openapi31, null, context);
+            Optional<Schema> resolvedPropSchema = AnnotationsUtils.getSchemaFromAnnotation(dependentSchemaAnnotation.schema(), components, jsonViewAnnotation, openapi31, null, Schema.SchemaResolution.DEFAULT, context);
             if (resolvedPropSchema.isPresent()) {
                 existingSchema = resolvedPropSchema.get();
                 dependentSchemas.put(name, existingSchema);
