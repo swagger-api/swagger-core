@@ -1495,20 +1495,20 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             }
         }
         if (annos.containsKey("javax.validation.constraints.Min")) {
-            if ("integer".equals(property.getType()) || "number".equals(property.getType())) {
+            if (isNumberSchema(property)) {
                 Min min = (Min) annos.get("javax.validation.constraints.Min");
                 property.setMinimum(new BigDecimal(min.value()));
             }
         }
         if (annos.containsKey("javax.validation.constraints.Max")) {
-            if ("integer".equals(property.getType()) || "number".equals(property.getType())) {
+            if (isNumberSchema(property)) {
                 Max max = (Max) annos.get("javax.validation.constraints.Max");
                 property.setMaximum(new BigDecimal(max.value()));
             }
         }
         if (annos.containsKey("javax.validation.constraints.Size")) {
             Size size = (Size) annos.get("javax.validation.constraints.Size");
-            if ("integer".equals(property.getType()) || "number".equals(property.getType())) {
+            if (isNumberSchema(property)) {
                 property.setMinimum(new BigDecimal(size.min()));
                 property.setMaximum(new BigDecimal(size.max()));
             }
@@ -3013,7 +3013,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
     }
 
     protected boolean isNumberSchema(Schema schema){
-        return "number".equals(schema.getType()) || (schema.getTypes() != null && schema.getTypes().contains("number"));
+        return "number".equals(schema.getType()) || (schema.getTypes() != null && schema.getTypes().contains("number")) || "integer".equals(schema.getType()) || (schema.getTypes() != null && schema.getTypes().contains("integer"));
     }
 
     protected Schema buildRefSchemaIfObject(Schema schema, ModelConverterContext context) {
