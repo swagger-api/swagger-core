@@ -2,6 +2,7 @@ package io.swagger.v3.core.resolving.v31;
 
 import io.swagger.v3.core.converter.AnnotatedType;
 import io.swagger.v3.core.converter.ModelConverterContextImpl;
+import io.swagger.v3.core.converter.ModelConverters;
 import io.swagger.v3.core.jackson.ModelResolver;
 import io.swagger.v3.core.matchers.SerializationMatchers;
 import io.swagger.v3.core.resolving.SwaggerTestBase;
@@ -10,10 +11,14 @@ import io.swagger.v3.core.resolving.resources.TestObject4715;
 import io.swagger.v3.core.resolving.v31.model.AnnotatedArray;
 import io.swagger.v3.core.resolving.v31.model.ModelWithDependentSchema;
 import io.swagger.v3.core.resolving.v31.model.ModelWithOAS31Stuff;
-import io.swagger.v3.core.resolving.v31.model.ModelWithOAS31StuffMinimal;
-import io.swagger.v3.core.util.Yaml31;
 import io.swagger.v3.oas.models.media.Schema;
 import org.testng.annotations.Test;
+import javax.validation.constraints.DecimalMax;
+import javax.validation.constraints.DecimalMin;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
+import java.util.List;
+import java.util.Map;
 
 public class ModelResolverOAS31Test extends SwaggerTestBase {
 
@@ -230,5 +235,116 @@ public class ModelResolverOAS31Test extends SwaggerTestBase {
                 "      items:\n" +
                 "        type: string\n" +
                 "      maxItems: 10");
+    }
+
+    @Test(description = "@Pattern correctly handled in type parameters of properties using collections when using oas 3.1.0")
+    public void testModelUsingCollectionTypePropertyHandlesPatternAnnotationForOas31() {
+        String expectedYaml = "ClassWithUsingPatternOnCollection:\n" +
+                "  type: object\n" +
+                "  properties:\n" +
+                "    myField:\n" +
+                "      type: array\n" +
+                "      items:\n" +
+                "        pattern: myPattern\n" +
+                "        type: string";
+
+        Map<String, Schema> stringSchemaMap = ModelConverters.getInstance(true).readAll(ClassWithUsingPatternOnCollection.class);
+        SerializationMatchers.assertEqualsToYaml31(stringSchemaMap, expectedYaml);
+    }
+
+    private static class ClassWithUsingPatternOnCollection {
+        private List<@Pattern(regexp = "myPattern") String> myField;
+
+        public List<String> getMyField() {
+            return myField;
+        }
+
+        public void setMyField(List<String> myField) {
+            this.myField = myField;
+        }
+    }
+
+    @Test(description = "@Size correctly handled in properties using collections when using oas 3.1.0")
+    public void testModelUsingCollectionTypePropertyHandleSizeAnnotationForOas31() {
+        String expectedYaml = "ClassWithUsingSizeOnCollection:\n" +
+                "  type: object\n" +
+                "  properties:\n" +
+                "    myField:\n" +
+                "      maxItems: 100\n" +
+                "      minItems: 1\n" +
+                "      type: array\n" +
+                "      items:\n" +
+                "        type: string";
+
+        Map<String, io.swagger.v3.oas.models.media.Schema> stringSchemaMap = ModelConverters.getInstance(true).readAll(ClassWithUsingSizeOnCollection.class);
+        SerializationMatchers.assertEqualsToYaml31(stringSchemaMap, expectedYaml);
+    }
+
+    private static class ClassWithUsingSizeOnCollection {
+        @Size(min = 1, max = 100)
+        private List<String> myField;
+
+        public List<String> getMyField() {
+            return myField;
+        }
+
+        public void setMyField(List<String> myField) {
+            this.myField = myField;
+        }
+    }
+
+    @Test(description = "@Size correctly handled for field type String using OAS 3.1.0")
+    public void testSizeAnnotationOnFieldForOAS31() {
+        String expectedYaml = "ClassWithUsingSizeOnField:\n" +
+                "  type: object\n" +
+                "  properties:\n" +
+                "    myField:\n" +
+                "      type: string\n" +
+                "      maxLength: 100\n" +
+                "      minLength: 1";
+
+        Map<String, io.swagger.v3.oas.models.media.Schema> stringSchemaMap = ModelConverters.getInstance(true).readAll(ClassWithUsingSizeOnField.class);
+        SerializationMatchers.assertEqualsToYaml31(stringSchemaMap, expectedYaml);
+    }
+
+    private static class ClassWithUsingSizeOnField {
+        @Size(min = 1, max = 100)
+        private String myField;
+
+        public String getMyField() {
+            return myField;
+        }
+
+        public void setMyField(String myField) {
+            this.myField = myField;
+        }
+    }
+
+    @Test(description = "@DecimalMax/Min annotations correctly handled for field type Number using OAS 3.1.0")
+    public void testDecimalAnnotationsOnField() {
+        String expectedYaml = "ClassWithUsingDecimalAnnotationsOnField:\n" +
+                "  type: object\n" +
+                "  properties:\n" +
+                "    myField:\n" +
+                "      type: number\n" +
+                "      maximum: 100\n" +
+                "      minimum: 1";
+
+        Map<String, io.swagger.v3.oas.models.media.Schema> stringSchemaMap = ModelConverters.getInstance(true).readAll(ClassWithUsingDecimalAnnotationsOnField.class);
+        SerializationMatchers.assertEqualsToYaml31(stringSchemaMap, expectedYaml);
+    }
+
+    private static class ClassWithUsingDecimalAnnotationsOnField {
+        @DecimalMin("1")
+        @DecimalMax("100")
+        private Number myField;
+
+        public Number getMyField() {
+            return myField;
+        }
+
+        public void setMyField(Number myField) {
+            this.myField = myField;
+        }
     }
 }
