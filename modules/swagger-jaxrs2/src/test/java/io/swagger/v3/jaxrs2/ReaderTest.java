@@ -143,9 +143,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CompletionStage;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.stream.Collectors;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
@@ -3378,6 +3376,7 @@ public class ReaderTest {
                 "components:\n" +
                 "  schemas:\n" +
                 "    Bar:\n" +
+                "      type: object\n" +
                 "      deprecated: true\n" +
                 "      description: Bar\n" +
                 "      properties:\n" +
@@ -3394,6 +3393,7 @@ public class ReaderTest {
                 "          - string\n" +
                 "          format: int32\n" +
                 "    Category:\n" +
+                "      type: object\n" +
                 "      properties:\n" +
                 "        id:\n" +
                 "          type: integer\n" +
@@ -3403,6 +3403,7 @@ public class ReaderTest {
                 "      xml:\n" +
                 "        name: Category\n" +
                 "    Foo:\n" +
+                "      type: object\n" +
                 "      deprecated: true\n" +
                 "      description: Foo\n" +
                 "      properties:\n" +
@@ -3420,6 +3421,7 @@ public class ReaderTest {
                 "          - object\n" +
                 "          format: int32\n" +
                 "    IfSchema:\n" +
+                "      type: object\n" +
                 "      deprecated: true\n" +
                 "      description: if schema\n" +
                 "      properties:\n" +
@@ -3437,6 +3439,7 @@ public class ReaderTest {
                 "          - object\n" +
                 "          format: int32\n" +
                 "    Pet:\n" +
+                "      type: object\n" +
                 "      properties:\n" +
                 "        id:\n" +
                 "          type: integer\n" +
@@ -3470,6 +3473,7 @@ public class ReaderTest {
                 "      xml:\n" +
                 "        name: Pet\n" +
                 "    Tag:\n" +
+                "      type: object\n" +
                 "      properties:\n" +
                 "        id:\n" +
                 "          type: integer\n" +
@@ -3510,6 +3514,7 @@ public class ReaderTest {
                 "components:\n" +
                 "  schemas:\n" +
                 "    Foo:\n" +
+                "      type: object\n" +
                 "      deprecated: true\n" +
                 "      description: Foo\n" +
                 "      properties:\n" +
@@ -3527,6 +3532,7 @@ public class ReaderTest {
                 "          - object\n" +
                 "          format: int32\n" +
                 "    SimpleTag:\n" +
+                "      type: object\n" +
                 "      properties:\n" +
                 "        annotated:\n" +
                 "          $ref: '#/components/schemas/SimpleCategory'\n" +
@@ -3534,7 +3540,8 @@ public class ReaderTest {
                 "          properties:\n" +
                 "            foo:\n" +
                 "              $ref: '#/components/schemas/Foo'\n" +
-                "    SimpleCategory: {}\n";
+                "    SimpleCategory:\n" +
+                "      type: object\n" ;
         SerializationMatchers.assertEqualsToYaml31(openAPI, yaml);
     }
 
@@ -3558,12 +3565,14 @@ public class ReaderTest {
                 "components:\n" +
                 "  schemas:\n" +
                 "    Category:\n" +
+                "      type: object\n" +
                 "      description: parent\n" +
                 "      properties:\n" +
                 "        id:\n" +
                 "          type: integer\n" +
                 "          format: int64\n" +
                 "    Pet:\n" +
+                "      type: object\n" +
                 "      description: Pet\n" +
                 "      properties:\n" +
                 "        category:\n" +
@@ -3606,6 +3615,7 @@ public class ReaderTest {
                 "components:\n" +
                 "  schemas:\n" +
                 "    PetSimple:\n" +
+                "      type: object\n" +
                 "      description: Pet\n";
         SerializationMatchers.assertEqualsToYaml31(openAPI, yaml);
     }
@@ -3654,6 +3664,7 @@ public class ReaderTest {
                 "components:\n" +
                 "  schemas:\n" +
                 "    PetSimple:\n" +
+                "      type: object\n" +
                 "      description: Pet\n";
         SerializationMatchers.assertEqualsToYaml31(openAPI, yaml);
     }
@@ -3699,6 +3710,7 @@ public class ReaderTest {
                 "components:\n" +
                 "  schemas:\n" +
                 "    PetSimple:\n" +
+                "      type: object\n" +
                 "      description: Pet\n";
         SerializationMatchers.assertEqualsToYaml31(openAPI, yaml);
     }
@@ -3775,6 +3787,7 @@ public class ReaderTest {
                 "components:\n" +
                 "  schemas:\n" +
                 "    PetSimple:\n" +
+                "      type: object\n" +
                 "      description: Pet\n";
         SerializationMatchers.assertEqualsToYaml31(openAPI, yaml);
     }
@@ -3838,12 +3851,14 @@ public class ReaderTest {
                 "components:\n" +
                 "  schemas:\n" +
                 "    Category:\n" +
+                "      type: object\n" +
                 "      description: parent\n" +
                 "      properties:\n" +
                 "        id:\n" +
                 "          type: integer\n" +
                 "          format: int64\n" +
                 "    Pet:\n" +
+                "      type: object\n" +
                 "      description: Pet\n" +
                 "      properties:\n" +
                 "        category:\n" +
@@ -3934,6 +3949,7 @@ public class ReaderTest {
                 "            creditCard:\n" +
                 "              $ref: '#/components/schemas/CreditCard'\n" +
                 "    MultipleBaseBean:\n" +
+                "      type: object\n" +
                 "      description: MultipleBaseBean\n" +
                 "      properties:\n" +
                 "        beanType:\n" +
@@ -3962,6 +3978,7 @@ public class ReaderTest {
                 "            format: int32\n" +
                 "      description: MultipleSub2Bean\n" +
                 "    Address:\n" +
+                "      type: object\n" +
                 "      if:\n" +
                 "        $ref: '#/components/schemas/AnnotatedCountry'\n" +
                 "      then:\n" +
@@ -3982,22 +3999,27 @@ public class ReaderTest {
                 "      propertyNames:\n" +
                 "        $ref: '#/components/schemas/PropertyNamesPattern'\n" +
                 "    AnnotatedCountry:\n" +
+                "      type: object\n" +
                 "      properties:\n" +
                 "        country:\n" +
                 "          const: United States\n" +
                 "    CreditCard:\n" +
+                "      type: object\n" +
                 "      properties:\n" +
                 "        billingAddress:\n" +
                 "          type: string\n" +
                 "    PostalCodeNumberPattern:\n" +
+                "      type: object\n" +
                 "      properties:\n" +
                 "        postalCode:\n" +
                 "          pattern: \"[0-9]{5}(-[0-9]{4})?\"\n" +
                 "    PostalCodePattern:\n" +
+                "      type: object\n" +
                 "      properties:\n" +
                 "        postalCode:\n" +
                 "          pattern: \"[A-Z][0-9][A-Z] [0-9][A-Z][0-9]\"\n" +
                 "    PropertyNamesPattern:\n" +
+                "      type: object\n" +
                 "      pattern: \"^[A-Za-z_][A-Za-z0-9_]*$\"\n";
         SerializationMatchers.assertEqualsToYaml31(openAPI, yaml);
     }

@@ -1,6 +1,7 @@
 package io.swagger.v3.oas.models.media;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.models.annotations.OpenAPI30;
 import io.swagger.v3.oas.models.annotations.OpenAPI31;
 import io.swagger.v3.oas.models.Components;
@@ -35,6 +36,26 @@ public class Schema<T> {
         private String value;
 
         BynaryStringConversion(String value) {
+            this.value = value;
+        }
+
+        @Override
+        public String toString() {
+            return String.valueOf(value);
+        }
+    }
+
+    public static final String SCHEMA_RESOLUTION_PROPERTY = "schema-resolution";
+    public enum SchemaResolution {
+        @JsonProperty("default")
+        DEFAULT("default"),
+        @JsonProperty("inline")
+        INLINE("inline"),
+        @JsonProperty("all-of")
+        ALL_OF("all-of");
+        private String value;
+
+        SchemaResolution(String value) {
             this.value = value;
         }
 

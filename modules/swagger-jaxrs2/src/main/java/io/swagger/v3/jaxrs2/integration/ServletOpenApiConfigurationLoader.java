@@ -6,6 +6,7 @@ import io.swagger.v3.oas.integration.SwaggerConfiguration;
 import io.swagger.v3.oas.integration.api.OpenAPIConfigBuilder;
 import io.swagger.v3.oas.integration.api.OpenAPIConfiguration;
 import io.swagger.v3.oas.integration.api.OpenApiConfigurationLoader;
+import io.swagger.v3.oas.models.media.Schema;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,6 +25,7 @@ import static io.swagger.v3.jaxrs2.integration.ServletConfigContextUtils.OPENAPI
 import static io.swagger.v3.jaxrs2.integration.ServletConfigContextUtils.OPENAPI_CONFIGURATION_READALLRESOURCES_KEY;
 import static io.swagger.v3.jaxrs2.integration.ServletConfigContextUtils.OPENAPI_CONFIGURATION_READER_KEY;
 import static io.swagger.v3.jaxrs2.integration.ServletConfigContextUtils.OPENAPI_CONFIGURATION_SCANNER_KEY;
+import static io.swagger.v3.jaxrs2.integration.ServletConfigContextUtils.OPENAPI_CONFIGURATION_SCHEMA_RESOLUTION_KEY;
 import static io.swagger.v3.jaxrs2.integration.ServletConfigContextUtils.OPENAPI_CONFIGURATION_SKIPRESOLVEAPPPATH_KEY;
 import static io.swagger.v3.jaxrs2.integration.ServletConfigContextUtils.OPENAPI_CONFIGURATION_SORTOUTPUT_KEY;
 import static io.swagger.v3.jaxrs2.integration.ServletConfigContextUtils.OPENAPI_CONFIGURATION_ALWAYSRESOLVEAPPPATH_KEY;
@@ -70,7 +72,9 @@ public class ServletOpenApiConfigurationLoader implements OpenApiConfigurationLo
                     .openAPI31(getBooleanInitParam(servletConfig, OPENAPI_CONFIGURATION_OPENAPI_31_KEY))
                     .convertToOpenAPI31(getBooleanInitParam(servletConfig, OPENAPI_CONFIGURATION_CONVERT_TO_OPENAPI_31_KEY))
                     .modelConverterClasses(resolveModelConverterClasses(servletConfig));
-
+            if (getInitParam(servletConfig, OPENAPI_CONFIGURATION_SCHEMA_RESOLUTION_KEY) != null) {
+                configuration.schemaResolution(Schema.SchemaResolution.valueOf(getInitParam(servletConfig, OPENAPI_CONFIGURATION_SCHEMA_RESOLUTION_KEY)));
+            }
             return configuration;
 
         }
