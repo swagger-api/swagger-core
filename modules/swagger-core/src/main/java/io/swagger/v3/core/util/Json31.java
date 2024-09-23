@@ -13,23 +13,22 @@ import java.util.Map;
 
 public class Json31 {
 
-    private static ObjectMapper mapper;
-    private static ObjectMapper converterMapper;
+    private static final class ObjectMapperHolder {
+        private static final ObjectMapper MAPPER = ObjectMapperFactory.createJson31();
+    }
+
+    private static final class ConverterMapperHolder {
+        private static final ObjectMapper MAPPER = ObjectMapperFactory.createJsonConverter();
+    }
 
     static Logger LOGGER = LoggerFactory.getLogger(Json31.class);
 
     public static ObjectMapper mapper() {
-        if (mapper == null) {
-            mapper = ObjectMapperFactory.createJson31();
-        }
-        return mapper;
+        return ObjectMapperHolder.MAPPER;
     }
 
     public static ObjectMapper converterMapper() {
-        if (converterMapper == null) {
-            converterMapper = ObjectMapperFactory.createJsonConverter();
-        }
-        return converterMapper;
+        return ConverterMapperHolder.MAPPER;
     }
 
     public static ObjectWriter pretty() {

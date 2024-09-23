@@ -11,15 +11,16 @@ import org.slf4j.LoggerFactory;
 import java.util.Map;
 
 public class Yaml31 {
-    static ObjectMapper mapper;
+
+    private static final class ObjectMapperHolder {
+        private static final ObjectMapper MAPPER = ObjectMapperFactory.createYaml31();
+    }
+
 
     static Logger LOGGER = LoggerFactory.getLogger(Yaml31.class);
 
     public static ObjectMapper mapper() {
-        if (mapper == null) {
-            mapper = ObjectMapperFactory.createYaml31();
-        }
-        return mapper;
+        return ObjectMapperHolder.MAPPER;
     }
 
     public static ObjectWriter pretty() {
