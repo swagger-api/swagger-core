@@ -13,7 +13,7 @@
     <description>swagger-eclipse-transformer-maven-plugin</description>
     <packaging>maven-plugin</packaging>
     <properties>
-        <maven.target.version>3.9.6</maven.target.version>
+        <maven.target.version>3.9.9</maven.target.version>
         <eclipse.transformer.version>0.20</eclipse.transformer.version>
         <maven-test-harness.version>3.3.0</maven-test-harness.version>
         <shrinkwrap.version>1.2.6</shrinkwrap.version>
@@ -94,7 +94,7 @@
         <dependency>
             <groupId>org.apache.maven.plugin-tools</groupId>
             <artifactId>maven-plugin-annotations</artifactId>
-            <version>3.10.2</version>
+            <version>3.15.0</version>
             <scope>provided</scope>
             <exclusions>
                 <exclusion>
@@ -127,7 +127,7 @@
         <dependency>
             <groupId>org.codehaus.plexus</groupId>
             <artifactId>plexus-component-annotations</artifactId>
-            <version>2.1.1</version>
+            <version>2.2.0</version>
         </dependency>
         <dependency>
             <groupId>org.apache.maven</groupId>
