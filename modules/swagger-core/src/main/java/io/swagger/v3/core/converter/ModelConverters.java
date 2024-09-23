@@ -45,7 +45,7 @@ public class ModelConverters {
     public ModelConverters(boolean openapi31, Schema.SchemaResolution schemaResolution) {
         converters = new CopyOnWriteArrayList<>();
         if (openapi31) {
-            converters.add(new ModelResolver(Json31.mapper()).openapi31(true));
+            converters.add(new ModelResolver(Json31.mapper()).openapi31(true).schemaResolution(schemaResolution));
         } else {
             converters.add(new ModelResolver(Json.mapper()).schemaResolution(schemaResolution));
         }
@@ -81,7 +81,7 @@ public class ModelConverters {
         synchronized (ModelConverters.class) {
             if (openapi31) {
                 if (SINGLETON31 == null) {
-                    SINGLETON31 = new ModelConverters(openapi31);
+                    SINGLETON31 = new ModelConverters(openapi31, Schema.SchemaResolution.DEFAULT);
                     init(SINGLETON31);
                 }
                 return SINGLETON31;

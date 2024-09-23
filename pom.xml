@@ -654,7 +654,7 @@
         <httpcomponents-version>4.5.14</httpcomponents-version>
         <commons-codec-version>1.16.0</commons-codec-version>
 
-        <surefire-version>2.22.2</surefire-version>
+        <surefire-version>3.5.0</surefire-version>
         <enforcer-plugin-version>3.2.1</enforcer-plugin-version>
         <failsafe-plugin-version>2.22.2</failsafe-plugin-version>
 
