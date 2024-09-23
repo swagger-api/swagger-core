@@ -9,7 +9,7 @@ public class SchemaResolutionResource {
 
     @GET
     @Path("/inlineSchemaSecond")
-    public InlineSchemaSecond inlineSchemaSecond() {
+    public InlineSchemaSecond inlineSchemaSecond(@Schema(description = "InlineSchemaSecond API") InlineSchemaSecond inlineSchemaSecond) {
         return null;
     }
     @GET
