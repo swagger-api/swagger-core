@@ -97,6 +97,8 @@ Parameter | Description | Required | Default
 `contextId`|see [Context](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#context)|false|
 `outputPath`|**DEPRECATED** output path where file(s) are saved|false|
 `defaultResponseCode`|see [configuration property](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)|false|
+`openapi31`|see [configuration property](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)| false   |
+`schemaResolution`|see [configuration property](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)| DEFAULT |
 
 **Note** parameter `openApiFile` corresponds to [config](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties) openAPI. It points to a location of a file in YAML or JSON format representing the input spec that will be merged with the resolved spec. Typically used to add Info section, or any other meta data.
 An example of such file:
@@ -121,5 +123,8 @@ info:
 Since version 2.1.6, `sortOutput` parameter is available, allowing to sort object properties and map keys alphabetically.
 Since version 2.1.6, `objectMapperProcessorClass` allows to configure also the ObjectMapper instance used to serialize the resolved OpenAPI
 Since version 2.1.9, `alwaysResolveAppPath` parameter is available, allowing to trigger resolving of Application Path from annotation also not in runtime (e.g. using servlet in separate application, or in maven plugin at build time, etc)
+Since version 2.2.12, `openapi31` parameter is available, if set to true the resolved spec will be processed into a 3.1.0 specification by resolving according to OAS 3.1 rules
 Since version 2.1.15, `skipResolveAppPath` parameter is available, allowing to skip resolving of Application Path from annotation
 Since version 2.2.17, `defaultResponseCode` parameter is available, allowing to set the code used when resolving responses with no http status code annotation
+Since version 2.2.17, `defaultResponseCode` parameter is available, allowing to set the code used when resolving responses with no http status code annotation
+Since version 2.2.24, `schemaResolution` parameter is available, allowing to specify how object schemas and object properties within schemas are resolved for OAS 3.0 specification
