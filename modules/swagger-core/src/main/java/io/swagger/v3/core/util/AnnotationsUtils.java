@@ -621,7 +621,7 @@ public abstract class AnnotationsUtils {
                 } else {
                     schemaObject = new Schema();
                 }
-            } else if (Schema.SchemaResolution.ALL_OF.equals(schemaResolution)) {
+            } else if (Schema.SchemaResolution.ALL_OF.equals(schemaResolution) || Schema.SchemaResolution.ALL_OF_REF.equals(schemaResolution)) {
                 if (existingSchema == null) {
                     schemaObject = new Schema();
                 } else {

@@ -52,7 +52,10 @@ public class Schema<T> {
         @JsonProperty("inline")
         INLINE("inline"),
         @JsonProperty("all-of")
-        ALL_OF("all-of");
+        ALL_OF("all-of"),
+        @JsonProperty("all-of-ref")
+        ALL_OF_REF("all-of-ref");
+
         private String value;
 
         SchemaResolution(String value) {

@@ -682,7 +682,10 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
                 Annotation[] ctxAnnotation31 = null;
 
-                if (Schema.SchemaResolution.ALL_OF.equals(this.schemaResolution) || openapi31) {
+                if (
+                        Schema.SchemaResolution.ALL_OF.equals(this.schemaResolution) ||
+                                Schema.SchemaResolution.ALL_OF_REF.equals(this.schemaResolution) ||
+                                openapi31) {
                     List<Annotation> ctxAnnotations31List = new ArrayList<>();
                     if (annotations != null) {
                         for (Annotation a : annotations) {
@@ -692,8 +695,8 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                                 ctxAnnotations31List.add(a);
                             }
                             if ((ctxSchema != null) && (!ctxSchema.implementation().equals(Void.class) || StringUtils.isNotEmpty(ctxSchema.type()))) {
-                                    ctxAnnotations31List.add(a);
-                                }
+                                ctxAnnotations31List.add(a);
+                            }
                         }
                         ctxAnnotation31 = ctxAnnotations31List.toArray(new Annotation[ctxAnnotations31List.size()]);
                     }
@@ -708,7 +711,10 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                         .schemaProperty(true)
                         .components(annotatedType.getComponents())
                         .propertyName(propName);
-                if (Schema.SchemaResolution.ALL_OF.equals(this.schemaResolution) || openapi31) {
+                if (
+                        Schema.SchemaResolution.ALL_OF.equals(this.schemaResolution) ||
+                                Schema.SchemaResolution.ALL_OF_REF.equals(this.schemaResolution) ||
+                                openapi31) {
                     aType.ctxAnnotations(ctxAnnotation31);
                 } else {
                     aType.ctxAnnotations(annotations);
@@ -740,7 +746,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                         property = reResolvedProperty.get();
                     }
 
-                } else if (Schema.SchemaResolution.ALL_OF.equals(this.schemaResolution)) {
+                } else if (Schema.SchemaResolution.ALL_OF.equals(this.schemaResolution) || Schema.SchemaResolution.ALL_OF_REF.equals(this.schemaResolution)) {
                     Optional<Schema> reResolvedProperty = AnnotationsUtils.getSchemaFromAnnotation(ctxSchema, annotatedType.getComponents(), null, openapi31, null, schemaResolution, context);
                     if (reResolvedProperty.isPresent()) {
                         ctxProperty = reResolvedProperty.get();
@@ -795,6 +801,8 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                                     property = new Schema()
                                             .addAllOfItem(ctxProperty)
                                             .addAllOfItem(new Schema().$ref(constructRef(pName)));
+                                } else if (Schema.SchemaResolution.ALL_OF_REF.equals(this.schemaResolution) && ctxProperty != null) {
+                                    property = ctxProperty.addAllOfItem(new Schema().$ref(constructRef(pName)));
                                 } else {
                                     property = new Schema().$ref(constructRef(pName));
                                 }
@@ -816,6 +824,9 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                                 if (Schema.SchemaResolution.ALL_OF.equals(this.schemaResolution) && ctxProperty != null) {
                                     property = new Schema()
                                             .addAllOfItem(ctxProperty)
+                                            .addAllOfItem(new Schema().$ref(StringUtils.isNotEmpty(property.get$ref()) ? property.get$ref() : property.getName()));
+                                } else if (Schema.SchemaResolution.ALL_OF_REF.equals(this.schemaResolution) && ctxProperty != null) {
+                                    property = ctxProperty
                                             .addAllOfItem(new Schema().$ref(StringUtils.isNotEmpty(property.get$ref()) ? property.get$ref() : property.getName()));
                                 } else {
                                     property = new Schema().$ref(StringUtils.isNotEmpty(property.get$ref()) ? property.get$ref() : property.getName());
