@@ -76,7 +76,7 @@ public class ParameterProcessor {
         io.swagger.v3.oas.annotations.media.ArraySchema ctxArraySchema = AnnotationsUtils.getArraySchemaAnnotation(annotations.toArray(new Annotation[0]));
         Annotation[] ctxAnnotation31 = null;
 
-        if (Schema.SchemaResolution.ALL_OF.equals(schemaResolution)) {
+        if (Schema.SchemaResolution.ALL_OF.equals(schemaResolution) || Schema.SchemaResolution.ALL_OF_REF.equals(schemaResolution)) {
             List<Annotation> ctxAnnotations31List = new ArrayList<>();
             if (annotations != null) {
                 for (Annotation a : annotations) {
@@ -95,7 +95,7 @@ public class ParameterProcessor {
                 .skipOverride(true)
                 .jsonViewAnnotation(jsonViewAnnotation);
 
-        if (Schema.SchemaResolution.ALL_OF.equals(schemaResolution)) {
+        if (Schema.SchemaResolution.ALL_OF.equals(schemaResolution) || Schema.SchemaResolution.ALL_OF_REF.equals(schemaResolution)) {
             annotatedType.ctxAnnotations(ctxAnnotation31);
         } else {
             annotatedType.ctxAnnotations(reworkedAnnotations.toArray(new Annotation[reworkedAnnotations.size()]));
@@ -106,7 +106,7 @@ public class ParameterProcessor {
         if (resolvedSchema.schema != null) {
             Schema resSchema = AnnotationsUtils.clone(resolvedSchema.schema, openapi31);
             Schema ctxSchemaObject = null;
-            if (Schema.SchemaResolution.ALL_OF.equals(schemaResolution)) {
+            if (Schema.SchemaResolution.ALL_OF.equals(schemaResolution) || Schema.SchemaResolution.ALL_OF_REF.equals(schemaResolution)) {
                 Optional<Schema> reResolvedSchema = AnnotationsUtils.getSchemaFromAnnotation(ctxSchema, annotatedType.getComponents(), null, openapi31, null, schemaResolution, null);
                 if (reResolvedSchema.isPresent()) {
                     ctxSchemaObject = reResolvedSchema.get();
@@ -120,6 +120,9 @@ public class ParameterProcessor {
             if (Schema.SchemaResolution.ALL_OF.equals(schemaResolution) && ctxSchemaObject != null) {
                 resSchema = new Schema()
                         .addAllOfItem(ctxSchemaObject)
+                        .addAllOfItem(resolvedSchema.schema);
+            } else if (Schema.SchemaResolution.ALL_OF_REF.equals(schemaResolution) && ctxSchemaObject != null) {
+                resSchema = ctxSchemaObject
                         .addAllOfItem(resolvedSchema.schema);
             }
             parameter.setSchema(resSchema);
