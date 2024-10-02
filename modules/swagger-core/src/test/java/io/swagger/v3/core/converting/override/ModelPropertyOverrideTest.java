@@ -93,7 +93,13 @@ public class ModelPropertyOverrideTest {
                 "        maxItems: 2\n" +
                 "        type: array\n" +
                 "        items:\n" +
-                "          type: string\n";
+                "          type: string\n" +
+                "    sized:\n" +
+                "      maxItems: 2\n" +
+                "      minItems: 0\n" +
+                "      type: array\n" +
+                "      items:\n" +
+                "        type: string\n";
         SerializationMatchers.assertEqualsToYaml(model, expected);
     }
 }

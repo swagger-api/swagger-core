@@ -10,6 +10,7 @@ import io.swagger.v3.oas.integration.OpenApiConfigurationException;
 import io.swagger.v3.oas.integration.SwaggerConfiguration;
 import io.swagger.v3.oas.integration.api.OpenApiContext;
 import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.media.Schema;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Arrays;
@@ -36,6 +37,7 @@ public class SwaggerLoader {
     private String openapiAsString;
 
     private String objectMapperProcessorClass;
+    private String defaultResponseCode;
     private String modelConverterClasses;
 
     private Boolean sortOutput = false;
@@ -47,6 +49,8 @@ public class SwaggerLoader {
     private Boolean openAPI31 = false;
 
     private Boolean convertToOpenAPI31 = false;
+
+    private String schemaResolution;
 
     /**
      * @since 2.0.6
@@ -60,6 +64,20 @@ public class SwaggerLoader {
      */
     public void setObjectMapperProcessorClass(String objectMapperProcessorClass) {
         this.objectMapperProcessorClass = objectMapperProcessorClass;
+    }
+
+    /**
+     * @since 2.2.17
+     */
+    public String getDefaultResponseCode() {
+        return defaultResponseCode;
+    }
+
+    /**
+     * @since 2.2.17
+     */
+    public void setDefaultResponseCode(String defaultResponseCode) {
+        this.defaultResponseCode = defaultResponseCode;
     }
 
     /**
@@ -235,6 +253,20 @@ public class SwaggerLoader {
         this.convertToOpenAPI31 = convertToOpenAPI31;
     }
 
+    /**
+     *  @since 2.2.24
+     */
+    public String getSchemaResolution() {
+        return schemaResolution;
+    }
+
+    /**
+     *  @since 2.2.24
+     */
+    public void setSchemaResolution(String schemaResolution) {
+        this.schemaResolution = schemaResolution;
+    }
+
     public Map<String, String> resolve() throws Exception{
 
         Set<String> ignoredRoutesSet = null;
@@ -279,12 +311,16 @@ public class SwaggerLoader {
                 .resourceClasses(resourceClassesSet)
                 .resourcePackages(resourcePackagesSet)
                 .objectMapperProcessorClass(objectMapperProcessorClass)
+                .defaultResponseCode(defaultResponseCode)
                 .modelConverterClasses(modelConverterSet)
                 .sortOutput(sortOutput)
                 .alwaysResolveAppPath(alwaysResolveAppPath)
                 .skipResolveAppPath(skipResolveAppPath)
                 .openAPI31(openAPI31)
                 .convertToOpenAPI31(convertToOpenAPI31);
+        if (schemaResolution != null) {
+            config.schemaResolution(Schema.SchemaResolution.valueOf(schemaResolution));
+        }
         try {
             GenericOpenApiContextBuilder builder = new JaxrsOpenApiContextBuilder()
                     .openApiConfiguration(config);

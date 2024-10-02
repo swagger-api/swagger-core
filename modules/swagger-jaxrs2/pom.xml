@@ -5,7 +5,7 @@
     <parent>
         <artifactId>swagger-project</artifactId>
         <groupId>io.swagger.core.v3</groupId>
-        <version>2.2.16-SNAPSHOT</version>
+        <version>2.2.25-SNAPSHOT</version>
         <relativePath>../../</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -40,7 +40,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
-                <version>3.0.0</version>
+                <version>3.5.0</version>
                 <configuration>
                     <portNames>
                         <portName>jetty.port</portName>
@@ -96,7 +96,8 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${surefire-version}</version>
                 <configuration>
-                    <argLine>--add-opens java.base/java.lang=ALL-UNNAMED</argLine>
+                    <argLine>-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5005 --add-opens java.base/java.lang=ALL-UNNAMED</argLine>
+                    <forkCount>0</forkCount>
                 </configuration>
             </plugin>
             <plugin>
@@ -117,25 +118,6 @@
                                 <jetty.port>${jetty.port}</jetty.port>
                             </systemPropertyVariables>
                         </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>io.swagger.core.v3</groupId>
-                <artifactId>swagger-eclipse-transformer-maven-plugin</artifactId>
-                <version>${project.version}</version>
-                <configuration>
-                    <attach>false</attach>
-                    <classifier>jakarta</classifier>
-                    <outputDirectory>${project.basedir}/../swagger-project-jakarta/modules/${project.artifactId}-jakarta/transformed</outputDirectory>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>transform-jakarta</id>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                        <phase>package</phase>
                     </execution>
                 </executions>
             </plugin>
@@ -174,7 +156,7 @@
         <dependency>
             <groupId>org.javassist</groupId>
             <artifactId>javassist</artifactId>
-            <version>3.29.2-GA</version>
+            <version>3.30.2-GA</version>
         </dependency>
         <dependency>
             <groupId>commons-io</groupId>
@@ -233,19 +215,19 @@
         <dependency>
             <groupId>org.jboss.weld</groupId>
             <artifactId>weld-core-impl</artifactId>
-            <version>3.1.6.Final</version>
+            <version>3.1.9.Final</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.jboss.arquillian.testng</groupId>
             <artifactId>arquillian-testng-container</artifactId>
-            <version>1.7.0.Alpha14</version>
+            <version>1.8.0.Final</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.jboss.arquillian.container</groupId>
             <artifactId>arquillian-weld-embedded</artifactId>
-            <version>2.0.0.Final</version>
+            <version>2.1.0.Final</version>
             <scope>test</scope>
             <exclusions>
                 <exclusion>

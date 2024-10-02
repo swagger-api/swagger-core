@@ -1,6 +1,7 @@
 package io.swagger.v3.oas.models.media;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.models.annotations.OpenAPI30;
 import io.swagger.v3.oas.models.annotations.OpenAPI31;
 import io.swagger.v3.oas.models.Components;
@@ -27,6 +28,45 @@ import java.util.Set;
 public class Schema<T> {
 
     public static final String BIND_TYPE_AND_TYPES = "bind-type";
+    public static final String BINARY_STRING_CONVERSION_PROPERTY = "binary-string-conversion";
+    public enum BynaryStringConversion {
+        BINARY_STRING_CONVERSION_BASE64("base64"),
+        BINARY_STRING_CONVERSION_DEFAULT_CHARSET("default"),
+        BINARY_STRING_CONVERSION_STRING_SCHEMA("string-schema");
+        private String value;
+
+        BynaryStringConversion(String value) {
+            this.value = value;
+        }
+
+        @Override
+        public String toString() {
+            return String.valueOf(value);
+        }
+    }
+
+    public static final String SCHEMA_RESOLUTION_PROPERTY = "schema-resolution";
+    public enum SchemaResolution {
+        @JsonProperty("default")
+        DEFAULT("default"),
+        @JsonProperty("inline")
+        INLINE("inline"),
+        @JsonProperty("all-of")
+        ALL_OF("all-of"),
+        @JsonProperty("all-of-ref")
+        ALL_OF_REF("all-of-ref");
+
+        private String value;
+
+        SchemaResolution(String value) {
+            this.value = value;
+        }
+
+        @Override
+        public String toString() {
+            return String.valueOf(value);
+        }
+    }
 
     protected T _default;
 

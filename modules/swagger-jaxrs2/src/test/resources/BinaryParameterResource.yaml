@@ -1,0 +1,42 @@
+openapi: 3.0.1
+paths:
+  /binary:
+    post:
+      summary: Create new item
+      description: Post operation with entity in a body
+      operationId: createItem
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Item'
+        required: true
+      responses:
+        "201":
+          headers:
+            Location:
+              style: simple
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Item'
+components:
+  schemas:
+    Item:
+      type: object
+      properties:
+        name:
+          type: string
+        value:
+          type: string
+        bytes:
+          type: string
+          format: byte
+          example: Ynl0ZQ==
+        binary:
+          type: string
+          format: binary
+          example: YmluYXJ5
+        byteNoAnnotation:
+          type: string
+          format: byte

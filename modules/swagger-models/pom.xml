@@ -4,7 +4,7 @@
     <parent>
         <groupId>io.swagger.core.v3</groupId>
         <artifactId>swagger-project</artifactId>
-        <version>2.2.16-SNAPSHOT</version>
+        <version>2.2.25-SNAPSHOT</version>
         <relativePath>../..</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -44,25 +44,6 @@
                     <argLine>-Djdk.attach.allowAttachSelf</argLine>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>io.swagger.core.v3</groupId>
-                <artifactId>swagger-eclipse-transformer-maven-plugin</artifactId>
-                <version>${project.version}</version>
-                <configuration>
-                    <attach>false</attach>
-                    <classifier>jakarta</classifier>
-                    <outputDirectory>${project.basedir}/../swagger-project-jakarta/modules/${project.artifactId}-jakarta/transformed</outputDirectory>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>transform-jakarta</id>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                        <phase>package</phase>
-                    </execution>
-                </executions>
-            </plugin>
         </plugins>
     </build>
     <dependencies>
@@ -98,6 +79,6 @@
         <coverage.complexity.minimum>0.07</coverage.complexity.minimum>
         <coverage.line.minimum>0.0</coverage.line.minimum>
         <jmockit-version>1.49</jmockit-version>
-        <mockito-version>2.16.0</mockito-version>
+        <mockito-version>2.28.2</mockito-version>
     </properties>
 </project>

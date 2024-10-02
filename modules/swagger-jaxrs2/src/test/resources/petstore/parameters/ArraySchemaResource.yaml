@@ -10,6 +10,7 @@ paths:
       - name: arrayParameter
         in: query
         required: true
+        explode: true
         schema:
           maxItems: 10
           minItems: 1

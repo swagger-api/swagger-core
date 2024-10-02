@@ -4,7 +4,7 @@
     <parent>
         <groupId>io.swagger.core.v3</groupId>
         <artifactId>swagger-project-jakarta</artifactId>
-        <version>2.2.16-SNAPSHOT</version>
+        <version>2.2.25-SNAPSHOT</version>
         <relativePath>../..</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -12,7 +12,65 @@
     <name>swagger-jaxrs2-servlet-initializer-v2-jakarta</name>
     <description>swagger-jaxrs2-servlet-initializer-v2-jakarta</description>
 
-    <build></build>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.eclipse.transformer</groupId>
+                <artifactId>transformer-maven-plugin</artifactId>
+                <version>${transformer-maven-plugin-version}</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <rules>
+                        <jakartaDefaults>true</jakartaDefaults>
+                    </rules>
+                    <baseName>${project.build.finalName}-jakarta</baseName>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>default-jar</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <configuration>
+                            <artifact>
+                                <groupId>${project.groupId}</groupId>
+                                <artifactId>swagger-jaxrs2-servlet-initializer-v2</artifactId>
+                                <version>${project.version}</version>
+                            </artifact>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>javadoc-jar</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <configuration>
+                            <artifact>
+                                <groupId>${project.groupId}</groupId>
+                                <artifactId>swagger-jaxrs2-servlet-initializer-v2</artifactId>
+                                <version>${project.version}</version>
+                                <classifier>javadoc</classifier>
+                            </artifact>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>source-jar</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <configuration>
+                            <artifact>
+                                <groupId>${project.groupId}</groupId>
+                                <artifactId>swagger-jaxrs2-servlet-initializer-v2</artifactId>
+                                <version>${project.version}</version>
+                                <classifier>sources</classifier>
+                            </artifact>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 
     <dependencies>
         <dependency>

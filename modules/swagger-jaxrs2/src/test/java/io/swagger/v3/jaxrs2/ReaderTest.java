@@ -15,9 +15,11 @@ import io.swagger.v3.core.util.PrimitiveType;
 import io.swagger.v3.jaxrs2.matchers.SerializationMatchers;
 import io.swagger.v3.jaxrs2.petstore31.PetResource;
 import io.swagger.v3.jaxrs2.petstore31.TagResource;
+import io.swagger.v3.jaxrs2.resources.DefaultResponseResource;
 import io.swagger.v3.jaxrs2.resources.Misc31Resource;
 import io.swagger.v3.jaxrs2.resources.ParameterMaximumValueResource;
 import io.swagger.v3.jaxrs2.resources.ResponseReturnTypeResource;
+import io.swagger.v3.jaxrs2.resources.SchemaAdditionalPropertiesResource;
 import io.swagger.v3.jaxrs2.resources.SchemaPropertiesResource;
 import io.swagger.v3.jaxrs2.resources.SiblingPropResource;
 import io.swagger.v3.jaxrs2.resources.SiblingsResource;
@@ -78,6 +80,7 @@ import io.swagger.v3.jaxrs2.resources.Ticket3731BisResource;
 import io.swagger.v3.jaxrs2.resources.Ticket3731Resource;
 import io.swagger.v3.jaxrs2.resources.Ticket4412Resource;
 import io.swagger.v3.jaxrs2.resources.Ticket4446Resource;
+import io.swagger.v3.jaxrs2.resources.Ticket4483Resource;
 import io.swagger.v3.jaxrs2.resources.UploadResource;
 import io.swagger.v3.jaxrs2.resources.UrlEncodedResourceWithEncodings;
 import io.swagger.v3.jaxrs2.resources.UserAnnotationResource;
@@ -140,9 +143,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CompletionStage;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.stream.Collectors;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
@@ -3011,6 +3012,75 @@ public class ReaderTest {
         SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
     }
 
+    @Test(description = "Test Schema AdditionalProperties annotations")
+    public void testSchemaAdditionalProperties() {
+        Reader reader = new Reader(new OpenAPI());
+
+        OpenAPI openAPI = reader.read(SchemaAdditionalPropertiesResource.class);
+        String yaml = "openapi: 3.0.1\n" +
+                "paths:\n" +
+                "  /arraySchemaImpl:\n" +
+                "    get:\n" +
+                "      operationId: arraySchemaImpl\n" +
+                "      responses:\n" +
+                "        \"200\":\n" +
+                "          description: voila!\n" +
+                "          content:\n" +
+                "            application/json:\n" +
+                "              schema:\n" +
+                "                type: object\n" +
+                "                additionalProperties:\n" +
+                "                  type: array\n" +
+                "                  items:\n" +
+                "                    $ref: '#/components/schemas/Pet'\n" +
+                "  /fromtResponseType:\n" +
+                "    get:\n" +
+                "      operationId: fromtResponseType\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*':\n" +
+                "              schema:\n" +
+                "                type: object\n" +
+                "                additionalProperties:\n" +
+                "                  type: array\n" +
+                "                  items:\n" +
+                "                    $ref: '#/components/schemas/Pet'\n" +
+                "  /schemaImpl:\n" +
+                "    get:\n" +
+                "      operationId: schemaImpl\n" +
+                "      responses:\n" +
+                "        \"200\":\n" +
+                "          description: voila!\n" +
+                "          content:\n" +
+                "            application/json:\n" +
+                "              schema:\n" +
+                "                type: object\n" +
+                "                additionalProperties:\n" +
+                "                  $ref: '#/components/schemas/Pet'\n" +
+                "  /schemaNotImpl:\n" +
+                "    get:\n" +
+                "      operationId: schemaNotImpl\n" +
+                "      responses:\n" +
+                "        \"200\":\n" +
+                "          description: voila!\n" +
+                "          content:\n" +
+                "            application/json:\n" +
+                "              schema:\n" +
+                "                type: object\n" +
+                "                additionalProperties:\n" +
+                "                  $ref: '#/components/schemas/Pet'\n" +
+                "components:\n" +
+                "  schemas:\n" +
+                "    Pet:\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        foo:\n" +
+                "          type: string\n";
+        SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
+    }
+
     @Test(description = "Responses schema resolved from return type")
     public void testResponseReturnType() {
         Reader reader = new Reader(new OpenAPI());
@@ -3075,6 +3145,27 @@ public class ReaderTest {
                 "      properties:\n" +
                 "        foo:\n" +
                 "          type: string";
+        SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
+    }
+
+    @Test(description = "Responses Default Status")
+    public void testResponseDefaultStatus() {
+        SwaggerConfiguration config = new SwaggerConfiguration().defaultResponseCode("200");
+        Reader reader = new Reader(config);
+
+        OpenAPI openAPI = reader.read(DefaultResponseResource.class);
+        String yaml = "openapi: 3.0.1\n" +
+                "paths:\n" +
+                "  /:\n" +
+                "    get:\n" +
+                "      operationId: test\n" +
+                "      responses:\n" +
+                "        \"200\":\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*':\n" +
+                "              schema:\n" +
+                "                type: string\n";
         SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
     }
 
@@ -3285,6 +3376,7 @@ public class ReaderTest {
                 "components:\n" +
                 "  schemas:\n" +
                 "    Bar:\n" +
+                "      type: object\n" +
                 "      deprecated: true\n" +
                 "      description: Bar\n" +
                 "      properties:\n" +
@@ -3301,6 +3393,7 @@ public class ReaderTest {
                 "          - string\n" +
                 "          format: int32\n" +
                 "    Category:\n" +
+                "      type: object\n" +
                 "      properties:\n" +
                 "        id:\n" +
                 "          type: integer\n" +
@@ -3310,6 +3403,7 @@ public class ReaderTest {
                 "      xml:\n" +
                 "        name: Category\n" +
                 "    Foo:\n" +
+                "      type: object\n" +
                 "      deprecated: true\n" +
                 "      description: Foo\n" +
                 "      properties:\n" +
@@ -3327,6 +3421,7 @@ public class ReaderTest {
                 "          - object\n" +
                 "          format: int32\n" +
                 "    IfSchema:\n" +
+                "      type: object\n" +
                 "      deprecated: true\n" +
                 "      description: if schema\n" +
                 "      properties:\n" +
@@ -3344,6 +3439,7 @@ public class ReaderTest {
                 "          - object\n" +
                 "          format: int32\n" +
                 "    Pet:\n" +
+                "      type: object\n" +
                 "      properties:\n" +
                 "        id:\n" +
                 "          type: integer\n" +
@@ -3377,6 +3473,7 @@ public class ReaderTest {
                 "      xml:\n" +
                 "        name: Pet\n" +
                 "    Tag:\n" +
+                "      type: object\n" +
                 "      properties:\n" +
                 "        id:\n" +
                 "          type: integer\n" +
@@ -3417,6 +3514,7 @@ public class ReaderTest {
                 "components:\n" +
                 "  schemas:\n" +
                 "    Foo:\n" +
+                "      type: object\n" +
                 "      deprecated: true\n" +
                 "      description: Foo\n" +
                 "      properties:\n" +
@@ -3434,6 +3532,7 @@ public class ReaderTest {
                 "          - object\n" +
                 "          format: int32\n" +
                 "    SimpleTag:\n" +
+                "      type: object\n" +
                 "      properties:\n" +
                 "        annotated:\n" +
                 "          $ref: '#/components/schemas/SimpleCategory'\n" +
@@ -3441,7 +3540,8 @@ public class ReaderTest {
                 "          properties:\n" +
                 "            foo:\n" +
                 "              $ref: '#/components/schemas/Foo'\n" +
-                "    SimpleCategory: {}\n";
+                "    SimpleCategory:\n" +
+                "      type: object\n" ;
         SerializationMatchers.assertEqualsToYaml31(openAPI, yaml);
     }
 
@@ -3465,12 +3565,14 @@ public class ReaderTest {
                 "components:\n" +
                 "  schemas:\n" +
                 "    Category:\n" +
+                "      type: object\n" +
                 "      description: parent\n" +
                 "      properties:\n" +
                 "        id:\n" +
                 "          type: integer\n" +
                 "          format: int64\n" +
                 "    Pet:\n" +
+                "      type: object\n" +
                 "      description: Pet\n" +
                 "      properties:\n" +
                 "        category:\n" +
@@ -3513,6 +3615,7 @@ public class ReaderTest {
                 "components:\n" +
                 "  schemas:\n" +
                 "    PetSimple:\n" +
+                "      type: object\n" +
                 "      description: Pet\n";
         SerializationMatchers.assertEqualsToYaml31(openAPI, yaml);
     }
@@ -3561,6 +3664,7 @@ public class ReaderTest {
                 "components:\n" +
                 "  schemas:\n" +
                 "    PetSimple:\n" +
+                "      type: object\n" +
                 "      description: Pet\n";
         SerializationMatchers.assertEqualsToYaml31(openAPI, yaml);
     }
@@ -3606,6 +3710,7 @@ public class ReaderTest {
                 "components:\n" +
                 "  schemas:\n" +
                 "    PetSimple:\n" +
+                "      type: object\n" +
                 "      description: Pet\n";
         SerializationMatchers.assertEqualsToYaml31(openAPI, yaml);
     }
@@ -3682,6 +3787,7 @@ public class ReaderTest {
                 "components:\n" +
                 "  schemas:\n" +
                 "    PetSimple:\n" +
+                "      type: object\n" +
                 "      description: Pet\n";
         SerializationMatchers.assertEqualsToYaml31(openAPI, yaml);
     }
@@ -3745,12 +3851,14 @@ public class ReaderTest {
                 "components:\n" +
                 "  schemas:\n" +
                 "    Category:\n" +
+                "      type: object\n" +
                 "      description: parent\n" +
                 "      properties:\n" +
                 "        id:\n" +
                 "          type: integer\n" +
                 "          format: int64\n" +
                 "    Pet:\n" +
+                "      type: object\n" +
                 "      description: Pet\n" +
                 "      properties:\n" +
                 "        category:\n" +
@@ -3841,6 +3949,7 @@ public class ReaderTest {
                 "            creditCard:\n" +
                 "              $ref: '#/components/schemas/CreditCard'\n" +
                 "    MultipleBaseBean:\n" +
+                "      type: object\n" +
                 "      description: MultipleBaseBean\n" +
                 "      properties:\n" +
                 "        beanType:\n" +
@@ -3869,6 +3978,7 @@ public class ReaderTest {
                 "            format: int32\n" +
                 "      description: MultipleSub2Bean\n" +
                 "    Address:\n" +
+                "      type: object\n" +
                 "      if:\n" +
                 "        $ref: '#/components/schemas/AnnotatedCountry'\n" +
                 "      then:\n" +
@@ -3889,22 +3999,27 @@ public class ReaderTest {
                 "      propertyNames:\n" +
                 "        $ref: '#/components/schemas/PropertyNamesPattern'\n" +
                 "    AnnotatedCountry:\n" +
+                "      type: object\n" +
                 "      properties:\n" +
                 "        country:\n" +
                 "          const: United States\n" +
                 "    CreditCard:\n" +
+                "      type: object\n" +
                 "      properties:\n" +
                 "        billingAddress:\n" +
                 "          type: string\n" +
                 "    PostalCodeNumberPattern:\n" +
+                "      type: object\n" +
                 "      properties:\n" +
                 "        postalCode:\n" +
                 "          pattern: \"[0-9]{5}(-[0-9]{4})?\"\n" +
                 "    PostalCodePattern:\n" +
+                "      type: object\n" +
                 "      properties:\n" +
                 "        postalCode:\n" +
                 "          pattern: \"[A-Z][0-9][A-Z] [0-9][A-Z][0-9]\"\n" +
                 "    PropertyNamesPattern:\n" +
+                "      type: object\n" +
                 "      pattern: \"^[A-Za-z_][A-Za-z0-9_]*$\"\n";
         SerializationMatchers.assertEqualsToYaml31(openAPI, yaml);
     }
@@ -3968,5 +4083,86 @@ public class ReaderTest {
                 "          content:\n" +
                 "            '*/*': {}\n";
         SerializationMatchers.assertEqualsToYaml31(openAPI, yaml);
+    }
+
+    @Test
+    public void test4483Response() {
+        Reader reader = new Reader(new OpenAPI());
+
+        OpenAPI openAPI = reader.read(Ticket4483Resource.class);
+        String yaml = "openapi: 3.0.1\n" +
+                "tags:\n" +
+                "- name: Dummy\n" +
+                "  description: Dummy resource for testing setup\n" +
+                "paths:\n" +
+                "  /test:\n" +
+                "    get:\n" +
+                "      tags:\n" +
+                "      - Dummy\n" +
+                "      description: Dummy GET\n" +
+                "      operationId: dummy\n" +
+                "      responses:\n" +
+                "        \"401\":\n" +
+                "          description: Authentication is required\n" +
+                "          content:\n" +
+                "            application/json:\n" +
+                "              schema:\n" +
+                "                type: array\n" +
+                "                items:\n" +
+                "                  $ref: '#/components/schemas/LocalizedError'\n" +
+                "        \"200\":\n" +
+                "          description: test\n" +
+                "          content:\n" +
+                "            application/json:\n" +
+                "              schema:\n" +
+                "                type: object\n" +
+                "                additionalProperties:\n" +
+                "                  type: boolean\n" +
+                "  /test/opresp:\n" +
+                "    get:\n" +
+                "      tags:\n" +
+                "      - Dummy\n" +
+                "      operationId: dummyopresp\n" +
+                "      responses:\n" +
+                "        \"401\":\n" +
+                "          description: Authentication is required\n" +
+                "          content:\n" +
+                "            application/json:\n" +
+                "              schema:\n" +
+                "                type: array\n" +
+                "                items:\n" +
+                "                  $ref: '#/components/schemas/LocalizedError'\n" +
+                "        \"200\":\n" +
+                "          description: Dummy GET opresp\n" +
+                "          content:\n" +
+                "            application/json:\n" +
+                "              schema:\n" +
+                "                type: object\n" +
+                "                additionalProperties:\n" +
+                "                  type: boolean\n" +
+                "  /test/oprespnodesc:\n" +
+                "    get:\n" +
+                "      tags:\n" +
+                "      - Dummy\n" +
+                "      operationId: oprespnodesc\n" +
+                "      responses:\n" +
+                "        \"401\":\n" +
+                "          description: Authentication is required\n" +
+                "          content:\n" +
+                "            application/json:\n" +
+                "              schema:\n" +
+                "                type: array\n" +
+                "                items:\n" +
+                "                  $ref: '#/components/schemas/LocalizedError'\n" +
+                "components:\n" +
+                "  schemas:\n" +
+                "    LocalizedError:\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        code:\n" +
+                "          type: string\n" +
+                "        message:\n" +
+                "          type: string\n";
+        SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
     }
 }

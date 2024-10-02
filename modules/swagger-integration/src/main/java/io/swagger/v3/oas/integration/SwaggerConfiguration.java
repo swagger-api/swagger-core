@@ -2,6 +2,7 @@ package io.swagger.v3.oas.integration;
 
 import io.swagger.v3.oas.integration.api.OpenAPIConfiguration;
 import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.media.Schema;
 
 import java.util.Collection;
 import java.util.Map;
@@ -39,6 +40,24 @@ public class SwaggerConfiguration implements OpenAPIConfiguration {
     private Boolean openAPI31 = false;
 
     private Boolean convertToOpenAPI31;
+
+    private Schema.SchemaResolution schemaResolution = Schema.SchemaResolution.DEFAULT;
+
+    @Override
+    public String getDefaultResponseCode() {
+        return defaultResponseCode;
+    }
+
+    public void setDefaultResponseCode(String defaultResponseCode) {
+        this.defaultResponseCode = defaultResponseCode;
+    }
+
+    public SwaggerConfiguration defaultResponseCode(String defaultResponseCode) {
+        this.defaultResponseCode = defaultResponseCode;
+        return this;
+    }
+
+    private String defaultResponseCode;
 
     public Long getCacheTTL() {
         return cacheTTL;
@@ -355,6 +374,20 @@ public class SwaggerConfiguration implements OpenAPIConfiguration {
      */
     public SwaggerConfiguration convertToOpenAPI31(Boolean convertToOpenAPI31) {
         this.setConvertToOpenAPI31(convertToOpenAPI31);
+        return this;
+    }
+
+    @Override
+    public Schema.SchemaResolution getSchemaResolution() {
+        return schemaResolution;
+    }
+
+    public void setSchemaResolution(Schema.SchemaResolution schemaResolution) {
+        this.schemaResolution = schemaResolution;
+    }
+
+    public SwaggerConfiguration schemaResolution(Schema.SchemaResolution schemaResolution) {
+        this.setSchemaResolution(schemaResolution);
         return this;
     }
 }

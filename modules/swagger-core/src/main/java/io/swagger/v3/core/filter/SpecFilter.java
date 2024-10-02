@@ -12,7 +12,6 @@ import io.swagger.v3.oas.models.Paths;
 import io.swagger.v3.oas.models.callbacks.Callback;
 import io.swagger.v3.oas.models.headers.Header;
 import io.swagger.v3.oas.models.media.ArraySchema;
-import io.swagger.v3.oas.models.media.ComposedSchema;
 import io.swagger.v3.oas.models.media.Content;
 import io.swagger.v3.oas.models.media.MediaType;
 import io.swagger.v3.oas.models.media.Schema;
@@ -86,7 +85,7 @@ public class SpecFilter {
 
         if (filteredOpenAPI.getWebhooks() != null) {
             for (String resourcePath : filteredOpenAPI.getWebhooks().keySet()) {
-                PathItem pathItem = filteredOpenAPI.getPaths().get(resourcePath);
+                PathItem pathItem = filteredOpenAPI.getWebhooks().get(resourcePath);
 
                 PathItem filteredPathItem = filterPathItem(filter, pathItem, resourcePath, params, cookies, headers);
                 PathItem clonedPathItem = cloneFilteredPathItem(filter,filteredPathItem, resourcePath, params, cookies, headers, allowedTags, filteredTags);
@@ -308,20 +307,25 @@ public class SpecFilter {
         if (schema instanceof ArraySchema &&
                 ((ArraySchema) schema).getItems() != null) {
             addSchemaRef(((ArraySchema) schema).getItems(), referencedDefinitions);
-        } else if (schema instanceof ComposedSchema) {
-            ComposedSchema composedSchema = (ComposedSchema) schema;
-            if (composedSchema.getAllOf() != null) {
-                for (Schema ref : composedSchema.getAllOf()) {
+        } else if (schema.getTypes() != null && schema.getTypes().contains("array") && schema.getItems() != null) {
+            addSchemaRef(schema.getItems(), referencedDefinitions);
+        } else {
+            List<Schema> allOf = schema.getAllOf();
+            List<Schema> anyOf = schema.getAnyOf();
+            List<Schema> oneOf = schema.getOneOf();
+
+            if (allOf != null) {
+                for (Schema ref : allOf) {
                     addSchemaRef(ref, referencedDefinitions);
                 }
             }
-            if (composedSchema.getAnyOf() != null) {
-                for (Schema ref : composedSchema.getAnyOf()) {
+            if (anyOf != null) {
+                for (Schema ref : anyOf) {
                     addSchemaRef(ref, referencedDefinitions);
                 }
             }
-            if (composedSchema.getOneOf() != null) {
-                for (Schema ref : composedSchema.getOneOf()) {
+            if (oneOf != null) {
+                for (Schema ref : oneOf) {
                     addSchemaRef(ref, referencedDefinitions);
                 }
             }

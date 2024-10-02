@@ -11,6 +11,7 @@ import io.swagger.v3.oas.integration.OpenApiConfigurationException;
 import io.swagger.v3.oas.integration.SwaggerConfiguration;
 import io.swagger.v3.oas.integration.api.OpenApiContext;
 import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.media.Schema;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -184,6 +185,7 @@ public class SwaggerMojo extends AbstractMojo {
         if (config.isConvertToOpenAPI31() == null) {
             config.setConvertToOpenAPI31(convertToOpenAPI31);
         }
+
     }
 
     /**
@@ -345,11 +347,18 @@ public class SwaggerMojo extends AbstractMojo {
         if (StringUtils.isNotBlank(objectMapperProcessorClass)) {
             config.objectMapperProcessorClass(objectMapperProcessorClass);
         }
+        if (StringUtils.isNotBlank(defaultResponseCode)) {
+            config.defaultResponseCode(defaultResponseCode);
+        }
         if (isCollectionNotBlank(modelConverterClasses)) {
             config.modelConverterClasses(modelConverterClasses);
         }
         if (openapi31 != null) {
             config.openAPI31(openapi31);
+        }
+
+        if (StringUtils.isNotBlank(schemaResolution)) {
+            config.schemaResolution(Schema.SchemaResolution.valueOf(schemaResolution));
         }
 
         return config;
@@ -385,6 +394,11 @@ public class SwaggerMojo extends AbstractMojo {
      */
     @Parameter( property = "resolve.objectMapperProcessorClass" )
     private String objectMapperProcessorClass;
+    /**
+     * @since 2.2.17
+     */
+    @Parameter( property = "resolve.defaultResponseCode" )
+    private String defaultResponseCode;
     @Parameter(property = "resolve.prettyPrint")
     private Boolean prettyPrint;
     @Parameter(property = "resolve.readAllResources")
@@ -444,6 +458,12 @@ public class SwaggerMojo extends AbstractMojo {
      */
     @Parameter(property = "resolve.convertToOpenAPI31")
     private Boolean convertToOpenAPI31;
+
+    /**
+     * @since 2.2.24
+     */
+    @Parameter(property = "resolve.schemaResolution")
+    private String schemaResolution;
 
     private String projectEncoding = "UTF-8";
     private SwaggerConfiguration config;

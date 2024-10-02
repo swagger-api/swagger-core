@@ -44,6 +44,7 @@ paths:
         - name: arrayParameter
           in: query
           required: true
+          explode: true
           content:
             application/json:
               schema:
@@ -58,6 +59,7 @@ paths:
         - name: arrayParameterImplementation
           in: query
           required: true
+          explode: true
           schema:
             type: array
             contains: {}
@@ -98,6 +100,7 @@ paths:
 components:
   schemas:
     Category:
+      type: object
       properties:
         id:
           type: integer
@@ -107,6 +110,7 @@ components:
       xml:
         name: Category
     Pet:
+      type: object
       properties:
         id:
           type: integer
@@ -137,6 +141,7 @@ components:
       xml:
         name: Pet
     Tag:
+      type: object
       properties:
         id:
           type: integer
@@ -144,8 +149,9 @@ components:
         name:
           type: string
       xml:
-        name: Tag
+        name: tag
     User:
+      type: object
       properties:
         id:
           type: integer
@@ -169,6 +175,7 @@ components:
       xml:
         name: User
     SubscriptionResponse:
+      type: object
       properties:
         subscriptionId:
           type: string

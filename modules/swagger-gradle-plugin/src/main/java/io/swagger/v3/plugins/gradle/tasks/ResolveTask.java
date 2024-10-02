@@ -77,6 +77,10 @@ public class ResolveTask extends DefaultTask {
 
     private Boolean convertToOpenAPI31 = false;
 
+    private String schemaResolution;
+
+    private String defaultResponseCode;
+
     @Input
     @Optional
     public String getOutputFileName() {
@@ -228,6 +232,22 @@ public class ResolveTask extends DefaultTask {
     }
 
     /**
+     * @since 2.2.17
+     */
+    @Input
+    @Optional
+    public String getDefaultResponseCode() {
+        return defaultResponseCode;
+    }
+
+    /**
+     * @since 2.2.17
+     */
+    public void setDefaultResponseCode(String defaultResponseCode) {
+        this.defaultResponseCode = defaultResponseCode;
+    }
+
+    /**
      * @since 2.0.6
      */
     @Input
@@ -368,6 +388,19 @@ public class ResolveTask extends DefaultTask {
         }
     }
 
+    /**
+     * @since 2.2.24
+     */
+    @Input
+    @Optional
+    public String getSchemaResolution() {
+        return schemaResolution;
+    }
+
+    public void setSchemaResolution(String schemaResolution) {
+        this.schemaResolution = schemaResolution;
+    }
+
     @TaskAction
     public void resolve() throws GradleException {
         if (skip) {
@@ -461,6 +494,11 @@ public class ResolveTask extends DefaultTask {
                 method.invoke(swaggerLoader, objectMapperProcessorClass);
             }
 
+            if (StringUtils.isNotBlank(defaultResponseCode)) {
+                method=swaggerLoaderClass.getDeclaredMethod("setDefaultResponseCode",String.class);
+                method.invoke(swaggerLoader, defaultResponseCode);
+            }
+
             method=swaggerLoaderClass.getDeclaredMethod("setPrettyPrint", Boolean.class);
             method.invoke(swaggerLoader, prettyPrint);
 
@@ -481,6 +519,9 @@ public class ResolveTask extends DefaultTask {
 
             method=swaggerLoaderClass.getDeclaredMethod("setConvertToOpenAPI31", Boolean.class);
             method.invoke(swaggerLoader, convertToOpenAPI31);
+
+            method=swaggerLoaderClass.getDeclaredMethod("setSchemaResolution", String.class);
+            method.invoke(swaggerLoader, schemaResolution);
 
             method=swaggerLoaderClass.getDeclaredMethod("resolve");
             Map<String, String> specs = (Map<String, String>)method.invoke(swaggerLoader);

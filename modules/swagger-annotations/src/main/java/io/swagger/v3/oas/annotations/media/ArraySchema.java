@@ -39,9 +39,10 @@ public @interface ArraySchema {
      *
      * @since 2.2.12
      *
+     * @deprecated since 2.2.21, use {@link #schema()} instead. Marked for removal in future versions.
      * @return items
      */
-
+    @Deprecated
     Schema items() default @Schema;
 
     /**

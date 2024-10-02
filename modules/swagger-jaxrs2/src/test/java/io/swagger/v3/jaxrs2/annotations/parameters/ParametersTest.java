@@ -88,6 +88,7 @@ public class ParametersTest extends AbstractAnnotationTest {
                 "      - name: arrayParameter\n" +
                 "        in: query\n" +
                 "        required: true\n" +
+                "        explode: true\n" +
                 "        content:\n" +
                 "          application/json:\n" +
                 "            schema:\n" +
@@ -102,6 +103,7 @@ public class ParametersTest extends AbstractAnnotationTest {
                 "      - name: arrayParameterImplementation\n" +
                 "        in: query\n" +
                 "        required: true\n" +
+                "        explode: true\n" +
                 "        schema:\n" +
                 "          maxItems: 10\n" +
                 "          minItems: 1\n" +
@@ -148,6 +150,7 @@ public class ParametersTest extends AbstractAnnotationTest {
                 "      - name: arrayParameter\n" +
                 "        in: query\n" +
                 "        required: true\n" +
+                "        explode: true\n" +
                 "        schema:\n" +
                 "          maxItems: 10\n" +
                 "          minItems: 1\n" +
@@ -220,6 +223,7 @@ public class ParametersTest extends AbstractAnnotationTest {
                 "      - name: arrayParameter\n" +
                 "        in: query\n" +
                 "        required: true\n" +
+                "        explode: true\n" +
                 "        content:\n" +
                 "          application/json:\n" +
                 "            schema:\n" +
@@ -234,6 +238,7 @@ public class ParametersTest extends AbstractAnnotationTest {
                 "      - name: arrayParameterImplementation\n" +
                 "        in: query\n" +
                 "        required: true\n" +
+                "        explode: true\n" +
                 "        schema:\n" +
                 "          maxItems: 10\n" +
                 "          minItems: 1\n" +
