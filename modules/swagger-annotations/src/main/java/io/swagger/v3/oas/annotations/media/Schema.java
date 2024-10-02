@@ -554,6 +554,14 @@ public @interface Schema {
         NOT_REQUIRED;
     }
 
+    enum SchemaResolution {
+        AUTO,
+        DEFAULT,
+        INLINE,
+        ALL_OF,
+        ALL_OF_REF;
+    }
+
     /**
      * Allows to specify the dependentRequired value
      **
@@ -616,4 +624,17 @@ public @interface Schema {
      */
     @OpenAPI31
     String _const() default "";
+
+    /**
+     * Allows to specify the schema resolution mode for object schemas
+     *
+     * SchemaResolution.DEFAULT: bundled into components/schemas, $ref with no siblings
+     * SchemaResolution.INLINE: inline schema, no $ref
+     * SchemaResolution.ALL_OF: bundled into components/schemas, $ref and any context annotation resolution into allOf
+     * SchemaResolution.ALL_OF_REF: bundled into components/schemas, $ref into allOf, context annotation resolution into root
+     *
+     * @return the schema resolution mode for this schema
+     *
+     */
+    SchemaResolution schemaResolution() default SchemaResolution.AUTO;
 }

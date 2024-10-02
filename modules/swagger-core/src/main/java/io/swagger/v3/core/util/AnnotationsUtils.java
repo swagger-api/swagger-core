@@ -2658,6 +2658,15 @@ public abstract class AnnotationsUtils {
                 return patch.additionalPropertiesSchema();
             }
 
+            /* We always want the patch to take precedence in schema resolution behavior */
+            @Override
+            public SchemaResolution schemaResolution() {
+                if (!patch.schemaResolution().equals(SchemaResolution.DEFAULT) || master.schemaResolution().equals(SchemaResolution.DEFAULT)) {
+                    return patch.schemaResolution();
+                }
+                return master.schemaResolution();
+            }
+
         };
 
         return (io.swagger.v3.oas.annotations.media.Schema)schema;
@@ -2874,4 +2883,10 @@ public abstract class AnnotationsUtils {
         return (io.swagger.v3.oas.annotations.media.ArraySchema)newArraySchema;
     }
 
+    public static Schema.SchemaResolution resolveSchemaResolution(Schema.SchemaResolution globalSchemaResolution, io.swagger.v3.oas.annotations.media.Schema schemaAnnotation) {
+        if (schemaAnnotation != null && !io.swagger.v3.oas.annotations.media.Schema.SchemaResolution.AUTO.equals(schemaAnnotation.schemaResolution())) {
+            return Schema.SchemaResolution.valueOf(schemaAnnotation.schemaResolution().toString());
+        }
+        return globalSchemaResolution;
+    }
 }
