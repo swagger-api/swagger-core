@@ -16,6 +16,7 @@ import io.swagger.v3.jaxrs2.matchers.SerializationMatchers;
 import io.swagger.v3.jaxrs2.petstore31.PetResource;
 import io.swagger.v3.jaxrs2.petstore31.TagResource;
 import io.swagger.v3.jaxrs2.resources.DefaultResponseResource;
+import io.swagger.v3.jaxrs2.resources.TestControllerWithRecordResource;
 import io.swagger.v3.jaxrs2.resources.Misc31Resource;
 import io.swagger.v3.jaxrs2.resources.ParameterMaximumValueResource;
 import io.swagger.v3.jaxrs2.resources.ResponseReturnTypeResource;
@@ -4164,5 +4165,41 @@ public class ReaderTest {
                 "        message:\n" +
                 "          type: string\n";
         SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
+    }
+
+    @Test
+    public void TestJavaRecordRef(){
+        Reader reader = new Reader(new SwaggerConfiguration().openAPI(new OpenAPI()).openAPI31(true));
+
+        OpenAPI openAPI = reader.read(TestControllerWithRecordResource.class);
+        String yaml = "openapi: 3.1.0\n" +
+                "paths:\n" +
+                "  /v17:\n" +
+                "    post:\n" +
+                "      operationId: opsRecordID\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: Successful operation\n" +
+                "          content:\n" +
+                "            application/json:\n" +
+                "              schema:\n" +
+                "                $ref: '#/components/schemas/JavaRecordResource'\n" +
+                "components:\n" +
+                "  schemas:\n" +
+                "    JavaRecordResource:\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        test:\n" +
+                "          type: string\n" +
+                "          description: Testing of Java Record Processing\n" +
+                "        isLatest:\n" +
+                "          type: boolean\n" +
+                "        id:\n" +
+                "          type: string\n" +
+                "        age:\n" +
+                "          type: integer\n" +
+                "          format: int32";
+        SerializationMatchers.assertEqualsToYaml31(openAPI, yaml);
+
     }
 }

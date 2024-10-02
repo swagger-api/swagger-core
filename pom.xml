@@ -627,7 +627,7 @@
         </dependencies>
     </dependencyManagement>
     <properties>
-        <maven.compiler.release>8</maven.compiler.release>
+        <maven.compiler.release>17</maven.compiler.release>
         <joda-version>2.2.3</joda-version>
         <joda-time-version>2.13.0</joda-time-version>
         <snakeyaml-version>2.3</snakeyaml-version>
