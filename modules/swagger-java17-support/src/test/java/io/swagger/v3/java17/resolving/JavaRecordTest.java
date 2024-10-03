@@ -1,8 +1,8 @@
-package io.swagger.v3.core.resolving;
+package io.swagger.v3.java17.resolving;
 
 import io.swagger.v3.core.converter.ModelConverters;
-import io.swagger.v3.core.matchers.SerializationMatchers;
 import io.swagger.v3.oas.models.media.Schema;
+import io.swagger.v3.java17.matchers.SerializationMatchers;
 import org.testng.annotations.Test;
 
 import javax.validation.constraints.*;
