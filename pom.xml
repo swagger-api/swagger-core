@@ -395,6 +395,16 @@
                 </plugins>
             </build>
         </profile>
+        <profile>
+            <id>java-17-modules</id>
+            <activation>
+                <jdk>[17,)</jdk>
+            </activation>
+            <modules>
+                <module>modules/swagger-java17-support</module>
+            </modules>
+        </profile>
+
     </profiles>
     <modules>
         <module>modules/swagger-annotations</module>
