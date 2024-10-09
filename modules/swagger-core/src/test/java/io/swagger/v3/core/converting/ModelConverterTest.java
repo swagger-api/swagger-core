@@ -3,6 +3,7 @@ package io.swagger.v3.core.converting;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 import io.swagger.v3.core.converter.ModelConverters;
 import io.swagger.v3.core.matchers.SerializationMatchers;
 import io.swagger.v3.core.oas.models.Cat;
@@ -231,7 +232,7 @@ public class ModelConverterTest {
     @Test(description = "it should convert a model with enum array")
     public void convertModelWithEnumArray() {
         final Map<String, Schema> schemas = readAll(ModelWithEnumArray.class);
-        assertEquals(schemas.size(), 1);
+        assertEquals(schemas.keySet(), Sets.newHashSet("ModelWithEnumArray", "Action"));
     }
 
     private Type getGenericType(Class<?> cls) throws Exception {
