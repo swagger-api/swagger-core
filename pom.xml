@@ -596,7 +596,7 @@
         <maven-plugin-version>1.0.0</maven-plugin-version>
         <commons-lang-version>3.14.0</commons-lang-version>
         <slf4j-version>2.0.9</slf4j-version>
-        <jetty-version>9.4.53.v20231009</jetty-version>
+        <jetty-version>9.4.56.v20240826</jetty-version>
         <servlet-api-version>2.5</servlet-api-version>
         <coverage.complexity.minimum>0.90</coverage.complexity.minimum>
         <coverage.line.minimum>0.90</coverage.line.minimum>
