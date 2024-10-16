@@ -48,5 +48,10 @@ public class EnumTest {
             "components:\n" +
             "  schemas:\n" +
             "    TaskDTO:\n" +
-            "      type: object\n";
+            "      type: object\n" +
+            "    TaskType:\n" +
+            "      type: string\n" +
+            "      enum:\n" +
+            "        - A\n" +
+            "        - B";
 }
