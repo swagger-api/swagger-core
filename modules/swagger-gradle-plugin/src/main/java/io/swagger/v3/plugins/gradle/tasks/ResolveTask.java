@@ -1,20 +1,16 @@
 package io.swagger.v3.plugins.gradle.tasks;
 
-import java.util.stream.Stream;
 import org.apache.commons.lang3.StringUtils;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.GradleException;
-import org.gradle.api.logging.Logging;
-import org.gradle.api.tasks.CacheableTask;
-import org.gradle.api.tasks.Classpath;
-import org.gradle.api.tasks.Input;
-import org.gradle.api.tasks.InputFile;
-import org.gradle.api.tasks.Optional;
-import org.gradle.api.tasks.OutputDirectory;
-import org.gradle.api.tasks.PathSensitive;
-import org.gradle.api.tasks.PathSensitivity;
-import org.gradle.api.tasks.TaskAction;
-import org.slf4j.Logger;
+import org.gradle.api.file.ConfigurableFileCollection;
+import org.gradle.api.file.DirectoryProperty;
+import org.gradle.api.file.RegularFileProperty;
+import org.gradle.api.provider.Property;
+import org.gradle.api.provider.Provider;
+import org.gradle.api.provider.SetProperty;
+import org.gradle.api.tasks.*;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
@@ -26,201 +22,226 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
-import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
+import java.util.stream.Stream;
 
 @CacheableTask
 public class ResolveTask extends DefaultTask {
 
-    private static Logger LOGGER = Logging.getLogger(ResolveTask.class);
-
-    public enum Format {JSON, YAML, JSONANDYAML};
-
-    private String outputFileName = "openapi";
-
-    private String outputPath;
-    private File outputDir;
-
-    private File openApiFile;
-
-    private Format outputFormat = Format.JSON;
-
-    private Set<String> resourcePackages;
-    private Set<String> resourceClasses;
-    private String filterClass;
-    private String readerClass;
-    private String scannerClass;
-    private Boolean prettyPrint = false;
-    private Boolean readAllResources = Boolean.TRUE;
-    private Collection<String> ignoredRoutes;
-    private Iterable<File> buildClasspath;
-    private Iterable<File> classpath;
-
-    private Boolean skip = Boolean.FALSE;
-
-    private String encoding = "UTF-8";
-
-    private LinkedHashSet<String> modelConverterClasses;
-    private String objectMapperProcessorClass;
-
-    private Boolean sortOutput = Boolean.FALSE;
-    private Boolean alwaysResolveAppPath = Boolean.FALSE;
-    private Boolean skipResolveAppPath = Boolean.FALSE;
-
-
-    private String contextId;
-
-    private Boolean openAPI31 = false;
-
-    private Boolean convertToOpenAPI31 = false;
-
-    private String schemaResolution;
-
-    private String defaultResponseCode;
+    public enum Format {JSON, YAML, JSONANDYAML}
 
     @Input
     @Optional
-    public String getOutputFileName() {
-        return outputFileName;
-    }
-
+    public final Property<String> outputFileName = getProject().getObjects().property(String.class);
+    @OutputDirectory
+    public final DirectoryProperty outputDir = getProject().getObjects().directoryProperty();
     @InputFile
     @Optional
     @PathSensitive(PathSensitivity.RELATIVE)
-    public File getOpenApiFile() {
+    public final RegularFileProperty openApiFile = getProject().getObjects().fileProperty();
+    @Input
+    @Optional
+    public final Property<Format> outputFormat = getProject().getObjects().property(Format.class);
+    @Input
+    @Optional
+    public final SetProperty<String> resourcePackages = getProject().getObjects().setProperty(String.class);
+    @Input
+    @Optional
+    public final SetProperty<String> resourceClasses = getProject().getObjects().setProperty(String.class);
+    @Input
+    @Optional
+    public final Property<String> filterClass = getProject().getObjects().property(String.class);
+    @Input
+    @Optional
+    public final Property<String> readerClass = getProject().getObjects().property(String.class);
+    @Input
+    @Optional
+    public final Property<String> scannerClass = getProject().getObjects().property(String.class);
+    @Input
+    @Optional
+    public final Property<Boolean> prettyPrint = getProject().getObjects().property(Boolean.class);
+    @Input
+    @Optional
+    public final Property<Boolean> readAllResources = getProject().getObjects().property(Boolean.class);
+    @Input
+    @Optional
+    public final SetProperty<String> ignoredRoutes = getProject().getObjects().setProperty(String.class);
+    @Classpath
+    @Optional
+    public final ConfigurableFileCollection buildClasspath = getProject().getObjects().fileCollection();
+    @Classpath
+    public final ConfigurableFileCollection classpath = getProject().getObjects().fileCollection();
+    /**
+     * Completely skips execution of the task.
+     *
+     * @deprecated if you want to skip the task do not execute it in the first place or remove the task dependency
+     * that causes it to run
+     */
+    @Deprecated
+    @Input
+    @Optional
+    public final Property<Boolean> skip = getProject().getObjects().property(Boolean.class);
+    @Input
+    @Optional
+
+    public final Property<String> encoding = getProject().getObjects().property(String.class);
+    /**
+     * @since 2.0.6
+     */
+    @Input
+    @Optional
+    public final SetProperty<String> modelConverterClasses = getProject().getObjects().setProperty(String.class);
+    @Input
+    @Optional
+    public final Property<String> objectMapperProcessorClass = getProject().getObjects().property(String.class);
+    @Input
+    @Optional
+    public final Property<Boolean> sortOutput = getProject().getObjects().property(Boolean.class);
+    @Input
+    @Optional
+
+    public final Property<Boolean> alwaysResolveAppPath = getProject().getObjects().property(Boolean.class);
+    @Input
+    @Optional
+
+
+    public final Property<Boolean> skipResolveAppPath = getProject().getObjects().property(Boolean.class);
+    @Input
+    @Optional
+    public final Property<String> contextId = getProject().getObjects().property(String.class);
+    @Input
+    @Optional
+    public final Property<Boolean> openAPI31 = getProject().getObjects().property(Boolean.class);
+
+    /**
+     * @since 2.2.12
+     */
+    @Input
+    @Optional
+    public final Property<Boolean> convertToOpenAPI31 = getProject().getObjects().property(Boolean.class);
+
+    /**
+     * @since 2.2.24
+     */
+    @Input
+    @Optional
+    public final Property<String> schemaResolution = getProject().getObjects().property(String.class);
+    @Input
+    @Optional
+    public final Property<String> defaultResponseCode = getProject().getObjects().property(String.class);
+
+    public Property<String> getOutputFileName() {
+        return outputFileName;
+    }
+
+    public RegularFileProperty getOpenApiFile() {
         return openApiFile;
     }
-
-    public void setOpenApiFile(File openApiFile) {
-        this.openApiFile = openApiFile;
+    public DirectoryProperty getOutputDir() {
+        return outputDir;
     }
 
-    @Classpath
-    public Iterable<File> getClasspath() {
+    public void setOutputDir(String outputPath) {
+        this.outputDir.set(getProject().file(outputPath));
+    }
+
+    public void setOutputFileName(String outputFileName) {
+        this.outputFileName.set(outputFileName);
+    }
+
+
+    public void setOpenApiFile(File openApiFile) {
+        this.openApiFile.set(openApiFile);
+    }
+
+    public ConfigurableFileCollection getClasspath() {
         return classpath;
     }
 
     public void setClasspath(Iterable<File> classpath) {
-        this.classpath = classpath;
+        this.classpath.setFrom(classpath);
     }
 
-    @Classpath
-    @Optional
-    public Iterable<File> getBuildClasspath() {
+    public ConfigurableFileCollection getBuildClasspath() {
         return buildClasspath;
     }
 
     public void setBuildClasspath(Iterable<File> buildClasspath) {
-        this.buildClasspath = buildClasspath;
-    }
-
-    public void setOutputFileName(String outputFileName) {
-        this.outputFileName = outputFileName;
+        this.buildClasspath.setFrom(buildClasspath);
     }
 
     /**
-     * @deprecated Use {@linkplain #getOutputDir()} instead.
+     * @deprecated Use {@linkplain #outputDir} instead.
      */
     @Deprecated
-    @Input
-    @Optional
-    public String getOutputPath() {
-        return outputPath;
+    @Internal
+    public Provider<String> getOutputPath() {
+        return outputDir.map(dir -> dir.getAsFile().getPath());
     }
 
     /**
-     * @deprecated Use {@linkplain #setOutputDir(File)} instead.
+     * @deprecated Use {@linkplain #outputDir} instead.
      */
     @Deprecated
     public void setOutputPath(String outputPath) {
-        this.outputPath = outputPath;
-        outputDir = new File(outputPath);
+        this.outputDir.set(getProject().file(outputPath));
     }
 
-    @OutputDirectory
-    public File getOutputDir() {
-        return outputDir;
-    }
-
-    public void setOutputDir(File outputDir) {
-        this.outputDir = outputDir;
-    }
-
-    @Input
-    @Optional
-    public Format getOutputFormat() {
+    public Property<Format> getOutputFormat() {
         return outputFormat;
     }
 
-    public void setOutputFormat(Format outputFormat) {
-        this.outputFormat = outputFormat;
+    public void setOutputFormat(String outputFormat) {
+        this.outputFormat.set(Format.valueOf(outputFormat));
     }
 
-    @Input
-    @Optional
-    public Set<String> getResourcePackages() {
+    public void setOutputFormat(Format outputFormat) {
+        this.outputFormat.set(outputFormat);
+    }
+
+    public SetProperty<String> getResourcePackages() {
         return resourcePackages;
     }
 
     public void setResourcePackages(Set<String> resourcePackages) {
-        this.resourcePackages = resourcePackages;
+        this.resourcePackages.set(resourcePackages);
     }
 
-    /**
-     * @since 2.0.6
-     */
-    @Input
-    @Optional
-    public LinkedHashSet<String> getModelConverterClasses() {
+    public SetProperty<String> getModelConverterClasses() {
         return modelConverterClasses;
     }
 
-    /**
-     * @since 2.0.6
-     */
-    public void setModelConverterClasses(LinkedHashSet<String> modelConverterClasses) {
-        this.modelConverterClasses = modelConverterClasses;
+    public void setModelConverterClasses(Set<String> modelConverterClasses) {
+        this.modelConverterClasses.set(modelConverterClasses);
     }
 
-    @Input
-    @Optional
-    public Set<String> getResourceClasses() {
+    public SetProperty<String> getResourceClasses() {
         return resourceClasses;
     }
 
     public void setResourceClasses(Set<String> resourceClasses) {
-        this.resourceClasses = resourceClasses;
+        this.resourceClasses.set(resourceClasses);
     }
 
-    @Input
-    @Optional
-    public String getFilterClass() {
+    public Property<String> getFilterClass() {
         return filterClass;
     }
 
     public void setFilterClass(String filterClass) {
-        this.filterClass = filterClass;
+        this.filterClass.set(filterClass);
     }
 
-    @Input
-    @Optional
-    public String getReaderClass() {
+    public Property<String> getReaderClass() {
         return readerClass;
     }
 
     public void setReaderClass(String readerClass) {
-        this.readerClass = readerClass;
+        this.readerClass.set(readerClass);
     }
 
-    /**
-     * @since 2.0.6
-     */
-    @Input
-    @Optional
-    public String getObjectMapperProcessorClass() {
+    public Property<String> getObjectMapperProcessorClass() {
         return objectMapperProcessorClass;
     }
 
@@ -228,15 +249,10 @@ public class ResolveTask extends DefaultTask {
      * @since 2.0.6
      */
     public void setObjectMapperProcessorClass(String objectMapperProcessorClass) {
-        this.objectMapperProcessorClass = objectMapperProcessorClass;
+        this.objectMapperProcessorClass.set(objectMapperProcessorClass);
     }
 
-    /**
-     * @since 2.2.17
-     */
-    @Input
-    @Optional
-    public String getDefaultResponseCode() {
+    public Property<String> getDefaultResponseCode() {
         return defaultResponseCode;
     }
 
@@ -244,15 +260,10 @@ public class ResolveTask extends DefaultTask {
      * @since 2.2.17
      */
     public void setDefaultResponseCode(String defaultResponseCode) {
-        this.defaultResponseCode = defaultResponseCode;
+        this.defaultResponseCode.set(defaultResponseCode);
     }
 
-    /**
-     * @since 2.0.6
-     */
-    @Input
-    @Optional
-    public String getContextId() {
+    public Property<String> getContextId() {
         return contextId;
     }
 
@@ -260,95 +271,87 @@ public class ResolveTask extends DefaultTask {
      * @since 2.0.6
      */
     public void setContextId(String contextId) {
-        this.contextId = contextId;
+        this.contextId.set(contextId);
     }
 
-    @Input
-    @Optional
-    public String getScannerClass() {
+    public Property<String> getScannerClass() {
         return scannerClass;
     }
 
     public void setScannerClass(String scannerClass) {
-        this.scannerClass = scannerClass;
+        this.scannerClass.set(scannerClass);
     }
 
-    @Input
-    @Optional
-    public Boolean getPrettyPrint() {
+    public Property<Boolean> getPrettyPrint() {
         return prettyPrint;
     }
 
-    public void setPrettyPrint(Boolean prettyPrint) {
-        this.prettyPrint = prettyPrint;
+    public void setPrettyPrint(@Nullable String prettyPrint) {
+        setPrettyPrint(prettyPrint == null ? null : Boolean.valueOf(prettyPrint));
     }
 
-    @Input
-    @Optional
-    public Boolean getReadAllResources() {
+    public void setPrettyPrint(@Nullable Boolean prettyPrint) {
+        this.prettyPrint.set(prettyPrint);
+    }
+
+    public Property<Boolean> getReadAllResources() {
         return readAllResources;
     }
 
     public void setReadAllResources(Boolean readAllResources) {
-        this.readAllResources = readAllResources;
+        this.readAllResources.set(readAllResources);
+        ;
     }
 
-    @Input
-    @Optional
-    public Collection<String> getIgnoredRoutes() {
+    public void setReadAllResources(@Nullable String readAllResources) {
+        setReadAllResources(readAllResources == null ? null : Boolean.valueOf(readAllResources));
+    }
+
+    public SetProperty<String> getIgnoredRoutes() {
         return ignoredRoutes;
     }
 
     public void setIgnoredRoutes(Collection<String> ignoredRoutes) {
-        this.ignoredRoutes = ignoredRoutes;
+        this.ignoredRoutes.set(ignoredRoutes);
     }
 
-    @Input
-    @Optional
-    public Boolean getSkip() {
+    public Property<Boolean> getSkip() {
         return skip;
     }
 
     public void setSkip(Boolean skip) {
-        this.skip = skip;
+        this.skip.set(skip);
     }
 
-    @Input
-    @Optional
-    public String getEncoding() {
+    public Property<String> getEncoding() {
         return encoding;
     }
 
-    public void setEncoding(String resourceClasses) {
-        this.encoding = encoding;
+    public void setEncoding(String encoding) {
+        this.encoding.set(encoding);
     }
 
-    @Input
-    @Optional
-    public Boolean getSortOutput() {
+    public Property<Boolean> getSortOutput() {
         return sortOutput;
     }
 
     public void setSortOutput(Boolean sortOutput) {
-        this.sortOutput = sortOutput;
+        this.sortOutput.set(sortOutput);
     }
 
-    @Input
-    @Optional
-    public Boolean getAlwaysResolveAppPath() {
+    public Property<Boolean> getAlwaysResolveAppPath() {
         return alwaysResolveAppPath;
     }
 
     public void setAlwaysResolveAppPath(Boolean alwaysResolveAppPath) {
-        this.alwaysResolveAppPath = alwaysResolveAppPath;
+        this.alwaysResolveAppPath.set(alwaysResolveAppPath);
     }
 
-    /**
-     * @since 2.2.15
-     */
-    @Input
-    @Optional
-    public Boolean getSkipResolveAppPath() {
+    public void setAlwaysResolveAppPath(@Nullable String alwaysResolveAppPath) {
+        setAlwaysResolveAppPath(alwaysResolveAppPath == null ? null : Boolean.valueOf(alwaysResolveAppPath));
+    }
+
+    public Property<Boolean> getSkipResolveAppPath() {
         return skipResolveAppPath;
     }
 
@@ -356,183 +359,188 @@ public class ResolveTask extends DefaultTask {
      * @since 2.2.15
      */
     public void setSkipResolveAppPath(Boolean skipResolveAppPath) {
-        this.skipResolveAppPath = skipResolveAppPath;
+        this.skipResolveAppPath.set(skipResolveAppPath);
+        ;
     }
 
-    /**
-     * @since 2.2.0
-     */
-    @Input
-    @Optional
-    public Boolean getOpenAPI31() {
+    public Property<Boolean> getOpenAPI31() {
         return openAPI31;
     }
 
     public void setOpenAPI31(Boolean openAPI31) {
-        this.openAPI31 = openAPI31;
+        this.openAPI31.set(openAPI31);
     }
 
-    /**
-     * @since 2.2.12
-     */
-    @Input
-    @Optional
-    public Boolean getConvertToOpenAPI31() {
+    public void setOpenAPI31(@Nullable String openAPI31) {
+        setOpenAPI31(openAPI31 == null ? null : Boolean.valueOf(openAPI31));
+    }
+
+    public Property<Boolean> getConvertToOpenAPI31() {
         return convertToOpenAPI31;
     }
 
     public void setConvertToOpenAPI31(Boolean convertToOpenAPI31) {
-        this.convertToOpenAPI31 = convertToOpenAPI31;
+        this.convertToOpenAPI31.set(convertToOpenAPI31);
         if (Boolean.TRUE.equals(convertToOpenAPI31)) {
-            this.openAPI31 = true;
+            this.openAPI31.set(Boolean.TRUE);
         }
     }
 
-    /**
-     * @since 2.2.24
-     */
-    @Input
-    @Optional
-    public String getSchemaResolution() {
+    public void setConvertToOpenAPI31(@Nullable String convertToOpenAPI31) {
+        setConvertToOpenAPI31(convertToOpenAPI31 == null ? null : Boolean.valueOf(convertToOpenAPI31));
+    }
+
+    public Property<String> getSchemaResolution() {
         return schemaResolution;
     }
 
     public void setSchemaResolution(String schemaResolution) {
-        this.schemaResolution = schemaResolution;
+        this.schemaResolution.set(schemaResolution);
     }
 
     @TaskAction
     public void resolve() throws GradleException {
-        if (skip) {
-            LOGGER.info( "Skipping OpenAPI specification resolution" );
+        if (skip.getOrElse(false)) {
+            getLogger().warn("You use the deprecated 'skip' property. For better performance prevent the execution instead (for example by calling the `compileJava` task instead)");
+            getLogger().info("Skipping OpenAPI specification resolution");
             return;
         }
-        LOGGER.info( "Resolving OpenAPI specification.." );
-
-        Stream<URL> classpathStream = StreamSupport.stream(getClasspath().spliterator(), false).map(f -> {
+        getLogger().info("Resolving OpenAPI specification..");
+        Stream<URL> classpathStream = classpath.getFiles().stream().map(f -> {
             try {
                 return f.toURI().toURL();
             } catch (MalformedURLException e) {
                 throw new GradleException(
-                    String.format("Could not create classpath for annotations task %s.", getName()), e);
+                        String.format("Could not create classpath for annotations task %s.", getName()), e);
             }
         });
 
-        Stream<URL> buildClasspathStream = StreamSupport.stream(getBuildClasspath().spliterator(), false).map(f -> {
+
+        Stream<URL> buildClasspathStream = buildClasspath.getFiles().stream().map(f -> {
             try {
                 return f.toURI().toURL();
             } catch (MalformedURLException e) {
                 throw new GradleException(
-                    String.format("Could not create classpath for annotations task %s.", getName()), e);
+                        String.format("Could not create classpath for annotations task %s.", getName()), e);
             }
         });
 
         URL[] urls = Stream.concat(classpathStream, buildClasspathStream)
-            .distinct()
-            .toArray(URL[]::new);
+                .distinct()
+                .toArray(URL[]::new);
 
         //ClassLoader classLoader = new URLClassLoader(urls.toArray(new URL[urls.size()]), Thread.currentThread().getContextClassLoader());
-        ClassLoader classLoader = new URLClassLoader(urls);
 
-        try {
-            Class swaggerLoaderClass = classLoader.loadClass("io.swagger.v3.jaxrs2.integration.SwaggerLoader");
+        try (URLClassLoader classLoader = new URLClassLoader(urls)) {
+            Class<?> swaggerLoaderClass = classLoader.loadClass("io.swagger.v3.jaxrs2.integration.SwaggerLoader");
             Object swaggerLoader = swaggerLoaderClass.newInstance();
 
-            Method method =  null;
-            method=swaggerLoaderClass.getDeclaredMethod("setOutputFormat",String.class);
-            method.invoke(swaggerLoader, outputFormat.name());
+            Method method = null;
+            method = swaggerLoaderClass.getDeclaredMethod("setOutputFormat", String.class);
+            method.invoke(swaggerLoader, outputFormat.get().name());
 
-            if (openApiFile != null) {
-                if (openApiFile.exists() && openApiFile.isFile()) {
-                    String openapiFileContent = new String(Files.readAllBytes(openApiFile.toPath()), encoding);
+            if (openApiFile.isPresent()) {
+                final File openApiFileHandle = openApiFile.get().getAsFile();
+                if (openApiFileHandle.exists() && openApiFileHandle.isFile()) {
+                    String openapiFileContent = new String(Files.readAllBytes(openApiFileHandle.toPath()), encoding.get());
                     if (StringUtils.isNotBlank(openapiFileContent)) {
-                        method=swaggerLoaderClass.getDeclaredMethod("setOpenapiAsString",String.class);
+                        method = swaggerLoaderClass.getDeclaredMethod("setOpenapiAsString", String.class);
                         method.invoke(swaggerLoader, openapiFileContent);
                     }
                 }
             }
 
-            if (resourcePackages != null && !resourcePackages.isEmpty()) {
-                method=swaggerLoaderClass.getDeclaredMethod("setResourcePackages",String.class);
-                method.invoke(swaggerLoader, resourcePackages.stream().map(Object::toString).collect(Collectors.joining(",")));
+            if (resourcePackages.isPresent() && !resourcePackages.get().isEmpty()) {
+                method = swaggerLoaderClass.getDeclaredMethod("setResourcePackages", String.class);
+                method.invoke(swaggerLoader, resourcePackages.get().stream().map(Object::toString).collect(Collectors.joining(",")));
             }
-            if (resourceClasses != null && !resourceClasses.isEmpty()) {
-                method=swaggerLoaderClass.getDeclaredMethod("setResourceClasses",String.class);
-                method.invoke(swaggerLoader, resourceClasses.stream().map(Object::toString).collect(Collectors.joining(",")));
+            if (resourceClasses.isPresent() && !resourceClasses.get().isEmpty()) {
+                method = swaggerLoaderClass.getDeclaredMethod("setResourceClasses", String.class);
+                method.invoke(swaggerLoader, resourceClasses.get().stream().map(Object::toString).collect(Collectors.joining(",")));
             }
-            if (modelConverterClasses != null && !modelConverterClasses.isEmpty()) {
-                method=swaggerLoaderClass.getDeclaredMethod("setModelConverterClasses",String.class);
-                method.invoke(swaggerLoader, modelConverterClasses.stream().map(Object::toString).collect(Collectors.joining(",")));
+            if (modelConverterClasses.isPresent() && !modelConverterClasses.get().isEmpty()) {
+                method = swaggerLoaderClass.getDeclaredMethod("setModelConverterClasses", String.class);
+                method.invoke(swaggerLoader, modelConverterClasses.get().stream().map(Object::toString).collect(Collectors.joining(",")));
             }
-            if (ignoredRoutes != null && !ignoredRoutes.isEmpty()) {
-                method=swaggerLoaderClass.getDeclaredMethod("setIgnoredRoutes",String.class);
-                method.invoke(swaggerLoader, ignoredRoutes.stream().map(Object::toString).collect(Collectors.joining(",")));
-            }
-
-            if (StringUtils.isNotBlank(filterClass)) {
-                method=swaggerLoaderClass.getDeclaredMethod("setFilterClass",String.class);
-                method.invoke(swaggerLoader, filterClass);
+            if (ignoredRoutes.isPresent() && !ignoredRoutes.get().isEmpty()) {
+                method = swaggerLoaderClass.getDeclaredMethod("setIgnoredRoutes", String.class);
+                method.invoke(swaggerLoader, ignoredRoutes.get().stream().map(Object::toString).collect(Collectors.joining(",")));
             }
 
-            if (StringUtils.isNotBlank(readerClass)) {
-                method=swaggerLoaderClass.getDeclaredMethod("setReaderClass",String.class);
-                method.invoke(swaggerLoader, readerClass);
+            if (filterClass.isPresent() && StringUtils.isNotBlank(filterClass.get())) {
+                method = swaggerLoaderClass.getDeclaredMethod("setFilterClass", String.class);
+                method.invoke(swaggerLoader, filterClass.get());
             }
 
-            if (StringUtils.isNotBlank(scannerClass)) {
-                method=swaggerLoaderClass.getDeclaredMethod("setScannerClass",String.class);
-                method.invoke(swaggerLoader, scannerClass);
+            if (readerClass.isPresent() && StringUtils.isNotBlank(readerClass.get())) {
+                method = swaggerLoaderClass.getDeclaredMethod("setReaderClass", String.class);
+                method.invoke(swaggerLoader, readerClass.get());
             }
 
-            if (StringUtils.isNotBlank(contextId)) {
-                method=swaggerLoaderClass.getDeclaredMethod("setContextId",String.class);
-                method.invoke(swaggerLoader, contextId);
+            if (scannerClass.isPresent() && StringUtils.isNotBlank(scannerClass.get())) {
+                method = swaggerLoaderClass.getDeclaredMethod("setScannerClass", String.class);
+                method.invoke(swaggerLoader, scannerClass.get());
             }
 
-            if (StringUtils.isNotBlank(objectMapperProcessorClass)) {
-                method=swaggerLoaderClass.getDeclaredMethod("setObjectMapperProcessorClass",String.class);
-                method.invoke(swaggerLoader, objectMapperProcessorClass);
+            if (contextId.isPresent() && StringUtils.isNotBlank(contextId.get())) {
+                method = swaggerLoaderClass.getDeclaredMethod("setContextId", String.class);
+                method.invoke(swaggerLoader, contextId.get());
             }
 
-            if (StringUtils.isNotBlank(defaultResponseCode)) {
-                method=swaggerLoaderClass.getDeclaredMethod("setDefaultResponseCode",String.class);
-                method.invoke(swaggerLoader, defaultResponseCode);
+            if (objectMapperProcessorClass.isPresent() && StringUtils.isNotBlank(objectMapperProcessorClass.get())) {
+                method = swaggerLoaderClass.getDeclaredMethod("setObjectMapperProcessorClass", String.class);
+                method.invoke(swaggerLoader, objectMapperProcessorClass.get());
             }
 
-            method=swaggerLoaderClass.getDeclaredMethod("setPrettyPrint", Boolean.class);
-            method.invoke(swaggerLoader, prettyPrint);
+            if (defaultResponseCode.isPresent() && StringUtils.isNotBlank(defaultResponseCode.get())) {
+                method = swaggerLoaderClass.getDeclaredMethod("setDefaultResponseCode", String.class);
+                method.invoke(swaggerLoader, defaultResponseCode.get());
+            }
 
-            method=swaggerLoaderClass.getDeclaredMethod("setSortOutput", Boolean.class);
-            method.invoke(swaggerLoader, sortOutput);
+            method = swaggerLoaderClass.getDeclaredMethod("setPrettyPrint", Boolean.class);
+            method.invoke(swaggerLoader, prettyPrint.get());
 
-            method=swaggerLoaderClass.getDeclaredMethod("setAlwaysResolveAppPath", Boolean.class);
-            method.invoke(swaggerLoader, alwaysResolveAppPath);
+            method = swaggerLoaderClass.getDeclaredMethod("setSortOutput", Boolean.class);
+            method.invoke(swaggerLoader, sortOutput.get());
 
-            method=swaggerLoaderClass.getDeclaredMethod("setSkipResolveAppPath", Boolean.class);
-            method.invoke(swaggerLoader, skipResolveAppPath);
+            method = swaggerLoaderClass.getDeclaredMethod("setAlwaysResolveAppPath", Boolean.class);
+            method.invoke(swaggerLoader, alwaysResolveAppPath.get());
 
-            method=swaggerLoaderClass.getDeclaredMethod("setReadAllResources", Boolean.class);
-            method.invoke(swaggerLoader, readAllResources);
+            method = swaggerLoaderClass.getDeclaredMethod("setSkipResolveAppPath", Boolean.class);
+            method.invoke(swaggerLoader, skipResolveAppPath.get());
 
-            method=swaggerLoaderClass.getDeclaredMethod("setOpenAPI31", Boolean.class);
-            method.invoke(swaggerLoader, openAPI31);
+            method = swaggerLoaderClass.getDeclaredMethod("setReadAllResources", Boolean.class);
+            method.invoke(swaggerLoader, readAllResources.get());
 
-            method=swaggerLoaderClass.getDeclaredMethod("setConvertToOpenAPI31", Boolean.class);
-            method.invoke(swaggerLoader, convertToOpenAPI31);
+            if (openAPI31.isPresent() && !openAPI31.get() && convertToOpenAPI31.get()) {
+                throw new GradleException("`convertToOpenAPI31` can't be enabled when `openAPI31` support is explicity disabled");
+            }
+            if (openAPI31.isPresent()) {
+                method = swaggerLoaderClass.getDeclaredMethod("setOpenAPI31", Boolean.class);
+                method.invoke(swaggerLoader, openAPI31.get());
+            }
 
-            method=swaggerLoaderClass.getDeclaredMethod("setSchemaResolution", String.class);
-            method.invoke(swaggerLoader, schemaResolution);
+            if (convertToOpenAPI31.isPresent()) {
+                method = swaggerLoaderClass.getDeclaredMethod("setConvertToOpenAPI31", Boolean.class);
+                method.invoke(swaggerLoader, convertToOpenAPI31.get());
+            }
+            if (schemaResolution.isPresent()) {
+                method = swaggerLoaderClass.getDeclaredMethod("setSchemaResolution", String.class);
+                method.invoke(swaggerLoader, schemaResolution.get());
+            }
+            method = swaggerLoaderClass.getDeclaredMethod("resolve");
+            Map<String, String> specs = (Map<String, String>) method.invoke(swaggerLoader);
 
-            method=swaggerLoaderClass.getDeclaredMethod("resolve");
-            Map<String, String> specs = (Map<String, String>)method.invoke(swaggerLoader);
-
+            final Path outputFile = outputDir.getAsFile().get().toPath();
             if (specs.get("JSON") != null) {
-                Path path = outputDir.toPath().resolve(String.format("%s.json", outputFileName));
-                Files.write(path, specs.get("JSON").getBytes(Charset.forName(encoding)));
+                Path path = outputFile.resolve(String.format("%s.json", outputFileName.get()));
+                Files.write(path, specs.get("JSON").getBytes(Charset.forName(encoding.get())));
+                getLogger().debug("Saved openapi to {}", path.toAbsolutePath());
             }
             if (specs.get("YAML") != null) {
-                Path path = outputDir.toPath().resolve(String.format("%s.yaml", outputFileName));
-                Files.write(path, specs.get("YAML").getBytes(Charset.forName(encoding)));
+                Path path = outputFile.resolve(String.format("%s.yaml", outputFileName.get()));
+                Files.write(path, specs.get("YAML").getBytes(Charset.forName(encoding.get())));
+                getLogger().debug("Saved openapi to {}", path.toAbsolutePath());
             }
         } catch (IOException e) {
             throw new GradleException("Failed to write API definition: " + e.getMessage(), e);
