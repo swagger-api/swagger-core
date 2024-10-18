@@ -16,6 +16,8 @@ import io.swagger.v3.core.filter.resources.ReplaceGetOperationsFilter;
 import io.swagger.v3.core.matchers.SerializationMatchers;
 import io.swagger.v3.core.util.Json;
 import io.swagger.v3.core.util.Json31;
+import io.swagger.v3.core.util.Yaml;
+import io.swagger.v3.core.util.Yaml31;
 import io.swagger.v3.core.util.ResourceUtils;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
@@ -46,6 +48,8 @@ public class SpecFilterTest {
     private static final String RESOURCE_RECURSIVE_MODELS = "specFiles/recursivemodels.json";
     private static final String RESOURCE_PATH = "specFiles/petstore-3.0-v2.json";
     private static final String RESOURCE_PATH_3303 = "specFiles/petstore-3.0-v2-ticket-3303.json";
+    private static final String RESOURCE_WITH_REF_DEFINITION_4737 = "specFiles/3.1.0/issue-4737-3.1.yaml";
+    private static final String RESOURCE_WITH_REFERRED_DEFINITIONS= "specFiles/3.1.0/specWithReferredSchemas-3.1.yaml";
     private static final String RESOURCE_PATH_LIST = "specFiles/3.1.0/list-3.1.json";
     private static final String RESOURCE_PATH_COMPOSED_SCHEMA = "specFiles/3.1.0/composed-schema-3.1.json";
     private static final String RESOURCE_REFERRED_SCHEMAS = "specFiles/petstore-3.0-referred-schemas.json";
@@ -450,6 +454,30 @@ public class SpecFilterTest {
         assertNotNull(filtered);
     }
 
+    @Test(description = "RemoveUnreferencedDefinitionsFilter should not remove schema definition if ref used in Webhook")
+    public void testTicket4737() throws IOException {
+        final OpenAPI openAPI = getOpenAPIYaml31(RESOURCE_WITH_REF_DEFINITION_4737);
+        final RemoveUnreferencedDefinitionsFilter remover = new RemoveUnreferencedDefinitionsFilter();
+        final OpenAPI filtered = new SpecFilter().filter(openAPI, remover, null, null, null);
+        assertNotNull(filtered.getComponents().getSchemas().get("RequestDto"));
+    }
+
+    @Test
+    public void shouldNotRemoveUsedDefinitions() throws IOException {
+        final OpenAPI openAPI = getOpenAPIYaml31(RESOURCE_WITH_REFERRED_DEFINITIONS);
+        final RemoveUnreferencedDefinitionsFilter remover = new RemoveUnreferencedDefinitionsFilter();
+        final OpenAPI filtered = new SpecFilter().filter(openAPI, remover, null, null, null);
+        assertNotNull(filtered.getComponents().getSchemas().get("ResponseDefinition"));
+        assertNotNull(filtered.getComponents().getSchemas().get("WebhookResponseDefinition"));
+        assertNotNull(filtered.getComponents().getSchemas().get("WebhookOperationDefinition"));
+        assertNotNull(filtered.getComponents().getSchemas().get("RequestBodyDefinition"));
+        assertNotNull(filtered.getComponents().getSchemas().get("ParameterDefinition"));
+        assertNotNull(filtered.getComponents().getSchemas().get("HeaderDefinition"));
+        assertNotNull(filtered.getComponents().getSchemas().get("CallbackDefinition"));
+        assertNotNull(filtered.getComponents().getSchemas().get("PathItemDefinition"));
+        assertNull(filtered.getComponents().getSchemas().get("UnusedDefinition"));
+    }
+
     private Set getTagNames(OpenAPI openAPI) {
         Set<String> result = new HashSet<>();
         if (openAPI.getTags() != null) {
@@ -468,5 +496,15 @@ public class SpecFilterTest {
     private OpenAPI getOpenAPI31(String path) throws IOException {
         final String json = ResourceUtils.loadClassResource(getClass(), path);
         return Json31.mapper().readValue(json, OpenAPI.class);
+    }
+
+    private OpenAPI getOpenAPIYaml(String path) throws IOException {
+        final String yaml = ResourceUtils.loadClassResource(getClass(), path);
+        return Yaml.mapper().readValue(yaml, OpenAPI.class);
+    }
+
+    private OpenAPI getOpenAPIYaml31(String path) throws IOException {
+        final String yaml = ResourceUtils.loadClassResource(getClass(), path);
+        return Yaml31.mapper().readValue(yaml, OpenAPI.class);
     }
 }
