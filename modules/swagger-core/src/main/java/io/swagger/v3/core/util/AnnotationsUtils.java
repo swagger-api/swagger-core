@@ -587,24 +587,46 @@ public abstract class AnnotationsUtils {
             boolean openapi31,
             Schema existingSchema,
             ModelConverterContext context) {
+        return getSchemaFromAnnotation(schema, components, jsonViewAnnotation, openapi31, existingSchema, Schema.SchemaResolution.DEFAULT, null);
+    }
+    public static Optional<Schema> getSchemaFromAnnotation(
+            io.swagger.v3.oas.annotations.media.Schema schema,
+            Components components,
+            JsonView jsonViewAnnotation,
+            boolean openapi31,
+            Schema existingSchema,
+            Schema.SchemaResolution schemaResolution,
+            ModelConverterContext context) {
         if (schema == null || !hasSchemaAnnotation(schema)) {
-            if (existingSchema == null || !openapi31) {
+            if (existingSchema == null || (!openapi31 && Schema.SchemaResolution.DEFAULT.equals(schemaResolution))) {
                 return Optional.empty();
-            } else if (existingSchema != null && openapi31) {
+            } else if (existingSchema != null && (openapi31 || Schema.SchemaResolution.INLINE.equals(schemaResolution))) {
                 return Optional.of(existingSchema);
             }
         }
         Schema schemaObject = null;
         if (!openapi31) {
             if (existingSchema != null) {
-                return Optional.of(existingSchema);
+                if (!Schema.SchemaResolution.DEFAULT.equals(schemaResolution)) {
+                    schemaObject = existingSchema;
+                } else {
+                    return Optional.of(existingSchema);
+                }
             }
-            if (schema.oneOf().length > 0 ||
-                    schema.allOf().length > 0 ||
-                    schema.anyOf().length > 0) {
-                schemaObject = new ComposedSchema();
-            } else {
-                schemaObject = new Schema();
+            if (Schema.SchemaResolution.DEFAULT.equals(schemaResolution)) {
+                if (schema != null && (schema.oneOf().length > 0 ||
+                        schema.allOf().length > 0 ||
+                        schema.anyOf().length > 0)) {
+                    schemaObject = new ComposedSchema();
+                } else {
+                    schemaObject = new Schema();
+                }
+            } else if (Schema.SchemaResolution.ALL_OF.equals(schemaResolution) || Schema.SchemaResolution.ALL_OF_REF.equals(schemaResolution)) {
+                if (existingSchema == null) {
+                    schemaObject = new Schema();
+                } else {
+                    schemaObject = existingSchema;
+                }
             }
         } else {
             if (existingSchema == null) {
@@ -612,6 +634,9 @@ public abstract class AnnotationsUtils {
             } else {
                 schemaObject = existingSchema;
             }
+        }
+        if (schema == null) {
+            return Optional.of(schemaObject);
         }
         if (StringUtils.isNotBlank(schema.description())) {
             schemaObject.setDescription(schema.description());
@@ -824,21 +849,21 @@ public abstract class AnnotationsUtils {
             Class<?>[] schemaImplementations = schema.oneOf();
             for (Class<?> schemaImplementation : schemaImplementations) {
                 Schema oneOfSchemaObject = resolveSchemaFromType(schemaImplementation, components, jsonViewAnnotation, openapi31, null, null, context);
-                ((ComposedSchema) schemaObject).addOneOfItem(oneOfSchemaObject);
+                schemaObject.addOneOfItem(oneOfSchemaObject);
             }
         }
         if (schema.anyOf().length > 0) {
             Class<?>[] schemaImplementations = schema.anyOf();
             for (Class<?> schemaImplementation : schemaImplementations) {
                 Schema anyOfSchemaObject = resolveSchemaFromType(schemaImplementation, components, jsonViewAnnotation, openapi31, null, null, context);
-                ((ComposedSchema) schemaObject).addAnyOfItem(anyOfSchemaObject);
+                schemaObject.addAnyOfItem(anyOfSchemaObject);
             }
         }
         if (schema.allOf().length > 0) {
             Class<?>[] schemaImplementations = schema.allOf();
             for (Class<?> schemaImplementation : schemaImplementations) {
                 Schema allOfSchemaObject = resolveSchemaFromType(schemaImplementation, components, jsonViewAnnotation, openapi31, null, null, context);
-                ((ComposedSchema) schemaObject).addAllOfItem(allOfSchemaObject);
+                schemaObject.addAllOfItem(allOfSchemaObject);
             }
         }
         if (schema.additionalProperties().equals(io.swagger.v3.oas.annotations.media.Schema.AdditionalPropertiesValue.TRUE)) {
@@ -1956,11 +1981,15 @@ public abstract class AnnotationsUtils {
 
     }
 
+    public static Annotation mergeSchemaAnnotations(
+            Annotation[] ctxAnnotations, JavaType type) {
+        return mergeSchemaAnnotations(ctxAnnotations, type, false);
+    }
     /*
      * returns null if no annotations, otherwise either ArraySchema or Schema
      */
     public static Annotation mergeSchemaAnnotations(
-            Annotation[] ctxAnnotations, JavaType type) {
+            Annotation[] ctxAnnotations, JavaType type, boolean contextWins) {
         // get type array and schema
         io.swagger.v3.oas.annotations.media.Schema tS = type.getRawClass().getDeclaredAnnotation(io.swagger.v3.oas.annotations.media.Schema.class);
         if (!hasSchemaAnnotation(tS)) {
@@ -2020,6 +2049,9 @@ public abstract class AnnotationsUtils {
         }
 
         else if (tA != null && cA != null) {
+            if (contextWins) {
+                return mergeArraySchemaAnnotations(tA, cA);
+            }
             return mergeArraySchemaAnnotations(cA, tA);
         }
 
@@ -2028,6 +2060,9 @@ public abstract class AnnotationsUtils {
         }
 
         else if (tS != null && cS != null) {
+            if (contextWins) {
+                return mergeSchemaAnnotations(cS, tS);
+            }
             return mergeSchemaAnnotations(tS, cS);
         }
 
@@ -2623,6 +2658,15 @@ public abstract class AnnotationsUtils {
                 return patch.additionalPropertiesSchema();
             }
 
+            /* We always want the patch to take precedence in schema resolution behavior */
+            @Override
+            public SchemaResolution schemaResolution() {
+                if (!patch.schemaResolution().equals(SchemaResolution.DEFAULT) || master.schemaResolution().equals(SchemaResolution.DEFAULT)) {
+                    return patch.schemaResolution();
+                }
+                return master.schemaResolution();
+            }
+
         };
 
         return (io.swagger.v3.oas.annotations.media.Schema)schema;
@@ -2839,4 +2883,10 @@ public abstract class AnnotationsUtils {
         return (io.swagger.v3.oas.annotations.media.ArraySchema)newArraySchema;
     }
 
+    public static Schema.SchemaResolution resolveSchemaResolution(Schema.SchemaResolution globalSchemaResolution, io.swagger.v3.oas.annotations.media.Schema schemaAnnotation) {
+        if (schemaAnnotation != null && !io.swagger.v3.oas.annotations.media.Schema.SchemaResolution.AUTO.equals(schemaAnnotation.schemaResolution())) {
+            return Schema.SchemaResolution.valueOf(schemaAnnotation.schemaResolution().toString());
+        }
+        return globalSchemaResolution;
+    }
 }

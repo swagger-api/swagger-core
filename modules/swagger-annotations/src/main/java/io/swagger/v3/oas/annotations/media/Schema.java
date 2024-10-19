@@ -237,7 +237,7 @@ public @interface Schema {
     boolean writeOnly() default false;
 
     /**
-     * Allows to specify the access mode (AccessMode.READ_ONLY, READ_WRITE)
+     * Allows to specify the access mode (AccessMode.READ_ONLY, WRITE_ONLY, READ_WRITE)
      *
      * AccessMode.READ_ONLY: value will not be written to during a request but may be returned during a response.
      * AccessMode.WRITE_ONLY: value will only be written to during a request but not returned during a response.
@@ -246,7 +246,7 @@ public @interface Schema {
      * @return the accessMode for this schema (property)
      *
      */
-     AccessMode accessMode() default AccessMode.AUTO;
+    AccessMode accessMode() default AccessMode.AUTO;
 
     /**
      * Provides an example of the schema.  When associated with a specific media type, the example string shall be parsed by the consumer to be treated as an object or an array.
@@ -554,6 +554,14 @@ public @interface Schema {
         NOT_REQUIRED;
     }
 
+    enum SchemaResolution {
+        AUTO,
+        DEFAULT,
+        INLINE,
+        ALL_OF,
+        ALL_OF_REF;
+    }
+
     /**
      * Allows to specify the dependentRequired value
      **
@@ -616,4 +624,17 @@ public @interface Schema {
      */
     @OpenAPI31
     String _const() default "";
+
+    /**
+     * Allows to specify the schema resolution mode for object schemas
+     *
+     * SchemaResolution.DEFAULT: bundled into components/schemas, $ref with no siblings
+     * SchemaResolution.INLINE: inline schema, no $ref
+     * SchemaResolution.ALL_OF: bundled into components/schemas, $ref and any context annotation resolution into allOf
+     * SchemaResolution.ALL_OF_REF: bundled into components/schemas, $ref into allOf, context annotation resolution into root
+     *
+     * @return the schema resolution mode for this schema
+     *
+     */
+    SchemaResolution schemaResolution() default SchemaResolution.AUTO;
 }

@@ -85,7 +85,7 @@ public class SpecFilter {
 
         if (filteredOpenAPI.getWebhooks() != null) {
             for (String resourcePath : filteredOpenAPI.getWebhooks().keySet()) {
-                PathItem pathItem = filteredOpenAPI.getPaths().get(resourcePath);
+                PathItem pathItem = filteredOpenAPI.getWebhooks().get(resourcePath);
 
                 PathItem filteredPathItem = filterPathItem(filter, pathItem, resourcePath, params, cookies, headers);
                 PathItem clonedPathItem = cloneFilteredPathItem(filter,filteredPathItem, resourcePath, params, cookies, headers, allowedTags, filteredTags);

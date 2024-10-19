@@ -50,6 +50,7 @@ paths:
 components:
   schemas:
     User:
+      type: object
       properties:
         id:
           type: integer
