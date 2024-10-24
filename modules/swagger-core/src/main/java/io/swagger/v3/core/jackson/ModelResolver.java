@@ -1116,17 +1116,21 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
         // use recursion to check for method findJsonValueAccessor existence (Jackson 2.9+)
         // if not found use previous deprecated method which could lead to inaccurate result
-        AnnotatedMember jsonValueMember = invokeMethod(beanDesc, "findJsonValueAccessor");
-        if (jsonValueMember != null) {
-            return jsonValueMember.getType();
-        } else {
+        try {
+            AnnotatedMember jsonValueMember = invokeMethod(beanDesc, "findJsonValueAccessor");
+            if (jsonValueMember != null) {
+                return jsonValueMember.getType();
+            }
+        } catch (Exception e) {
             LOGGER.warn("jackson BeanDescription.findJsonValueAccessor not found, this could lead to inaccurate result, please update jackson to 2.9+");
         }
 
-        jsonValueMember = invokeMethod(beanDesc, "findJsonValueMethod");
-        if (jsonValueMember != null) {
-            return jsonValueMember.getType();
-        } else {
+        try {
+            AnnotatedMember jsonValueMember = invokeMethod(beanDesc, "findJsonValueMethod");
+            if (jsonValueMember != null) {
+                return jsonValueMember.getType();
+            }
+        } catch (Exception e) {
             LOGGER.error("Neither 'findJsonValueMethod' nor 'findJsonValueAccessor' found in jackson BeanDescription. Please verify your Jackson version.");
         }
         return null;
@@ -3057,13 +3061,9 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         return "number".equals(schema.getType()) || (schema.getTypes() != null && schema.getTypes().contains("number")) || "integer".equals(schema.getType()) || (schema.getTypes() != null && schema.getTypes().contains("integer"));
     }
 
-    private AnnotatedMember invokeMethod(final BeanDescription beanDesc, String methodName) {
-        try {
-            Method m = BeanDescription.class.getMethod(methodName);
-            return (AnnotatedMember) m.invoke(beanDesc);
-        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
-            return null;
-        }
+    private AnnotatedMember invokeMethod(final BeanDescription beanDesc, String methodName) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException{
+        Method m = BeanDescription.class.getMethod(methodName);
+        return (AnnotatedMember) m.invoke(beanDesc);
     }
 
     protected Schema buildRefSchemaIfObject(Schema schema, ModelConverterContext context) {
