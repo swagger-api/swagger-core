@@ -335,6 +335,9 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         }
 
         if (model == null && type.isEnumType()) {
+            @SuppressWarnings("unchecked")
+            Class<Enum<?>> rawEnumClass = (Class<Enum<?>>) type.getRawClass();
+            model = _createSchemaForEnum(rawEnumClass);
             model = openapi31 ? new JsonSchema().typesItem("string") : new StringSchema();
             _addEnumProps(type.getRawClass(), model);
             isPrimitive = true;
@@ -1357,6 +1360,79 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 }
             }
         }
+    }
+
+    /**
+     * Adds each enum property value to the model schema
+     *
+     * @param enumClass the enum class for which to add properties
+     */
+    protected Schema _createSchemaForEnum(Class<Enum<?>> enumClass) {
+        boolean useIndex = _mapper.isEnabled(SerializationFeature.WRITE_ENUMS_USING_INDEX);
+        boolean useToString = _mapper.isEnabled(SerializationFeature.WRITE_ENUMS_USING_TO_STRING);
+
+        Optional<Method> jsonValueMethod = Arrays.stream(enumClass.getDeclaredMethods())
+                .filter(m -> m.isAnnotationPresent(JsonValue.class))
+                .filter(m -> m.getAnnotation(JsonValue.class).value())
+                .findFirst();
+
+        Optional<Field> jsonValueField = Arrays.stream(enumClass.getDeclaredFields())
+                .filter(f -> f.isAnnotationPresent(JsonValue.class))
+                .filter(f -> f.getAnnotation(JsonValue.class).value())
+                .findFirst();
+
+        Schema schema = null;
+        if (jsonValueField.isPresent()) {
+            jsonValueField.get().setAccessible(true);
+            PrimitiveType primitiveType = PrimitiveType.fromType(jsonValueField.get().getType());
+            if (primitiveType != null) {
+                schema = primitiveType.createProperty();
+            }
+        } else if (jsonValueMethod.isPresent()) {
+            jsonValueMethod.get().setAccessible(true);
+            PrimitiveType primitiveType = PrimitiveType.fromType(jsonValueMethod.get().getReturnType());
+            if (primitiveType != null) {
+                schema = primitiveType.createProperty();
+            }
+        }
+        if (schema == null) {
+            schema = new StringSchema();
+        }
+
+        Enum<?>[] enumConstants = enumClass.getEnumConstants();
+
+        if (enumConstants != null) {
+            String[] enumValues = _intr.findEnumValues(enumClass, enumConstants,
+                    new String[enumConstants.length]);
+
+            for (Enum<?> en : enumConstants) {
+                Field enumField = ReflectionUtils.findField(en.name(), enumClass);
+                if (null != enumField && enumField.isAnnotationPresent(Hidden.class)) {
+                    continue;
+                }
+
+                String enumValue = enumValues[en.ordinal()];
+                Object methodValue = jsonValueMethod.flatMap(m -> ReflectionUtils.safeInvoke(m, en)).orElse(null);
+                Object fieldValue = jsonValueField.flatMap(f -> ReflectionUtils.safeGet(f, en)).orElse(null);
+
+                Object n;
+                if (methodValue != null) {
+                    n = methodValue;
+                } else if (fieldValue != null) {
+                    n = fieldValue;
+                } else if (enumValue != null) {
+                    n = enumValue;
+                } else if (useIndex) {
+                    n = String.valueOf(en.ordinal());
+                } else if (useToString) {
+                    n = en.toString();
+                } else {
+                    n = _intr.findEnumValue(en);
+                }
+                schema.addEnumItemObject(n);
+            }
+        }
+        return schema;
     }
 
     protected boolean ignore(final Annotated member, final XmlAccessorType xmlAccessorTypeAnnotation, final String propName, final Set<String> propertiesToIgnore) {

@@ -12,6 +12,7 @@ import io.swagger.v3.core.oas.models.ModelWithEnumField;
 import io.swagger.v3.core.oas.models.ModelWithEnumProperty;
 import io.swagger.v3.core.oas.models.ModelWithEnumRefProperty;
 import io.swagger.v3.core.oas.models.ModelWithJacksonEnumField;
+import io.swagger.v3.oas.models.media.IntegerSchema;
 import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.media.StringSchema;
 import org.testng.annotations.AfterTest;
@@ -216,23 +217,23 @@ public class EnumPropertyTest {
         assertEquals(secondStringProperty.getEnum(), Arrays.asList("one", "two", "three"));
 
         final Schema thirdEnumProperty = (Schema) model.getProperties().get("thirdEnumValue");
-        assertTrue(thirdEnumProperty instanceof StringSchema);
-        final StringSchema thirdStringProperty = (StringSchema) thirdEnumProperty;
-        assertEquals(thirdStringProperty.getEnum(), Arrays.asList("2", "4", "6"));
+        assertTrue(thirdEnumProperty instanceof IntegerSchema);
+        final IntegerSchema thirdStringProperty = (IntegerSchema) thirdEnumProperty;
+        assertEquals(thirdStringProperty.getEnum(), Arrays.asList(2, 4, 6));
 
         final Schema fourthEnumProperty = (Schema) model.getProperties().get("fourthEnumValue");
         assertTrue(fourthEnumProperty instanceof StringSchema);
         final StringSchema fourthStringProperty = (StringSchema) fourthEnumProperty;
-        assertEquals(fourthEnumProperty.getEnum(), Arrays.asList("one", "two", "three"));
+        assertEquals(fourthStringProperty.getEnum(), Arrays.asList("one", "two", "three"));
 
         final Schema fifthEnumProperty = (Schema) model.getProperties().get("fifthEnumValue");
-        assertTrue(fifthEnumProperty instanceof StringSchema);
-        final StringSchema fifthStringProperty = (StringSchema) fifthEnumProperty;
-        assertEquals(fifthEnumProperty.getEnum(), Arrays.asList("2", "4", "6"));
+        assertTrue(fifthEnumProperty instanceof IntegerSchema);
+        final IntegerSchema fifthStringProperty = (IntegerSchema) fifthEnumProperty;
+        assertEquals(fifthStringProperty.getEnum(), Arrays.asList(2, 4, 6));
 
         final Schema sixthEnumProperty = (Schema) model.getProperties().get("sixthEnumValue");
         assertTrue(sixthEnumProperty instanceof StringSchema);
         final StringSchema sixthStringProperty = (StringSchema) sixthEnumProperty;
-        assertEquals(sixthEnumProperty.getEnum(), Arrays.asList("one", "two", "three"));
+        assertEquals(sixthStringProperty.getEnum(), Arrays.asList("one", "two", "three"));
     }
 }
