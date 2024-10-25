@@ -1171,9 +1171,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         final boolean useIndex = _mapper.isEnabled(SerializationFeature.WRITE_ENUMS_USING_INDEX);
         final boolean useToString = _mapper.isEnabled(SerializationFeature.WRITE_ENUMS_USING_TO_STRING);
 
-        Optional<Method> jsonValueMethod = Arrays.stream(propClass.getDeclaredMethods())
-                .filter(m -> m.isAnnotationPresent(JsonValue.class))
-                .filter(m -> m.getAnnotation(JsonValue.class).value())
+        Optional<Method> jsonValueMethod = ReflectionUtils.getAnnotatedMethods(propClass, JsonValue.class).stream()
                 .findFirst();
 
         Optional<Field> jsonValueField = Arrays.stream(propClass.getDeclaredFields())
