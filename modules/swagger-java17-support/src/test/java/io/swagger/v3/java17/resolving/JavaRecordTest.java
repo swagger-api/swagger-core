@@ -80,4 +80,41 @@ public class JavaRecordTest {
     ){
     }
 
+    @Test
+    public void testJavaRecordWithBeanValidationSizeTypeUse() {
+        String expectedYaml = "JavaRecordWithAnnotationsOnGenericType:\n" +
+                "  type: object\n" +
+                "  properties:\n" +
+                "    randomList:\n" +
+                "      maxItems: 10000\n" +
+                "      minItems: 100\n" +
+                "      type: array\n" +
+                "      items:\n" +
+                "        maxLength: 10\n" +
+                "        minLength: 1\n" +
+                "        type: string\n" +
+                "    secondList:\n" +
+                "      type: array\n" +
+                "      items:\n" +
+                "        pattern: (.+?)@(.+?)\n" +
+                "        type: string\n" +
+                "    id:\n" +
+                "      type: array\n" +
+                "      items:\n" +
+                "        maximum: 10000\n" +
+                "        minimum: 1\n" +
+                "        type: integer\n" +
+                "        format: int32";
+
+        Map<String, Schema> stringSchemaMap = ModelConverters.getInstance(false).readAll(JavaRecordWithAnnotationsOnGenericType.class);
+        SerializationMatchers.assertEqualsToYaml(stringSchemaMap, expectedYaml);
+        }
+
+    public record JavaRecordWithAnnotationsOnGenericType(
+            @Size(min = 100, max = 10000)
+            List<@Size(min = 1, max = 10) String> randomList,
+            List<@Pattern(regexp = "(.+?)@(.+?)") String> secondList,
+            List<@Min(1)@Max(10000) Integer> id
+    ){
+    }
 }
