@@ -1082,7 +1082,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                                             .map(field -> !(field.getType().equals(Optional.class)))
                                             .orElse(false);
 
-        if (isNotOptionalType) {
+        if (isNotOptionalType || isRecordType(propDef)) {
             return annotations;
         }
 
@@ -1091,6 +1091,9 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
     }
 
     private Stream<Annotation> extractGenericTypeArgumentAnnotations(BeanPropertyDefinition propDef) {
+        if (isRecordType(propDef)){
+            return getRecordComponentAnnotations(propDef);
+        }
         return Optional.ofNullable(propDef)
                        .map(BeanPropertyDefinition::getField)
                        .map(AnnotatedField::getAnnotated)
@@ -1098,14 +1101,41 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                        .orElseGet(Stream::of);
     }
 
+    private Stream<Annotation> getRecordComponentAnnotations(BeanPropertyDefinition propDef) {
+        try {
+            Method accessor = propDef.getPrimaryMember().getDeclaringClass().getDeclaredMethod(propDef.getName());
+            return getGenericTypeArgumentAnnotations(accessor.getAnnotatedReturnType());
+        } catch (NoSuchMethodException e) {
+            LOGGER.error("Accessor for record component not found");
+            return Stream.empty();
+        }
+    }
+
+    private Boolean isRecordType(BeanPropertyDefinition propDef){
+        try {
+            Class<?> clazz = propDef.getPrimaryMember().getDeclaringClass();
+            Method isRecordMethod = Class.class.getMethod("isRecord");
+            return (Boolean) isRecordMethod.invoke(clazz);
+        } catch (NoSuchMethodException e) {
+            return false;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     private Stream<Annotation> getGenericTypeArgumentAnnotations(Field field) {
-        return Optional.of(field.getAnnotatedType())
-                       .filter(annotatedType -> annotatedType instanceof AnnotatedParameterizedType)
-                       .map(annotatedType -> (AnnotatedParameterizedType) annotatedType)
-                       .map(AnnotatedParameterizedType::getAnnotatedActualTypeArguments)
-                       .map(types -> Stream.of(types)
-                                           .flatMap(type -> Stream.of(type.getAnnotations())))
-                       .orElseGet(Stream::of);
+        return getGenericTypeArgumentAnnotations(field.getAnnotatedType());
+    }
+
+    private Stream<Annotation> getGenericTypeArgumentAnnotations(java.lang.reflect.AnnotatedType annotatedType) {
+        return Optional.of(annotatedType)
+                .filter(type -> type instanceof AnnotatedParameterizedType)
+                .map(type -> (AnnotatedParameterizedType) type)
+                .map(AnnotatedParameterizedType::getAnnotatedActualTypeArguments)
+                .map(types -> Stream.of(types)
+                        .flatMap(type -> Stream.of(type.getAnnotations())))
+                .orElseGet(Stream::of);
     }
 
     private boolean shouldResolveEnumAsRef(io.swagger.v3.oas.annotations.media.Schema resolvedSchemaAnnotation) {
