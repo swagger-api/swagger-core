@@ -100,6 +100,7 @@ paths:
 components:
   schemas:
     Category:
+      type: object
       properties:
         id:
           type: integer
@@ -109,6 +110,7 @@ components:
       xml:
         name: Category
     Pet:
+      type: object
       properties:
         id:
           type: integer
@@ -139,6 +141,7 @@ components:
       xml:
         name: Pet
     Tag:
+      type: object
       properties:
         id:
           type: integer
@@ -146,8 +149,9 @@ components:
         name:
           type: string
       xml:
-        name: Tag
+        name: tag
     User:
+      type: object
       properties:
         id:
           type: integer
@@ -171,6 +175,7 @@ components:
       xml:
         name: User
     SubscriptionResponse:
+      type: object
       properties:
         subscriptionId:
           type: string

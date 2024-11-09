@@ -412,7 +412,7 @@ public class Reader implements OpenApiReader {
         final List<Parameter> globalParameters = new ArrayList<>();
 
         // look for constructor-level annotated properties
-        globalParameters.addAll(ReaderUtils.collectConstructorParameters(cls, components, classConsumes, null));
+        globalParameters.addAll(ReaderUtils.collectConstructorParameters(cls, components, classConsumes, null, config.getSchemaResolution()));
 
         // look for field-level annotated properties
         globalParameters.addAll(ReaderUtils.collectFieldParameters(cls, components, classConsumes, null));
@@ -1165,7 +1165,7 @@ public class Reader implements OpenApiReader {
         final Class<?> subResource = getSubResourceWithJaxRsSubresourceLocatorSpecs(method);
         Schema returnTypeSchema = null;
         if (!shouldIgnoreClass(returnType.getTypeName()) && !method.getGenericReturnType().equals(subResource)) {
-            ResolvedSchema resolvedSchema = ModelConverters.getInstance(config.isOpenAPI31()).resolveAsResolvedSchema(new AnnotatedType(returnType).resolveAsRef(true).jsonViewAnnotation(jsonViewAnnotation).components(components));
+            ResolvedSchema resolvedSchema = ModelConverters.getInstance(config.isOpenAPI31(), config.getSchemaResolution()).resolveAsResolvedSchema(new AnnotatedType(returnType).resolveAsRef(true).jsonViewAnnotation(jsonViewAnnotation).components(components));
             if (resolvedSchema.schema != null) {
                 returnTypeSchema = resolvedSchema.schema;
                 Content content = new Content();
@@ -1318,7 +1318,7 @@ public class Reader implements OpenApiReader {
         }
         ignore = rawClassName.startsWith("javax.ws.rs.");
         ignore = ignore || rawClassName.equalsIgnoreCase("void");
-        ignore = ignore || ModelConverters.getInstance(config.isOpenAPI31()).isRegisteredAsSkippedClass(rawClassName);
+        ignore = ignore || ModelConverters.getInstance(config.isOpenAPI31(), config.getSchemaResolution()).isRegisteredAsSkippedClass(rawClassName);
         return ignore;
     }
 
@@ -1525,8 +1525,11 @@ public class Reader implements OpenApiReader {
         LOGGER.debug("trying extension {}", extension);
 
         extension.setOpenAPI31(Boolean.TRUE.equals(config.isOpenAPI31()));
-
-        return extension.extractParameters(annotations, type, typesToSkip, components, classConsumes, methodConsumes, true, jsonViewAnnotation, chain);
+        Schema.SchemaResolution curSchemaResolution = config.getSchemaResolution();
+        extension.setSchemaResolution(config.getSchemaResolution());
+        ResolvedParameter resolvedParameter = extension.extractParameters(annotations, type, typesToSkip, components, classConsumes, methodConsumes, true, jsonViewAnnotation, chain);
+        ((SwaggerConfiguration)config).setSchemaResolution(curSchemaResolution);
+        return resolvedParameter;
     }
 
     private Set<String> extractOperationIdFromPathItem(PathItem path) {

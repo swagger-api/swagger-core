@@ -42,6 +42,19 @@ public class ParameterProcessor {
             String[] methodTypes,
             JsonView jsonViewAnnotation,
             boolean openapi31) {
+        return applyAnnotations(parameter, type, annotations, components, classTypes, methodTypes, jsonViewAnnotation, openapi31, null);
+    }
+
+    public static Parameter applyAnnotations(
+            Parameter parameter,
+            Type type,
+            List<Annotation> annotations,
+            Components components,
+            String[] classTypes,
+            String[] methodTypes,
+            JsonView jsonViewAnnotation,
+            boolean openapi31,
+            Schema.SchemaResolution schemaResolution) {
 
         final AnnotationsHelper helper = new AnnotationsHelper(annotations, type);
         if (helper.isContext()) {
@@ -59,17 +72,60 @@ public class ParameterProcessor {
         if (paramSchemaOrArrayAnnotation != null) {
             reworkedAnnotations.add(paramSchemaOrArrayAnnotation);
         }
+        io.swagger.v3.oas.annotations.media.Schema ctxSchema = AnnotationsUtils.getSchemaAnnotation(annotations.toArray(new Annotation[0]));
+        io.swagger.v3.oas.annotations.media.ArraySchema ctxArraySchema = AnnotationsUtils.getArraySchemaAnnotation(annotations.toArray(new Annotation[0]));
+        Annotation[] ctxAnnotation31 = null;
+
+        if (Schema.SchemaResolution.ALL_OF.equals(schemaResolution) || Schema.SchemaResolution.ALL_OF_REF.equals(schemaResolution)) {
+            List<Annotation> ctxAnnotations31List = new ArrayList<>();
+            if (annotations != null) {
+                for (Annotation a : annotations) {
+                    if (
+                            !(a instanceof io.swagger.v3.oas.annotations.media.Schema) &&
+                                    !(a instanceof io.swagger.v3.oas.annotations.media.ArraySchema)) {
+                        ctxAnnotations31List.add(a);
+                    }
+                }
+                ctxAnnotation31 = ctxAnnotations31List.toArray(new Annotation[ctxAnnotations31List.size()]);
+            }
+        }
         AnnotatedType annotatedType = new AnnotatedType()
                 .type(type)
                 .resolveAsRef(true)
                 .skipOverride(true)
-                .jsonViewAnnotation(jsonViewAnnotation)
-                .ctxAnnotations(reworkedAnnotations.toArray(new Annotation[reworkedAnnotations.size()]));
+                .jsonViewAnnotation(jsonViewAnnotation);
 
-        final ResolvedSchema resolvedSchema = ModelConverters.getInstance(openapi31).resolveAsResolvedSchema(annotatedType);
+        if (Schema.SchemaResolution.ALL_OF.equals(schemaResolution) || Schema.SchemaResolution.ALL_OF_REF.equals(schemaResolution)) {
+            annotatedType.ctxAnnotations(ctxAnnotation31);
+        } else {
+            annotatedType.ctxAnnotations(reworkedAnnotations.toArray(new Annotation[reworkedAnnotations.size()]));
+        }
+
+        final ResolvedSchema resolvedSchema = ModelConverters.getInstance(openapi31, schemaResolution).resolveAsResolvedSchema(annotatedType);
 
         if (resolvedSchema.schema != null) {
-            parameter.setSchema(resolvedSchema.schema);
+            Schema resSchema = AnnotationsUtils.clone(resolvedSchema.schema, openapi31);
+            Schema ctxSchemaObject = null;
+            if (Schema.SchemaResolution.ALL_OF.equals(schemaResolution) || Schema.SchemaResolution.ALL_OF_REF.equals(schemaResolution)) {
+                Optional<Schema> reResolvedSchema = AnnotationsUtils.getSchemaFromAnnotation(ctxSchema, annotatedType.getComponents(), null, openapi31, null, schemaResolution, null);
+                if (reResolvedSchema.isPresent()) {
+                    ctxSchemaObject = reResolvedSchema.get();
+                }
+                reResolvedSchema = AnnotationsUtils.getArraySchema(ctxArraySchema, annotatedType.getComponents(), null, openapi31, ctxSchemaObject);
+                if (reResolvedSchema.isPresent()) {
+                    ctxSchemaObject = reResolvedSchema.get();
+                }
+
+            }
+            if (Schema.SchemaResolution.ALL_OF.equals(schemaResolution) && ctxSchemaObject != null) {
+                resSchema = new Schema()
+                        .addAllOfItem(ctxSchemaObject)
+                        .addAllOfItem(resolvedSchema.schema);
+            } else if (Schema.SchemaResolution.ALL_OF_REF.equals(schemaResolution) && ctxSchemaObject != null) {
+                resSchema = ctxSchemaObject
+                        .addAllOfItem(resolvedSchema.schema);
+            }
+            parameter.setSchema(resSchema);
         }
         resolvedSchema.referencedSchemas.forEach(components::addSchemas);
 

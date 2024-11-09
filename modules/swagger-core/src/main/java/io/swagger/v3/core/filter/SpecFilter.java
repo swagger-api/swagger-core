@@ -85,7 +85,7 @@ public class SpecFilter {
 
         if (filteredOpenAPI.getWebhooks() != null) {
             for (String resourcePath : filteredOpenAPI.getWebhooks().keySet()) {
-                PathItem pathItem = filteredOpenAPI.getPaths().get(resourcePath);
+                PathItem pathItem = filteredOpenAPI.getWebhooks().get(resourcePath);
 
                 PathItem filteredPathItem = filterPathItem(filter, pathItem, resourcePath, params, cookies, headers);
                 PathItem clonedPathItem = cloneFilteredPathItem(filter,filteredPathItem, resourcePath, params, cookies, headers, allowedTags, filteredTags);
@@ -350,34 +350,94 @@ public class SpecFilter {
         Map<PathItem.HttpMethod, Operation> ops = pathItem.readOperationsMap();
         for (Operation op : ops.values()) {
             if (op.getRequestBody() != null) {
-                addContentSchemaRef(op.getRequestBody().getContent(), referencedDefinitions);
+                addRequestBodySchemaRef(op.getRequestBody(), referencedDefinitions);
             }
             if (op.getResponses() != null) {
                 for (String keyResponses : op.getResponses().keySet()) {
                     ApiResponse response = op.getResponses().get(keyResponses);
-                    if (response.getHeaders() != null) {
-                        for (String keyHeaders : response.getHeaders().keySet()) {
-                            Header header = response.getHeaders().get(keyHeaders);
-                            addSchemaRef(header.getSchema(), referencedDefinitions);
-                            addContentSchemaRef(header.getContent(), referencedDefinitions);
-                        }
-                    }
-                    addContentSchemaRef(response.getContent(), referencedDefinitions);
+                    addApiResponseSchemaRef(response, referencedDefinitions);
                 }
             }
             if (op.getParameters() != null) {
                 for (Parameter parameter : op.getParameters()) {
-                    addSchemaRef(parameter.getSchema(), referencedDefinitions);
-                    addContentSchemaRef(parameter.getContent(), referencedDefinitions);
+                    addParameterSchemaRef(parameter, referencedDefinitions);
                 }
             }
             if (op.getCallbacks() != null) {
                 for (String keyCallback : op.getCallbacks().keySet()) {
                     Callback callback = op.getCallbacks().get(keyCallback);
-                    for (PathItem callbackPathItem : callback.values()) {
-                        addPathItemSchemaRef(callbackPathItem, referencedDefinitions);
-                    }
+                    addCallbackSchemaRef(callback, referencedDefinitions);
                 }
+            }
+        }
+    }
+
+    private void addApiResponseSchemaRef(ApiResponse response, Set<String> referencedDefinitions) {
+        if (response.getHeaders() != null) {
+            for (String keyHeaders : response.getHeaders().keySet()) {
+                Header header = response.getHeaders().get(keyHeaders);
+                addHeaderSchemaRef(header, referencedDefinitions);
+            }
+        }
+        addContentSchemaRef(response.getContent(), referencedDefinitions);
+    }
+
+    private void addRequestBodySchemaRef(RequestBody requestBody, Set<String> referencedDefinitions) {
+            addContentSchemaRef(requestBody.getContent(), referencedDefinitions);
+    }
+
+    private void addParameterSchemaRef(Parameter parameter, Set<String> referencedDefinitions) {
+        addSchemaRef(parameter.getSchema(), referencedDefinitions);
+        addContentSchemaRef(parameter.getContent(), referencedDefinitions);
+    }
+
+    private void addHeaderSchemaRef(Header header, Set<String> referencedDefinitions) {
+        addSchemaRef(header.getSchema(), referencedDefinitions);
+        addContentSchemaRef(header.getContent(), referencedDefinitions);
+    }
+
+    private void addCallbackSchemaRef(Callback callback, Set<String> referencedDefinitions){
+        for (PathItem callbackPathItem : callback.values()) {
+            addPathItemSchemaRef(callbackPathItem, referencedDefinitions);
+        }
+    }
+
+    private void addComponentsSchemaRef(Components components, Set<String> referencedDefinitions){
+
+        if (components.getResponses() != null){
+            for (String resourcePath : components.getResponses().keySet()) {
+                ApiResponse apiResponse = components.getResponses().get(resourcePath);
+                addApiResponseSchemaRef(apiResponse, referencedDefinitions);
+            }
+        }
+        if (components.getRequestBodies() != null){
+            for (String requestBody : components.getRequestBodies().keySet()) {
+                RequestBody requestBody1 = components.getRequestBodies().get(requestBody);
+                addRequestBodySchemaRef(requestBody1, referencedDefinitions);
+            }
+        }
+        if (components.getParameters() != null){
+            for (String parameter : components.getParameters().keySet()) {
+                Parameter resourceParam = components.getParameters().get(parameter);
+                addParameterSchemaRef(resourceParam, referencedDefinitions);
+            }
+        }
+        if (components.getHeaders() != null){
+            for (String header : components.getHeaders().keySet()) {
+                Header resourceHeader = components.getHeaders().get(header);
+                addHeaderSchemaRef(resourceHeader, referencedDefinitions);
+            }
+        }
+        if (components.getCallbacks() != null){
+            for (String callback : components.getCallbacks().keySet()){
+                Callback resourceCallback = components.getCallbacks().get(callback);
+                addCallbackSchemaRef(resourceCallback, referencedDefinitions);
+            }
+        }
+        if (components.getPathItems() != null){
+            for (String resourcePath : components.getPathItems().keySet()){
+                PathItem pathItem = components.getPathItems().get(resourcePath);
+                addPathItemSchemaRef(pathItem, referencedDefinitions);
             }
         }
     }
@@ -394,6 +454,16 @@ public class SpecFilter {
                 PathItem pathItem = openApi.getPaths().get(resourcePath);
                 addPathItemSchemaRef(pathItem, referencedDefinitions);
             }
+        }
+        if (openApi.getWebhooks() != null){
+            for (String resourcePath : openApi.getWebhooks().keySet()) {
+                PathItem pathItem = openApi.getWebhooks().get(resourcePath);
+                addPathItemSchemaRef(pathItem, referencedDefinitions);
+            }
+        }
+        if (openApi.getComponents() != null){
+            Components components = openApi.getComponents();
+            addComponentsSchemaRef(components, referencedDefinitions);
         }
 
         referencedDefinitions.addAll(resolveAllNestedRefs(referencedDefinitions, referencedDefinitions, openApi));

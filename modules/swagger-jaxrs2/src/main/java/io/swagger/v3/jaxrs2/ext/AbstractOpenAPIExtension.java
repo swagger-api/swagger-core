@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.type.TypeFactory;
 import io.swagger.v3.jaxrs2.ResolvedParameter;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.Operation;
+import io.swagger.v3.oas.models.media.Schema;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -17,6 +18,7 @@ import java.util.Set;
 public abstract class AbstractOpenAPIExtension implements OpenAPIExtension {
 
     protected boolean openapi31;
+    protected Schema.SchemaResolution schemaResolution;
 
     @Override
     public String extractOperationMethod(Method method, Iterator<OpenAPIExtension> chain) {
@@ -67,5 +69,10 @@ public abstract class AbstractOpenAPIExtension implements OpenAPIExtension {
     @Override
     public void setOpenAPI31(boolean openapi31) {
         this.openapi31 = openapi31;
+    }
+
+    @Override
+    public void setSchemaResolution(Schema.SchemaResolution schemaResolution) {
+        this.schemaResolution = schemaResolution;
     }
 }

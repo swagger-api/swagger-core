@@ -77,6 +77,8 @@ public class ResolveTask extends DefaultTask {
 
     private Boolean convertToOpenAPI31 = false;
 
+    private String schemaResolution;
+
     private String defaultResponseCode;
 
     @Input
@@ -386,6 +388,19 @@ public class ResolveTask extends DefaultTask {
         }
     }
 
+    /**
+     * @since 2.2.24
+     */
+    @Input
+    @Optional
+    public String getSchemaResolution() {
+        return schemaResolution;
+    }
+
+    public void setSchemaResolution(String schemaResolution) {
+        this.schemaResolution = schemaResolution;
+    }
+
     @TaskAction
     public void resolve() throws GradleException {
         if (skip) {
@@ -504,6 +519,9 @@ public class ResolveTask extends DefaultTask {
 
             method=swaggerLoaderClass.getDeclaredMethod("setConvertToOpenAPI31", Boolean.class);
             method.invoke(swaggerLoader, convertToOpenAPI31);
+
+            method=swaggerLoaderClass.getDeclaredMethod("setSchemaResolution", String.class);
+            method.invoke(swaggerLoader, schemaResolution);
 
             method=swaggerLoaderClass.getDeclaredMethod("resolve");
             Map<String, String> specs = (Map<String, String>)method.invoke(swaggerLoader);

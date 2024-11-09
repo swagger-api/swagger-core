@@ -120,7 +120,7 @@ public class DefaultParameterExtension extends AbstractOpenAPIExtension {
                     annotations,
                     components,
                     classConsumes == null ? new String[0] : classConsumes.value(),
-                    methodConsumes == null ? new String[0] : methodConsumes.value(), jsonViewAnnotation, openapi31);
+                    methodConsumes == null ? new String[0] : methodConsumes.value(), jsonViewAnnotation, openapi31, this.schemaResolution);
             if (unknownParameter != null) {
                 if (StringUtils.isNotBlank(unknownParameter.getIn()) && !"form".equals(unknownParameter.getIn())) {
                     extractParametersResult.parameters.add(unknownParameter);
@@ -141,7 +141,8 @@ public class DefaultParameterExtension extends AbstractOpenAPIExtension {
                     classConsumes == null ? new String[0] : classConsumes.value(),
                     methodConsumes == null ? new String[0] : methodConsumes.value(),
                     jsonViewAnnotation,
-                    openapi31);
+                    openapi31,
+                    this.schemaResolution);
             if (processedParameter != null) {
                 extractParametersResult.parameters.add(processedParameter);
             }
@@ -264,7 +265,9 @@ public class DefaultParameterExtension extends AbstractOpenAPIExtension {
                             components,
                             classConsumes == null ? new String[0] : classConsumes.value(),
                             methodConsumes == null ? new String[0] : methodConsumes.value(),
-                            jsonViewAnnotation);
+                            jsonViewAnnotation,
+                            openapi31,
+                            this.schemaResolution);
                     if (processedParam != null) {
                         parameters.add(processedParam);
                     }
@@ -281,7 +284,9 @@ public class DefaultParameterExtension extends AbstractOpenAPIExtension {
                             components,
                             classConsumes == null ? new String[0] : classConsumes.value(),
                             methodConsumes == null ? new String[0] : methodConsumes.value(),
-                            jsonViewAnnotation);
+                            jsonViewAnnotation,
+                            openapi31,
+                            this.schemaResolution);
                     if (processedParam != null) {
                         formParameters.add(processedParam);
                     }

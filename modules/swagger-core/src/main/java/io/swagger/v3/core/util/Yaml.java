@@ -5,13 +5,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 
 public class Yaml {
-    static ObjectMapper mapper;
+
+    private static final class ObjectMapperHolder {
+        private static final ObjectMapper MAPPER = ObjectMapperFactory.createYaml();
+    }
 
     public static ObjectMapper mapper() {
-        if (mapper == null) {
-            mapper = ObjectMapperFactory.createYaml();
-        }
-        return mapper;
+        return ObjectMapperHolder.MAPPER;
     }
 
     public static ObjectWriter pretty() {
