@@ -118,6 +118,8 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
     public static boolean composedModelPropertiesAsSibling = System.getProperty(SET_PROPERTY_OF_COMPOSED_MODEL_AS_SIBLING) != null;
 
+    private static final int SCHEMA_COMPONENT_PREFIX = "#/components/schemas/".length();
+
     /**
      * Allows all enums to be resolved as a reference to a scheme added to the components section.
      */
@@ -727,7 +729,11 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                             .ctxAnnotations(null)
                             .jsonUnwrappedHandler(null)
                             .resolveAsRef(false);
-                        handleUnwrapped(props, context.resolve(t), uw.prefix(), uw.suffix(), requiredProps);
+                        Schema innerModel = context.resolve(t);
+                        if (StringUtils.isNotBlank(innerModel.get$ref())) {
+                            innerModel = context.getDefinedModels().get(innerModel.get$ref().substring(SCHEMA_COMPONENT_PREFIX));
+                        }
+                        handleUnwrapped(props, innerModel, uw.prefix(), uw.suffix(), requiredProps);
                         return null;
                     } else {
                         return new Schema();
@@ -2278,7 +2284,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             if (StringUtils.isNotBlank(typeInfoProp)) {
                 Schema modelToUpdate = model;
                 if (StringUtils.isNotBlank(model.get$ref())) {
-                    modelToUpdate = context.getDefinedModels().get(model.get$ref().substring(21));
+                    modelToUpdate = context.getDefinedModels().get(model.get$ref().substring(SCHEMA_COMPONENT_PREFIX));
                 }
                 if (modelToUpdate.getProperties() == null || !modelToUpdate.getProperties().keySet().contains(typeInfoProp)) {
                     Schema discriminatorSchema = new StringSchema().name(typeInfoProp);
