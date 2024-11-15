@@ -368,7 +368,9 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             if (xml != null) {
                 model.xml(xml);
             }
-            applyBeanValidatorAnnotations(model, annotatedType.getCtxAnnotations(), null, false);
+            if (!type.isEnumType()){
+                applyBeanValidatorAnnotations(model, annotatedType.getCtxAnnotations(), null, false);
+            }
             resolveSchemaMembers(model, annotatedType, context, next);
             if (resolvedArrayAnnotation != null) {
                 ArraySchema schema = new ArraySchema();
