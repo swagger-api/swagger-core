@@ -14,6 +14,9 @@ import java.util.Map;
 import static io.swagger.v3.core.util.TestUtils.normalizeLineEnds;
 import static org.testng.Assert.assertEquals;
 
+import org.json.JSONObject;
+import org.skyscreamer.jsonassert.JSONAssert;
+
 public class NumericFormatTest {
     @Test
     public void testFormatOfInteger() {
@@ -41,8 +44,8 @@ public class NumericFormatTest {
         final Map<String, Schema> models = ModelConverters.getInstance().readAll(ModelWithDecimalFields.class);
         assertEquals(models.size(), 1);
 
-        String json = Json.pretty(models);
-        assertEquals(normalizeLineEnds(json),
+        String json1 = Json.pretty(models);
+        String json2 = 
                 "{\n" +
                         "  \"ModelWithDecimalFields\" : {\n" +
                         "    \"type\" : \"object\",\n" +
@@ -55,7 +58,11 @@ public class NumericFormatTest {
                         "      }\n" +
                         "    }\n" +
                         "  }\n" +
-                        "}");
+                        "}";
+        JSONObject jsonObj1 = new JSONObject(json1);
+        JSONObject jsonObj2 = new JSONObject(json2);
+
+        JSONAssert.assertEquals(jsonObj1, jsonObj2, true);
     }
 
     @Test
@@ -63,9 +70,9 @@ public class NumericFormatTest {
         final Map<String, Schema> models = ModelConverters.getInstance().readAll(ModelWithoutScientificFields.class);
         assertEquals(models.size(), 1);
 
-        String json = Json.pretty(models);
+        String json1 = Json.pretty(models);
 
-        assertEquals(normalizeLineEnds(json),
+        String json2 = 
                 "{\n" +
                         "  \"ModelWithoutScientificFields\" : {\n" +
                         "    \"type\" : \"object\",\n" +
@@ -79,7 +86,11 @@ public class NumericFormatTest {
                         "      }\n" +
                         "    }\n" +
                         "  }\n" +
-                        "}");
+                        "}";
+        JSONObject jsonObj1 = new JSONObject(json1);
+        JSONObject jsonObj2 = new JSONObject(json2);
+
+        JSONAssert.assertEquals(jsonObj1, jsonObj2, true);
 
     }
 

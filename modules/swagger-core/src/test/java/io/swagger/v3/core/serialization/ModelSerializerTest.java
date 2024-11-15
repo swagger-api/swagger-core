@@ -17,6 +17,8 @@ import io.swagger.v3.oas.models.media.IntegerSchema;
 import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.media.StringSchema;
 import org.testng.annotations.Test;
+import org.json.JSONObject;
+import org.skyscreamer.jsonassert.JSONAssert;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -110,15 +112,22 @@ public class ModelSerializerTest {
     public void serializeArrayModel() throws IOException {
         final ArraySchema model = new ArraySchema();
         model.setItems(new Schema().$ref("Pet"));
-        assertEquals(m.writeValueAsString(model), "{\"type\":\"array\",\"items\":{\"$ref\":\"#/components/schemas/Pet\"}}");
+        String json1 = m.writeValueAsString(model);
+        String json2 = "{\"type\":\"array\",\"items\":{\"$ref\":\"#/components/schemas/Pet\"}}";
+        JSONObject jsonObj1 = new JSONObject(json1);
+        JSONObject jsonObj2 = new JSONObject(json2);
+        JSONAssert.assertEquals(jsonObj1, jsonObj2, true);
     }
 
     @Test(description = "it should deserialize an array model")
     public void deserializeArrayModel() throws IOException {
-        final String json = "{\"type\":\"array\",\"items\":{\"$ref\":\"#/definitions/Pet\"}}";
-        final Schema p = m.readValue(json, Schema.class);
+        final String json1 = "{\"type\":\"array\",\"items\":{\"$ref\":\"#/definitions/Pet\"}}";
+        final Schema p = m.readValue(json1, Schema.class);
+        String json2 = m.writeValueAsString(p);
+        JSONObject jsonObj1 = new JSONObject(json1);
+        JSONObject jsonObj2 = new JSONObject(json2);
         assertTrue(p instanceof ArraySchema);
-        assertEquals(m.writeValueAsString(p), json);
+        JSONAssert.assertEquals(jsonObj1, jsonObj2, true);
     }
 
     @Test(description = "it should not create an xml object for $ref")
