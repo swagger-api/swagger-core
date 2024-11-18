@@ -46,6 +46,7 @@ public class Schema<T> {
     }
 
     public static final String SCHEMA_RESOLUTION_PROPERTY = "schema-resolution";
+    public static final String APPLY_SCHEMA_RESOLUTION_PROPERTY = "apply-schema-resolution";
     public enum SchemaResolution {
         @JsonProperty("default")
         DEFAULT("default"),

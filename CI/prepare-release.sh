@@ -75,7 +75,8 @@ sed -i -e "s/$sc_find/$sc_replace/g" $CUR/modules/swagger-maven-plugin/README.md
 
 sc_find="<version>$SC_LAST_RELEASE<\/version>"
 sc_replace="<version>$SC_VERSION<\/version>"
-sed -i -e "s/$sc_find/$sc_replace/g" $CUR/modules/swaggerjava17-support/pom.xml
+sed -i -e "s/$sc_find/$sc_replace/g" $CUR/modules/swagger-java17-support/pom.xml
+rm -f $CUR/modules/swagger-java17-support/pom.xml.versionsBackup
 
 #####################
 ### build and test maven ###
