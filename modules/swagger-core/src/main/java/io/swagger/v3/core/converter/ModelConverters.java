@@ -81,7 +81,8 @@ public class ModelConverters {
         synchronized (ModelConverters.class) {
             if (openapi31) {
                 if (SINGLETON31 == null) {
-                    SINGLETON31 = new ModelConverters(openapi31, Schema.SchemaResolution.DEFAULT);
+                    boolean applySchemaResolution = Boolean.parseBoolean(System.getProperty(Schema.APPLY_SCHEMA_RESOLUTION_PROPERTY, "false")) || Boolean.parseBoolean(System.getenv(Schema.APPLY_SCHEMA_RESOLUTION_PROPERTY));
+                    SINGLETON31 = new ModelConverters(openapi31, applySchemaResolution ? schemaResolution : Schema.SchemaResolution.DEFAULT);
                     init(SINGLETON31);
                 }
                 return SINGLETON31;
