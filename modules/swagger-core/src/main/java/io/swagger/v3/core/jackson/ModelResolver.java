@@ -1128,13 +1128,16 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
     private Boolean isRecordType(BeanPropertyDefinition propDef){
         try {
-            Class<?> clazz = propDef.getPrimaryMember().getDeclaringClass();
-            Method isRecordMethod = Class.class.getMethod("isRecord");
-            return (Boolean) isRecordMethod.invoke(clazz);
+            if (propDef.getPrimaryMember() != null) {
+                Class<?> clazz = propDef.getPrimaryMember().getDeclaringClass();
+                Method isRecordMethod = Class.class.getMethod("isRecord");
+                return (Boolean) isRecordMethod.invoke(clazz);
+            } else {
+                return false;
+            }
         } catch (NoSuchMethodException e) {
             return false;
         } catch (Exception e) {
-            e.printStackTrace();
             return false;
         }
     }
