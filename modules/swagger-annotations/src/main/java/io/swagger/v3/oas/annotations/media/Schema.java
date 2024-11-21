@@ -256,6 +256,13 @@ public @interface Schema {
     String example() default "";
 
     /**
+     * Set value of example to null if array contains the value of example
+     *
+     * @return Array of string that each element must be set to null if it equals example
+     */
+    String[] nullValues() default {};
+
+    /**
      * Additional external documentation for this schema.
      *
      * @return additional schema documentation
