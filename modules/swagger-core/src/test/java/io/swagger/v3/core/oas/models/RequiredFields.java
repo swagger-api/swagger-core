@@ -31,4 +31,7 @@ public class RequiredFields {
     @Schema(description = "mode not required with annotation", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
     @NotNull
     public Long modeNotRequiredWithAnnotation;
+
+    @NotNull(groups = RequiredFields.class)
+    public Long requiredByAnnotationWithGroupsAttribute;
 }

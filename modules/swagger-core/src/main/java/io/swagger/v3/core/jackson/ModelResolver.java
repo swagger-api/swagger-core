@@ -102,6 +102,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.Objects;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -1532,9 +1533,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             }
         }
         if (parent != null && annotations != null && applyNotNullAnnotations) {
-            boolean requiredItem = Arrays.stream(annotations).anyMatch(annotation ->
-                    NOT_NULL_ANNOTATIONS.contains(annotation.annotationType().getSimpleName())
-            );
+            boolean requiredItem = Arrays.stream(annotations).anyMatch(this::requiredByAnnotation);
             if (requiredItem) {
                 addRequiredItem(parent, property.getName());
             }
@@ -1589,6 +1588,14 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 property.getItems().setPattern(pattern.regexp());
             }
         }
+    }
+
+    private boolean requiredByAnnotation(Annotation annotation) {
+        boolean hasNotNullAnnotation = NOT_NULL_ANNOTATIONS.contains(annotation.annotationType().getSimpleName());
+        if (hasNotNullAnnotation && annotation.annotationType().getCanonicalName().contains(".validation.constraints")) {
+            return !hasGroupsAttribute(annotation);
+        }
+        return hasNotNullAnnotation;
     }
 
     private boolean resolveSubtypes(Schema model, BeanDescription bean, ModelConverterContext context, JsonView jsonViewAnnotation) {
@@ -3077,5 +3084,21 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             }
         }
         return result;
+    }
+
+    private boolean hasGroupsAttribute(Annotation annotation) {
+        return Arrays.stream(annotation.annotationType().getDeclaredMethods())
+                .filter(m -> "groups".equals(m.getName()))
+                .findFirst()
+                .map(m -> {
+                    try {
+                        return m.invoke(annotation);
+                    } catch (Exception e) {
+                        return null;
+                    }
+                })
+                .map(Class[].class::cast)
+                .filter(g -> g.length > 0)
+                .isPresent();
     }
 }
