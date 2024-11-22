@@ -1,5 +1,6 @@
 package io.swagger.v3.java17.resolving;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.core.converter.ModelConverters;
 import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.java17.matchers.SerializationMatchers;
@@ -117,4 +118,25 @@ public class JavaRecordTest {
             List<@Min(1)@Max(10000) Integer> id
     ){
     }
+
+    @Test
+    public void testJavaRecordWithJsonPropertyAnnotationNotMatchingFieldName() {
+        String expectedYaml = "JavaRecordWithJsonPropertyAnnotationNotMatchingFieldName:\n" +
+            "  type: object\n" +
+            "  properties:\n" +
+            "    listOfStrings:\n" +
+            "      type: array\n" +
+            "      items:\n" +
+            "        maxLength: 5\n" +
+            "        minLength: 1\n" +
+            "        type: string";
+
+        Map<String, Schema> stringSchemaMap = ModelConverters.getInstance(false).readAll(JavaRecordWithJsonPropertyAnnotationNotMatchingFieldName.class);
+        SerializationMatchers.assertEqualsToYaml(stringSchemaMap, expectedYaml);
+    }
+
+    public record JavaRecordWithJsonPropertyAnnotationNotMatchingFieldName(
+        @JsonProperty("listOfStrings") List<@Size(min = 1, max = 5)String> stringList
+    ) { }
+
 }

@@ -1112,7 +1112,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
     private Stream<Annotation> getRecordComponentAnnotations(BeanPropertyDefinition propDef) {
         try {
-            Method accessor = propDef.getPrimaryMember().getDeclaringClass().getDeclaredMethod(propDef.getName());
+            Method accessor = propDef.getPrimaryMember().getDeclaringClass().getDeclaredMethod(propDef.getPrimaryMember().getName());
             return getGenericTypeArgumentAnnotations(accessor.getAnnotatedReturnType());
         } catch (NoSuchMethodException e) {
             LOGGER.error("Accessor for record component not found");
