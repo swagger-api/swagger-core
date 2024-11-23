@@ -142,12 +142,6 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
     @Override
     public Schema resolve(AnnotatedType annotatedType, ModelConverterContext context, Iterator<ModelConverter> next) {
-
-
-        boolean applySchemaResolution =
-                !openapi31 ||
-                        (Boolean.parseBoolean(System.getProperty(Schema.APPLY_SCHEMA_RESOLUTION_PROPERTY, "false")) ||
-                                Boolean.parseBoolean(System.getenv(Schema.APPLY_SCHEMA_RESOLUTION_PROPERTY)));
         boolean isPrimitive = false;
         Schema model = null;
         List<String> requiredProps = new ArrayList<>();
@@ -479,7 +473,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                     }
                     if (isObjectSchema(addPropertiesSchema) && pName != null) {
                         if (context.getDefinedModels().containsKey(pName)) {
-                            if (Schema.SchemaResolution.INLINE.equals(containerResolvedSchemaResolution) && applySchemaResolution) {
+                            if (Schema.SchemaResolution.INLINE.equals(containerResolvedSchemaResolution) && applySchemaResolution()) {
                                 addPropertiesSchema = context.getDefinedModels().get(pName);
                             } else {
                                 // create a reference for the items
@@ -531,7 +525,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 }
                 if (isObjectSchema(items) && pName != null) {
                     if (context.getDefinedModels().containsKey(pName)) {
-                        if (Schema.SchemaResolution.INLINE.equals(containerResolvedSchemaResolution) && applySchemaResolution) {
+                        if (Schema.SchemaResolution.INLINE.equals(containerResolvedSchemaResolution) && applySchemaResolution()) {
                             items = context.getDefinedModels().get(pName);
                         } else {
                             // create a reference for the items
@@ -757,7 +751,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 property = context.resolve(aType);
                 property = clone(property);
                 Schema ctxProperty = null;
-                if (!applySchemaResolution) {
+                if (!applySchemaResolution()) {
                     Optional<Schema> reResolvedProperty = AnnotationsUtils.getSchemaFromAnnotation(ctxSchema, annotatedType.getComponents(), null, openapi31, property, schemaResolution, context);
                     if (reResolvedProperty.isPresent()) {
                         property = reResolvedProperty.get();
@@ -841,7 +835,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                                 }
                             }
                         } else if (property.get$ref() != null) {
-                            if (applySchemaResolution) {
+                            if (applySchemaResolution()) {
                                 if (Schema.SchemaResolution.ALL_OF.equals(resolvedSchemaResolution) && ctxProperty != null) {
                                     property = new Schema()
                                             .addAllOfItem(ctxProperty)
@@ -1134,13 +1128,16 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
     private Boolean isRecordType(BeanPropertyDefinition propDef){
         try {
-            Class<?> clazz = propDef.getPrimaryMember().getDeclaringClass();
-            Method isRecordMethod = Class.class.getMethod("isRecord");
-            return (Boolean) isRecordMethod.invoke(clazz);
+            if (propDef.getPrimaryMember() != null) {
+                Class<?> clazz = propDef.getPrimaryMember().getDeclaringClass();
+                Method isRecordMethod = Class.class.getMethod("isRecord");
+                return (Boolean) isRecordMethod.invoke(clazz);
+            } else {
+                return false;
+            }
         } catch (NoSuchMethodException e) {
             return false;
         } catch (Exception e) {
-            e.printStackTrace();
             return false;
         }
     }
@@ -3128,5 +3125,11 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             }
         }
         return result;
+    }
+
+    protected boolean applySchemaResolution() {
+        return !openapi31 ||
+                        (Boolean.parseBoolean(System.getProperty(Schema.APPLY_SCHEMA_RESOLUTION_PROPERTY, "false")) ||
+                                Boolean.parseBoolean(System.getenv(Schema.APPLY_SCHEMA_RESOLUTION_PROPERTY)));
     }
 }
