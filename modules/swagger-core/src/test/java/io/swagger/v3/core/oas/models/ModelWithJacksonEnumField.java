@@ -6,8 +6,8 @@ package io.swagger.v3.core.oas.models;
 public class ModelWithJacksonEnumField {
     public JacksonPropertyEnum firstEnumValue;
     public JacksonValueEnum secondEnumValue;
-    public JacksonNumberValueEnum thirdEnumValue;
+    public JacksonIntegerValueEnum thirdEnumValue;
     public JacksonValueFieldEnum fourthEnumValue;
-    public JacksonNumberValueFieldEnum fifthEnumValue;
+    public JacksonIntegerValueFieldEnum fifthEnumValue;
     public JacksonValuePrivateEnum sixthEnumValue;
 }
