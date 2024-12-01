@@ -56,7 +56,6 @@ import io.swagger.v3.oas.models.media.Discriminator;
 import io.swagger.v3.oas.models.media.IntegerSchema;
 import io.swagger.v3.oas.models.media.JsonSchema;
 import io.swagger.v3.oas.models.media.MapSchema;
-import io.swagger.v3.oas.models.media.NumberSchema;
 import io.swagger.v3.oas.models.media.ObjectSchema;
 import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.media.StringSchema;
@@ -97,6 +96,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -1566,15 +1566,14 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         }
     }
 
-    protected void applyBeanValidatorAnnotations(Schema property, Annotation[] annotations, Schema parent, boolean applyNotNullAnnotations) {
+    protected void applyBeanValidatorAnnotations(Schema property, Annotation[] directAnnotations, Schema parent, boolean applyNotNullAnnotations) {
+        Collection<Annotation> annotations = collectTransitiveAnnotations(directAnnotations); // Allows using composite constraints
         Map<String, Annotation> annos = new HashMap<>();
-        if (annotations != null) {
-            for (Annotation anno : annotations) {
-                annos.put(anno.annotationType().getName(), anno);
-            }
+        for (Annotation anno : annotations) {
+            annos.put(anno.annotationType().getName(), anno);
         }
-        if (parent != null && annotations != null && applyNotNullAnnotations) {
-            boolean requiredItem = Arrays.stream(annotations).anyMatch(annotation ->
+        if (parent != null && applyNotNullAnnotations) {
+            boolean requiredItem = annotations.stream().anyMatch(annotation ->
                     NOT_NULL_ANNOTATIONS.contains(annotation.annotationType().getSimpleName())
             );
             if (requiredItem) {
@@ -1631,6 +1630,24 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 property.getItems().setPattern(pattern.regexp());
             }
         }
+    }
+
+    private Collection<Annotation> collectTransitiveAnnotations(Annotation[] annotations) {
+        if (annotations == null) {
+            return new HashSet<>();
+        }
+        LinkedHashSet<Annotation> annotationsToVisit = new LinkedHashSet<>(Arrays.asList(annotations));
+        Set<Annotation> collectedAnnotations = new HashSet<>();
+        while (!annotationsToVisit.isEmpty()) {
+            Annotation annotation = annotationsToVisit.iterator().next();
+            annotationsToVisit.remove(annotation);
+            if (!collectedAnnotations.contains(annotation)) {
+                collectedAnnotations.add(annotation);
+                Annotation[] annotationsOfAnnotation = annotation.annotationType().getAnnotations();
+                annotationsToVisit.addAll(Arrays.asList(annotationsOfAnnotation));
+            }
+        }
+        return collectedAnnotations;
     }
 
     private boolean resolveSubtypes(Schema model, BeanDescription bean, ModelConverterContext context, JsonView jsonViewAnnotation) {
