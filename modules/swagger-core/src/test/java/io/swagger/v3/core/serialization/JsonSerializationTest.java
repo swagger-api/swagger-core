@@ -17,6 +17,8 @@ import io.swagger.v3.oas.models.responses.ApiResponses;
 import io.swagger.v3.oas.models.servers.Server;
 import org.testng.annotations.Test;
 import org.yaml.snakeyaml.LoaderOptions;
+import org.json.JSONObject;
+import org.skyscreamer.jsonassert.JSONAssert;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -68,7 +70,11 @@ public class JsonSerializationTest {
         swagger.addExtension("x-extension-with-properties", extensionObjectProps);
 
         String swaggerJson = Json.mapper().writeValueAsString(swagger);
-        assertEquals(swaggerJson, "{\"openapi\":\"3.0.1\",\"x-extension-with-properties\":{\"x-foo-bar\":\"foo bar\",\"x-bar-foo\":null}}");
+        String json2 = "{\"openapi\":\"3.0.1\",\"x-extension-with-properties\":{\"x-foo-bar\":\"foo bar\",\"x-bar-foo\":null}}";
+        JSONObject jsonObj1 = new JSONObject(swaggerJson);
+        JSONObject jsonObj2 = new JSONObject(json2);
+
+        JSONAssert.assertEquals(jsonObj1, jsonObj2, true);
     }
 
     @Test
