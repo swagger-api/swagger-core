@@ -10,6 +10,8 @@ import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.responses.ApiResponse;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+import org.json.JSONObject;
+import org.skyscreamer.jsonassert.JSONAssert;
 
 import static io.swagger.v3.core.util.TestUtils.normalizeLineEnds;
 import static org.testng.Assert.assertEquals;
@@ -167,13 +169,17 @@ public class MapPropertyDeserializerTest {
         Schema responseSchema = response.getContent().get("*/*").getSchema();
 
         Schema schema = new ObjectSchema().additionalProperties(true);
-        assertEquals(normalizeLineEnds(Json.pretty(schema)), "{\n" +
+        String json1 = "{\n" +
                 "  \"type\" : \"object\",\n" +
                 "  \"additionalProperties\" : true\n" +
-                "}");
+                "}";
+        String json2 = normalizeLineEnds(Json.pretty(schema));
+        JSONObject jsonObj1 = new JSONObject(json1);
+        JSONObject jsonObj2 = new JSONObject(json2);
+        JSONAssert.assertEquals(jsonObj1, jsonObj2, true);
 
         schema = new ObjectSchema().additionalProperties(responseSchema);
-        assertEquals(normalizeLineEnds(Json.pretty(schema)), "{\n" +
+        String json3 = "{\n" +
                 "  \"type\" : \"object\",\n" +
                 "  \"additionalProperties\" : {\n" +
                 "    \"type\" : \"object\",\n" +
@@ -183,7 +189,11 @@ public class MapPropertyDeserializerTest {
                 "    },\n" +
                 "    \"x-foo\" : \"vendor x\"\n" +
                 "  }\n" +
-                "}");
+                "}";
+        String json4 = normalizeLineEnds(Json.pretty(schema));
+        JSONObject jsonObj3 = new JSONObject(json3);
+        JSONObject jsonObj4 = new JSONObject(json4);
+        JSONAssert.assertEquals(jsonObj3, jsonObj4, true);
     }
 
     @Test(description = "vendor extensions should be included with object type")

@@ -23,8 +23,8 @@ public class NumericFormatTest {
         final Map<String, Schema> models = ModelConverters.getInstance().readAll(ModelWithIntegerFields.class);
         assertEquals(models.size(), 1);
 
-        String json = Json.pretty(models);
-        assertEquals(normalizeLineEnds(json),
+        String json1 = Json.pretty(models);
+        String json2 = 
                 "{\n" +
                         "  \"ModelWithIntegerFields\" : {\n" +
                         "    \"type\" : \"object\",\n" +
@@ -36,7 +36,11 @@ public class NumericFormatTest {
                         "      }\n" +
                         "    }\n" +
                         "  }\n" +
-                        "}");
+                        "}";
+        JSONObject jsonObj1 = new JSONObject(json1);
+        JSONObject jsonObj2 = new JSONObject(json2);
+
+        JSONAssert.assertEquals(jsonObj1, jsonObj2, true);
     }
 
     @Test
