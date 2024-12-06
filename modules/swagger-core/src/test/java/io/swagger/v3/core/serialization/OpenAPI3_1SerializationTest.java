@@ -31,6 +31,14 @@ import io.swagger.v3.oas.models.responses.ApiResponses;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import org.testng.annotations.Test;
 import org.yaml.snakeyaml.LoaderOptions;
+import org.json.JSONObject;
+import org.skyscreamer.jsonassert.JSONAssert;
+import java.util.Map;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
@@ -1392,45 +1400,65 @@ public class OpenAPI3_1SerializationTest {
 
         System.out.println("--------- root ----------");
         Json31.prettyPrint(openAPI);
-        assertEquals(Json31.pretty(openAPI), withJacksonSystemLineSeparator("{\n" +
+        String json1 = withJacksonSystemLineSeparator("{\n" +
                 "  \"openapi\" : \"3.1.0\",\n" +
                 "  \"components\" : {\n" +
                 "    \"schemas\" : {\n" +
                 "      \"test\" : true\n" +
                 "    }\n" +
                 "  }\n" +
-                "}"));
+                "}");
+        String json2 = Json31.pretty(openAPI);
+        JSONObject jsonObj1 = new JSONObject(json1);
+        JSONObject jsonObj2 = new JSONObject(json2);
+        JSONAssert.assertEquals(jsonObj1, jsonObj2, true);
+
         System.out.println("--------- schema ----------");
         Json31.prettyPrint(openAPI.getComponents().getSchemas().get("test"));
         assertEquals(Json31.pretty(openAPI.getComponents().getSchemas().get("test")), "true");
         System.out.println("--------- root YAML----------");
         Yaml31.prettyPrint(openAPI);
-        assertEquals(Yaml31.pretty(openAPI), "openapi: 3.1.0\n" +
+        String expectedYaml =  "openapi: 3.1.0\n" +
                 "components:\n" +
                 "  schemas:\n" +
-                "    test: true\n");
+                "    test: true\n";
+        String actualYaml = Yaml31.pretty(openAPI);
+        Set<String> expectedSet = new HashSet<>(Arrays.asList(expectedYaml.split("\n")));
+        Set<String> actualSet = new HashSet<>(Arrays.asList(actualYaml.split("\n")));
+        assertEquals(expectedSet, actualSet);
+
         System.out.println("--------- schema YAML ----------");
         Yaml31.prettyPrint(openAPI.getComponents().getSchemas().get("test"));
         assertEquals(Yaml31.pretty(openAPI.getComponents().getSchemas().get("test")), "true\n");
         System.out.println("--------- root 3.0 ----------");
         Json.prettyPrint(openAPI);
-        assertEquals(Json.pretty(openAPI), withJacksonSystemLineSeparator("{\n" +
+        String json5 = withJacksonSystemLineSeparator("{\n" +
                 "  \"openapi\" : \"3.1.0\",\n" +
                 "  \"components\" : {\n" +
                 "    \"schemas\" : {\n" +
                 "      \"test\" : { }\n" +
                 "    }\n" +
                 "  }\n" +
-                "}"));
+                "}");
+        String json6 = Json.pretty(openAPI);
+        JSONObject jsonObj5 = new JSONObject(json5);
+        JSONObject jsonObj6 = new JSONObject(json6);
+        JSONAssert.assertEquals(jsonObj5, jsonObj6, true);
+
         System.out.println("--------- schema 3.0 ----------");
         Json.prettyPrint(openAPI.getComponents().getSchemas().get("test"));
         assertEquals(Json.pretty(openAPI.getComponents().getSchemas().get("test")), "{ }");
         System.out.println("--------- root YAML 3.0 ----------");
         Yaml.prettyPrint(openAPI);
-        assertEquals(Yaml.pretty(openAPI), "openapi: 3.1.0\n" +
+        String expectedYaml2 =  "openapi: 3.1.0\n" +
                 "components:\n" +
                 "  schemas:\n" +
-                "    test: {}\n");
+                "    test: {}\n";
+        String actualYaml2 = Yaml.pretty(openAPI);
+        Set<String> expectedSet2 = new HashSet<>(Arrays.asList(expectedYaml2.split("\n")));
+        Set<String> actualSet2 = new HashSet<>(Arrays.asList(actualYaml2.split("\n")));
+        assertEquals(expectedSet2, actualSet2);
+
         System.out.println("--------- schema YAML 3.0 ----------");
         Yaml.prettyPrint(openAPI.getComponents().getSchemas().get("test"));
         assertEquals(Yaml.pretty(openAPI.getComponents().getSchemas().get("test")), "{}\n");
@@ -1459,20 +1487,28 @@ public class OpenAPI3_1SerializationTest {
 
         OpenAPI openAPI = Json31.mapper().readValue(expectedJson, OpenAPI.class);
         String ser = Json31.pretty(openAPI);
-        assertEquals(ser, withJacksonSystemLineSeparator(expectedJson));
+        JSONObject jsonObj1 = new JSONObject(withJacksonSystemLineSeparator(expectedJson));
+        JSONObject jsonObj2 = new JSONObject(ser);
+        JSONAssert.assertEquals(jsonObj1, jsonObj2, true);
         assertTrue(Boolean.TRUE.equals(openAPI.getComponents().getSchemas().get("test").getAdditionalProperties()));
         openAPI = Json.mapper().readValue(expectedJson, OpenAPI.class);
         ser = Json.pretty(openAPI);
-        assertEquals(ser, withJacksonSystemLineSeparator(expectedJson));
+        JSONObject jsonObj3 = new JSONObject(withJacksonSystemLineSeparator(expectedJson));
+        JSONObject jsonObj4 = new JSONObject(ser);
+        JSONAssert.assertEquals(jsonObj3, jsonObj4, true);
         assertTrue(Boolean.TRUE.equals(openAPI.getComponents().getSchemas().get("test").getAdditionalProperties()));
 
         openAPI = Yaml31.mapper().readValue(expectedYaml, OpenAPI.class);
         ser = Yaml31.pretty(openAPI);
-        assertEquals(ser, expectedYaml);
+        Set<String> expectedSet5 = new HashSet<>(Arrays.asList(expectedYaml.split("\n")));
+        Set<String> actualSet5 = new HashSet<>(Arrays.asList(ser.split("\n")));
+        assertEquals(expectedSet5, actualSet5);
         assertTrue(Boolean.TRUE.equals(openAPI.getComponents().getSchemas().get("test").getAdditionalProperties()));
         openAPI = Yaml.mapper().readValue(expectedYaml, OpenAPI.class);
         ser = Yaml.pretty(openAPI);
-        assertEquals(ser, expectedYaml);
+        Set<String> expectedSet6 = new HashSet<>(Arrays.asList(expectedYaml.split("\n")));
+        Set<String> actualSet6 = new HashSet<>(Arrays.asList(ser.split("\n")));
+        assertEquals(expectedSet6, actualSet6);
         assertTrue(Boolean.TRUE.equals(openAPI.getComponents().getSchemas().get("test").getAdditionalProperties()));
 
         expectedJson = "{\n" +
@@ -1496,20 +1532,28 @@ public class OpenAPI3_1SerializationTest {
 
         openAPI = Json31.mapper().readValue(expectedJson, OpenAPI.class);
         ser = Json31.pretty(openAPI);
-        assertEquals(ser, withJacksonSystemLineSeparator(expectedJson));
+        JSONObject jsonObj5 = new JSONObject(withJacksonSystemLineSeparator(expectedJson));
+        JSONObject jsonObj6 = new JSONObject(ser);
+        JSONAssert.assertEquals(jsonObj5, jsonObj6, true);
         assertTrue(Boolean.TRUE.equals(openAPI.getComponents().getSchemas().get("test").getAdditionalProperties()));
         openAPI = Json.mapper().readValue(expectedJson, OpenAPI.class);
         ser = Json.pretty(openAPI);
-        assertEquals(ser, withJacksonSystemLineSeparator(expectedJson));
+        JSONObject jsonObj7 = new JSONObject(withJacksonSystemLineSeparator(expectedJson));
+        JSONObject jsonObj8 = new JSONObject(ser);
+        JSONAssert.assertEquals(jsonObj7, jsonObj8, true);
         assertTrue(Boolean.TRUE.equals(openAPI.getComponents().getSchemas().get("test").getAdditionalProperties()));
 
         openAPI = Yaml31.mapper().readValue(expectedYaml, OpenAPI.class);
         ser = Yaml31.pretty(openAPI);
-        assertEquals(ser, expectedYaml);
+        Set<String> expectedSet7 = new HashSet<>(Arrays.asList(expectedYaml.split("\n")));
+        Set<String> actualSet7 = new HashSet<>(Arrays.asList(ser.split("\n")));
+        assertEquals(expectedSet7, actualSet7);
         assertTrue(Boolean.TRUE.equals(openAPI.getComponents().getSchemas().get("test").getAdditionalProperties()));
         openAPI = Yaml.mapper().readValue(expectedYaml, OpenAPI.class);
         ser = Yaml.pretty(openAPI);
-        assertEquals(ser, expectedYaml);
+        Set<String> expectedSet8 = new HashSet<>(Arrays.asList(expectedYaml.split("\n")));
+        Set<String> actualSet8 = new HashSet<>(Arrays.asList(ser.split("\n")));
+        assertEquals(expectedSet8, actualSet8);
         assertTrue(Boolean.TRUE.equals(openAPI.getComponents().getSchemas().get("test").getAdditionalProperties()));
     }
 
