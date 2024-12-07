@@ -5,6 +5,8 @@ import io.swagger.v3.core.converter.AnnotatedType;
 import io.swagger.v3.core.converter.ModelConverters;
 import io.swagger.v3.core.converter.ResolvedSchema;
 import io.swagger.v3.core.jackson.ModelResolver;
+import io.swagger.v3.core.jackson.ValidationAnnotationFilter;
+import io.swagger.v3.core.jackson.ValidationAnnotationFilter.DefaultValidationAnnotationFilter;
 import io.swagger.v3.oas.annotations.enums.Explode;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.models.Components;
@@ -55,7 +57,20 @@ public class ParameterProcessor {
             JsonView jsonViewAnnotation,
             boolean openapi31,
             Schema.SchemaResolution schemaResolution) {
+        return applyAnnotations(parameter, type, annotations, components, classTypes, methodTypes, jsonViewAnnotation, openapi31, schemaResolution, new DefaultValidationAnnotationFilter());
+    }
 
+    public static Parameter applyAnnotations(
+            Parameter parameter,
+            Type type,
+            List<Annotation> annotations,
+            Components components,
+            String[] classTypes,
+            String[] methodTypes,
+            JsonView jsonViewAnnotation,
+            boolean openapi31,
+            Schema.SchemaResolution schemaResolution,
+            ValidationAnnotationFilter validationAnnotationFilter) {
         final AnnotationsHelper helper = new AnnotationsHelper(annotations, type);
         if (helper.isContext()) {
             return null;
@@ -252,7 +267,7 @@ public class ParameterProcessor {
                 } catch (Exception e) {
                     LOGGER.error("failed on " + annotation.annotationType().getName(), e);
                 }
-            } else if (ModelResolver.NOT_NULL_ANNOTATIONS.contains(annotation.annotationType().getSimpleName())) {
+            } else if (ModelResolver.hasNotNullAnnotation(annotation, validationAnnotationFilter)) {
                 parameter.setRequired(true);
             }
         }

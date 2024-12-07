@@ -31,6 +31,7 @@ import com.fasterxml.jackson.databind.util.Annotations;
 import io.swagger.v3.core.converter.AnnotatedType;
 import io.swagger.v3.core.converter.ModelConverter;
 import io.swagger.v3.core.converter.ModelConverterContext;
+import io.swagger.v3.core.jackson.ValidationAnnotationFilter.DefaultValidationAnnotationFilter;
 import io.swagger.v3.core.util.AnnotationsUtils;
 import io.swagger.v3.core.util.Constants;
 import io.swagger.v3.core.util.Json;
@@ -56,7 +57,6 @@ import io.swagger.v3.oas.models.media.Discriminator;
 import io.swagger.v3.oas.models.media.IntegerSchema;
 import io.swagger.v3.oas.models.media.JsonSchema;
 import io.swagger.v3.oas.models.media.MapSchema;
-import io.swagger.v3.oas.models.media.NumberSchema;
 import io.swagger.v3.oas.models.media.ObjectSchema;
 import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.media.StringSchema;
@@ -71,6 +71,9 @@ import javax.validation.constraints.DecimalMax;
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -111,6 +114,11 @@ import static io.swagger.v3.core.util.RefUtils.constructRef;
 public class ModelResolver extends AbstractModelConverter implements ModelConverter {
 
     Logger LOGGER = LoggerFactory.getLogger(ModelResolver.class);
+
+    /**
+     * @deprecated Use {@link ModelResolver#hasNotNullAnnotation(Annotation[], ValidationAnnotationFilter)} instead
+     */
+    @Deprecated
     public static List<String> NOT_NULL_ANNOTATIONS = Arrays.asList("NotNull", "NonNull", "NotBlank", "NotEmpty");
 
     public static final String SET_PROPERTY_OF_COMPOSED_MODEL_AS_SIBLING = "composed-model-properties-as-sibiling";
@@ -126,6 +134,8 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
     public static boolean enumsAsRef = System.getProperty(SET_PROPERTY_OF_ENUMS_AS_REF) != null;
 
     private boolean openapi31;
+
+    private ValidationAnnotationFilter validationAnnotationFilter = new DefaultValidationAnnotationFilter();
 
     private Schema.SchemaResolution schemaResolution = Schema.SchemaResolution.DEFAULT;
 
@@ -1581,57 +1591,56 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             }
         }
         if (parent != null && annotations != null && applyNotNullAnnotations) {
-            boolean requiredItem = Arrays.stream(annotations).anyMatch(annotation ->
-                    NOT_NULL_ANNOTATIONS.contains(annotation.annotationType().getSimpleName())
-            );
+            boolean requiredItem = hasNotNullAnnotation(annotations, validationAnnotationFilter);
             if (requiredItem) {
                 addRequiredItem(parent, property.getName());
             }
         }
         if (annos.containsKey("javax.validation.constraints.Min")) {
-            if (isNumberSchema(property)) {
-                Min min = (Min) annos.get("javax.validation.constraints.Min");
+            Min min = (Min) annos.get("javax.validation.constraints.Min");
+            if (isNumberSchema(property) && validationAnnotationFilter.isMinAnnotationApplicable(min)) {
                 property.setMinimum(new BigDecimal(min.value()));
             }
         }
         if (annos.containsKey("javax.validation.constraints.Max")) {
-            if (isNumberSchema(property)) {
-                Max max = (Max) annos.get("javax.validation.constraints.Max");
+            Max max = (Max) annos.get("javax.validation.constraints.Max");
+            if (isNumberSchema(property) && validationAnnotationFilter.isMaxAnnotationApplicable(max)) {
                 property.setMaximum(new BigDecimal(max.value()));
             }
         }
         if (annos.containsKey("javax.validation.constraints.Size")) {
             Size size = (Size) annos.get("javax.validation.constraints.Size");
-            if (isNumberSchema(property)) {
+            boolean isApplicable = validationAnnotationFilter.isSizeAnnotationApplicable(size);
+            if (isApplicable && isNumberSchema(property)) {
                 property.setMinimum(new BigDecimal(size.min()));
                 property.setMaximum(new BigDecimal(size.max()));
             }
-            if (isStringSchema(property)) {
+            if (isApplicable && isStringSchema(property)) {
                 property.setMinLength(Integer.valueOf(size.min()));
                 property.setMaxLength(Integer.valueOf(size.max()));
             }
-            if (isArraySchema(property)) {
+            if (isApplicable && isArraySchema(property)) {
                 property.setMinItems(size.min());
                 property.setMaxItems(size.max());
             }
         }
         if (annos.containsKey("javax.validation.constraints.DecimalMin")) {
             DecimalMin min = (DecimalMin) annos.get("javax.validation.constraints.DecimalMin");
-            if (isNumberSchema(property)) {
+            if (isNumberSchema(property) && validationAnnotationFilter.isDecimalMinAnnotationApplicable(min)) {
                 property.setMinimum(new BigDecimal(min.value()));
                 property.setExclusiveMinimum(!min.inclusive());
             }
         }
         if (annos.containsKey("javax.validation.constraints.DecimalMax")) {
             DecimalMax max = (DecimalMax) annos.get("javax.validation.constraints.DecimalMax");
-            if (isNumberSchema(property)) {
+            if (isNumberSchema(property) && validationAnnotationFilter.isDecimalMaxAnnotationApplicable(max)) {
                 property.setMaximum(new BigDecimal(max.value()));
                 property.setExclusiveMaximum(!max.inclusive());
             }
         }
         if (annos.containsKey("javax.validation.constraints.Pattern")) {
             Pattern pattern = (Pattern) annos.get("javax.validation.constraints.Pattern");
-            if (isStringSchema(property)) {
+            if (isStringSchema(property) && validationAnnotationFilter.isPatternAnnotationApplicable(pattern)) {
                 property.setPattern(pattern.regexp());
             }
             if(property.getItems() != null && isStringSchema(property.getItems())) {
@@ -2423,9 +2432,9 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         Set<String> propertiesToIgnore = new HashSet<>();
         JsonIgnoreProperties ignoreProperties = a.get(JsonIgnoreProperties.class);
         if (ignoreProperties != null) {
-        	if(!ignoreProperties.allowGetters()) {
-        		propertiesToIgnore.addAll(Arrays.asList(ignoreProperties.value()));
-        	}
+            if(!ignoreProperties.allowGetters()) {
+                propertiesToIgnore.addAll(Arrays.asList(ignoreProperties.value()));
+            }
         }
         propertiesToIgnore.addAll(resolveIgnoredProperties(annotations));
         return propertiesToIgnore;
@@ -3087,6 +3096,11 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         return this;
     }
 
+    public ModelResolver validationAnnotationFilter(ValidationAnnotationFilter validationAnnotationFilter) {
+        this.validationAnnotationFilter = validationAnnotationFilter;
+        return this;
+    }
+
     public boolean isOpenapi31() {
         return openapi31;
     }
@@ -3134,4 +3148,38 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                         (Boolean.parseBoolean(System.getProperty(Schema.APPLY_SCHEMA_RESOLUTION_PROPERTY, "false")) ||
                                 Boolean.parseBoolean(System.getenv(Schema.APPLY_SCHEMA_RESOLUTION_PROPERTY)));
     }
+
+
+    /**
+     * Check if the parameter has any of the annotations that make it non-optional
+     *
+     * @param annotations the annotations to check
+     * @param validationAnnotationFilter the filters to use to remove annotations that don't match the current group
+     * @return whether any of the known NotNull annotations are present
+     */
+    public static boolean hasNotNullAnnotation(Annotation[] annotations, ValidationAnnotationFilter validationAnnotationFilter) {
+        for (Annotation annotation : annotations) {
+            if (hasNotNullAnnotation(annotation, validationAnnotationFilter)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static boolean hasNotNullAnnotation(Annotation annotation, ValidationAnnotationFilter validationAnnotationFilter) {
+        if (annotation instanceof NotEmpty && validationAnnotationFilter.isNotEmptyAnnotationApplicable((NotEmpty) annotation)) {
+            return true;
+        }
+        if (annotation instanceof NotBlank && validationAnnotationFilter.isNotBlankAnnotationApplicable((NotBlank) annotation)) {
+            return true;
+        }
+        if (annotation instanceof NotNull && validationAnnotationFilter.isNotNullAnnotationApplicable((NotNull) annotation)) {
+            return true;
+        }
+        if (annotation.annotationType().getSimpleName().equals("NonNull")) {
+            return true;
+        }
+        return false;
+    }
+
 }

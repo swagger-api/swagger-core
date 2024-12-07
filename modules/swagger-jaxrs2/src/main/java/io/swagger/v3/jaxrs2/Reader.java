@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.type.TypeFactory;
 import io.swagger.v3.core.converter.AnnotatedType;
 import io.swagger.v3.core.converter.ModelConverters;
 import io.swagger.v3.core.converter.ResolvedSchema;
+import io.swagger.v3.core.jackson.ValidationAnnotationFilter.DefaultValidationAnnotationFilter;
 import io.swagger.v3.core.util.AnnotationsUtils;
 import io.swagger.v3.core.util.Json;
 import io.swagger.v3.core.util.Json31;
@@ -1531,6 +1532,7 @@ public class Reader implements OpenApiReader {
         extension.setOpenAPI31(Boolean.TRUE.equals(config.isOpenAPI31()));
         Schema.SchemaResolution curSchemaResolution = config.getSchemaResolution();
         extension.setSchemaResolution(config.getSchemaResolution());
+        extension.setValidationAnnotationFilter(new DefaultValidationAnnotationFilter());
         ResolvedParameter resolvedParameter = extension.extractParameters(annotations, type, typesToSkip, components, classConsumes, methodConsumes, true, jsonViewAnnotation, chain);
         ((SwaggerConfiguration)config).setSchemaResolution(curSchemaResolution);
         return resolvedParameter;

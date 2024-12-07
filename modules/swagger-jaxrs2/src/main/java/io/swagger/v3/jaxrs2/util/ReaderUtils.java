@@ -1,6 +1,8 @@
 package io.swagger.v3.jaxrs2.util;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import io.swagger.v3.core.jackson.ValidationAnnotationFilter;
+import io.swagger.v3.core.jackson.ValidationAnnotationFilter.DefaultValidationAnnotationFilter;
 import io.swagger.v3.core.util.ParameterProcessor;
 import io.swagger.v3.core.util.ReflectionUtils;
 import io.swagger.v3.jaxrs2.ext.OpenAPIExtension;
@@ -47,6 +49,10 @@ public class ReaderUtils {
      * @return the collection of supported parameters
      */
     public static List<Parameter> collectConstructorParameters(Class<?> cls, Components components, javax.ws.rs.Consumes classConsumes, JsonView jsonViewAnnotation, Schema.SchemaResolution schemaResolution) {
+        return collectConstructorParameters(cls, components, classConsumes, jsonViewAnnotation, schemaResolution, new DefaultValidationAnnotationFilter());
+    }
+
+    public static List<Parameter> collectConstructorParameters(Class<?> cls, Components components, javax.ws.rs.Consumes classConsumes, JsonView jsonViewAnnotation, Schema.SchemaResolution schemaResolution, ValidationAnnotationFilter validationAnnotationFilter) {
         if (cls.isLocalClass() || (cls.isMemberClass() && !Modifier.isStatic(cls.getModifiers()))) {
             return Collections.emptyList();
         }
@@ -81,7 +87,10 @@ public class ReaderUtils {
                                     components,
                                     classConsumes == null ? new String[0] : classConsumes.value(),
                                     null,
-                                    jsonViewAnnotation, false, schemaResolution);
+                                    jsonViewAnnotation,
+                                    false,
+                                    schemaResolution,
+                                    validationAnnotationFilter);
                             if (processedParameter != null) {
                                 parameters.add(processedParameter);
                             }
