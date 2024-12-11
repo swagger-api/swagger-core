@@ -1163,6 +1163,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             if (jsonValueMember != null) {
                 return jsonValueMember.getType();
             }
+            return null;
         } catch (Exception e) {
             LOGGER.warn("jackson BeanDescription.findJsonValueAccessor not found, this could lead to inaccurate result, please update jackson to 2.9+");
         }
