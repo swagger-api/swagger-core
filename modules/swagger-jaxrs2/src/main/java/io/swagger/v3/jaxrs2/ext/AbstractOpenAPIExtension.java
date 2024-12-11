@@ -3,6 +3,7 @@ package io.swagger.v3.jaxrs2.ext;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.type.TypeFactory;
+import io.swagger.v3.core.jackson.ValidationAnnotationFilter;
 import io.swagger.v3.jaxrs2.ResolvedParameter;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.Operation;
@@ -19,6 +20,7 @@ public abstract class AbstractOpenAPIExtension implements OpenAPIExtension {
 
     protected boolean openapi31;
     protected Schema.SchemaResolution schemaResolution;
+    protected ValidationAnnotationFilter validationAnnotationFilter;
 
     @Override
     public String extractOperationMethod(Method method, Iterator<OpenAPIExtension> chain) {
@@ -74,5 +76,10 @@ public abstract class AbstractOpenAPIExtension implements OpenAPIExtension {
     @Override
     public void setSchemaResolution(Schema.SchemaResolution schemaResolution) {
         this.schemaResolution = schemaResolution;
+    }
+
+    @Override
+    public void setValidationAnnotationFilter(ValidationAnnotationFilter validationAnnotationFilter) {
+        this.validationAnnotationFilter = validationAnnotationFilter;
     }
 }

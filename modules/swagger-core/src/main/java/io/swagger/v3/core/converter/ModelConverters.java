@@ -2,6 +2,8 @@ package io.swagger.v3.core.converter;
 
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import io.swagger.v3.core.jackson.ModelResolver;
+import io.swagger.v3.core.jackson.ValidationAnnotationFilter;
+import io.swagger.v3.core.jackson.ValidationAnnotationFilter.DefaultValidationAnnotationFilter;
 import io.swagger.v3.core.util.Json;
 import io.swagger.v3.core.util.Json31;
 import io.swagger.v3.oas.models.media.Schema;
@@ -51,6 +53,16 @@ public class ModelConverters {
         }
     }
 
+    public ModelConverters(boolean openapi31, Schema.SchemaResolution schemaResolution, ValidationAnnotationFilter validationAnnotationFilter) {
+        converters = new CopyOnWriteArrayList<>();
+        if (openapi31) {
+            converters.add(new ModelResolver(Json31.mapper()).openapi31(true).schemaResolution(schemaResolution).validationAnnotationFilter(validationAnnotationFilter));
+        } else {
+            converters.add(new ModelResolver(Json.mapper()).schemaResolution(schemaResolution).validationAnnotationFilter(validationAnnotationFilter));
+        }
+    }
+
+
     public Set<String> getSkippedPackages() {
         return skippedPackages;
     }
@@ -78,17 +90,21 @@ public class ModelConverters {
     }
 
     public static ModelConverters getInstance(boolean openapi31, Schema.SchemaResolution schemaResolution) {
+        return getInstance(openapi31, schemaResolution, new DefaultValidationAnnotationFilter());
+    }
+
+    public static ModelConverters getInstance(boolean openapi31, Schema.SchemaResolution schemaResolution, ValidationAnnotationFilter validationAnnotationFilter) {
         synchronized (ModelConverters.class) {
             if (openapi31) {
                 if (SINGLETON31 == null) {
                     boolean applySchemaResolution = Boolean.parseBoolean(System.getProperty(Schema.APPLY_SCHEMA_RESOLUTION_PROPERTY, "false")) || Boolean.parseBoolean(System.getenv(Schema.APPLY_SCHEMA_RESOLUTION_PROPERTY));
-                    SINGLETON31 = new ModelConverters(openapi31, applySchemaResolution ? schemaResolution : Schema.SchemaResolution.DEFAULT);
+                    SINGLETON31 = new ModelConverters(openapi31, applySchemaResolution ? schemaResolution : Schema.SchemaResolution.DEFAULT, validationAnnotationFilter);
                     init(SINGLETON31);
                 }
                 return SINGLETON31;
             }
             if (SINGLETON == null) {
-                SINGLETON = new ModelConverters(openapi31, schemaResolution);
+                SINGLETON = new ModelConverters(openapi31, schemaResolution, validationAnnotationFilter);
                 init(SINGLETON);
             }
             return SINGLETON;
