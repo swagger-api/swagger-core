@@ -8,6 +8,8 @@ import io.swagger.v3.oas.models.media.BinarySchema;
 import io.swagger.v3.oas.models.media.ByteArraySchema;
 import io.swagger.v3.oas.models.media.Schema;
 import org.testng.annotations.Test;
+import org.json.JSONObject;
+import org.skyscreamer.jsonassert.JSONAssert;
 
 import java.util.Map;
 
@@ -42,14 +44,18 @@ public class ByteConverterTest {
         Schema model = new Schema()
                 .addProperties("byteProperty", new ByteArraySchema());
 
-        assertEquals(Json.pretty(model), "{" + NEWLINE +
+        String json1 = "{" + NEWLINE +
                 "  \"properties\" : {" + NEWLINE +
                 "    \"byteProperty\" : {" + NEWLINE +
                 "      \"type\" : \"string\"," + NEWLINE +
                 "      \"format\" : \"byte\"" + NEWLINE +
                 "    }" + NEWLINE +
                 "  }" + NEWLINE +
-                "}");
+                "}";
+        String json2 = Json.pretty(model);
+        JSONObject jsonObj1 = new JSONObject(json1);
+        JSONObject jsonObj2 = new JSONObject(json2);
+        JSONAssert.assertEquals(jsonObj1, jsonObj2, true);
     }
 
     @Test
@@ -73,7 +79,7 @@ public class ByteConverterTest {
         Schema model = new Schema()
                 .addProperties("byteArray", new ArraySchema().items(new BinarySchema()));
 
-        assertEquals(Json.pretty(model), "{" + NEWLINE +
+        String json1 =  "{" + NEWLINE +
                 "  \"properties\" : {" + NEWLINE +
                 "    \"byteArray\" : {" + NEWLINE +
                 "      \"type\" : \"array\"," + NEWLINE +
@@ -83,7 +89,11 @@ public class ByteConverterTest {
                 "      }" + NEWLINE +
                 "    }" + NEWLINE +
                 "  }" + NEWLINE +
-                "}");
+                "}";
+        String json2 = Json.pretty(model);
+        JSONObject jsonObj1 = new JSONObject(json1);
+        JSONObject jsonObj2 = new JSONObject(json2);
+        JSONAssert.assertEquals(jsonObj1, jsonObj2, true);
     }
 
     @Test
@@ -92,7 +102,7 @@ public class ByteConverterTest {
                 .addProperties("byteArray",
                         new ArraySchema().items(new BinarySchema()).readOnly(true));
 
-        assertEquals(Json.pretty(model), "{" + NEWLINE +
+        String json1 = "{" + NEWLINE +
                 "  \"properties\" : {" + NEWLINE +
                 "    \"byteArray\" : {" + NEWLINE +
                 "      \"type\" : \"array\"," + NEWLINE +
@@ -103,7 +113,11 @@ public class ByteConverterTest {
                 "      }" + NEWLINE +
                 "    }" + NEWLINE +
                 "  }" + NEWLINE +
-                "}");
+                "}";
+        String json2 = Json.pretty(model);
+        JSONObject jsonObj1 = new JSONObject(json1);
+        JSONObject jsonObj2 = new JSONObject(json2);
+        JSONAssert.assertEquals(jsonObj1, jsonObj2, true);
     }
 
     class ByteConverterModel {

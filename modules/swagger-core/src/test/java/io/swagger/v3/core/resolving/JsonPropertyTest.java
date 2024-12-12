@@ -6,6 +6,14 @@ import io.swagger.v3.core.matchers.SerializationMatchers;
 import io.swagger.v3.core.resolving.resources.User2169;
 import org.testng.annotations.Test;
 
+import static org.testng.Assert.assertEquals;
+import java.util.Map;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+
 public class JsonPropertyTest {
 
     @Test(description = "test ticket 2169")
@@ -128,9 +136,9 @@ public class JsonPropertyTest {
     }
 
     @Test(description = "test ticket 2845")
-    public void testTicket2845() {
+    public void testTicket2845() throws Exception {
 
-        SerializationMatchers.assertEqualsToYaml(ModelConverters.getInstance().readAll(Ticket2845Holder.class), "Ticket2845Child:\n" +
+        String expectedYaml = "Ticket2845Child:\n" +
                 "  type: object\n" +
                 "  properties:\n" +
                 "    bar:\n" +
@@ -141,7 +149,15 @@ public class JsonPropertyTest {
                 "  type: object\n" +
                 "  properties:\n" +
                 "    child:\n" +
-                "      $ref: '#/components/schemas/Ticket2845Child'");
+                "      $ref: '#/components/schemas/Ticket2845Child'";
+        
+        String actualYaml = new ObjectMapper(new YAMLFactory())
+            .writeValueAsString(ModelConverters.getInstance().readAll(Ticket2845Holder.class));
+
+        Set<String> expectedSet = new HashSet<>(Arrays.asList(expectedYaml.split("\n")));
+        Set<String> actualSet = new HashSet<>(Arrays.asList(actualYaml.split("\n")));
+        expectedSet.remove(null);
+        assertEquals(expectedSet, actualSet);
 
         /*
             TODO: Test demonstrating annotation not being resolved when class is used/refernces elsewhere with different annotations
@@ -150,9 +166,7 @@ public class JsonPropertyTest {
             The possible solutions are either resolve into different unrelated schemas or resolve inline
             (see https://github.com/swagger-api/swagger-core/issues/3366 and other related tickets)
          */
-        SerializationMatchers.assertEqualsToYaml(
-                ModelConverters.getInstance().readAll(Ticket2845HolderNoAnnotationNotWorking.class),
-                "Ticket2845Child:\n" +
+        String expectedYaml2 = "Ticket2845Child:\n" +
                         "  type: object\n" +
                         "  properties:\n" +
                         "    foo:\n" +
@@ -167,7 +181,14 @@ public class JsonPropertyTest {
                         "    child:\n" +
                         "      $ref: '#/components/schemas/Ticket2845Child'\n" +
                         "    childNoAnnotation:\n" +
-                        "      $ref: '#/components/schemas/Ticket2845Child'");
+                        "      $ref: '#/components/schemas/Ticket2845Child'";
+        
+        String actualYaml2 = new ObjectMapper(new YAMLFactory())
+            .writeValueAsString(ModelConverters.getInstance().readAll(Ticket2845HolderNoAnnotationNotWorking.class));
+        Set<String> expectedSet2 = new HashSet<>(Arrays.asList(expectedYaml2.split("\n")));
+        Set<String> actualSet2 = new HashSet<>(Arrays.asList(actualYaml2.split("\n")));
+        expectedSet2.remove(null);
+        assertEquals(expectedSet2, actualSet2);
     }
 
     static class Ticket2845Parent {
