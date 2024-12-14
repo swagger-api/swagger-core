@@ -27,6 +27,11 @@ public class BeanValidatorTest {
         Assert.assertEquals(age.getMinimum(), new BigDecimal(13.0));
         Assert.assertEquals(age.getMaximum(), new BigDecimal(99.0));
 
+        final StringSchema lastName = (StringSchema) properties.get("lastName");
+        Assert.assertEquals((int) lastName.getMinLength(), 1);
+        Assert.assertEquals((int) lastName.getMaxLength(), 100);
+        Assert.assertEquals(lastName.getPattern(), "[A-Z].*");
+
         final StringSchema password = (StringSchema) properties.get("password");
         Assert.assertEquals((int) password.getMinLength(), 6);
         Assert.assertEquals((int) password.getMaxLength(), 20);

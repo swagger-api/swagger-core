@@ -13,12 +13,20 @@ import io.swagger.v3.core.resolving.v31.model.ModelWithDependentSchema;
 import io.swagger.v3.core.resolving.v31.model.ModelWithOAS31Stuff;
 import io.swagger.v3.oas.models.media.Schema;
 import org.testng.annotations.Test;
+import javax.validation.Constraint;
 import javax.validation.constraints.DecimalMax;
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
 import java.util.List;
 import java.util.Map;
+
+import static java.lang.annotation.ElementType.ANNOTATION_TYPE;
+import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.ElementType.TYPE_USE;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 public class ModelResolverOAS31Test extends SwaggerTestBase {
 
@@ -264,6 +272,35 @@ public class ModelResolverOAS31Test extends SwaggerTestBase {
         }
     }
 
+    @Test(description = "Composed Constraint handled in type parameters of properties using collections when using oas 3.1.0")
+    public void testModelUsingCollectionTypePropertyHandlesComposedConstraintAnnotationForOas31() {
+        String expectedYaml = "ClassWithUsingComposedConstraintOnCollection:\n" +
+                "  type: object\n" +
+                "  properties:\n" +
+                "    myField:\n" +
+                "      type: array\n" +
+                "      items:\n" +
+                "        maxLength: 100\n" +
+                "        minLength: 1\n" +
+                "        pattern: myTopLevelPattern\n" +
+                "        type: string";
+
+        Map<String, Schema> stringSchemaMap = ModelConverters.getInstance(true).readAll(ClassWithUsingComposedConstraintOnCollection.class);
+        SerializationMatchers.assertEqualsToYaml31(stringSchemaMap, expectedYaml);
+    }
+
+    private static class ClassWithUsingComposedConstraintOnCollection {
+        private List<@DeeplyComposedConstraint @Pattern(regexp = "myTopLevelPattern") String> myField;
+
+        public List<String> getMyField() {
+            return myField;
+        }
+
+        public void setMyField(List<String> myField) {
+            this.myField = myField;
+        }
+    }
+
     @Test(description = "@Size correctly handled in properties using collections when using oas 3.1.0")
     public void testModelUsingCollectionTypePropertyHandleSizeAnnotationForOas31() {
         String expectedYaml = "ClassWithUsingSizeOnCollection:\n" +
@@ -347,4 +384,47 @@ public class ModelResolverOAS31Test extends SwaggerTestBase {
             this.myField = myField;
         }
     }
+
+
+    @Test(description = "Composed Constraints are handled on fields")
+    public void testComposedConstraintOnField() {
+        String expectedYaml = "ClassWithUsingComposedAnnotationsOnField:\n" +
+                "  type: object\n" +
+                "  properties:\n" +
+                "    myField:\n" +
+                "      type: string\n" +
+                "      maxLength: 100\n" +
+                "      minLength: 1\n" +
+                "      pattern: myTopLevelPattern";
+
+        Map<String, io.swagger.v3.oas.models.media.Schema> stringSchemaMap = ModelConverters.getInstance(true).readAll(ClassWithUsingComposedAnnotationsOnField.class);
+        SerializationMatchers.assertEqualsToYaml31(stringSchemaMap, expectedYaml);
+    }
+
+    private static class ClassWithUsingComposedAnnotationsOnField {
+        @DeeplyComposedConstraint
+        @Pattern(regexp = "myTopLevelPattern")
+        private String myField;
+
+        public String getMyField() {
+            return myField;
+        }
+
+        public void setMyField(String myField) {
+            this.myField = myField;
+        }
+    }
+
+    @Target({FIELD, ANNOTATION_TYPE, TYPE_USE })
+    @Retention(RUNTIME)
+    @Constraint(validatedBy = {})
+    @Pattern(regexp = "myPattern")
+    private @interface ComposedConstraint {}
+
+    @Target({ FIELD, ANNOTATION_TYPE, TYPE_USE })
+    @Retention(RUNTIME)
+    @Constraint(validatedBy = {})
+    @ComposedConstraint
+    @Size(min = 1, max = 100)
+    private @interface DeeplyComposedConstraint {}
 }
