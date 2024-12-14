@@ -1,5 +1,8 @@
 package io.swagger.v3.core.oas.models;
 
+import io.swagger.v3.core.resolving.v31.ModelResolverOAS31Test;
+
+import javax.validation.Constraint;
 import javax.validation.constraints.DecimalMax;
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.Max;
@@ -7,8 +10,15 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
 import java.util.List;
 import java.util.Optional;
+
+import static java.lang.annotation.ElementType.ANNOTATION_TYPE;
+import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.ElementType.TYPE_USE;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 public class BeanValidationsModel {
     @NotNull
@@ -17,6 +27,9 @@ public class BeanValidationsModel {
     @Min(13)
     @Max(99)
     protected Integer age;
+
+    @DeeplyComposedConstraint
+    protected String lastName;
 
     protected String username;
 
@@ -55,6 +68,14 @@ public class BeanValidationsModel {
 
     public void setAge(Integer age) {
         this.age = age;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
     public String getUsername() {
@@ -129,4 +150,16 @@ public class BeanValidationsModel {
         this.optionalValue = optionalValue;
     }
 
+    @Target({FIELD, ANNOTATION_TYPE, TYPE_USE })
+    @Retention(RUNTIME)
+    @Constraint(validatedBy = {})
+    @Pattern(regexp = "[A-Z].*")
+    private @interface ComposedConstraint {}
+
+    @Target({ FIELD, ANNOTATION_TYPE, TYPE_USE })
+    @Retention(RUNTIME)
+    @Constraint(validatedBy = {})
+    @ComposedConstraint
+    @Size(min = 1, max = 100)
+    private @interface DeeplyComposedConstraint {}
 }
