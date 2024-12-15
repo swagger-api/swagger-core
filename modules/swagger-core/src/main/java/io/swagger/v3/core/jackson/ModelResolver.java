@@ -1118,7 +1118,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
     private Stream<Annotation> getRecordComponentAnnotations(BeanPropertyDefinition propDef) {
         try {
-            Method accessor = propDef.getPrimaryMember().getDeclaringClass().getDeclaredMethod(propDef.getName());
+            Method accessor = propDef.getPrimaryMember().getDeclaringClass().getDeclaredMethod(propDef.getPrimaryMember().getName());
             return getGenericTypeArgumentAnnotations(accessor.getAnnotatedReturnType());
         } catch (NoSuchMethodException e) {
             LOGGER.error("Accessor for record component not found");
@@ -1169,6 +1169,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             if (jsonValueMember != null) {
                 return jsonValueMember.getType();
             }
+            return null;
         } catch (Exception e) {
             LOGGER.warn("jackson BeanDescription.findJsonValueAccessor not found, this could lead to inaccurate result, please update jackson to 2.9+");
         }
