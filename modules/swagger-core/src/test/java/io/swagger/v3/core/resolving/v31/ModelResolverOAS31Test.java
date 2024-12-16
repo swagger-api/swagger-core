@@ -79,6 +79,11 @@ public class ModelResolverOAS31Test extends SwaggerTestBase {
                 "    creditCard:\n" +
                 "      type: integer\n" +
                 "      format: int32\n" +
+                "CountryEnum:\n" +
+                "  type: string\n" +
+                "  enum:\n" +
+                "    - UNITED_STATES_OF_AMERICA\n" +
+                "    - CANADA\n" +
                 "CreditCard:\n" +
                 "  type: object\n" +
                 "  properties:\n" +
