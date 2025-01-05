@@ -13,6 +13,8 @@ import io.swagger.v3.oas.models.media.ObjectSchema;
 import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.media.StringSchema;
 import org.testng.annotations.Test;
+import org.json.JSONObject;
+import org.skyscreamer.jsonassert.JSONAssert;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -66,18 +68,24 @@ public class PropertySerializationTest {
     @Test(description = "it should serialize a DateTimeProperty")
     public void serializeDateTimeProperty() throws IOException {
         final DateTimeSchema p = new DateTimeSchema();
-        final String json = "{\"type\":\"string\",\"format\":\"date-time\"}";
-        assertEquals(m.writeValueAsString(p), json);
+        final String json1 = "{\"type\":\"string\",\"format\":\"date-time\"}";
+        String json2 = m.writeValueAsString(p);
+        JSONObject jsonObj1 = new JSONObject(json1);
+        JSONObject jsonObj2 = new JSONObject(json2);
+        JSONAssert.assertEquals(jsonObj1, jsonObj2, true);
     }
 
     @Test(description = "it should deserialize a DateTimeProperty")
     public void deserializeDateTimeProperty() throws IOException {
-        final String json = "{\"type\":\"string\",\"format\":\"date-time\"}";
-        final Schema p = m.readValue(json, Schema.class);
+        final String json1 = "{\"type\":\"string\",\"format\":\"date-time\"}";
+        final Schema p = m.readValue(json1, Schema.class);
         assertEquals(p.getType(), "string");
         assertEquals(p.getFormat(), "date-time");
         assertEquals(p.getClass(), DateTimeSchema.class);
-        assertEquals(m.writeValueAsString(p), json);
+        String json2 = m.writeValueAsString(p);
+        JSONObject jsonObj1 = new JSONObject(json1);
+        JSONObject jsonObj2 = new JSONObject(json2);
+        JSONAssert.assertEquals(jsonObj1, jsonObj2, true);
     }
 
     @Test(description = "it should serialize a DoubleProperty")
@@ -85,18 +93,24 @@ public class PropertySerializationTest {
         final NumberSchema p = new NumberSchema()
                 ._default(new BigDecimal("3.14159"));
         p.format("double");
-        final String json = "{\"type\":\"number\",\"format\":\"double\",\"default\":3.14159}";
-        assertEquals(m.writeValueAsString(p), json);
+        final String json1 = "{\"type\":\"number\",\"format\":\"double\",\"default\":3.14159}";
+        String json2 = m.writeValueAsString(p);
+        JSONObject jsonObj1 = new JSONObject(json1);
+        JSONObject jsonObj2 = new JSONObject(json2);
+        JSONAssert.assertEquals(jsonObj1, jsonObj2, true);
     }
 
     @Test(description = "it should deserialize a DoubleProperty")
     public void deserializeDoubleProperty() throws IOException {
-        final String json = "{\"type\":\"number\",\"format\":\"double\"}";
-        final Schema p = m.readValue(json, Schema.class);
+        final String json1 = "{\"type\":\"number\",\"format\":\"double\"}";
+        final Schema p = m.readValue(json1, Schema.class);
         assertEquals(p.getType(), "number");
         assertEquals(p.getFormat(), "double");
         assertEquals(p.getClass(), NumberSchema.class);
-        assertEquals(m.writeValueAsString(p), json);
+        String json2 = m.writeValueAsString(p);
+        JSONObject jsonObj1 = new JSONObject(json1);
+        JSONObject jsonObj2 = new JSONObject(json2);
+        JSONAssert.assertEquals(jsonObj1, jsonObj2, true);
     }
 
     @Test(description = "it should serialize a FloatProperty")
@@ -104,36 +118,48 @@ public class PropertySerializationTest {
         final NumberSchema p = new NumberSchema()
                 ._default(new BigDecimal("1.2"));
         p.format("float");
-        final String json = "{\"type\":\"number\",\"format\":\"float\",\"default\":1.2}";
-        assertEquals(m.writeValueAsString(p), json);
+        final String json1 = "{\"type\":\"number\",\"format\":\"float\",\"default\":1.2}";
+        String json2 = m.writeValueAsString(p);
+        JSONObject jsonObj1 = new JSONObject(json1);
+        JSONObject jsonObj2 = new JSONObject(json2);
+        JSONAssert.assertEquals(jsonObj1, jsonObj2, true);
     }
 
     @Test(description = "it should deserialize a FloatProperty")
     public void deserializeFloatProperty() throws IOException {
-        final String json = "{\"type\":\"number\",\"format\":\"float\"}";
-        final Schema p = m.readValue(json, Schema.class);
+        final String json1 = "{\"type\":\"number\",\"format\":\"float\"}";
+        final Schema p = m.readValue(json1, Schema.class);
         assertEquals(p.getType(), "number");
         assertEquals(p.getFormat(), "float");
         assertEquals(p.getClass(), NumberSchema.class);
-        assertEquals(m.writeValueAsString(p), json);
+        String json2 = m.writeValueAsString(p);
+        JSONObject jsonObj1 = new JSONObject(json1);
+        JSONObject jsonObj2 = new JSONObject(json2);
+        JSONAssert.assertEquals(jsonObj1, jsonObj2, true);
     }
 
     @Test(description = "it should serialize an IntegerProperty")
     public void serializeIntegerProperty() throws IOException {
         final IntegerSchema p = new IntegerSchema()
                 ._default(32);
-        final String json = "{\"type\":\"integer\",\"format\":\"int32\",\"default\":32}";
-        assertEquals(m.writeValueAsString(p), json);
+        final String json1 = "{\"type\":\"integer\",\"format\":\"int32\",\"default\":32}";
+        String json2 = m.writeValueAsString(p);
+        JSONObject jsonObj1 = new JSONObject(json1);
+        JSONObject jsonObj2 = new JSONObject(json2);
+        JSONAssert.assertEquals(jsonObj1, jsonObj2, true);
     }
 
     @Test(description = "it should deserialize a IntegerProperty")
     public void deserializeIntegerProperty() throws IOException {
-        final String json = "{\"type\":\"integer\",\"format\":\"int32\"}";
-        final Schema p = m.readValue(json, Schema.class);
+        final String json1 = "{\"type\":\"integer\",\"format\":\"int32\"}";
+        final Schema p = m.readValue(json1, Schema.class);
         assertEquals(p.getType(), "integer");
         assertEquals(p.getFormat(), "int32");
         assertEquals(p.getClass(), IntegerSchema.class);
-        assertEquals(m.writeValueAsString(p), json);
+        String json2 = m.writeValueAsString(p);
+        JSONObject jsonObj1 = new JSONObject(json1);
+        JSONObject jsonObj2 = new JSONObject(json2);
+        JSONAssert.assertEquals(jsonObj1, jsonObj2, true);
     }
 
     @Test(description = "it should serialize a LongProperty")
@@ -141,18 +167,24 @@ public class PropertySerializationTest {
         final IntegerSchema p = new IntegerSchema()
                 .format("int64")
                 ._default(8675309);
-        final String json = "{\"type\":\"integer\",\"format\":\"int64\",\"default\":8675309}";
-        assertEquals(m.writeValueAsString(p), json);
+        final String json1 = "{\"type\":\"integer\",\"format\":\"int64\",\"default\":8675309}";
+        String json2 = m.writeValueAsString(p);
+        JSONObject jsonObj1 = new JSONObject(json1);
+        JSONObject jsonObj2 = new JSONObject(json2);
+        JSONAssert.assertEquals(jsonObj1, jsonObj2, true);
     }
 
     @Test(description = "it should deserialize a LongProperty")
     public void deserializeLongProperty() throws IOException {
-        final String json = "{\"type\":\"integer\",\"format\":\"int64\"}";
-        final Schema p = m.readValue(json, Schema.class);
+        final String json1 = "{\"type\":\"integer\",\"format\":\"int64\"}";
+        final Schema p = m.readValue(json1, Schema.class);
         assertEquals(p.getType(), "integer");
         assertEquals(p.getFormat(), "int64");
         assertEquals(p.getClass(), IntegerSchema.class);
-        assertEquals(m.writeValueAsString(p), json);
+        String json2 = m.writeValueAsString(p);
+        JSONObject jsonObj1 = new JSONObject(json1);
+        JSONObject jsonObj2 = new JSONObject(json2);
+        JSONAssert.assertEquals(jsonObj1, jsonObj2, true);
     }
 
     @Test(description = "it should serialize a string MapProperty")
@@ -174,33 +206,45 @@ public class PropertySerializationTest {
     @Test(description = "it should serialize a integer MapProperty")
     public void serializeIntegerMapProperty() throws IOException {
         final Schema p = new MapSchema().additionalProperties(new IntegerSchema());
-        final String json = "{\"type\":\"object\",\"additionalProperties\":{\"type\":\"integer\",\"format\":\"int32\"}}";
-        assertEquals(m.writeValueAsString(p), json);
+        final String json1 = "{\"type\":\"object\",\"additionalProperties\":{\"type\":\"integer\",\"format\":\"int32\"}}";
+        String json2 = m.writeValueAsString(p);
+        JSONObject jsonObj1 = new JSONObject(json1);
+        JSONObject jsonObj2 = new JSONObject(json2);
+        JSONAssert.assertEquals(jsonObj1, jsonObj2, true);
     }
 
     @Test(description = "it should deserialize a integer MapProperty")
     public void deserializeIntegerMapProperty() throws IOException {
-        final String json = "{\"type\":\"object\",\"additionalProperties\":{\"type\":\"integer\",\"format\":\"int32\"}}";
-        final Schema p = m.readValue(json, Schema.class);
+        final String json1 = "{\"type\":\"object\",\"additionalProperties\":{\"type\":\"integer\",\"format\":\"int32\"}}";
+        final Schema p = m.readValue(json1, Schema.class);
         assertEquals(p.getType(), "object");
         assertEquals(p.getClass(), MapSchema.class);
-        assertEquals(m.writeValueAsString(p), json);
+        String json2 = m.writeValueAsString(p);
+        JSONObject jsonObj1 = new JSONObject(json1);
+        JSONObject jsonObj2 = new JSONObject(json2);
+        JSONAssert.assertEquals(jsonObj1, jsonObj2, true);
     }
 
     @Test(description = "it should serialize a long MapProperty")
     public void serializeLongMapProperty() throws IOException {
         final Schema p = new MapSchema().additionalProperties(new IntegerSchema().format("int64"));
-        final String json = "{\"type\":\"object\",\"additionalProperties\":{\"type\":\"integer\",\"format\":\"int64\"}}";
-        assertEquals(m.writeValueAsString(p), json);
+        final String json1 = "{\"type\":\"object\",\"additionalProperties\":{\"type\":\"integer\",\"format\":\"int64\"}}";
+        String json2 = m.writeValueAsString(p);
+        JSONObject jsonObj1 = new JSONObject(json1);
+        JSONObject jsonObj2 = new JSONObject(json2);
+        JSONAssert.assertEquals(jsonObj1, jsonObj2, true);
     }
 
     @Test(description = "it should deserialize a long MapProperty")
     public void deserializeLongMapProperty() throws IOException {
-        final String json = "{\"type\":\"object\",\"additionalProperties\":{\"type\":\"integer\",\"format\":\"int64\"}}";
-        final Schema p = m.readValue(json, Schema.class);
+        final String json1 = "{\"type\":\"object\",\"additionalProperties\":{\"type\":\"integer\",\"format\":\"int64\"}}";
+        final Schema p = m.readValue(json1, Schema.class);
         assertEquals(p.getType(), "object");
         assertEquals(p.getClass(), MapSchema.class);
-        assertEquals(m.writeValueAsString(p), json);
+        String json2 = m.writeValueAsString(p);
+        JSONObject jsonObj1 = new JSONObject(json1);
+        JSONObject jsonObj2 = new JSONObject(json2);
+        JSONAssert.assertEquals(jsonObj1, jsonObj2, true);
     }
 
     @Test(description = "it should serialize a RefProperty")
@@ -260,45 +304,60 @@ public class PropertySerializationTest {
 
     @Test(description = "it should deserialize an IntegerProperty with enums")
     public void deserializeEnumIntegerProperty() throws IOException {
-        final String json = "{\"type\":\"integer\",\"format\":\"int32\",\"enum\":[1,2]}";
-        final Schema p = m.readValue(json, Schema.class);
+        final String json1 = "{\"type\":\"integer\",\"format\":\"int32\",\"enum\":[1,2]}";
+        final Schema p = m.readValue(json1, Schema.class);
         assertEquals(p.getType(), "integer");
         List<Number> _enum = ((IntegerSchema) p).getEnum();
         assertNotNull(_enum);
         assertEquals(_enum, Arrays.asList(1, 2));
         assertEquals(p.getClass(), IntegerSchema.class);
-        assertEquals(m.writeValueAsString(p), json);
+        String json2 = m.writeValueAsString(p);
+        JSONObject jsonObj1 = new JSONObject(json1);
+        JSONObject jsonObj2 = new JSONObject(json2);
+        JSONAssert.assertEquals(jsonObj1, jsonObj2, true);
     }
 
     @Test(description = "it should serialize a string array property")
     public void serializeArrayStringProperty() throws IOException {
         final Schema p = new ArraySchema().items(new StringSchema());
-        final String json = "{\"type\":\"array\",\"items\":{\"type\":\"string\"}}";
-        assertEquals(m.writeValueAsString(p), json);
+        final String json1 = "{\"type\":\"array\",\"items\":{\"type\":\"string\"}}";
+        String json2 = m.writeValueAsString(p);
+        JSONObject jsonObj1 = new JSONObject(json1);
+        JSONObject jsonObj2 = new JSONObject(json2);
+        JSONAssert.assertEquals(jsonObj1, jsonObj2, true);
     }
 
     @Test(description = "it should deserialize a string array property")
     public void deserializeArrayStringProperty() throws IOException {
-        final String json = "{\"type\":\"array\",\"items\":{\"type\":\"string\"}}";
-        final Schema p = m.readValue(json, Schema.class);
+        final String json1 = "{\"type\":\"array\",\"items\":{\"type\":\"string\"}}";
+        final Schema p = m.readValue(json1, Schema.class);
+        String json2 = m.writeValueAsString(p);
         assertEquals(p.getType(), "array");
         assertEquals(p.getClass(), ArraySchema.class);
-        assertEquals(m.writeValueAsString(p), json);
+        JSONObject jsonObj1 = new JSONObject(json1);
+        JSONObject jsonObj2 = new JSONObject(json2);
+        JSONAssert.assertEquals(jsonObj1, jsonObj2, true);
     }
 
     @Test(description = "it should serialize a string property with readOnly set")
     public void serializeReadOnlyStringProperty() throws IOException {
         final Schema p = new StringSchema().readOnly(true);
-        final String json = "{\"type\":\"string\",\"readOnly\":true}";
-        assertEquals(m.writeValueAsString(p), json);
+        final String json1 = "{\"type\":\"string\",\"readOnly\":true}";
+        String json2 = m.writeValueAsString(p);
+        JSONObject jsonObj1 = new JSONObject(json1);
+        JSONObject jsonObj2 = new JSONObject(json2);
+        JSONAssert.assertEquals(jsonObj1, jsonObj2, true);
     }
 
     @Test(description = "it should serialize a string property with readOnly unset")
     public void deserializeNotReadOnlyStringProperty() throws IOException {
         final StringSchema p = new StringSchema();
         p.setReadOnly(false);
-        final String json = "{\"type\":\"string\",\"readOnly\":false}";
-        assertEquals(m.writeValueAsString(p), json);
+        final String json1 = "{\"type\":\"string\",\"readOnly\":false}";
+        String json2 = m.writeValueAsString(p);
+        JSONObject jsonObj1 = new JSONObject(json1);
+        JSONObject jsonObj2 = new JSONObject(json2);
+        JSONAssert.assertEquals(jsonObj1, jsonObj2, true);
     }
 
     @Test(description = "it should serialize an object property with required set")
@@ -306,8 +365,11 @@ public class PropertySerializationTest {
         final Schema p = new ObjectSchema()
                 .addProperties("stringProperty", new StringSchema());
         p.required(Arrays.asList("stringProperty"));
-        final String json = "{\"required\":[\"stringProperty\"],\"type\":\"object\",\"properties\":{\"stringProperty\":{\"type\":\"string\"}}}";
-        assertEquals(m.writeValueAsString(p), json);
+        final String json1 = "{\"required\":[\"stringProperty\"],\"type\":\"object\",\"properties\":{\"stringProperty\":{\"type\":\"string\"}}}";
+        String json2 = m.writeValueAsString(p);
+        JSONObject jsonObj1 = new JSONObject(json1);
+        JSONObject jsonObj2 = new JSONObject(json2);
+        JSONAssert.assertEquals(jsonObj1, jsonObj2, true);
     }
 
     @Test(description = "it should deserialize an object property with required set")

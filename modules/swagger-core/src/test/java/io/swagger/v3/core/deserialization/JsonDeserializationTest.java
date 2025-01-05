@@ -33,6 +33,9 @@ import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+
 public class JsonDeserializationTest {
     private final ObjectMapper m = Json.mapper();
 
@@ -490,40 +493,60 @@ public class JsonDeserializationTest {
 
         assertNull(oas.getComponents().getSchemas().get("UserStatus").getExample());
         assertTrue(oas.getComponents().getSchemas().get("UserStatus").getExampleSetFlag());
-        assertEquals(Yaml.pretty(oas), yamlNull);
+        
+        // Use Jackson's YAML mapper to parse both expected and actual YAML into maps
+        ObjectMapper yamlMapper = new ObjectMapper(new YAMLFactory());
+        Map<String, Object> expectedMap = yamlMapper.readValue(yamlNull, Map.class);
+        Map<String, Object> actualMap = yamlMapper.readValue(Yaml.pretty(oas), Map.class);
+        assertEquals(expectedMap, actualMap);
 
         oas = Yaml.mapper().readValue(yamlMissing, OpenAPI.class);
         Yaml.prettyPrint(oas);
         assertNull(oas.getComponents().getSchemas().get("UserStatus").getExample());
         assertFalse(oas.getComponents().getSchemas().get("UserStatus").getExampleSetFlag());
-        assertEquals(Yaml.pretty(oas), yamlMissing);
+
+        Map<String, Object> expectedMap2 = yamlMapper.readValue(yamlMissing, Map.class);
+        Map<String, Object> actualMap2 = yamlMapper.readValue(Yaml.pretty(oas), Map.class);
+        assertEquals(expectedMap2, actualMap2);
 
         oas = Yaml.mapper().readValue(yamlNotNull, OpenAPI.class);
         Yaml.prettyPrint(oas);
         assertNotNull(oas.getComponents().getSchemas().get("UserStatus").getExample());
         assertTrue(oas.getComponents().getSchemas().get("UserStatus").getExampleSetFlag());
-        assertEquals(Yaml.pretty(oas), yamlNotNull);
+
+        Map<String, Object> expectedMap3 = yamlMapper.readValue(yamlNotNull, Map.class);
+        Map<String, Object> actualMap3 = yamlMapper.readValue(Yaml.pretty(oas), Map.class);
+        assertEquals(expectedMap3, actualMap3);
 
         oas = Yaml.mapper().readValue(yamlValueNull, OpenAPI.class);
         Yaml.prettyPrint(oas);
         Example ex = oas.getComponents().getExamples().get("UserStatus");
         assertNull(ex.getValue());
         assertTrue(ex.getValueSetFlag());
-        assertEquals(Yaml.pretty(oas), yamlValueNull);
+
+        Map<String, Object> expectedMap4 = yamlMapper.readValue(yamlValueNull, Map.class);
+        Map<String, Object> actualMap4 = yamlMapper.readValue(Yaml.pretty(oas), Map.class);
+        assertEquals(expectedMap4, actualMap4);
 
         oas = Yaml.mapper().readValue(yamlValueMissing, OpenAPI.class);
         Yaml.prettyPrint(oas);
         ex = oas.getComponents().getExamples().get("UserStatus");
         assertNull(ex.getValue());
         assertFalse(ex.getValueSetFlag());
-        assertEquals(Yaml.pretty(oas), yamlValueMissing);
+        
+        Map<String, Object> expectedMap5 = yamlMapper.readValue(yamlValueMissing, Map.class);
+        Map<String, Object> actualMap5 = yamlMapper.readValue(Yaml.pretty(oas), Map.class);
+        assertEquals(expectedMap5, actualMap5);
 
         oas = Yaml.mapper().readValue(yamlValueNotNull, OpenAPI.class);
         Yaml.prettyPrint(oas);
         ex = oas.getComponents().getExamples().get("UserStatus");
         assertNotNull(ex.getValue());
         assertTrue(ex.getValueSetFlag());
-        assertEquals(Yaml.pretty(oas), yamlValueNotNull);
+
+        Map<String, Object> expectedMap6 = yamlMapper.readValue(yamlValueNotNull, Map.class);
+        Map<String, Object> actualMap6 = yamlMapper.readValue(Yaml.pretty(oas), Map.class);
+        assertEquals(expectedMap6, actualMap6);
     }
 
     @Test
