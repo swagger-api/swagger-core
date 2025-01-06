@@ -11,7 +11,7 @@ import static java.lang.annotation.ElementType.METHOD;
 /**
  * The annotation may be used to define a method as an OpenAPI Webhook.
  *
- * @see <a target="_new" href="https://github.com/OAI/OpenAPI-Specification/blob/3.1.0/versions/3.1.0.md#oasWebhooks">Webhook (OpenAPI specification)</a>
+ * @see <a target="_new" href="https://github.com/OAI/OpenAPI-Specification/blob/3.1.1/versions/3.1.1.md#oas-webhooks">Webhook (OpenAPI specification)</a>
  * @see io.swagger.v3.oas.annotations.OpenAPIDefinition
  **/
 @Target({METHOD, ANNOTATION_TYPE})
