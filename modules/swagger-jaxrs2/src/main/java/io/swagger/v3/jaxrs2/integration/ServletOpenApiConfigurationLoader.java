@@ -26,6 +26,7 @@ import static io.swagger.v3.jaxrs2.integration.ServletConfigContextUtils.OPENAPI
 import static io.swagger.v3.jaxrs2.integration.ServletConfigContextUtils.OPENAPI_CONFIGURATION_READER_KEY;
 import static io.swagger.v3.jaxrs2.integration.ServletConfigContextUtils.OPENAPI_CONFIGURATION_SCANNER_KEY;
 import static io.swagger.v3.jaxrs2.integration.ServletConfigContextUtils.OPENAPI_CONFIGURATION_SCHEMA_RESOLUTION_KEY;
+import static io.swagger.v3.jaxrs2.integration.ServletConfigContextUtils.OPENAPI_CONFIGURATION_OPENAPI_VERSION_KEY;
 import static io.swagger.v3.jaxrs2.integration.ServletConfigContextUtils.OPENAPI_CONFIGURATION_SKIPRESOLVEAPPPATH_KEY;
 import static io.swagger.v3.jaxrs2.integration.ServletConfigContextUtils.OPENAPI_CONFIGURATION_SORTOUTPUT_KEY;
 import static io.swagger.v3.jaxrs2.integration.ServletConfigContextUtils.OPENAPI_CONFIGURATION_ALWAYSRESOLVEAPPPATH_KEY;
@@ -74,6 +75,9 @@ public class ServletOpenApiConfigurationLoader implements OpenApiConfigurationLo
                     .modelConverterClasses(resolveModelConverterClasses(servletConfig));
             if (getInitParam(servletConfig, OPENAPI_CONFIGURATION_SCHEMA_RESOLUTION_KEY) != null) {
                 configuration.schemaResolution(Schema.SchemaResolution.valueOf(getInitParam(servletConfig, OPENAPI_CONFIGURATION_SCHEMA_RESOLUTION_KEY)));
+            }
+            if (getInitParam(servletConfig, OPENAPI_CONFIGURATION_OPENAPI_VERSION_KEY) != null) {
+                configuration.openAPIVersion(getInitParam(servletConfig, OPENAPI_CONFIGURATION_OPENAPI_VERSION_KEY));
             }
             return configuration;
 

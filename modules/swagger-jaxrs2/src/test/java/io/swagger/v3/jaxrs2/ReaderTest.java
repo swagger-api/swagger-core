@@ -4165,4 +4165,25 @@ public class ReaderTest {
                 "          type: string\n";
         SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
     }
+
+    @Test(description = "openAPIVersion")
+    public void testOpenAPIVersion() {
+        SwaggerConfiguration config = new SwaggerConfiguration().openAPIVersion("3.0.4");
+        Reader reader = new Reader(config);
+
+        OpenAPI openAPI = reader.read(DefaultResponseResource.class);
+        String yaml = "openapi: 3.0.4\n" +
+                "paths:\n" +
+                "  /:\n" +
+                "    get:\n" +
+                "      operationId: test\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*':\n" +
+                "              schema:\n" +
+                "                type: string\n";
+        SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
+    }
 }

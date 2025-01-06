@@ -68,6 +68,12 @@ public class ServletConfigContextUtils {
      */
     public static final String OPENAPI_CONFIGURATION_SCHEMA_RESOLUTION_KEY = "openApi.configuration.schemaResolution";
 
+    /**
+     * @since 2.2.28
+     */
+    public static final String OPENAPI_CONFIGURATION_OPENAPI_VERSION_KEY = "openApi.configuration.openAPIVersion";
+
+
     public static Set<String> resolveResourcePackages(ServletConfig servletConfig) {
         if (!isServletConfigAvailable(servletConfig)) {
             return null;

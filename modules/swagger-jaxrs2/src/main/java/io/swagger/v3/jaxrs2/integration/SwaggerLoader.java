@@ -52,6 +52,8 @@ public class SwaggerLoader {
 
     private String schemaResolution;
 
+    private String openAPIVersion;
+
     /**
      * @since 2.0.6
      */
@@ -267,6 +269,20 @@ public class SwaggerLoader {
         this.schemaResolution = schemaResolution;
     }
 
+    /**
+     *  @since 2.2.28
+     */
+    public String getOpenAPIVersion() {
+        return openAPIVersion;
+    }
+
+    /**
+     *  @since 2.2.28
+     */
+    public void setOpenAPIVersion(String openAPIVersion) {
+        this.openAPIVersion = openAPIVersion;
+    }
+
     public Map<String, String> resolve() throws Exception{
 
         Set<String> ignoredRoutesSet = null;
@@ -320,6 +336,9 @@ public class SwaggerLoader {
                 .convertToOpenAPI31(convertToOpenAPI31);
         if (schemaResolution != null) {
             config.schemaResolution(Schema.SchemaResolution.valueOf(schemaResolution));
+        }
+        if (openAPIVersion != null) {
+            config.openAPIVersion(openAPIVersion);
         }
         try {
             GenericOpenApiContextBuilder builder = new JaxrsOpenApiContextBuilder()
