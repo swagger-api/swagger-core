@@ -361,6 +361,10 @@ public class SwaggerMojo extends AbstractMojo {
             config.schemaResolution(Schema.SchemaResolution.valueOf(schemaResolution));
         }
 
+        if (StringUtils.isNotBlank(openAPIVersion)) {
+            config.openAPIVersion(openAPIVersion);
+        }
+
         return config;
     }
 
@@ -464,6 +468,12 @@ public class SwaggerMojo extends AbstractMojo {
      */
     @Parameter(property = "resolve.schemaResolution")
     private String schemaResolution;
+
+    /**
+     * @since 2.2.28
+     */
+    @Parameter(property = "resolve.openAPIVersion")
+    private String openAPIVersion;
 
     private String projectEncoding = "UTF-8";
     private SwaggerConfiguration config;

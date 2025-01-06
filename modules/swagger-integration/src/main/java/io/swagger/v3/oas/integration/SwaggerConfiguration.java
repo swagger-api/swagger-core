@@ -43,6 +43,8 @@ public class SwaggerConfiguration implements OpenAPIConfiguration {
 
     private Schema.SchemaResolution schemaResolution = Schema.SchemaResolution.DEFAULT;
 
+    private String openAPIVersion = "3.0.1";
+
     @Override
     public String getDefaultResponseCode() {
         return defaultResponseCode;
@@ -388,6 +390,29 @@ public class SwaggerConfiguration implements OpenAPIConfiguration {
 
     public SwaggerConfiguration schemaResolution(Schema.SchemaResolution schemaResolution) {
         this.setSchemaResolution(schemaResolution);
+        return this;
+    }
+
+    /**
+     * @since 2.2.28
+     */
+    @Override
+    public String getOpenAPIVersion() {
+        return openAPIVersion;
+    }
+
+    /**
+     * @since 2.2.28
+     */
+    public void setOpenAPIVersion(String openAPIVersion) {
+        this.openAPIVersion = openAPIVersion;
+    }
+
+    /**
+     * @since 2.2.28
+     */
+    public SwaggerConfiguration openAPIVersion(String openAPIVersion) {
+        this.setOpenAPIVersion(openAPIVersion);
         return this;
     }
 }

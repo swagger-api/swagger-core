@@ -74,4 +74,9 @@ public interface OpenAPIConfiguration {
      * @since 2.2.24
      */
     public Schema.SchemaResolution getSchemaResolution();
+
+    /**
+     * @since 2.2.28
+     */
+    public String getOpenAPIVersion();
 }
