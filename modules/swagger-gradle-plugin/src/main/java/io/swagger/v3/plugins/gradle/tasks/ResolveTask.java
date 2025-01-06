@@ -131,7 +131,7 @@ public class ResolveTask extends DefaultTask {
 
     @Input
     @Optional
-    private String openAPIVersion;
+    private Property<String> openAPIVersion = getProject().getObjects().property(String.class);;
 
     @Input
     @Optional
