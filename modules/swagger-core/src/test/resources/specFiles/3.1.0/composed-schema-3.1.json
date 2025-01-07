@@ -18,6 +18,9 @@
       "SomeChildObject": {
         "description": "Some child object"
       },
+      "PatternPropertiesReferencedObject": {
+        "description": "An object schema with is ONLY referenced via pattern properties"
+      },
       "SomeParentObject": {
         "description": "Some parent object",
         "properties": {
@@ -36,6 +39,11 @@
                 "$ref": "#/components/schemas/SomeChild2ImplObject"
               }
             ]
+          }
+        },
+        "patternProperties": {
+          "somePattern": {
+            "$ref": "#/components/schemas/PatternPropertiesReferencedObject"
           }
         }
       }
