@@ -297,10 +297,11 @@ public class SpecFilterTest {
         final RemoveUnreferencedDefinitionsFilter remover = new RemoveUnreferencedDefinitionsFilter();
         final OpenAPI filtered = new SpecFilter().filter(openAPI, remover, null, null, null);
 
-        assertEquals(filtered.getComponents().getSchemas().size(), 4, "Expected to have parent and abstract child with both implementations schemas");
+        assertEquals(filtered.getComponents().getSchemas().size(), 5, "Expected to have parent and abstract child with both implementations schemas");
         assertTrue(filtered.getComponents().getSchemas().containsKey("SomeChild1ImplObject"), "Schemas should contains child 1 implementation");
         assertTrue(filtered.getComponents().getSchemas().containsKey("SomeChild2ImplObject"), "Schemas should contains child 2 implementation");
         assertTrue(filtered.getComponents().getSchemas().containsKey("SomeChildObject"), "Schemas should contains child abstract parent");
+        assertTrue(filtered.getComponents().getSchemas().containsKey("PatternPropertiesReferencedObject"), "Schemas should contains pattern properties referenced schema");
     }
 
     @Test
