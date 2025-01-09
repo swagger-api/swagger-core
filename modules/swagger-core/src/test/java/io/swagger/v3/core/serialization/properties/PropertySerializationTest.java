@@ -6,6 +6,7 @@ import io.swagger.v3.oas.models.media.ArraySchema;
 import io.swagger.v3.oas.models.media.BooleanSchema;
 import io.swagger.v3.oas.models.media.DateSchema;
 import io.swagger.v3.oas.models.media.DateTimeSchema;
+import io.swagger.v3.oas.models.media.DurationSchema;
 import io.swagger.v3.oas.models.media.IntegerSchema;
 import io.swagger.v3.oas.models.media.MapSchema;
 import io.swagger.v3.oas.models.media.NumberSchema;
@@ -77,6 +78,23 @@ public class PropertySerializationTest {
         assertEquals(p.getType(), "string");
         assertEquals(p.getFormat(), "date-time");
         assertEquals(p.getClass(), DateTimeSchema.class);
+        assertEquals(m.writeValueAsString(p), json);
+    }
+
+    @Test(description = "it should serialize a DateTimeProperty")
+    public void serializeDurationProperty() throws IOException {
+        final DurationSchema p = new DurationSchema();
+        final String json = "{\"type\":\"string\",\"format\":\"duration\"}";
+        assertEquals(m.writeValueAsString(p), json);
+    }
+
+    @Test(description = "it should deserialize a DateTimeProperty")
+    public void deserializeDurationProperty() throws IOException {
+        final String json = "{\"type\":\"string\",\"format\":\"duration\"}";
+        final Schema p = m.readValue(json, Schema.class);
+        assertEquals(p.getType(), "string");
+        assertEquals(p.getFormat(), "duration");
+        assertEquals(p.getClass(), DurationSchema.class);
         assertEquals(m.writeValueAsString(p), json);
     }
 
