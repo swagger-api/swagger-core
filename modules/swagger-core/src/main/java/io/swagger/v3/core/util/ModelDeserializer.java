@@ -12,6 +12,7 @@ import io.swagger.v3.oas.models.media.BooleanSchema;
 import io.swagger.v3.oas.models.media.ComposedSchema;
 import io.swagger.v3.oas.models.media.DateSchema;
 import io.swagger.v3.oas.models.media.DateTimeSchema;
+import io.swagger.v3.oas.models.media.DurationSchema;
 import io.swagger.v3.oas.models.media.EmailSchema;
 import io.swagger.v3.oas.models.media.IntegerSchema;
 import io.swagger.v3.oas.models.media.JsonSchema;
@@ -75,6 +76,8 @@ public class ModelDeserializer extends JsonDeserializer<Schema> {
                     schema = Json.mapper().convertValue(node, DateSchema.class);
                 } else if ("date-time".equals(format)) {
                     schema = Json.mapper().convertValue(node, DateTimeSchema.class);
+                } else if ("duration".equals(format)) {
+                    schema = Json.mapper().convertValue(node, DurationSchema.class);
                 } else if ("email".equals(format)) {
                     schema = Json.mapper().convertValue(node, EmailSchema.class);
                 } else if ("password".equals(format)) {
