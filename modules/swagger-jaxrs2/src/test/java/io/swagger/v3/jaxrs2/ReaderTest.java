@@ -15,10 +15,12 @@ import io.swagger.v3.core.util.PrimitiveType;
 import io.swagger.v3.jaxrs2.matchers.SerializationMatchers;
 import io.swagger.v3.jaxrs2.petstore31.PetResource;
 import io.swagger.v3.jaxrs2.petstore31.TagResource;
+import io.swagger.v3.jaxrs2.resources.ArraySchemaImplementationResource;
 import io.swagger.v3.jaxrs2.resources.DefaultResponseResource;
 import io.swagger.v3.jaxrs2.resources.Misc31Resource;
 import io.swagger.v3.jaxrs2.resources.ParameterMaximumValueResource;
 import io.swagger.v3.jaxrs2.resources.ResponseReturnTypeResource;
+import io.swagger.v3.jaxrs2.resources.SchemaAdditionalPropertiesBooleanResource;
 import io.swagger.v3.jaxrs2.resources.SchemaAdditionalPropertiesResource;
 import io.swagger.v3.jaxrs2.resources.SchemaPropertiesResource;
 import io.swagger.v3.jaxrs2.resources.SiblingPropResource;
@@ -3079,6 +3081,81 @@ public class ReaderTest {
                 "        foo:\n" +
                 "          type: string\n";
         SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
+    }
+
+    @Test(description = "Test Schema AdditionalProperties annotations")
+    public void testSchemaAdditionalPropertiesBoolean() {
+        ModelConverters.reset();
+        SwaggerConfiguration config = new SwaggerConfiguration().openAPI(new OpenAPI()).schemaResolution(Schema.SchemaResolution.ALL_OF);
+        Reader reader = new Reader(config);
+
+        OpenAPI openAPI = reader.read(SchemaAdditionalPropertiesBooleanResource.class);
+        String yaml = "openapi: 3.0.1\n" +
+                "paths:\n" +
+                "  /test:\n" +
+                "    get:\n" +
+                "      operationId: test\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*':\n" +
+                "              schema:\n" +
+                "                $ref: '#/components/schemas/Pet'\n" +
+                "components:\n" +
+                "  schemas:\n" +
+                "    Bar:\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        foo:\n" +
+                "          type: string\n" +
+                "    Pet:\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        bar:\n" +
+                "          allOf:\n" +
+                "          - additionalProperties:\n" +
+                "              $ref: '#/components/schemas/Bar'\n" +
+                "          - $ref: '#/components/schemas/Bar'\n" +
+                "        vbar:\n" +
+                "          allOf:\n" +
+                "          - additionalProperties: false\n" +
+                "          - $ref: '#/components/schemas/Bar'\n" +
+                "      additionalProperties: false\n";
+        SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
+        ModelConverters.reset();
+    }
+
+    @Test(description = "Test ArraySchema implementation annotations")
+    public void testArraySchemaImplementation() {
+        SwaggerConfiguration config = new SwaggerConfiguration().openAPI31(true).openAPI(new OpenAPI());
+        Reader reader = new Reader(config);
+
+        OpenAPI openAPI = reader.read(ArraySchemaImplementationResource.class);
+        String yaml = "openapi: 3.1.0\n" +
+                "paths:\n" +
+                "  /test:\n" +
+                "    get:\n" +
+                "      operationId: test\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*':\n" +
+                "              schema:\n" +
+                "                $ref: '#/components/schemas/Pet'\n" +
+                "components:\n" +
+                "  schemas:\n" +
+                "    Pet:\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        cars:\n" +
+                "          type: array\n" +
+                "          items:\n" +
+                "            type: integer\n" +
+                "            format: int32\n" +
+                "            description: A house in a street\n";
+        SerializationMatchers.assertEqualsToYaml31(openAPI, yaml);
     }
 
     @Test(description = "Responses schema resolved from return type")

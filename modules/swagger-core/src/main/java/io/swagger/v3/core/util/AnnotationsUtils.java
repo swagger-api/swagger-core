@@ -126,9 +126,8 @@ public abstract class AnnotationsUtils {
                 && schema.patternProperties().length == 0
                 && schema.properties().length == 0
                 && StringUtils.isBlank(schema._const())
-
-
                 && schema.additionalProperties().equals(io.swagger.v3.oas.annotations.media.Schema.AdditionalPropertiesValue.USE_ADDITIONAL_PROPERTIES_ANNOTATION)
+                && schema.additionalPropertiesSchema().equals(Void.class)
                 ) {
             return false;
         }
