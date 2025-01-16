@@ -518,7 +518,7 @@ public class ExtensionsResource {
                     "        content:\n" +
                     "          '*/*':\n" +
                     "            schema:\n" +
-                    "              $ref: '#/components/schemas/ExtensionUser'\n" +
+                    "              $ref: \"#/components/schemas/ExtensionUser\"\n" +
                     "        x-extension:\n" +
                     "          name: param\n" +
                     "        x-extension2:\n" +
@@ -529,7 +529,7 @@ public class ExtensionsResource {
                     "          content:\n" +
                     "            '*/*':\n" +
                     "              schema:\n" +
-                    "                $ref: '#/components/schemas/ExtensionUser'\n" +
+                    "                $ref: \"#/components/schemas/ExtensionUser\"\n" +
                     "              x-content:\n" +
                     "                name: Josh\n" +
                     "              x-content-extensions:\n" +

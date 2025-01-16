@@ -375,7 +375,7 @@ public class OpenApiResourceIT extends AbstractAnnotationTest {
             "              schema:\n" +
             "                type: array\n" +
             "                items:\n" +
-            "                  $ref: '#/components/schemas/Car'\n" +
+            "                  $ref: \"#/components/schemas/Car\"\n" +
             "  /cars/detail:\n" +
             "    get:\n" +
             "      tags:\n" +
@@ -389,7 +389,7 @@ public class OpenApiResourceIT extends AbstractAnnotationTest {
             "              schema:\n" +
             "                type: array\n" +
             "                items:\n" +
-            "                  $ref: '#/components/schemas/Car_Detail'\n" +
+            "                  $ref: \"#/components/schemas/Car_Detail\"\n" +
             "  /cars/sale:\n" +
             "    get:\n" +
             "      tags:\n" +
@@ -403,7 +403,7 @@ public class OpenApiResourceIT extends AbstractAnnotationTest {
             "              schema:\n" +
             "                type: array\n" +
             "                items:\n" +
-            "                  $ref: '#/components/schemas/Car_Summary-or-Sale'\n" +
+            "                  $ref: \"#/components/schemas/Car_Summary-or-Sale\"\n" +
             "  /cars/summary:\n" +
             "    get:\n" +
             "      tags:\n" +
@@ -417,7 +417,7 @@ public class OpenApiResourceIT extends AbstractAnnotationTest {
             "              schema:\n" +
             "                type: array\n" +
             "                items:\n" +
-            "                  $ref: '#/components/schemas/Car_Summary'\n" +
+            "                  $ref: \"#/components/schemas/Car_Summary\"\n" +
             "  /files/attach:\n" +
             "    put:\n" +
             "      operationId: putFile\n" +
@@ -491,7 +491,7 @@ public class OpenApiResourceIT extends AbstractAnnotationTest {
             "          content:\n" +
             "            application/json:\n" +
             "              schema:\n" +
-            "                $ref: '#/components/schemas/Widget'\n" +
+            "                $ref: \"#/components/schemas/Widget\"\n" +
             "components:\n" +
             "  schemas:\n" +
             "    Car:\n" +
@@ -509,7 +509,7 @@ public class OpenApiResourceIT extends AbstractAnnotationTest {
             "        tires:\n" +
             "          type: array\n" +
             "          items:\n" +
-            "            $ref: '#/components/schemas/Tire'\n" +
+            "            $ref: \"#/components/schemas/Tire\"\n" +
             "    Car_Detail:\n" +
             "      type: object\n" +
             "      properties:\n" +
@@ -522,7 +522,7 @@ public class OpenApiResourceIT extends AbstractAnnotationTest {
             "        tires:\n" +
             "          type: array\n" +
             "          items:\n" +
-            "            $ref: '#/components/schemas/Tire_Detail'\n" +
+            "            $ref: \"#/components/schemas/Tire_Detail\"\n" +
             "    Car_Summary:\n" +
             "      type: object\n" +
             "      properties:\n" +

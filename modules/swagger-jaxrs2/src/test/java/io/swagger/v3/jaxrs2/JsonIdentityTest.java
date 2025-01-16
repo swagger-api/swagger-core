@@ -34,7 +34,7 @@ public class JsonIdentityTest {
             "        content:\n" +
             "          '*/*':\n" +
             "            schema:\n" +
-            "              $ref: '#/components/schemas/ModelWithJsonIdentityCyclic'\n" +
+            "              $ref: \"#/components/schemas/ModelWithJsonIdentityCyclic\"\n" +
             "        required: true\n" +
             "      responses:\n" +
             "        default:\n" +
@@ -63,7 +63,7 @@ public class JsonIdentityTest {
             "        sourceDefinitions:\n" +
             "          type: array\n" +
             "          items:\n" +
-            "            $ref: '#/components/schemas/SourceDefinition'\n";
+            "            $ref: \"#/components/schemas/SourceDefinition\"\n";
 
     static final String EXPECTED_YAML = "openapi: 3.0.1\n" +
             "paths:\n" +
@@ -75,7 +75,7 @@ public class JsonIdentityTest {
             "        content:\n" +
             "          '*/*':\n" +
             "            schema:\n" +
-            "              $ref: '#/components/schemas/ModelWithJsonIdentity'\n" +
+            "              $ref: \"#/components/schemas/ModelWithJsonIdentity\"\n" +
             "        required: true\n" +
             "      responses:\n" +
             "        default:\n" +
@@ -91,7 +91,7 @@ public class JsonIdentityTest {
             "        PropertyGeneratorAsId:\n" +
             "          type: string\n" +
             "        PropertyGeneratorAsProperty:\n" +
-            "          $ref: '#/components/schemas/SourceDefinition1'\n" +
+            "          $ref: \"#/components/schemas/SourceDefinition1\"\n" +
             "        ChangedPropertyName:\n" +
             "          type: string\n" +
             "        ChangedPropertyName2:\n" +
@@ -99,35 +99,35 @@ public class JsonIdentityTest {
             "        SourceWithoutPropertyAsId:\n" +
             "          type: string\n" +
             "        SourceWithoutPropertyAsProperty:\n" +
-            "          $ref: '#/components/schemas/SourceDefinition3'\n" +
+            "          $ref: \"#/components/schemas/SourceDefinition3\"\n" +
             "        IntSequenceGeneratorAsId:\n" +
             "          type: integer\n" +
             "          format: int32\n" +
             "        IntSequenceGeneratorAsProperty:\n" +
-            "          $ref: '#/components/schemas/SourceDefinition4'\n" +
+            "          $ref: \"#/components/schemas/SourceDefinition4\"\n" +
             "        IntSequenceWithoutPropertyAsId:\n" +
             "          type: integer\n" +
             "          format: int32\n" +
             "        IntSequenceWithoutPropertyAsProperty:\n" +
-            "          $ref: '#/components/schemas/SourceDefinition5'\n" +
+            "          $ref: \"#/components/schemas/SourceDefinition5\"\n" +
             "        UUIDGeneratorAsId:\n" +
             "          type: string\n" +
             "          format: uuid\n" +
             "        UUIDGeneratorAsProperty:\n" +
-            "          $ref: '#/components/schemas/SourceDefinition6'\n" +
+            "          $ref: \"#/components/schemas/SourceDefinition6\"\n" +
             "        UUIDGeneratorWithoutPropertyAsId:\n" +
             "          type: string\n" +
             "          format: uuid\n" +
             "        UUIDGeneratorWithoutPropertyAsProperty:\n" +
-            "          $ref: '#/components/schemas/SourceDefinition7'\n" +
+            "          $ref: \"#/components/schemas/SourceDefinition7\"\n" +
             "        GeneratorsNone:\n" +
-            "          $ref: '#/components/schemas/SourceDefinition8'\n" +
+            "          $ref: \"#/components/schemas/SourceDefinition8\"\n" +
             "        CustomGenerator:\n" +
             "          type: string\n" +
             "        WithoutJsonIdentityReference:\n" +
-            "          $ref: '#/components/schemas/SourceDefinition10'\n" +
+            "          $ref: \"#/components/schemas/SourceDefinition10\"\n" +
             "        IntSequenceGeneratorAtClassLevel:\n" +
-            "          $ref: '#/components/schemas/SourceDefinition11'\n" +
+            "          $ref: \"#/components/schemas/SourceDefinition11\"\n" +
             "    SourceDefinition1:\n" +
             "      type: object\n" +
             "      properties:\n" +
