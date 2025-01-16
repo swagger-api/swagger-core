@@ -391,7 +391,7 @@ public class ReaderTest {
                 "          content:\n" +
                 "            application/json:\n" +
                 "              schema:\n" +
-                "                $ref: '#/components/schemas/SampleResponseSchema'\n" +
+                "                $ref: \"#/components/schemas/SampleResponseSchema\"\n" +
                 "        \"404\":\n" +
                 "          description: not found!\n" +
                 "        \"400\":\n" +
@@ -399,7 +399,7 @@ public class ReaderTest {
                 "          content:\n" +
                 "            '*/*':\n" +
                 "              schema:\n" +
-                "                $ref: '#/components/schemas/GenericError'\n" +
+                "                $ref: \"#/components/schemas/GenericError\"\n" +
                 "      deprecated: true\n" +
                 "components:\n" +
                 "  schemas:\n" +
@@ -430,13 +430,13 @@ public class ReaderTest {
                 "          content:\n" +
                 "            application/json:\n" +
                 "              schema:\n" +
-                "                $ref: '#/components/schemas/SampleResponseSchema'\n" +
+                "                $ref: \"#/components/schemas/SampleResponseSchema\"\n" +
                 "        default:\n" +
                 "          description: boo\n" +
                 "          content:\n" +
                 "            '*/*':\n" +
                 "              schema:\n" +
-                "                $ref: '#/components/schemas/GenericError'\n" +
+                "                $ref: \"#/components/schemas/GenericError\"\n" +
                 "      deprecated: true\n" +
                 "  /allOf:\n" +
                 "    get:\n" +
@@ -458,8 +458,8 @@ public class ReaderTest {
                 "            application/json:\n" +
                 "              schema:\n" +
                 "                allOf:\n" +
-                "                - $ref: '#/components/schemas/MultipleSub1Bean'\n" +
-                "                - $ref: '#/components/schemas/MultipleSub2Bean'\n" +
+                "                - $ref: \"#/components/schemas/MultipleSub1Bean\"\n" +
+                "                - $ref: \"#/components/schemas/MultipleSub2Bean\"\n" +
                 "  /anyOf:\n" +
                 "    get:\n" +
                 "      summary: Test inheritance / polymorphism\n" +
@@ -480,8 +480,8 @@ public class ReaderTest {
                 "            application/json:\n" +
                 "              schema:\n" +
                 "                anyOf:\n" +
-                "                - $ref: '#/components/schemas/MultipleSub1Bean'\n" +
-                "                - $ref: '#/components/schemas/MultipleSub2Bean'\n" +
+                "                - $ref: \"#/components/schemas/MultipleSub1Bean\"\n" +
+                "                - $ref: \"#/components/schemas/MultipleSub2Bean\"\n" +
                 "  /oneOf:\n" +
                 "    get:\n" +
                 "      summary: Test inheritance / polymorphism\n" +
@@ -502,8 +502,8 @@ public class ReaderTest {
                 "            application/json:\n" +
                 "              schema:\n" +
                 "                oneOf:\n" +
-                "                - $ref: '#/components/schemas/MultipleSub1Bean'\n" +
-                "                - $ref: '#/components/schemas/MultipleSub2Bean'\n" +
+                "                - $ref: \"#/components/schemas/MultipleSub1Bean\"\n" +
+                "                - $ref: \"#/components/schemas/MultipleSub2Bean\"\n" +
                 "components:\n" +
                 "  schemas:\n" +
                 "    SampleResponseSchema:\n" +
@@ -514,7 +514,7 @@ public class ReaderTest {
                 "      type: object\n" +
                 "      description: MultipleSub1Bean\n" +
                 "      allOf:\n" +
-                "      - $ref: '#/components/schemas/MultipleBaseBean'\n" +
+                "      - $ref: \"#/components/schemas/MultipleBaseBean\"\n" +
                 "      - type: object\n" +
                 "        properties:\n" +
                 "          c:\n" +
@@ -524,7 +524,7 @@ public class ReaderTest {
                 "      type: object\n" +
                 "      description: MultipleSub2Bean\n" +
                 "      allOf:\n" +
-                "      - $ref: '#/components/schemas/MultipleBaseBean'\n" +
+                "      - $ref: \"#/components/schemas/MultipleBaseBean\"\n" +
                 "      - type: object\n" +
                 "        properties:\n" +
                 "          d:\n" +
@@ -1075,7 +1075,7 @@ public class ReaderTest {
                 "        content:\n" +
                 "          application/json:\n" +
                 "            schema:\n" +
-                "              $ref: '#/components/schemas/Animal'\n" +
+                "              $ref: \"#/components/schemas/Animal\"\n" +
                 "      responses:\n" +
                 "        default:\n" +
                 "          description: default response\n" +
@@ -1097,7 +1097,7 @@ public class ReaderTest {
                 "    Cat:\n" +
                 "      type: object\n" +
                 "      allOf:\n" +
-                "      - $ref: '#/components/schemas/Animal'\n" +
+                "      - $ref: \"#/components/schemas/Animal\"\n" +
                 "      - type: object\n" +
                 "        properties:\n" +
                 "          lives:\n" +
@@ -1106,7 +1106,7 @@ public class ReaderTest {
                 "    Dog:\n" +
                 "      type: object\n" +
                 "      allOf:\n" +
-                "      - $ref: '#/components/schemas/Animal'\n" +
+                "      - $ref: \"#/components/schemas/Animal\"\n" +
                 "      - type: object\n" +
                 "        properties:\n" +
                 "          barkVolume:\n" +
@@ -1131,7 +1131,7 @@ public class ReaderTest {
                 "          content:\n" +
                 "            '*/*':\n" +
                 "              schema:\n" +
-                "                $ref: '#/components/schemas/Test'\n" +
+                "                $ref: \"#/components/schemas/Test\"\n" +
                 "components:\n" +
                 "  schemas:\n" +
                 "    Test:\n" +
@@ -1182,7 +1182,7 @@ public class ReaderTest {
                 "        content:\n" +
                 "          '*/*':\n" +
                 "            schema:\n" +
-                "              $ref: '#/components/schemas/Book'\n" +
+                "              $ref: \"#/components/schemas/Book\"\n" +
                 "        required: true\n" +
                 "      responses:\n" +
                 "        default:\n" +
@@ -1196,7 +1196,7 @@ public class ReaderTest {
                 "        content:\n" +
                 "          '*/*':\n" +
                 "            schema:\n" +
-                "              $ref: '#/components/schemas/Book'\n" +
+                "              $ref: \"#/components/schemas/Book\"\n" +
                 "        required: true\n" +
                 "      responses:\n" +
                 "        default:\n" +
@@ -1232,7 +1232,7 @@ public class ReaderTest {
                 "          content:\n" +
                 "            application/json:\n" +
                 "              schema:\n" +
-                "                $ref: '#/components/schemas/DistancesResponse'\n" +
+                "                $ref: \"#/components/schemas/DistancesResponse\"\n" +
                 "components:\n" +
                 "  schemas:\n" +
                 "    DistancesResponse:\n" +
@@ -1286,15 +1286,15 @@ public class ReaderTest {
                 "          content:\n" +
                 "            application/json:\n" +
                 "              schema:\n" +
-                "                $ref: '#/components/schemas/SampleResponseSchema'\n" +
+                "                $ref: \"#/components/schemas/SampleResponseSchema\"\n" +
                 "        default:\n" +
                 "          description: boo\n" +
                 "          content:\n" +
                 "            '*/*':\n" +
                 "              schema:\n" +
-                "                $ref: '#/components/schemas/GenericError'\n" +
+                "                $ref: \"#/components/schemas/GenericError\"\n" +
                 "        \"401\":\n" +
-                "          $ref: '#/components/responses/invalidJWT'\n" +
+                "          $ref: \"#/components/responses/invalidJWT\"\n" +
                 "      deprecated: true\n" +
                 "components:\n" +
                 "  schemas:\n" +
@@ -1340,15 +1340,15 @@ public class ReaderTest {
                 "          content:\n" +
                 "            application/json:\n" +
                 "              schema:\n" +
-                "                $ref: '#/components/schemas/SampleResponseSchema'\n" +
+                "                $ref: \"#/components/schemas/SampleResponseSchema\"\n" +
                 "        default:\n" +
                 "          description: boo\n" +
                 "          content:\n" +
                 "            '*/*':\n" +
                 "              schema:\n" +
-                "                $ref: '#/components/schemas/GenericError'\n" +
+                "                $ref: \"#/components/schemas/GenericError\"\n" +
                 "        \"401\":\n" +
-                "          $ref: '#/components/responses/invalidJWT'\n" +
+                "          $ref: \"#/components/responses/invalidJWT\"\n" +
                 "      deprecated: true\n" +
                 "components:\n" +
                 "  schemas:\n" +
@@ -1392,7 +1392,7 @@ public class ReaderTest {
                 "          content:\n" +
                 "            '*/*':\n" +
                 "              schema:\n" +
-                "                $ref: '#/components/schemas/Town'\n" +
+                "                $ref: \"#/components/schemas/Town\"\n" +
                 "components:\n" +
                 "  schemas:\n" +
                 "    Town:\n" +
@@ -1430,7 +1430,7 @@ public class ReaderTest {
                 "      description: Defines a simple get operation with a payload complex input object\n" +
                 "      operationId: sendPayload\n" +
                 "      requestBody:\n" +
-                "        $ref: '#/components/requestBodies/User'\n" +
+                "        $ref: \"#/components/requestBodies/User\"\n" +
                 "      responses:\n" +
                 "        default:\n" +
                 "          description: default response\n" +
@@ -1494,7 +1494,7 @@ public class ReaderTest {
                 "      description: Defines a simple get operation with a payload complex input object\n" +
                 "      operationId: sendPayload\n" +
                 "      requestBody:\n" +
-                "        $ref: '#/components/requestBodies/User'\n" +
+                "        $ref: \"#/components/requestBodies/User\"\n" +
                 "      responses:\n" +
                 "        default:\n" +
                 "          description: default response\n" +
@@ -1572,7 +1572,7 @@ public class ReaderTest {
                 "      description: Defines a simple get operation with a payload complex input object\n" +
                 "      operationId: sendPayload\n" +
                 "      parameters:\n" +
-                "      - $ref: '#/components/parameters/id'\n" +
+                "      - $ref: \"#/components/parameters/id\"\n" +
                 "      responses:\n" +
                 "        default:\n" +
                 "          description: default response\n" +
@@ -1623,7 +1623,7 @@ public class ReaderTest {
                 "      description: Defines a simple get operation with a payload complex input object\n" +
                 "      operationId: sendPayload\n" +
                 "      parameters:\n" +
-                "      - $ref: '#/components/parameters/id'\n" +
+                "      - $ref: \"#/components/parameters/id\"\n" +
                 "      responses:\n" +
                 "        default:\n" +
                 "          description: default response\n" +
@@ -1693,7 +1693,7 @@ public class ReaderTest {
                 "            description: subscriptionId_1\n" +
                 "            value: 12345\n" +
                 "            externalValue: Subscription external value 1\n" +
-                "            $ref: '#/components/examples/Id'\n" +
+                "            $ref: \"#/components/examples/Id\"\n" +
                 "        example: example\n" +
                 "      requestBody:\n" +
                 "        content:\n" +
@@ -1707,7 +1707,7 @@ public class ReaderTest {
                 "          content:\n" +
                 "            '*/*':\n" +
                 "              schema:\n" +
-                "                $ref: '#/components/schemas/SubscriptionResponse'\n" +
+                "                $ref: \"#/components/schemas/SubscriptionResponse\"\n" +
                 "components:\n" +
                 "  schemas:\n" +
                 "    SubscriptionResponse:\n" +
@@ -1749,7 +1749,7 @@ public class ReaderTest {
                 "      operationId: subscribe\n" +
                 "      parameters:\n" +
                 "      - example:\n" +
-                "          $ref: '#/components/examples/Id'\n" +
+                "          $ref: \"#/components/examples/Id\"\n" +
                 "      requestBody:\n" +
                 "        content:\n" +
                 "          '*/*':\n" +
@@ -1762,7 +1762,7 @@ public class ReaderTest {
                 "          content:\n" +
                 "            '*/*':\n" +
                 "              schema:\n" +
-                "                $ref: '#/components/schemas/SubscriptionResponse'\n" +
+                "                $ref: \"#/components/schemas/SubscriptionResponse\"\n" +
                 "components:\n" +
                 "  schemas:\n" +
                 "    SubscriptionResponse:\n" +
@@ -1820,7 +1820,7 @@ public class ReaderTest {
                 "          headers:\n" +
                 "            Rate-Limit-Limit:\n" +
                 "              description: The number of allowed requests in the current period\n" +
-                "              $ref: '#/components/headers/Header'\n" +
+                "              $ref: \"#/components/headers/Header\"\n" +
                 "              style: simple\n" +
                 "              schema:\n" +
                 "                type: integer\n" +
@@ -1870,7 +1870,7 @@ public class ReaderTest {
                 "    myOauth2Security:\n" +
                 "      type: oauth2\n" +
                 "      description: myOauthSecurity Description\n" +
-                "      $ref: '#/components/securitySchemes/Security'\n" +
+                "      $ref: \"#/components/securitySchemes/Security\"\n" +
                 "      in: header\n" +
                 "      flows:\n" +
                 "        implicit:\n" +
@@ -1909,13 +1909,13 @@ public class ReaderTest {
                 "          content:\n" +
                 "            '*/*':\n" +
                 "              schema:\n" +
-                "                $ref: '#/components/schemas/User'\n" +
+                "                $ref: \"#/components/schemas/User\"\n" +
                 "          links:\n" +
                 "            address:\n" +
                 "              operationId: getAddress\n" +
                 "              parameters:\n" +
                 "                userId: $request.query.userId\n" +
-                "              $ref: '#/components/links/Link'\n" +
+                "              $ref: \"#/components/links/Link\"\n" +
                 "components:\n" +
                 "  links:\n" +
                 "    Link:\n" +
@@ -1948,7 +1948,7 @@ public class ReaderTest {
                 "          description: voila!\n" +
                 "      callbacks:\n" +
                 "        testCallback1:\n" +
-                "          $ref: '#/components/callbacks/Callback'\n" +
+                "          $ref: \"#/components/callbacks/Callback\"\n" +
                 "components:\n" +
                 "  callbacks:\n" +
                 "    Callback:\n" +
@@ -2064,7 +2064,7 @@ public class ReaderTest {
                 "      summary: Simple get operation\n" +
                 "      operationId: sendPayload2\n" +
                 "      parameters:\n" +
-                "      - $ref: '#/components/parameters/id'\n" +
+                "      - $ref: \"#/components/parameters/id\"\n" +
                 "      responses:\n" +
                 "        default:\n" +
                 "          description: default response\n" +
@@ -2075,7 +2075,7 @@ public class ReaderTest {
                 "      summary: Simple get operation\n" +
                 "      operationId: sendPayload1\n" +
                 "      parameters:\n" +
-                "      - $ref: '#/components/parameters/id'\n" +
+                "      - $ref: \"#/components/parameters/id\"\n" +
                 "      responses:\n" +
                 "        default:\n" +
                 "          description: default response\n" +
@@ -2108,14 +2108,14 @@ public class ReaderTest {
                 "        content:\n" +
                 "          application/json:\n" +
                 "            schema:\n" +
-                "              $ref: '#/components/schemas/ProcessTokenDTO'\n" +
+                "              $ref: \"#/components/schemas/ProcessTokenDTO\"\n" +
                 "      responses:\n" +
                 "        default:\n" +
                 "          description: default response\n" +
                 "          content:\n" +
                 "            application/json:\n" +
                 "              schema:\n" +
-                "                $ref: '#/components/schemas/ProcessTokenDTO'\n" +
+                "                $ref: \"#/components/schemas/ProcessTokenDTO\"\n" +
                 "components:\n" +
                 "  schemas:\n" +
                 "    ProcessTokenDTO:\n" +
@@ -2154,7 +2154,7 @@ public class ReaderTest {
                 "        content:\n" +
                 "          application/json:\n" +
                 "            schema:\n" +
-                "              $ref: '#/components/schemas/User'\n" +
+                "              $ref: \"#/components/schemas/User\"\n" +
                 "            example:\n" +
                 "              foo: foo\n" +
                 "              bar: bar\n" +
@@ -2170,7 +2170,7 @@ public class ReaderTest {
                 "        content:\n" +
                 "          application/json:\n" +
                 "            schema:\n" +
-                "              $ref: '#/components/schemas/User'\n" +
+                "              $ref: \"#/components/schemas/User\"\n" +
                 "            example:\n" +
                 "              foo: foo\n" +
                 "              bar: bar\n" +
@@ -2227,7 +2227,7 @@ public class ReaderTest {
                 "                name:\n" +
                 "                  type: string\n" +
                 "                picture:\n" +
-                "                  $ref: '#/components/schemas/picture'\n" +
+                "                  $ref: \"#/components/schemas/picture\"\n" +
                 "      responses:\n" +
                 "        default:\n" +
                 "          description: default response\n" +
@@ -2240,7 +2240,7 @@ public class ReaderTest {
                 "        content:\n" +
                 "          multipart/form-data:\n" +
                 "            schema:\n" +
-                "              $ref: '#/components/schemas/UploadRequest'\n" +
+                "              $ref: \"#/components/schemas/UploadRequest\"\n" +
                 "      responses:\n" +
                 "        default:\n" +
                 "          description: default response\n" +
@@ -2321,7 +2321,7 @@ public class ReaderTest {
                 "          content:\n" +
                 "            application/json:\n" +
                 "              schema:\n" +
-                "                $ref: '#/components/schemas/Response'\n" +
+                "                $ref: \"#/components/schemas/Response\"\n" +
                 "  /example/model/by/ids:\n" +
                 "    get:\n" +
                 "      tags:\n" +
@@ -2334,7 +2334,7 @@ public class ReaderTest {
                 "          content:\n" +
                 "            application/json:\n" +
                 "              schema:\n" +
-                "                $ref: '#/components/schemas/ByIdResponse'\n" +
+                "                $ref: \"#/components/schemas/ByIdResponse\"\n" +
                 "  /example/containerized/model:\n" +
                 "    get:\n" +
                 "      tags:\n" +
@@ -2347,7 +2347,7 @@ public class ReaderTest {
                 "          content:\n" +
                 "            application/json:\n" +
                 "              schema:\n" +
-                "                $ref: '#/components/schemas/ContainerizedResponse'\n" +
+                "                $ref: \"#/components/schemas/ContainerizedResponse\"\n" +
                 "components:\n" +
                 "  schemas:\n" +
                 "    Model:\n" +
@@ -2360,11 +2360,11 @@ public class ReaderTest {
                 "        active:\n" +
                 "          type: boolean\n" +
                 "        schemaParent:\n" +
-                "          $ref: '#/components/schemas/Model'\n" +
+                "          $ref: \"#/components/schemas/Model\"\n" +
                 "        optionalString:\n" +
                 "          type: string\n" +
                 "        parent:\n" +
-                "          $ref: '#/components/schemas/Model'\n" +
+                "          $ref: \"#/components/schemas/Model\"\n" +
                 "        id:\n" +
                 "          type: integer\n" +
                 "          format: int32\n" +
@@ -2377,14 +2377,14 @@ public class ReaderTest {
                 "        models:\n" +
                 "          type: array\n" +
                 "          items:\n" +
-                "            $ref: '#/components/schemas/Model'\n" +
+                "            $ref: \"#/components/schemas/Model\"\n" +
                 "    ByIdResponse:\n" +
                 "      type: object\n" +
                 "      properties:\n" +
                 "        modelsById:\n" +
                 "          type: object\n" +
                 "          additionalProperties:\n" +
-                "            $ref: '#/components/schemas/Model'\n" +
+                "            $ref: \"#/components/schemas/Model\"\n" +
                 "    ContainerizedResponse:\n" +
                 "      type: object\n" +
                 "      properties:\n" +
@@ -2394,14 +2394,14 @@ public class ReaderTest {
                 "        containerizedModels:\n" +
                 "          type: array\n" +
                 "          items:\n" +
-                "            $ref: '#/components/schemas/ModelContainer'\n" +
+                "            $ref: \"#/components/schemas/ModelContainer\"\n" +
                 "    ModelContainer:\n" +
                 "      type: object\n" +
                 "      properties:\n" +
                 "        text:\n" +
                 "          type: string\n" +
                 "        model:\n" +
-                "          $ref: '#/components/schemas/Model'\n" +
+                "          $ref: \"#/components/schemas/Model\"\n" +
                 "        id:\n" +
                 "          type: integer\n" +
                 "          format: int32";
@@ -2656,7 +2656,7 @@ public class ReaderTest {
                 "          content:\n" +
                 "            '*/*':\n" +
                 "              schema:\n" +
-                "                $ref: '#/components/schemas/ItemWithChildren'\n" +
+                "                $ref: \"#/components/schemas/ItemWithChildren\"\n" +
                 "  /item/nogeneric/{id}:\n" +
                 "    get:\n" +
                 "      operationId: getByIdNoGeneric\n" +
@@ -2672,7 +2672,7 @@ public class ReaderTest {
                 "          content:\n" +
                 "            '*/*':\n" +
                 "              schema:\n" +
-                "                $ref: '#/components/schemas/ItemWithChildren'\n" +
+                "                $ref: \"#/components/schemas/ItemWithChildren\"\n" +
                 "  /item/nogenericsamereturn/{id}:\n" +
                 "    get:\n" +
                 "      operationId: getByIdNoGenericSameReturn\n" +
@@ -2688,7 +2688,7 @@ public class ReaderTest {
                 "          content:\n" +
                 "            '*/*':\n" +
                 "              schema:\n" +
-                "                $ref: '#/components/schemas/BaseDTO'\n" +
+                "                $ref: \"#/components/schemas/BaseDTO\"\n" +
                 "  /item/genericparam:\n" +
                 "    post:\n" +
                 "      operationId: genericParam\n" +
@@ -2696,14 +2696,14 @@ public class ReaderTest {
                 "        content:\n" +
                 "          '*/*':\n" +
                 "            schema:\n" +
-                "              $ref: '#/components/schemas/ItemWithChildren'\n" +
+                "              $ref: \"#/components/schemas/ItemWithChildren\"\n" +
                 "      responses:\n" +
                 "        default:\n" +
                 "          description: default response\n" +
                 "          content:\n" +
                 "            '*/*':\n" +
                 "              schema:\n" +
-                "                $ref: '#/components/schemas/BaseDTO'\n" +
+                "                $ref: \"#/components/schemas/BaseDTO\"\n" +
                 "components:\n" +
                 "  schemas:\n" +
                 "    ItemWithChildren:\n" +
@@ -2737,7 +2737,7 @@ public class ReaderTest {
                 "        content:\n" +
                 "          '*/*':\n" +
                 "            schema:\n" +
-                "              $ref: '#/components/schemas/SampleDTO'\n" +
+                "              $ref: \"#/components/schemas/SampleDTO\"\n" +
                 "      responses:\n" +
                 "        \"201\":\n" +
                 "          description: Created\n" +
@@ -2756,7 +2756,7 @@ public class ReaderTest {
                 "        content:\n" +
                 "          '*/*':\n" +
                 "            schema:\n" +
-                "              $ref: '#/components/schemas/SampleOtherDTO'\n" +
+                "              $ref: \"#/components/schemas/SampleOtherDTO\"\n" +
                 "      responses:\n" +
                 "        \"200\":\n" +
                 "          description: OK\n" +
@@ -2775,7 +2775,7 @@ public class ReaderTest {
                 "        content:\n" +
                 "          '*/*':\n" +
                 "            schema:\n" +
-                "              $ref: '#/components/schemas/SampleOtherDTO'\n" +
+                "              $ref: \"#/components/schemas/SampleOtherDTO\"\n" +
                 "      responses:\n" +
                 "        \"200\":\n" +
                 "          description: OK\n" +
@@ -2935,7 +2935,7 @@ public class ReaderTest {
                 "          content:\n" +
                 "            application/json:\n" +
                 "              schema:\n" +
-                "                $ref: '#/components/schemas/MultipleBaseBean'\n" +
+                "                $ref: \"#/components/schemas/MultipleBaseBean\"\n" +
                 "  /two:\n" +
                 "    get:\n" +
                 "      operationId: requestBodySchemaPropertySchema\n" +
@@ -2955,7 +2955,7 @@ public class ReaderTest {
                 "          content:\n" +
                 "            application/json:\n" +
                 "              schema:\n" +
-                "                $ref: '#/components/schemas/MultipleBaseBean'\n" +
+                "                $ref: \"#/components/schemas/MultipleBaseBean\"\n" +
                 "  /three:\n" +
                 "    get:\n" +
                 "      operationId: requestBodySchemaPropertySchemaArray\n" +
@@ -2977,7 +2977,7 @@ public class ReaderTest {
                 "          content:\n" +
                 "            application/json:\n" +
                 "              schema:\n" +
-                "                $ref: '#/components/schemas/MultipleBaseBean'\n" +
+                "                $ref: \"#/components/schemas/MultipleBaseBean\"\n" +
                 "components:\n" +
                 "  schemas:\n" +
                 "    MultipleBaseBean:\n" +
@@ -2995,7 +2995,7 @@ public class ReaderTest {
                 "      type: object\n" +
                 "      description: MultipleSub1Bean\n" +
                 "      allOf:\n" +
-                "      - $ref: '#/components/schemas/MultipleBaseBean'\n" +
+                "      - $ref: \"#/components/schemas/MultipleBaseBean\"\n" +
                 "      - type: object\n" +
                 "        properties:\n" +
                 "          c:\n" +
@@ -3005,7 +3005,7 @@ public class ReaderTest {
                 "      type: object\n" +
                 "      description: MultipleSub2Bean\n" +
                 "      allOf:\n" +
-                "      - $ref: '#/components/schemas/MultipleBaseBean'\n" +
+                "      - $ref: \"#/components/schemas/MultipleBaseBean\"\n" +
                 "      - type: object\n" +
                 "        properties:\n" +
                 "          d:\n" +
@@ -3034,7 +3034,7 @@ public class ReaderTest {
                 "                additionalProperties:\n" +
                 "                  type: array\n" +
                 "                  items:\n" +
-                "                    $ref: '#/components/schemas/Pet'\n" +
+                "                    $ref: \"#/components/schemas/Pet\"\n" +
                 "  /fromtResponseType:\n" +
                 "    get:\n" +
                 "      operationId: fromtResponseType\n" +
@@ -3048,7 +3048,7 @@ public class ReaderTest {
                 "                additionalProperties:\n" +
                 "                  type: array\n" +
                 "                  items:\n" +
-                "                    $ref: '#/components/schemas/Pet'\n" +
+                "                    $ref: \"#/components/schemas/Pet\"\n" +
                 "  /schemaImpl:\n" +
                 "    get:\n" +
                 "      operationId: schemaImpl\n" +
@@ -3060,7 +3060,7 @@ public class ReaderTest {
                 "              schema:\n" +
                 "                type: object\n" +
                 "                additionalProperties:\n" +
-                "                  $ref: '#/components/schemas/Pet'\n" +
+                "                  $ref: \"#/components/schemas/Pet\"\n" +
                 "  /schemaNotImpl:\n" +
                 "    get:\n" +
                 "      operationId: schemaNotImpl\n" +
@@ -3072,7 +3072,7 @@ public class ReaderTest {
                 "              schema:\n" +
                 "                type: object\n" +
                 "                additionalProperties:\n" +
-                "                  $ref: '#/components/schemas/Pet'\n" +
+                "                  $ref: \"#/components/schemas/Pet\"\n" +
                 "components:\n" +
                 "  schemas:\n" +
                 "    Pet:\n" +
@@ -3101,7 +3101,7 @@ public class ReaderTest {
                 "          content:\n" +
                 "            '*/*':\n" +
                 "              schema:\n" +
-                "                $ref: '#/components/schemas/Pet'\n" +
+                "                $ref: \"#/components/schemas/Pet\"\n" +
                 "components:\n" +
                 "  schemas:\n" +
                 "    Bar:\n" +
@@ -3115,12 +3115,12 @@ public class ReaderTest {
                 "        bar:\n" +
                 "          allOf:\n" +
                 "          - additionalProperties:\n" +
-                "              $ref: '#/components/schemas/Bar'\n" +
-                "          - $ref: '#/components/schemas/Bar'\n" +
+                "              $ref: \"#/components/schemas/Bar\"\n" +
+                "          - $ref: \"#/components/schemas/Bar\"\n" +
                 "        vbar:\n" +
                 "          allOf:\n" +
                 "          - additionalProperties: false\n" +
-                "          - $ref: '#/components/schemas/Bar'\n" +
+                "          - $ref: \"#/components/schemas/Bar\"\n" +
                 "      additionalProperties: false\n";
         SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
         ModelConverters.reset();
@@ -3143,7 +3143,7 @@ public class ReaderTest {
                 "          content:\n" +
                 "            '*/*':\n" +
                 "              schema:\n" +
-                "                $ref: '#/components/schemas/Pet'\n" +
+                "                $ref: \"#/components/schemas/Pet\"\n" +
                 "components:\n" +
                 "  schemas:\n" +
                 "    Pet:\n" +
@@ -3184,13 +3184,13 @@ public class ReaderTest {
                 "          content:\n" +
                 "            application/json:\n" +
                 "              schema:\n" +
-                "                $ref: '#/components/schemas/TestDTO'\n" +
+                "                $ref: \"#/components/schemas/TestDTO\"\n" +
                 "        \"201\":\n" +
                 "          description: \"201\"\n" +
                 "          content:\n" +
                 "            application/json:\n" +
                 "              schema:\n" +
-                "                $ref: '#/components/schemas/TestDTO'\n" +
+                "                $ref: \"#/components/schemas/TestDTO\"\n" +
                 "        \"204\":\n" +
                 "          description: No Content\n" +
                 "          content:\n" +
@@ -3214,7 +3214,7 @@ public class ReaderTest {
                 "          content:\n" +
                 "            application/json:\n" +
                 "              schema:\n" +
-                "                $ref: '#/components/schemas/TestDTO'\n" +
+                "                $ref: \"#/components/schemas/TestDTO\"\n" +
                 "components:\n" +
                 "  schemas:\n" +
                 "    TestDTO:\n" +
@@ -3292,7 +3292,7 @@ public class ReaderTest {
                 "        content:\n" +
                 "          application/json:\n" +
                 "            schema:\n" +
-                "              $ref: '#/components/schemas/Pet'\n" +
+                "              $ref: \"#/components/schemas/Pet\"\n" +
                 "        required: true\n" +
                 "      responses:\n" +
                 "        \"400\":\n" +
@@ -3309,10 +3309,10 @@ public class ReaderTest {
                 "        content:\n" +
                 "          application/json:\n" +
                 "            schema:\n" +
-                "              $ref: '#/components/schemas/Pet'\n" +
+                "              $ref: \"#/components/schemas/Pet\"\n" +
                 "          application/xml:\n" +
                 "            schema:\n" +
-                "              $ref: '#/components/schemas/Pet'\n" +
+                "              $ref: \"#/components/schemas/Pet\"\n" +
                 "        required: true\n" +
                 "      responses:\n" +
                 "        \"405\":\n" +
@@ -3362,10 +3362,10 @@ public class ReaderTest {
                 "        content:\n" +
                 "          application/json:\n" +
                 "            schema:\n" +
-                "              $ref: '#/components/schemas/Pet'\n" +
+                "              $ref: \"#/components/schemas/Pet\"\n" +
                 "          application/xml:\n" +
                 "            schema:\n" +
-                "              $ref: '#/components/schemas/Pet'\n" +
+                "              $ref: \"#/components/schemas/Pet\"\n" +
                 "      responses:\n" +
                 "        \"405\":\n" +
                 "          description: Invalid input\n" +
@@ -3396,7 +3396,7 @@ public class ReaderTest {
                 "          content:\n" +
                 "            application/json:\n" +
                 "              schema:\n" +
-                "                $ref: '#/components/schemas/Pet'\n" +
+                "                $ref: \"#/components/schemas/Pet\"\n" +
                 "        \"400\":\n" +
                 "          description: Invalid status value\n" +
                 "  /pet/findByTags:\n" +
@@ -3418,7 +3418,7 @@ public class ReaderTest {
                 "          content:\n" +
                 "            application/json:\n" +
                 "              schema:\n" +
-                "                $ref: '#/components/schemas/Pet'\n" +
+                "                $ref: \"#/components/schemas/Pet\"\n" +
                 "        \"400\":\n" +
                 "          description: Invalid tag value\n" +
                 "      deprecated: true\n" +
@@ -3442,10 +3442,10 @@ public class ReaderTest {
                 "          content:\n" +
                 "            application/json:\n" +
                 "              schema:\n" +
-                "                $ref: '#/components/schemas/Pet'\n" +
+                "                $ref: \"#/components/schemas/Pet\"\n" +
                 "            application/xml:\n" +
                 "              schema:\n" +
-                "                $ref: '#/components/schemas/Pet'\n" +
+                "                $ref: \"#/components/schemas/Pet\"\n" +
                 "        \"400\":\n" +
                 "          description: Invalid ID supplied\n" +
                 "        \"404\":\n" +
@@ -3522,7 +3522,7 @@ public class ReaderTest {
                 "          type: integer\n" +
                 "          format: int64\n" +
                 "        category:\n" +
-                "          $ref: '#/components/schemas/Category'\n" +
+                "          $ref: \"#/components/schemas/Category\"\n" +
                 "        name:\n" +
                 "          type: string\n" +
                 "        photoUrls:\n" +
@@ -3536,13 +3536,13 @@ public class ReaderTest {
                 "        tags:\n" +
                 "          type: array\n" +
                 "          items:\n" +
-                "            $ref: '#/components/schemas/Tag'\n" +
+                "            $ref: \"#/components/schemas/Tag\"\n" +
                 "          xml:\n" +
                 "            wrapped: true\n" +
                 "        status:\n" +
                 "          type: string\n" +
                 "          if:\n" +
-                "            $ref: '#/components/schemas/IfSchema'\n" +
+                "            $ref: \"#/components/schemas/IfSchema\"\n" +
                 "          $id: idtest\n" +
                 "          description: pet status in the store\n" +
                 "          enum:\n" +
@@ -3558,13 +3558,13 @@ public class ReaderTest {
                 "        name:\n" +
                 "          type: string\n" +
                 "        annotated:\n" +
-                "          $ref: '#/components/schemas/Category'\n" +
+                "          $ref: \"#/components/schemas/Category\"\n" +
                 "          description: child description\n" +
                 "          properties:\n" +
                 "            foo:\n" +
-                "              $ref: '#/components/schemas/Foo'\n" +
+                "              $ref: \"#/components/schemas/Foo\"\n" +
                 "            bar:\n" +
-                "              $ref: '#/components/schemas/Bar'\n" +
+                "              $ref: \"#/components/schemas/Bar\"\n" +
                 "      xml:\n" +
                 "        name: Tag\n";
         SerializationMatchers.assertEqualsToYaml31(openAPI, yaml);
@@ -3587,7 +3587,7 @@ public class ReaderTest {
                 "          content:\n" +
                 "            '*/*':\n" +
                 "              schema:\n" +
-                "                $ref: '#/components/schemas/SimpleTag'\n" +
+                "                $ref: \"#/components/schemas/SimpleTag\"\n" +
                 "components:\n" +
                 "  schemas:\n" +
                 "    Foo:\n" +
@@ -3612,11 +3612,11 @@ public class ReaderTest {
                 "      type: object\n" +
                 "      properties:\n" +
                 "        annotated:\n" +
-                "          $ref: '#/components/schemas/SimpleCategory'\n" +
+                "          $ref: \"#/components/schemas/SimpleCategory\"\n" +
                 "          description: child description\n" +
                 "          properties:\n" +
                 "            foo:\n" +
-                "              $ref: '#/components/schemas/Foo'\n" +
+                "              $ref: \"#/components/schemas/Foo\"\n" +
                 "    SimpleCategory:\n" +
                 "      type: object\n" ;
         SerializationMatchers.assertEqualsToYaml31(openAPI, yaml);
@@ -3638,7 +3638,7 @@ public class ReaderTest {
                 "          content:\n" +
                 "            '*/*':\n" +
                 "              schema:\n" +
-                "                $ref: '#/components/schemas/Pet'\n" +
+                "                $ref: \"#/components/schemas/Pet\"\n" +
                 "components:\n" +
                 "  schemas:\n" +
                 "    Category:\n" +
@@ -3653,7 +3653,7 @@ public class ReaderTest {
                 "      description: Pet\n" +
                 "      properties:\n" +
                 "        category:\n" +
-                "          $ref: '#/components/schemas/Category'\n" +
+                "          $ref: \"#/components/schemas/Category\"\n" +
                 "          description: child\n";
         SerializationMatchers.assertEqualsToYaml31(openAPI, yaml);
     }
@@ -3674,7 +3674,7 @@ public class ReaderTest {
                 "          content:\n" +
                 "            '*/*':\n" +
                 "              schema:\n" +
-                "                $ref: '#/components/schemas/PetSimple'\n" +
+                "                $ref: \"#/components/schemas/PetSimple\"\n" +
                 "                description: resource pet\n" +
                 "                readOnly: true\n" +
                 "  /test/impl:\n" +
@@ -3686,7 +3686,7 @@ public class ReaderTest {
                 "          content:\n" +
                 "            '*/*':\n" +
                 "              schema:\n" +
-                "                $ref: '#/components/schemas/PetSimple'\n" +
+                "                $ref: \"#/components/schemas/PetSimple\"\n" +
                 "                description: resource pet\n" +
                 "                readOnly: true\n" +
                 "components:\n" +
@@ -3713,12 +3713,12 @@ public class ReaderTest {
                 "          content:\n" +
                 "            application/json:\n" +
                 "              schema:\n" +
-                "                $ref: '#/components/schemas/PetSimple'\n" +
+                "                $ref: \"#/components/schemas/PetSimple\"\n" +
                 "                description: resource pet\n" +
                 "                readOnly: true\n" +
                 "            application/xml:\n" +
                 "              schema:\n" +
-                "                $ref: '#/components/schemas/PetSimple'\n" +
+                "                $ref: \"#/components/schemas/PetSimple\"\n" +
                 "                description: resource pet xml\n" +
                 "                readOnly: true\n" +
                 "  /test/impl:\n" +
@@ -3730,12 +3730,12 @@ public class ReaderTest {
                 "          content:\n" +
                 "            application/json:\n" +
                 "              schema:\n" +
-                "                $ref: '#/components/schemas/PetSimple'\n" +
+                "                $ref: \"#/components/schemas/PetSimple\"\n" +
                 "                description: resource pet\n" +
                 "                readOnly: true\n" +
                 "            application/xml:\n" +
                 "              schema:\n" +
-                "                $ref: '#/components/schemas/PetSimple'\n" +
+                "                $ref: \"#/components/schemas/PetSimple\"\n" +
                 "                description: resource pet xml\n" +
                 "                readOnly: true\n" +
                 "components:\n" +
@@ -3761,7 +3761,7 @@ public class ReaderTest {
                 "        content:\n" +
                 "          application/json:\n" +
                 "            schema:\n" +
-                "              $ref: '#/components/schemas/PetSimple'\n" +
+                "              $ref: \"#/components/schemas/PetSimple\"\n" +
                 "              description: resource pet\n" +
                 "              writeOnly: true\n" +
                 "      responses:\n" +
@@ -3776,7 +3776,7 @@ public class ReaderTest {
                 "        content:\n" +
                 "          '*/*':\n" +
                 "            schema:\n" +
-                "              $ref: '#/components/schemas/PetSimple'\n" +
+                "              $ref: \"#/components/schemas/PetSimple\"\n" +
                 "              description: resource pet\n" +
                 "              writeOnly: true\n" +
                 "      responses:\n" +
@@ -3807,12 +3807,12 @@ public class ReaderTest {
                 "        content:\n" +
                 "          application/json:\n" +
                 "            schema:\n" +
-                "              $ref: '#/components/schemas/PetSimple'\n" +
+                "              $ref: \"#/components/schemas/PetSimple\"\n" +
                 "              description: resource pet\n" +
                 "              writeOnly: true\n" +
                 "          application/xml:\n" +
                 "            schema:\n" +
-                "              $ref: '#/components/schemas/PetSimple'\n" +
+                "              $ref: \"#/components/schemas/PetSimple\"\n" +
                 "              description: resource pet xml\n" +
                 "              writeOnly: true\n" +
                 "      responses:\n" +
@@ -3827,12 +3827,12 @@ public class ReaderTest {
                 "        content:\n" +
                 "          application/json:\n" +
                 "            schema:\n" +
-                "              $ref: '#/components/schemas/PetSimple'\n" +
+                "              $ref: \"#/components/schemas/PetSimple\"\n" +
                 "              description: resource pet\n" +
                 "              writeOnly: true\n" +
                 "          application/xml:\n" +
                 "            schema:\n" +
-                "              $ref: '#/components/schemas/PetSimple'\n" +
+                "              $ref: \"#/components/schemas/PetSimple\"\n" +
                 "              description: resource pet xml\n" +
                 "              writeOnly: true\n" +
                 "      responses:\n" +
@@ -3848,12 +3848,12 @@ public class ReaderTest {
                 "        content:\n" +
                 "          application/json:\n" +
                 "            schema:\n" +
-                "              $ref: '#/components/schemas/PetSimple'\n" +
+                "              $ref: \"#/components/schemas/PetSimple\"\n" +
                 "              description: resource pet\n" +
                 "              writeOnly: true\n" +
                 "          application/xml:\n" +
                 "            schema:\n" +
-                "              $ref: '#/components/schemas/PetSimple'\n" +
+                "              $ref: \"#/components/schemas/PetSimple\"\n" +
                 "              description: resource pet xml\n" +
                 "              writeOnly: true\n" +
                 "      responses:\n" +
@@ -3887,14 +3887,14 @@ public class ReaderTest {
                 "        content:\n" +
                 "          application/json:\n" +
                 "            schema:\n" +
-                "              $ref: '#/components/schemas/Pet'\n" +
+                "              $ref: \"#/components/schemas/Pet\"\n" +
                 "              description: A Pet in JSON Format\n" +
                 "              required:\n" +
                 "              - id\n" +
                 "              writeOnly: true\n" +
                 "          application/xml:\n" +
                 "            schema:\n" +
-                "              $ref: '#/components/schemas/Pet'\n" +
+                "              $ref: \"#/components/schemas/Pet\"\n" +
                 "              description: A Pet in XML Format\n" +
                 "              required:\n" +
                 "              - id\n" +
@@ -3906,12 +3906,12 @@ public class ReaderTest {
                 "          content:\n" +
                 "            application/xml:\n" +
                 "              schema:\n" +
-                "                $ref: '#/components/schemas/Pet'\n" +
+                "                $ref: \"#/components/schemas/Pet\"\n" +
                 "                description: A Pet in XML Format\n" +
                 "                readOnly: true\n" +
                 "            application/json:\n" +
                 "              schema:\n" +
-                "                $ref: '#/components/schemas/Pet'\n" +
+                "                $ref: \"#/components/schemas/Pet\"\n" +
                 "                description: A Pet in JSON Format\n" +
                 "                readOnly: true\n" +
                 "        \"400\":\n" +
@@ -3939,7 +3939,7 @@ public class ReaderTest {
                 "      description: Pet\n" +
                 "      properties:\n" +
                 "        category:\n" +
-                "          $ref: '#/components/schemas/Category'\n" +
+                "          $ref: \"#/components/schemas/Category\"\n" +
                 "          description: child\n" +
                 "webhooks:\n" +
                 "  newPet:\n" +
@@ -3949,7 +3949,7 @@ public class ReaderTest {
                 "        content:\n" +
                 "          application/json:\n" +
                 "            schema:\n" +
-                "              $ref: '#/components/schemas/Pet'\n" +
+                "              $ref: \"#/components/schemas/Pet\"\n" +
                 "              description: Webhook Pet\n" +
                 "      responses:\n" +
                 "        \"200\":\n" +
@@ -3974,10 +3974,10 @@ public class ReaderTest {
                 "          content:\n" +
                 "            application/json:\n" +
                 "              schema:\n" +
-                "                $ref: '#/components/schemas/ModelWithOAS31Stuff'\n" +
+                "                $ref: \"#/components/schemas/ModelWithOAS31Stuff\"\n" +
                 "            application/xml:\n" +
                 "              schema:\n" +
-                "                $ref: '#/components/schemas/ModelWithOAS31Stuff'\n" +
+                "                $ref: \"#/components/schemas/ModelWithOAS31Stuff\"\n" +
                 "components:\n" +
                 "  schemas:\n" +
                 "    ModelWithOAS31Stuff:\n" +
@@ -4017,14 +4017,14 @@ public class ReaderTest {
                 "          type: string\n" +
                 "          contentMediaType: application/jwt\n" +
                 "          contentSchema:\n" +
-                "            $ref: '#/components/schemas/MultipleBaseBean'\n" +
+                "            $ref: \"#/components/schemas/MultipleBaseBean\"\n" +
                 "        address:\n" +
-                "          $ref: '#/components/schemas/Address'\n" +
+                "          $ref: \"#/components/schemas/Address\"\n" +
                 "        client:\n" +
                 "          type: string\n" +
                 "          dependentSchemas:\n" +
                 "            creditCard:\n" +
-                "              $ref: '#/components/schemas/CreditCard'\n" +
+                "              $ref: \"#/components/schemas/CreditCard\"\n" +
                 "    MultipleBaseBean:\n" +
                 "      type: object\n" +
                 "      description: MultipleBaseBean\n" +
@@ -4038,7 +4038,7 @@ public class ReaderTest {
                 "          type: string\n" +
                 "    MultipleSub1Bean:\n" +
                 "      allOf:\n" +
-                "      - $ref: '#/components/schemas/MultipleBaseBean'\n" +
+                "      - $ref: \"#/components/schemas/MultipleBaseBean\"\n" +
                 "      - type: object\n" +
                 "        properties:\n" +
                 "          c:\n" +
@@ -4047,7 +4047,7 @@ public class ReaderTest {
                 "      description: MultipleSub1Bean\n" +
                 "    MultipleSub2Bean:\n" +
                 "      allOf:\n" +
-                "      - $ref: '#/components/schemas/MultipleBaseBean'\n" +
+                "      - $ref: \"#/components/schemas/MultipleBaseBean\"\n" +
                 "      - type: object\n" +
                 "        properties:\n" +
                 "          d:\n" +
@@ -4057,11 +4057,11 @@ public class ReaderTest {
                 "    Address:\n" +
                 "      type: object\n" +
                 "      if:\n" +
-                "        $ref: '#/components/schemas/AnnotatedCountry'\n" +
+                "        $ref: \"#/components/schemas/AnnotatedCountry\"\n" +
                 "      then:\n" +
-                "        $ref: '#/components/schemas/PostalCodeNumberPattern'\n" +
+                "        $ref: \"#/components/schemas/PostalCodeNumberPattern\"\n" +
                 "      else:\n" +
-                "        $ref: '#/components/schemas/PostalCodePattern'\n" +
+                "        $ref: \"#/components/schemas/PostalCodePattern\"\n" +
                 "      dependentRequired:\n" +
                 "        street:\n" +
                 "        - country\n" +
@@ -4074,7 +4074,7 @@ public class ReaderTest {
                 "          - United States of America\n" +
                 "          - Canada\n" +
                 "      propertyNames:\n" +
-                "        $ref: '#/components/schemas/PropertyNamesPattern'\n" +
+                "        $ref: \"#/components/schemas/PropertyNamesPattern\"\n" +
                 "    AnnotatedCountry:\n" +
                 "      type: object\n" +
                 "      properties:\n" +
@@ -4117,7 +4117,7 @@ public class ReaderTest {
                 "          content:\n" +
                 "            '*/*':\n" +
                 "              schema:\n" +
-                "                $ref: '#/components/schemas/MyPojo'\n" +
+                "                $ref: \"#/components/schemas/MyPojo\"\n" +
                 "components:\n" +
                 "  schemas:\n" +
                 "    MyPojo:\n" +
@@ -4130,7 +4130,7 @@ public class ReaderTest {
                 "        morePojos:\n" +
                 "          type: array\n" +
                 "          items:\n" +
-                "            $ref: '#/components/schemas/MyPojo'\n";
+                "            $ref: \"#/components/schemas/MyPojo\"\n";
         SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
     }
 
@@ -4186,7 +4186,7 @@ public class ReaderTest {
                 "              schema:\n" +
                 "                type: array\n" +
                 "                items:\n" +
-                "                  $ref: '#/components/schemas/LocalizedError'\n" +
+                "                  $ref: \"#/components/schemas/LocalizedError\"\n" +
                 "        \"200\":\n" +
                 "          description: test\n" +
                 "          content:\n" +
@@ -4208,7 +4208,7 @@ public class ReaderTest {
                 "              schema:\n" +
                 "                type: array\n" +
                 "                items:\n" +
-                "                  $ref: '#/components/schemas/LocalizedError'\n" +
+                "                  $ref: \"#/components/schemas/LocalizedError\"\n" +
                 "        \"200\":\n" +
                 "          description: Dummy GET opresp\n" +
                 "          content:\n" +
@@ -4230,7 +4230,7 @@ public class ReaderTest {
                 "              schema:\n" +
                 "                type: array\n" +
                 "                items:\n" +
-                "                  $ref: '#/components/schemas/LocalizedError'\n" +
+                "                  $ref: \"#/components/schemas/LocalizedError\"\n" +
                 "components:\n" +
                 "  schemas:\n" +
                 "    LocalizedError:\n" +

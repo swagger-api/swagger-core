@@ -23,7 +23,7 @@ paths:
         in: query
         description: address
         schema:
-          $ref: '#/components/schemas/User'
+          $ref: "#/components/schemas/User"
       requestBody:
         content:
           '*/*':
@@ -35,7 +35,7 @@ paths:
           content:
             '*/*':
               schema:
-                $ref: '#/components/schemas/User'
+                $ref: "#/components/schemas/User"
 components:
   schemas:
     User:

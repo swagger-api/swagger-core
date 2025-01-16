@@ -29,19 +29,19 @@ public class AllofResolvingTest extends SwaggerTestBase {
                 "      - type: object\n" +
                 "        description: First user schema property\n" +
                 "        nullable: true\n" +
-                "      - $ref: '#/components/schemas/UserProperty'\n" +
+                "      - $ref: \"#/components/schemas/UserProperty\"\n" +
                 "    propertyTwo:\n" +
                 "      allOf:\n" +
                 "      - type: object\n" +
                 "        description: Second user schema property\n" +
                 "        example: example value for propertyTwo\n" +
-                "      - $ref: '#/components/schemas/UserProperty'\n" +
+                "      - $ref: \"#/components/schemas/UserProperty\"\n" +
                 "    propertyThree:\n" +
                 "      allOf:\n" +
                 "      - type: object\n" +
                 "        description: \"Third user schema property, with example for testing\"\n" +
                 "        example: example value for propertyThree\n" +
-                "      - $ref: '#/components/schemas/UserProperty'\n";
+                "      - $ref: \"#/components/schemas/UserProperty\"\n";
 
         SerializationMatchers.assertEqualsToYaml(c.getDefinedModels(), expectedYaml);
         // stringSchemaMap = c.readAll(InlineSchemaSecond.class);
@@ -53,7 +53,7 @@ public class AllofResolvingTest extends SwaggerTestBase {
                 "  type: object\n" +
                 "  properties:\n" +
                 "    basicProperty:\n" +
-                "      $ref: '#/components/schemas/BasicProperty'\n" +
+                "      $ref: \"#/components/schemas/BasicProperty\"\n" +
                 "  description: Represents an order-specific property\n" +
                 "  example: Order-specific example value\n" +
                 "OrderSchema:\n" +
@@ -64,13 +64,13 @@ public class AllofResolvingTest extends SwaggerTestBase {
                 "      - type: object\n" +
                 "        description: First order schema property\n" +
                 "        nullable: true\n" +
-                "      - $ref: '#/components/schemas/OrderProperty'\n" +
+                "      - $ref: \"#/components/schemas/OrderProperty\"\n" +
                 "    userProperty:\n" +
                 "      allOf:\n" +
                 "      - type: object\n" +
                 "        description: \"Order schema property, references UserProperty\"\n" +
                 "        example: example value for userProperty\n" +
-                "      - $ref: '#/components/schemas/UserProperty'\n" +
+                "      - $ref: \"#/components/schemas/UserProperty\"\n" +
                 "UserProperty:\n" +
                 "  type: object\n" +
                 "  description: Represents a user-specific property\n" +
@@ -83,19 +83,19 @@ public class AllofResolvingTest extends SwaggerTestBase {
                 "      - type: object\n" +
                 "        description: First user schema property\n" +
                 "        nullable: true\n" +
-                "      - $ref: '#/components/schemas/UserProperty'\n" +
+                "      - $ref: \"#/components/schemas/UserProperty\"\n" +
                 "    propertyTwo:\n" +
                 "      allOf:\n" +
                 "      - type: object\n" +
                 "        description: Second user schema property\n" +
                 "        example: example value for propertyTwo\n" +
-                "      - $ref: '#/components/schemas/UserProperty'\n" +
+                "      - $ref: \"#/components/schemas/UserProperty\"\n" +
                 "    propertyThree:\n" +
                 "      allOf:\n" +
                 "      - type: object\n" +
                 "        description: \"Third user schema property, with example for testing\"\n" +
                 "        example: example value for propertyThree\n" +
-                "      - $ref: '#/components/schemas/UserProperty'\n";
+                "      - $ref: \"#/components/schemas/UserProperty\"\n";
         SerializationMatchers.assertEqualsToYaml(c.getDefinedModels(), expectedYaml);
     }
 
