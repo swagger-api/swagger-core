@@ -31,7 +31,7 @@ public class Ticket3030Test extends SwaggerTestBase {
         String yaml = "Child:\n" +
                 "  type: object\n" +
                 "  allOf:\n" +
-                "  - $ref: '#/components/schemas/Parent'\n" +
+                "  - $ref: \"#/components/schemas/Parent\"\n" +
                 "  - type: object\n" +
                 "    properties:\n" +
                 "      property:\n" +

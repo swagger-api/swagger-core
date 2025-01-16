@@ -48,11 +48,11 @@ public class ModelResolverOAS31Test extends SwaggerTestBase {
         SerializationMatchers.assertEqualsToYaml31(context.getDefinedModels(), "Address:\n" +
                 "  type: object\n" +
                 "  if:\n" +
-                "    $ref: '#/components/schemas/AnnotatedCountry'\n" +
+                "    $ref: \"#/components/schemas/AnnotatedCountry\"\n" +
                 "  then:\n" +
-                "    $ref: '#/components/schemas/PostalCodeNumberPattern'\n" +
+                "    $ref: \"#/components/schemas/PostalCodeNumberPattern\"\n" +
                 "  else:\n" +
-                "    $ref: '#/components/schemas/PostalCodePattern'\n" +
+                "    $ref: \"#/components/schemas/PostalCodePattern\"\n" +
                 "  dependentRequired:\n" +
                 "    street:\n" +
                 "    - country\n" +
@@ -65,7 +65,7 @@ public class ModelResolverOAS31Test extends SwaggerTestBase {
                 "      - UNITED_STATES_OF_AMERICA\n" +
                 "      - CANADA\n" +
                 "  propertyNames:\n" +
-                "    $ref: '#/components/schemas/PropertyNamesPattern'\n" +
+                "    $ref: \"#/components/schemas/PropertyNamesPattern\"\n" +
                 "AnnotatedCountry:\n" +
                 "  type: object\n" +
                 "  properties:\n" +
@@ -121,17 +121,17 @@ public class ModelResolverOAS31Test extends SwaggerTestBase {
                 "      type: string\n" +
                 "      contentMediaType: application/jwt\n" +
                 "      contentSchema:\n" +
-                "        $ref: '#/components/schemas/MultipleBaseBean'\n" +
+                "        $ref: \"#/components/schemas/MultipleBaseBean\"\n" +
                 "    address:\n" +
-                "      $ref: '#/components/schemas/Address'\n" +
+                "      $ref: \"#/components/schemas/Address\"\n" +
                 "    client:\n" +
-                "      $ref: '#/components/schemas/Client'\n" +
+                "      $ref: \"#/components/schemas/Client\"\n" +
                 "      dependentSchemas:\n" +
                 "        creditCard:\n" +
-                "          $ref: '#/components/schemas/CreditCard'\n" +
+                "          $ref: \"#/components/schemas/CreditCard\"\n" +
                 "      patternProperties:\n" +
                 "        creditCard:\n" +
-                "          $ref: '#/components/schemas/CreditCard'\n" +
+                "          $ref: \"#/components/schemas/CreditCard\"\n" +
                 "      properties:\n" +
                 "        extraObject: {}\n" +
                 "MultipleBaseBean:\n" +
@@ -147,7 +147,7 @@ public class ModelResolverOAS31Test extends SwaggerTestBase {
                 "      type: string\n" +
                 "MultipleSub1Bean:\n" +
                 "  allOf:\n" +
-                "  - $ref: '#/components/schemas/MultipleBaseBean'\n" +
+                "  - $ref: \"#/components/schemas/MultipleBaseBean\"\n" +
                 "  - type: object\n" +
                 "    properties:\n" +
                 "      c:\n" +
@@ -156,7 +156,7 @@ public class ModelResolverOAS31Test extends SwaggerTestBase {
                 "  description: MultipleSub1Bean\n" +
                 "MultipleSub2Bean:\n" +
                 "  allOf:\n" +
-                "  - $ref: '#/components/schemas/MultipleBaseBean'\n" +
+                "  - $ref: \"#/components/schemas/MultipleBaseBean\"\n" +
                 "  - type: object\n" +
                 "    properties:\n" +
                 "      d:\n" +
@@ -195,7 +195,7 @@ public class ModelResolverOAS31Test extends SwaggerTestBase {
                 "    value:\n" +
                 "      properties:\n" +
                 "        enable:\n" +
-                "          $ref: '#/components/schemas/BooleanFakeClass'\n" +
+                "          $ref: \"#/components/schemas/BooleanFakeClass\"\n" +
                 "  properties:\n" +
                 "    name:\n" +
                 "      type: string\n" +

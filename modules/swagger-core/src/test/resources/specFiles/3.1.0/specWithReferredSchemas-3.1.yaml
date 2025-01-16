@@ -114,11 +114,11 @@ webhooks:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/WebhookOperationDefinition'
+              $ref: "#/components/schemas/WebhookOperationDefinition"
               description: Webhook Pet
       responses:
         '200':
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/WebhookResponseDefinition'
+                $ref: "#/components/schemas/WebhookResponseDefinition"

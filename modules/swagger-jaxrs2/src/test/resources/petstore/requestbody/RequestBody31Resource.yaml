@@ -19,7 +19,7 @@ paths:
         content:
           '*/*':
             schema:
-              $ref: '#/components/schemas/User'
+              $ref: "#/components/schemas/User"
         required: true
       responses:
         default:

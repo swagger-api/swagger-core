@@ -24,7 +24,7 @@ public class SchemaResolutionAllOfTest {
                 "          content:\n" +
                 "            '*/*':\n" +
                 "              schema:\n" +
-                "                $ref: '#/components/schemas/InlineSchemaFirst'\n" +
+                "                $ref: \"#/components/schemas/InlineSchemaFirst\"\n" +
                 "  /test/inlineSchemaSecond:\n" +
                 "    get:\n" +
                 "      operationId: inlineSchemaFirst_1\n" +
@@ -34,7 +34,7 @@ public class SchemaResolutionAllOfTest {
                 "            schema:\n" +
                 "              allOf:\n" +
                 "              - description: InlineSchemaSecond API\n" +
-                "              - $ref: '#/components/schemas/InlineSchemaFirst'\n" +
+                "              - $ref: \"#/components/schemas/InlineSchemaFirst\"\n" +
                 "      responses:\n" +
                 "        default:\n" +
                 "          description: default response\n" +
@@ -46,7 +46,7 @@ public class SchemaResolutionAllOfTest {
                 "      type: object\n" +
                 "      properties:\n" +
                 "        property1:\n" +
-                "          $ref: '#/components/schemas/InlineSchemaPropertyFirst'\n" +
+                "          $ref: \"#/components/schemas/InlineSchemaPropertyFirst\"\n" +
                 "    InlineSchemaPropertyFirst:\n" +
                 "      type: object\n" +
                 "      properties:\n" +

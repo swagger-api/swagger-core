@@ -17,14 +17,14 @@ paths:
           uniqueItems: true
           type: array
           items:
-            $ref: '#/components/schemas/SubscriptionResponse'
+            $ref: "#/components/schemas/SubscriptionResponse"
       responses:
         default:
           description: test description
           content:
             '*/*':
               schema:
-                $ref: '#/components/schemas/SubscriptionResponse'
+                $ref: "#/components/schemas/SubscriptionResponse"
 components:
   schemas:
     SubscriptionResponse:

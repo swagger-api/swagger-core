@@ -56,7 +56,7 @@ public class Ticket2884Test extends SwaggerTestBase {
         Assert.assertNotNull(o);
         Assert.assertTrue(o.get$ref().contains(Ticket2884ModelClass.class.getSimpleName()));
         SerializationMatchers.assertEqualsToYaml(schema.schema.getProperties(), "Ticket2884ModelClass:\n" +
-                "  $ref: '#/components/schemas/Ticket2884ModelClass'");
+                "  $ref: \"#/components/schemas/Ticket2884ModelClass\"");
 
     }
 }
