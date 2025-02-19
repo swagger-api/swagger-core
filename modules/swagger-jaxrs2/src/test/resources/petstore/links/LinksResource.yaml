@@ -14,7 +14,7 @@ paths:
           content:
             '*/*':
               schema:
-                $ref: '#/components/schemas/User'
+                $ref: "#/components/schemas/User"
           links:
             address:
               operationId: getAddress

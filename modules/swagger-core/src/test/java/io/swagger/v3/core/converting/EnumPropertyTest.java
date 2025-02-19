@@ -94,11 +94,11 @@ public class EnumPropertyTest {
                 "  type: object\n" +
                 "  properties:\n" +
                 "    a:\n" +
-                "      $ref: '#/components/schemas/TestEnum'\n" +
+                "      $ref: \"#/components/schemas/TestEnum\"\n" +
                 "    b:\n" +
-                "      $ref: '#/components/schemas/TestEnum'\n" +
+                "      $ref: \"#/components/schemas/TestEnum\"\n" +
                 "    c:\n" +
-                "      $ref: '#/components/schemas/TestSecondEnum'\n" +
+                "      $ref: \"#/components/schemas/TestSecondEnum\"\n" +
                 "    d:\n" +
                 "      type: string\n" +
                 "      enum:\n" +
@@ -133,11 +133,11 @@ public class EnumPropertyTest {
                 "  type: object\n" +
                 "  properties:\n" +
                 "    a:\n" +
-                "      $ref: '#/components/schemas/io.swagger.v3.core.oas.models.TestEnum'\n" +
+                "      $ref: \"#/components/schemas/io.swagger.v3.core.oas.models.TestEnum\"\n" +
                 "    b:\n" +
-                "      $ref: '#/components/schemas/io.swagger.v3.core.oas.models.TestEnum'\n" +
+                "      $ref: \"#/components/schemas/io.swagger.v3.core.oas.models.TestEnum\"\n" +
                 "    c:\n" +
-                "      $ref: '#/components/schemas/io.swagger.v3.core.oas.models.TestSecondEnum'\n" +
+                "      $ref: \"#/components/schemas/io.swagger.v3.core.oas.models.TestSecondEnum\"\n" +
                 "    d:\n" +
                 "      type: string\n" +
                 "      enum:\n" +
@@ -173,7 +173,7 @@ public class EnumPropertyTest {
                 "  type: object\n" +
                 "  properties:\n" +
                 "    enumValue:\n" +
-                "      $ref: '#/components/schemas/TestEnum'\n" +
+                "      $ref: \"#/components/schemas/TestEnum\"\n" +
                 "TestEnum:\n" +
                 "  type: string\n" +
                 "  enum:\n" +

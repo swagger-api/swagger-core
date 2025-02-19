@@ -38,7 +38,7 @@ import static java.lang.annotation.ElementType.METHOD;
  * <li>hidden: @{@link Hidden}</li>
  * </ul>
  *
- * @see <a target="_new" href="https://github.com/OAI/OpenAPI-Specification/blob/3.0.1/versions/3.0.1.md#operationObject">Operation (OpenAPI specification)</a>
+ * @see <a target="_new" href="https://github.com/OAI/OpenAPI-Specification/blob/3.0.4/versions/3.0.4.md#operation-object">Operation (OpenAPI specification)</a>
  **/
 @Target({METHOD, ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)

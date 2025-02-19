@@ -25,7 +25,7 @@ public class SchemaResolutionAnnotationTest {
                 "          content:\n" +
                 "            '*/*':\n" +
                 "              schema:\n" +
-                "                $ref: '#/components/schemas/InlineSchemaFirst'\n" +
+                "                $ref: \"#/components/schemas/InlineSchemaFirst\"\n" +
                 "  /test/inlineSchemaSecond:\n" +
                 "    get:\n" +
                 "      operationId: inlineSchemaSecond\n" +
@@ -38,9 +38,9 @@ public class SchemaResolutionAnnotationTest {
                 "                foo:\n" +
                 "                  type: string\n" +
                 "                propertySecond1:\n" +
-                "                  $ref: '#/components/schemas/InlineSchemaPropertySecond'\n" +
+                "                  $ref: \"#/components/schemas/InlineSchemaPropertySecond\"\n" +
                 "                property2:\n" +
-                "                  $ref: '#/components/schemas/InlineSchemaPropertyFirst'\n" +
+                "                  $ref: \"#/components/schemas/InlineSchemaPropertyFirst\"\n" +
                 "              description: InlineSchemaSecond API\n" +
                 "      responses:\n" +
                 "        default:\n" +
@@ -48,7 +48,7 @@ public class SchemaResolutionAnnotationTest {
                 "          content:\n" +
                 "            '*/*':\n" +
                 "              schema:\n" +
-                "                $ref: '#/components/schemas/InlineSchemaSecond'\n" +
+                "                $ref: \"#/components/schemas/InlineSchemaSecond\"\n" +
                 "components:\n" +
                 "  schemas:\n" +
                 "    InlineSchemaFirst:\n" +
@@ -58,7 +58,7 @@ public class SchemaResolutionAnnotationTest {
                 "          description: InlineSchemaFirst property 1\n" +
                 "          nullable: true\n" +
                 "          allOf:\n" +
-                "          - $ref: '#/components/schemas/InlineSchemaPropertyFirst'\n" +
+                "          - $ref: \"#/components/schemas/InlineSchemaPropertyFirst\"\n" +
                 "        property2:\n" +
                 "          type: object\n" +
                 "          properties:\n" +
@@ -77,7 +77,7 @@ public class SchemaResolutionAnnotationTest {
                 "      type: object\n" +
                 "      properties:\n" +
                 "        bar:\n" +
-                "          $ref: '#/components/schemas/InlineSchemaSimple'\n" +
+                "          $ref: \"#/components/schemas/InlineSchemaSimple\"\n" +
                 "      description: propertysecond\n" +
                 "      nullable: true\n" +
                 "      example: examplesecond\n" +
@@ -93,9 +93,9 @@ public class SchemaResolutionAnnotationTest {
                 "        foo:\n" +
                 "          type: string\n" +
                 "        propertySecond1:\n" +
-                "          $ref: '#/components/schemas/InlineSchemaPropertySecond'\n" +
+                "          $ref: \"#/components/schemas/InlineSchemaPropertySecond\"\n" +
                 "        property2:\n" +
-                "          $ref: '#/components/schemas/InlineSchemaPropertyFirst'\n" +
+                "          $ref: \"#/components/schemas/InlineSchemaPropertyFirst\"\n" +
                 "      description: InlineSchemaSecond API\n" +
                 "    InlineSchemaSimple:\n" +
                 "      type: object\n" +
@@ -110,7 +110,7 @@ public class SchemaResolutionAnnotationTest {
                 "          description: property 2\n" +
                 "          example: example\n" +
                 "          allOf:\n" +
-                "          - $ref: '#/components/schemas/InlineSchemaPropertySimple'\n";
+                "          - $ref: \"#/components/schemas/InlineSchemaPropertySimple\"\n";
         SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
         ModelConverters.reset();
     }

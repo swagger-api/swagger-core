@@ -756,7 +756,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                     if (reResolvedProperty.isPresent()) {
                         property = reResolvedProperty.get();
                     }
-                    reResolvedProperty = AnnotationsUtils.getArraySchema(ctxArraySchema, annotatedType.getComponents(), null, openapi31, property);
+                    reResolvedProperty = AnnotationsUtils.getArraySchema(ctxArraySchema, annotatedType.getComponents(), null, openapi31, property, true);
                     if (reResolvedProperty.isPresent()) {
                         property = reResolvedProperty.get();
                     }
@@ -2707,6 +2707,19 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         Annotated a = beanDesc.getClassInfo();
         Annotation[] annotations = annotatedType.getCtxAnnotations();
         resolveSchemaMembers(schema, a, annotations, schemaAnnotation);
+        if (schemaAnnotation != null) {
+            if (schemaAnnotation.additionalProperties().equals(io.swagger.v3.oas.annotations.media.Schema.AdditionalPropertiesValue.TRUE)) {
+                schema.additionalProperties(true);
+            } else if (schemaAnnotation.additionalProperties().equals(io.swagger.v3.oas.annotations.media.Schema.AdditionalPropertiesValue.FALSE)) {
+                schema.additionalProperties(false);
+            } else {
+                if (!schemaAnnotation.additionalPropertiesSchema().equals(Void.class)) {
+                    Schema additionalPropertiesSchema = resolve(new AnnotatedType(schemaAnnotation.additionalPropertiesSchema()), context, next);
+                    additionalPropertiesSchema = buildRefSchemaIfObject(additionalPropertiesSchema, context);
+                    schema.additionalProperties(additionalPropertiesSchema);
+                }
+            }
+        }
 
         if (openapi31 && schema != null && schemaAnnotation != null) {
             if (!Void.class.equals(schemaAnnotation.contentSchema())) {
@@ -2738,18 +2751,6 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 Schema unevaluatedProperties = resolve(new AnnotatedType(schemaAnnotation.unevaluatedProperties()), context, next);
                 unevaluatedProperties = buildRefSchemaIfObject(unevaluatedProperties, context);
                 schema.setUnevaluatedProperties(unevaluatedProperties);
-            }
-
-            if (schemaAnnotation.additionalProperties().equals(io.swagger.v3.oas.annotations.media.Schema.AdditionalPropertiesValue.TRUE)) {
-                schema.additionalProperties(true);
-            } else if (schemaAnnotation.additionalProperties().equals(io.swagger.v3.oas.annotations.media.Schema.AdditionalPropertiesValue.FALSE)) {
-                schema.additionalProperties(false);
-            } else {
-                if (!schemaAnnotation.additionalPropertiesSchema().equals(Void.class)) {
-                    Schema additionalPropertiesSchema = resolve(new AnnotatedType(schemaAnnotation.additionalPropertiesSchema()), context, next);
-                    additionalPropertiesSchema = buildRefSchemaIfObject(additionalPropertiesSchema, context);
-                    schema.additionalProperties(additionalPropertiesSchema);
-                }
             }
 
             final Map<String, List<String>> dependentRequired =  resolveDependentRequired(a, annotations, schemaAnnotation);

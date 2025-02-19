@@ -20,7 +20,7 @@ webhooks:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/RequestDto'
+              $ref: "#/components/schemas/RequestDto"
               description: Webhook Pet
       responses:
         '200':

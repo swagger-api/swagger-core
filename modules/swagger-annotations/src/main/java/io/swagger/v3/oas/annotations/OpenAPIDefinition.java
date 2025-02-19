@@ -19,7 +19,7 @@ import static java.lang.annotation.ElementType.TYPE;
  * The annotation that may be used to populate OpenAPI Object fields info, tags, servers, security and externalDocs
  * If more than one class is annotated with {@link OpenAPIDefinition}, with the same fields defined, behaviour is inconsistent.
  *
- * @see <a target="_new" href="https://github.com/OAI/OpenAPI-Specification/blob/3.0.1/versions/3.0.1.md#oasObject">OpenAPI (OpenAPI specification)</a>
+ * @see <a target="_new" href="https://github.com/OAI/OpenAPI-Specification/blob/3.0.4/versions/3.0.4.md#oas-object">OpenAPI (OpenAPI specification)</a>
  */
 @Target({TYPE, PACKAGE, ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)

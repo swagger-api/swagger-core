@@ -9,8 +9,8 @@ import java.util.Objects;
 /**
  * SecurityRequirement
  *
- * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.0.1/versions/3.0.1.md#securityRequirementObject"
- * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.1.0/versions/3.1.0.md#securityRequirementObject"
+ * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.0.4/versions/3.0.4.md#security-requirement-object"
+ * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.1.1/versions/3.1.1.md#security-requirement-object"
  */
 
 public class SecurityRequirement extends LinkedHashMap<String, List<String>> {

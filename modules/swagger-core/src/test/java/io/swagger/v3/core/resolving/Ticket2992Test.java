@@ -42,11 +42,11 @@ public class Ticket2992Test extends SwaggerTestBase {
                 "    name:\n" +
                 "      type: string\n" +
                 "    a:\n" +
-                "      $ref: '#/components/schemas/LocalTime'\n" +
+                "      $ref: \"#/components/schemas/LocalTime\"\n" +
                 "    b:\n" +
-                "      $ref: '#/components/schemas/LocalTime'\n" +
+                "      $ref: \"#/components/schemas/LocalTime\"\n" +
                 "    c:\n" +
-                "      $ref: '#/components/schemas/LocalTime'\n" +
+                "      $ref: \"#/components/schemas/LocalTime\"\n" +
                 "    d:\n" +
                 "      type: string\n" +
                 "      format: date-time\n" +

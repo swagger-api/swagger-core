@@ -10,7 +10,7 @@ servers:
   - url: http://petstore.swagger.io/v1
 paths:
   /ref_pet:
-    $ref: '#/components/pathItems/pet'
+    $ref: "#/components/pathItems/pet"
     description: "ref pathItem description"
     summary: "ref pathItem summary"
   /pets:
@@ -20,7 +20,7 @@ paths:
       summary: Create a pet
       operationId: createPets
       parameters:
-        - $ref: '#/components/parameters/testParameter'
+        - $ref: "#/components/parameters/testParameter"
           description: "ref parameter description"
           summary: "ref parameter summary"
         - name: randomParam
@@ -29,26 +29,26 @@ paths:
             type: string
           examples:
             refExample:
-              $ref: '#/components/examples/testExample'
+              $ref: "#/components/examples/testExample"
               description: "ref example description"
               summary: "ref example summary"
       callbacks:
         callIt:
-          $ref: '#/components/callbacks/TestCallback'
+          $ref: "#/components/callbacks/TestCallback"
       requestBody:
-        $ref: '#/components/requestBodies/body'
+        $ref: "#/components/requestBodies/body"
         description: "ref request body description"
         summary: "ref request body summary"
       responses:
         "201":
-          $ref: '#/components/responses/okResponse'
+          $ref: "#/components/responses/okResponse"
           description: "ref response description"
           summary: "ref response summary"
         default:
           description: 'default response'
           headers:
             head:
-              $ref: '#/components/headers/head'
+              $ref: "#/components/headers/head"
               description: "ref header description"
               summary: "ref header summary"
 
@@ -134,7 +134,7 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/Pet'
+            $ref: "#/components/schemas/Pet"
   responses:
     okResponse:
       description: everything is good"

@@ -25,8 +25,8 @@ import static java.lang.annotation.ElementType.PARAMETER;
  * <p>The annotation {@link Schema} shall be used for non array elements; {@link ArraySchema} and {@link Schema} cannot
  * coexist</p>
  *
- * @see <a target="_new" href="https://github.com/OAI/OpenAPI-Specification/blob/3.0.1/versions/3.0.1.md#schemaObject">Schema (OpenAPI specification)</a>
- * @see <a target="_new" href="https://github.com/OAI/OpenAPI-Specification/blob/3.1.0/versions/3.1.0.md#schemaObject">Schema (OpenAPI specification)</a>
+ * @see <a target="_new" href="https://github.com/OAI/OpenAPI-Specification/blob/3.0.4/versions/3.0.4.md#schema-object">Schema (OpenAPI specification)</a>
+ * @see <a target="_new" href="https://github.com/OAI/OpenAPI-Specification/blob/3.1.1/versions/3.1.1.md#schema-object">Schema (OpenAPI specification)</a>
  * @see Schema
  **/
 @Target({FIELD, METHOD, PARAMETER, TYPE, ANNOTATION_TYPE})

@@ -18,7 +18,7 @@ import static java.lang.annotation.ElementType.PARAMETER;
 /**
  * The annotation may be used at method level to add one ore more callbacks to the operation definition.
  *
- * @see <a target="_new" href="https://github.com/OAI/OpenAPI-Specification/blob/3.0.1/versions/3.0.1.md#callbackObject">Callback (OpenAPI specification)</a>
+ * @see <a target="_new" href="https://github.com/OAI/OpenAPI-Specification/blob/3.0.4/versions/3.0.4.md#callback-object">Callback (OpenAPI specification)</a>
  **/
 @Target({FIELD, METHOD, PARAMETER, TYPE, ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)

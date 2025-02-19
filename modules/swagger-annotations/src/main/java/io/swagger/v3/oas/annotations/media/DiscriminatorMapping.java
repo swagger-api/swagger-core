@@ -15,8 +15,8 @@ import java.lang.annotation.Target;
  *
  * <p>Use {@link Schema#discriminatorProperty()} to define a discriminator property.</p>
  *
- * @see <a target="_new" href="https://github.com/OAI/OpenAPI-Specification/blob/3.0.1/versions/3.0.1.md#discriminatorObject">Discriminator (OpenAPI specification)</a>
- * @see <a target="_new" href="https://github.com/OAI/OpenAPI-Specification/blob/3.1.0/versions/3.1.0.md#discriminatorObject">Discriminator (OpenAPI specification)</a>
+ * @see <a target="_new" href="https://github.com/OAI/OpenAPI-Specification/blob/3.0.4/versions/3.0.4.md#discriminator-object">Discriminator (OpenAPI specification)</a>
+ * @see <a target="_new" href="https://github.com/OAI/OpenAPI-Specification/blob/3.1.1/versions/3.1.1.md#discriminator-object">Discriminator (OpenAPI specification)</a>
  * @see Schema
  **/
 @Target({})

@@ -23,11 +23,11 @@ paths:
               - string
               - number
             if:
-              $ref: '#/components/schemas/SubscriptionResponse'
+              $ref: "#/components/schemas/SubscriptionResponse"
             then:
-              $ref: '#/components/schemas/SubscriptionResponse'
+              $ref: "#/components/schemas/SubscriptionResponse"
             else:
-              $ref: '#/components/schemas/SubscriptionResponse'
+              $ref: "#/components/schemas/SubscriptionResponse"
             $anchor: parameter $anchor
             $schema: parameter $schema
             exclusiveMaximum: 100
@@ -64,7 +64,7 @@ paths:
             type: array
             contains: {}
             items:
-              $ref: '#/components/schemas/SubscriptionResponse'
+              $ref: "#/components/schemas/SubscriptionResponse"
             maxContains: 50
             maxItems: 10
             minContains: 1
@@ -76,7 +76,7 @@ paths:
           required: true
           explode: true
           schema:
-            $ref: '#/components/schemas/SubscriptionResponse'
+            $ref: "#/components/schemas/SubscriptionResponse"
         - name: id
           in: query
           description: idParam
@@ -91,10 +91,10 @@ paths:
                 $id: http://yourdomain.com/schemas/myschema.json
                 dependentSchemas:
                   pet:
-                    $ref: '#/components/schemas/Pet'
+                    $ref: "#/components/schemas/Pet"
                 patternProperties:
                   user:
-                    $ref: '#/components/schemas/User'
+                    $ref: "#/components/schemas/User"
                 properties:
                   extraObject: {}
 components:
@@ -116,7 +116,7 @@ components:
           type: integer
           format: int64
         category:
-          $ref: '#/components/schemas/Category'
+          $ref: "#/components/schemas/Category"
         name:
           type: string
         photoUrls:
@@ -130,7 +130,7 @@ components:
         tags:
           type: array
           items:
-            $ref: '#/components/schemas/Tag'
+            $ref: "#/components/schemas/Tag"
           xml:
             wrapped: true
         status:

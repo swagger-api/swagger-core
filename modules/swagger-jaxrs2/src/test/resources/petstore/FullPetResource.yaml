@@ -54,7 +54,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Pet'
+              $ref: "#/components/schemas/Pet"
         required: true
       responses:
         "400":
@@ -71,10 +71,10 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Pet'
+              $ref: "#/components/schemas/Pet"
           application/xml:
             schema:
-              $ref: '#/components/schemas/Pet'
+              $ref: "#/components/schemas/Pet"
         required: true
       responses:
         "405":
@@ -124,10 +124,10 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Pet'
+              $ref: "#/components/schemas/Pet"
           application/xml:
             schema:
-              $ref: '#/components/schemas/Pet'
+              $ref: "#/components/schemas/Pet"
       responses:
         "405":
           description: Invalid input
@@ -158,7 +158,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Pet'
+                $ref: "#/components/schemas/Pet"
         "400":
           description: Invalid status value
   /pet/findByTags:
@@ -180,7 +180,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Pet'
+                $ref: "#/components/schemas/Pet"
         "400":
           description: Invalid tag value
       deprecated: true
@@ -204,10 +204,10 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Pet'
+                $ref: "#/components/schemas/Pet"
             application/xml:
               schema:
-                $ref: '#/components/schemas/Pet'
+                $ref: "#/components/schemas/Pet"
         "400":
           description: Invalid ID supplied
         "404":
@@ -221,7 +221,7 @@ paths:
         in: query
         description: idParam
         schema:
-          $ref: '#/components/schemas/User'
+          $ref: "#/components/schemas/User"
       responses:
         "200":
           description: voila!
@@ -250,7 +250,7 @@ paths:
                   content:
                     application/json:
                       schema:
-                        $ref: '#/components/schemas/User'
+                        $ref: "#/components/schemas/User"
   /multiplecallback:
     get:
       summary: Simple get operation
@@ -393,7 +393,7 @@ paths:
           content:
             '*/*':
               schema:
-                $ref: '#/components/schemas/User'
+                $ref: "#/components/schemas/User"
           links:
             address:
               operationId: getAddress
@@ -471,7 +471,7 @@ paths:
           content:
             '*/*':
               schema:
-                $ref: '#/components/schemas/Pet'
+                $ref: "#/components/schemas/Pet"
         "400":
           description: Invalid ID supplied
         "404":
@@ -543,7 +543,7 @@ paths:
           content:
             '*/*':
               schema:
-                $ref: '#/components/schemas/Pet'
+                $ref: "#/components/schemas/Pet"
         "400":
           description: Invalid ID supplied
         "404":
@@ -617,7 +617,7 @@ paths:
           content:
             '*/*':
               schema:
-                $ref: '#/components/schemas/Pet'
+                $ref: "#/components/schemas/Pet"
       servers:
       - url: http://foo2
         description: server 2
@@ -638,14 +638,14 @@ paths:
           uniqueItems: true
           type: array
           items:
-            $ref: '#/components/schemas/SubscriptionResponse'
+            $ref: "#/components/schemas/SubscriptionResponse"
       responses:
         default:
           description: test description
           content:
             '*/*':
               schema:
-                $ref: '#/components/schemas/SubscriptionResponse'
+                $ref: "#/components/schemas/SubscriptionResponse"
   /complexparameter:
     get:
       operationId: create User_1
@@ -669,7 +669,7 @@ paths:
         in: query
         description: address
         schema:
-          $ref: '#/components/schemas/User'
+          $ref: "#/components/schemas/User"
       requestBody:
         content:
           '*/*':
@@ -681,7 +681,7 @@ paths:
           content:
             '*/*':
               schema:
-                $ref: '#/components/schemas/User'
+                $ref: "#/components/schemas/User"
   /multiplenoannotatedparameter:
     post:
       operationId: create User
@@ -710,7 +710,7 @@ paths:
           content:
             '*/*':
               schema:
-                $ref: '#/components/schemas/User'
+                $ref: "#/components/schemas/User"
   /openapiwithcontentjaxrsannotatedparameter:
     get:
       operationId: create User_3
@@ -729,7 +729,7 @@ paths:
           content:
             '*/*':
               schema:
-                $ref: '#/components/schemas/User'
+                $ref: "#/components/schemas/User"
   /openapiwithimplementationjaxrsannotatedparameter:
     get:
       operationId: create User_4
@@ -738,14 +738,14 @@ paths:
         in: query
         description: idParam
         schema:
-          $ref: '#/components/schemas/User'
+          $ref: "#/components/schemas/User"
       responses:
         default:
           description: default response
           content:
             '*/*':
               schema:
-                $ref: '#/components/schemas/User'
+                $ref: "#/components/schemas/User"
   /parameters:
     post:
       description: "subscribes a client to updates relevant to the requestor's account,\
@@ -758,7 +758,7 @@ paths:
         required: true
         style: simple
         schema:
-          $ref: '#/components/schemas/SubscriptionResponse'
+          $ref: "#/components/schemas/SubscriptionResponse"
       - name: formId
         in: query
         required: true
@@ -770,13 +770,13 @@ paths:
         required: true
         explode: false
         schema:
-          $ref: '#/components/schemas/SubscriptionResponse'
+          $ref: "#/components/schemas/SubscriptionResponse"
       - name: explodeTrue
         in: query
         required: true
         explode: true
         schema:
-          $ref: '#/components/schemas/SubscriptionResponse'
+          $ref: "#/components/schemas/SubscriptionResponse"
       - name: explodeAvoiding
         in: query
         required: true
@@ -810,13 +810,13 @@ paths:
           uniqueItems: true
           type: array
           items:
-            $ref: '#/components/schemas/SubscriptionResponse'
+            $ref: "#/components/schemas/SubscriptionResponse"
       - name: arrayParameterImplementation2
         in: query
         required: true
         explode: true
         schema:
-          $ref: '#/components/schemas/SubscriptionResponse'
+          $ref: "#/components/schemas/SubscriptionResponse"
       - name: id
         in: query
         description: idParam
@@ -828,7 +828,7 @@ paths:
           content:
             '*/*':
               schema:
-                $ref: '#/components/schemas/SubscriptionResponse'
+                $ref: "#/components/schemas/SubscriptionResponse"
   /repeatableparameter:
     post:
       description: "subscribes a client to updates relevant to the requestor's account,\
@@ -841,7 +841,7 @@ paths:
         required: true
         style: simple
         schema:
-          $ref: '#/components/schemas/SubscriptionResponse'
+          $ref: "#/components/schemas/SubscriptionResponse"
       - name: formId
         in: query
         required: true
@@ -853,13 +853,13 @@ paths:
         required: true
         explode: false
         schema:
-          $ref: '#/components/schemas/SubscriptionResponse'
+          $ref: "#/components/schemas/SubscriptionResponse"
       - name: explodeTrue
         in: query
         required: true
         explode: true
         schema:
-          $ref: '#/components/schemas/SubscriptionResponse'
+          $ref: "#/components/schemas/SubscriptionResponse"
       - name: explodeAvoiding
         in: query
         required: true
@@ -893,20 +893,20 @@ paths:
           uniqueItems: true
           type: array
           items:
-            $ref: '#/components/schemas/SubscriptionResponse'
+            $ref: "#/components/schemas/SubscriptionResponse"
       - name: arrayParameterImplementation2
         in: query
         required: true
         explode: true
         schema:
-          $ref: '#/components/schemas/SubscriptionResponse'
+          $ref: "#/components/schemas/SubscriptionResponse"
       responses:
         default:
           description: test description
           content:
             '*/*':
               schema:
-                $ref: '#/components/schemas/SubscriptionResponse'
+                $ref: "#/components/schemas/SubscriptionResponse"
   /singlejaxrsannotatedparameter:
     get:
       operationId: create User_5
@@ -921,7 +921,7 @@ paths:
           content:
             '*/*':
               schema:
-                $ref: '#/components/schemas/User'
+                $ref: "#/components/schemas/User"
   /singlenoannotatedparameter:
     get:
       operationId: create User_6
@@ -936,7 +936,7 @@ paths:
           content:
             '*/*':
               schema:
-                $ref: '#/components/schemas/User'
+                $ref: "#/components/schemas/User"
   /methodWithRequestBodyAndTwoParameters:
     post:
       summary: Create user
@@ -956,7 +956,7 @@ paths:
         content:
           '*/*':
             schema:
-              $ref: '#/components/schemas/User'
+              $ref: "#/components/schemas/User"
         required: true
       responses:
         default:
@@ -992,7 +992,7 @@ paths:
         content:
           '*/*':
             schema:
-              $ref: '#/components/schemas/User'
+              $ref: "#/components/schemas/User"
         required: true
       responses:
         default:
@@ -1009,7 +1009,7 @@ paths:
         content:
           '*/*':
             schema:
-              $ref: '#/components/schemas/User'
+              $ref: "#/components/schemas/User"
         required: true
       responses:
         default:
@@ -1045,7 +1045,7 @@ paths:
         content:
           '*/*':
             schema:
-              $ref: '#/components/schemas/User'
+              $ref: "#/components/schemas/User"
       responses:
         default:
           description: default response
@@ -1060,10 +1060,10 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/User'
+              $ref: "#/components/schemas/User"
           application/xml:
             schema:
-              $ref: '#/components/schemas/User'
+              $ref: "#/components/schemas/User"
       responses:
         default:
           description: default response
@@ -1079,7 +1079,7 @@ paths:
         content:
           '*/*':
             schema:
-              $ref: '#/components/schemas/User'
+              $ref: "#/components/schemas/User"
         required: true
       responses:
         default:
@@ -1096,10 +1096,10 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/User'
+              $ref: "#/components/schemas/User"
           application/xml:
             schema:
-              $ref: '#/components/schemas/User'
+              $ref: "#/components/schemas/User"
       responses:
         default:
           description: default response
@@ -1114,10 +1114,10 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Pet'
+              $ref: "#/components/schemas/Pet"
           application/xml:
             schema:
-              $ref: '#/components/schemas/Pet'
+              $ref: "#/components/schemas/Pet"
       responses:
         default:
           description: default response
@@ -1153,7 +1153,7 @@ paths:
           content:
             '*/*':
               schema:
-                $ref: '#/components/schemas/Pet'
+                $ref: "#/components/schemas/Pet"
         default:
           description: Default Pet
           content:
@@ -1176,13 +1176,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SecondSampleResponseSchema'
+                $ref: "#/components/schemas/SecondSampleResponseSchema"
         "400":
           description: boo
           content:
             '*/*':
               schema:
-                $ref: '#/components/schemas/GenericError'
+                $ref: "#/components/schemas/GenericError"
       deprecated: true
   /responseinmethod:
     get:
@@ -1226,7 +1226,7 @@ paths:
           content:
             '*/*':
               schema:
-                $ref: '#/components/schemas/User'
+                $ref: "#/components/schemas/User"
   /responseinoperation:
     get:
       summary: Find Users
@@ -1354,7 +1354,7 @@ components:
           type: integer
           format: int64
         category:
-          $ref: '#/components/schemas/Category'
+          $ref: "#/components/schemas/Category"
         name:
           type: string
         photoUrls:
@@ -1370,7 +1370,7 @@ components:
           xml:
             wrapped: true
           items:
-            $ref: '#/components/schemas/Tag'
+            $ref: "#/components/schemas/Tag"
         status:
           type: string
           description: pet status in the store

@@ -128,6 +128,11 @@ public class ResolveTask extends DefaultTask {
     @Input
     @Optional
     public final Property<String> schemaResolution = getProject().getObjects().property(String.class);
+
+    @Input
+    @Optional
+    private Property<String> openAPIVersion = getProject().getObjects().property(String.class);;
+
     @Input
     @Optional
     public final Property<String> defaultResponseCode = getProject().getObjects().property(String.class);
@@ -398,6 +403,14 @@ public class ResolveTask extends DefaultTask {
         this.schemaResolution.set(schemaResolution);
     }
 
+    public Property<String> getOpenAPIVersion() {
+        return openAPIVersion;
+    }
+
+    public void setOpenAPIVersion(String openAPIVersion) {
+        this.openAPIVersion.set(openAPIVersion);
+    }
+
     @TaskAction
     public void resolve() throws GradleException {
         if (skip.getOrElse(false)) {
@@ -528,6 +541,11 @@ public class ResolveTask extends DefaultTask {
                 method = swaggerLoaderClass.getDeclaredMethod("setSchemaResolution", String.class);
                 method.invoke(swaggerLoader, schemaResolution.get());
             }
+            if (openAPIVersion.isPresent()) {
+                method = swaggerLoaderClass.getDeclaredMethod("setOpenAPIVersion", String.class);
+                method.invoke(swaggerLoader, openAPIVersion.get());
+            }
+
             method = swaggerLoaderClass.getDeclaredMethod("resolve");
             Map<String, String> specs = (Map<String, String>) method.invoke(swaggerLoader);
 

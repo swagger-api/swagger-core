@@ -78,6 +78,8 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
 
     private Schema.SchemaResolution schemaResolution;
 
+    private String openAPIVersion;
+
     public long getCacheTTL() {
         return cacheTTL;
     }
@@ -354,6 +356,28 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
         return (T) this;
     }
 
+    /**
+     * @since 2.2.28
+     */
+    public String getOpenAPIVersion() {
+        return openAPIVersion;
+    }
+
+    /**
+     * @since 2.2.28
+     */
+    public void setOpenAPIVersion(String openAPIVersion) {
+        this.openAPIVersion = openAPIVersion;
+    }
+
+    /**
+     * @since 2.2.28
+     */
+    public T openAPIVersion(String openAPIVersion) {
+        this.openAPIVersion = openAPIVersion;
+        return (T) this;
+    }
+
     protected void register() {
         OpenApiContextLocator.getInstance().putOpenApiContext(id, this);
     }
@@ -492,6 +516,10 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
             ((SwaggerConfiguration) openApiConfiguration).setOpenAPI31(openAPI31);
             ((SwaggerConfiguration) openApiConfiguration).setConvertToOpenAPI31(convertToOpenAPI31);
             if (schemaResolution != null) {
+                ((SwaggerConfiguration) openApiConfiguration).setSchemaResolution(schemaResolution);
+            }
+            if (openAPIVersion != null && !openAPIVersion.isEmpty()) {
+                ((SwaggerConfiguration) openApiConfiguration).openAPIVersion(openAPIVersion);
                 ((SwaggerConfiguration) openApiConfiguration).setSchemaResolution(schemaResolution);
             }
         }
