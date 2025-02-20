@@ -60,7 +60,15 @@ public class TypeNameResolver {
     }
 
     protected String getNameOfClass(Class<?> cls) {
-        return useFqn?cls.getName():cls.getSimpleName();
+        if(useFqn){
+            return  cls.getName();
+        }
+        String simpleName = cls.getSimpleName();
+        if(cls.isMemberClass()){
+            String enclosingClsName = cls.getEnclosingClass().getSimpleName();
+            return String.format("%s%s", enclosingClsName, simpleName);
+        }
+        return simpleName;
     }
 
     protected String nameForGenericType(JavaType type, Set<Options> options) {

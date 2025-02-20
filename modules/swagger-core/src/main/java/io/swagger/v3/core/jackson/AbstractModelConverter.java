@@ -18,6 +18,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public abstract class AbstractModelConverter implements ModelConverter {
     protected final ObjectMapper _mapper;
@@ -74,7 +76,28 @@ public abstract class AbstractModelConverter implements ModelConverter {
             return name;
         }
         name = _findTypeName(type, beanDesc);
+        // Check if the resolved type name already exists in the map
+        if (_resolvedTypeNames.containsValue(name)) {
+            // Determine if the type is from the Java standard library
+            final boolean isFromJava = type.getRawClass().getCanonicalName().contains("java.lang.");
+            // If the type is not a collection, map, primitive, or from Java standard library
+            if (!type.isCollectionLikeType() && !type.isMapLikeType() && !type.isPrimitive() && !isFromJava) {
+                // Iterate through the resolved type names to find conflicts
+                for (Map.Entry<JavaType, String> entry : _resolvedTypeNames.entrySet()) {
+                    JavaType key = entry.getKey();
+                    String value = entry.getValue();
+                    // If a conflict is found (same name but different type)
+                    if (value.equals(name)) {
+                        if (key != type) {
+                            // Generate a new name postfix to resolve the conflict
+                            name = genNamePostfix(name);
+                        }
+                    }
+                }
+            }
+        }
         _resolvedTypeNames.put(type, name);
+
         return name;
     }
 
@@ -128,5 +151,22 @@ public abstract class AbstractModelConverter implements ModelConverter {
             }
         }
         return false;
+    }
+
+    private String genNamePostfix(String name) {
+        // Regular expression to match a number at the end of the string
+        Pattern pattern = Pattern.compile("(\\d+)$");
+        Matcher matcher = pattern.matcher(name);
+
+        if (matcher.find()) {
+            // Extract the number, increment it, and replace it in the name
+            String numberStr = matcher.group(1);
+            int number = Integer.parseInt(numberStr);
+            number++;
+            return name.substring(0, matcher.start(1)) + number;
+        } else {
+            // If no number at the end, append "2"
+            return name + "2";
+        }
     }
 }
