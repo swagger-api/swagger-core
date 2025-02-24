@@ -1,6 +1,7 @@
 package io.swagger.v3.jaxrs2.ext;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import io.swagger.v3.core.jackson.ValidationAnnotationFilter;
 import io.swagger.v3.jaxrs2.ResolvedParameter;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.Operation;
@@ -34,6 +35,10 @@ public interface OpenAPIExtension {
     }
 
     default void setSchemaResolution(Schema.SchemaResolution schemaResolution) {
+        //todo: override me!
+    }
+
+    default void setValidationAnnotationFilter(ValidationAnnotationFilter validationAnnotationFilter) {
         //todo: override me!
     }
 }
