@@ -555,8 +555,8 @@ public class ResolveTask extends DefaultTask {
             }
 
             if (defaultResponseCode.isPresent() && StringUtils.isNotBlank(groupsValidationStrategy.get())) {
-                method = swaggerLoaderClass.getDeclaredMethod("setGroupsValidationStrategy", Configuration.GroupsValidationStrategy.class);
-                method.invoke(swaggerLoader, Configuration.GroupsValidationStrategy.valueOf(groupsValidationStrategy.get()));
+                method = swaggerLoaderClass.getDeclaredMethod("setGroupsValidationStrategy", String.class);
+                method.invoke(swaggerLoader, groupsValidationStrategy.get());
             }
 
             method = swaggerLoaderClass.getDeclaredMethod("setPrettyPrint", Boolean.class);
