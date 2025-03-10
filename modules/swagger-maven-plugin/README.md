@@ -198,6 +198,8 @@ Parameter | Description | Required      | Default
 `ignoredRoutes`|see [configuration property](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)| false         |
 `objectMapperProcessorClass`|see [configuration property](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)| false         |
 `defaultResponseCode`|see [configuration property](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)| false         |
+`groupsValidationStrategy`|see [configuration property](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)|false|
+`validatorProcessorClass`|see [configuration property](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)|false|
 `modelConverterClasses`|see [configuration property](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)| false         |
 `contextId`|see [Context](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#context)| false         |${project.artifactId}
 `openapi31`|see [configuration property](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)| false         |
@@ -216,3 +218,5 @@ Since version 2.1.15, `skipResolveAppPath` parameter is available, allowing to s
 Since version 2.2.17, `defaultResponseCode` parameter is available, allowing to set the code used when resolving responses with no http status code annotation
 Since version 2.2.24, `schemaResolution` parameter is available, allowing to specify how object schemas and object properties within schemas are resolved for OAS 3.0 specification
 Since version 2.2.28, `openAPIVersion` parameter is available, allowing to specify the version of the OpenAPI specification to be used for the resolved spec.
+Since version 2.2.29, `groupsValidationStrategy` parameter is available, allowing to specify the strategy for resolving Validation annotations (`never`, `always`, `neverIfNoContext`).
+Since version 2.2.29, `validatorProcessorClass` parameter is available, allowing to specify a custom validator processor class, implementation of `io.swagger.v3.core.util.ValidatorProcessor`.
