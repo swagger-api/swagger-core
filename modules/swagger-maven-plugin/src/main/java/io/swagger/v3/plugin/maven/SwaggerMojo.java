@@ -3,6 +3,7 @@ package io.swagger.v3.plugin.maven;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import io.swagger.v3.core.filter.OpenAPISpecFilter;
 import io.swagger.v3.core.filter.SpecFilter;
+import io.swagger.v3.core.util.Configuration;
 import io.swagger.v3.core.util.Json;
 import io.swagger.v3.core.util.Yaml;
 import io.swagger.v3.jaxrs2.integration.JaxrsOpenApiContextBuilder;
@@ -350,6 +351,16 @@ public class SwaggerMojo extends AbstractMojo {
         if (StringUtils.isNotBlank(defaultResponseCode)) {
             config.defaultResponseCode(defaultResponseCode);
         }
+
+        if (StringUtils.isNotBlank(defaultResponseCode)) {
+            config.defaultResponseCode(defaultResponseCode);
+        }
+        if (StringUtils.isNotBlank(validatorProcessorClass)) {
+            config.validatorProcessorClass(validatorProcessorClass);
+        }
+        if (StringUtils.isNotBlank(groupsValidationStrategy)) {
+            config.groupsValidationStrategy(Configuration.GroupsValidationStrategy.valueOf(groupsValidationStrategy));
+        }
         if (isCollectionNotBlank(modelConverterClasses)) {
             config.modelConverterClasses(modelConverterClasses);
         }
@@ -403,6 +414,19 @@ public class SwaggerMojo extends AbstractMojo {
      */
     @Parameter( property = "resolve.defaultResponseCode" )
     private String defaultResponseCode;
+
+    /**
+     * @since 2.2.29
+     */
+    @Parameter( property = "resolve.validatorProcessorClass" )
+    private String validatorProcessorClass;
+
+    /**
+     * @since 2.2.19
+     */
+    @Parameter( property = "resolve.groupsValidationStrategy" )
+    private String groupsValidationStrategy;
+
     @Parameter(property = "resolve.prettyPrint")
     private Boolean prettyPrint;
     @Parameter(property = "resolve.readAllResources")

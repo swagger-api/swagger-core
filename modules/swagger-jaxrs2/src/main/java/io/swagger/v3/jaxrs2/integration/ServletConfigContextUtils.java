@@ -52,6 +52,16 @@ public class ServletConfigContextUtils {
     public static final String OPENAPI_CONFIGURATION_DEFAULT_RESPONSE_CODE_KEY = "openApi.configuration.defaultResponseCode";
 
     /**
+     * @since 2.2.29
+     */
+    public static final String OPENAPI_CONFIGURATION_GROUPS_VALIDATION_STRATEGY = "openApi.configuration.groupsValidationStrategy";
+
+    /**
+     * @since 2.2.29
+     */
+    public static final String OPENAPI_CONFIGURATION_VALIDATOR_PROCESSOR_CLASS = "openApi.configuration.validatorProcessorClass";
+
+    /**
      * @since 2.0.6
      */
     public static final String OPENAPI_CONFIGURATION_MODEL_CONVERTERS_KEY = "openApi.configuration.modelConverterClasses";

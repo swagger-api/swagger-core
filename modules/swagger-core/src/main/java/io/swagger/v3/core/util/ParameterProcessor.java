@@ -55,7 +55,23 @@ public class ParameterProcessor {
             JsonView jsonViewAnnotation,
             boolean openapi31,
             Schema.SchemaResolution schemaResolution) {
+        Configuration configuration = new Configuration();
+        configuration.setOpenAPI31(openapi31);
+        configuration.setSchemaResolution(schemaResolution);
+        return applyAnnotations(parameter, type, annotations, components, classTypes, methodTypes, jsonViewAnnotation, configuration);
+    }
+    public static Parameter applyAnnotations(
+            Parameter parameter,
+            Type type,
+            List<Annotation> annotations,
+            Components components,
+            String[] classTypes,
+            String[] methodTypes,
+            JsonView jsonViewAnnotation,
+            Configuration configuration) {
 
+        boolean openapi31 = configuration != null && configuration.isOpenAPI31() != null && configuration.isOpenAPI31();
+        Schema.SchemaResolution schemaResolution = configuration.getSchemaResolution();;
         final AnnotationsHelper helper = new AnnotationsHelper(annotations, type);
         if (helper.isContext()) {
             return null;
@@ -101,7 +117,7 @@ public class ParameterProcessor {
             annotatedType.ctxAnnotations(reworkedAnnotations.toArray(new Annotation[reworkedAnnotations.size()]));
         }
 
-        final ResolvedSchema resolvedSchema = ModelConverters.getInstance(openapi31, schemaResolution).resolveAsResolvedSchema(annotatedType);
+        final ResolvedSchema resolvedSchema = ModelConverters.getInstance(configuration).resolveAsResolvedSchema(annotatedType);
 
         if (resolvedSchema.schema != null) {
             Schema resSchema = AnnotationsUtils.clone(resolvedSchema.schema, openapi31);

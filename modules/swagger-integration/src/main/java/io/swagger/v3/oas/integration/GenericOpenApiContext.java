@@ -17,6 +17,7 @@ import io.swagger.v3.core.filter.SpecFilter;
 import io.swagger.v3.core.jackson.ModelResolver;
 import io.swagger.v3.core.jackson.PathsSerializer;
 import io.swagger.v3.core.jackson.mixin.Schema31Mixin;
+import io.swagger.v3.core.util.Configuration;
 import io.swagger.v3.core.util.Json;
 import io.swagger.v3.core.util.Json31;
 import io.swagger.v3.core.util.Yaml;
@@ -696,6 +697,14 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
 
         if (merged.getSchemaResolution() == null) {
             merged.setSchemaResolution(parentConfig.getSchemaResolution());
+        }
+
+        if (merged.getValidatorProcessorClass() == null) {
+            merged.setValidatorProcessorClass(parentConfig.getValidatorProcessorClass());
+        }
+
+        if (merged.getGroupsValidationStrategy() == null || merged.getGroupsValidationStrategy().equals(Configuration.GroupsValidationStrategy.DEFAULT)) {
+            merged.setGroupsValidationStrategy(parentConfig.getGroupsValidationStrategy());
         }
 
         return merged;

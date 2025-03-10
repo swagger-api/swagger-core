@@ -120,7 +120,7 @@ public class DefaultParameterExtension extends AbstractOpenAPIExtension {
                     annotations,
                     components,
                     classConsumes == null ? new String[0] : classConsumes.value(),
-                    methodConsumes == null ? new String[0] : methodConsumes.value(), jsonViewAnnotation, openapi31, this.schemaResolution);
+                    methodConsumes == null ? new String[0] : methodConsumes.value(), jsonViewAnnotation, configuration);
             if (unknownParameter != null) {
                 if (StringUtils.isNotBlank(unknownParameter.getIn()) && !"form".equals(unknownParameter.getIn())) {
                     extractParametersResult.parameters.add(unknownParameter);
@@ -266,8 +266,7 @@ public class DefaultParameterExtension extends AbstractOpenAPIExtension {
                             classConsumes == null ? new String[0] : classConsumes.value(),
                             methodConsumes == null ? new String[0] : methodConsumes.value(),
                             jsonViewAnnotation,
-                            openapi31,
-                            this.schemaResolution);
+                            configuration);
                     if (processedParam != null) {
                         parameters.add(processedParam);
                     }
