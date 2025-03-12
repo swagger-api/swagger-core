@@ -255,6 +255,19 @@ public class SpecFilter {
                     }
                 }
 
+                Map<String, Schema> clonedPatternProperties = new LinkedHashMap<>();
+                if (filteredDefinition.get().getPatternProperties() != null) {
+                    for (Object propName : filteredDefinition.get().getPatternProperties().keySet()) {
+                        Schema property = (Schema) filteredDefinition.get().getPatternProperties().get(propName);
+                        if (property != null) {
+                            Optional<Schema> filteredProperty = filter.filterSchemaProperty(property, definition, (String) propName, params, cookies, headers);
+                            if (filteredProperty.isPresent()) {
+                                clonedPatternProperties.put((String) propName, filteredProperty.get());
+                            }
+                        }
+                    }
+                }
+
                 try {
                     // TODO solve this, and generally handle clone and passing references
                     Schema clonedModel;
@@ -268,6 +281,12 @@ public class SpecFilter {
                     }
                     if (!clonedProperties.isEmpty()) {
                         clonedModel.setProperties(clonedProperties);
+                    }
+                    if(clonedModel.getPatternProperties() != null) {
+                        clonedModel.getPatternProperties().clear();
+                    }
+                    if(!clonedPatternProperties.isEmpty()) {
+                        clonedModel.setPatternProperties(clonedPatternProperties);
                     }
                     clonedComponentsSchema.put(key, clonedModel);
 
@@ -302,6 +321,13 @@ public class SpecFilter {
 
         if (schema.getAdditionalProperties() instanceof Schema) {
             addSchemaRef((Schema)schema.getAdditionalProperties(), referencedDefinitions);
+        }
+
+        if (schema.getPatternProperties() != null) {
+            for (Object propName : schema.getPatternProperties().keySet()) {
+                Schema property = (Schema) schema.getPatternProperties().get(propName);
+                addSchemaRef(property, referencedDefinitions);
+            }
         }
 
         if (schema instanceof ArraySchema &&
