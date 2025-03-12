@@ -1,5 +1,6 @@
 package io.swagger.v3.oas.integration;
 
+import io.swagger.v3.core.util.Configuration;
 import io.swagger.v3.oas.integration.api.OpenAPIConfiguration;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.media.Schema;
@@ -44,6 +45,11 @@ public class SwaggerConfiguration implements OpenAPIConfiguration {
     private Schema.SchemaResolution schemaResolution = Schema.SchemaResolution.DEFAULT;
 
     private String openAPIVersion = "3.0.1";
+
+    private Configuration.GroupsValidationStrategy groupsValidationStrategy = Configuration.GroupsValidationStrategy.DEFAULT;
+
+    private String validatorProcessorClass;
+
 
     @Override
     public String getDefaultResponseCode() {
@@ -415,4 +421,70 @@ public class SwaggerConfiguration implements OpenAPIConfiguration {
         this.setOpenAPIVersion(openAPIVersion);
         return this;
     }
+
+    /**
+     * @since 2.2.29
+     */
+    @Override
+    public Configuration.GroupsValidationStrategy getGroupsValidationStrategy() {
+        return groupsValidationStrategy;
+    }
+
+    /**
+     * @since 2.2.29
+     */
+    public void setGroupsValidationStrategy(Configuration.GroupsValidationStrategy groupsValidationStrategy) {
+        this.groupsValidationStrategy = groupsValidationStrategy;
+    }
+
+    /**
+     * @since 2.2.29
+     */
+    public SwaggerConfiguration groupsValidationStrategy(Configuration.GroupsValidationStrategy groupsValidationStrategy) {
+        this.groupsValidationStrategy = groupsValidationStrategy;
+        return this;
+    }
+
+    /**
+     * see io.swagger.v3.core.util.ValidatorProcessor
+     *
+     * @since 2.2.29
+     */
+
+    @Override
+    public String getValidatorProcessorClass() {
+        return validatorProcessorClass;
+    }
+
+    /**
+     * @since 2.2.29
+     */
+    public void setValidatorProcessorClass(String validatorProcessorClass) {
+        this.validatorProcessorClass = validatorProcessorClass;
+    }
+
+    /**
+     * @since 2.2.29
+     */
+    public SwaggerConfiguration validatorProcessorClass(String validatorProcessorClass) {
+        this.validatorProcessorClass = validatorProcessorClass;
+        return this;
+    }
+
+    public Configuration toConfiguration() {
+        Configuration configuration = new Configuration();
+
+        configuration.setOpenAPI(getOpenAPI());
+        configuration.setUserDefinedOptions(getUserDefinedOptions());
+        configuration.setModelConverterClasses(getModelConverterClasses());
+        configuration.setObjectMapperProcessorClass(getObjectMapperProcessorClass());
+        configuration.setOpenAPI31(isOpenAPI31());
+        configuration.setSchemaResolution(getSchemaResolution());
+        configuration.setOpenAPIVersion(getOpenAPIVersion());
+        configuration.setGroupsValidationStrategy(getGroupsValidationStrategy());
+        configuration.setValidatorProcessorClass(getValidatorProcessorClass());
+
+        return configuration;
+    }
+
 }

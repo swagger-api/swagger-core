@@ -291,6 +291,7 @@ public class SchemaResolutionRecordsTest {
 
     @Test
     public void testSchemaResolutionAllOfRefWithRecordsTest(){
+        ModelConverters.reset();
         Reader reader = new Reader(new SwaggerConfiguration().openAPI(new OpenAPI()).schemaResolution(Schema.SchemaResolution.ALL_OF_REF));
         OpenAPI openAPI = reader.read(SchemaResolutionWithRecordsResource.class);
         String yaml = "openapi: 3.0.1\n" +
@@ -379,5 +380,6 @@ public class SchemaResolutionRecordsTest {
                 "          allOf:\n" +
                 "          - $ref: '#/components/schemas/InlineSchemaPropertySimple'\n";
         SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
+        ModelConverters.reset();
     }
 }

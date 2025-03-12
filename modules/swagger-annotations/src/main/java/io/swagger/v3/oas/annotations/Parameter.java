@@ -159,4 +159,6 @@ public @interface Parameter {
      * @return the reference
      **/
     String ref() default "";
+
+    Class<?>[] validationGroups() default {};
 }

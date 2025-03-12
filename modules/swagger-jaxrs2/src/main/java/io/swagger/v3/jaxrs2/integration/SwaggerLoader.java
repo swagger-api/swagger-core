@@ -3,6 +3,7 @@ package io.swagger.v3.jaxrs2.integration;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import io.swagger.v3.core.filter.OpenAPISpecFilter;
 import io.swagger.v3.core.filter.SpecFilter;
+import io.swagger.v3.core.util.Configuration;
 import io.swagger.v3.core.util.Json;
 import io.swagger.v3.core.util.Yaml;
 import io.swagger.v3.oas.integration.GenericOpenApiContextBuilder;
@@ -38,6 +39,10 @@ public class SwaggerLoader {
 
     private String objectMapperProcessorClass;
     private String defaultResponseCode;
+
+    private Configuration.GroupsValidationStrategy groupsValidationStrategy = Configuration.GroupsValidationStrategy.DEFAULT;
+    private String validatorProcessorClass;
+
     private String modelConverterClasses;
 
     private Boolean sortOutput = false;
@@ -80,6 +85,36 @@ public class SwaggerLoader {
      */
     public void setDefaultResponseCode(String defaultResponseCode) {
         this.defaultResponseCode = defaultResponseCode;
+    }
+
+    /**
+     * @since 2.2.29
+     */
+    public String getGroupsValidationStrategy() {
+        return groupsValidationStrategy.toString();
+    }
+
+    /**
+     * @since 2.2.29
+     */
+    public void setGroupsValidationStrategy(String groupsValidationStrategy) {
+        if (StringUtils.isNotBlank(groupsValidationStrategy)) {
+            this.groupsValidationStrategy = Configuration.GroupsValidationStrategy.valueOf(groupsValidationStrategy);
+        }
+    }
+
+    /**
+     * @since 2.2.29
+     */
+    public String getValidatorProcessorClass() {
+        return validatorProcessorClass;
+    }
+
+    /**
+     * @since 2.2.29
+     */
+    public void setValidatorProcessorClass(String validatorProcessorClass) {
+        this.validatorProcessorClass = validatorProcessorClass;
     }
 
     /**
@@ -328,6 +363,8 @@ public class SwaggerLoader {
                 .resourcePackages(resourcePackagesSet)
                 .objectMapperProcessorClass(objectMapperProcessorClass)
                 .defaultResponseCode(defaultResponseCode)
+                .validatorProcessorClass(validatorProcessorClass)
+                .groupsValidationStrategy(groupsValidationStrategy)
                 .modelConverterClasses(modelConverterSet)
                 .sortOutput(sortOutput)
                 .alwaysResolveAppPath(alwaysResolveAppPath)

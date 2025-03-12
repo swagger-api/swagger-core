@@ -6,11 +6,13 @@ import io.swagger.v3.core.converter.AnnotatedType;
 import io.swagger.v3.core.converter.ModelConverter;
 import io.swagger.v3.core.converter.ModelConverterContextImpl;
 import io.swagger.v3.core.converter.ModelConverters;
+import io.swagger.v3.core.converter.ResolvedSchema;
 import io.swagger.v3.core.filter.AbstractSpecFilter;
 import io.swagger.v3.core.filter.OpenAPISpecFilter;
 import io.swagger.v3.core.filter.SpecFilter;
 import io.swagger.v3.core.jackson.ModelResolver;
 import io.swagger.v3.core.model.ApiDescription;
+import io.swagger.v3.core.util.Configuration;
 import io.swagger.v3.core.util.PrimitiveType;
 import io.swagger.v3.jaxrs2.matchers.SerializationMatchers;
 import io.swagger.v3.jaxrs2.petstore31.PetResource;
@@ -83,6 +85,9 @@ import io.swagger.v3.jaxrs2.resources.Ticket3731Resource;
 import io.swagger.v3.jaxrs2.resources.Ticket4412Resource;
 import io.swagger.v3.jaxrs2.resources.Ticket4446Resource;
 import io.swagger.v3.jaxrs2.resources.Ticket4483Resource;
+import io.swagger.v3.jaxrs2.resources.Ticket4804CustomClass;
+import io.swagger.v3.jaxrs2.resources.Ticket4804ProcessorResource;
+import io.swagger.v3.jaxrs2.resources.Ticket4804Resource;
 import io.swagger.v3.jaxrs2.resources.UploadResource;
 import io.swagger.v3.jaxrs2.resources.UrlEncodedResourceWithEncodings;
 import io.swagger.v3.jaxrs2.resources.UserAnnotationResource;
@@ -4262,5 +4267,861 @@ public class ReaderTest {
                 "              schema:\n" +
                 "                type: string\n";
         SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
+    }
+
+    @Test(description = "Constraints annotations with groups - Inline")
+    public void testTicket4804Inline() {
+        ModelConverters.reset();
+        SwaggerConfiguration config = new SwaggerConfiguration().schemaResolution(Schema.SchemaResolution.INLINE);
+        Reader reader = new Reader(config);
+
+        OpenAPI openAPI = reader.read(Ticket4804Resource.class);
+        String yaml = "openapi: 3.0.1\n" +
+                "paths:\n" +
+                "  /test/barcart:\n" +
+                "    put:\n" +
+                "      operationId: barCart\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          '*/*':\n" +
+                "            schema:\n" +
+                "              required:\n" +
+                "              - notNullcartDetails\n" +
+                "              type: object\n" +
+                "              properties:\n" +
+                "                pageSize:\n" +
+                "                  type: integer\n" +
+                "                  format: int32\n" +
+                "                cartDetails:\n" +
+                "                  required:\n" +
+                "                  - description\n" +
+                "                  type: object\n" +
+                "                  properties:\n" +
+                "                    name:\n" +
+                "                      type: string\n" +
+                "                    description:\n" +
+                "                      type: string\n" +
+                "                notNullcartDetails:\n" +
+                "                  required:\n" +
+                "                  - description\n" +
+                "                  type: object\n" +
+                "                  properties:\n" +
+                "                    name:\n" +
+                "                      type: string\n" +
+                "                    description:\n" +
+                "                      type: string\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*': {}\n" +
+                "  /test/foocart:\n" +
+                "    put:\n" +
+                "      operationId: fooCart\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          '*/*':\n" +
+                "            schema:\n" +
+                "              required:\n" +
+                "              - cartDetails\n" +
+                "              - notNullcartDetails\n" +
+                "              type: object\n" +
+                "              properties:\n" +
+                "                pageSize:\n" +
+                "                  type: integer\n" +
+                "                  format: int32\n" +
+                "                cartDetails:\n" +
+                "                  required:\n" +
+                "                  - description\n" +
+                "                  type: object\n" +
+                "                  properties:\n" +
+                "                    name:\n" +
+                "                      type: string\n" +
+                "                    description:\n" +
+                "                      type: string\n" +
+                "                notNullcartDetails:\n" +
+                "                  required:\n" +
+                "                  - description\n" +
+                "                  type: object\n" +
+                "                  properties:\n" +
+                "                    name:\n" +
+                "                      type: string\n" +
+                "                    description:\n" +
+                "                      type: string\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*': {}\n" +
+                "  /test/createcart:\n" +
+                "    post:\n" +
+                "      operationId: postCart\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          '*/*':\n" +
+                "            schema:\n" +
+                "              required:\n" +
+                "              - notNullcartDetails\n" +
+                "              - pageSize\n" +
+                "              type: object\n" +
+                "              properties:\n" +
+                "                pageSize:\n" +
+                "                  type: integer\n" +
+                "                  format: int32\n" +
+                "                cartDetails:\n" +
+                "                  required:\n" +
+                "                  - description\n" +
+                "                  - name\n" +
+                "                  type: object\n" +
+                "                  properties:\n" +
+                "                    name:\n" +
+                "                      type: string\n" +
+                "                    description:\n" +
+                "                      type: string\n" +
+                "                notNullcartDetails:\n" +
+                "                  required:\n" +
+                "                  - description\n" +
+                "                  - name\n" +
+                "                  type: object\n" +
+                "                  properties:\n" +
+                "                    name:\n" +
+                "                      type: string\n" +
+                "                    description:\n" +
+                "                      type: string\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*': {}\n" +
+                "  /test/updatecart:\n" +
+                "    put:\n" +
+                "      operationId: putCart\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          '*/*':\n" +
+                "            schema:\n" +
+                "              required:\n" +
+                "              - notNullcartDetails\n" +
+                "              type: object\n" +
+                "              properties:\n" +
+                "                pageSize:\n" +
+                "                  type: integer\n" +
+                "                  format: int32\n" +
+                "                cartDetails:\n" +
+                "                  required:\n" +
+                "                  - description\n" +
+                "                  type: object\n" +
+                "                  properties:\n" +
+                "                    name:\n" +
+                "                      type: string\n" +
+                "                    description:\n" +
+                "                      type: string\n" +
+                "                notNullcartDetails:\n" +
+                "                  required:\n" +
+                "                  - description\n" +
+                "                  type: object\n" +
+                "                  properties:\n" +
+                "                    name:\n" +
+                "                      type: string\n" +
+                "                    description:\n" +
+                "                      type: string\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*': {}\n" +
+                "components:\n" +
+                "  schemas:\n" +
+                "    Cart:\n" +
+                "      required:\n" +
+                "      - notNullcartDetails\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        pageSize:\n" +
+                "          type: integer\n" +
+                "          format: int32\n" +
+                "        cartDetails:\n" +
+                "          required:\n" +
+                "          - description\n" +
+                "          type: object\n" +
+                "          properties:\n" +
+                "            name:\n" +
+                "              type: string\n" +
+                "            description:\n" +
+                "              type: string\n" +
+                "        notNullcartDetails:\n" +
+                "          required:\n" +
+                "          - description\n" +
+                "          type: object\n" +
+                "          properties:\n" +
+                "            name:\n" +
+                "              type: string\n" +
+                "            description:\n" +
+                "              type: string\n" +
+                "    CartDetails:\n" +
+                "      required:\n" +
+                "      - description\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        name:\n" +
+                "          type: string\n" +
+                "        description:\n" +
+                "          type: string\n";
+        SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
+        ModelConverters.reset();
+    }
+
+    @Test(description = "Constraints annotations with groups - Default")
+    public void testTicket4804Default() {
+        ModelConverters.reset();
+        SwaggerConfiguration config = new SwaggerConfiguration();
+        Reader reader = new Reader(config);
+
+        OpenAPI openAPI = reader.read(Ticket4804Resource.class);
+        String yaml = "openapi: 3.0.1\n" +
+                "paths:\n" +
+                "  /test/barcart:\n" +
+                "    put:\n" +
+                "      operationId: barCart\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          '*/*':\n" +
+                "            schema:\n" +
+                "              $ref: \"#/components/schemas/Cart\"\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*': {}\n" +
+                "  /test/foocart:\n" +
+                "    put:\n" +
+                "      operationId: fooCart\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          '*/*':\n" +
+                "            schema:\n" +
+                "              $ref: \"#/components/schemas/Cart\"\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*': {}\n" +
+                "  /test/createcart:\n" +
+                "    post:\n" +
+                "      operationId: postCart\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          '*/*':\n" +
+                "            schema:\n" +
+                "              $ref: \"#/components/schemas/Cart\"\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*': {}\n" +
+                "  /test/updatecart:\n" +
+                "    put:\n" +
+                "      operationId: putCart\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          '*/*':\n" +
+                "            schema:\n" +
+                "              $ref: \"#/components/schemas/Cart\"\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*': {}\n" +
+                "components:\n" +
+                "  schemas:\n" +
+                "    Cart:\n" +
+                "      required:\n" +
+                "      - notNullcartDetails\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        pageSize:\n" +
+                "          type: integer\n" +
+                "          format: int32\n" +
+                "        cartDetails:\n" +
+                "          $ref: \"#/components/schemas/CartDetails\"\n" +
+                "        notNullcartDetails:\n" +
+                "          $ref: \"#/components/schemas/CartDetails\"\n" +
+                "    CartDetails:\n" +
+                "      required:\n" +
+                "      - description\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        name:\n" +
+                "          type: string\n" +
+                "        description:\n" +
+                "          type: string\n";
+        SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
+        ModelConverters.reset();
+    }
+
+    @Test(description = "Constraints annotations with groups - Always")
+    public void testTicket4804Always() {
+        ModelConverters.reset();
+        SwaggerConfiguration config = new SwaggerConfiguration().groupsValidationStrategy(Configuration.GroupsValidationStrategy.ALWAYS);
+        Reader reader = new Reader(config);
+
+        OpenAPI openAPI = reader.read(Ticket4804Resource.class);
+        String yaml = "openapi: 3.0.1\n" +
+                "paths:\n" +
+                "  /test/barcart:\n" +
+                "    put:\n" +
+                "      operationId: barCart\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          '*/*':\n" +
+                "            schema:\n" +
+                "              $ref: \"#/components/schemas/Cart\"\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*': {}\n" +
+                "  /test/foocart:\n" +
+                "    put:\n" +
+                "      operationId: fooCart\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          '*/*':\n" +
+                "            schema:\n" +
+                "              $ref: \"#/components/schemas/Cart\"\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*': {}\n" +
+                "  /test/createcart:\n" +
+                "    post:\n" +
+                "      operationId: postCart\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          '*/*':\n" +
+                "            schema:\n" +
+                "              $ref: \"#/components/schemas/Cart\"\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*': {}\n" +
+                "  /test/updatecart:\n" +
+                "    put:\n" +
+                "      operationId: putCart\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          '*/*':\n" +
+                "            schema:\n" +
+                "              $ref: \"#/components/schemas/Cart\"\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*': {}\n" +
+                "components:\n" +
+                "  schemas:\n" +
+                "    Cart:\n" +
+                "      required:\n" +
+                "      - cartDetails\n" +
+                "      - notNullcartDetails\n" +
+                "      - pageSize\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        pageSize:\n" +
+                "          type: integer\n" +
+                "          format: int32\n" +
+                "        cartDetails:\n" +
+                "          $ref: \"#/components/schemas/CartDetails\"\n" +
+                "        notNullcartDetails:\n" +
+                "          $ref: \"#/components/schemas/CartDetails\"\n" +
+                "    CartDetails:\n" +
+                "      required:\n" +
+                "      - description\n" +
+                "      - name\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        name:\n" +
+                "          type: string\n" +
+                "        description:\n" +
+                "          type: string\n";
+        SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
+        ModelConverters.reset();
+    }
+
+    @Test(description = "Constraints annotations with groups - Never")
+    public void testTicket4804Never() {
+        ModelConverters.reset();
+        SwaggerConfiguration config = new SwaggerConfiguration().groupsValidationStrategy(Configuration.GroupsValidationStrategy.NEVER);
+        Reader reader = new Reader(config);
+
+        OpenAPI openAPI = reader.read(Ticket4804Resource.class);
+        String yaml = "openapi: 3.0.1\n" +
+                "paths:\n" +
+                "  /test/barcart:\n" +
+                "    put:\n" +
+                "      operationId: barCart\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          '*/*':\n" +
+                "            schema:\n" +
+                "              $ref: \"#/components/schemas/Cart\"\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*': {}\n" +
+                "  /test/foocart:\n" +
+                "    put:\n" +
+                "      operationId: fooCart\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          '*/*':\n" +
+                "            schema:\n" +
+                "              $ref: \"#/components/schemas/Cart\"\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*': {}\n" +
+                "  /test/createcart:\n" +
+                "    post:\n" +
+                "      operationId: postCart\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          '*/*':\n" +
+                "            schema:\n" +
+                "              $ref: \"#/components/schemas/Cart\"\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*': {}\n" +
+                "  /test/updatecart:\n" +
+                "    put:\n" +
+                "      operationId: putCart\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          '*/*':\n" +
+                "            schema:\n" +
+                "              $ref: \"#/components/schemas/Cart\"\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*': {}\n" +
+                "components:\n" +
+                "  schemas:\n" +
+                "    Cart:\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        pageSize:\n" +
+                "          type: integer\n" +
+                "          format: int32\n" +
+                "        cartDetails:\n" +
+                "          $ref: \"#/components/schemas/CartDetails\"\n" +
+                "        notNullcartDetails:\n" +
+                "          $ref: \"#/components/schemas/CartDetails\"\n" +
+                "    CartDetails:\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        name:\n" +
+                "          type: string\n" +
+                "        description:\n" +
+                "          type: string\n";
+        SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
+        ModelConverters.reset();
+    }
+
+    @Test(description = "Constraints annotations with groups - NeverNoContext")
+    public void testTicket4804NeverNoContext() {
+        ModelConverters.reset();
+        SwaggerConfiguration config =
+                new SwaggerConfiguration()
+                        .groupsValidationStrategy(Configuration.GroupsValidationStrategy.NEVER_IF_NO_CONTEXT)
+                        .schemaResolution(Schema.SchemaResolution.INLINE);
+        Reader reader = new Reader(config);
+
+        OpenAPI openAPI = reader.read(Ticket4804Resource.class);
+        String yaml = "openapi: 3.0.1\n" +
+                "paths:\n" +
+                "  /test/barcart:\n" +
+                "    put:\n" +
+                "      operationId: barCart\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          '*/*':\n" +
+                "            schema:\n" +
+                "              type: object\n" +
+                "              properties:\n" +
+                "                pageSize:\n" +
+                "                  type: integer\n" +
+                "                  format: int32\n" +
+                "                cartDetails:\n" +
+                "                  type: object\n" +
+                "                  properties:\n" +
+                "                    name:\n" +
+                "                      type: string\n" +
+                "                    description:\n" +
+                "                      type: string\n" +
+                "                notNullcartDetails:\n" +
+                "                  type: object\n" +
+                "                  properties:\n" +
+                "                    name:\n" +
+                "                      type: string\n" +
+                "                    description:\n" +
+                "                      type: string\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*': {}\n" +
+                "  /test/foocart:\n" +
+                "    put:\n" +
+                "      operationId: fooCart\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          '*/*':\n" +
+                "            schema:\n" +
+                "              required:\n" +
+                "              - cartDetails\n" +
+                "              type: object\n" +
+                "              properties:\n" +
+                "                pageSize:\n" +
+                "                  type: integer\n" +
+                "                  format: int32\n" +
+                "                cartDetails:\n" +
+                "                  type: object\n" +
+                "                  properties:\n" +
+                "                    name:\n" +
+                "                      type: string\n" +
+                "                    description:\n" +
+                "                      type: string\n" +
+                "                notNullcartDetails:\n" +
+                "                  type: object\n" +
+                "                  properties:\n" +
+                "                    name:\n" +
+                "                      type: string\n" +
+                "                    description:\n" +
+                "                      type: string\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*': {}\n" +
+                "  /test/createcart:\n" +
+                "    post:\n" +
+                "      operationId: postCart\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          '*/*':\n" +
+                "            schema:\n" +
+                "              required:\n" +
+                "              - pageSize\n" +
+                "              type: object\n" +
+                "              properties:\n" +
+                "                pageSize:\n" +
+                "                  type: integer\n" +
+                "                  format: int32\n" +
+                "                cartDetails:\n" +
+                "                  required:\n" +
+                "                  - name\n" +
+                "                  type: object\n" +
+                "                  properties:\n" +
+                "                    name:\n" +
+                "                      type: string\n" +
+                "                    description:\n" +
+                "                      type: string\n" +
+                "                notNullcartDetails:\n" +
+                "                  required:\n" +
+                "                  - name\n" +
+                "                  type: object\n" +
+                "                  properties:\n" +
+                "                    name:\n" +
+                "                      type: string\n" +
+                "                    description:\n" +
+                "                      type: string\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*': {}\n" +
+                "  /test/updatecart:\n" +
+                "    put:\n" +
+                "      operationId: putCart\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          '*/*':\n" +
+                "            schema:\n" +
+                "              type: object\n" +
+                "              properties:\n" +
+                "                pageSize:\n" +
+                "                  type: integer\n" +
+                "                  format: int32\n" +
+                "                cartDetails:\n" +
+                "                  type: object\n" +
+                "                  properties:\n" +
+                "                    name:\n" +
+                "                      type: string\n" +
+                "                    description:\n" +
+                "                      type: string\n" +
+                "                notNullcartDetails:\n" +
+                "                  type: object\n" +
+                "                  properties:\n" +
+                "                    name:\n" +
+                "                      type: string\n" +
+                "                    description:\n" +
+                "                      type: string\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*': {}\n" +
+                "components:\n" +
+                "  schemas:\n" +
+                "    Cart:\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        pageSize:\n" +
+                "          type: integer\n" +
+                "          format: int32\n" +
+                "        cartDetails:\n" +
+                "          type: object\n" +
+                "          properties:\n" +
+                "            name:\n" +
+                "              type: string\n" +
+                "            description:\n" +
+                "              type: string\n" +
+                "        notNullcartDetails:\n" +
+                "          type: object\n" +
+                "          properties:\n" +
+                "            name:\n" +
+                "              type: string\n" +
+                "            description:\n" +
+                "              type: string\n" +
+                "    CartDetails:\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        name:\n" +
+                "          type: string\n" +
+                "        description:\n" +
+                "          type: string\n";
+        SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
+        ModelConverters.reset();
+    }
+
+    @Test(description = "Constraints annotations with groups - Processor")
+    public void testTicket4804Processor() {
+        ModelConverters.reset();
+        SwaggerConfiguration config =
+                new SwaggerConfiguration()
+                        .validatorProcessorClass(Ticket4804ProcessorResource.CustomValidatorProcessor.class.getName())
+                        .schemaResolution(Schema.SchemaResolution.INLINE);
+        Reader reader = new Reader(config);
+
+        OpenAPI openAPI = reader.read(Ticket4804ProcessorResource.class);
+        String yaml = "openapi: 3.0.1\n" +
+                "paths:\n" +
+                "  /test/barcart:\n" +
+                "    put:\n" +
+                "      operationId: barCart\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          '*/*':\n" +
+                "            schema:\n" +
+                "              type: object\n" +
+                "              properties:\n" +
+                "                pageSize:\n" +
+                "                  type: integer\n" +
+                "                  format: int32\n" +
+                "                cartDetails:\n" +
+                "                  type: object\n" +
+                "                  properties:\n" +
+                "                    name:\n" +
+                "                      type: string\n" +
+                "                    description:\n" +
+                "                      type: string\n" +
+                "                notNullcartDetails:\n" +
+                "                  type: object\n" +
+                "                  properties:\n" +
+                "                    name:\n" +
+                "                      type: string\n" +
+                "                    description:\n" +
+                "                      type: string\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*': {}\n" +
+                "  /test/foocart:\n" +
+                "    put:\n" +
+                "      operationId: fooCart\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          '*/*':\n" +
+                "            schema:\n" +
+                "              type: object\n" +
+                "              properties:\n" +
+                "                pageSize:\n" +
+                "                  type: integer\n" +
+                "                  format: int32\n" +
+                "                cartDetails:\n" +
+                "                  type: object\n" +
+                "                  properties:\n" +
+                "                    name:\n" +
+                "                      type: string\n" +
+                "                    description:\n" +
+                "                      type: string\n" +
+                "                notNullcartDetails:\n" +
+                "                  type: object\n" +
+                "                  properties:\n" +
+                "                    name:\n" +
+                "                      type: string\n" +
+                "                    description:\n" +
+                "                      type: string\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*': {}\n" +
+                "  /test/createcart:\n" +
+                "    post:\n" +
+                "      operationId: postCart\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          '*/*':\n" +
+                "            schema:\n" +
+                "              type: object\n" +
+                "              properties:\n" +
+                "                pageSize:\n" +
+                "                  type: integer\n" +
+                "                  format: int32\n" +
+                "                cartDetails:\n" +
+                "                  type: object\n" +
+                "                  properties:\n" +
+                "                    name:\n" +
+                "                      type: string\n" +
+                "                    description:\n" +
+                "                      type: string\n" +
+                "                notNullcartDetails:\n" +
+                "                  type: object\n" +
+                "                  properties:\n" +
+                "                    name:\n" +
+                "                      type: string\n" +
+                "                    description:\n" +
+                "                      type: string\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*': {}\n" +
+                "  /test/updatecart:\n" +
+                "    put:\n" +
+                "      operationId: putCart\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          '*/*':\n" +
+                "            schema:\n" +
+                "              required:\n" +
+                "              - cartDetails\n" +
+                "              type: object\n" +
+                "              properties:\n" +
+                "                pageSize:\n" +
+                "                  type: integer\n" +
+                "                  format: int32\n" +
+                "                cartDetails:\n" +
+                "                  type: object\n" +
+                "                  properties:\n" +
+                "                    name:\n" +
+                "                      type: string\n" +
+                "                    description:\n" +
+                "                      type: string\n" +
+                "                notNullcartDetails:\n" +
+                "                  type: object\n" +
+                "                  properties:\n" +
+                "                    name:\n" +
+                "                      type: string\n" +
+                "                    description:\n" +
+                "                      type: string\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*': {}\n" +
+                "components:\n" +
+                "  schemas:\n" +
+                "    Cart:\n" +
+                "      required:\n" +
+                "      - cartDetails\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        pageSize:\n" +
+                "          type: integer\n" +
+                "          format: int32\n" +
+                "        cartDetails:\n" +
+                "          type: object\n" +
+                "          properties:\n" +
+                "            name:\n" +
+                "              type: string\n" +
+                "            description:\n" +
+                "              type: string\n" +
+                "        notNullcartDetails:\n" +
+                "          type: object\n" +
+                "          properties:\n" +
+                "            name:\n" +
+                "              type: string\n" +
+                "            description:\n" +
+                "              type: string\n" +
+                "    CartDetails:\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        name:\n" +
+                "          type: string\n" +
+                "        description:\n" +
+                "          type: string\n";
+        SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
+        ModelConverters.reset();
+    }
+
+    @Test
+    public void shouldIncludeOnlyNonGroupedJakartaValidatedFieldsAsMandatoryByDefault() {
+        ModelConverters.reset();
+        ResolvedSchema schema = ModelConverters.getInstance(false).resolveAsResolvedSchema(new AnnotatedType().type(Ticket4804CustomClass.class));
+        String expectedYaml = "schema:\n" +
+                "  required:\n" +
+                "  - nonGroupValidatedField\n" +
+                "  type: object\n" +
+                "  properties:\n" +
+                "    nonGroupValidatedField:\n" +
+                "      type: string\n" +
+                "    singleGroupValidatedField:\n" +
+                "      type: integer\n" +
+                "      format: int32\n" +
+                "    multipleGroupValidatedField:\n" +
+                "      type: number\n" +
+                "    otherGroupValidatedField:\n" +
+                "      type: string\n" +
+                "    singleGroupValidatedField2:\n" +
+                "      type: string\n" +
+                "referencedSchemas:\n" +
+                "  Ticket4804CustomClass:\n" +
+                "    required:\n" +
+                "    - nonGroupValidatedField\n" +
+                "    type: object\n" +
+                "    properties:\n" +
+                "      nonGroupValidatedField:\n" +
+                "        type: string\n" +
+                "      singleGroupValidatedField:\n" +
+                "        type: integer\n" +
+                "        format: int32\n" +
+                "      multipleGroupValidatedField:\n" +
+                "        type: number\n" +
+                "      otherGroupValidatedField:\n" +
+                "        type: string\n" +
+                "      singleGroupValidatedField2:\n" +
+                "        type: string\n";
+        SerializationMatchers.assertEqualsToYaml(schema, expectedYaml);
+        ModelConverters.reset();
     }
 }

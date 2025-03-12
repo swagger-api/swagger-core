@@ -32,13 +32,16 @@ import io.swagger.v3.core.converter.AnnotatedType;
 import io.swagger.v3.core.converter.ModelConverter;
 import io.swagger.v3.core.converter.ModelConverterContext;
 import io.swagger.v3.core.util.AnnotationsUtils;
+import io.swagger.v3.core.util.Configuration;
 import io.swagger.v3.core.util.Constants;
 import io.swagger.v3.core.util.Json;
 import io.swagger.v3.core.util.ObjectMapperFactory;
 import io.swagger.v3.core.util.ReferenceTypeUtils;
 import io.swagger.v3.core.util.PrimitiveType;
 import io.swagger.v3.core.util.ReflectionUtils;
+import io.swagger.v3.core.util.ValidatorProcessor;
 import io.swagger.v3.oas.annotations.Hidden;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.StringToClassMapItem;
 import io.swagger.v3.oas.annotations.media.DependentRequired;
 import io.swagger.v3.oas.annotations.media.DependentSchema;
@@ -71,6 +74,9 @@ import javax.validation.constraints.DecimalMax;
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -97,6 +103,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -118,6 +125,8 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
     public static boolean composedModelPropertiesAsSibling = System.getProperty(SET_PROPERTY_OF_COMPOSED_MODEL_AS_SIBLING) != null;
 
+    private static final int SCHEMA_COMPONENT_PREFIX = "#/components/schemas/".length();
+
     /**
      * Allows all enums to be resolved as a reference to a scheme added to the components section.
      */
@@ -126,6 +135,10 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
     private boolean openapi31;
 
     private Schema.SchemaResolution schemaResolution = Schema.SchemaResolution.DEFAULT;
+
+    protected Configuration configuration = new Configuration();
+
+    protected ValidatorProcessor validatorProcessor;
 
     public ModelResolver(ObjectMapper mapper) {
         super(mapper);
@@ -710,7 +723,23 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                         ctxAnnotation31 = ctxAnnotations31List.toArray(new Annotation[ctxAnnotations31List.size()]);
                     }
                 }
-
+                Set<Annotation> validationInvocationAnnotations = null;
+                if (validatorProcessor != null) {
+                    validationInvocationAnnotations = validatorProcessor.resolveInvocationAnnotations(annotations);
+                    if (validationInvocationAnnotations == null) {
+                        validationInvocationAnnotations = validatorProcessor.resolveInvocationAnnotations(annotatedType.getCtxAnnotations());
+                    } else {
+                        validationInvocationAnnotations.addAll(validatorProcessor.resolveInvocationAnnotations(annotatedType.getCtxAnnotations()));
+                    }
+                }
+                if (validationInvocationAnnotations == null) {
+                    validationInvocationAnnotations = resolveValidationInvocationAnnotations(annotations);
+                    validationInvocationAnnotations.addAll(resolveValidationInvocationAnnotations(annotatedType.getCtxAnnotations()));
+                }
+                annotations = Stream.concat(Arrays.stream(annotations), Arrays.stream(validationInvocationAnnotations.toArray(new Annotation[0]))).toArray(Annotation[]::new);
+                if (ctxAnnotation31 != null) {
+                    ctxAnnotation31 = Stream.concat(Arrays.stream(ctxAnnotation31), Arrays.stream(validationInvocationAnnotations.toArray(new Annotation[0]))).toArray(Annotation[]::new);
+                }
                 AnnotatedType aType = new AnnotatedType()
                         .type(propType)
                         .parent(model)
@@ -736,7 +765,11 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                             .ctxAnnotations(null)
                             .jsonUnwrappedHandler(null)
                             .resolveAsRef(false);
-                        handleUnwrapped(props, context.resolve(t), uw.prefix(), uw.suffix(), requiredProps);
+                        Schema innerModel = context.resolve(t);
+                        if (StringUtils.isNotBlank(innerModel.get$ref())) {
+                            innerModel = context.getDefinedModels().get(innerModel.get$ref().substring(SCHEMA_COMPONENT_PREFIX));
+                        }
+                        handleUnwrapped(props, innerModel, uw.prefix(), uw.suffix(), requiredProps);
                         return null;
                     } else {
                         return new Schema();
@@ -1558,17 +1591,250 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         }
     }
 
-    protected void applyBeanValidatorAnnotations(BeanPropertyDefinition propDef, Schema property, Annotation[] annotations, Schema parent, boolean applyNotNullAnnotations) {
-        applyBeanValidatorAnnotations(property, annotations, parent, applyNotNullAnnotations);
+    protected boolean applyBeanValidatorAnnotations(BeanPropertyDefinition propDef, Schema property, Annotation[] annotations, Schema parent, boolean applyNotNullAnnotations) {
+        boolean updated = false;
+        updated = applyBeanValidatorAnnotations(property, annotations, parent, applyNotNullAnnotations);
 
         if (Objects.nonNull(property.getItems())) {
             Annotation[] genericTypeArgumentAnnotations = extractGenericTypeArgumentAnnotations(propDef).toArray(Annotation[]::new);
-            applyBeanValidatorAnnotations(property.getItems(), genericTypeArgumentAnnotations, property, applyNotNullAnnotations);
+            updated = applyBeanValidatorAnnotations(property.getItems(), genericTypeArgumentAnnotations, property, applyNotNullAnnotations) || updated;
         }
+        return updated;
     }
 
-    protected void applyBeanValidatorAnnotations(Schema property, Annotation[] annotations, Schema parent, boolean applyNotNullAnnotations) {
+    protected Configuration.GroupsValidationStrategy resolveGroupsValidationStrategy() {
+        return configuration == null ? Configuration.GroupsValidationStrategy.DEFAULT : configuration.getGroupsValidationStrategy();
+    }
+
+    protected Set<Class> resolveValidationInvocationGroups(Map<String, Annotation> annos) {
+        Set<Class> invocationGroups = new LinkedHashSet<>();
+        if (annos.containsKey("org.springframework.validation.annotation.Validated")) {
+            Annotation validated = annos.get("org.springframework.validation.annotation.Validated");
+            Method method = null;
+            try {
+                method = validated.getClass().getDeclaredMethod("value");
+                Class[] groups = (Class[]) method.invoke(validated, null);
+                invocationGroups.addAll(Arrays.asList(groups));
+            } catch (Exception e) {
+                //
+            }
+        }
+        if (annos.containsKey("io.swagger.v3.oas.annotations.parameters.ValidatedParameter")) {
+            Annotation validated = annos.get("io.swagger.v3.oas.annotations.parameters.ValidatedParameter");
+            Method method = null;
+            try {
+                method = validated.getClass().getDeclaredMethod("value");
+                Class[] groups = (Class[]) method.invoke(validated, null);
+                invocationGroups.addAll(Arrays.asList(groups));
+            } catch (Exception e) {
+                //
+            }
+        }
+        if (annos.containsKey("io.swagger.v3.oas.annotations.Parameter")) {
+            Parameter parameter = (Parameter) annos.get("io.swagger.v3.oas.annotations.Parameter");
+            invocationGroups.addAll(Arrays.asList(parameter.validationGroups()));
+        }
+        return invocationGroups;
+    }
+
+    protected Set<Annotation> resolveValidationInvocationAnnotations(Annotation[] annotations) {
+        Set<Annotation> validationInvocationAnnotations = new LinkedHashSet<>();
+        if (annotations == null) {
+            return validationInvocationAnnotations;
+        }
+        for (Annotation anno : annotations) {
+            if (anno.annotationType().getName().equals("org.springframework.validation.annotation.Validated")) {
+                validationInvocationAnnotations.add(anno);
+            }
+            if (anno.annotationType().getName().equals("io.swagger.v3.oas.annotations.parameters.ValidatedParameter")) {
+                validationInvocationAnnotations.add(anno);
+            }
+            if (anno.annotationType().getName().equals("io.swagger.v3.oas.annotations.Parameter")) {
+                validationInvocationAnnotations.add(anno);
+            }
+        }
+        return validationInvocationAnnotations;
+    }
+
+    protected boolean applyBeanValidatorAnnotations(Schema property, Annotation[] annotations, Schema parent, boolean applyNotNullAnnotations) {
+        boolean modified = false;
+        Configuration.GroupsValidationStrategy strategy = resolveGroupsValidationStrategy();
+        if (strategy.equals(Configuration.GroupsValidationStrategy.ALWAYS)) {
+            return applyBeanValidatorAnnotationsNoGroups(property, annotations, parent, applyNotNullAnnotations);
+        } else if (strategy.equals(Configuration.GroupsValidationStrategy.NEVER)) {
+            return modified;
+        }
+        if (validatorProcessor != null &&
+                (validatorProcessor.getMode().equals(ValidatorProcessor.MODE.BEFORE) ||
+                        validatorProcessor.getMode().equals(ValidatorProcessor.MODE.REPLACE))) {
+            modified = validatorProcessor.applyBeanValidatorAnnotations(property, annotations, parent, applyNotNullAnnotations);
+            if (validatorProcessor.getMode().equals(ValidatorProcessor.MODE.REPLACE)) {
+                return modified;
+            }
+        }
         Map<String, Annotation> annos = new HashMap<>();
+        if (annotations != null) {
+            for (Annotation anno : annotations) {
+                annos.put(anno.annotationType().getName(), anno);
+            }
+        }
+
+        if (parent != null &&
+                Arrays.stream(annotations).anyMatch(
+                        annotation -> annotation.annotationType().getSimpleName().equals("NonNull"))) {
+            modified = addRequiredItem(parent, property.getName());
+        }
+
+        // see if we have Validated or other group-aware annotations
+        Set<Class> invocationGroups = null;
+        if (validatorProcessor != null) {
+            invocationGroups = validatorProcessor.resolveInvocationGroups(annos);
+        }
+        if (invocationGroups == null) {
+            invocationGroups = resolveValidationInvocationGroups(annos);
+        }
+        if (invocationGroups.isEmpty()) {
+            if (strategy.equals(Configuration.GroupsValidationStrategy.NEVER_IF_NO_CONTEXT)) {
+                return modified;
+            }
+        } else {
+            if (!(strategy.equals(Configuration.GroupsValidationStrategy.DEFAULT) || strategy.equals(Configuration.GroupsValidationStrategy.NEVER_IF_NO_CONTEXT))) {
+                return modified;
+            }
+        }
+        boolean acceptNoGroups = !strategy.equals(Configuration.GroupsValidationStrategy.NEVER_IF_NO_CONTEXT);
+        // if we get here, validate only if groups match.
+        if (parent != null && annos.containsKey("javax.validation.constraints.NotNull") && applyNotNullAnnotations) {
+            NotNull anno = (NotNull) annos.get("javax.validation.constraints.NotNull");
+            if (anno.groups().length == 0 && acceptNoGroups) {;
+                // no groups, so apply
+                modified = addRequiredItem(parent, property.getName());
+            } else {
+                // check if the groups match
+                for (Class group : anno.groups()) {
+                    if (invocationGroups.contains(group)) {
+                        modified = addRequiredItem(parent, property.getName());
+                    }
+                }
+            }
+        }
+
+        if (annos.containsKey("javax.validation.constraints.NotEmpty")) {
+            NotEmpty anno = (NotEmpty) annos.get("javax.validation.constraints.NotEmpty");
+            boolean apply = checkGroupValidation(anno.groups(), invocationGroups, acceptNoGroups);
+            if (apply) {
+                if (isArraySchema(property)) {
+                    property.setMinItems(1);
+                    modified = true;
+                } else if (isStringSchema(property)) {
+                    property.setMinLength(1);
+                    modified = true;
+                } else if (isObjectSchema(property)) {
+                    property.setMinProperties(1);
+                    modified = true;
+                }
+            }
+        }
+
+        if (annos.containsKey("javax.validation.constraints.NotBlank")) {
+            NotBlank anno = (NotBlank) annos.get("javax.validation.constraints.NotBlank");
+            boolean apply = checkGroupValidation(anno.groups(), invocationGroups, acceptNoGroups);
+            if (apply && isStringSchema(property)) {
+                property.setMinLength(1);
+                modified = true;
+            }
+        }
+        if (annos.containsKey("javax.validation.constraints.Min")) {
+            Min anno = (Min) annos.get("javax.validation.constraints.Min");
+            boolean apply = checkGroupValidation(anno.groups(), invocationGroups, acceptNoGroups);
+            if (apply && isNumberSchema(property)) {
+                property.setMinimum(new BigDecimal(anno.value()));
+                modified = true;
+            }
+        }
+        if (annos.containsKey("javax.validation.constraints.Max")) {
+            Max anno = (Max) annos.get("javax.validation.constraints.Max");
+            boolean apply = checkGroupValidation(anno.groups(), invocationGroups, acceptNoGroups);
+            if (apply && isNumberSchema(property)) {
+                property.setMaximum(new BigDecimal(anno.value()));
+                modified = true;
+            }
+        }
+        if (annos.containsKey("javax.validation.constraints.Size")) {
+            Size anno = (Size) annos.get("javax.validation.constraints.Size");
+            boolean apply = checkGroupValidation(anno.groups(), invocationGroups, acceptNoGroups);
+            if (apply) {
+                if (isNumberSchema(property)) {
+                    property.setMinimum(new BigDecimal(anno.min()));
+                    property.setMaximum(new BigDecimal(anno.max()));
+                    modified = true;
+                }
+                if (isStringSchema(property)) {
+                    property.setMinLength(Integer.valueOf(anno.min()));
+                    property.setMaxLength(Integer.valueOf(anno.max()));
+                    modified = true;
+                }
+                if (isArraySchema(property)) {
+                    property.setMinItems(anno.min());
+                    property.setMaxItems(anno.max());
+                    modified = true;
+                }
+            }
+        }
+        if (annos.containsKey("javax.validation.constraints.DecimalMin")) {
+            DecimalMin min = (DecimalMin) annos.get("javax.validation.constraints.DecimalMin");
+            boolean apply = checkGroupValidation(min.groups(), invocationGroups, acceptNoGroups);
+            if (apply && isNumberSchema(property)) {
+                property.setMinimum(new BigDecimal(min.value()));
+                property.setExclusiveMinimum(!min.inclusive());
+                modified = true;
+            }
+        }
+        if (annos.containsKey("javax.validation.constraints.DecimalMax")) {
+            DecimalMax max = (DecimalMax) annos.get("javax.validation.constraints.DecimalMax");
+            boolean apply = checkGroupValidation(max.groups(), invocationGroups, acceptNoGroups);
+            if (apply && isNumberSchema(property)) {
+                property.setMaximum(new BigDecimal(max.value()));
+                property.setExclusiveMaximum(!max.inclusive());
+                modified = true;
+            }
+        }
+        if (annos.containsKey("javax.validation.constraints.Pattern")) {
+            Pattern pattern = (Pattern) annos.get("javax.validation.constraints.Pattern");
+            boolean apply = checkGroupValidation(pattern.groups(), invocationGroups, acceptNoGroups);
+            if (apply) {
+                if (isStringSchema(property)) {
+                    property.setPattern(pattern.regexp());
+                    modified = true;
+                }
+                if (property.getItems() != null && isStringSchema(property.getItems())) {
+                    property.getItems().setPattern(pattern.regexp());
+                    modified = true;
+                }
+            }
+        }
+        if (validatorProcessor != null && validatorProcessor.getMode().equals(ValidatorProcessor.MODE.AFTER)) {
+            modified = validatorProcessor.applyBeanValidatorAnnotations(property, annotations, parent, applyNotNullAnnotations);
+        }
+        return modified;
+    }
+
+    protected boolean checkGroupValidation(Class[] groups, Set<Class> invocationGroups, boolean acceptNoGroups) {
+        if (groups.length == 0) {;
+            return acceptNoGroups;
+        } else {
+            for (Class group : groups) {
+                if (invocationGroups.contains(group)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    protected boolean applyBeanValidatorAnnotationsNoGroups(Schema property, Annotation[] annotations, Schema parent, boolean applyNotNullAnnotations) {
+        Map<String, Annotation> annos = new HashMap<>();
+        boolean modified = false;
         if (annotations != null) {
             for (Annotation anno : annotations) {
                 annos.put(anno.annotationType().getName(), anno);
@@ -1579,19 +1845,21 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                     NOT_NULL_ANNOTATIONS.contains(annotation.annotationType().getSimpleName())
             );
             if (requiredItem) {
-                addRequiredItem(parent, property.getName());
+                modified = addRequiredItem(parent, property.getName());
             }
         }
         if (annos.containsKey("javax.validation.constraints.Min")) {
             if (isNumberSchema(property)) {
                 Min min = (Min) annos.get("javax.validation.constraints.Min");
                 property.setMinimum(new BigDecimal(min.value()));
+                modified = true;
             }
         }
         if (annos.containsKey("javax.validation.constraints.Max")) {
             if (isNumberSchema(property)) {
                 Max max = (Max) annos.get("javax.validation.constraints.Max");
                 property.setMaximum(new BigDecimal(max.value()));
+                modified = true;
             }
         }
         if (annos.containsKey("javax.validation.constraints.Size")) {
@@ -1599,14 +1867,17 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             if (isNumberSchema(property)) {
                 property.setMinimum(new BigDecimal(size.min()));
                 property.setMaximum(new BigDecimal(size.max()));
+                modified = true;
             }
             if (isStringSchema(property)) {
                 property.setMinLength(Integer.valueOf(size.min()));
                 property.setMaxLength(Integer.valueOf(size.max()));
+                modified = true;
             }
             if (isArraySchema(property)) {
                 property.setMinItems(size.min());
                 property.setMaxItems(size.max());
+                modified = true;
             }
         }
         if (annos.containsKey("javax.validation.constraints.DecimalMin")) {
@@ -1614,6 +1885,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             if (isNumberSchema(property)) {
                 property.setMinimum(new BigDecimal(min.value()));
                 property.setExclusiveMinimum(!min.inclusive());
+                modified = true;
             }
         }
         if (annos.containsKey("javax.validation.constraints.DecimalMax")) {
@@ -1621,17 +1893,21 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             if (isNumberSchema(property)) {
                 property.setMaximum(new BigDecimal(max.value()));
                 property.setExclusiveMaximum(!max.inclusive());
+                modified = true;
             }
         }
         if (annos.containsKey("javax.validation.constraints.Pattern")) {
             Pattern pattern = (Pattern) annos.get("javax.validation.constraints.Pattern");
             if (isStringSchema(property)) {
                 property.setPattern(pattern.regexp());
+                modified = true;
             }
             if(property.getItems() != null && isStringSchema(property.getItems())) {
                 property.getItems().setPattern(pattern.regexp());
+                modified = true;
             }
         }
+        return modified;
     }
 
     private boolean resolveSubtypes(Schema model, BeanDescription bean, ModelConverterContext context, JsonView jsonViewAnnotation) {
@@ -2291,7 +2567,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             if (StringUtils.isNotBlank(typeInfoProp)) {
                 Schema modelToUpdate = model;
                 if (StringUtils.isNotBlank(model.get$ref())) {
-                    modelToUpdate = context.getDefinedModels().get(model.get$ref().substring(21));
+                    modelToUpdate = context.getDefinedModels().get(model.get$ref().substring(SCHEMA_COMPONENT_PREFIX));
                 }
                 if (modelToUpdate.getProperties() == null || !modelToUpdate.getProperties().keySet().contains(typeInfoProp)) {
                     Schema discriminatorSchema = new StringSchema().name(typeInfoProp);
@@ -2939,16 +3215,19 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         }
     }
 
-    protected void addRequiredItem(Schema model, String propName) {
+    protected boolean addRequiredItem(Schema model, String propName) {
         if (model == null || propName == null || StringUtils.isBlank(propName)) {
-            return;
+            return false;
         }
         if (model.getRequired() == null || model.getRequired().isEmpty()) {
             model.addRequiredItem(propName);
+            return true;
         }
         if (model.getRequired().stream().noneMatch(propName::equals)) {
             model.addRequiredItem(propName);
+            return true;
         }
+        return false;
     }
 
     protected boolean shouldIgnoreClass(Type type) {
@@ -3087,6 +3366,38 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
     public void setOpenapi31(boolean openapi31) {
         this.openapi31 = openapi31;
+    }
+
+    public ModelResolver configuration(Configuration configuration) {
+        this.setConfiguration(configuration);
+        return this;
+    }
+
+    public Configuration getConfiguration() {
+        return configuration;
+    }
+
+    public void setConfiguration(Configuration configuration) {
+        this.configuration = configuration;
+        if (configuration != null) {
+            if (configuration.isOpenAPI31() != null) {
+                this.openapi31(configuration.isOpenAPI31());
+            }
+            if (configuration.getSchemaResolution() != null) {
+                this.schemaResolution(configuration.getSchemaResolution());
+            }
+            // see if we have a processor
+            if (StringUtils.isNotBlank(configuration.getValidatorProcessorClass())) {
+                try {
+                    Class<?> processorClass = getClass().getClassLoader().loadClass(configuration.getValidatorProcessorClass());
+                    if (ValidatorProcessor.class.isAssignableFrom(processorClass)) {
+                        validatorProcessor = (ValidatorProcessor) processorClass.newInstance();
+                    }
+                } catch (Exception e) {
+                    LOGGER.error("Unable to load validator processor class: " + configuration.getValidatorProcessorClass(), e);
+                }
+            }
+        }
     }
 
     protected boolean isObjectSchema(Schema schema) {

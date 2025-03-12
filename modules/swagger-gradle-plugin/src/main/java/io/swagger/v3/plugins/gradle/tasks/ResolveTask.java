@@ -137,6 +137,14 @@ public class ResolveTask extends DefaultTask {
     @Optional
     public final Property<String> defaultResponseCode = getProject().getObjects().property(String.class);
 
+    @Input
+    @Optional
+    public final Property<String> validatorProcessorClass = getProject().getObjects().property(String.class);
+
+    @Input
+    @Optional
+    public final Property<String> groupsValidationStrategy = getProject().getObjects().property(String.class);
+
     public Property<String> getOutputFileName() {
         return outputFileName;
     }
@@ -257,6 +265,9 @@ public class ResolveTask extends DefaultTask {
         this.objectMapperProcessorClass.set(objectMapperProcessorClass);
     }
 
+    /**
+     * @since 2.2.17
+     */
     public Property<String> getDefaultResponseCode() {
         return defaultResponseCode;
     }
@@ -266,6 +277,34 @@ public class ResolveTask extends DefaultTask {
      */
     public void setDefaultResponseCode(String defaultResponseCode) {
         this.defaultResponseCode.set(defaultResponseCode);
+    }
+
+    /**
+     * @since 2.2.29
+     */
+    public Property<String> getValidatorProcessorClass() {
+        return validatorProcessorClass;
+    }
+
+    /**
+     * @since 2.2.29
+     */
+    public void setValidatorProcessorClass(String validatorProcessorClass) {
+        this.validatorProcessorClass.set(validatorProcessorClass);
+    }
+
+    /**
+     * @since 2.2.29
+     */
+    public Property<String> getGroupsValidationStrategy() {
+        return groupsValidationStrategy;
+    }
+
+    /**
+     * @since 2.2.29
+     */
+    public void setGroupsValidationStrategy(String groupsValidationStrategy) {
+        this.groupsValidationStrategy.set(groupsValidationStrategy);
     }
 
     public Property<String> getContextId() {
@@ -508,6 +547,16 @@ public class ResolveTask extends DefaultTask {
             if (defaultResponseCode.isPresent() && StringUtils.isNotBlank(defaultResponseCode.get())) {
                 method = swaggerLoaderClass.getDeclaredMethod("setDefaultResponseCode", String.class);
                 method.invoke(swaggerLoader, defaultResponseCode.get());
+            }
+
+            if (validatorProcessorClass.isPresent() && StringUtils.isNotBlank(validatorProcessorClass.get())) {
+                method = swaggerLoaderClass.getDeclaredMethod("setValidatorProcessorClass", String.class);
+                method.invoke(swaggerLoader, validatorProcessorClass.get());
+            }
+
+            if (defaultResponseCode.isPresent() && StringUtils.isNotBlank(groupsValidationStrategy.get())) {
+                method = swaggerLoaderClass.getDeclaredMethod("setGroupsValidationStrategy", String.class);
+                method.invoke(swaggerLoader, groupsValidationStrategy.get());
             }
 
             method = swaggerLoaderClass.getDeclaredMethod("setPrettyPrint", Boolean.class);
