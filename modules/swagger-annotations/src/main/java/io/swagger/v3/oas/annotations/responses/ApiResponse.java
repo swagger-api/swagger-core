@@ -30,6 +30,14 @@ import static java.lang.annotation.ElementType.TYPE;
 @Inherited
 @Repeatable(ApiResponses.class)
 public @interface ApiResponse {
+
+    /**
+     * Unique name to identify this ApiResponse component. Used in components block.
+     *
+     * @return the name of the ApiResponse
+     */
+    String name() default "";
+
     /**
      * A short description of the response.
      *
