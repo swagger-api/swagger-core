@@ -122,9 +122,6 @@ public class Reader implements OpenApiReader {
         this.openApiTags = openApiTags;
         this.components = components;
         setConfiguration(openApiConfiguration);
-        if (openApiConfiguration != null && StringUtils.isNotBlank(openApiConfiguration.getOpenAPIVersion())) {
-            this.openAPI.openapi(openApiConfiguration.getOpenAPIVersion());
-        }
 
     }
 
@@ -222,6 +219,9 @@ public class Reader implements OpenApiReader {
                 if (this.openAPI.getComponents() != null) {
                     this.components = this.openAPI.getComponents();
                 }
+            }
+            if (StringUtils.isNotBlank(openApiConfiguration.getOpenAPIVersion())) {
+                this.openAPI.openapi(openApiConfiguration.getOpenAPIVersion());
             }
             this.defaultResponseKey = StringUtils.isBlank(config.getDefaultResponseCode()) ? ApiResponses.DEFAULT : config.getDefaultResponseCode();
         }

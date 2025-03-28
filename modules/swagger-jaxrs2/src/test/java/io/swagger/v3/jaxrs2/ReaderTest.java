@@ -88,6 +88,7 @@ import io.swagger.v3.jaxrs2.resources.Ticket4483Resource;
 import io.swagger.v3.jaxrs2.resources.Ticket4804CustomClass;
 import io.swagger.v3.jaxrs2.resources.Ticket4804ProcessorResource;
 import io.swagger.v3.jaxrs2.resources.Ticket4804Resource;
+import io.swagger.v3.jaxrs2.resources.Ticket4859Resource;
 import io.swagger.v3.jaxrs2.resources.UploadResource;
 import io.swagger.v3.jaxrs2.resources.UrlEncodedResourceWithEncodings;
 import io.swagger.v3.jaxrs2.resources.UserAnnotationResource;
@@ -5122,6 +5123,44 @@ public class ReaderTest {
                 "      singleGroupValidatedField2:\n" +
                 "        type: string\n";
         SerializationMatchers.assertEqualsToYaml(schema, expectedYaml);
+        ModelConverters.reset();
+    }
+
+    @Test(description = "test schema.minLength applied")
+    public void testTicket4859() {
+        ModelConverters.reset();
+        SwaggerConfiguration config = new SwaggerConfiguration();
+        Reader reader = new Reader(config);
+
+        OpenAPI openAPI = reader.read(Ticket4859Resource.class);
+        String yaml = "openapi: 3.0.1\n" +
+                "paths:\n" +
+                "  /test/minlength:\n" +
+                "    put:\n" +
+                "      operationId: minlength\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          '*/*':\n" +
+                "            schema:\n" +
+                "              $ref: \"#/components/schemas/Minlength\"\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*': {}\n" +
+                "components:\n" +
+                "  schemas:\n" +
+                "    Minlength:\n" +
+                "      required:\n" +
+                "      - name\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        name:\n" +
+                "          maxLength: 19\n" +
+                "          minLength: 12\n" +
+                "          type: string\n" +
+                "          example: \"4242424242424242\"\n";
+        SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
         ModelConverters.reset();
     }
 }
