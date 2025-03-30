@@ -25,6 +25,15 @@ public class ModelConverterContextImpl implements ModelConverterContext {
     private final HashMap<AnnotatedType, Schema> modelByType;
     private final Set<AnnotatedType> processedTypes;
 
+    public Set<AnnotatedType> getProcessedTypes() {
+        return processedTypes;
+    }
+    public HashMap<AnnotatedType, Schema> getModelByType() {
+        return modelByType;
+    }
+    public Map<String, Schema> getModelByName() {
+        return modelByName;
+    }
     public ModelConverterContextImpl(List<ModelConverter> converters) {
         this.converters = converters;
         modelByName = new TreeMap<>();
