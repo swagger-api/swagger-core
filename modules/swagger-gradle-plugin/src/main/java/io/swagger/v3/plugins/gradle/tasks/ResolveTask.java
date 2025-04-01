@@ -554,7 +554,7 @@ public class ResolveTask extends DefaultTask {
                 method.invoke(swaggerLoader, validatorProcessorClass.get());
             }
 
-            if (defaultResponseCode.isPresent() && StringUtils.isNotBlank(groupsValidationStrategy.get())) {
+            if (groupsValidationStrategy.isPresent() && StringUtils.isNotBlank(groupsValidationStrategy.get())) {
                 method = swaggerLoaderClass.getDeclaredMethod("setGroupsValidationStrategy", String.class);
                 method.invoke(swaggerLoader, groupsValidationStrategy.get());
             }
