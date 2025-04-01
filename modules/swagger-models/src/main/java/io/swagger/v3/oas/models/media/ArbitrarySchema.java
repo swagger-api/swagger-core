@@ -3,7 +3,7 @@ package io.swagger.v3.oas.models.media;
 import java.util.Objects;
 
 /**
- * ObjectSchema
+ * ArbitrarySchema
  */
 
 public class ArbitrarySchema extends Schema<Object> {
@@ -51,7 +51,7 @@ public class ArbitrarySchema extends Schema<Object> {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("class ObjectSchema {\n");
+        sb.append("class ArbitrarySchema {\n");
         sb.append("    ").append(toIndentedString(super.toString())).append("\n");
         sb.append("}");
         return sb.toString();
