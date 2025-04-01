@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
+import io.swagger.v3.oas.models.media.ArbitrarySchema;
 import io.swagger.v3.oas.models.media.ArraySchema;
 import io.swagger.v3.oas.models.media.BooleanSchema;
 import io.swagger.v3.oas.models.media.ComposedSchema;
@@ -31,6 +32,15 @@ import java.util.List;
 import java.util.Set;
 
 public class ModelDeserializer extends JsonDeserializer<Schema> {
+
+    static Boolean useArbitrarySchema = false;
+    static {
+        if (System.getenv(Schema.USE_ARBITRARY_SCHEMA_PROPERTY) != null) {
+            useArbitrarySchema = Boolean.parseBoolean(System.getenv(Schema.USE_ARBITRARY_SCHEMA_PROPERTY));
+        } else if (System.getProperty(Schema.USE_ARBITRARY_SCHEMA_PROPERTY) != null) {
+            useArbitrarySchema = Boolean.parseBoolean(System.getProperty(Schema.USE_ARBITRARY_SCHEMA_PROPERTY));
+        }
+    }
 
     protected boolean openapi31 = false;
     @Override
@@ -85,18 +95,18 @@ public class ModelDeserializer extends JsonDeserializer<Schema> {
                     schema = Json.mapper().convertValue(node, StringSchema.class);
                 }
             } else if (type.textValue().equals("object")) {
-                schema = deserializeObjectSchema(node);
+                schema = deserializeArbitraryOrObjectSchema(node, true);
             }
         } else if (node.get("$ref") != null) {
             schema = new Schema().$ref(node.get("$ref").asText());
-        } else { // assume object
-            schema = deserializeObjectSchema(node);
+        } else {
+            schema = deserializeArbitraryOrObjectSchema(node, false);
         }
 
         return schema;
     }
 
-    private Schema deserializeObjectSchema(JsonNode node) {
+    private Schema deserializeArbitraryOrObjectSchema(JsonNode node, boolean alwaysObject) {
         JsonNode additionalProperties = node.get("additionalProperties");
         Schema schema = null;
         if (additionalProperties != null) {
@@ -117,7 +127,11 @@ public class ModelDeserializer extends JsonDeserializer<Schema> {
                 schema = ms;
             }
         } else {
-            schema = Json.mapper().convertValue(node, ObjectSchema.class);
+            if (!Boolean.TRUE.equals(useArbitrarySchema) || alwaysObject) {
+                schema = Json.mapper().convertValue(node, ObjectSchema.class);
+            } else {
+                schema = Json.mapper().convertValue(node, ArbitrarySchema.class);
+            }
         }
         if (schema != null) {
             schema.jsonSchema(Json31.jsonSchemaAsMap(node));

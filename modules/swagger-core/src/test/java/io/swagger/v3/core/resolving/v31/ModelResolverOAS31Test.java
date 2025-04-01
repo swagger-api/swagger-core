@@ -65,11 +65,12 @@ public class ModelResolverOAS31Test extends SwaggerTestBase {
                 "      - UNITED_STATES_OF_AMERICA\n" +
                 "      - CANADA\n" +
                 "  propertyNames:\n" +
-                "    $ref: \"#/components/schemas/PropertyNamesPattern\"\n" +
+                "    pattern: \"^[A-Za-z_][A-Za-z0-9_]*$\"\n" +
                 "AnnotatedCountry:\n" +
                 "  type: object\n" +
                 "  properties:\n" +
                 "    country:\n" +
+                "      type: string\n" +
                 "      const: United States\n" +
                 "Client:\n" +
                 "  type: object\n" +
@@ -167,16 +168,18 @@ public class ModelResolverOAS31Test extends SwaggerTestBase {
                 "  type: object\n" +
                 "  properties:\n" +
                 "    postalCode:\n" +
+                "      type: string\n" +
                 "      pattern: \"[0-9]{5}(-[0-9]{4})?\"\n" +
                 "PostalCodePattern:\n" +
                 "  type: object\n" +
                 "  properties:\n" +
                 "    postalCode:\n" +
+                "      type: string\n" +
                 "      pattern: \"[A-Z][0-9][A-Z] [0-9][A-Z][0-9]\"\n" +
                 "PropertyNamesPattern:\n" +
-                "  type: object\n" +
                 "  pattern: \"^[A-Za-z_][A-Za-z0-9_]*$\"\n");
     }
+
 
     @Test
     public void testDependentSchemasAnnotation() {

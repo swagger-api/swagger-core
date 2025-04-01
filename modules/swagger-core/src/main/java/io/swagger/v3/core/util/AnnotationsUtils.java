@@ -506,7 +506,7 @@ public abstract class AnnotationsUtils {
             arraySchemaObject = new ArraySchema();
         } else {
             if (existingSchema == null) {
-                arraySchemaObject = new ArraySchema();
+                arraySchemaObject = new JsonSchema().typesItem("array");
             } else {
                 arraySchemaObject = existingSchema;
             }
@@ -889,7 +889,7 @@ public abstract class AnnotationsUtils {
         Schema schemaObject;
         PrimitiveType primitiveType = PrimitiveType.fromType(schemaImplementation);
         if (primitiveType != null) {
-            schemaObject = primitiveType.createProperty();
+            schemaObject = openapi31 ? primitiveType.createProperty31() : primitiveType.createProperty();
         } else {
             schemaObject = new Schema();
             ResolvedSchema resolvedSchema = null;
@@ -1583,7 +1583,7 @@ public abstract class AnnotationsUtils {
                 }
                 if (annotationContent.schemaProperties().length > 0) {
                     if (mediaType.getSchema() == null) {
-                        mediaType.schema(new Schema<Object>().type("object"));
+                        mediaType.schema(openapi31 ? new JsonSchema().typesItem("object") : new Schema<Object>().type("object"));
                     }
                     Schema oSchema = mediaType.getSchema();
                     for (SchemaProperty sp: annotationContent.schemaProperties()) {

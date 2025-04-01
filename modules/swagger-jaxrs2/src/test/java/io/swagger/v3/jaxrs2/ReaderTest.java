@@ -89,6 +89,7 @@ import io.swagger.v3.jaxrs2.resources.Ticket4804CustomClass;
 import io.swagger.v3.jaxrs2.resources.Ticket4804ProcessorResource;
 import io.swagger.v3.jaxrs2.resources.Ticket4804Resource;
 import io.swagger.v3.jaxrs2.resources.Ticket4859Resource;
+import io.swagger.v3.jaxrs2.resources.Ticket4879Resource;
 import io.swagger.v3.jaxrs2.resources.UploadResource;
 import io.swagger.v3.jaxrs2.resources.UrlEncodedResourceWithEncodings;
 import io.swagger.v3.jaxrs2.resources.UserAnnotationResource;
@@ -3623,8 +3624,7 @@ public class ReaderTest {
                 "          properties:\n" +
                 "            foo:\n" +
                 "              $ref: \"#/components/schemas/Foo\"\n" +
-                "    SimpleCategory:\n" +
-                "      type: object\n" ;
+                "    SimpleCategory: {}\n";
         SerializationMatchers.assertEqualsToYaml31(openAPI, yaml);
     }
 
@@ -3698,7 +3698,6 @@ public class ReaderTest {
                 "components:\n" +
                 "  schemas:\n" +
                 "    PetSimple:\n" +
-                "      type: object\n" +
                 "      description: Pet\n";
         SerializationMatchers.assertEqualsToYaml31(openAPI, yaml);
     }
@@ -3747,7 +3746,6 @@ public class ReaderTest {
                 "components:\n" +
                 "  schemas:\n" +
                 "    PetSimple:\n" +
-                "      type: object\n" +
                 "      description: Pet\n";
         SerializationMatchers.assertEqualsToYaml31(openAPI, yaml);
     }
@@ -3793,7 +3791,6 @@ public class ReaderTest {
                 "components:\n" +
                 "  schemas:\n" +
                 "    PetSimple:\n" +
-                "      type: object\n" +
                 "      description: Pet\n";
         SerializationMatchers.assertEqualsToYaml31(openAPI, yaml);
     }
@@ -3870,7 +3867,6 @@ public class ReaderTest {
                 "components:\n" +
                 "  schemas:\n" +
                 "    PetSimple:\n" +
-                "      type: object\n" +
                 "      description: Pet\n";
         SerializationMatchers.assertEqualsToYaml31(openAPI, yaml);
     }
@@ -4080,7 +4076,7 @@ public class ReaderTest {
                 "          - United States of America\n" +
                 "          - Canada\n" +
                 "      propertyNames:\n" +
-                "        $ref: \"#/components/schemas/PropertyNamesPattern\"\n" +
+                "        pattern: \"^[A-Za-z_][A-Za-z0-9_]*$\"\n" +
                 "    AnnotatedCountry:\n" +
                 "      type: object\n" +
                 "      properties:\n" +
@@ -4102,7 +4098,6 @@ public class ReaderTest {
                 "        postalCode:\n" +
                 "          pattern: \"[A-Z][0-9][A-Z] [0-9][A-Z][0-9]\"\n" +
                 "    PropertyNamesPattern:\n" +
-                "      type: object\n" +
                 "      pattern: \"^[A-Za-z_][A-Za-z0-9_]*$\"\n";
         SerializationMatchers.assertEqualsToYaml31(openAPI, yaml);
     }
@@ -5161,6 +5156,77 @@ public class ReaderTest {
                 "          type: string\n" +
                 "          example: \"4242424242424242\"\n";
         SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
+        ModelConverters.reset();
+    }
+
+    @Test(description = "test default value type")
+    public void testTicket4879() {
+        ModelConverters.reset();
+        SwaggerConfiguration config = new SwaggerConfiguration().openAPI31(true);
+        Reader reader = new Reader(config);
+
+        OpenAPI openAPI = reader.read(Ticket4879Resource.class);
+        String yaml = "openapi: 3.1.0\n" +
+                "paths:\n" +
+                "  /test/test:\n" +
+                "    put:\n" +
+                "      operationId: test\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          '*/*':\n" +
+                "            schema:\n" +
+                "              $ref: \"#/components/schemas/DefaultClass\"\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*': {}\n" +
+                "  /test/testDefaultValueAnnotation:\n" +
+                "    get:\n" +
+                "      operationId: testDefault\n" +
+                "      parameters:\n" +
+                "      - name: myBool\n" +
+                "        in: query\n" +
+                "        schema:\n" +
+                "          type: boolean\n" +
+                "          default: true\n" +
+                "      - name: myInt\n" +
+                "        in: query\n" +
+                "        schema:\n" +
+                "          type: integer\n" +
+                "          format: int32\n" +
+                "          default: 1\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*': {}\n" +
+                "  /test/testsize:\n" +
+                "    get:\n" +
+                "      operationId: testSize\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          '*/*':\n" +
+                "            schema:\n" +
+                "              type: array\n" +
+                "              items:\n" +
+                "                type: string\n" +
+                "              maxItems: 100\n" +
+                "              minItems: 1\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*': {}\n" +
+                "components:\n" +
+                "  schemas:\n" +
+                "    DefaultClass:\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        name:\n" +
+                "          type: boolean\n" +
+                "          default: true\n";
+        SerializationMatchers.assertEqualsToYaml31(openAPI, yaml);
         ModelConverters.reset();
     }
 }

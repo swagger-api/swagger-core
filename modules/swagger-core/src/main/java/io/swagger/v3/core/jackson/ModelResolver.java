@@ -59,7 +59,6 @@ import io.swagger.v3.oas.models.media.Discriminator;
 import io.swagger.v3.oas.models.media.IntegerSchema;
 import io.swagger.v3.oas.models.media.JsonSchema;
 import io.swagger.v3.oas.models.media.MapSchema;
-import io.swagger.v3.oas.models.media.NumberSchema;
 import io.swagger.v3.oas.models.media.ObjectSchema;
 import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.media.StringSchema;
@@ -153,6 +152,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
     @Override
     public Schema resolve(AnnotatedType annotatedType, ModelConverterContext context, Iterator<ModelConverter> next) {
+        boolean implicitObject = false;
         boolean isPrimitive = false;
         Schema model = null;
         List<String> requiredProps = new ArrayList<>();
@@ -269,7 +269,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 resolveArraySchema(annotatedType, schema, resolvedArrayAnnotation);
                 Schema innerSchema = null;
 
-                Schema primitive = PrimitiveType.createProperty(cls);
+                Schema primitive = PrimitiveType.createProperty(cls, openapi31);
                 if (primitive != null) {
                     innerSchema = primitive;
                 } else {
@@ -310,7 +310,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 primitiveType = PrimitiveType.fromName(resolvedSchemaAnnotation.type());
             }
             if (primitiveType != null) {
-                Schema primitive = primitiveType.createProperty();
+                Schema primitive = openapi31 ? primitiveType.createProperty31() : primitiveType.createProperty();
                 model = primitive;
                 isPrimitive = true;
 
@@ -318,7 +318,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         }
 
         if (model == null && type.isEnumType()) {
-            model = new StringSchema();
+            model = openapi31 ? new JsonSchema().typesItem("string") : new StringSchema();
             _addEnumProps(type.getRawClass(), model);
             isPrimitive = true;
         }
@@ -326,7 +326,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             if (resolvedSchemaAnnotation != null && StringUtils.isEmpty(resolvedSchemaAnnotation.type())) {
                 PrimitiveType primitiveType = PrimitiveType.fromTypeAndFormat(type, resolvedSchemaAnnotation.format());
                 if (primitiveType != null) {
-                    model = primitiveType.createProperty();
+                    model = openapi31 ? primitiveType.createProperty31() : primitiveType.createProperty();
                     isPrimitive = true;
                 }
             } 
@@ -334,7 +334,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             if (model == null) {
                 PrimitiveType primitiveType = PrimitiveType.fromType(type);
                 if (primitiveType != null) {
-                    model = primitiveType.createProperty();
+                    model = openapi31 ? primitiveType.createProperty31() : primitiveType.createProperty();
                     isPrimitive = true;
                 }
             }
@@ -561,10 +561,16 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             }
         } else if (isComposedSchema) {
             model = new ComposedSchema().name(name);
-            if (openapi31 && resolvedArrayAnnotation == null) {
-                model.addType("object");
+            if (
+                    (openapi31 && Boolean.TRUE.equals(PrimitiveType.explicitObjectType)) ||
+                    (!openapi31 && (!Boolean.FALSE.equals(PrimitiveType.explicitObjectType)))) {
+                if (openapi31 && resolvedArrayAnnotation == null) {
+                    model.addType("object");
+                } else {
+                    model.type("object");
+                }
             } else {
-                model.type("object");
+                implicitObject = true;
             }
         } else {
             AnnotatedType aType = ReferenceTypeUtils.unwrapReference(annotatedType);
@@ -573,10 +579,16 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 return model;
             } else {
                 model = new Schema().name(name);
-                if (openapi31 && resolvedArrayAnnotation == null) {
-                    model.addType("object");
+                if (
+                        (openapi31 && Boolean.TRUE.equals(PrimitiveType.explicitObjectType)) ||
+                                (!openapi31 && (!Boolean.FALSE.equals(PrimitiveType.explicitObjectType)))) {
+                    if (openapi31 && resolvedArrayAnnotation == null) {
+                        model.addType("object");
+                    } else {
+                        model.type("object");
+                    }
                 } else {
-                    model.type("object");
+                    implicitObject = true;
                 }
             }
         }
@@ -1080,11 +1092,18 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             // define the model here to support self/cyclic referencing of models
             context.defineModel(name, model, annotatedType, null);
         }
-
+        // check if it has "object" related keywords
+        if (isInferredObjectSchema(model) && model.get$ref() == null) {
+          if (openapi31 && model.getTypes() == null) {
+            model.addType("object");
+          } else if (!openapi31 && model.getType() == null){
+            model.type("object");
+          }
+        }
         Schema.SchemaResolution resolvedSchemaResolution = AnnotationsUtils.resolveSchemaResolution(this.schemaResolution, resolvedSchemaAnnotation);
 
         if (model != null && annotatedType.isResolveAsRef() &&
-                (isComposedSchema || isObjectSchema(model)) &&
+                (isComposedSchema || isObjectSchema(model) || implicitObject) &&
                 StringUtils.isNotBlank(model.getName())) {
             if (context.getDefinedModels().containsKey(model.getName())) {
                 if (!Schema.SchemaResolution.INLINE.equals(resolvedSchemaResolution)) {
@@ -1290,9 +1309,13 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 } else {
                     n = _intr().findEnumValue(en);
                 }
-                if (property instanceof StringSchema) {
-                    StringSchema sp = (StringSchema) property;
-                    sp.addEnumItem(n);
+                if (isStringSchema(property)) {
+                    if (openapi31) {
+                        property.addEnumItemObject(n);
+                    } else {
+                        StringSchema sp = (StringSchema) property;
+                        sp.addEnumItem(n);
+                    }
                 }
             }
         }
@@ -1431,7 +1454,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                         final AnnotatedMember propMember = def.getPrimaryMember();
                         final JavaType propType = propMember.getType();
                         if (PrimitiveType.fromType(propType) != null) {
-                            return PrimitiveType.createProperty(propType);
+                            return PrimitiveType.createProperty(propType, openapi31);
                         } else {
                             List<Annotation> list = new ArrayList<>();
                             for (Annotation a : propMember.annotations()) {
@@ -2593,7 +2616,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                     modelToUpdate = context.getDefinedModels().get(model.get$ref().substring(SCHEMA_COMPONENT_PREFIX));
                 }
                 if (modelToUpdate.getProperties() == null || !modelToUpdate.getProperties().keySet().contains(typeInfoProp)) {
-                    Schema discriminatorSchema = new StringSchema().name(typeInfoProp);
+                    Schema discriminatorSchema = openapi31 ? new JsonSchema().typesItem("string").name(typeInfoProp) : new StringSchema().name(typeInfoProp);
                     modelToUpdate.addProperties(typeInfoProp, discriminatorSchema);
                     if (modelToUpdate.getRequired() == null || !modelToUpdate.getRequired().contains(typeInfoProp)) {
                         modelToUpdate.addRequiredItem(typeInfoProp);
@@ -3429,7 +3452,20 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
     }
 
     protected boolean isObjectSchema(Schema schema) {
-        return (schema.getTypes() != null && schema.getTypes().contains("object")) || "object".equals(schema.getType()) || (schema.getType() == null && schema.getProperties() != null && !schema.getProperties().isEmpty());
+        return (schema.getTypes() != null && schema.getTypes().contains("object")) || "object".equals(schema.getType()) || (schema.getType() == null && ((schema.getProperties() != null && !schema.getProperties().isEmpty()) || (schema.getPatternProperties() != null && !schema.getPatternProperties().isEmpty())));
+    }
+
+    protected boolean isInferredObjectSchema(Schema schema) {
+        return ((schema.getProperties() != null && !schema.getProperties().isEmpty())
+            || (schema.getPatternProperties() != null && !schema.getPatternProperties().isEmpty())
+            || (schema.getAdditionalProperties() != null)
+            || (schema.getUnevaluatedProperties() != null)
+            || (schema.getRequired() != null && !schema.getRequired().isEmpty())
+            || (schema.getPropertyNames() != null)
+            || (schema.getDependentRequired() != null && !schema.getDependentRequired().isEmpty())
+            || (schema.getDependentSchemas() != null && !schema.getDependentSchemas().isEmpty())
+            || (schema.getMinProperties() != null && schema.getMinProperties() > 0)
+            || (schema.getMaxProperties() != null && schema.getMaxProperties() > 0));
     }
 
     protected boolean isArraySchema(Schema schema) {
