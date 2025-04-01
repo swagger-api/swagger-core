@@ -47,6 +47,9 @@ public class Schema<T> {
 
     public static final String SCHEMA_RESOLUTION_PROPERTY = "schema-resolution";
     public static final String APPLY_SCHEMA_RESOLUTION_PROPERTY = "apply-schema-resolution";
+    public static final String EXPLICIT_OBJECT_SCHEMA_PROPERTY = "explicit-object-schema";
+    public static final String USE_ARBITRARY_SCHEMA_PROPERTY = "use-arbitrary-schema";
+
     public enum SchemaResolution {
         @JsonProperty("default")
         DEFAULT("default"),
@@ -539,6 +542,16 @@ public class Schema<T> {
 
     /**
      *
+     * @since 2.2.30 (OpenAPI 3.1.0)
+     */
+    @OpenAPI31
+    public Schema typesItem(String type) {
+        addType(type);
+        return this;
+    }
+
+    /**
+     *
      * @since 2.2.0 (OpenAPI 3.1.0)
      */
     @OpenAPI31
@@ -821,7 +834,7 @@ public class Schema<T> {
 
 
     /**
-     * returns the name property from a from a Schema instance. Ignored in serialization.
+     * returns the name property from a Schema instance. Ignored in serialization.
      *
      * @return String name
      **/

@@ -253,8 +253,8 @@ public class ParameterProcessor {
                     if (parameter.getSchema() == null) {
                         parameter.setSchema(new ArraySchema());
                     }
-                    if (parameter.getSchema() instanceof ArraySchema) {
-                        ArraySchema as = (ArraySchema) parameter.getSchema();
+                    if (isArraySchema(parameter.getSchema())) {
+                        Schema as = parameter.getSchema();
                         Integer min = (Integer) annotation.annotationType().getMethod("min").invoke(annotation);
                         if (min != null) {
                             as.setMinItems(min);
@@ -281,10 +281,9 @@ public class ParameterProcessor {
             }
         }
         if (paramSchema != null) {
-            if (paramSchema instanceof ArraySchema) {
-                ArraySchema as = (ArraySchema) paramSchema;
+            if (isArraySchema(paramSchema)) {
                 if (defaultValue != null) {
-                    as.getItems().setDefault(defaultValue);
+                    paramSchema.getItems().setDefault(defaultValue);
                 }
             } else {
                 if (defaultValue != null) {
@@ -293,6 +292,10 @@ public class ParameterProcessor {
             }
         }
         return parameter;
+    }
+
+    public static boolean isArraySchema(Schema schema) {
+        return "array".equals(schema.getType()) || (schema.getTypes() != null && schema.getTypes().contains("array"));
     }
 
     public static void setParameterExplode(Parameter parameter, io.swagger.v3.oas.annotations.Parameter p) {
