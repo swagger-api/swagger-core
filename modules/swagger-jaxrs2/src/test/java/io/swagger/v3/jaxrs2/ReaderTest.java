@@ -86,6 +86,7 @@ import io.swagger.v3.jaxrs2.resources.Ticket4412Resource;
 import io.swagger.v3.jaxrs2.resources.Ticket4446Resource;
 import io.swagger.v3.jaxrs2.resources.Ticket4483Resource;
 import io.swagger.v3.jaxrs2.resources.Ticket4804CustomClass;
+import io.swagger.v3.jaxrs2.resources.Ticket4804NotBlankResource;
 import io.swagger.v3.jaxrs2.resources.Ticket4804ProcessorResource;
 import io.swagger.v3.jaxrs2.resources.Ticket4804Resource;
 import io.swagger.v3.jaxrs2.resources.Ticket4859Resource;
@@ -4551,6 +4552,87 @@ public class ReaderTest {
                 "          type: string\n" +
                 "        description:\n" +
                 "          type: string\n";
+        SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
+        ModelConverters.reset();
+    }
+
+    @Test(description = "Constraints annotations with groups - Default NotBlank")
+    public void testTicket4804DefaultNotBlank() {
+        ModelConverters.reset();
+        SwaggerConfiguration config = new SwaggerConfiguration();
+        Reader reader = new Reader(config);
+
+        OpenAPI openAPI = reader.read(Ticket4804NotBlankResource.class);
+        String yaml = "openapi: 3.0.1\n" +
+                "paths:\n" +
+                "  /test/barcart:\n" +
+                "    put:\n" +
+                "      operationId: barCart\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          '*/*':\n" +
+                "            schema:\n" +
+                "              $ref: \"#/components/schemas/Cart\"\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*': {}\n" +
+                "  /test/createcart:\n" +
+                "    post:\n" +
+                "      operationId: postCart\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          '*/*':\n" +
+                "            schema:\n" +
+                "              $ref: \"#/components/schemas/Cart\"\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*': {}\n" +
+                "  /test/updatecart:\n" +
+                "    put:\n" +
+                "      operationId: putCart\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          '*/*':\n" +
+                "            schema:\n" +
+                "              $ref: \"#/components/schemas/Cart\"\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*': {}\n" +
+                "components:\n" +
+                "  schemas:\n" +
+                "    Cart:\n" +
+                "      required:\n" +
+                "      - notNullcartDetails\n" +
+                "      - pageSizes\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        pageSizes:\n" +
+                "          type: array\n" +
+                "          items:\n" +
+                "            type: integer\n" +
+                "            format: int32\n" +
+                "        notNullcartDetails:\n" +
+                "          $ref: \"#/components/schemas/CartDetails\"\n" +
+                "    CartDetails:\n" +
+                "      required:\n" +
+                "      - description\n" +
+                "      - name\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        name:\n" +
+                "          minLength: 1\n" +
+                "          type: string\n" +
+                "        description:\n" +
+                "          minItems: 1\n" +
+                "          type: array\n" +
+                "          items:\n" +
+                "            type: string\n";
         SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
         ModelConverters.reset();
     }

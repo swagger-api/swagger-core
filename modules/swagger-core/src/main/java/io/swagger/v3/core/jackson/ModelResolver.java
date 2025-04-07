@@ -1703,7 +1703,8 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         if (parent != null &&
                 Arrays.stream(annotations).anyMatch(
                         annotation -> annotation.annotationType().getSimpleName().equals("NonNull"))) {
-            modified = updateRequiredItem(parent, property.getName());
+            modified = updateRequiredItem(parent, property.getName()) || modified;
+
         }
 
         // see if we have Validated or other group-aware annotations
@@ -1730,12 +1731,12 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             if (anno.groups().length == 0 && acceptNoGroups) {
                 ;
                 // no groups, so apply
-                modified = updateRequiredItem(parent, property.getName());
+                modified = updateRequiredItem(parent, property.getName()) || modified;
             } else {
                 // check if the groups match
                 for (Class group : anno.groups()) {
                     if (invocationGroups.contains(group)) {
-                        modified = updateRequiredItem(parent, property.getName());
+                        modified = updateRequiredItem(parent, property.getName()) || modified;
                     }
                 }
             }
@@ -1763,18 +1764,22 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                         modified = true;
                     }
                 }
+                modified = updateRequiredItem(parent, property.getName()) || modified;
             }
         }
 
         if (annos.containsKey("javax.validation.constraints.NotBlank")) {
             NotBlank anno = (NotBlank) annos.get("javax.validation.constraints.NotBlank");
             boolean apply = checkGroupValidation(anno.groups(), invocationGroups, acceptNoGroups);
-            if (apply && isStringSchema(property)) {
-                io.swagger.v3.oas.annotations.media.Schema ctxSchema = AnnotationsUtils.getSchemaAnnotation(annotations);
-                if (ctxSchema == null || ctxSchema.minLength() == 0) {
-                    property.setMinLength(1);
-                    modified = true;
+            if (apply) {
+                if (isStringSchema(property)) {
+                    io.swagger.v3.oas.annotations.media.Schema ctxSchema = AnnotationsUtils.getSchemaAnnotation(annotations);
+                    if (ctxSchema == null || ctxSchema.minLength() == 0) {
+                        property.setMinLength(1);
+                        modified = true;
+                    }
                 }
+                modified = updateRequiredItem(parent, property.getName()) || modified;
             }
         }
         if (annos.containsKey("javax.validation.constraints.Min")) {
@@ -1847,14 +1852,13 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             }
         }
         if (validatorProcessor != null && validatorProcessor.getMode().equals(ValidatorProcessor.MODE.AFTER)) {
-            modified = validatorProcessor.applyBeanValidatorAnnotations(property, annotations, parent, applyNotNullAnnotations);
+            modified = validatorProcessor.applyBeanValidatorAnnotations(property, annotations, parent, applyNotNullAnnotations) || modified;
         }
         return modified;
     }
 
     protected boolean checkGroupValidation(Class[] groups, Set<Class> invocationGroups, boolean acceptNoGroups) {
         if (groups.length == 0) {
-            ;
             return acceptNoGroups;
         } else {
             for (Class group : groups) {
