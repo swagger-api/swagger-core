@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -311,13 +312,14 @@ public class ParameterProcessor {
     private static boolean isExplodable(io.swagger.v3.oas.annotations.Parameter p, Parameter parameter) {
         io.swagger.v3.oas.annotations.media.Schema schema = AnnotationsUtils.hasArrayAnnotation(p.array()) ? p.array().schema() : p.schema();
         boolean explode = true;
-        if ("form".equals(parameter.getIn())){
-            return true;
-        }
         if (schema != null) {
             Class implementation = schema.implementation();
             if (implementation == Void.class) {
-                if (!schema.type().equals("object") && !schema.type().equals("array")) {
+                if (!schema.type().equals("object") && !schema.type().equals("array") && !schema.type().isEmpty()) {
+                    explode = false;
+                }
+                if (schema.types().length != 0 &&
+                        (!Arrays.asList(schema.types()).contains("array") && !Arrays.asList(schema.types()).contains("object"))) {
                     explode = false;
                 }
             }

@@ -82,6 +82,7 @@ import io.swagger.v3.jaxrs2.resources.Ticket3015Resource;
 import io.swagger.v3.jaxrs2.resources.Ticket3587Resource;
 import io.swagger.v3.jaxrs2.resources.Ticket3731BisResource;
 import io.swagger.v3.jaxrs2.resources.Ticket3731Resource;
+import io.swagger.v3.jaxrs2.resources.Ticket4065Resource;
 import io.swagger.v3.jaxrs2.resources.Ticket4412Resource;
 import io.swagger.v3.jaxrs2.resources.Ticket4446Resource;
 import io.swagger.v3.jaxrs2.resources.Ticket4483Resource;
@@ -5308,6 +5309,36 @@ public class ReaderTest {
                 "        name:\n" +
                 "          type: boolean\n" +
                 "          default: true\n";
+        SerializationMatchers.assertEqualsToYaml31(openAPI, yaml);
+        ModelConverters.reset();
+    }
+
+    @Test(description = "test explode FALSE")
+    public void testTicket4065() {
+        ModelConverters.reset();
+        SwaggerConfiguration config = new SwaggerConfiguration();
+        Reader reader = new Reader(config);
+
+        OpenAPI openAPI = reader.read(Ticket4065Resource.class);
+        String yaml = "openapi: 3.0.1\n" +
+                "paths:\n" +
+                "  /bar:\n" +
+                "    get:\n" +
+                "      operationId: test\n" +
+                "      parameters:\n" +
+                "      - name: blub\n" +
+                "        in: query\n" +
+                "        explode: false\n" +
+                "        schema:\n" +
+                "          type: array\n" +
+                "          items:\n" +
+                "            type: integer\n" +
+                "            format: int64\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            application/json: {}\n";
         SerializationMatchers.assertEqualsToYaml31(openAPI, yaml);
         ModelConverters.reset();
     }
