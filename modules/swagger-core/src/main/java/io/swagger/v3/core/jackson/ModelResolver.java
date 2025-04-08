@@ -1741,7 +1741,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
         if (parent != null &&
                 Arrays.stream(annotations).anyMatch(
-                        annotation -> annotation.annotationType().getSimpleName().equals("NonNull"))) {
+                        annotation -> annotation.annotationType().getSimpleName().equalsIgnoreCase("NonNull"))) {
             modified = updateRequiredItem(parent, property.getName()) || modified;
 
         }

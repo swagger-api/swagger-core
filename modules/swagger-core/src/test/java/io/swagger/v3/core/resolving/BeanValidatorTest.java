@@ -25,6 +25,7 @@ public class BeanValidatorTest {
         final Map<String, Schema> properties = model.getProperties();
 
         assertTrue(model.getRequired().contains("id"));
+        assertTrue(model.getRequired().contains("username"));
 
         final StringSchema username = (StringSchema) properties.get("username");
         assertEquals((String) username.getPattern(), "(?![-._])[-._a-zA-Z0-9]{3,32}");
