@@ -65,6 +65,7 @@ import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.media.StringSchema;
 import io.swagger.v3.oas.models.media.UUIDSchema;
 import io.swagger.v3.oas.models.media.XML;
+import javax.validation.constraints.Email;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.slf4j.Logger;
@@ -1889,6 +1890,20 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 }
             }
         }
+        if (annos.containsKey("javax.validation.constraints.Email")) {
+            Email email = (Email) annos.get("javax.validation.constraints.Email");
+            boolean apply = checkGroupValidation(email.groups(), invocationGroups, acceptNoGroups);
+            if (apply) {
+                if (isStringSchema(property)) {
+                    property.setFormat("email");
+                    modified = true;
+                }
+                if (property.getItems() != null && isStringSchema(property.getItems())) {
+                    property.getItems().setFormat("email");
+                    modified = true;
+                }
+            }
+        }
         if (validatorProcessor != null && validatorProcessor.getMode().equals(ValidatorProcessor.MODE.AFTER)) {
             modified = validatorProcessor.applyBeanValidatorAnnotations(property, annotations, parent, applyNotNullAnnotations) || modified;
         }
@@ -1996,6 +2011,16 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             }
             if (property.getItems() != null && isStringSchema(property.getItems())) {
                 property.getItems().setPattern(pattern.regexp());
+                modified = true;
+            }
+        }
+        if (annos.containsKey("javax.validation.constraints.Email")) {
+            if (isStringSchema(property)) {
+                property.setFormat("email");
+                modified = true;
+            }
+            if (property.getItems() != null && isStringSchema(property.getItems())) {
+                property.getItems().setFormat("email");
                 modified = true;
             }
         }
