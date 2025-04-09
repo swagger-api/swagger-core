@@ -3,6 +3,7 @@ package io.swagger.v3.core.resolving;
 import io.swagger.v3.core.converter.ModelConverters;
 import io.swagger.v3.core.oas.models.BeanValidationsModel;
 import io.swagger.v3.oas.models.media.ArraySchema;
+import io.swagger.v3.oas.models.media.EmailSchema;
 import io.swagger.v3.oas.models.media.IntegerSchema;
 import io.swagger.v3.oas.models.media.NumberSchema;
 import io.swagger.v3.oas.models.media.Schema;
@@ -23,6 +24,9 @@ public class BeanValidatorTest {
 
         Assert.assertTrue(model.getRequired().contains("id"));
 
+        final StringSchema username = (StringSchema) properties.get("username");
+        Assert.assertEquals((String) username.getPattern(), "(?![-._])[-._a-zA-Z0-9]{3,32}");
+
         final IntegerSchema age = (IntegerSchema) properties.get("age");
         Assert.assertEquals(age.getMinimum(), new BigDecimal(13.0));
         Assert.assertEquals(age.getMaximum(), new BigDecimal(99.0));
@@ -31,8 +35,8 @@ public class BeanValidatorTest {
         Assert.assertEquals((int) password.getMinLength(), 6);
         Assert.assertEquals((int) password.getMaxLength(), 20);
 
-        final StringSchema email = (StringSchema) properties.get("email");
-        Assert.assertEquals((String) email.getPattern(), "(.+?)@(.+?)");
+        final EmailSchema email = (EmailSchema) properties.get("email");
+        Assert.assertEquals((String) email.getFormat(), "email");
 
         final NumberSchema minBalance = (NumberSchema) properties.get("minBalance");
         Assert.assertTrue(minBalance.getExclusiveMinimum());
