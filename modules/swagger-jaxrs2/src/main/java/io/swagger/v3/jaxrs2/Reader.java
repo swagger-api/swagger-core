@@ -16,6 +16,7 @@ import io.swagger.v3.core.util.KotlinDetector;
 import io.swagger.v3.core.util.ParameterProcessor;
 import io.swagger.v3.core.util.PathUtils;
 import io.swagger.v3.core.util.ReflectionUtils;
+import io.swagger.v3.core.util.SecurityParser;
 import io.swagger.v3.jaxrs2.ext.OpenAPIExtension;
 import io.swagger.v3.jaxrs2.ext.OpenAPIExtensions;
 import io.swagger.v3.jaxrs2.util.ReaderUtils;
