@@ -24,15 +24,13 @@ import io.swagger.v3.oas.models.security.Scopes;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.servers.Server;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import org.testng.Assert;
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotNull;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.Map;
+
+import static org.testng.Assert.assertEquals;
 
 public class SecurityDefinitionTest {
 
