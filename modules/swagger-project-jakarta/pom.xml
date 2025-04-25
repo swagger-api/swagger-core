@@ -484,7 +484,6 @@
         <bnd-version>6.4.0</bnd-version>
         <servlet-api-version>5.0.0</servlet-api-version>
         <jersey2-version>3.1.10</jersey2-version>
-        <junit-version>4.13.2</junit-version>
         <jackson-version>2.18.2</jackson-version>
         <jackson-databind-version>2.18.2</jackson-databind-version>
         <logback-version>1.5.16</logback-version>
