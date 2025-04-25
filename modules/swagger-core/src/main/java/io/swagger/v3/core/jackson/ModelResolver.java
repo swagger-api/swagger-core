@@ -226,7 +226,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             if (resolvedArrayAnnotation == null) {
                 schemaRefFromAnnotation = resolvedSchemaAnnotation.ref();
                 if (!openapi31) {
-                    return new JsonSchema().$ref(resolvedSchemaAnnotation.ref()).name(name);
+                    return new Schema().$ref(resolvedSchemaAnnotation.ref()).name(name);
                 }
             } else {
                 ArraySchema schema = new ArraySchema();
@@ -578,9 +578,8 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 model = context.resolve(aType);
                 return model;
             } else {
-                model = new Schema().name(name);
-                if (
-                        (openapi31 && Boolean.TRUE.equals(PrimitiveType.explicitObjectType)) ||
+                model = openapi31 ? new JsonSchema().name(name) : new Schema().name(name);
+                if ((openapi31 && Boolean.TRUE.equals(PrimitiveType.explicitObjectType)) ||
                                 (!openapi31 && (!Boolean.FALSE.equals(PrimitiveType.explicitObjectType)))) {
                     if (openapi31 && resolvedArrayAnnotation == null) {
                         model.addType("object");
@@ -2604,7 +2603,8 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         if (schema != null &&
                 schema.extensions() != null &&
                 schema.extensions().length > 0) {
-            return AnnotationsUtils.getExtensions(openapi31, schema.extensions());
+            boolean usePrefix = !openapi31;
+            return AnnotationsUtils.getExtensions(openapi31, usePrefix, schema.extensions());
         }
         return null;
     }
@@ -2798,7 +2798,8 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         if (arraySchema != null &&
                 arraySchema.extensions() != null &&
                 arraySchema.extensions().length > 0) {
-            return AnnotationsUtils.getExtensions(openapi31, arraySchema.extensions());
+            boolean usePrefix = !openapi31;
+            return AnnotationsUtils.getExtensions(openapi31, usePrefix, arraySchema.extensions());
         }
         return null;
     }

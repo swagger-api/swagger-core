@@ -539,7 +539,8 @@ public abstract class AnnotationsUtils {
         }
 
         if (arraySchema.extensions().length > 0) {
-            Map<String, Object> extensions = AnnotationsUtils.getExtensions(openapi31, arraySchema.extensions());
+            boolean usePrefix = !openapi31;
+            Map<String, Object> extensions = AnnotationsUtils.getExtensions(openapi31, usePrefix, arraySchema.extensions());
             if (extensions != null) {
                 extensions.forEach(arraySchemaObject::addExtension);
             }
@@ -831,7 +832,8 @@ public abstract class AnnotationsUtils {
         }
 
         if (schema.extensions().length > 0) {
-            Map<String, Object> extensions = AnnotationsUtils.getExtensions(openapi31, schema.extensions());
+            boolean usePrefix = !openapi31;
+            Map<String, Object> extensions = AnnotationsUtils.getExtensions(openapi31, usePrefix, schema.extensions());
             if (extensions != null) {
                 extensions.forEach(schemaObject::addExtension);
             }
@@ -1847,20 +1849,26 @@ public abstract class AnnotationsUtils {
     }
 
     public static Map<String, Object> getExtensions(Extension... extensions) {
-        return getExtensions(false, extensions);
+        return getExtensions(false, true, extensions);
     }
 
     public static Map<String, Object> getExtensions(boolean openapi31, Extension... extensions) {
+        return getExtensions(openapi31, true, extensions);
+    }
+
+    public static Map<String, Object> getExtensions(boolean openapi31, boolean usePrefix, Extension... extensions) {
         final Map<String, Object> map = new HashMap<>();
         for (Extension extension : extensions) {
             final String name = extension.name();
-            String decoratedName = openapi31 ? name : StringUtils.prependIfMissing(name, "x-");
-            final String key = name.length() > 0 ? decoratedName : name;
+            String decoratedName = usePrefix
+                    ? StringUtils.prependIfMissing(name, "x-")
+                    : name;
+            final String key = name.isEmpty() ? name : decoratedName;
 
             for (ExtensionProperty property : extension.properties()) {
                 final String propertyName = property.name();
                 final String propertyValue = property.value();
-                JsonNode processedValue = null;
+                JsonNode processedValue;
                 final boolean propertyAsJson = property.parseValue();
                 if (StringUtils.isNotBlank(propertyName) && StringUtils.isNotBlank(propertyValue)) {
                     if (key.isEmpty()) {
@@ -1871,14 +1879,14 @@ public abstract class AnnotationsUtils {
                                 } else {
                                     processedValue = Json.mapper().readTree(propertyValue);
                                 }
-                                decoratedName = openapi31 ? propertyName : StringUtils.prependIfMissing(propertyName, "x-");
+                                decoratedName = usePrefix ? StringUtils.prependIfMissing(propertyName, "x-") : propertyName;
                                 map.put(decoratedName, processedValue);
                             } catch (Exception e) {
-                                decoratedName = openapi31 ? propertyName : StringUtils.prependIfMissing(propertyName, "x-");
+                                decoratedName = usePrefix ? StringUtils.prependIfMissing(propertyName, "x-") : propertyName;
                                 map.put(decoratedName, propertyValue);
                             }
                         } else {
-                            decoratedName = openapi31 ? propertyName : StringUtils.prependIfMissing(propertyName, "x-");
+                            decoratedName = usePrefix ? StringUtils.prependIfMissing(propertyName, "x-") : propertyName;
                             map.put(decoratedName, propertyValue);
                         }
                     } else {

@@ -90,6 +90,7 @@ import io.swagger.v3.jaxrs2.resources.Ticket4804CustomClass;
 import io.swagger.v3.jaxrs2.resources.Ticket4804NotBlankResource;
 import io.swagger.v3.jaxrs2.resources.Ticket4804ProcessorResource;
 import io.swagger.v3.jaxrs2.resources.Ticket4804Resource;
+import io.swagger.v3.jaxrs2.resources.Ticket4850Resource;
 import io.swagger.v3.jaxrs2.resources.Ticket4859Resource;
 import io.swagger.v3.jaxrs2.resources.Ticket4879Resource;
 import io.swagger.v3.jaxrs2.resources.UploadResource;
@@ -5342,4 +5343,37 @@ public class ReaderTest {
         SerializationMatchers.assertEqualsToYaml31(openAPI, yaml);
         ModelConverters.reset();
     }
+
+    @Test(description = "Extensions Tests OAS 3.1")
+    public void testExtensionsOAS31() {
+        SwaggerConfiguration config = new SwaggerConfiguration().openAPI31(true);
+        Reader reader = new Reader(config);
+
+        OpenAPI openAPI = reader.read(Ticket4850Resource.class);
+        assertNotNull(openAPI);
+
+        String yaml = "openapi: 3.1.0\n" +
+                "paths:\n" +
+                "  /bar:\n" +
+                "    get:\n" +
+                "      operationId: test\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*':\n" +
+                "              schema:\n" +
+                "                $ref: \"#/components/schemas/ExtensionsResource\"\n" +
+                "components:\n" +
+                "  schemas:\n" +
+                "    ExtensionsResource:\n" +
+                "      description: ExtensionsResource\n" +
+                "      x-user:\n" +
+                "        name: Josh\n" +
+                "      user-extensions:\n" +
+                "        lastName: Hart\n" +
+                "        address: House";
+        SerializationMatchers.assertEqualsToYaml31(openAPI, yaml);
+    }
+
 }
