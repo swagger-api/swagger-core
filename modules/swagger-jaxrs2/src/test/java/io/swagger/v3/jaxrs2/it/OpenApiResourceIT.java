@@ -6,7 +6,6 @@ import io.restassured.http.ContentType;
 import io.swagger.v3.core.util.Json;
 import io.swagger.v3.core.util.Yaml;
 import io.swagger.v3.jaxrs2.annotations.AbstractAnnotationTest;
-import org.testng.Assert;
 import org.testng.SkipException;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -14,6 +13,7 @@ import org.testng.annotations.Test;
 import java.io.IOException;
 
 import static io.restassured.RestAssured.given;
+import static org.testng.Assert.assertTrue;
 
 /**
  * <p>
@@ -664,7 +664,7 @@ public class OpenApiResourceIT extends AbstractAnnotationTest {
                 .contentType("application/yaml")
                 .extract().response().body().asString();
 
-        Assert.assertTrue(actualBody.contains("openapi: 3.1.0"));
+        assertTrue(actualBody.contains("openapi: 3.1.0"));
     }
 
     @Test
@@ -681,7 +681,7 @@ public class OpenApiResourceIT extends AbstractAnnotationTest {
                 .contentType("application/yaml")
                 .extract().response().body().asString();
 
-        Assert.assertTrue(actualBody.contains("openapi: 3.1.0"));
+        assertTrue(actualBody.contains("openapi: 3.1.0"));
     }
 
     @Test
@@ -696,7 +696,7 @@ public class OpenApiResourceIT extends AbstractAnnotationTest {
                 .assertThat()
                 .statusCode(200)
                 .extract().response().body().asString();
-        Assert.assertTrue(actualBody.contains("openapi: 3.1.0"));
+        assertTrue(actualBody.contains("openapi: 3.1.0"));
     }
 
     private String formatYaml(String source) throws IOException {

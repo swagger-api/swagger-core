@@ -6,7 +6,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.headers.Header;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.models.headers.Header.StyleEnum;
-import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -14,6 +13,8 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Optional;
+
+import static org.testng.Assert.assertEquals;
 
 public class AnnotationsUtilsHeadersTest {
 
@@ -48,7 +49,7 @@ public class AnnotationsUtilsHeadersTest {
         final Optional<Map<String, io.swagger.v3.oas.models.headers.Header>> optionalMap =
                 AnnotationsUtils.getHeaders(headers, null, null);
 
-        Assert.assertEquals(optionalMap, expected);
+        assertEquals(optionalMap, expected);
     }
 
     @Operation(description = "method")
