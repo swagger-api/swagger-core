@@ -611,12 +611,6 @@
                 <scope>test</scope>
             </dependency>
             <dependency>
-                <groupId>junit</groupId>
-                <artifactId>junit</artifactId>
-                <version>${junit-version}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
                 <groupId>org.apache.ant</groupId>
                 <artifactId>ant</artifactId>
                 <version>${ant-version}</version>
@@ -647,7 +641,6 @@
         <bnd-version>6.4.0</bnd-version>
         <servlet-api-version>4.0.4</servlet-api-version>
         <jersey2-version>2.46</jersey2-version>
-        <junit-version>4.13.2</junit-version>
         <jackson-version>2.18.2</jackson-version>
         <jackson-databind-version>2.18.2</jackson-databind-version>
         <logback-version>1.5.16</logback-version>

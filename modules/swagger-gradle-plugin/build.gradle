@@ -42,7 +42,7 @@ dependencies {
     testImplementation 'com.google.guava:guava:32.1.3-jre'
     testImplementation 'javax.ws.rs:javax.ws.rs-api:2.1.1'
     testImplementation "io.swagger.core.v3:swagger-jaxrs2:${project.version}"
-    testImplementation 'junit:junit:4+'
+    testImplementation 'org.testng:testng:7.10.2'
     testImplementation "org.eclipse.jetty:jetty-server:${project.jettyVersion}"
     testImplementation "org.eclipse.jetty:jetty-servlet:${project.jettyVersion}"
     testImplementation "org.eclipse.jetty:jetty-servlets:${project.jettyVersion}"
@@ -99,6 +99,10 @@ pluginBundle {
             id          = project.pluginId
         }
     }
+}
+
+test {
+    useTestNG()
 }
 
 publishing {

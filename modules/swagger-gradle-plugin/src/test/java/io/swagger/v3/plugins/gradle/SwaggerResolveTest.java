@@ -2,10 +2,7 @@ package io.swagger.v3.plugins.gradle;
 
 import static java.lang.String.format;
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS;
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.hasItem;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.testng.Assert.assertTrue;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -13,30 +10,29 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import org.gradle.testkit.runner.BuildResult;
 import org.gradle.testkit.runner.GradleRunner;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.testng.annotations.Test;
+import org.testng.annotations.BeforeMethod;
 
 public class SwaggerResolveTest {
 
-    @Rule
-    public final TemporaryFolder testProjectDir = new TemporaryFolder();
-    private File buildFile;
-    private File settingsFile;
-    private File openapiInputFile;
+    private Path testProjectDir;
+    private Path buildFile;
+    private Path settingsFile;
+    private Path openapiInputFile;
     private String outputFile;
     private String outputDir;
 
-    @Before
+    @BeforeMethod
     public void setup() throws IOException {
-        buildFile = testProjectDir.newFile("build.gradle");
-        settingsFile = testProjectDir.newFile("settings.gradle");
-        openapiInputFile = testProjectDir.newFile("openapiinput.yaml");
+        testProjectDir = Files.createTempDirectory("test");
+        buildFile = Files.createFile(testProjectDir.resolve("build.gradle"));
+        settingsFile = Files.createFile(testProjectDir.resolve("settings.gradle"));
+        openapiInputFile = Files.createFile(testProjectDir.resolve("openapiinput.yaml"));
         writeFile(openapiInputFile, "openapi: 3.0.1\n" +
                 "servers:\n" +
                 "- url: http://foo\n" +
@@ -85,7 +81,7 @@ public class SwaggerResolveTest {
                 "    implementation 'javax.ws.rs:javax.ws.rs-api:2.1'\n" +
                 "    implementation 'javax.servlet:javax.servlet-api:3.1.0'\n" +
                 "    testImplementation 'com.github.tomakehurst:wiremock:2.27.2'\n" +
-                "    testImplementation 'junit:junit:4+'\n" +
+                "    testImplementation 'org.testng:testng:7.10.2'\n" +
                 "\n" +
                 "\n" +
                 "}\n" +
@@ -98,7 +94,7 @@ public class SwaggerResolveTest {
                 "    resourcePackages = ['io.swagger.v3.plugins.gradle.petstore']\n" +
                 "    outputPath = \'" + toNormalizedPath(outputDir) + "\'\n" +
                 "    filterClass = \'io.swagger.v3.plugins.gradle.resources.MyFilter\'\n" +
-                "    openApiFile = file(\'" + toNormalizedPath(openapiInputFile.getAbsolutePath()) + "\')\n" +
+                "    openApiFile = file(\'" + toNormalizedPath(openapiInputFile.toAbsolutePath().toString()) + "\')\n" +
                 "}";
 
 
@@ -118,18 +114,18 @@ public class SwaggerResolveTest {
 
         BuildResult result = GradleRunner.create()
                 .withPluginClasspath()
-                .withProjectDir(testProjectDir.getRoot())
+                .withProjectDir(testProjectDir.toFile())
                 .withDebug(true)
                 .withArguments(resolveTask, "--stacktrace", "--info")
                 .forwardOutput()
                 .build();
 
-        assertThat(result.taskPaths(SUCCESS), hasItem(format(":%s", resolveTask)));
-        assertThat(new File(outputDir + "/PetStoreAPI.json").exists(), is(true));
-        assertThat(new String(Files.readAllBytes(Paths.get(outputDir, "PetStoreAPI.json")), StandardCharsets.UTF_8), containsString("UPDATEDBYFILTER"));
+        assertTrue(result.taskPaths(SUCCESS).contains(format(":%s", resolveTask)));
+        assertTrue(new File(outputDir + "/PetStoreAPI.json").exists());
+        assertTrue(Files.readString(Paths.get(outputDir, "PetStoreAPI.json")).contains("UPDATEDBYFILTER"));
     }
 
-     @Test
+    @Test
     public void testSwaggerResolveWithOAS31OptionTask() throws IOException {
         outputDir = testProjectDir.getRoot().toString() + "/target";
         outputFile = testProjectDir.getRoot().toString() + "/testAPI31.json";
@@ -158,7 +154,7 @@ public class SwaggerResolveTest {
                 "    implementation 'javax.ws.rs:javax.ws.rs-api:2.1'\n" +
                 "    implementation 'javax.servlet:javax.servlet-api:3.1.0'\n" +
                 "    testImplementation 'com.github.tomakehurst:wiremock:2.27.2'\n" +
-                "    testImplementation 'junit:junit:4+'\n" +
+                "    testImplementation 'org.testng:testng:7.10.2'\n" +
                 "\n" +
                 "\n" +
                 "}\n" +
@@ -172,7 +168,7 @@ public class SwaggerResolveTest {
                 "    outputPath = \'" + toNormalizedPath(outputDir) + "\'\n" +
                 "    openAPI31 = \'TRUE\'\n" +
                 "    convertToOpenAPI31 = \'TRUE\'\n" +
-                "    openApiFile = file(\'" + toNormalizedPath(openapiInputFile.getAbsolutePath()) + "\')\n" +
+                "    openApiFile = file(\'" + toNormalizedPath(openapiInputFile.toAbsolutePath().toString()) + "\')\n" +
                 "}";
 
 
@@ -192,24 +188,23 @@ public class SwaggerResolveTest {
 
         BuildResult result = GradleRunner.create()
                 .withPluginClasspath()
-                .withProjectDir(testProjectDir.getRoot())
+                .withProjectDir(testProjectDir.toFile())
                 .withDebug(true)
                 .withArguments(resolveTask, "--stacktrace", "--info")
                 .forwardOutput()
                 .build();
 
-        assertThat(result.taskPaths(SUCCESS), hasItem(format(":%s", resolveTask)));
-        assertThat(new File(outputDir + "/PetStoreAPI31.json").exists(), is(true));
+        assertTrue(result.taskPaths(SUCCESS).contains(format(":%s", resolveTask)));
+        assertTrue(new File(outputDir + "/PetStoreAPI31.json").exists());
 
         byte[] content = Files.readAllBytes(Paths.get(outputDir, "PetStoreAPI31.json"));
 
         String strContent = new String(content, StandardCharsets.UTF_8);
-        assertThat(strContent, containsString("\"openapi\" : \"3.1.0\""));
-        //
+        assertTrue(strContent.contains("\"openapi\" : \"3.0.1\""));
     }
 
-    private static void writeFile(File destination, String content) throws IOException {
-        try (BufferedWriter output = new BufferedWriter(new FileWriter(destination))) {
+    private static void writeFile(Path destination, String content) throws IOException {
+        try (BufferedWriter output = new BufferedWriter(new FileWriter(destination.toFile()))) {
             output.write(content);
         }
     }

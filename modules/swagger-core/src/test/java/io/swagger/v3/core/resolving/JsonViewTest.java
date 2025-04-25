@@ -8,13 +8,14 @@ import io.swagger.v3.core.converter.ModelConverterContextImpl;
 import io.swagger.v3.core.jackson.ModelResolver;
 import io.swagger.v3.core.resolving.resources.JsonViewObject;
 import io.swagger.v3.oas.models.media.Schema;
-import org.junit.Test;
-import org.testng.Assert;
+import org.testng.annotations.Test;
 
 import java.lang.annotation.Annotation;
 import java.util.Map;
 
 import static io.swagger.v3.core.resolving.SwaggerTestBase.mapper;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
 
 public class JsonViewTest {
 
@@ -41,11 +42,11 @@ public class JsonViewTest {
                     .getAnnotations()));
 
     Map<String, Schema> properties = model.getProperties();
-    Assert.assertEquals(properties.size(), 4);
-    Assert.assertNotNull(properties.get("id"));
-    Assert.assertNotNull(properties.get("firstName"));
-    Assert.assertNotNull(properties.get("lastName"));
-    Assert.assertNotNull(properties.get("email"));
+    assertEquals(properties.size(), 4);
+    assertNotNull(properties.get("id"));
+    assertNotNull(properties.get("firstName"));
+    assertNotNull(properties.get("lastName"));
+    assertNotNull(properties.get("email"));
   }
 
   @Test
@@ -74,9 +75,9 @@ public class JsonViewTest {
                     .getAnnotations()));
 
     Map<String, Schema> properties = model.getProperties();
-    Assert.assertEquals(properties.size(), 3);
-    Assert.assertNotNull(properties.get("id"));
-    Assert.assertNotNull(properties.get("firstName"));
-    Assert.assertNotNull(properties.get("lastName"));
+    assertEquals(properties.size(), 3);
+    assertNotNull(properties.get("id"));
+    assertNotNull(properties.get("firstName"));
+    assertNotNull(properties.get("lastName"));
   }
 }
