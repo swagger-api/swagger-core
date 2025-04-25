@@ -17,8 +17,6 @@
         <eclipse.transformer.version>0.20</eclipse.transformer.version>
         <maven-test-harness.version>3.3.0</maven-test-harness.version>
         <shrinkwrap.version>1.2.6</shrinkwrap.version>
-        <junit-jupiter.version>5.7.0</junit-jupiter.version>
-        <junit-platform.version>1.7.0</junit-platform.version>
         <assertj.version>3.18.1</assertj.version>
     </properties>
     <build>

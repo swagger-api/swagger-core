@@ -9,8 +9,10 @@ import io.swagger.v3.core.matchers.SerializationMatchers;
 import io.swagger.v3.core.resolving.resources.Ticket2884Model;
 import io.swagger.v3.core.resolving.resources.Ticket2884ModelClass;
 import io.swagger.v3.oas.models.media.Schema;
-import org.junit.Assert;
 import org.testng.annotations.Test;
+
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertTrue;
 
 public class Ticket2884Test extends SwaggerTestBase {
 
@@ -53,8 +55,8 @@ public class Ticket2884Test extends SwaggerTestBase {
     public void test2884_null() {
         ResolvedSchema schema = ModelConverters.getInstance().readAllAsResolvedSchema(new AnnotatedType(Ticket2884ModelClass.class).resolveAsRef(true));
         Schema o = (Schema)schema.schema.getProperties().get(Ticket2884ModelClass.class.getSimpleName());
-        Assert.assertNotNull(o);
-        Assert.assertTrue(o.get$ref().contains(Ticket2884ModelClass.class.getSimpleName()));
+        assertNotNull(o);
+        assertTrue(o.get$ref().contains(Ticket2884ModelClass.class.getSimpleName()));
         SerializationMatchers.assertEqualsToYaml(schema.schema.getProperties(), "Ticket2884ModelClass:\n" +
                 "  $ref: \"#/components/schemas/Ticket2884ModelClass\"");
 

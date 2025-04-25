@@ -1,6 +1,5 @@
 package io.swagger.v3.jaxrs2.util;
 
-import org.hamcrest.collection.IsMapContaining;
 import org.testng.annotations.Test;
 
 import javax.ws.rs.core.MultivaluedHashMap;
@@ -10,8 +9,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
 
 public class ServletUtilsTest {
 
@@ -35,11 +34,11 @@ public class ServletUtilsTest {
         Map<String, String[]> params = new HashMap<>();
         params.put(URLEncoder.encode("key1&", UTF_8.name()), new String[]{"value1", URLEncoder.encode("value2?", UTF_8.name())});
         params.put("key2", new String[]{URLEncoder.encode("value2", UTF_8.name()), "value3", "value4", "value4"});
-        assertThat(params, IsMapContaining.hasEntry("key1%26", new String[]{"value1", "value2%3F"}));
+        assertEquals(params.get("key1%26"), new String[]{"value1", "value2%3F"});
 
         MultivaluedHashMap<String, String> multivaluedHashMap = ServletUtils.getQueryParams(params);
         assertEquals(multivaluedHashMap.size(), 2);
-        assertThat(multivaluedHashMap, IsMapContaining.hasKey("key1&"));
+        assertNotNull(multivaluedHashMap.get("key1&"));
         assertEquals(multivaluedHashMap.get("key1&").size(), 2);
         assertEquals(multivaluedHashMap.get("key1&"), Arrays.asList("value1", "value2?"));
         assertEquals(multivaluedHashMap.get("key2"), Arrays.asList("value2", "value3", "value4", "value4"));
