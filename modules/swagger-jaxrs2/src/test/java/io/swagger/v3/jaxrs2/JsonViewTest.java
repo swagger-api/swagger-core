@@ -12,8 +12,6 @@ import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.PathItem;
 import io.swagger.v3.oas.models.media.MediaType;
 
-import org.testng.Assert;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -28,6 +26,9 @@ import javax.ws.rs.Path;
 import javax.ws.rs.core.Response;
 
 import org.testng.annotations.Test;
+
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertTrue;
 
 public class JsonViewTest {
 
@@ -162,12 +163,12 @@ public class JsonViewTest {
 
         OpenAPI openAPI = reader.read(CarSummaryApi.class);
         String openApiJson = Json.mapper().writeValueAsString(openAPI);
-        Assert.assertTrue(openApiJson.contains("manufacture"));
-        Assert.assertTrue(openApiJson.contains("model"));
-        Assert.assertTrue(openApiJson.contains("color"));
-        Assert.assertFalse(openApiJson.contains("tires"));
-        Assert.assertFalse(openApiJson.contains("made"));
-        Assert.assertFalse(openApiJson.contains("condition"));
+        assertTrue(openApiJson.contains("manufacture"));
+        assertTrue(openApiJson.contains("model"));
+        assertTrue(openApiJson.contains("color"));
+        assertFalse(openApiJson.contains("tires"));
+        assertFalse(openApiJson.contains("made"));
+        assertFalse(openApiJson.contains("condition"));
 
         reader = new Reader(new OpenAPI());
         openAPI = reader.read(CarSummaryUpdateApi.class);
@@ -190,59 +191,59 @@ public class JsonViewTest {
             .orElse(new MediaType())
             .getSchema()
             .get$ref();
-        Assert.assertTrue(carSummarySchemaProperties.contains("manufacture"));
-        Assert.assertTrue(carSummarySchemaProperties.contains("model"));
-        Assert.assertTrue(carSummarySchemaProperties.contains("color"));
-        Assert.assertFalse(carSummarySchemaProperties.contains("price"));
-        Assert.assertFalse(carSummarySchemaProperties.contains("tires"));
-        Assert.assertFalse(carSummarySchemaProperties.contains("made"));
-        Assert.assertFalse(carSummarySchemaProperties.contains("condition"));
-        Assert.assertTrue(carSummaryUpdateApiRequestBodySchemaRef.contains("Car_Summary"));
+        assertTrue(carSummarySchemaProperties.contains("manufacture"));
+        assertTrue(carSummarySchemaProperties.contains("model"));
+        assertTrue(carSummarySchemaProperties.contains("color"));
+        assertFalse(carSummarySchemaProperties.contains("price"));
+        assertFalse(carSummarySchemaProperties.contains("tires"));
+        assertFalse(carSummarySchemaProperties.contains("made"));
+        assertFalse(carSummarySchemaProperties.contains("condition"));
+        assertTrue(carSummaryUpdateApiRequestBodySchemaRef.contains("Car_Summary"));
 
         reader = new Reader(new OpenAPI());
         openAPI = reader.read(CarDetailApi.class);
         openApiJson = Json.mapper().writeValueAsString(openAPI);
-        Assert.assertTrue(openApiJson.contains("manufacture"));
-        Assert.assertTrue(openApiJson.contains("model"));
-        Assert.assertTrue(openApiJson.contains("color"));
-        Assert.assertTrue(openApiJson.contains("tires"));
-        Assert.assertTrue(openApiJson.contains("brand"));
-        Assert.assertTrue(openApiJson.contains("condition"));
-        Assert.assertTrue(openApiJson.contains("Car_Detail"));
+        assertTrue(openApiJson.contains("manufacture"));
+        assertTrue(openApiJson.contains("model"));
+        assertTrue(openApiJson.contains("color"));
+        assertTrue(openApiJson.contains("tires"));
+        assertTrue(openApiJson.contains("brand"));
+        assertTrue(openApiJson.contains("condition"));
+        assertTrue(openApiJson.contains("Car_Detail"));
 
         reader = new Reader(new OpenAPI());
         openAPI = reader.read(CarSaleSummaryApi.class);
         openApiJson = Json.mapper().writeValueAsString(openAPI);
         Yaml.prettyPrint(openAPI);
-        Assert.assertTrue(openApiJson.contains("manufacture"));
-        Assert.assertTrue(openApiJson.contains("model"));
-        Assert.assertTrue(openApiJson.contains("color"));
-        Assert.assertTrue(openApiJson.contains("price"));
-        Assert.assertFalse(openApiJson.contains("tires"));
-        Assert.assertFalse(openApiJson.contains("made"));
-        Assert.assertFalse(openApiJson.contains("condition"));
+        assertTrue(openApiJson.contains("manufacture"));
+        assertTrue(openApiJson.contains("model"));
+        assertTrue(openApiJson.contains("color"));
+        assertTrue(openApiJson.contains("price"));
+        assertFalse(openApiJson.contains("tires"));
+        assertFalse(openApiJson.contains("made"));
+        assertFalse(openApiJson.contains("condition"));
 
         reader = new Reader(new OpenAPI());
         openAPI = reader.read(CarApi.class);
         openApiJson = Json.mapper().writeValueAsString(openAPI);
-        Assert.assertTrue(openApiJson.contains("manufacture"));
-        Assert.assertTrue(openApiJson.contains("model"));
-        Assert.assertTrue(openApiJson.contains("color"));
-        Assert.assertTrue(openApiJson.contains("price"));
-        Assert.assertTrue(openApiJson.contains("tires"));
-        Assert.assertFalse(openApiJson.contains("made"));
-        Assert.assertTrue(openApiJson.contains("condition"));
+        assertTrue(openApiJson.contains("manufacture"));
+        assertTrue(openApiJson.contains("model"));
+        assertTrue(openApiJson.contains("color"));
+        assertTrue(openApiJson.contains("price"));
+        assertTrue(openApiJson.contains("tires"));
+        assertFalse(openApiJson.contains("made"));
+        assertTrue(openApiJson.contains("condition"));
 
         reader = new Reader(new OpenAPI());
         openAPI = reader.read(CarIgnoreApi.class);
         openApiJson = Json.mapper().writeValueAsString(openAPI);
-        Assert.assertTrue(openApiJson.contains("manufacture"));
-        Assert.assertTrue(openApiJson.contains("model"));
-        Assert.assertTrue(openApiJson.contains("color"));
-        Assert.assertTrue(openApiJson.contains("price"));
-        Assert.assertTrue(openApiJson.contains("tires"));
-        Assert.assertFalse(openApiJson.contains("made"));
-        Assert.assertTrue(openApiJson.contains("condition"));
+        assertTrue(openApiJson.contains("manufacture"));
+        assertTrue(openApiJson.contains("model"));
+        assertTrue(openApiJson.contains("color"));
+        assertTrue(openApiJson.contains("price"));
+        assertTrue(openApiJson.contains("tires"));
+        assertFalse(openApiJson.contains("made"));
+        assertTrue(openApiJson.contains("condition"));
     }
 
 }

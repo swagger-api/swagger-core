@@ -8,11 +8,13 @@ import io.swagger.v3.oas.models.media.IntegerSchema;
 import io.swagger.v3.oas.models.media.NumberSchema;
 import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.media.StringSchema;
-import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import java.math.BigDecimal;
 import java.util.Map;
+
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
 public class BeanValidatorTest {
 
@@ -22,36 +24,36 @@ public class BeanValidatorTest {
         final Schema model = schemas.get("BeanValidationsModel");
         final Map<String, Schema> properties = model.getProperties();
 
-        Assert.assertTrue(model.getRequired().contains("id"));
+        assertTrue(model.getRequired().contains("id"));
 
         final StringSchema username = (StringSchema) properties.get("username");
-        Assert.assertEquals((String) username.getPattern(), "(?![-._])[-._a-zA-Z0-9]{3,32}");
+        assertEquals((String) username.getPattern(), "(?![-._])[-._a-zA-Z0-9]{3,32}");
 
         final IntegerSchema age = (IntegerSchema) properties.get("age");
-        Assert.assertEquals(age.getMinimum(), new BigDecimal(13.0));
-        Assert.assertEquals(age.getMaximum(), new BigDecimal(99.0));
+        assertEquals(age.getMinimum(), new BigDecimal(13.0));
+        assertEquals(age.getMaximum(), new BigDecimal(99.0));
 
         final StringSchema password = (StringSchema) properties.get("password");
-        Assert.assertEquals((int) password.getMinLength(), 6);
-        Assert.assertEquals((int) password.getMaxLength(), 20);
+        assertEquals((int) password.getMinLength(), 6);
+        assertEquals((int) password.getMaxLength(), 20);
 
         final EmailSchema email = (EmailSchema) properties.get("email");
-        Assert.assertEquals((String) email.getFormat(), "email");
+        assertEquals((String) email.getFormat(), "email");
 
         final NumberSchema minBalance = (NumberSchema) properties.get("minBalance");
-        Assert.assertTrue(minBalance.getExclusiveMinimum());
+        assertTrue(minBalance.getExclusiveMinimum());
 
         final NumberSchema maxBalance = (NumberSchema) properties.get("maxBalance");
-        Assert.assertTrue(maxBalance.getExclusiveMaximum());
+        assertTrue(maxBalance.getExclusiveMaximum());
 
         final ArraySchema items = (ArraySchema) properties.get("items");
-        Assert.assertEquals((int) items.getMinItems(), 2);
-        Assert.assertEquals((int) items.getMaxItems(), 10);
-        Assert.assertEquals((int) items.getItems().getMinLength(), 3);
-        Assert.assertEquals((int) items.getItems().getMaxLength(), 4);
+        assertEquals((int) items.getMinItems(), 2);
+        assertEquals((int) items.getMaxItems(), 10);
+        assertEquals((int) items.getItems().getMinLength(), 3);
+        assertEquals((int) items.getItems().getMaxLength(), 4);
 
         final StringSchema optionalValue = (StringSchema) properties.get("optionalValue");
-        Assert.assertEquals((int) optionalValue.getMinLength(), 1);
-        Assert.assertEquals((int) optionalValue.getMaxLength(), 10);
+        assertEquals((int) optionalValue.getMinLength(), 1);
+        assertEquals((int) optionalValue.getMaxLength(), 10);
     }
 }

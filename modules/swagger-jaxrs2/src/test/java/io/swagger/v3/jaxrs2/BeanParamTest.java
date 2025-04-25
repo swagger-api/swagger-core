@@ -6,7 +6,6 @@ import javax.ws.rs.BeanParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 
-import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import io.swagger.v3.jaxrs2.resources.model.ListOfStringsBeanParam;
@@ -14,6 +13,8 @@ import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.media.ArraySchema;
 import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.parameters.Parameter;
+
+import static org.testng.Assert.assertEquals;
 
 public class BeanParamTest {
 
@@ -29,13 +30,13 @@ public class BeanParamTest {
     public void shouldSerializeTypeParameter() {
         OpenAPI openApi = new Reader(new OpenAPI()).read(MyBeanParamResource.class);
         List<Parameter> getOperationParams = openApi.getPaths().get("/").getGet().getParameters();
-        Assert.assertEquals(getOperationParams.size(), 1);
+        assertEquals(getOperationParams.size(), 1);
         Parameter param = getOperationParams.get(0);
-        Assert.assertEquals(param.getName(), "listOfStrings");
+        assertEquals(param.getName(), "listOfStrings");
         Schema<?> schema = param.getSchema();
         // These are the important checks:
-        Assert.assertEquals(schema.getClass(), ArraySchema.class);
-        Assert.assertEquals(((ArraySchema) schema).getItems().getType(), "string");   
+        assertEquals(schema.getClass(), ArraySchema.class);
+        assertEquals(schema.getItems().getType(), "string");
     }
 
 }
