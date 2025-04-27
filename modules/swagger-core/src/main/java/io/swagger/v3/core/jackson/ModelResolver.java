@@ -1264,14 +1264,16 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         final boolean useToString = _mapper.isEnabled(SerializationFeature.WRITE_ENUMS_USING_TO_STRING);
 
         Optional<Method> jsonValueMethod = Arrays.stream(propClass.getDeclaredMethods())
-                .filter(m -> m.isAnnotationPresent(JsonValue.class))
-                .filter(m -> m.getAnnotation(JsonValue.class).value())
-                .findFirst();
+                .filter(m -> {
+                    JsonValue annotation = ReflectionUtils.getAnnotation(m, JsonValue.class);
+                    return annotation != null && annotation.value();
+                }).findFirst();
 
         Optional<Field> jsonValueField = Arrays.stream(propClass.getDeclaredFields())
-                .filter(f -> f.isAnnotationPresent(JsonValue.class))
-                .filter(f -> f.getAnnotation(JsonValue.class).value())
-                .findFirst();
+                .filter(f -> {
+                    JsonValue annotation = f.getAnnotation(JsonValue.class);
+                    return annotation != null && annotation.value();
+                }).findFirst();
 
         jsonValueMethod.ifPresent(m -> m.setAccessible(true));
         jsonValueField.ifPresent(m -> m.setAccessible(true));
