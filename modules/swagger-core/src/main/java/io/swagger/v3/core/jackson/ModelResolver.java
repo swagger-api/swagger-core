@@ -53,6 +53,7 @@ import io.swagger.v3.oas.annotations.media.SchemaProperties;
 import io.swagger.v3.oas.annotations.media.SchemaProperty;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.ExternalDocumentation;
+import io.swagger.v3.oas.models.SpecVersion;
 import io.swagger.v3.oas.models.media.ArraySchema;
 import io.swagger.v3.oas.models.media.ComposedSchema;
 import io.swagger.v3.oas.models.media.Discriminator;
@@ -230,8 +231,12 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 }
             } else {
                 ArraySchema schema = new ArraySchema();
+                if (openapi31) {
+                    schema.specVersion(SpecVersion.V31);
+                }
                 resolveArraySchema(annotatedType, schema, resolvedArrayAnnotation);
-                return schema.items(new Schema().$ref(resolvedSchemaAnnotation.ref()).name(name));
+                Schema itemsSchema = openapi31 ? new JsonSchema() : new Schema();
+                return schema.items(itemsSchema.$ref(resolvedSchemaAnnotation.ref()).name(name));
             }
         }
 
@@ -266,6 +271,9 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                     .skipOverride(true);
             if (resolvedArrayAnnotation != null) {
                 ArraySchema schema = new ArraySchema();
+                if (openapi31) {
+                    schema.specVersion(SpecVersion.V31);
+                }
                 resolveArraySchema(annotatedType, schema, resolvedArrayAnnotation);
                 Schema innerSchema = null;
 
@@ -277,10 +285,14 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                     if (innerSchema != null && isObjectSchema(innerSchema) && StringUtils.isNotBlank(innerSchema.getName())) {
                         // create a reference for the items
                         if (context.getDefinedModels().containsKey(innerSchema.getName())) {
-                            innerSchema = new Schema().$ref(constructRef(innerSchema.getName()));
+                            String ref = constructRef(innerSchema.getName());
+                            innerSchema = openapi31 ? new JsonSchema() : new Schema();
+                            innerSchema.$ref(ref);
                         }
                     } else if (innerSchema != null && innerSchema.get$ref() != null) {
-                        innerSchema = new Schema().$ref(StringUtils.isNotEmpty(innerSchema.get$ref()) ? innerSchema.get$ref() : innerSchema.getName());
+                        String ref = StringUtils.isNotEmpty(innerSchema.get$ref()) ? innerSchema.get$ref() : innerSchema.getName();
+                        innerSchema = openapi31 ? new JsonSchema() : new Schema();
+                        innerSchema.$ref(ref);
                     }
                 }
                 schema.setItems(innerSchema);
@@ -290,10 +302,14 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 if (implSchema != null && aType.isResolveAsRef() && isObjectSchema(implSchema) && StringUtils.isNotBlank(implSchema.getName())) {
                     // create a reference for the items
                     if (context.getDefinedModels().containsKey(implSchema.getName())) {
-                        implSchema = new Schema().$ref(constructRef(implSchema.getName()));
+                        String ref = constructRef(implSchema.getName());
+                        implSchema = openapi31 ? new JsonSchema() : new Schema();
+                        implSchema.$ref(ref);
                     }
                 } else if (implSchema != null && implSchema.get$ref() != null) {
-                    implSchema = new Schema().$ref(StringUtils.isNotEmpty(implSchema.get$ref()) ? implSchema.get$ref() : implSchema.getName());
+                    String ref = StringUtils.isNotEmpty(implSchema.get$ref()) ? implSchema.get$ref() : implSchema.getName();
+                    implSchema = openapi31 ? new JsonSchema() : new Schema();
+                    implSchema.$ref(ref);
                 }
                 return implSchema;
             }
@@ -365,7 +381,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         }
 
         if ("Object".equals(name)) {
-            Schema schema = new Schema();
+            Schema schema = openapi31 ? new JsonSchema() : new Schema();
             if (schemaRefFromAnnotation != null) {
                 schema.raw$ref(schemaRefFromAnnotation);
             }
@@ -386,6 +402,9 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             resolveSchemaMembers(model, annotatedType, context, next);
             if (resolvedArrayAnnotation != null) {
                 ArraySchema schema = new ArraySchema();
+                if (openapi31) {
+                    schema.specVersion(SpecVersion.V31);
+                }
                 resolveArraySchema(annotatedType, schema, resolvedArrayAnnotation);
                 schema.setItems(model);
                 return schema;
@@ -394,7 +413,8 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 // Store off the ref and add the enum as a top-level model
                 context.defineModel(name, model, annotatedType, null);
                 // Return the model as a ref only property
-                model = new Schema().$ref(Components.COMPONENTS_SCHEMAS_REF + name);
+                model = openapi31 ? new JsonSchema() : new Schema();
+                model.$ref(Components.COMPONENTS_SCHEMAS_REF + name);
             }
             if (!isComposedSchema) {
                 if (schemaRefFromAnnotation != null && model != null) {
@@ -488,14 +508,20 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                                 addPropertiesSchema = context.getDefinedModels().get(pName);
                             } else {
                                 // create a reference for the items
-                                addPropertiesSchema = new Schema().$ref(constructRef(pName));
+                                addPropertiesSchema = openapi31 ? new JsonSchema() : new Schema();
+                                addPropertiesSchema.$ref(constructRef(pName));
                             }
                         }
                     } else if (addPropertiesSchema.get$ref() != null) {
-                        addPropertiesSchema = new Schema().$ref(StringUtils.isNotEmpty(addPropertiesSchema.get$ref()) ? addPropertiesSchema.get$ref() : addPropertiesSchema.getName());
+                        String ref = StringUtils.isNotEmpty(addPropertiesSchema.get$ref()) ? addPropertiesSchema.get$ref() : addPropertiesSchema.getName();
+                        addPropertiesSchema = openapi31 ? new JsonSchema() : new Schema();
+                        addPropertiesSchema.$ref(ref);
                     }
                 }
                 Schema mapModel = new MapSchema().additionalProperties(addPropertiesSchema);
+                if (openapi31) {
+                    mapModel.specVersion(SpecVersion.V31);
+                }
                 mapModel.name(name);
                 model = mapModel;
             } else if (valueType != null) {
@@ -540,15 +566,21 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                             items = context.getDefinedModels().get(pName);
                         } else {
                             // create a reference for the items
-                            items = new Schema().$ref(constructRef(pName));
+                            items = openapi31 ? new JsonSchema() : new Schema();
+                            items.$ref(constructRef(pName));
                         }
                     }
                 } else if (items.get$ref() != null) {
-                    items = new Schema().$ref(StringUtils.isNotEmpty(items.get$ref()) ? items.get$ref() : items.getName());
+                    String ref = StringUtils.isNotEmpty(items.get$ref()) ? items.get$ref() : items.getName();
+                    items = openapi31 ? new JsonSchema() : new Schema();
+                    items.$ref(ref);
                 }
 
                 Schema arrayModel =
                         new ArraySchema().items(items);
+                if (openapi31) {
+                    arrayModel.specVersion(SpecVersion.V31);
+                }
                 if (_isSetType(type.getRawClass())) {
                     arrayModel.setUniqueItems(true);
                 }
@@ -560,7 +592,8 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 }
             }
         } else if (isComposedSchema) {
-            model = new ComposedSchema().name(name);
+            model = openapi31 ? new JsonSchema() : new ComposedSchema();
+            model.name(name);
             if (
                     (openapi31 && Boolean.TRUE.equals(PrimitiveType.explicitObjectType)) ||
                     (!openapi31 && (!Boolean.FALSE.equals(PrimitiveType.explicitObjectType)))) {
@@ -783,7 +816,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                         handleUnwrapped(props, innerModel, uw.prefix(), uw.suffix(), requiredProps);
                         return null;
                     } else {
-                        return new Schema();
+                        return openapi31 ? new JsonSchema() : new Schema();
                     }
                 });
                 property = context.resolve(aType);
@@ -851,13 +884,15 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                                 if (Schema.SchemaResolution.INLINE.equals(resolvedSchemaResolution)) {
                                     property = context.getDefinedModels().get(pName);
                                 } else if (Schema.SchemaResolution.ALL_OF.equals(resolvedSchemaResolution) && ctxProperty != null) {
-                                    property = new Schema()
+                                    property = openapi31 ? new JsonSchema() : new Schema();
+                                    property
                                             .addAllOfItem(ctxProperty)
-                                            .addAllOfItem(new Schema().$ref(constructRef(pName)));
+                                            .addAllOfItem(openapi31 ? new JsonSchema().$ref(constructRef(pName)) : new Schema().$ref(constructRef(pName)));
                                 } else if (Schema.SchemaResolution.ALL_OF_REF.equals(resolvedSchemaResolution) && ctxProperty != null) {
-                                    property = ctxProperty.addAllOfItem(new Schema().$ref(constructRef(pName)));
+                                    property = ctxProperty.addAllOfItem(openapi31 ? new JsonSchema().$ref(constructRef(pName)) : new Schema().$ref(constructRef(pName)));
                                 } else {
-                                    property = new Schema().$ref(constructRef(pName));
+                                    property = openapi31 ? new JsonSchema() : new Schema();
+                                    property.$ref(constructRef(pName));
                                 }
                                 property = clone(property);
                                 // TODO: why is this needed? is it not handled before?
@@ -1078,7 +1113,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             if (!composedModelPropertiesAsSibling) {
                 if (composedSchema.getAllOf() != null && !composedSchema.getAllOf().isEmpty()) {
                     if (composedSchema.getProperties() != null && !composedSchema.getProperties().isEmpty()) {
-                        ObjectSchema propSchema = new ObjectSchema();
+                        Schema propSchema = openapi31 ? new JsonSchema().typesItem("object") : new ObjectSchema();
                         propSchema.properties(composedSchema.getProperties());
                         composedSchema.setProperties(null);
                         composedSchema.addAllOfItem(propSchema);
@@ -1116,11 +1151,14 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         if (model != null && resolvedArrayAnnotation != null) {
             if (!"array".equals(model.getType())) {
                 ArraySchema schema = new ArraySchema();
+                if (openapi31) {
+                    schema.specVersion(SpecVersion.V31);
+                }
                 schema.setItems(model);
                 resolveArraySchema(annotatedType, schema, resolvedArrayAnnotation);
                 return schema;
             } else {
-                if (model instanceof ArraySchema) {
+                if (isArraySchema(model)) {
                     resolveArraySchema(annotatedType, (ArraySchema) model, resolvedArrayAnnotation);
                 }
             }
@@ -1589,7 +1627,8 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 model = resolve(type, context, null);
             }
             model.addProperties(propertyName, id);
-            return new Schema().$ref(StringUtils.isNotEmpty(model.get$ref())
+            Schema retSchema = openapi31 ? new JsonSchema() : new Schema();
+            return retSchema.$ref(StringUtils.isNotEmpty(model.get$ref())
                     ? model.get$ref() : model.getName());
         }
 
@@ -2046,7 +2085,8 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             } else {
                 composedSchema = (ComposedSchema) subtypeModel;
             }
-            Schema refSchema = new Schema().$ref(Components.COMPONENTS_SCHEMAS_REF + model.getName());
+            Schema refSchema = openapi31 ? new JsonSchema() : new Schema();
+            refSchema.$ref(Components.COMPONENTS_SCHEMAS_REF + model.getName());
             // allOf could have already being added during type resolving when @Schema(allOf..) is declared
             if (composedSchema.getAllOf() == null || !composedSchema.getAllOf().contains(refSchema)) {
                 composedSchema.addAllOfItem(refSchema);
@@ -2055,7 +2095,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             if (!composedModelPropertiesAsSibling) {
                 if (composedSchema.getAllOf() != null && !composedSchema.getAllOf().isEmpty()) {
                     if (composedSchema.getProperties() != null && !composedSchema.getProperties().isEmpty()) {
-                        ObjectSchema propSchema = new ObjectSchema();
+                        Schema propSchema = openapi31 ? new JsonSchema().typesItem("object") : new ObjectSchema();
                         propSchema.properties(composedSchema.getProperties());
                         composedSchema.setProperties(null);
                         composedSchema.addAllOfItem(propSchema);
@@ -2654,7 +2694,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 if (JsonTypeInfo.Id.NAME.equals(id) && name == null) {
                     name = type.getRawClass().getSimpleName();
                 }
-                Schema wrapperSchema = new ObjectSchema();
+                Schema wrapperSchema = openapi31 ? new JsonSchema().typesItem("object") : new ObjectSchema();
                 wrapperSchema.name(model.getName());
                 wrapperSchema.addProperties(name, model);
                 return wrapperSchema;
@@ -2890,7 +2930,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
     protected void resolveContains(AnnotatedType annotatedType, ArraySchema arraySchema, io.swagger.v3.oas.annotations.media.ArraySchema arraySchemaAnnotation) {
         final io.swagger.v3.oas.annotations.media.Schema containsAnnotation = arraySchemaAnnotation.contains();
-        final Schema contains = new Schema();
+        final Schema contains = openapi31 ? new JsonSchema() : new Schema();
         if (containsAnnotation.types().length > 0) {
             for (String type : containsAnnotation.types()) {
                 contains.addType(type);
@@ -2911,7 +2951,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
     protected void resolveUnevaluatedItems(AnnotatedType annotatedType, ArraySchema arraySchema, io.swagger.v3.oas.annotations.media.ArraySchema arraySchemaAnnotation) {
         final io.swagger.v3.oas.annotations.media.Schema unevaluatedItemsAnnotation = arraySchemaAnnotation.unevaluatedItems();
-        final Schema unevaluatedItems = new Schema();
+        final Schema unevaluatedItems = openapi31 ? new JsonSchema() : new Schema();
         if (StringUtils.isNotBlank(unevaluatedItemsAnnotation.type())) {
             unevaluatedItems.addType(unevaluatedItemsAnnotation.type());
         }
@@ -3388,7 +3428,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 }
                 if (resolvedArrayAnnotation.prefixItems().length > 0) {
                     for (io.swagger.v3.oas.annotations.media.Schema prefixItemAnnotation : resolvedArrayAnnotation.prefixItems()) {
-                        final Schema prefixItem = new Schema();
+                        final Schema prefixItem = new JsonSchema();
                         if (StringUtils.isNotBlank(prefixItemAnnotation.type())) {
                             prefixItem.addType(prefixItemAnnotation.type());
                         }
@@ -3497,7 +3537,8 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         Schema result = schema;
         if (isObjectSchema(schema) && StringUtils.isNotBlank(schema.getName())) {
             if (context.getDefinedModels().containsKey(schema.getName())) {
-                result = new Schema().$ref(constructRef(schema.getName()));
+                result = openapi31 ? new JsonSchema() : new Schema();
+                result.$ref(constructRef(schema.getName()));
             }
         }
         return result;
