@@ -91,6 +91,7 @@ import io.swagger.v3.jaxrs2.resources.Ticket4804NotBlankResource;
 import io.swagger.v3.jaxrs2.resources.Ticket4804ProcessorResource;
 import io.swagger.v3.jaxrs2.resources.Ticket4804Resource;
 import io.swagger.v3.jaxrs2.resources.Ticket4859Resource;
+import io.swagger.v3.jaxrs2.resources.Ticket4878Resource;
 import io.swagger.v3.jaxrs2.resources.Ticket4879Resource;
 import io.swagger.v3.jaxrs2.resources.UploadResource;
 import io.swagger.v3.jaxrs2.resources.UrlEncodedResourceWithEncodings;
@@ -5339,6 +5340,40 @@ public class ReaderTest {
                 "          description: default response\n" +
                 "          content:\n" +
                 "            application/json: {}\n";
+        SerializationMatchers.assertEqualsToYaml31(openAPI, yaml);
+        ModelConverters.reset();
+    }
+
+    @Test(description = "Test model resolution for global path parameters with openAPI 3.1")
+    public void testTicket4878() {
+        ModelConverters.reset();
+        SwaggerConfiguration config = new SwaggerConfiguration().openAPI31(true);
+        Reader reader = new Reader(config);
+
+        OpenAPI openAPI = reader.read(Ticket4878Resource.class);
+        String yaml = "openapi: 3.1.0\n" +
+                "paths:\n" +
+                "  /{globalPathParam}/{localPathParam}:\n" +
+                "    get:\n" +
+                "      operationId: getMethod\n" +
+                "      parameters:\n" +
+                "      - name: globalPathParam\n" +
+                "        in: path\n" +
+                "        required: true\n" +
+                "        schema:\n" +
+                "          type: string\n" +
+                "          $comment: 3.1 property for global path param\n" +
+                "      - name: localPathParam\n" +
+                "        in: path\n" +
+                "        required: true\n" +
+                "        schema:\n" +
+                "          type: string\n" +
+                "          $comment: 3.1 property for local path param\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*': {}\n";
         SerializationMatchers.assertEqualsToYaml31(openAPI, yaml);
         ModelConverters.reset();
     }

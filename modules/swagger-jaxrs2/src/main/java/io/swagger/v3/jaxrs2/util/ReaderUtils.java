@@ -36,9 +36,6 @@ public class ReaderUtils {
     private static final String OPTIONS_METHOD = "options";
     private static final String PATH_DELIMITER = "/";
 
-    public static List<Parameter> collectConstructorParameters(Class<?> cls, Components components, javax.ws.rs.Consumes classConsumes, JsonView jsonViewAnnotation) {
-        return collectConstructorParameters(cls, components, classConsumes, jsonViewAnnotation, null);
-    }
     /**
      * Collects constructor-level parameters from class.
      *
@@ -46,7 +43,7 @@ public class ReaderUtils {
      * @param components
      * @return the collection of supported parameters
      */
-    public static List<Parameter> collectConstructorParameters(Class<?> cls, Components components, javax.ws.rs.Consumes classConsumes, JsonView jsonViewAnnotation, Schema.SchemaResolution schemaResolution) {
+    public static List<Parameter> collectConstructorParameters(Class<?> cls, Components components, javax.ws.rs.Consumes classConsumes, JsonView jsonViewAnnotation, Schema.SchemaResolution schemaResolution, boolean openapi31) {
         if (cls.isLocalClass() || (cls.isMemberClass() && !Modifier.isStatic(cls.getModifiers()))) {
             return Collections.emptyList();
         }
@@ -81,7 +78,9 @@ public class ReaderUtils {
                                     components,
                                     classConsumes == null ? new String[0] : classConsumes.value(),
                                     null,
-                                    jsonViewAnnotation, false, schemaResolution);
+                                    jsonViewAnnotation,
+                                    openapi31,
+                                    schemaResolution);
                             if (processedParameter != null) {
                                 parameters.add(processedParameter);
                             }
