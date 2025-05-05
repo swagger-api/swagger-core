@@ -36,6 +36,13 @@ public class ReaderUtils {
     private static final String OPTIONS_METHOD = "options";
     private static final String PATH_DELIMITER = "/";
 
+    public static List<Parameter> collectConstructorParameters(Class<?> cls, Components components, javax.ws.rs.Consumes classConsumes, JsonView jsonViewAnnotation) {
+        return collectConstructorParameters(cls, components, classConsumes, jsonViewAnnotation, null);
+    }
+
+    public static List<Parameter> collectConstructorParameters(Class<?> cls, Components components, javax.ws.rs.Consumes classConsumes, JsonView jsonViewAnnotation, Schema.SchemaResolution schemaResolution) {
+        return collectConstructorParameters(cls, components, classConsumes, jsonViewAnnotation, schemaResolution, false);
+    }
     /**
      * Collects constructor-level parameters from class.
      *
