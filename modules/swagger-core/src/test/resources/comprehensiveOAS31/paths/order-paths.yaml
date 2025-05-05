@@ -1,0 +1,664 @@
+# Order Paths for OpenAPI 3.1
+# This file contains order-related paths referenced by the root file
+
+# Path for /orders
+/orders:
+  get:
+    summary: List all orders
+    description: Returns all orders from the system that the user has access to
+    operationId: listOrders
+    tags:
+      - orders
+    parameters:
+      - name: limit
+        in: query
+        description: Maximum number of orders to return
+        required: false
+        schema:
+          type: integer
+          format: int32
+          minimum: 1
+          maximum: 100
+          default: 20
+      - name: offset
+        in: query
+        description: Offset for pagination
+        required: false
+        schema:
+          type: integer
+          format: int32
+          minimum: 0
+          default: 0
+      - name: status
+        in: query
+        description: Status values that need to be considered for filter
+        required: false
+        schema:
+          type: string
+          enum: [placed, approved, delivered, cancelled]
+      - name: userId
+        in: query
+        description: User ID to filter by
+        required: false
+        schema:
+          type: integer
+          format: int64
+          minimum: 1
+      - name: sort
+        in: query
+        description: Sort order
+        required: false
+        schema:
+          type: string
+          enum: [id, status, createdAt]
+          default: createdAt
+    responses:
+      '200':
+        description: A paged array of orders
+        headers:
+          x-next:
+            description: A link to the next page of responses
+            schema:
+              type: string
+              format: uri
+          x-total-count:
+            description: Total number of orders
+            schema:
+              type: integer
+              format: int32
+              minimum: 0
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/order-schemas.yaml#/OrderArray"
+            examples:
+              orders:
+                summary: Example of orders
+                value:
+                  - id: 1
+                    petId: 1
+                    quantity: 1
+                    shipDate: "2023-01-01T12:00:00Z"
+                    status: placed
+                    complete: false
+                  - id: 2
+                    petId: 2
+                    quantity: 2
+                    shipDate: "2023-01-02T12:00:00Z"
+                    status: approved
+                    complete: false
+      '400':
+        description: Bad request
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/common-schemas.yaml#/Error"
+      '401':
+        description: Unauthorized
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/common-schemas.yaml#/Error"
+      '403':
+        description: Forbidden
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/common-schemas.yaml#/Error"
+      '500':
+        description: Internal server error
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/common-schemas.yaml#/Error"
+    security:
+      - order_auth:
+          - read:orders
+  post:
+    summary: Create an order
+    description: Creates a new order in the store
+    operationId: createOrder
+    tags:
+      - orders
+    requestBody:
+      description: Order to add to the store
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "../schemas/order-schemas.yaml#/Order"
+          examples:
+            order:
+              summary: Example of an order
+              value:
+                id: 0
+                petId: 1
+                quantity: 1
+                shipDate: "2023-01-01T12:00:00Z"
+                status: placed
+                complete: false
+    responses:
+      '201':
+        description: Order created
+        headers:
+          Location:
+            description: URL of the newly created order
+            schema:
+              type: string
+              format: uri
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/order-schemas.yaml#/Order"
+      '400':
+        description: Bad request
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/common-schemas.yaml#/Error"
+      '401':
+        description: Unauthorized
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/common-schemas.yaml#/Error"
+      '403':
+        description: Forbidden
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/common-schemas.yaml#/Error"
+      '500':
+        description: Internal server error
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/common-schemas.yaml#/Error"
+    security:
+      - order_auth:
+          - write:orders
+
+# Path for /orders/{orderId}
+/orders/{orderId}:
+  parameters:
+    - name: orderId
+      in: path
+      description: ID of order to return
+      required: true
+      schema:
+        type: integer
+        format: int64
+        minimum: 1
+  get:
+    summary: Find order by ID
+    description: Returns a single order
+    operationId: getOrderById
+    tags:
+      - orders
+    responses:
+      '200':
+        description: Successful operation
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/order-schemas.yaml#/Order"
+            examples:
+              order:
+                summary: Example of an order
+                value:
+                  id: 1
+                  petId: 1
+                  quantity: 1
+                  shipDate: "2023-01-01T12:00:00Z"
+                  status: placed
+                  complete: false
+      '400':
+        description: Invalid ID supplied
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/common-schemas.yaml#/Error"
+      '404':
+        description: Order not found
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/common-schemas.yaml#/Error"
+      '500':
+        description: Internal server error
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/common-schemas.yaml#/Error"
+    security:
+      - order_auth:
+          - read:orders
+      - api_key: []
+  put:
+    summary: Update an existing order
+    description: Updates an order in the store
+    operationId: updateOrder
+    tags:
+      - orders
+    requestBody:
+      description: Order to update
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "../schemas/order-schemas.yaml#/Order"
+          examples:
+            order:
+              summary: Example of an order
+              value:
+                id: 1
+                petId: 1
+                quantity: 1
+                shipDate: "2023-01-01T12:00:00Z"
+                status: approved
+                complete: false
+    responses:
+      '200':
+        description: Successful operation
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/order-schemas.yaml#/Order"
+      '400':
+        description: Invalid ID supplied
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/common-schemas.yaml#/Error"
+      '404':
+        description: Order not found
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/common-schemas.yaml#/Error"
+      '405':
+        description: Validation exception
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/common-schemas.yaml#/Error"
+      '500':
+        description: Internal server error
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/common-schemas.yaml#/Error"
+    security:
+      - order_auth:
+          - write:orders
+  delete:
+    summary: Deletes an order
+    description: Deletes an order from the store
+    operationId: deleteOrder
+    tags:
+      - orders
+    responses:
+      '204':
+        description: Order deleted
+      '400':
+        description: Invalid ID supplied
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/common-schemas.yaml#/Error"
+      '404':
+        description: Order not found
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/common-schemas.yaml#/Error"
+      '500':
+        description: Internal server error
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/common-schemas.yaml#/Error"
+    security:
+      - order_auth:
+          - write:orders
+
+# Path for /orders/{orderId}/status
+/orders/{orderId}/status:
+  parameters:
+    - name: orderId
+      in: path
+      description: ID of order to update status
+      required: true
+      schema:
+        type: integer
+        format: int64
+        minimum: 1
+  get:
+    summary: Get order status
+    description: Returns the status of an order
+    operationId: getOrderStatus
+    tags:
+      - orders
+    responses:
+      '200':
+        description: Successful operation
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/order-schemas.yaml#/OrderStatus"
+            examples:
+              status:
+                summary: Example of order status
+                value:
+                  id: 1
+                  status: placed
+                  timestamp: "2023-01-01T12:00:00Z"
+      '400':
+        description: Invalid ID supplied
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/common-schemas.yaml#/Error"
+      '404':
+        description: Order not found
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/common-schemas.yaml#/Error"
+      '500':
+        description: Internal server error
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/common-schemas.yaml#/Error"
+    security:
+      - order_auth:
+          - read:orders
+  put:
+    summary: Update order status
+    description: Updates the status of an order
+    operationId: updateOrderStatus
+    tags:
+      - orders
+    requestBody:
+      description: Status to update
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - status
+            properties:
+              status:
+                type: string
+                description: Order status
+                enum: [placed, approved, delivered, cancelled]
+              notes:
+                type: string
+                description: Status notes
+                maxLength: 500
+          examples:
+            status:
+              summary: Example of status update
+              value:
+                status: approved
+                notes: "Approved by manager"
+    responses:
+      '200':
+        description: Successful operation
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/order-schemas.yaml#/OrderStatus"
+      '400':
+        description: Invalid ID supplied
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/common-schemas.yaml#/Error"
+      '404':
+        description: Order not found
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/common-schemas.yaml#/Error"
+      '500':
+        description: Internal server error
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/common-schemas.yaml#/Error"
+    security:
+      - order_auth:
+          - write:orders
+
+# Path for /orders/{orderId}/invoice
+/orders/{orderId}/invoice:
+  parameters:
+    - name: orderId
+      in: path
+      description: ID of order to get invoice for
+      required: true
+      schema:
+        type: integer
+        format: int64
+        minimum: 1
+  get:
+    summary: Get order invoice
+    description: Returns the invoice for an order
+    operationId: getOrderInvoice
+    tags:
+      - orders
+    responses:
+      '200':
+        description: Successful operation
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/order-schemas.yaml#/Invoice"
+            examples:
+              invoice:
+                summary: Example of an invoice
+                value:
+                  id: 1
+                  orderId: 1
+                  amount: 100.0
+                  tax: 10.0
+                  shipping: 5.0
+                  total: 115.0
+                  status: pending
+                  createdAt: "2023-01-01T12:00:00Z"
+      '400':
+        description: Invalid ID supplied
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/common-schemas.yaml#/Error"
+      '404':
+        description: Order not found
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/common-schemas.yaml#/Error"
+      '500':
+        description: Internal server error
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/common-schemas.yaml#/Error"
+    security:
+      - order_auth:
+          - read:orders
+  post:
+    summary: Create order invoice
+    description: Creates an invoice for an order
+    operationId: createOrderInvoice
+    tags:
+      - orders
+    requestBody:
+      description: Invoice to create
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "../schemas/order-schemas.yaml#/Invoice"
+          examples:
+            invoice:
+              summary: Example of an invoice
+              value:
+                id: 0
+                orderId: 1
+                amount: 100.0
+                tax: 10.0
+                shipping: 5.0
+                total: 115.0
+                status: pending
+    responses:
+      '201':
+        description: Invoice created
+        headers:
+          Location:
+            description: URL of the newly created invoice
+            schema:
+              type: string
+              format: uri
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/order-schemas.yaml#/Invoice"
+      '400':
+        description: Invalid ID supplied
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/common-schemas.yaml#/Error"
+      '404':
+        description: Order not found
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/common-schemas.yaml#/Error"
+      '500':
+        description: Internal server error
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/common-schemas.yaml#/Error"
+    security:
+      - order_auth:
+          - write:orders
+
+# Path for /orders/{orderId}/shipment
+/orders/{orderId}/shipment:
+  parameters:
+    - name: orderId
+      in: path
+      description: ID of order to get shipment for
+      required: true
+      schema:
+        type: integer
+        format: int64
+        minimum: 1
+  get:
+    summary: Get order shipment
+    description: Returns the shipment for an order
+    operationId: getOrderShipment
+    tags:
+      - orders
+    responses:
+      '200':
+        description: Successful operation
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/order-schemas.yaml#/Shipment"
+            examples:
+              shipment:
+                summary: Example of a shipment
+                value:
+                  id: 1
+                  orderId: 1
+                  status: shipped
+                  trackingNumber: "1Z999AA10123456784"
+                  carrier: ups
+                  estimatedDelivery: "2023-01-05"
+                  createdAt: "2023-01-01T12:00:00Z"
+                  shippedAt: "2023-01-02T12:00:00Z"
+      '400':
+        description: Invalid ID supplied
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/common-schemas.yaml#/Error"
+      '404':
+        description: Order not found
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/common-schemas.yaml#/Error"
+      '500':
+        description: Internal server error
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/common-schemas.yaml#/Error"
+    security:
+      - order_auth:
+          - read:orders
+  post:
+    summary: Create order shipment
+    description: Creates a shipment for an order
+    operationId: createOrderShipment
+    tags:
+      - orders
+    requestBody:
+      description: Shipment to create
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "../schemas/order-schemas.yaml#/Shipment"
+          examples:
+            shipment:
+              summary: Example of a shipment
+              value:
+                id: 0
+                orderId: 1
+                status: pending
+                carrier: ups
+                estimatedDelivery: "2023-01-05"
+    responses:
+      '201':
+        description: Shipment created
+        headers:
+          Location:
+            description: URL of the newly created shipment
+            schema:
+              type: string
+              format: uri
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/order-schemas.yaml#/Shipment"
+      '400':
+        description: Invalid ID supplied
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/common-schemas.yaml#/Error"
+      '404':
+        description: Order not found
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/common-schemas.yaml#/Error"
+      '500':
+        description: Internal server error
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/common-schemas.yaml#/Error"
+    security:
+      - order_auth:
+          - write:orders

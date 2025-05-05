@@ -1,0 +1,249 @@
+# Common Schemas for OpenAPI 3.1 and JSON Schema 2020/12
+# This file contains common schemas referenced by the root file
+
+# Basic schema with JSON Schema 2020/12 keywords
+Error:
+  $schema: "https://json-schema.org/draft/2020-12/schema"
+  $id: "https://example.com/schemas/Error"
+  $anchor: "Error"
+  title: "Error"
+  description: "Error response"
+  type: "object"
+  required:
+    - "code"
+    - "message"
+  properties:
+    code:
+      type: "integer"
+      format: "int32"
+      description: "Error code"
+      minimum: 100
+      maximum: 600
+    message:
+      type: "string"
+      description: "Error message"
+      minLength: 1
+    details:
+      type: "array"
+      description: "Error details"
+      items:
+        type: "string"
+      minItems: 0
+      maxItems: 10
+      uniqueItems: true
+
+# Schema with $dynamicAnchor and $dynamicRef
+Identifiable:
+  $schema: "https://json-schema.org/draft/2020-12/schema"
+  $id: "https://example.com/schemas/Identifiable"
+  $dynamicAnchor: "Identifiable"
+  title: "Identifiable"
+  description: "Base schema for objects with an ID"
+  type: "object"
+  required:
+    - "id"
+  properties:
+    id:
+      type: "string"
+      format: "uuid"
+      description: "Unique identifier"
+
+# Schema with $vocabulary
+ExtendedSchema:
+  $schema: "https://json-schema.org/draft/2020-12/schema"
+  $id: "https://example.com/schemas/ExtendedSchema"
+  $vocabulary:
+    "https://json-schema.org/draft/2020-12/vocab/core": true
+    "https://json-schema.org/draft/2020-12/vocab/applicator": true
+    "https://json-schema.org/draft/2020-12/vocab/validation": true
+    "https://json-schema.org/draft/2020-12/vocab/meta-data": true
+    "https://json-schema.org/draft/2020-12/vocab/format-annotation": true
+    "https://json-schema.org/draft/2020-12/vocab/content": true
+    "https://json-schema.org/draft/2020-12/vocab/unevaluated": true
+  title: "Extended Schema"
+  description: "Schema with vocabulary"
+  type: "object"
+  properties:
+    name:
+      type: "string"
+    value:
+      type: "string"
+
+# Schema with $comment
+CommentedSchema:
+  $schema: "https://json-schema.org/draft/2020-12/schema"
+  $id: "https://example.com/schemas/CommentedSchema"
+  $comment: "This is a schema with comments"
+  title: "Commented Schema"
+  description: "Schema with comments"
+  type: "object"
+  properties:
+    name:
+      $comment: "The name property"
+      type: "string"
+    value:
+      $comment: "The value property"
+      type: "string"
+
+# Schema with $defs
+SchemaWithDefs:
+  $schema: "https://json-schema.org/draft/2020-12/schema"
+  $id: "https://example.com/schemas/SchemaWithDefs"
+  title: "Schema with Definitions"
+  description: "Schema with $defs"
+  type: "object"
+  properties:
+    person:
+      $ref: "#/$defs/Person"
+    address:
+      $ref: "#/$defs/Address"
+  $defs:
+    Person:
+      type: "object"
+      properties:
+        firstName:
+          type: "string"
+        lastName:
+          type: "string"
+        age:
+          type: "integer"
+          minimum: 0
+    Address:
+      type: "object"
+      properties:
+        street:
+          type: "string"
+        city:
+          type: "string"
+        zipCode:
+          type: "string"
+          pattern: "^[0-9]{5}(?:-[0-9]{4})?$"
+
+# Schema with validation keywords
+ValidationSchema:
+  $schema: "https://json-schema.org/draft/2020-12/schema"
+  $id: "https://example.com/schemas/ValidationSchema"
+  title: "Validation Schema"
+  description: "Schema with validation keywords"
+  type: "object"
+  required:
+    - "name"
+    - "email"
+  properties:
+    name:
+      type: "string"
+      minLength: 1
+      maxLength: 100
+    email:
+      type: "string"
+      format: "email"
+      pattern: "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"
+    age:
+      type: "integer"
+      minimum: 0
+      maximum: 120
+      exclusiveMaximum: 121
+    score:
+      type: "number"
+      multipleOf: 0.5
+      minimum: 0
+      maximum: 10
+    tags:
+      type: "array"
+      items:
+        type: "string"
+      minItems: 0
+      maxItems: 10
+      uniqueItems: true
+    metadata:
+      type: "object"
+      minProperties: 0
+      maxProperties: 10
+      propertyNames:
+        pattern: "^[a-zA-Z0-9_]+$"
+    status:
+      enum: ["active", "inactive", "pending"]
+    role:
+      const: "user"
+
+# Schema with applicator keywords
+ApplicatorSchema:
+  $schema: "https://json-schema.org/draft/2020-12/schema"
+  $id: "https://example.com/schemas/ApplicatorSchema"
+  title: "Applicator Schema"
+  description: "Schema with applicator keywords"
+  allOf:
+    - type: "object"
+      properties:
+        id:
+          type: "string"
+          format: "uuid"
+    - required:
+      - "name"
+  anyOf:
+    - properties:
+        type:
+          const: "personal"
+    - properties:
+        type:
+          const: "business"
+  oneOf:
+    - properties:
+        status:
+          const: "active"
+    - properties:
+        status:
+          const: "inactive"
+  not:
+    properties:
+      status:
+        const: "deleted"
+  if:
+    properties:
+      type:
+        const: "personal"
+  then:
+    properties:
+      personalId:
+        type: "string"
+    required:
+      - "personalId"
+  else:
+    properties:
+      businessId:
+        type: "string"
+    required:
+      - "businessId"
+  dependentSchemas:
+    creditCard:
+      properties:
+        creditCardNumber:
+          type: "string"
+          pattern: "^[0-9]{16}$"
+      required:
+        - "creditCardNumber"
+  properties:
+    name:
+      type: "string"
+    type:
+      type: "string"
+    status:
+      type: "string"
+    items:
+      type: "array"
+      prefixItems:
+        - type: "string"
+        - type: "number"
+      items: false
+    contains:
+      type: "array"
+      contains:
+        type: "string"
+        const: "special"
+      minContains: 1
+      maxContains: 3
+  patternProperties:
+    "^x-":
+      type: "string"
+  additionalProperties: false
+  unevaluatedProperties: false
