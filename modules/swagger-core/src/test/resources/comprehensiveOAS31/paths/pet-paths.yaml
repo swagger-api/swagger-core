@@ -1,0 +1,470 @@
+# Pet Paths for OpenAPI 3.1
+# This file contains pet-related paths referenced by the root file
+
+# Path for /pets
+/pets:
+  get:
+    summary: List all pets
+    description: Returns all pets from the system that the user has access to
+    operationId: listPets
+    tags:
+      - pets
+    parameters:
+      - name: limit
+        in: query
+        description: Maximum number of pets to return
+        required: false
+        schema:
+          type: integer
+          format: int32
+          minimum: 1
+          maximum: 100
+          default: 20
+      - name: offset
+        in: query
+        description: Offset for pagination
+        required: false
+        schema:
+          type: integer
+          format: int32
+          minimum: 0
+          default: 0
+      - name: status
+        in: query
+        description: Status values that need to be considered for filter
+        required: false
+        schema:
+          type: string
+          enum: [available, pending, sold]
+      - name: tags
+        in: query
+        description: Tags to filter by
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+          minItems: 1
+          maxItems: 10
+          uniqueItems: true
+      - name: sort
+        in: query
+        description: Sort order
+        required: false
+        schema:
+          type: string
+          enum: [name, id, status]
+          default: name
+    responses:
+      '200':
+        description: A paged array of pets
+        headers:
+          x-next:
+            description: A link to the next page of responses
+            schema:
+              type: string
+              format: uri
+          x-total-count:
+            description: Total number of pets
+            schema:
+              type: integer
+              format: int32
+              minimum: 0
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/pet-schemas.yaml#/Pets"
+            examples:
+              pets:
+                summary: Example of pets
+                value:
+                  - id: 1
+                    name: Fluffy
+                    status: available
+                  - id: 2
+                    name: Rex
+                    status: pending
+      '400':
+        description: Bad request
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/common-schemas.yaml#/Error"
+      '401':
+        description: Unauthorized
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/common-schemas.yaml#/Error"
+      '403':
+        description: Forbidden
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/common-schemas.yaml#/Error"
+      '500':
+        description: Internal server error
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/common-schemas.yaml#/Error"
+    security:
+      - petstore_auth:
+          - read:pets
+  post:
+    summary: Create a pet
+    description: Creates a new pet in the store
+    operationId: createPet
+    tags:
+      - pets
+    requestBody:
+      description: Pet to add to the store
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "../schemas/pet-schemas.yaml#/Pet"
+          examples:
+            pet:
+              summary: Example of a pet
+              value:
+                id: 0
+                name: Fluffy
+                status: available
+    responses:
+      '201':
+        description: Pet created
+        headers:
+          Location:
+            description: URL of the newly created pet
+            schema:
+              type: string
+              format: uri
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/pet-schemas.yaml#/Pet"
+      '400':
+        description: Bad request
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/common-schemas.yaml#/Error"
+      '401':
+        description: Unauthorized
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/common-schemas.yaml#/Error"
+      '403':
+        description: Forbidden
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/common-schemas.yaml#/Error"
+      '500':
+        description: Internal server error
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/common-schemas.yaml#/Error"
+    security:
+      - petstore_auth:
+          - write:pets
+
+# Path for /pets/{petId}
+/pets/{petId}:
+  parameters:
+    - name: petId
+      in: path
+      description: ID of pet to return
+      required: true
+      schema:
+        type: integer
+        format: int64
+        minimum: 1
+  get:
+    summary: Find pet by ID
+    description: Returns a single pet
+    operationId: getPetById
+    tags:
+      - pets
+    responses:
+      '200':
+        description: Successful operation
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/pet-schemas.yaml#/Pet"
+            examples:
+              pet:
+                summary: Example of a pet
+                value:
+                  id: 1
+                  name: Fluffy
+                  status: available
+      '400':
+        description: Invalid ID supplied
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/common-schemas.yaml#/Error"
+      '404':
+        description: Pet not found
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/common-schemas.yaml#/Error"
+      '500':
+        description: Internal server error
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/common-schemas.yaml#/Error"
+    security:
+      - petstore_auth:
+          - read:pets
+      - api_key: []
+  put:
+    summary: Update an existing pet
+    description: Updates a pet in the store with form data
+    operationId: updatePet
+    tags:
+      - pets
+    requestBody:
+      description: Pet to update
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "../schemas/pet-schemas.yaml#/Pet"
+          examples:
+            pet:
+              summary: Example of a pet
+              value:
+                id: 1
+                name: Fluffy
+                status: available
+    responses:
+      '200':
+        description: Successful operation
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/pet-schemas.yaml#/Pet"
+      '400':
+        description: Invalid ID supplied
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/common-schemas.yaml#/Error"
+      '404':
+        description: Pet not found
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/common-schemas.yaml#/Error"
+      '405':
+        description: Validation exception
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/common-schemas.yaml#/Error"
+      '500':
+        description: Internal server error
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/common-schemas.yaml#/Error"
+    security:
+      - petstore_auth:
+          - write:pets
+  delete:
+    summary: Deletes a pet
+    description: Deletes a pet from the store
+    operationId: deletePet
+    tags:
+      - pets
+    responses:
+      '204':
+        description: Pet deleted
+      '400':
+        description: Invalid ID supplied
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/common-schemas.yaml#/Error"
+      '404':
+        description: Pet not found
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/common-schemas.yaml#/Error"
+      '500':
+        description: Internal server error
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/common-schemas.yaml#/Error"
+    security:
+      - petstore_auth:
+          - write:pets
+
+# Path for /pets/findByStatus
+/pets/findByStatus:
+  get:
+    summary: Finds pets by status
+    description: Multiple status values can be provided with comma separated strings
+    operationId: findPetsByStatus
+    tags:
+      - pets
+    parameters:
+      - name: status
+        in: query
+        description: Status values that need to be considered for filter
+        required: true
+        schema:
+          type: array
+          items:
+            type: string
+            enum: [available, pending, sold]
+          minItems: 1
+          maxItems: 3
+          uniqueItems: true
+        style: form
+        explode: false
+    responses:
+      '200':
+        description: Successful operation
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/pet-schemas.yaml#/Pets"
+      '400':
+        description: Invalid status value
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/common-schemas.yaml#/Error"
+      '500':
+        description: Internal server error
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/common-schemas.yaml#/Error"
+    security:
+      - petstore_auth:
+          - read:pets
+
+# Path for /pets/findByTags
+/pets/findByTags:
+  get:
+    summary: Finds pets by tags
+    description: Multiple tags can be provided with comma separated strings
+    operationId: findPetsByTags
+    tags:
+      - pets
+    parameters:
+      - name: tags
+        in: query
+        description: Tags to filter by
+        required: true
+        schema:
+          type: array
+          items:
+            type: string
+          minItems: 1
+          maxItems: 10
+          uniqueItems: true
+        style: form
+        explode: false
+    responses:
+      '200':
+        description: Successful operation
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/pet-schemas.yaml#/Pets"
+      '400':
+        description: Invalid tag value
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/common-schemas.yaml#/Error"
+      '500':
+        description: Internal server error
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/common-schemas.yaml#/Error"
+    security:
+      - petstore_auth:
+          - read:pets
+    deprecated: true
+
+# Path for /pets/{petId}/uploadImage
+/pets/{petId}/uploadImage:
+  parameters:
+    - name: petId
+      in: path
+      description: ID of pet to update
+      required: true
+      schema:
+        type: integer
+        format: int64
+        minimum: 1
+  post:
+    summary: Uploads an image for a pet
+    description: Uploads an image for a pet
+    operationId: uploadPetImage
+    tags:
+      - pets
+    requestBody:
+      content:
+        multipart/form-data:
+          schema:
+            type: object
+            properties:
+              additionalMetadata:
+                type: string
+                description: Additional data to pass to server
+              file:
+                type: string
+                format: binary
+                description: File to upload
+    responses:
+      '200':
+        description: Successful operation
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                code:
+                  type: integer
+                  format: int32
+                type:
+                  type: string
+                message:
+                  type: string
+      '400':
+        description: Invalid ID supplied
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/common-schemas.yaml#/Error"
+      '404':
+        description: Pet not found
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/common-schemas.yaml#/Error"
+      '500':
+        description: Internal server error
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/common-schemas.yaml#/Error"
+    security:
+      - petstore_auth:
+          - write:pets
