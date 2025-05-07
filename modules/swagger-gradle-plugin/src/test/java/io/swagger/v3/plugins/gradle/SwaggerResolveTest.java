@@ -54,8 +54,8 @@ public class SwaggerResolveTest {
 
     @Test
     public void testSwaggerResolveTask() throws IOException {
-        outputDir = testProjectDir.getRoot().toString() + "/target";
-        outputFile = testProjectDir.getRoot().toString() + "/testAPI.json";
+        outputDir = testProjectDir.toString() + "/target";
+        outputFile = testProjectDir.toString() + "/testAPI.json";
         //outputDir = "/tmp/a/target";
         String resolveTask = "resolve";
 
@@ -127,8 +127,8 @@ public class SwaggerResolveTest {
 
     @Test
     public void testSwaggerResolveWithOAS31OptionTask() throws IOException {
-        outputDir = testProjectDir.getRoot().toString() + "/target";
-        outputFile = testProjectDir.getRoot().toString() + "/testAPI31.json";
+        outputDir = testProjectDir.toString() + "/target";
+        outputFile = testProjectDir.toString() + "/testAPI31.json";
         //outputDir = "/tmp/a/target";
         String resolveTask = "resolve";
 
