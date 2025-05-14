@@ -671,6 +671,9 @@ public abstract class AnnotationsUtils {
         if (StringUtils.isNotBlank(schema.$dynamicAnchor())) {
             schemaObject.set$dynamicAnchor(schema.$dynamicAnchor());
         }
+        if (StringUtils.isNotBlank(schema.$dynamicRef())) {
+            schemaObject.set$dynamicRef(schema.$dynamicRef());
+        }
         if (StringUtils.isNotBlank(schema.contentEncoding())) {
             schemaObject.setContentEncoding(schema.contentEncoding());
         }
@@ -2482,6 +2485,14 @@ public abstract class AnnotationsUtils {
                     return master.$dynamicAnchor();
                 }
                 return patch.$dynamicAnchor();
+            }
+
+            @Override
+            public String $dynamicRef() {
+                if (StringUtils.isNotBlank(master.$dynamicRef()) || StringUtils.isBlank(patch.$dynamicRef())) {
+                    return master.$dynamicRef();
+                }
+                return patch.$dynamicRef();
             }
 
             @Override

@@ -1,0 +1,57 @@
+openapi: 3.1.0
+info:
+  title: Tree API
+  version: 1.0.0
+
+paths:
+  /tree:
+    post:
+      summary: Create a tree structure
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExtendedNode'
+      responses:
+        '200':
+          description: Tree accepted
+          content:
+            application/json:
+              schema:
+                type: string
+
+components:
+  schemas:
+    BaseNode:
+      $id: "https://example.com/schemas/base-node"
+      $schema: "https://json-schema.org/draft/2020-12/schema"
+      $dynamicAnchor: "node"
+      type: object
+      properties:
+        name:
+          type: string
+        children:
+          type: array
+          items:
+            $dynamicRef: "#node"
+      required: [name]
+
+    ExtendedProperties:
+      $id: "https://example.com/schemas/extended-properties"
+      $schema: "https://json-schema.org/draft/2020-12/schema"
+      $dynamicAnchor: "node"
+      type: object
+      properties:
+        type:
+          type: string
+          enum: [folder, file]
+      required: [type]
+
+    ExtendedNode:
+      $schema: "https://json-schema.org/draft/2020-12/schema"
+      $id: "https://example.com/schemas/extended-node"
+      allOf:
+        - $ref: "#/components/schemas/BaseNode"
+        - $ref: "#/components/schemas/ExtendedProperties"
+

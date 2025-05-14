@@ -208,6 +208,11 @@ public class Schema<T> {
     @OpenAPI31
     private String $dynamicAnchor;
 
+    /**
+     * @since 2.2.32 (OpenAPI 3.1.0)
+     */
+    @OpenAPI31
+    private String $dynamicRef;
 
     /**
      * @since 2.2.0 (OpenAPI 3.1.0)
@@ -613,6 +618,34 @@ public class Schema<T> {
     @OpenAPI31
     public Schema $dynamicAnchor(String $dynamicAnchor) {
         this.$dynamicAnchor = $dynamicAnchor;
+        return this;
+    }
+
+    /**
+     *
+     * @since 2.2.32 (OpenAPI 3.1.0)
+     */
+    @OpenAPI31
+    public String get$dynamicRef() {
+        return $dynamicRef;
+    }
+
+    /**
+     *
+     * @since 2.2.32 (OpenAPI 3.1.0)
+     */
+    @OpenAPI31
+    public void set$dynamicRef(String $dynamicRef) {
+        this.$dynamicRef = $dynamicRef;
+    }
+
+    /**
+     *
+     * @since 2.2.32 (OpenAPI 3.1.0)
+     */
+    @OpenAPI31
+    public Schema $dynamicRef(String $dynamicRef) {
+        this.$dynamicRef = $dynamicRef;
         return this;
     }
 
@@ -2098,6 +2131,7 @@ public class Schema<T> {
                 Objects.equals(this.$schema, schema.$schema) &&
                 Objects.equals(this.$vocabulary, schema.$vocabulary) &&
                 Objects.equals(this.$dynamicAnchor, schema.$dynamicAnchor) &&
+                Objects.equals(this.$dynamicRef, schema.$dynamicRef) &&
                 Objects.equals(this.types, schema.types) &&
                 Objects.equals(this.allOf, schema.allOf) &&
                 Objects.equals(this.anyOf, schema.anyOf) &&
@@ -2132,10 +2166,10 @@ public class Schema<T> {
                 exclusiveMinimum, exclusiveMinimumValue, maxLength, minLength, pattern, maxItems, minItems, uniqueItems,
                 maxProperties, minProperties, required, type, not, properties, additionalProperties, description,
                 format, $ref, nullable, readOnly, writeOnly, example, externalDocs, deprecated, xml, extensions,
-                discriminator, _enum, _default, patternProperties, $id, $anchor, $schema, $vocabulary, $dynamicAnchor, types, allOf, anyOf, oneOf, _const,
-                contentEncoding, contentMediaType, contentSchema, propertyNames, unevaluatedProperties, maxContains,
-                minContains, additionalItems, unevaluatedItems, _if, _else, then, dependentRequired, dependentSchemas,
-                $comment, examples, prefixItems, items);
+                discriminator, _enum, _default, patternProperties, $id, $anchor, $schema, $vocabulary, $dynamicAnchor,
+                $dynamicRef, types, allOf, anyOf, oneOf, _const, contentEncoding, contentMediaType, contentSchema,
+                propertyNames, unevaluatedProperties, maxContains, minContains, additionalItems, unevaluatedItems,
+                _if, _else, then, dependentRequired, dependentSchemas, $comment, examples, prefixItems, items);
     }
 
     public java.util.Map<String, Object> getExtensions() {
@@ -2206,6 +2240,7 @@ public class Schema<T> {
             sb.append("    $schema: ").append(toIndentedString($schema)).append("\n");
             sb.append("    $vocabulary: ").append(toIndentedString($vocabulary)).append("\n");
             sb.append("    $dynamicAnchor: ").append(toIndentedString($dynamicAnchor)).append("\n");
+            sb.append("    $dynamicRef: ").append(toIndentedString($dynamicRef)).append("\n");
             sb.append("    const: ").append(toIndentedString(_const)).append("\n");
             sb.append("    contentEncoding: ").append(toIndentedString(contentEncoding)).append("\n");
             sb.append("    contentMediaType: ").append(toIndentedString(contentMediaType)).append("\n");

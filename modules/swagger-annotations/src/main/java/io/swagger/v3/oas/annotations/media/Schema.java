@@ -418,6 +418,15 @@ public @interface Schema {
     String $dynamicAnchor() default "";
 
     /**
+     * Provides the $dynamicRef related to schema
+     *
+     * @since 2.2.32 / OpenAPI 3.1
+     * @return $dynamicRef schema
+     */
+    @OpenAPI31
+    String $dynamicRef() default "";
+
+    /**
      * Provides the content encoding related to this schema
      *
      * @since 2.2.12 / OpenAPI 3.1
