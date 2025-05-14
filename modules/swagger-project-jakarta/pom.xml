@@ -13,16 +13,6 @@
         <developerConnection>scm:git:git@github.com:swagger-api/swagger-core.git</developerConnection>
         <url>https://github.com/swagger-api/swagger-core</url>
     </scm>
-    <distributionManagement>
-        <snapshotRepository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-        </snapshotRepository>
-        <repository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-        </repository>
-    </distributionManagement>
     <prerequisites>
         <maven>2.2.0</maven>
     </prerequisites>
@@ -112,18 +102,14 @@
                 </executions>
             </plugin>
             <plugin>
-                <groupId>org.sonatype.plugins</groupId>
-                <artifactId>nexus-staging-maven-plugin</artifactId>
-                <version>1.6.13</version>
+                <groupId>org.sonatype.central</groupId>
+                <artifactId>central-publishing-maven-plugin</artifactId>
+                <version>0.7.0</version>
                 <extensions>true</extensions>
                 <configuration>
-                    <serverId>ossrh</serverId>
-                    <nexusUrl>https://oss.sonatype.org/</nexusUrl>
-                    <autoReleaseAfterClose>true</autoReleaseAfterClose>
-                    <stagingProgressTimeoutMinutes>30</stagingProgressTimeoutMinutes>
-<!--                    <skipStaging>true</skipStaging>
-                    <skipRemoteStaging>true</skipRemoteStaging>
-                    <skipNexusStagingDeployMojo>true</skipNexusStagingDeployMojo>-->
+                    <publishingServerId>central</publishingServerId>
+                    <autoPublish>true</autoPublish>
+                    <waitUntil>published</waitUntil>
                 </configuration>
             </plugin>
         </plugins>
@@ -509,7 +495,6 @@
         <coverage.missed.classes>0</coverage.missed.classes>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <sonatypeOssDistMgmtSnapshotsUrl>https://oss.sonatype.org/content/repositories/snapshots/</sonatypeOssDistMgmtSnapshotsUrl>
         <transformer-maven-plugin-version>0.5.0</transformer-maven-plugin-version>
         <maven.version>3.9.9</maven.version>
         <commons-compress-version>1.27.1</commons-compress-version>
