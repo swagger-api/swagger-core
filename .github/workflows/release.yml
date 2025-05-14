@@ -29,7 +29,6 @@ jobs:
         server-username: MAVEN_USERNAME
         server-password: MAVEN_PASSWORD
         gpg-private-key: ${{ secrets.OSSRH_GPG_PRIVATE_KEY }}
-        gpg-passphrase: ${{ secrets.OSSRH_GPG_PRIVATE_PASSPHRASE }}
     - name: Cache local Maven repository
       uses: actions/cache@v4
       with:
