@@ -8,6 +8,7 @@ import io.swagger.v3.core.util.Yaml;
 import io.swagger.v3.core.util.Yaml31;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.media.JsonSchema;
 import io.swagger.v3.oas.models.media.Schema;
 import org.testng.annotations.Test;
 
@@ -251,4 +252,18 @@ public class OpenAPI3_1DeserializationTest {
         oas = Yaml.mapper().readValue(yaml, OpenAPI.class);
         assertNull(oas.getComponents().getSchemas().get("test").getBooleanSchemaValue());
     }
+
+    @Test
+    public void testDynamicRefDeserializationOnOAS31() throws IOException {
+        final String jsonString = ResourceUtils.loadClassResource(getClass(), "specFiles/3.1.0/specWithDynamicRef.yaml");
+        OpenAPI openAPI = Yaml31.mapper().readValue(jsonString, OpenAPI.class);
+        assertNotNull(openAPI);
+
+        Schema baseNodeSchema = openAPI.getComponents().getSchemas().get("BaseNode");
+        assertNotNull(baseNodeSchema);
+        assertNotNull(baseNodeSchema.getProperties().get("children"));
+        JsonSchema childrenSchema = (JsonSchema) baseNodeSchema.getProperties().get("children");
+        assertEquals(childrenSchema.getItems().get$dynamicRef(), "#node");
+    }
+
 }

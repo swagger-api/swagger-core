@@ -2962,6 +2962,13 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         return null;
     }
 
+    protected String resolve$dynamicRef(Annotated a, Annotation[] annotations, io.swagger.v3.oas.annotations.media.Schema schema) {
+        if (schema != null && StringUtils.isNotBlank(schema.$dynamicRef())) {
+            return schema.$dynamicRef();
+        }
+        return null;
+    }
+
     protected String resolveContentEncoding(Annotated a, Annotation[] annotations, io.swagger.v3.oas.annotations.media.Schema schema) {
         if (schema != null && StringUtils.isNotBlank(schema.contentEncoding())) {
             return schema.contentEncoding();
@@ -3331,6 +3338,10 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             String $dynamicAnchor = resolve$dynamicAnchor(a, annotations, schemaAnnotation);
             if ($dynamicAnchor != null) {
                 schema.$dynamicAnchor($dynamicAnchor);
+            }
+            String $dynamicRef = resolve$dynamicRef(a, annotations, schemaAnnotation);
+            if ($dynamicRef != null) {
+                schema.$dynamicRef($dynamicRef);
             }
             String contentEncoding = resolveContentEncoding(a, annotations, schemaAnnotation);
             if (contentEncoding != null) {

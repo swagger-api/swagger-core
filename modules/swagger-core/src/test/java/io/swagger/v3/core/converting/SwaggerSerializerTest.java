@@ -37,7 +37,6 @@ import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
 public class SwaggerSerializerTest {
-    ObjectMapper m = Json.mapper();
 
     @Test(description = "it should convert a spec")
     public void convertSpec() throws IOException {
@@ -63,15 +62,10 @@ public class SwaggerSerializerTest {
                 .info(info)
                 .addServersItem(new Server()
                         .url("http://petstore.swagger.io"))
-
-//                .securityDefinition("api-key", new ApiKeyAuthDefinition("key", In.HEADER))
-//                .consumes("application/json")
-//                .produces("application/json")
                 .schema("Person", personModel)
                 .schema("Error", errorModel);
 
         final Operation get = new Operation()
-//                .produces("application/json")
                 .summary("finds pets in the system")
                 .description("a longer description")
                 .addTagsItem("Pet Operations")
@@ -173,7 +167,7 @@ public class SwaggerSerializerTest {
                 .addParametersItem(new Parameter().$ref("#/parameters/Foo"));
 
         swagger
-                .components(new Components().addParameters("Foo", parameter))
+                .components(swagger.getComponents().addParameters("Foo", parameter))
                 .path("/pets", new PathItem().get(get));
 
         final String swaggerJson = Json.mapper().writeValueAsString(swagger);
@@ -225,4 +219,17 @@ public class SwaggerSerializerTest {
 
         }
     }
+
+    @Test
+    public void testDynamicRefSerialization() throws IOException {
+        Schema<?> dynamicRefSchema = new Schema<>();
+        dynamicRefSchema.set$dynamicRef("#node");
+
+        Components components = new Components().addSchemas("DynamicRefSchema", dynamicRefSchema);
+        OpenAPI openAPI = new OpenAPI().components(components);
+        String json = Json.mapper().writeValueAsString(openAPI);
+
+        assertTrue(json.contains("\"$dynamicRef\":\"#node\""));
+    }
+
 }
