@@ -10,6 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>swagger-jersey2-jaxrs</artifactId>
     <name>swagger-jersey2-jaxrs (Jersey 2.x support)</name>
+    <description>swagger-jersey2-jaxrs (Jersey 2.x support)</description>
     <build>
         <sourceDirectory>src/main/java</sourceDirectory>
         <defaultGoal>install</defaultGoal>

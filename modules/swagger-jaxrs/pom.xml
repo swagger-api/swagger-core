@@ -10,6 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>swagger-jaxrs</artifactId>
     <name>swagger-jaxrs</name>
+    <description>swagger-jaxrs</description>
     <build>
         <sourceDirectory>src/main/java</sourceDirectory>
         <defaultGoal>install</defaultGoal>
