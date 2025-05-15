@@ -10,6 +10,7 @@
     <artifactId>swagger-mule</artifactId>
     <packaging>jar</packaging>
     <name>swagger-mule</name>
+    <description>swagger-mule</description>
     <properties>
         <!-- TODO increase coverage and remove these overrides-->
         <coverage.complexity.minimum>0.00</coverage.complexity.minimum>

@@ -11,6 +11,7 @@
     <artifactId>swagger-annotations</artifactId>
     <version>1.6.16</version>
     <name>swagger-annotations</name>
+    <description>swagger-annotations</description>
     <build>
         <sourceDirectory>src/main/java</sourceDirectory>
         <defaultGoal>install</defaultGoal>

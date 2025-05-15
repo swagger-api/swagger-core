@@ -11,6 +11,7 @@
     <artifactId>swagger-servlet</artifactId>
     <packaging>jar</packaging>
     <name>swagger-servlet</name>
+    <description>swagger-servlet</description>
     <build>
         <sourceDirectory>src/main/java</sourceDirectory>
         <defaultGoal>install</defaultGoal>
