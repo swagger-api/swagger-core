@@ -5409,4 +5409,98 @@ public class ReaderTest {
         SerializationMatchers.assertEqualsToYaml31(openAPI, yaml);
         ModelConverters.reset();
     }
+
+    @Test(description = "Test model resolution for global path parameters with openAPI 3.1")
+    public void testTicket4907() {
+        ModelConverters.reset();
+
+        // openAPI31 true and no other config
+        SwaggerConfiguration config = new SwaggerConfiguration().openAPI31(true);
+        Reader reader = new Reader(config);
+        OpenAPI openAPI = reader.read(Ticket4878Resource.class);
+        String yaml = "openapi: 3.1.0\n" +
+                "paths:\n" +
+                "  /{globalPathParam}/{localPathParam}:\n" +
+                "    get:\n" +
+                "      operationId: getMethod\n" +
+                "      parameters:\n" +
+                "      - name: globalPathParam\n" +
+                "        in: path\n" +
+                "        required: true\n" +
+                "        schema:\n" +
+                "          type: string\n" +
+                "          $comment: 3.1 property for global path param\n" +
+                "      - name: localPathParam\n" +
+                "        in: path\n" +
+                "        required: true\n" +
+                "        schema:\n" +
+                "          type: string\n" +
+                "          $comment: 3.1 property for local path param\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*': {}\n";
+        SerializationMatchers.assertEqualsToYaml31(openAPI, yaml);
+
+        // openAPI31 true and openAPI set
+        config.setOpenAPI(new OpenAPI().openapi("3.1.1"));
+        reader = new Reader(config);
+        openAPI = reader.read(Ticket4878Resource.class);
+        yaml = "openapi: 3.1.1\n" +
+                "paths:\n" +
+                "  /{globalPathParam}/{localPathParam}:\n" +
+                "    get:\n" +
+                "      operationId: getMethod\n" +
+                "      parameters:\n" +
+                "      - name: globalPathParam\n" +
+                "        in: path\n" +
+                "        required: true\n" +
+                "        schema:\n" +
+                "          type: string\n" +
+                "          $comment: 3.1 property for global path param\n" +
+                "      - name: localPathParam\n" +
+                "        in: path\n" +
+                "        required: true\n" +
+                "        schema:\n" +
+                "          type: string\n" +
+                "          $comment: 3.1 property for local path param\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*': {}\n";
+        SerializationMatchers.assertEqualsToYaml31(openAPI, yaml);
+
+        // openAPI31 true and openAPIVersion set
+        config.setOpenAPI(null);
+        config.setOpenAPIVersion("3.1.1");
+        reader = new Reader(config);
+        openAPI = reader.read(Ticket4878Resource.class);
+        yaml = "openapi: 3.1.1\n" +
+                "paths:\n" +
+                "  /{globalPathParam}/{localPathParam}:\n" +
+                "    get:\n" +
+                "      operationId: getMethod\n" +
+                "      parameters:\n" +
+                "      - name: globalPathParam\n" +
+                "        in: path\n" +
+                "        required: true\n" +
+                "        schema:\n" +
+                "          type: string\n" +
+                "          $comment: 3.1 property for global path param\n" +
+                "      - name: localPathParam\n" +
+                "        in: path\n" +
+                "        required: true\n" +
+                "        schema:\n" +
+                "          type: string\n" +
+                "          $comment: 3.1 property for local path param\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*': {}\n";
+        SerializationMatchers.assertEqualsToYaml31(openAPI, yaml);
+        ModelConverters.reset();
+    }
 }
