@@ -44,7 +44,7 @@ public class SwaggerConfiguration implements OpenAPIConfiguration {
 
     private Schema.SchemaResolution schemaResolution = Schema.SchemaResolution.DEFAULT;
 
-    private String openAPIVersion = "3.0.1";
+    private String openAPIVersion;
 
     private Configuration.GroupsValidationStrategy groupsValidationStrategy = Configuration.GroupsValidationStrategy.DEFAULT;
 

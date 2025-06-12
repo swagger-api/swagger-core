@@ -289,7 +289,13 @@ public class Reader implements OpenApiReader {
         final javax.ws.rs.Path apiPath = ReflectionUtils.getAnnotation(cls, javax.ws.rs.Path.class);
         final boolean openapi31 = Boolean.TRUE.equals(config.isOpenAPI31());
 
-        if (openapi31) {
+        if (
+                openapi31 &&
+                (
+                        config.getOpenAPI() == null ||
+                        config.getOpenAPI().getOpenapi() == null ||
+                        config.getOpenAPI().getOpenapi().startsWith("3.0")
+                ) && config.getOpenAPIVersion() == null) {
             openAPI.setOpenapi("3.1.0");
         }
 
