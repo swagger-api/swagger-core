@@ -65,7 +65,7 @@ jobs:
     - name:  Run maven deploy/release
       if: env.RELEASE_OK == 'yes'
       run: |
-        ./mvnw --no-transfer-progress -B -Prelease install
+        ./mvnw --no-transfer-progress -B -Prelease deploy
     - name: Run prepare javadocs script
       id: prepareJavadocs
       if: env.RELEASE_OK == 'yes'
