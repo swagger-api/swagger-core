@@ -66,7 +66,7 @@
                         <executions>
                             <execution>
                                 <id>copy-resources</id>
-                                <phase>deploy</phase>
+                                <phase>install</phase>
                                 <goals>
                                     <goal>copy-resources</goal>
                                 </goals>
