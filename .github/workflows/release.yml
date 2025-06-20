@@ -63,7 +63,7 @@ jobs:
         git config --global hub.protocol https
         git remote set-url origin https://\${{ secrets.GITHUB_TOKEN }}:x-oauth-basic@github.com/''' + 'swagger-api/swagger-core' + '''.git
     - name:  Run maven deploy/release
-      if: env.RELEASE_OK == 'yes'
+      if: env.RELEASE_OK == 'nope'
       run: |
         ./mvnw --no-transfer-progress -B -Prelease deploy
     - name: Run prepare javadocs script
