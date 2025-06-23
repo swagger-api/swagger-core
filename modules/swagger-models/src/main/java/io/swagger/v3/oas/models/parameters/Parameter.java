@@ -321,7 +321,10 @@ public class Parameter {
     }
 
     public void set$ref(String $ref) {
-        if ($ref != null && ($ref.indexOf('.') == -1 && $ref.indexOf('/') == -1)) {
+        if ($ref != null &&
+                !$ref.startsWith("#/components/parameters/")
+                && $ref.indexOf('.') == -1
+                && $ref.indexOf('/') == -1) {
             $ref = "#/components/parameters/" + $ref;
         }
         this.$ref = $ref;
