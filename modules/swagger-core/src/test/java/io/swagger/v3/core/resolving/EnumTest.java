@@ -56,6 +56,34 @@ public class EnumTest extends SwaggerTestBase {
         assertNotNull(model.getProperties().get("type"));
     }
 
+    @Test
+    public void testEnumPropertyWithSchemaAnnotation() {
+        final ModelResolver modelResolver = new ModelResolver(mapper()).openapi31(true);
+        final ModelConverterContextImpl context = new ModelConverterContextImpl(modelResolver);
+
+        final Schema model = context.resolve(new AnnotatedType().type(ClassWithEnumAsRefProperty.class));
+        assertNotNull(model);
+        assertEquals(model.getName(), "ClassWithEnumAsRefProperty");
+        assertTrue(model.getProperties().containsKey("enumWithSchemaProperty"));
+        final Schema enumPropertySchema = (Schema) model.getProperties().get("enumWithSchemaProperty");
+        assertNotNull(enumPropertySchema.get$ref());
+    }
+
+    public static class ClassWithEnumAsRefProperty {
+
+        @io.swagger.v3.oas.annotations.media.Schema(enumAsRef = true)
+        public final EnumWithSchemaProperty enumWithSchemaProperty;
+
+        public ClassWithEnumAsRefProperty(EnumWithSchemaProperty enumWithSchemaProperty) {
+            this.enumWithSchemaProperty = enumWithSchemaProperty;
+        }
+
+        public enum EnumWithSchemaProperty {
+            VALUE1,
+            VALUE2
+        }
+    }
+
     public enum Currency {
         USA, CANADA
     }
