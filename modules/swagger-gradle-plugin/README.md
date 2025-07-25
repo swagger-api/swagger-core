@@ -14,7 +14,7 @@ In many cases it is sufficient to set it to the `classpath` value, like:
 
 Alternatively provide as value a classpath with the following dependencies (replacing the provided [`javax` ones](https://github.com/swagger-api/swagger-core/blob/master/modules/swagger-gradle-plugin/src/main/java/io/swagger/v3/plugins/gradle/SwaggerPlugin.java#L16-L25)):
 
-* org.apache.commons:commons-lang3:3.12.0
+* org.apache.commons:commons-lang3:3.18.0
 * io.swagger.core.v3:swagger-jaxrs2-jakarta:2.2.9
 * jakarta.ws.rs:jakarta.ws.rs-api:3.0.0
 * jakarta.servlet:jakarta.servlet-api:5.0.0
