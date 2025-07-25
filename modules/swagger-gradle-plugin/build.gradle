@@ -24,7 +24,7 @@ compileJava {
 
 dependencies {
     implementation gradleApi()
-    implementation 'org.apache.commons:commons-lang3:3.14.0'
+    implementation 'org.apache.commons:commons-lang3:3.18.0'
 
     testImplementation gradleTestKit()
     testImplementation('com.github.tomakehurst:wiremock:2.27.2') {
