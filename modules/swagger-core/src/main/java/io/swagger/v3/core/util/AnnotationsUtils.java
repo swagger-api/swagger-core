@@ -554,6 +554,15 @@ public abstract class AnnotationsUtils {
             }
         }
 
+        if (arraySchema.arraySchema() != null) {
+            if (StringUtils.isNotBlank(arraySchema.arraySchema().description())) {
+                arraySchemaObject.setDescription(arraySchema.arraySchema().description());
+            }
+            if (StringUtils.isNotBlank(arraySchema.arraySchema().title())) {
+                arraySchemaObject.setTitle(arraySchema.arraySchema().title());
+            }
+        }
+
         return Optional.of(arraySchemaObject);
     }
 
