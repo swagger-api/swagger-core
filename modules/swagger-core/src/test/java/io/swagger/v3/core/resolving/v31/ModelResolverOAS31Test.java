@@ -30,8 +30,10 @@ public class ModelResolverOAS31Test extends SwaggerTestBase {
         SerializationMatchers.assertEqualsToYaml31(model, "type: array\n" +
                 "contains:\n" +
                 "  type: string\n" +
+                "description: arraydescription\n" +
                 "items:\n" +
                 "  type: string\n" +
+                "  description: itemdescription\n"+
                 "maxContains: 10\n" +
                 "minContains: 1\n" +
                 "prefixItems:\n" +
@@ -95,8 +97,10 @@ public class ModelResolverOAS31Test extends SwaggerTestBase {
                 "      type: array\n" +
                 "      contains:\n" +
                 "        type: string\n" +
+                "      description: itemdescription\n" +
                 "      items:\n" +
                 "        type: string\n" +
+                "        description: itemdescription\n" +
                 "      maxContains: 10\n" +
                 "      minContains: 1\n" +
                 "      prefixItems:\n" +
