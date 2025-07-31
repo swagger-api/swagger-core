@@ -415,8 +415,11 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 // Store off the ref and add the enum as a top-level model
                 context.defineModel(name, model, annotatedType, null);
                 // Return the model as a ref only property
-                model = openapi31 ? new JsonSchema() : new Schema();
-                model.$ref(Components.COMPONENTS_SCHEMAS_REF + name);
+                if (openapi31) {
+                    model = new JsonSchema().$ref(Components.COMPONENTS_SCHEMAS_REF + name);
+                } else {
+                    model = new Schema().$ref(Components.COMPONENTS_SCHEMAS_REF + name);
+                }
             }
             if (!isComposedSchema) {
                 if (schemaRefFromAnnotation != null && model != null) {
@@ -875,7 +878,26 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                     }
                     final BeanDescription propBeanDesc = _mapper.getSerializationConfig().introspect(propType);
                     if (property != null && !propType.isContainerType()) {
-                        if (isObjectSchema(property)) {
+                        // Check if this is an enum property with enumAsRef=true
+                        if (propType.isEnumType() && ctxSchema != null && ctxSchema.enumAsRef()) {
+                            // create a reference for the enum property
+                            String pName = _typeName(propType, propBeanDesc);
+                            if (StringUtils.isNotBlank(property.getName())) {
+                                pName = property.getName();
+                            }
+
+                            // Define the enum model if it's not already defined
+                            if (!context.getDefinedModels().containsKey(pName)) {
+                                context.defineModel(pName, property, new AnnotatedType().type(propType.getRawClass()), null);
+                            }
+
+                            // Create a reference to the enum model
+                            if (openapi31) {
+                                property = new JsonSchema().$ref(constructRef(pName));
+                            } else {
+                                property = new Schema().$ref(constructRef(pName));
+                            }
+                        } else if (isObjectSchema(property)) {
                             // create a reference for the property
                             String pName = _typeName(propType, propBeanDesc);
                             if (StringUtils.isNotBlank(property.getName())) {
