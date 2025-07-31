@@ -26,7 +26,7 @@ Alternatively provide as value a classpath with the following dependencies (repl
 
 ```
 plugins {
-  id "io.swagger.core.v3.swagger-gradle-plugin" version "2.2.34"
+  id "io.swagger.core.v3.swagger-gradle-plugin" version "2.2.35"
 }
 ```
 ### Gradle 1.x and 2.0
@@ -43,7 +43,7 @@ buildscript {
     }
   }
   dependencies {
-    classpath "io.swagger.core.v3:swagger-gradle-plugin:2.2.34"
+    classpath "io.swagger.core.v3:swagger-gradle-plugin:2.2.35"
   }
 }
 
