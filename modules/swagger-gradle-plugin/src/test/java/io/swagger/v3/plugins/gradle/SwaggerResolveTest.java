@@ -77,7 +77,7 @@ public class SwaggerResolveTest {
                 "    mavenCentral()\n" +
                 "}\n" +
                 "dependencies {  \n" +
-                "    implementation 'io.swagger.core.v3:swagger-jaxrs2:2.2.35-SNAPSHOT'\n" +
+                "    implementation 'io.swagger.core.v3:swagger-jaxrs2:2.2.35'\n" +
                 "    implementation 'javax.ws.rs:javax.ws.rs-api:2.1'\n" +
                 "    implementation 'javax.servlet:javax.servlet-api:3.1.0'\n" +
                 "    testImplementation 'com.github.tomakehurst:wiremock:2.27.2'\n" +
@@ -150,7 +150,7 @@ public class SwaggerResolveTest {
                 "    mavenCentral()\n" +
                 "}\n" +
                 "dependencies {  \n" +
-                "    implementation 'io.swagger.core.v3:swagger-jaxrs2:2.2.35-SNAPSHOT'\n" +
+                "    implementation 'io.swagger.core.v3:swagger-jaxrs2:2.2.35'\n" +
                 "    implementation 'javax.ws.rs:javax.ws.rs-api:2.1'\n" +
                 "    implementation 'javax.servlet:javax.servlet-api:3.1.0'\n" +
                 "    testImplementation 'com.github.tomakehurst:wiremock:2.27.2'\n" +
