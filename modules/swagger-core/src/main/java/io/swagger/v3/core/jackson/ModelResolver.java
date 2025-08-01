@@ -1043,7 +1043,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
         if (isComposedSchema) {
 
-            ComposedSchema composedSchema = (ComposedSchema) model;
+            Schema composedSchema = model; // Could be ComposedSchema or JsonSchema (3.1)
 
             Class<?>[] allOf = resolvedSchemaAnnotation.allOf();
             Class<?>[] anyOf = resolvedSchemaAnnotation.anyOf();
