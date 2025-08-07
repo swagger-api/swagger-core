@@ -548,7 +548,7 @@ public abstract class AnnotationsUtils {
 
         if (arraySchema.schema() != null) {
             if (arraySchema.schema().implementation().equals(Void.class)) {
-                getSchemaFromAnnotation(arraySchema.schema(), components, jsonViewAnnotation, openapi31).ifPresent(arraySchemaObject::setItems);
+                getSchemaFromAnnotation(arraySchema.schema(), components, jsonViewAnnotation, openapi31, arraySchemaObject.getItems()).ifPresent(arraySchemaObject::setItems);
             } else if (processSchemaImplementation) {
                 getSchema(arraySchema.schema(), arraySchema, false, arraySchema.schema().implementation(), components, jsonViewAnnotation, openapi31).ifPresent(arraySchemaObject::setItems);
             }
