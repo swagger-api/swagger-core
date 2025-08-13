@@ -2155,7 +2155,8 @@ public class Schema<T> {
                 Objects.equals(this.$comment, schema.$comment) &&
                 Objects.equals(this.examples, schema.examples) &&
                 Objects.equals(this.prefixItems, schema.prefixItems) &&
-                Objects.equals(this.items, schema.items)
+                Objects.equals(this.items, schema.items) &&
+                Objects.equals(this.booleanSchemaValue, schema.booleanSchemaValue)
 
                 ;
     }
@@ -2169,7 +2170,8 @@ public class Schema<T> {
                 discriminator, _enum, _default, patternProperties, $id, $anchor, $schema, $vocabulary, $dynamicAnchor,
                 $dynamicRef, types, allOf, anyOf, oneOf, _const, contentEncoding, contentMediaType, contentSchema,
                 propertyNames, unevaluatedProperties, maxContains, minContains, additionalItems, unevaluatedItems,
-                _if, _else, then, dependentRequired, dependentSchemas, $comment, examples, prefixItems, items);
+                _if, _else, then, dependentRequired, dependentSchemas, $comment, examples, prefixItems, items,
+                booleanSchemaValue);
     }
 
     public java.util.Map<String, Object> getExtensions() {
