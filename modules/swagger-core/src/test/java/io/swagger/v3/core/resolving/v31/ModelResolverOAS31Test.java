@@ -85,6 +85,26 @@ public class ModelResolverOAS31Test extends SwaggerTestBase {
                 "  properties:\n" +
                 "    billingAddress:\n" +
                 "      type: string\n" +
+                "    acceptingCountries:\n" +
+                "      type: array\n" +
+                "      items:\n" +
+                "        type: string\n" +
+                "        description: accepting country\n" +
+                "        enum:\n" +
+                "        - UNITED_STATES_OF_AMERICA\n" +
+                "        - CANADA\n" +
+                "      uniqueItems: true\n" +
+                "    availableCurrencies:\n" +
+                "      type: array\n" +
+                "      items:\n" +
+                "        $ref: \"#/components/schemas/Currency\"\n" +
+                "        description: available currencies\n" +
+                "      uniqueItems: true\n" +
+                "Currency:\n" +
+                "  type: object\n" +
+                "  properties:\n" +
+                "    currencyCode:\n" +
+                "      type: string\n" +
                 "ModelWithOAS31Stuff:\n" +
                 "  type: object\n" +
                 "  $comment: Random comment at schema level\n" +
