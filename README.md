@@ -23,7 +23,8 @@ The OpenAPI Specification has undergone several revisions since initial creation
 
 Swagger core Version      | Release Date | OpenAPI Spec compatibility | Notes | Status
 ------------------------- | ------------ | -------------------------- | ----- | ----
-2.2.35 (**current stable**)| 2025-07-31   | 3.x           | [tag v2.2.35](https://github.com/swagger-api/swagger-core/tree/v2.2.35) | Supported
+2.2.36 (**current stable**)| 2025-08-18   | 3.x           | [tag v2.2.36](https://github.com/swagger-api/swagger-core/tree/v2.2.36) | Supported
+2.2.35                     | 2025-07-31   | 3.x           | [tag v2.2.35](https://github.com/swagger-api/swagger-core/tree/v2.2.35) | Supported
 2.2.34                     | 2025-06-20   | 3.x           | [tag v2.2.34](https://github.com/swagger-api/swagger-core/tree/v2.2.34) | Supported
 2.2.33                     | 2025-06-12   | 3.x           | [tag v2.2.33](https://github.com/swagger-api/swagger-core/tree/v2.2.33) | Supported
 2.2.32                     | 2025-05-14   | 3.x           | [tag v2.2.32](https://github.com/swagger-api/swagger-core/tree/v2.2.32) | Supported
@@ -128,7 +129,7 @@ You need the following installed and available in your $PATH:
 * Jackson 2.4.5 or greater
 
 
-### To build from source (currently 2.2.36-SNAPSHOT)
+### To build from source (currently 2.2.37-SNAPSHOT)
 ```
 # first time building locally
 mvn -N
