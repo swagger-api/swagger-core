@@ -5,6 +5,7 @@ import io.swagger.v3.core.converter.ModelConverterContextImpl;
 import io.swagger.v3.core.jackson.ModelResolver;
 import io.swagger.v3.core.matchers.SerializationMatchers;
 import io.swagger.v3.core.resolving.SwaggerTestBase;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.testng.annotations.Test;
 
@@ -26,16 +27,24 @@ public class ByteObjectOAS31Test extends SwaggerTestBase {
                 "  properties:\n" +
                 "    primitiveWithoutSchema:\n" +
                 "      type: integer\n" +
-                "      format: int8\n" +
                 "      writeOnly: true\n" +
                 "    primitiveWithSchema:\n" +
                 "      type: integer\n" +
-                "      format: int8\n" +
                 "      writeOnly: true\n" +
                 "    primitiveWithSchemaTypeAndFormat:\n" +
                 "      type: integer\n" +
-                "      format: int8\n" +
-                "      writeOnly: true");
+                "      writeOnly: true\n" +
+                "    primitiveArrayWithoutSchema:\n" +
+                "      type: array\n" +
+                "      items:\n" +
+                "        type: integer\n" +
+                "      writeOnly: true\n" +
+                "    primitiveArrayWithSchema:\n" +
+                "      type: array\n" +
+                "      items:\n" +
+                "        type: integer\n" +
+                "      writeOnly: true"
+        );
     }
 
     public static class ByteObject {
@@ -50,6 +59,16 @@ public class ByteObjectOAS31Test extends SwaggerTestBase {
                 format = "byte"
         )
         private byte primitiveWithSchemaTypeAndFormat;
+
+        private byte[] primitiveArrayWithoutSchema;
+
+        @ArraySchema(
+                schema = @Schema(
+                        type = "string",
+                        format = "byte"
+                )
+        )
+        private byte[] primitiveArrayWithSchema;
 
         public byte primitiveWithoutSchema() {
             return primitiveWithoutSchema;
@@ -73,6 +92,22 @@ public class ByteObjectOAS31Test extends SwaggerTestBase {
 
         public void setPrimitiveWithSchemaTypeAndFormat(byte primitiveWithSchemaTypeAndFormat) {
             this.primitiveWithSchemaTypeAndFormat = primitiveWithSchemaTypeAndFormat;
+        }
+
+        public byte[] primitiveArrayWithoutSchema() {
+            return primitiveArrayWithoutSchema;
+        }
+
+        public void setPrimitiveArrayWithoutSchema(byte[] primitiveArrayWithoutSchema) {
+            this.primitiveArrayWithoutSchema = primitiveArrayWithoutSchema;
+        }
+
+        public byte[] primitiveArrayWithSchema() {
+            return primitiveArrayWithSchema;
+        }
+
+        public void setPrimitiveArrayWithSchema(byte[] primitiveArrayWithSchema) {
+            this.primitiveArrayWithSchema = primitiveArrayWithSchema;
         }
     }
 }

@@ -173,6 +173,13 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             type = _mapper.constructType(annotatedType.getType());
         }
 
+        // EARLY special handling for OpenAPI 3.1 and byte[]: treat as array of primitive items
+        if (openapi31 && type.getRawClass().isArray() && type.getRawClass().getComponentType() == byte.class) {
+            ArraySchema arraySchema = new ArraySchema().items(PrimitiveType.BYTE.createProperty31());
+            arraySchema.specVersion(SpecVersion.V31);
+            return arraySchema;
+        }
+
         final Annotation resolvedSchemaOrArrayAnnotation = AnnotationsUtils.mergeSchemaAnnotations(annotatedType.getCtxAnnotations(), type);
         final io.swagger.v3.oas.annotations.media.Schema resolvedSchemaAnnotation =
                 resolvedSchemaOrArrayAnnotation == null ?
