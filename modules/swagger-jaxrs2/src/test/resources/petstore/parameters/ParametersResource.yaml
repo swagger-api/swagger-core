@@ -76,6 +76,14 @@ paths:
         description: idParam
         schema:
           type: string
+      - name: enumStringParameter
+        in: query
+        schema:
+          type: string
+          enum:
+            - EMAIL
+            - SMS
+            - PHONE_CALL
       responses:
         default:
           description: test description
