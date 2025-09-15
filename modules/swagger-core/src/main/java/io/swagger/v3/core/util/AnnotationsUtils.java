@@ -2907,4 +2907,13 @@ public abstract class AnnotationsUtils {
         }
         return globalSchemaResolution;
     }
+
+    public static boolean computeEnumAsRef(io.swagger.v3.oas.annotations.media.Schema ctxSchema, io.swagger.v3.oas.annotations.media.ArraySchema ctxArraySchema) {
+        if (ctxSchema != null && ctxSchema.enumAsRef()) {
+            return ctxSchema.enumAsRef();
+        } else if(ctxArraySchema != null && ctxArraySchema.schema() != null && ctxArraySchema.schema().enumAsRef()) {
+             return ctxArraySchema.schema().enumAsRef();
+        }
+        return false;
+    }
 }
