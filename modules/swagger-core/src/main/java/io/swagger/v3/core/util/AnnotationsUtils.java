@@ -2916,4 +2916,19 @@ public abstract class AnnotationsUtils {
         }
         return false;
     }
+
+    public static boolean areSiblingsAllowed(Schema.SchemaResolution resolvedSchemaResolution, boolean openapi31) {
+        return Schema.SchemaResolution.ALL_OF.equals(resolvedSchemaResolution) || Schema.SchemaResolution.ALL_OF_REF.equals(resolvedSchemaResolution) || openapi31;
+    }
+
+    public static AnnotatedType addTypeWhenSiblingsAllowed(AnnotatedType aType, io.swagger.v3.oas.annotations.media.Schema ctxSchema, boolean areSiblingsAllowed) {
+        if (areSiblingsAllowed && ctxSchema != null) {
+            if (!Void.class.equals(ctxSchema.implementation())) {
+                aType.setType(ctxSchema.implementation());
+            } else if (StringUtils.isNotBlank(ctxSchema.type())) {
+                aType.setType(ctxSchema.type().getClass());
+            }
+        }
+        return aType;
+    }
 }
