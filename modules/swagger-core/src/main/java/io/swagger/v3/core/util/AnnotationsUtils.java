@@ -752,7 +752,7 @@ public abstract class AnnotationsUtils {
             schemaObject.setExamples(Arrays.asList(schema.examples()));
         }
 
-        if (StringUtils.isNotBlank(schema.defaultValue())) {
+        if (schema.defaultValue() != null) {
             schemaObject.setDefault(schema.defaultValue());
         }
         if (StringUtils.isNotBlank(schema.example())) {

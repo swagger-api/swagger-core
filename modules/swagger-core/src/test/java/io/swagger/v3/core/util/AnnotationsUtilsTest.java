@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.media.Schema;
+import java.lang.annotation.Annotation;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -21,6 +22,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
 public class AnnotationsUtilsTest {
@@ -65,7 +67,8 @@ public class AnnotationsUtilsTest {
                 {"byteType", ImmutableMap.of("type", "string", "format", "byte")},
                 {"binaryType", ImmutableMap.of("type", "string", "format", "binary")},
                 {"emailType", ImmutableMap.of("type", "string", "format", "email")},
-                {"dummyType", ImmutableMap.of("$ref", "#/components/schemas/DummyClass")}
+                {"dummyType", ImmutableMap.of("$ref", "#/components/schemas/DummyClass")},
+                {"emptyDefaultValue", ImmutableMap.of("type", "string", "defaultValue", "")}
         };
     }
 
@@ -79,6 +82,11 @@ public class AnnotationsUtilsTest {
        assertEquals(schema.get().getType(), expected.get("type"));
        assertEquals(schema.get().getFormat(), expected.get("format"));
        assertEquals(schema.get().get$ref(), expected.get("$ref"));
+
+        if (expected.containsKey("defaultValue")) {
+            assertNotNull(schema.get().getDefault());
+            assertEquals(schema.get().getDefault(), expected.get("defaultValue"));
+        }
     }
 
     @ApiResponse(content = @Content(schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = Byte.class)))
@@ -97,6 +105,12 @@ public class AnnotationsUtilsTest {
     private void dummyType() {
     }
 
+    @ApiResponse(content = @Content(schema = @io.swagger.v3.oas.annotations.media.Schema(defaultValue = "", type = "string")))
+    private void emptyDefaultValue() {
+    }
+
     class DummyClass implements Serializable {}
+
+
 
 }
