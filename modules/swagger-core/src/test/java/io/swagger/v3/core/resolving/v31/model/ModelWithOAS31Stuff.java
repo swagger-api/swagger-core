@@ -23,6 +23,13 @@ public class ModelWithOAS31Stuff {
     private Client client;
 
     @ArraySchema(
+            schema = @Schema(
+                    types = { "string" },
+                    description = "itemdescription",
+                    title = "itemtitle"
+
+            ),
+            arraySchema = @Schema(description = "arraydescription", title = "arraytitle"),
             maxContains = 10,
             minContains = 1,
             contains = @Schema(
