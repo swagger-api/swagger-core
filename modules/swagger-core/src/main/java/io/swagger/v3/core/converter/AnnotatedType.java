@@ -243,47 +243,28 @@ public class AnnotatedType {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof AnnotatedType)) {
-            return false;
-        }
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
         AnnotatedType that = (AnnotatedType) o;
-
-        if ((type == null && that.type != null) || (type != null && that.type == null)) {
-            return false;
-        }
-
-        if (type != null && that.type != null && !type.equals(that.type)) {
-            return false;
-        }
-        return Arrays.equals(this.ctxAnnotations, that.ctxAnnotations);
+        return skipOverride == that.skipOverride &&
+                schemaProperty == that.schemaProperty &&
+                resolveAsRef == that.resolveAsRef &&
+                resolveEnumAsRef == that.resolveEnumAsRef &&
+                includePropertiesWithoutJSONView == that.includePropertiesWithoutJSONView &&
+                skipSchemaName == that.skipSchemaName &&
+                skipJsonIdentity == that.skipJsonIdentity &&
+                Objects.equals(type, that.type) &&
+                Objects.equals(name, that.name) &&
+                Arrays.equals(ctxAnnotations, that.ctxAnnotations) &&
+                Objects.equals(jsonViewAnnotation, that.jsonViewAnnotation);
     }
-
 
     @Override
     public int hashCode() {
-        if (ctxAnnotations == null || ctxAnnotations.length == 0) {
-            return Objects.hash(type, "fixed");
-        }
-        List<Annotation> meaningfulAnnotations = new ArrayList<>();
-
-        boolean hasDifference = false;
-        for (Annotation a: ctxAnnotations) {
-            if(!a.annotationType().getName().startsWith("sun") && !a.annotationType().getName().startsWith("jdk")) {
-                meaningfulAnnotations.add(a);
-            } else {
-                hasDifference = true;
-            }
-        }
-        int result = 1;
-        result = 31 * result + (type == null ? 0 : Objects.hash(type, "fixed"));
-        if (hasDifference) {
-            result = 31 * result + meaningfulAnnotations.hashCode();
-        } else {
-            result = 31 * result + Arrays.hashCode(ctxAnnotations);
-        }
+        int result = Objects.hash(type, name, skipOverride, schemaProperty, resolveAsRef,
+                resolveEnumAsRef, jsonViewAnnotation, includePropertiesWithoutJSONView, skipSchemaName,
+                skipJsonIdentity);
+        result = 31 * result + Arrays.hashCode(ctxAnnotations);
         return result;
     }
 }
