@@ -90,7 +90,7 @@ public abstract class AnnotationsUtils {
                 && schema.accessMode().equals(io.swagger.v3.oas.annotations.media.Schema.AccessMode.AUTO)
                 && !schema.deprecated()
                 && schema.allowableValues().length == 0
-                && StringUtils.isBlank(schema.defaultValue())
+//                && StringUtils.isBlank(schema.defaultValue())
                 && schema.implementation().equals(Void.class)
                 && StringUtils.isBlank(schema.example())
                 && StringUtils.isBlank(schema.pattern())
@@ -597,6 +597,8 @@ public abstract class AnnotationsUtils {
             Schema existingSchema,
             Schema.SchemaResolution schemaResolution,
             ModelConverterContext context) {
+        System.out.println("조건 검사");
+        System.out.println(schema);
         if (schema == null || !hasSchemaAnnotation(schema)) {
             if (existingSchema == null || (!openapi31 && Schema.SchemaResolution.DEFAULT.equals(schemaResolution))) {
                 return Optional.empty();
@@ -604,6 +606,7 @@ public abstract class AnnotationsUtils {
                 return Optional.of(existingSchema);
             }
         }
+        System.out.println("조건 통과");
         Schema schemaObject = null;
         if (!openapi31) {
             if (existingSchema != null) {
@@ -751,8 +754,8 @@ public abstract class AnnotationsUtils {
         if (schema.examples().length > 0) {
             schemaObject.setExamples(Arrays.asList(schema.examples()));
         }
-
         if (schema.defaultValue() != null) {
+            System.out.println(schema.defaultValue());
             schemaObject.setDefault(schema.defaultValue());
         }
         if (StringUtils.isNotBlank(schema.example())) {

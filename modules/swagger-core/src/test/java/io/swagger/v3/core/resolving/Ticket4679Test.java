@@ -20,8 +20,10 @@ public class Ticket4679Test extends SwaggerTestBase{
                 "    exampleField:\n" +
                 "      type: integer\n" +
                 "      format: int32\n" +
+                "      default: \"\"\n" +
                 "    secondExampleField:\n" +
-                "      type: string\n";
+                "      type: string\n" +
+                "      default: \"\"\n";
 
         Map<String, io.swagger.v3.oas.models.media.Schema> stringSchemaMap = ModelConverters.getInstance(true).readAll(ModelWithCustomSchemaImplementationInProperty.class);
         SerializationMatchers.assertEqualsToYaml31(stringSchemaMap, expectedYaml);

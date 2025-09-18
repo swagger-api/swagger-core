@@ -27,6 +27,7 @@ paths:
                       schema:
                         type: integer
                         format: int32
+                        default: ""
         testCallback2:
           http://www.url2.com:
             get:

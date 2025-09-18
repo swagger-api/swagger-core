@@ -37,6 +37,7 @@ public class EncodingTest extends AbstractAnnotationTest {
                 "            application/json:\n" +
                 "              schema:\n" +
                 "                type: string\n" +
+                "                default: \"\"\n" +
                 "              encoding:\n" +
                 "                test:\n" +
                 "                  contentType: text/plain\n" +
@@ -247,6 +248,7 @@ public class EncodingTest extends AbstractAnnotationTest {
                 "          application/json:\n" +
                 "            schema:\n" +
                 "              type: string\n" +
+                "              default: \"\"\n" +
                 "            encoding:\n" +
                 "              testRequestBody:\n" +
                 "                contentType: text/plain\n" +

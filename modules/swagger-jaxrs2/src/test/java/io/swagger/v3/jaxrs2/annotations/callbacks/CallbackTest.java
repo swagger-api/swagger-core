@@ -212,7 +212,8 @@ public class CallbackTest extends AbstractAnnotationTest {
                 "                    application/json:\n" +
                 "                      schema:\n" +
                 "                        type: integer\n" +
-                "                        format: int32";
+                "                        format: int32\n" +
+                "                        default: \"\"";
         String extractedYAML = openApiYAML.substring(start, end);
 
         assertEquals(expectedYAML, extractedYAML);
@@ -276,6 +277,7 @@ public class CallbackTest extends AbstractAnnotationTest {
                 "                      schema:\n" +
                 "                        type: integer\n" +
                 "                        format: int32\n" +
+                "                        default: \"\"\n" +
                 "        testCallback2:\n" +
                 "          http://$request.query.url: {}";
         String extractedYAML = openApiYAML.substring(start, end);
@@ -344,6 +346,7 @@ public class CallbackTest extends AbstractAnnotationTest {
                 "                      schema:\n" +
                 "                        type: integer\n" +
                 "                        format: int32\n" +
+                "                        default: \"\"\n" +
                 "        testCallback2:\n" +
                 "          http://$request.query.url: {}";
         String extractedYAML = openApiYAML.substring(start, end);
@@ -379,6 +382,7 @@ public class CallbackTest extends AbstractAnnotationTest {
                 "                      schema:\n" +
                 "                        type: integer\n" +
                 "                        format: int32\n" +
+                "                        default: \"\"\n" +
                 "        testCallback2:\n" +
                 "          http://$request.query.url: {}";
         String extractedYAML = openApiYAML.substring(start, end);

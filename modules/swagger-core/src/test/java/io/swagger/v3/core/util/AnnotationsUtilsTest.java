@@ -5,7 +5,6 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.media.Schema;
-import java.lang.annotation.Annotation;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -110,7 +109,4 @@ public class AnnotationsUtilsTest {
     }
 
     class DummyClass implements Serializable {}
-
-
-
 }

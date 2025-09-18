@@ -72,6 +72,7 @@ public class ModelResolverOAS31Test extends SwaggerTestBase {
                 "    country:\n" +
                 "      type: string\n" +
                 "      const: United States\n" +
+                "      default: \"\"\n" +
                 "Client:\n" +
                 "  type: object\n" +
                 "  properties:\n" +
@@ -89,6 +90,7 @@ public class ModelResolverOAS31Test extends SwaggerTestBase {
                 "      type: array\n" +
                 "      items:\n" +
                 "        type: string\n" +
+                "        default: \"\"\n" +
                 "        description: accepting country\n" +
                 "        enum:\n" +
                 "        - UNITED_STATES_OF_AMERICA\n" +
@@ -98,6 +100,7 @@ public class ModelResolverOAS31Test extends SwaggerTestBase {
                 "      type: array\n" +
                 "      items:\n" +
                 "        $ref: \"#/components/schemas/Currency\"\n" +
+                "        default: \"\"\n" +
                 "        description: available currencies\n" +
                 "      uniqueItems: true\n" +
                 "Currency:\n" +
@@ -115,38 +118,46 @@ public class ModelResolverOAS31Test extends SwaggerTestBase {
                 "      type: array\n" +
                 "      contains:\n" +
                 "        type: string\n" +
+                "        default: \"\"\n" +
                 "      items:\n" +
                 "        type: string\n" +
                 "      maxContains: 10\n" +
                 "      minContains: 1\n" +
                 "      prefixItems:\n" +
                 "      - type: string\n" +
+                "        default: \"\"\n" +
                 "      unevaluatedItems:\n" +
                 "        type: number\n" +
+                "        default: \"\"\n" +
                 "    status:\n" +
                 "      type:\n" +
                 "      - string\n" +
                 "      - number\n" +
+                "      default: \"\"\n" +
                 "    intValue:\n" +
                 "      type: integer\n" +
                 "      format: int32\n" +
                 "      $anchor: intValue\n" +
                 "      $comment: comment at schema property level\n" +
+                "      default: \"\"\n" +
                 "      exclusiveMaximum: 100\n" +
                 "      exclusiveMinimum: 1\n" +
                 "    text:\n" +
                 "      type: string\n" +
                 "      contentEncoding: plan/text\n" +
                 "      contentMediaType: base64\n" +
+                "      default: \"\"\n" +
                 "    encodedString:\n" +
                 "      type: string\n" +
                 "      contentMediaType: application/jwt\n" +
                 "      contentSchema:\n" +
                 "        $ref: \"#/components/schemas/MultipleBaseBean\"\n" +
+                "      default: \"\"\n" +
                 "    address:\n" +
                 "      $ref: \"#/components/schemas/Address\"\n" +
                 "    client:\n" +
                 "      $ref: \"#/components/schemas/Client\"\n" +
+                "      default: \"\"\n" +
                 "      dependentSchemas:\n" +
                 "        creditCard:\n" +
                 "          $ref: \"#/components/schemas/CreditCard\"\n" +
@@ -189,12 +200,14 @@ public class ModelResolverOAS31Test extends SwaggerTestBase {
                 "  properties:\n" +
                 "    postalCode:\n" +
                 "      type: string\n" +
+                "      default: \"\"\n" +
                 "      pattern: \"[0-9]{5}(-[0-9]{4})?\"\n" +
                 "PostalCodePattern:\n" +
                 "  type: object\n" +
                 "  properties:\n" +
                 "    postalCode:\n" +
                 "      type: string\n" +
+                "      default: \"\"\n" +
                 "      pattern: \"[A-Z][0-9][A-Z] [0-9][A-Z][0-9]\"\n" +
                 "PropertyNamesPattern:\n" +
                 "  pattern: \"^[A-Za-z_][A-Za-z0-9_]*$\"\n");
@@ -216,6 +229,7 @@ public class ModelResolverOAS31Test extends SwaggerTestBase {
                 "  type: object\n" +
                 "  dependentSchemas:\n" +
                 "    value:\n" +
+                "      default: \"\"\n" +
                 "      properties:\n" +
                 "        enable:\n" +
                 "          $ref: \"#/components/schemas/BooleanFakeClass\"\n" +

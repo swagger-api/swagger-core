@@ -14,16 +14,16 @@ paths:
           description: Schema
           example: Subscription example
         examples:
-          subscriptionId_2:
-            summary: Subscription number 54321
-            description: subscriptionId_2
-            value: 54321
-            externalValue: Subscription external value 2
           subscriptionId_1:
             summary: Subscription number 12345
             description: subscriptionId_1
             value: 12345
             externalValue: Subscription external value 1
+          subscriptionId_2:
+            summary: Subscription number 54321
+            description: subscriptionId_2
+            value: 54321
+            externalValue: Subscription external value 2
         example: example
       requestBody:
         description: Created user object
@@ -35,6 +35,7 @@ paths:
               format: uuid
               readOnly: true
               example: Schema example
+              default: ""
             examples:
               Default Request:
                 summary: Subscription Request Example
@@ -53,6 +54,7 @@ paths:
                 format: uuid
                 readOnly: true
                 example: Schema example
+                default: ""
               examples:
                 Default Response:
                   summary: Subscription Response Example
@@ -61,6 +63,11 @@ paths:
                   externalValue: Subscription Response value 1
 components:
   schemas:
+    SubscriptionResponse:
+      type: object
+      properties:
+        subscriptionId:
+          type: string
     User:
       type: object
       properties:
@@ -85,8 +92,3 @@ components:
           format: int32
       xml:
         name: User
-    SubscriptionResponse:
-      type: object
-      properties:
-        subscriptionId:
-          type: string

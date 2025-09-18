@@ -18,12 +18,15 @@ public class Ticket3900Test extends SwaggerTestBase {
                 "properties:\n" +
                 "  startPoint:\n" +
                 "    $ref: '#/components/schemas/GeoPoint'\n" +
+                "    default: \"\"\n" +
                 "    description: Point where the route begins\n" +
                 "  intermediatePoint:\n" +
                 "    $ref: '#/components/schemas/GeoPoint'\n" +
+                "    default: \"\"\n" +
                 "    description: Intermediate point of the route\n" +
                 "  endPoint:\n" +
                 "    $ref: '#/components/schemas/GeoPoint'\n" +
+                "    default: \"\"\n" +
                 "    description: Point where the route ends");
     }
 
