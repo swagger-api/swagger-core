@@ -15,6 +15,7 @@ paths:
             '*/*':
               schema:
                 type: object
+                default: ""
                 dependentSchemas:
                   value:
                     type:

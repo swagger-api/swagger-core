@@ -59,6 +59,7 @@ public class SchemaResolutionAnnotationTest {
                 "          nullable: true\n" +
                 "          allOf:\n" +
                 "          - $ref: \"#/components/schemas/InlineSchemaPropertyFirst\"\n" +
+                "          default: \"\"\n" +
                 "        property2:\n" +
                 "          type: object\n" +
                 "          properties:\n" +
@@ -110,7 +111,8 @@ public class SchemaResolutionAnnotationTest {
                 "          description: property 2\n" +
                 "          example: example\n" +
                 "          allOf:\n" +
-                "          - $ref: \"#/components/schemas/InlineSchemaPropertySimple\"\n";
+                "          - $ref: \"#/components/schemas/InlineSchemaPropertySimple\"\n" +
+                "          default: \"\"\n";
         SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
         ModelConverters.reset();
     }

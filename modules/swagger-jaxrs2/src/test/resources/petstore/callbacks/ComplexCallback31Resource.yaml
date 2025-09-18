@@ -31,6 +31,7 @@ paths:
                         format: int32
                         $comment: random comment
                         $id: http://yourdomain.com/schemas/myschema.json
+                        default: ""
                         dependentSchemas:
                           pet: { }
                         patternProperties:
@@ -47,6 +48,7 @@ paths:
                     application/json:
                       schema:
                         $ref: "#/components/schemas/User"
+                        defalut: ""
 components:
   schemas:
     User:
@@ -70,6 +72,7 @@ components:
         userStatus:
           type: integer
           format: int32
+          default: ""
           description: User Status
       xml:
         name: User

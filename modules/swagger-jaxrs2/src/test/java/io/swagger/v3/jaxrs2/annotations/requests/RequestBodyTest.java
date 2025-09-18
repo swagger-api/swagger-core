@@ -454,6 +454,7 @@ public class RequestBodyTest extends AbstractAnnotationTest {
                 "            schema:\n" +
                 "              type: string\n" +
                 "              format: binary\n" +
+                "              default: \"\"\n" +
                 "      responses:\n" +
                 "        default:\n" +
                 "          description: default response\n" +

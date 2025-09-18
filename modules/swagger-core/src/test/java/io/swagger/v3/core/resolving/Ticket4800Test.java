@@ -21,6 +21,7 @@ public class Ticket4800Test extends SwaggerTestBase{
                 "      description: Prop description\n" +
                 "    secondExampleFieldWithTypeProp:\n" +
                 "      type: string\n" +
+                "      default: \"\"\n" +
                 "MyEnum:\n" +
                 "  type: string\n" +
                 "  enum:\n" +

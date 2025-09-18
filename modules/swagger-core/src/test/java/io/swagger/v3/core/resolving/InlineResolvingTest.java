@@ -25,10 +25,12 @@ public class InlineResolvingTest extends SwaggerTestBase{
                 "      description: InlineSchemaFirst property 1\n" +
                 "      nullable: true\n" +
                 "      example: example\n" +
+                "      default: \"\"\n" +
                 "    property2:\n" +
                 "      type: object\n" +
                 "      description: ' InlineSchemaFirst property 2'\n" +
                 "      example: example 2\n" +
+                "      default: \"\"\n" +
                 "InlineSchemaPropertyFirst:\n" +
                 "  type: object\n" +
                 "  description: property\n" +
@@ -45,10 +47,12 @@ public class InlineResolvingTest extends SwaggerTestBase{
                 "      description: InlineSchemaFirst property 1\n" +
                 "      nullable: true\n" +
                 "      example: example\n" +
+                "      default: \"\"\n" +
                 "    property2:\n" +
                 "      type: object\n" +
                 "      description: ' InlineSchemaFirst property 2'\n" +
                 "      example: example 2\n" +
+                "      default: \"\"\n" +
                 "InlineSchemaPropertyFirst:\n" +
                 "  type: object\n" +
                 "  description: property\n" +
@@ -62,10 +66,12 @@ public class InlineResolvingTest extends SwaggerTestBase{
                 "        property1:\n" +
                 "          type: object\n" +
                 "          description: property 1\n" +
+                "          default: \"\"\n" +
                 "        property2:\n" +
                 "          type: object\n" +
                 "          description: property 2\n" +
                 "          example: example\n" +
+                "          default: \"\"\n" +
                 "  description: propertysecond\n" +
                 "  nullable: true\n" +
                 "  example: examplesecond\n" +
@@ -85,27 +91,33 @@ public class InlineResolvingTest extends SwaggerTestBase{
                 "            property1:\n" +
                 "              type: object\n" +
                 "              description: property 1\n" +
+                "              default: \"\"\n" +
                 "            property2:\n" +
                 "              type: object\n" +
                 "              description: property 2\n" +
                 "              example: example\n" +
+                "              default: \"\"\n" +
                 "      description: InlineSchemaSecond property 1\n" +
                 "      nullable: true\n" +
                 "      example: examplesecond\n" +
+                "      default: \"\"\n" +
                 "    property2:\n" +
                 "      type: object\n" +
                 "      description: InlineSchemaSecond property 2\n" +
                 "      example: InlineSchemaSecond example 2\n" +
+                "      default: \"\"\n" +
                 "InlineSchemaSimple:\n" +
                 "  type: object\n" +
                 "  properties:\n" +
                 "    property1:\n" +
                 "      type: object\n" +
                 "      description: property 1\n" +
+                "      default: \"\"\n" +
                 "    property2:\n" +
                 "      type: object\n" +
                 "      description: property 2\n" +
-                "      example: example\n";
+                "      example: example\n" +
+                "      default: \"\"\n";
         SerializationMatchers.assertEqualsToYaml(c.getDefinedModels(), expectedYaml);
     }
 

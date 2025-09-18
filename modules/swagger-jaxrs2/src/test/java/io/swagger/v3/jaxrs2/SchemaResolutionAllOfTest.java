@@ -34,6 +34,7 @@ public class SchemaResolutionAllOfTest {
                 "            schema:\n" +
                 "              allOf:\n" +
                 "              - description: InlineSchemaSecond API\n" +
+                "                default: \"\"\n" +
                 "              - $ref: \"#/components/schemas/InlineSchemaFirst\"\n" +
                 "      responses:\n" +
                 "        default:\n" +
