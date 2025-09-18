@@ -111,6 +111,8 @@ public class ModelPropertyTest {
         assertTrue(model.getRequired().contains("modeRequired"));
         assertFalse(model.getRequired().contains("modeNotRequired"));
         assertFalse(model.getRequired().contains("modeNotRequiredWithAnnotation"));
+        assertFalse(model.getRequired().contains("modeNotRequiredWithAnnotationForNotBlank"));
+        assertFalse(model.getRequired().contains("modeNotRequiredWithAnnotationForNotEmpty"));
     }
 
     @Test
