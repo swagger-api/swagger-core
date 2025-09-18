@@ -2907,4 +2907,28 @@ public abstract class AnnotationsUtils {
         }
         return globalSchemaResolution;
     }
+
+    public static boolean computeEnumAsRef(io.swagger.v3.oas.annotations.media.Schema ctxSchema, io.swagger.v3.oas.annotations.media.ArraySchema ctxArraySchema) {
+        if (ctxSchema != null && ctxSchema.enumAsRef()) {
+            return ctxSchema.enumAsRef();
+        } else if(ctxArraySchema != null && ctxArraySchema.schema() != null && ctxArraySchema.schema().enumAsRef()) {
+             return ctxArraySchema.schema().enumAsRef();
+        }
+        return false;
+    }
+
+    public static boolean areSiblingsAllowed(Schema.SchemaResolution resolvedSchemaResolution, boolean openapi31) {
+        return Schema.SchemaResolution.ALL_OF.equals(resolvedSchemaResolution) || Schema.SchemaResolution.ALL_OF_REF.equals(resolvedSchemaResolution) || openapi31;
+    }
+
+    public static AnnotatedType addTypeWhenSiblingsAllowed(AnnotatedType aType, io.swagger.v3.oas.annotations.media.Schema ctxSchema, boolean areSiblingsAllowed) {
+        if (areSiblingsAllowed && ctxSchema != null) {
+            if (!Void.class.equals(ctxSchema.implementation())) {
+                aType.setType(ctxSchema.implementation());
+            } else if (StringUtils.isNotBlank(ctxSchema.type())) {
+                aType.setType(ctxSchema.type().getClass());
+            }
+        }
+        return aType;
+    }
 }

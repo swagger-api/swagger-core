@@ -21,6 +21,7 @@ public class AnnotatedType {
     private boolean schemaProperty;
     private Annotation[] ctxAnnotations;
     private boolean resolveAsRef;
+    private boolean resolveEnumAsRef;
     private JsonView jsonViewAnnotation;
     private boolean includePropertiesWithoutJSONView = true;
     private boolean skipSchemaName;
@@ -85,6 +86,19 @@ public class AnnotatedType {
 
     public AnnotatedType resolveAsRef(boolean resolveAsRef) {
         this.resolveAsRef = resolveAsRef;
+        return this;
+    }
+
+    public boolean isResolveEnumAsRef() {
+        return resolveEnumAsRef;
+    }
+
+    public void setResolveEnumAsRef(boolean resolveEnumAsRef) {
+        this.resolveEnumAsRef = resolveEnumAsRef;
+    }
+
+    public AnnotatedType resolveEnumAsRef(boolean resolveEnumAsRef) {
+        this.resolveEnumAsRef = resolveEnumAsRef;
         return this;
     }
 

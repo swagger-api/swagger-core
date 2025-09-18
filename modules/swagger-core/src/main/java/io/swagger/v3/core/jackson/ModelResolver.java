@@ -411,7 +411,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 schema.setItems(model);
                 return schema;
             }
-            if (type.isEnumType() && shouldResolveEnumAsRef(resolvedSchemaAnnotation)) {
+            if (type.isEnumType() && shouldResolveEnumAsRef(resolvedSchemaAnnotation, annotatedType.isResolveEnumAsRef())) {
                 // Store off the ref and add the enum as a top-level model
                 context.defineModel(name, model, annotatedType, null);
                 // Return the model as a ref only property
@@ -540,6 +540,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                         .propertyName(annotatedType.getPropertyName())
                         .jsonViewAnnotation(annotatedType.getJsonViewAnnotation())
                         .components(annotatedType.getComponents())
+                        .resolveEnumAsRef(annotatedType.isResolveEnumAsRef())
                         .parent(annotatedType.getParent()));
 
                 if (items == null) {
@@ -750,19 +751,13 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
                 Annotation[] ctxAnnotation31 = null;
                 Schema.SchemaResolution resolvedSchemaResolution = AnnotationsUtils.resolveSchemaResolution(this.schemaResolution, ctxSchema);
-                if (
-                        Schema.SchemaResolution.ALL_OF.equals(resolvedSchemaResolution) ||
-                                Schema.SchemaResolution.ALL_OF_REF.equals(resolvedSchemaResolution) ||
-                                openapi31) {
+                if (AnnotationsUtils.areSiblingsAllowed(resolvedSchemaResolution, openapi31)) {
                     List<Annotation> ctxAnnotations31List = new ArrayList<>();
                     if (annotations != null) {
                         for (Annotation a : annotations) {
                             if (
                                     !(a instanceof io.swagger.v3.oas.annotations.media.Schema) &&
                                             !(a instanceof io.swagger.v3.oas.annotations.media.ArraySchema)) {
-                                ctxAnnotations31List.add(a);
-                            }
-                            if ((ctxSchema != null) && (!ctxSchema.implementation().equals(Void.class) || StringUtils.isNotEmpty(ctxSchema.type()))) {
                                 ctxAnnotations31List.add(a);
                             }
                         }
@@ -794,7 +789,8 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                         .skipSchemaName(true)
                         .schemaProperty(true)
                         .components(annotatedType.getComponents())
-                        .propertyName(propName);
+                        .propertyName(propName)
+                        .resolveEnumAsRef(AnnotationsUtils.computeEnumAsRef(ctxSchema, ctxArraySchema));
                 if (
                         Schema.SchemaResolution.ALL_OF.equals(resolvedSchemaResolution) ||
                                 Schema.SchemaResolution.ALL_OF_REF.equals(resolvedSchemaResolution) ||
@@ -821,6 +817,9 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                         return openapi31 ? new JsonSchema() : new Schema();
                     }
                 });
+
+                boolean areSiblingsAllowed = AnnotationsUtils.areSiblingsAllowed(resolvedSchemaResolution, openapi31);
+                aType = AnnotationsUtils.addTypeWhenSiblingsAllowed(aType, ctxSchema, areSiblingsAllowed);
                 property = context.resolve(aType);
                 property = clone(property);
                 Schema ctxProperty = null;
@@ -1239,8 +1238,8 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 .orElseGet(Stream::of);
     }
 
-    private boolean shouldResolveEnumAsRef(io.swagger.v3.oas.annotations.media.Schema resolvedSchemaAnnotation) {
-        return (resolvedSchemaAnnotation != null && resolvedSchemaAnnotation.enumAsRef()) || ModelResolver.enumsAsRef;
+    private boolean shouldResolveEnumAsRef(io.swagger.v3.oas.annotations.media.Schema resolvedSchemaAnnotation, boolean isResolveEnumAsRef) {
+        return (resolvedSchemaAnnotation != null && resolvedSchemaAnnotation.enumAsRef()) || ModelResolver.enumsAsRef || isResolveEnumAsRef;
     }
 
     protected Type findJsonValueType(final BeanDescription beanDesc) {
