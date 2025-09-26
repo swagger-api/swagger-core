@@ -96,7 +96,9 @@ paths:
                   user:
                     $ref: "#/components/schemas/User"
                 properties:
-                  extraObject: {}
+                  extraObject: {
+                    type: object
+                  }
 components:
   schemas:
     Category:
