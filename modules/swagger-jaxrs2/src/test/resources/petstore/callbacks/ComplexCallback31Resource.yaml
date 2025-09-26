@@ -32,9 +32,13 @@ paths:
                         $comment: random comment
                         $id: http://yourdomain.com/schemas/myschema.json
                         dependentSchemas:
-                          pet: { }
+                          pet: {
+                            type: object
+                          }
                         patternProperties:
-                          user: { }
+                          user: {
+                            type: object
+                          }
         testCallback2:
           http://www.url2.com:
             get:
