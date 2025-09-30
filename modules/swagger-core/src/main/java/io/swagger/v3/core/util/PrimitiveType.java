@@ -572,7 +572,7 @@ public enum PrimitiveType {
         }
     }
 
-    private static class DateStub {
+    public static class DateStub {
         private DateStub() {
         }
     }
