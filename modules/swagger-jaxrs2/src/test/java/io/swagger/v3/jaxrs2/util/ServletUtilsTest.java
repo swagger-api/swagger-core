@@ -10,6 +10,7 @@ import java.util.Map;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.assertNotNull;
 
 public class ServletUtilsTest {
@@ -25,7 +26,8 @@ public class ServletUtilsTest {
         assertEquals(multivaluedMap.size(), 2);
         assertEquals(multivaluedMap.get("key1").size(), 2);
         assertEquals(multivaluedMap.get("key2").size(), 4);
-        assertEquals(multivaluedMap.keySet().iterator().next(), "key1");
+        assertTrue(multivaluedMap.containsKey("key1"));
+        assertTrue(multivaluedMap.containsKey("key2"));
     }
 
     @Test(description = "convert query parameters to multivaluedmap with decoded values")
