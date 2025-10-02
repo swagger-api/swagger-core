@@ -8,9 +8,11 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class AnnotatedType {
     private Type type;
@@ -155,11 +157,12 @@ public class AnnotatedType {
     }
 
     public Annotation[] getCtxAnnotations() {
-        return ctxAnnotations;
+//        return ctxAnnotations;
+        return ctxAnnotations == null ? null : Arrays.copyOf(ctxAnnotations, ctxAnnotations.length);
     }
 
     public void setCtxAnnotations(Annotation[] ctxAnnotations) {
-        this.ctxAnnotations = ctxAnnotations;
+        this.ctxAnnotations = ctxAnnotations == null ? null : Arrays.copyOf(ctxAnnotations, ctxAnnotations.length);
     }
 
     public AnnotatedType ctxAnnotations(Annotation[] ctxAnnotations) {
@@ -241,11 +244,26 @@ public class AnnotatedType {
         return this;
     }
 
+    private List<Annotation> getProcessedAnnotations(Annotation[] annotations) {
+        if (annotations == null || annotations.length == 0) {
+            return new ArrayList<>();
+        }
+        return Arrays.stream(annotations)
+                .filter(a -> {
+                    String pkg = a.annotationType().getPackage().getName();
+                    return !pkg.startsWith("java.") && !pkg.startsWith("jdk.") && !pkg.startsWith("sun.");
+                })
+                .sorted(Comparator.comparing(a -> a.annotationType().getName()))
+                .collect(Collectors.toList());
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof AnnotatedType)) return false;
         AnnotatedType that = (AnnotatedType) o;
+        List<Annotation> thisAnnotatinons = getProcessedAnnotations(this.ctxAnnotations);
+        List<Annotation> thatAnnotatinons = getProcessedAnnotations(that.ctxAnnotations);
         return skipOverride == that.skipOverride &&
                 schemaProperty == that.schemaProperty &&
                 resolveAsRef == that.resolveAsRef &&
@@ -255,16 +273,16 @@ public class AnnotatedType {
                 skipJsonIdentity == that.skipJsonIdentity &&
                 Objects.equals(type, that.type) &&
                 Objects.equals(name, that.name) &&
-                Arrays.equals(ctxAnnotations, that.ctxAnnotations) &&
+                Objects.equals(thisAnnotatinons, thatAnnotatinons) &&
                 Objects.equals(jsonViewAnnotation, that.jsonViewAnnotation);
     }
 
     @Override
     public int hashCode() {
-        int result = Objects.hash(type, name, skipOverride, schemaProperty, resolveAsRef,
+        List<Annotation> processedAnnotations = getProcessedAnnotations(this.ctxAnnotations);
+
+        return Objects.hash(type, name, skipOverride, schemaProperty, resolveAsRef,
                 resolveEnumAsRef, jsonViewAnnotation, includePropertiesWithoutJSONView, skipSchemaName,
-                skipJsonIdentity);
-        result = 31 * result + Arrays.hashCode(ctxAnnotations);
-        return result;
+                skipJsonIdentity, processedAnnotations);
     }
 }
