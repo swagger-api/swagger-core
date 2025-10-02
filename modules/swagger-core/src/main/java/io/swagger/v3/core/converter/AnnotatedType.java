@@ -157,7 +157,6 @@ public class AnnotatedType {
     }
 
     public Annotation[] getCtxAnnotations() {
-//        return ctxAnnotations;
         return ctxAnnotations == null ? null : Arrays.copyOf(ctxAnnotations, ctxAnnotations.length);
     }
 
