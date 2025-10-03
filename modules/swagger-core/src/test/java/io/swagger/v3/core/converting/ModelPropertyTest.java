@@ -103,6 +103,9 @@ public class ModelPropertyTest {
     public void testRequiredProperty() {
         final Map<String, Schema> models = ModelConverters.getInstance().readAll(RequiredFields.class);
         Schema model = models.get("RequiredFields");
+        assertFalse(model.getRequired().contains("optionalField"));
+        assertFalse(model.getRequired().contains("primitiveTypeWithoutConstraint"));
+        assertTrue(model.getRequired().contains("primitiveTypeWithConstraint"));
         assertTrue(model.getRequired().contains("required"));
         assertFalse(model.getRequired().contains("notRequired"));
         assertTrue(model.getRequired().contains("notRequiredWithAnnotation"));

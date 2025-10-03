@@ -2092,43 +2092,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             ComposedSchema composedSchema = null;
             if (!(subtypeModel instanceof ComposedSchema)) {
                 // create composed schema
-                // TODO #2312 - smarter way needs clone implemented in #2227
-                composedSchema = (ComposedSchema) new ComposedSchema()
-                        .title(subtypeModel.getTitle())
-                        .name(subtypeModel.getName())
-                        .deprecated(subtypeModel.getDeprecated())
-                        .additionalProperties(subtypeModel.getAdditionalProperties())
-                        .description(subtypeModel.getDescription())
-                        .discriminator(subtypeModel.getDiscriminator())
-                        .exclusiveMaximum(subtypeModel.getExclusiveMaximum())
-                        .exclusiveMinimum(subtypeModel.getExclusiveMinimum())
-                        .externalDocs(subtypeModel.getExternalDocs())
-                        .format(subtypeModel.getFormat())
-                        .maximum(subtypeModel.getMaximum())
-                        .maxItems(subtypeModel.getMaxItems())
-                        .maxLength(subtypeModel.getMaxLength())
-                        .maxProperties(subtypeModel.getMaxProperties())
-                        .minimum(subtypeModel.getMinimum())
-                        .minItems(subtypeModel.getMinItems())
-                        .minLength(subtypeModel.getMinLength())
-                        .minProperties(subtypeModel.getMinProperties())
-                        .multipleOf(subtypeModel.getMultipleOf())
-                        .not(subtypeModel.getNot())
-                        .nullable(subtypeModel.getNullable())
-                        .pattern(subtypeModel.getPattern())
-                        .properties(subtypeModel.getProperties())
-                        .readOnly(subtypeModel.getReadOnly())
-                        .required(subtypeModel.getRequired())
-                        .type(subtypeModel.getType())
-                        .uniqueItems(subtypeModel.getUniqueItems())
-                        .writeOnly(subtypeModel.getWriteOnly())
-                        .xml(subtypeModel.getXml())
-                        .extensions(subtypeModel.getExtensions());
-
-                if (subtypeModel.getExample() != null || subtypeModel.getExampleSetFlag()) {
-                    composedSchema.example(subtypeModel.getExample());
-                }
-                composedSchema.setEnum(subtypeModel.getEnum());
+                composedSchema = ComposedSchema.from(subtypeModel);
             } else {
                 composedSchema = (ComposedSchema) subtypeModel;
             }
