@@ -198,7 +198,7 @@ public enum PrimitiveType {
         }
         @Override
         public Schema createProperty31() {
-            return new JsonSchema().typesItem("string").type("string").format("date");
+            return new JsonSchema().typesItem("object").type("object").format("date");
         }
     },
     DATE_TIME(java.util.Date.class, "date-time") {
@@ -208,7 +208,7 @@ public enum PrimitiveType {
         }
         @Override
         public Schema createProperty31() {
-            return new JsonSchema().typesItem("string").type("string").format("date-time");
+            return new JsonSchema().typesItem("object").type("object").format("date-time");
         }
     },
     PARTIAL_TIME(java.time.LocalTime.class, "partial-time") {
@@ -218,7 +218,7 @@ public enum PrimitiveType {
         }
         @Override
         public Schema createProperty31() {
-            return new JsonSchema().typesItem("string").type("string").format("partial-time");
+            return new JsonSchema().typesItem("object").type("object").format("partial-time");
         }
     },
     FILE(java.io.File.class, "file") {
@@ -337,6 +337,7 @@ public enum PrimitiveType {
         addKeys(keyClasses, NUMBER, Number.class);
         addKeys(keyClasses, DATE, DateStub.class);
         addKeys(keyClasses, DATE_TIME, java.util.Date.class);
+//        addKeys(keyClasses, PARTIAL_TIME, java.time.LocalTime.class);
         addKeys(keyClasses, FILE, java.io.File.class);
         addKeys(keyClasses, OBJECT, Object.class);
         KEY_CLASSES = Collections.unmodifiableMap(keyClasses);
