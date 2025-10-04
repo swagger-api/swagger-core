@@ -1,0 +1,45 @@
+{
+  "First" : {
+    "type" : "object",
+    "allOf" : [ {
+      "$ref" : "#/components/schemas/ModelWithDiscriminatorMapping"
+    }, {
+      "type" : "object",
+      "properties" : {
+        "name" : {
+          "type" : "string",
+          "writeOnly" : true
+        }
+      }
+    } ]
+  },
+  "ModelWithDiscriminatorMapping" : {
+    "required" : [ "kind" ],
+    "type" : "object",
+    "properties" : {
+      "kind" : {
+        "type" : "string"
+      }
+    },
+    "discriminator" : {
+      "propertyName" : "kind",
+      "mapping" : {
+        "second" : "#/components/schemas/Second"
+      }
+    }
+  },
+  "Second" : {
+    "type" : "object",
+    "allOf" : [ {
+      "$ref" : "#/components/schemas/ModelWithDiscriminatorMapping"
+    }, {
+      "type" : "object",
+      "properties" : {
+        "value" : {
+          "type" : "string",
+          "writeOnly" : true
+        }
+      }
+    } ]
+  }
+}
