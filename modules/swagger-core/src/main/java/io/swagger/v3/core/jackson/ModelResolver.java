@@ -17,16 +17,21 @@ import com.fasterxml.jackson.databind.BeanDescription;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyMetadata;
+import com.fasterxml.jackson.databind.SerializationConfig;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.introspect.Annotated;
 import com.fasterxml.jackson.databind.introspect.AnnotatedClass;
+import com.fasterxml.jackson.databind.introspect.AnnotatedClassResolver;
 import com.fasterxml.jackson.databind.introspect.AnnotatedField;
 import com.fasterxml.jackson.databind.introspect.AnnotatedMember;
 import com.fasterxml.jackson.databind.introspect.AnnotatedMethod;
 import com.fasterxml.jackson.databind.introspect.BeanPropertyDefinition;
 import com.fasterxml.jackson.databind.introspect.POJOPropertyBuilder;
 import com.fasterxml.jackson.databind.jsontype.NamedType;
+import com.fasterxml.jackson.databind.jsontype.TypeIdResolver;
+import com.fasterxml.jackson.databind.jsontype.TypeResolverBuilder;
+import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
 import com.fasterxml.jackson.databind.util.Annotations;
 import io.swagger.v3.core.converter.AnnotatedType;
 import io.swagger.v3.core.converter.ModelConverter;
@@ -39,6 +44,7 @@ import io.swagger.v3.core.util.ObjectMapperFactory;
 import io.swagger.v3.core.util.ReferenceTypeUtils;
 import io.swagger.v3.core.util.PrimitiveType;
 import io.swagger.v3.core.util.ReflectionUtils;
+import io.swagger.v3.core.util.RefUtils;
 import io.swagger.v3.core.util.ValidatorProcessor;
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -2772,6 +2778,30 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                     for (DiscriminatorMapping mapping : mappings) {
                         if (!mapping.value().isEmpty() && !mapping.schema().equals(Void.class)) {
                             discriminator.mapping(mapping.value(), constructRef(context.resolve(new AnnotatedType().type(mapping.schema())).getName()));
+                        }
+                    }
+                }
+            } else {
+                SerializationConfig config = _mapper.getSerializationConfig();
+                AnnotationIntrospector introspector = config.getAnnotationIntrospector();
+                List<NamedType> subTypes = introspector.findSubtypes(
+                        AnnotatedClassResolver.resolveWithoutSuperTypes(config, type.getRawClass())
+                );
+
+                if (subTypes != null && !subTypes.isEmpty()) {
+                    BeanDescription bean = config.introspect(type);
+                    TypeResolverBuilder builder = introspector.findTypeResolver(config, bean.getClassInfo(), type);
+                    TypeSerializer serializer = builder.buildTypeSerializer(config, type, subTypes);
+                    TypeIdResolver resolver = serializer.getTypeIdResolver();
+
+                    for (NamedType subType : subTypes) {
+                        String schemaName = context.resolve(new AnnotatedType().type(subType.getType())).getName();
+                        String subTypeName = resolver.idFromValueAndType(null, subType.getType());
+
+                        // Per the specification, there is an implicit map to schemas with the same name
+                        // We skip writing the mappings that are implied to keep the schema minimal
+                        if (!subTypeName.equals(schemaName)) {
+                            discriminator.mapping(subTypeName, RefUtils.constructRef(schemaName));
                         }
                     }
                 }
