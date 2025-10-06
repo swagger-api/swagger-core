@@ -13,8 +13,10 @@ import io.swagger.v3.oas.annotations.media.Schema;
                 types = { "number" }
         ),
         schema = @Schema(
-                types = { "string" }
+                types = { "string" },
+                description = "itemdescription"
         ),
+        arraySchema = @Schema(description = "arraydescription"),
         prefixItems = {
                 @Schema(
                         types = { "string" }

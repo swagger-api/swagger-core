@@ -7,6 +7,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 
 import java.util.List;
+import java.util.Optional;
 
 public class RequiredFields {
     @Schema(description = "required", required = true)
@@ -15,9 +16,19 @@ public class RequiredFields {
     @Schema(description = "not required")
     public Long notRequired;
 
+    @Schema(description = "Optional field")
+    public Optional<Long> optionalField;
+
     @Schema(description = "not required with annotation")
     @NotNull
     public Long notRequiredWithAnnotation;
+
+    @Schema(description = "primitive type without constraint")
+    public long primitiveTypeWithoutConstraint;
+
+    @Schema(description = "primitive type with constraint")
+    @NotNull
+    public long primitiveTypeWithConstraint;
 
     @Schema(description = "mode auto", requiredMode = Schema.RequiredMode.AUTO)
     public Long modeAuto;
