@@ -148,6 +148,63 @@ Of course if you don't want to build locally you can grab artifacts from maven c
 
 `https://repo1.maven.org/maven2/io/swagger/core/`
 
+### Maven BOM
+
+To manage Swagger dependencies consistently across modules, import the Swagger Core BOM and omit versions on individual Swagger dependencies:
+
+```xml
+<dependencyManagement>
+  <dependencies>
+    <dependency>
+      <groupId>io.swagger.core.v3</groupId>
+      <artifactId>swagger-bom</artifactId>
+      <version>${swagger-openapiv3.version}</version>
+      <type>pom</type>
+      <scope>import</scope>
+    </dependency>
+  </dependencies>
+  
+</dependencyManagement>
+
+<!-- Then declare Swagger dependencies without versions -->
+<dependencies>
+  <dependency>
+    <groupId>io.swagger.core.v3</groupId>
+    <artifactId>swagger-annotations</artifactId>
+  </dependency>
+  <dependency>
+    <groupId>io.swagger.core.v3</groupId>
+    <artifactId>swagger-models</artifactId>
+  </dependency>
+  <dependency>
+    <groupId>io.swagger.core.v3</groupId>
+    <artifactId>swagger-core</artifactId>
+  </dependency>
+  <dependency>
+    <groupId>io.swagger.core.v3</groupId>
+    <artifactId>swagger-integration</artifactId>
+  </dependency>
+  <dependency>
+    <groupId>io.swagger.core.v3</groupId>
+    <artifactId>swagger-jaxrs2</artifactId>
+  </dependency>
+  <!-- Optional servlet initializer helpers -->
+  <dependency>
+    <groupId>io.swagger.core.v3</groupId>
+    <artifactId>swagger-jaxrs2-servlet-initializer</artifactId>
+  </dependency>
+  <dependency>
+    <groupId>io.swagger.core.v3</groupId>
+    <artifactId>swagger-jaxrs2-servlet-initializer-v2</artifactId>
+  </dependency>
+  <!-- Optional support for Java 17 module-path consumers -->
+  <dependency>
+    <groupId>io.swagger.core.v3</groupId>
+    <artifactId>swagger-java17-support</artifactId>
+  </dependency>
+</dependencies>
+```
+
 ## Sample Apps
 The samples have moved to [a new repository](https://github.com/swagger-api/swagger-samples/tree/2.0) and contain various integrations and configurations.
 
