@@ -176,8 +176,11 @@ public @interface Schema {
 
     /**
      * Allows to specify the required mode (RequiredMode.AUTO, REQUIRED, NOT_REQUIRED)
-     *
-     * RequiredMode.AUTO: will let the library decide based on its heuristics.
+     * RequiredMode.AUTO: the library decides using heuristics:
+     *   - Bean Validation / nullability annotations (@NotNull, @NonNull, @NotBlank, @NotEmpty) - required
+     *   - Optional - not required
+     *   - Primitive types (int, boolean, etc.) - not required unless annotated
+     *   - Other object fields without any constraints - not required
      * RequiredMode.REQUIRED: will force the item to be considered as required regardless of heuristics.
      * RequiredMode.NOT_REQUIRED: will force the item to be considered as not required regardless of heuristics.
      *
