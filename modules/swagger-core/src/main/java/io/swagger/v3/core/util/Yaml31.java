@@ -17,7 +17,7 @@ public class Yaml31 {
     }
 
 
-    static Logger LOGGER = LoggerFactory.getLogger(Yaml31.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(Yaml31.class);
 
     public static ObjectMapper mapper() {
         return ObjectMapperHolder.MAPPER;
@@ -31,16 +31,16 @@ public class Yaml31 {
         try {
             return pretty().writeValueAsString(o);
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error("Error serializing object to YAML (3.1)", e);
             return null;
         }
     }
 
     public static void prettyPrint(Object o) {
         try {
-            System.out.println(pretty().writeValueAsString(o));
+            LOGGER.debug(pretty().writeValueAsString(o));
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error("Error pretty-printing YAML (3.1)", e);
         }
     }
 

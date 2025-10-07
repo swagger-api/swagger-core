@@ -3,12 +3,16 @@ package io.swagger.v3.core.util;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Yaml {
 
     private static final class ObjectMapperHolder {
         private static final ObjectMapper MAPPER = ObjectMapperFactory.createYaml();
     }
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(Yaml.class);
 
     public static ObjectMapper mapper() {
         return ObjectMapperHolder.MAPPER;
@@ -22,16 +26,16 @@ public class Yaml {
         try {
             return pretty().writeValueAsString(o);
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error("Error serializing object to YAML", e);
             return null;
         }
     }
 
     public static void prettyPrint(Object o) {
         try {
-            System.out.println(pretty().writeValueAsString(o));
+            LOGGER.debug(pretty().writeValueAsString(o));
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error("Error pretty-printing YAML", e);
         }
     }
 }
