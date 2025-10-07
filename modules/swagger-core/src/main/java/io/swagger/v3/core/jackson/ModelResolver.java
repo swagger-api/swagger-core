@@ -39,6 +39,7 @@ import io.swagger.v3.core.util.ObjectMapperFactory;
 import io.swagger.v3.core.util.ReferenceTypeUtils;
 import io.swagger.v3.core.util.PrimitiveType;
 import io.swagger.v3.core.util.ReflectionUtils;
+import io.swagger.v3.core.util.AnnotationsIntrospector;
 import io.swagger.v3.core.util.ValidatorProcessor;
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -347,7 +348,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                     model = openapi31 ? primitiveType.createProperty31() : primitiveType.createProperty();
                     isPrimitive = true;
                 }
-            } 
+            }
 
             if (model == null) {
                 PrimitiveType primitiveType = PrimitiveType.fromType(type);
@@ -699,12 +700,10 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
             if (member != null && !ignore(member, xmlAccessorTypeAnnotation, propName, propertiesToIgnore, propDef)) {
 
-                List<Annotation> annotationList = new ArrayList<>();
-                for (Annotation a : member.annotations()) {
-                    annotationList.add(a);
-                }
+                List<Annotation> memberAnnotations = new ArrayList<>();
+                resolveAnnotateMemberAnnotations(member, memberAnnotations, true);
 
-                annotations = annotationList.toArray(new Annotation[annotationList.size()]);
+                annotations = memberAnnotations.toArray(new Annotation[memberAnnotations.size()]);
 
                 if (hiddenByJsonView(annotations, annotatedType)) {
                     continue;
@@ -1169,6 +1168,10 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         model = resolveWrapping(type, context, model);
 
         return model;
+    }
+
+    protected void resolveAnnotateMemberAnnotations(AnnotatedMember member, List<Annotation> output, boolean includeDefault) {
+        AnnotationsIntrospector.getAnnotations(member, output, includeDefault);
     }
 
     private Annotation[] addGenericTypeArgumentAnnotationsForOptionalField(BeanPropertyDefinition propDef, Annotation[] annotations) {
@@ -1803,6 +1806,21 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             }
         }
 
+        // jspecify
+        if (parent != null && applyNotNullAnnotations && acceptNoGroups) {
+            boolean nullable = annos.containsKey("org.jspecify.annotations.Nullable");
+            boolean nonnull = annos.containsKey("org.jspecify.annotations.NonNull");
+            boolean nullmarked = annos.containsKey("org.jspecify.annotations.NullMarked") && !annos.containsKey("org.jspecify.annotations.NullUnmarked");
+            if ((nullmarked && !nullable) || nonnull) {
+                modified = updateRequiredItem(parent, property.getName()) || modified;
+            }
+            if (nullable) {
+                property.setNullable(true);
+                property.addType("null");
+                modified = true;
+            }
+        }
+
         if (annos.containsKey("javax.validation.constraints.NotEmpty")) {
             NotEmpty anno = (NotEmpty) annos.get("javax.validation.constraints.NotEmpty");
             boolean apply = checkGroupValidation(anno.groups(), invocationGroups, acceptNoGroups);
@@ -1961,6 +1979,22 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 modified = updateRequiredItem(parent, property.getName());
             }
         }
+
+        // jspecify
+        if (parent != null && annotations != null && applyNotNullAnnotations) {
+            boolean nullable = annos.containsKey("org.jspecify.annotations.Nullable");
+            boolean nonnull = annos.containsKey("org.jspecify.annotations.NonNull");
+            boolean nullmarked = annos.containsKey("org.jspecify.annotations.NullMarked") && !annos.containsKey("org.jspecify.annotations.NullUnmarked");
+            if ((nullmarked && !nullable) || nonnull) {
+                modified = updateRequiredItem(parent, property.getName()) || modified;
+            }
+            if (nullable) {
+                property.setNullable(true);
+                property.addType("null");
+                modified = true;
+            }
+        }
+
         if (annos.containsKey("javax.validation.constraints.Min")) {
             if (isNumberSchema(property)) {
                 Min min = (Min) annos.get("javax.validation.constraints.Min");
