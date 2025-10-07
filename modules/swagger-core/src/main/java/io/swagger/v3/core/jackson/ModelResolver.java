@@ -1787,6 +1787,8 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 return modified;
             }
         }
+        // expand composed constraint meta-annotations (e.g., @Min/@Max on custom annotations)
+        annotations = expandValidationMetaAnnotations(annotations);
         Map<String, Annotation> annos = new HashMap<>();
         if (annotations != null) {
             for (Annotation anno : annotations) {
@@ -1979,6 +1981,8 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
     }
 
     protected boolean applyBeanValidatorAnnotationsNoGroups(Schema property, Annotation[] annotations, Schema parent, boolean applyNotNullAnnotations) {
+        // expand composed constraint meta-annotations (e.g., @Min/@Max on custom annotations)
+        annotations = expandValidationMetaAnnotations(annotations);
         Map<String, Annotation> annos = new HashMap<>();
         boolean modified = false;
         if (annotations != null) {
@@ -2080,6 +2084,42 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             }
         }
         return modified;
+    }
+
+    /**
+     * Expands provided annotations to include bean-validation constraint annotations present as meta-annotations
+     * on custom annotations (i.e., composed constraints like a custom @ValidStoreId annotated with @Min/@Max).
+     * Only javax.validation.constraints annotations are added to avoid unrelated meta-annotations.
+     */
+    private Annotation[] expandValidationMetaAnnotations(Annotation[] annotations) {
+        if (annotations == null || annotations.length == 0) {
+            return annotations;
+        }
+        Map<String, Annotation> merged = new LinkedHashMap<>();
+        for (Annotation a : annotations) {
+            if (a != null) {
+                merged.put(a.annotationType().getName(), a);
+            }
+        }
+        try {
+            for (Annotation a : annotations) {
+                if (a == null) continue;
+                Annotation[] metas = a.annotationType().getAnnotations();
+                if (metas == null) continue;
+                for (Annotation meta : metas) {
+                    if (meta == null) continue;
+                    String name = meta.annotationType().getName();
+                    // include only standard bean validation constraint annotations
+                    if (name != null && name.startsWith("javax.validation.constraints")) {
+                        merged.putIfAbsent(name, meta);
+                    }
+                }
+            }
+        } catch (Throwable t) {
+            // be conservative: if anything goes wrong, fall back to original annotations
+            return annotations;
+        }
+        return merged.values().toArray(new Annotation[0]);
     }
 
     private boolean resolveSubtypes(Schema model, BeanDescription bean, ModelConverterContext context, JsonView jsonViewAnnotation) {
