@@ -1,10 +1,17 @@
 package io.swagger.v3.oas.transformer;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintStream;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.AbstractMojo;
@@ -134,7 +141,9 @@ public class TransformMojo extends AbstractMojo {
      * @return A configured transformer
      */
     public Transformer getTransformer() {
-        final Transformer transformer = new Transformer(System.out, System.err);
+        final Transformer transformer = new Transformer(
+                createLoggingPrintStream(getLog()::info),
+                createLoggingPrintStream(getLog()::error));
         transformer.setOptionDefaults(JakartaTransformer.class, getOptionDefaults());
         return transformer;
     }
@@ -175,6 +184,50 @@ public class TransformMojo extends AbstractMojo {
         optionDefaults.put(Transformer.AppOption.RULES_PER_CLASS_CONSTANT,
                 isEmpty(rulesPerClassConstantUri) ? "jakarta-per-class-constant-master.properties" : rulesPerClassConstantUri);
         return optionDefaults;
+    }
+
+    private PrintStream createLoggingPrintStream(Consumer<String> logConsumer) {
+        try {
+            return new PrintStream(new LoggingOutputStream(logConsumer), true, StandardCharsets.UTF_8.name());
+        } catch (UnsupportedEncodingException e) {
+            throw new IllegalStateException("UTF-8 encoding is not supported", e);
+        }
+    }
+
+    private static final class LoggingOutputStream extends OutputStream {
+        private final Consumer<String> logConsumer;
+        private final ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+
+        private LoggingOutputStream(Consumer<String> logConsumer) {
+            this.logConsumer = logConsumer;
+        }
+
+        @Override
+        public void write(int b) {
+            if (b == '\n') {
+                flushBuffer();
+            } else if (b != '\r') {
+                buffer.write(b);
+            }
+        }
+
+        @Override
+        public void flush() {
+            flushBuffer();
+        }
+
+        @Override
+        public void close() throws IOException {
+            flushBuffer();
+        }
+
+        private void flushBuffer() {
+            if (buffer.size() == 0) {
+                return;
+            }
+            logConsumer.accept(new String(buffer.toByteArray(), StandardCharsets.UTF_8));
+            buffer.reset();
+        }
     }
 
     private boolean isEmpty(final String input) {
