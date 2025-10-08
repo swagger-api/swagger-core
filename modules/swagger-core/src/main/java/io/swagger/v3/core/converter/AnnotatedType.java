@@ -263,15 +263,8 @@ public class AnnotatedType {
         AnnotatedType that = (AnnotatedType) o;
         List<Annotation> thisAnnotatinons = getProcessedAnnotations(this.ctxAnnotations);
         List<Annotation> thatAnnotatinons = getProcessedAnnotations(that.ctxAnnotations);
-        return skipOverride == that.skipOverride &&
-                schemaProperty == that.schemaProperty &&
-                resolveAsRef == that.resolveAsRef &&
-                resolveEnumAsRef == that.resolveEnumAsRef &&
-                includePropertiesWithoutJSONView == that.includePropertiesWithoutJSONView &&
-                skipSchemaName == that.skipSchemaName &&
-                skipJsonIdentity == that.skipJsonIdentity &&
+        return  includePropertiesWithoutJSONView == that.includePropertiesWithoutJSONView &&
                 Objects.equals(type, that.type) &&
-                Objects.equals(name, that.name) &&
                 Objects.equals(thisAnnotatinons, thatAnnotatinons) &&
                 Objects.equals(jsonViewAnnotation, that.jsonViewAnnotation);
     }
@@ -279,9 +272,6 @@ public class AnnotatedType {
     @Override
     public int hashCode() {
         List<Annotation> processedAnnotations = getProcessedAnnotations(this.ctxAnnotations);
-
-        return Objects.hash(type, name, skipOverride, schemaProperty, resolveAsRef,
-                resolveEnumAsRef, jsonViewAnnotation, includePropertiesWithoutJSONView, skipSchemaName,
-                skipJsonIdentity, processedAnnotations);
+        return Objects.hash(type, jsonViewAnnotation, includePropertiesWithoutJSONView, processedAnnotations);
     }
 }
