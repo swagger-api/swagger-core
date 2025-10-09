@@ -69,6 +69,9 @@ public class TransformMojo extends AbstractMojo {
     @Parameter(defaultValue = "transformed")
     private String				classifier;
 
+    @Parameter(property = "transformer-plugin.max-log-buffer-size", defaultValue = "16384")
+    private int					maxLogBufferSize;
+
     @Parameter(defaultValue = "${project.build.directory}", required = true)
     private File				outputDirectory;
 
@@ -188,7 +191,7 @@ public class TransformMojo extends AbstractMojo {
 
     private PrintStream createLoggingPrintStream(Consumer<String> logConsumer) {
         try {
-            return new PrintStream(new LoggingOutputStream(logConsumer), true, StandardCharsets.UTF_8.name());
+            return new PrintStream(new LoggingOutputStream(logConsumer, maxLogBufferSize), true, StandardCharsets.UTF_8.name());
         } catch (UnsupportedEncodingException e) {
             throw new IllegalStateException("UTF-8 encoding is not supported", e);
         }
@@ -197,9 +200,11 @@ public class TransformMojo extends AbstractMojo {
     private static final class LoggingOutputStream extends OutputStream {
         private final Consumer<String> logConsumer;
         private final ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+        private final int maxBufferSize;
 
-        private LoggingOutputStream(Consumer<String> logConsumer) {
+        private LoggingOutputStream(Consumer<String> logConsumer, int maxBufferSize) {
             this.logConsumer = logConsumer;
+            this.maxBufferSize = maxBufferSize > 0 ? maxBufferSize : Integer.MAX_VALUE;
         }
 
         @Override
@@ -208,6 +213,9 @@ public class TransformMojo extends AbstractMojo {
                 flushBuffer();
             } else if (b != '\r') {
                 buffer.write(b);
+                if (buffer.size() >= this.maxBufferSize) {
+                    flushBuffer();
+                }
             }
         }
 
