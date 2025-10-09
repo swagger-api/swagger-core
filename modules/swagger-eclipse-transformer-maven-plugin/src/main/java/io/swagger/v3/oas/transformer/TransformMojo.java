@@ -69,8 +69,7 @@ public class TransformMojo extends AbstractMojo {
     @Parameter(defaultValue = "transformed")
     private String				classifier;
 
-    @Parameter(property = "transformer-plugin.max-log-buffer-size", defaultValue = "16384")
-    private int					maxLogBufferSize;
+    private static final int	MAX_LOG_BUFFER_SIZE = 16 * 1024;
 
     @Parameter(defaultValue = "${project.build.directory}", required = true)
     private File				outputDirectory;
@@ -191,7 +190,7 @@ public class TransformMojo extends AbstractMojo {
 
     private PrintStream createLoggingPrintStream(Consumer<String> logConsumer) {
         try {
-            return new PrintStream(new LoggingOutputStream(logConsumer, maxLogBufferSize), true, StandardCharsets.UTF_8.name());
+            return new PrintStream(new LoggingOutputStream(logConsumer, MAX_LOG_BUFFER_SIZE), true, StandardCharsets.UTF_8.name());
         } catch (UnsupportedEncodingException e) {
             throw new IllegalStateException("UTF-8 encoding is not supported", e);
         }
