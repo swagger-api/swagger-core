@@ -26,16 +26,17 @@ public class Json {
         try {
             return pretty().writeValueAsString(o);
         } catch (Exception e) {
-            LOGGER.error("Error serializing object to JSON", e);
+            PrettyPrintHelper.emitError(LOGGER, "Error serializing object to JSON", e);
             return null;
         }
     }
 
     public static void prettyPrint(Object o) {
         try {
-            LOGGER.debug(pretty().writeValueAsString(o).replace("\r", ""));
+            String prettyString = pretty().writeValueAsString(o).replace("\r", "");
+            PrettyPrintHelper.emit(LOGGER, prettyString);
         } catch (Exception e) {
-            LOGGER.error("Error pretty-printing JSON", e);
+            PrettyPrintHelper.emitError(LOGGER, "Error pretty-printing JSON", e);
         }
     }
 }

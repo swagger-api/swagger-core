@@ -26,16 +26,17 @@ public class Yaml {
         try {
             return pretty().writeValueAsString(o);
         } catch (Exception e) {
-            LOGGER.error("Error serializing object to YAML", e);
+            PrettyPrintHelper.emitError(LOGGER, "Error serializing object to YAML", e);
             return null;
         }
     }
 
     public static void prettyPrint(Object o) {
         try {
-            LOGGER.debug(pretty().writeValueAsString(o));
+            String prettyString = pretty().writeValueAsString(o);
+            PrettyPrintHelper.emit(LOGGER, prettyString);
         } catch (Exception e) {
-            LOGGER.error("Error pretty-printing YAML", e);
+            PrettyPrintHelper.emitError(LOGGER, "Error pretty-printing YAML", e);
         }
     }
 }
