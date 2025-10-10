@@ -27,6 +27,8 @@ import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.parameters.Parameter;
 import io.swagger.v3.oas.models.tags.Tag;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
@@ -44,6 +46,7 @@ import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
 
 public class SpecFilterTest {
+    private static final Logger LOGGER = LoggerFactory.getLogger(SpecFilterTest.class);
 
     private static final String RESOURCE_RECURSIVE_MODELS = "specFiles/recursivemodels.json";
     private static final String RESOURCE_PATH = "specFiles/petstore-3.0-v2.json";
@@ -189,7 +192,7 @@ public class SpecFilterTest {
                     try {
                         filteredMap.put("filtered " + id, new SpecFilter().filter(openAPI, new NoOpOperationsFilter(), null, null, null));
                     } catch (Exception e) {
-                        e.printStackTrace();
+                        LOGGER.error("Failed to filter OpenAPI concurrently", e);
                     }
                 }
             }.start();
@@ -220,7 +223,7 @@ public class SpecFilterTest {
                     }
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                LOGGER.error("Interrupted while waiting for filtering threads to complete", e);
             }
             for (OpenAPI filtered : filteredMap.values()) {
                 assertEquals(Json.pretty(openAPI), Json.pretty(filtered));
