@@ -1353,7 +1353,8 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
             for (Enum<?> en : enumConstants) {
                 Field enumField = ReflectionUtils.findField(en.name(), enumClass);
-                if (null != enumField && enumField.isAnnotationPresent(Hidden.class)) {
+                // Skip enum field if @Hidden is present and ignoreHidden is not enabled
+                if (null != enumField && enumField.isAnnotationPresent(Hidden.class) && !Boolean.TRUE.equals(configuration.isIgnoreHidden())) {
                     continue;
                 }
 
@@ -1386,6 +1387,10 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
     }
 
     protected boolean hasHiddenAnnotation(Annotated annotated) {
+        // If ignoreHidden is enabled, always return false (don't hide anything)
+        if (Boolean.TRUE.equals(configuration.isIgnoreHidden())) {
+            return false;
+        }
         return annotated.hasAnnotation(Hidden.class) || (
                 annotated.hasAnnotation(io.swagger.v3.oas.annotations.media.Schema.class) &&
                         annotated.getAnnotation(io.swagger.v3.oas.annotations.media.Schema.class).hidden()

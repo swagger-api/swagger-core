@@ -1,5 +1,6 @@
 package io.swagger.v3.jaxrs2.annotations.operations;
 
+import io.swagger.v3.jaxrs2.Reader;
 import io.swagger.v3.jaxrs2.annotations.AbstractAnnotationTest;
 import io.swagger.v3.jaxrs2.resources.GenericResponsesResource;
 import io.swagger.v3.jaxrs2.resources.HiddenAnnotatedUserResource;
@@ -19,12 +20,16 @@ import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.integration.SwaggerConfiguration;
+import io.swagger.v3.oas.models.OpenAPI;
 import org.testng.annotations.Test;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.POST;
 import java.io.IOException;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
 
 public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
     @Test
@@ -1555,6 +1560,44 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
         @GET
         @Path("/path")
         public void simpleGet() {
+        }
+    }
+
+    @Test(description = "reads hidden operation when ignoreHidden is true")
+    public void testHiddenUserResourceWithIgnoreHiddenConfiguration() throws IOException {
+        SwaggerConfiguration config = new SwaggerConfiguration()
+                .openAPI(new OpenAPI())
+                .ignoreHidden(Boolean.TRUE);
+        Reader reader = new Reader(config);
+        OpenAPI openAPI = reader.read(HiddenUserResource.class);
+
+        assertNotNull(openAPI);
+        assertNotNull(openAPI.getPaths());
+        assertNotNull(openAPI.getPaths().get("/user"));
+        assertNotNull(openAPI.getPaths().get("/user").getPost());
+        assertEquals(openAPI.getPaths().get("/user").getPost().getSummary(), "Create user");
+    }
+
+    @Test(description = "includes operation with @Operation(hidden=true) when ignoreHidden is true")
+    public void testOperationHiddenTrueWithIgnoreHiddenConfiguration() throws IOException {
+        SwaggerConfiguration config = new SwaggerConfiguration()
+                .openAPI(new OpenAPI())
+                .ignoreHidden(Boolean.TRUE);
+        Reader reader = new Reader(config);
+        OpenAPI openAPI = reader.read(ResourceWithHiddenOperation.class);
+
+        assertNotNull(openAPI);
+        assertNotNull(openAPI.getPaths());
+        assertNotNull(openAPI.getPaths().get("/test"));
+        assertNotNull(openAPI.getPaths().get("/test").getPost());
+        assertEquals(openAPI.getPaths().get("/test").getPost().getSummary(), "Hidden operation");
+    }
+
+    @Path("/test")
+    static class ResourceWithHiddenOperation {
+        @POST
+        @Operation(hidden = true, summary = "Hidden operation")
+        public void hiddenOperation() {
         }
     }
 }

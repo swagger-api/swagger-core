@@ -40,6 +40,7 @@ public class Configuration {
     private String openAPIVersion = "3.0.1";
     private GroupsValidationStrategy groupsValidationStrategy = GroupsValidationStrategy.DEFAULT;
     private String validatorProcessorClass;
+    private Boolean ignoreHidden = Boolean.FALSE;
 
     public OpenAPI getOpenAPI() {
         return openAPI;
@@ -159,6 +160,19 @@ public class Configuration {
 
     public Configuration validatorProcessorClass(String validatorProcessorClass) {
         this.validatorProcessorClass = validatorProcessorClass;
+        return this;
+    }
+
+    public Boolean isIgnoreHidden() {
+        return ignoreHidden;
+    }
+
+    public void setIgnoreHidden(Boolean ignoreHidden) {
+        this.ignoreHidden = ignoreHidden;
+    }
+
+    public Configuration ignoreHidden(Boolean ignoreHidden) {
+        this.ignoreHidden = ignoreHidden;
         return this;
     }
 }
