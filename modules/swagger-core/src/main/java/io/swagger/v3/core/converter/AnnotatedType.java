@@ -8,9 +8,11 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class AnnotatedType {
     private Type type;
@@ -21,6 +23,7 @@ public class AnnotatedType {
     private boolean schemaProperty;
     private Annotation[] ctxAnnotations;
     private boolean resolveAsRef;
+    private boolean resolveEnumAsRef;
     private JsonView jsonViewAnnotation;
     private boolean includePropertiesWithoutJSONView = true;
     private boolean skipSchemaName;
@@ -88,6 +91,19 @@ public class AnnotatedType {
         return this;
     }
 
+    public boolean isResolveEnumAsRef() {
+        return resolveEnumAsRef;
+    }
+
+    public void setResolveEnumAsRef(boolean resolveEnumAsRef) {
+        this.resolveEnumAsRef = resolveEnumAsRef;
+    }
+
+    public AnnotatedType resolveEnumAsRef(boolean resolveEnumAsRef) {
+        this.resolveEnumAsRef = resolveEnumAsRef;
+        return this;
+    }
+
     public boolean isSchemaProperty() {
         return schemaProperty;
     }
@@ -141,11 +157,11 @@ public class AnnotatedType {
     }
 
     public Annotation[] getCtxAnnotations() {
-        return ctxAnnotations;
+        return ctxAnnotations == null ? null : Arrays.copyOf(ctxAnnotations, ctxAnnotations.length);
     }
 
     public void setCtxAnnotations(Annotation[] ctxAnnotations) {
-        this.ctxAnnotations = ctxAnnotations;
+        this.ctxAnnotations = ctxAnnotations == null ? null : Arrays.copyOf(ctxAnnotations, ctxAnnotations.length);
     }
 
     public AnnotatedType ctxAnnotations(Annotation[] ctxAnnotations) {
@@ -227,49 +243,35 @@ public class AnnotatedType {
         return this;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
+    private List<Annotation> getProcessedAnnotations(Annotation[] annotations) {
+        if (annotations == null || annotations.length == 0) {
+            return new ArrayList<>();
         }
-        if (!(o instanceof AnnotatedType)) {
-            return false;
-        }
-        AnnotatedType that = (AnnotatedType) o;
-
-        if ((type == null && that.type != null) || (type != null && that.type == null)) {
-            return false;
-        }
-
-        if (type != null && that.type != null && !type.equals(that.type)) {
-            return false;
-        }
-        return Arrays.equals(this.ctxAnnotations, that.ctxAnnotations);
+        return Arrays.stream(annotations)
+                .filter(a -> {
+                    String pkg = a.annotationType().getPackage().getName();
+                    return !pkg.startsWith("java.") && !pkg.startsWith("jdk.") && !pkg.startsWith("sun.");
+                })
+                .sorted(Comparator.comparing(a -> a.annotationType().getName()))
+                .collect(Collectors.toList());
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof AnnotatedType)) return false;
+        AnnotatedType that = (AnnotatedType) o;
+        List<Annotation> thisAnnotatinons = getProcessedAnnotations(this.ctxAnnotations);
+        List<Annotation> thatAnnotatinons = getProcessedAnnotations(that.ctxAnnotations);
+        return  includePropertiesWithoutJSONView == that.includePropertiesWithoutJSONView &&
+                Objects.equals(type, that.type) &&
+                Objects.equals(thisAnnotatinons, thatAnnotatinons) &&
+                Objects.equals(jsonViewAnnotation, that.jsonViewAnnotation);
+    }
 
     @Override
     public int hashCode() {
-        if (ctxAnnotations == null || ctxAnnotations.length == 0) {
-            return Objects.hash(type, "fixed");
-        }
-        List<Annotation> meaningfulAnnotations = new ArrayList<>();
-
-        boolean hasDifference = false;
-        for (Annotation a: ctxAnnotations) {
-            if(!a.annotationType().getName().startsWith("sun") && !a.annotationType().getName().startsWith("jdk")) {
-                meaningfulAnnotations.add(a);
-            } else {
-                hasDifference = true;
-            }
-        }
-        int result = 1;
-        result = 31 * result + (type == null ? 0 : Objects.hash(type, "fixed"));
-        if (hasDifference) {
-            result = 31 * result + meaningfulAnnotations.hashCode();
-        } else {
-            result = 31 * result + Arrays.hashCode(ctxAnnotations);
-        }
-        return result;
+        List<Annotation> processedAnnotations = getProcessedAnnotations(this.ctxAnnotations);
+        return Objects.hash(type, jsonViewAnnotation, includePropertiesWithoutJSONView, processedAnnotations);
     }
 }

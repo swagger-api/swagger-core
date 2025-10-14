@@ -21,7 +21,7 @@ public class Json31 {
         private static final ObjectMapper MAPPER = ObjectMapperFactory.createJsonConverter();
     }
 
-    static Logger LOGGER = LoggerFactory.getLogger(Json31.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(Json31.class);
 
     public static ObjectMapper mapper() {
         return ObjectMapperHolder.MAPPER;
@@ -39,16 +39,17 @@ public class Json31 {
         try {
             return pretty().writeValueAsString(o);
         } catch (Exception e) {
-            e.printStackTrace();
+            PrettyPrintHelper.emitError(LOGGER, "Error serializing object to JSON (3.1)", e);
             return null;
         }
     }
 
     public static void prettyPrint(Object o) {
         try {
-            System.out.println(pretty().writeValueAsString(o).replace("\r", ""));
+            String prettyString = pretty().writeValueAsString(o).replace("\r", "");
+            PrettyPrintHelper.emit(LOGGER, prettyString);
         } catch (Exception e) {
-            e.printStackTrace();
+            PrettyPrintHelper.emitError(LOGGER, "Error pretty-printing JSON (3.1)", e);
         }
     }
 
