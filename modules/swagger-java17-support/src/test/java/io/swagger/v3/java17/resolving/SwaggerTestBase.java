@@ -6,9 +6,12 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import io.swagger.v3.core.jackson.ModelResolver;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class SwaggerTestBase {
     static ObjectMapper mapper;
+    private static final Logger LOGGER = LoggerFactory.getLogger(SwaggerTestBase.class);
 
     public static ObjectMapper mapper() {
         if (mapper == null) {
@@ -26,9 +29,9 @@ public abstract class SwaggerTestBase {
 
     protected void prettyPrint(Object o) {
         try {
-            System.out.println(mapper().writer(new DefaultPrettyPrinter()).writeValueAsString(o));
+            LOGGER.debug(mapper().writer(new DefaultPrettyPrinter()).writeValueAsString(o));
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error("Failed to pretty print object", e);
         }
     }
 }

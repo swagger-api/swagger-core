@@ -8,6 +8,8 @@ import io.swagger.v3.jaxrs2.matchers.SerializationMatchers;
 import io.swagger.v3.oas.integration.SwaggerConfiguration;
 import io.swagger.v3.oas.models.OpenAPI;
 import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,6 +18,8 @@ import java.nio.charset.StandardCharsets;
 import static org.testng.Assert.fail;
 
 public abstract class AbstractAnnotationTest {
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractAnnotationTest.class);
+
     public String readIntoYaml(final Class<?> cls) {
         Reader reader = new Reader(new OpenAPI());
         OpenAPI openAPI = reader.read(cls);
@@ -37,7 +41,7 @@ public abstract class AbstractAnnotationTest {
             try {
             compareAsYaml(cls, getOpenAPIAsString(file));
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.error("Failed to compare class {} with YAML resource {}", cls.getName(), file, e);
             fail();
         }
     }
