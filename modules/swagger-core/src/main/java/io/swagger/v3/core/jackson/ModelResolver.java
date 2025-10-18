@@ -745,7 +745,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                         propSchemaOrArray == null ?
                                 null :
                                 propSchemaOrArray instanceof io.swagger.v3.oas.annotations.media.ArraySchema ?
-                                        ((io.swagger.v3.oas.annotations.media.ArraySchema) propSchemaOrArray).schema() :
+                                        ((io.swagger.v3.oas.annotations.media.ArraySchema) propSchemaOrArray).arraySchema() :
                                         (io.swagger.v3.oas.annotations.media.Schema) propSchemaOrArray;
 
                 io.swagger.v3.oas.annotations.media.Schema.AccessMode accessMode = resolveAccessMode(propDef, type, propResolvedSchemaAnnotation);
