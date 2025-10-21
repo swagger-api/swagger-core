@@ -83,6 +83,7 @@ import io.swagger.v3.jaxrs2.resources.Ticket3587Resource;
 import io.swagger.v3.jaxrs2.resources.Ticket3731BisResource;
 import io.swagger.v3.jaxrs2.resources.Ticket3731Resource;
 import io.swagger.v3.jaxrs2.resources.Ticket4065Resource;
+import io.swagger.v3.jaxrs2.resources.Ticket4341Resource;
 import io.swagger.v3.jaxrs2.resources.Ticket4412Resource;
 import io.swagger.v3.jaxrs2.resources.Ticket4446Resource;
 import io.swagger.v3.jaxrs2.resources.Ticket4483Resource;
@@ -794,6 +795,21 @@ public class ReaderTest {
 
         assertEquals(openAPI.getComponents().getSchemas().get("User").getRequired().get(0), "issue3438");
     }
+
+    @Test(description = "array required property resolved from ArraySchema.arraySchema.requiredMode")
+    public void test4341() {
+        Reader reader = new Reader(new OpenAPI());
+        OpenAPI openAPI = reader.read(Ticket4341Resource.class);
+
+        Schema userSchema = openAPI.getComponents().getSchemas().get("User");
+        List<String> required = userSchema.getRequired();
+        assertTrue(required.contains("requiredArray"));
+        assertFalse(required.contains("notRequiredArray"));
+        assertFalse(required.contains("notRequiredArrayWithNotNull"));
+        assertTrue(required.contains("autoRequiredWithNotNull"));
+        assertFalse(required.contains("autoNotRequired"));
+    }
+
 
     @Test(description = "test resource with subresources")
     public void testResourceWithSubresources() {
