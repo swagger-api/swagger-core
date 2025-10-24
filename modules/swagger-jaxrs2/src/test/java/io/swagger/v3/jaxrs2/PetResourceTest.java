@@ -54,6 +54,8 @@ import io.swagger.v3.jaxrs2.petstore.tags.TagOpenAPIDefinitionResource;
 import io.swagger.v3.jaxrs2.petstore.tags.TagOperationResource;
 import io.swagger.v3.oas.integration.SwaggerConfiguration;
 import io.swagger.v3.oas.models.OpenAPI;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testng.annotations.Test;
 
 import java.io.File;
@@ -73,6 +75,7 @@ import static org.testng.Assert.fail;
  * Adding a lot of tests of different pet resource examples
  */
 public class PetResourceTest extends AbstractAnnotationTest {
+    private static final Logger LOGGER = LoggerFactory.getLogger(PetResourceTest.class);
     private static final String PETSTORE_SOURCE = "petstore/";
     private static final String TAGS_SOURCE = "petstore/tags/";
     private static final String OPERATIONS_SOURCE = "petstore/operation/";
@@ -314,7 +317,7 @@ public class PetResourceTest extends AbstractAnnotationTest {
                 compareAsYaml(clazz, getOpenAPIAsString(file));
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.error("Failed to compare class {} with YAML resource {}", clazz.getName(), file, e);
             fail();
         }
     }

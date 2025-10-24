@@ -30,8 +30,10 @@ public class ModelResolverOAS31Test extends SwaggerTestBase {
         SerializationMatchers.assertEqualsToYaml31(model, "type: array\n" +
                 "contains:\n" +
                 "  type: string\n" +
+                "description: arraydescription\n" +
                 "items:\n" +
                 "  type: string\n" +
+                "  description: itemdescription\n"+
                 "maxContains: 10\n" +
                 "minContains: 1\n" +
                 "prefixItems:\n" +
@@ -85,6 +87,26 @@ public class ModelResolverOAS31Test extends SwaggerTestBase {
                 "  properties:\n" +
                 "    billingAddress:\n" +
                 "      type: string\n" +
+                "    acceptingCountries:\n" +
+                "      type: array\n" +
+                "      items:\n" +
+                "        type: string\n" +
+                "        description: accepting country\n" +
+                "        enum:\n" +
+                "        - UNITED_STATES_OF_AMERICA\n" +
+                "        - CANADA\n" +
+                "      uniqueItems: true\n" +
+                "    availableCurrencies:\n" +
+                "      type: array\n" +
+                "      items:\n" +
+                "        $ref: \"#/components/schemas/Currency\"\n" +
+                "        description: available currencies\n" +
+                "      uniqueItems: true\n" +
+                "Currency:\n" +
+                "  type: object\n" +
+                "  properties:\n" +
+                "    currencyCode:\n" +
+                "      type: string\n" +
                 "ModelWithOAS31Stuff:\n" +
                 "  type: object\n" +
                 "  $comment: Random comment at schema level\n" +
@@ -95,12 +117,16 @@ public class ModelResolverOAS31Test extends SwaggerTestBase {
                 "      type: array\n" +
                 "      contains:\n" +
                 "        type: string\n" +
+                "      description: arraydescription\n" +
                 "      items:\n" +
                 "        type: string\n" +
+                "        description: itemdescription\n" +
+                "        title: itemtitle\n" +
                 "      maxContains: 10\n" +
                 "      minContains: 1\n" +
                 "      prefixItems:\n" +
                 "      - type: string\n" +
+                "      title: arraytitle\n" +
                 "      unevaluatedItems:\n" +
                 "        type: number\n" +
                 "    status:\n" +

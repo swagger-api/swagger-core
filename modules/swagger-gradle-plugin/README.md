@@ -14,7 +14,7 @@ In many cases it is sufficient to set it to the `classpath` value, like:
 
 Alternatively provide as value a classpath with the following dependencies (replacing the provided [`javax` ones](https://github.com/swagger-api/swagger-core/blob/master/modules/swagger-gradle-plugin/src/main/java/io/swagger/v3/plugins/gradle/SwaggerPlugin.java#L16-L25)):
 
-* org.apache.commons:commons-lang3:3.12.0
+* org.apache.commons:commons-lang3:3.18.0
 * io.swagger.core.v3:swagger-jaxrs2-jakarta:2.2.9
 * jakarta.ws.rs:jakarta.ws.rs-api:3.0.0
 * jakarta.servlet:jakarta.servlet-api:5.0.0
@@ -26,7 +26,7 @@ Alternatively provide as value a classpath with the following dependencies (repl
 
 ```
 plugins {
-  id "io.swagger.core.v3.swagger-gradle-plugin" version "2.2.33"
+  id "io.swagger.core.v3.swagger-gradle-plugin" version "2.2.39"
 }
 ```
 ### Gradle 1.x and 2.0
@@ -43,7 +43,7 @@ buildscript {
     }
   }
   dependencies {
-    classpath "io.swagger.core.v3:swagger-gradle-plugin:2.2.33"
+    classpath "io.swagger.core.v3:swagger-gradle-plugin:2.2.39"
   }
 }
 
@@ -123,14 +123,13 @@ info:
     url: http://www.apache.org/licenses/LICENSE-2.0.html
 ```
 
-Since version 2.1.6, `sortOutput` parameter is available, allowing to sort object properties and map keys alphabetically.
-Since version 2.1.6, `objectMapperProcessorClass` allows to configure also the ObjectMapper instance used to serialize the resolved OpenAPI
-Since version 2.1.9, `alwaysResolveAppPath` parameter is available, allowing to trigger resolving of Application Path from annotation also not in runtime (e.g. using servlet in separate application, or in maven plugin at build time, etc)
-Since version 2.2.12, `openapi31` parameter is available, if set to true the resolved spec will be processed into a 3.1.0 specification by resolving according to OAS 3.1 rules
-Since version 2.1.15, `skipResolveAppPath` parameter is available, allowing to skip resolving of Application Path from annotation
-Since version 2.2.17, `defaultResponseCode` parameter is available, allowing to set the code used when resolving responses with no http status code annotation
-Since version 2.2.17, `defaultResponseCode` parameter is available, allowing to set the code used when resolving responses with no http status code annotation
-Since version 2.2.24, `schemaResolution` parameter is available, allowing to specify how object schemas and object properties within schemas are resolved for OAS 3.0 specification
-Since version 2.2.28, `openAPIVersion` parameter is available, allowing to specify the version of the OpenAPI specification to be used for the resolved spec.
-Since version 2.2.29, `groupsValidationStrategy` parameter is available, allowing to specify the strategy for resolving Validation annotations (`never`, `always`, `neverIfNoContext`).
-Since version 2.2.29, `validatorProcessorClass` parameter is available, allowing to specify a custom validator processor class, implementation of `io.swagger.v3.core.util.ValidatorProcessor`.
+- Since version 2.1.6, `sortOutput` parameter is available, allowing to sort object properties and map keys alphabetically.
+- Since version 2.1.6, `objectMapperProcessorClass` allows to configure also the ObjectMapper instance used to serialize the resolved OpenAPI
+- Since version 2.1.9, `alwaysResolveAppPath` parameter is available, allowing to trigger resolving of Application Path from annotation also not in runtime (e.g. using servlet in separate application, or in maven plugin at build time, etc)
+- Since version 2.2.12, `openapi31` parameter is available, if set to true the resolved spec will be processed into a 3.1.0 specification by resolving according to OAS 3.1 rules
+- Since version 2.1.15, `skipResolveAppPath` parameter is available, allowing to skip resolving of Application Path from annotation
+- Since version 2.2.17, `defaultResponseCode` parameter is available, allowing to set the code used when resolving responses with no http status code annotation
+- Since version 2.2.24, `schemaResolution` parameter is available, allowing to specify how object schemas and object properties within schemas are resolved for OAS 3.0 specification
+- Since version 2.2.28, `openAPIVersion` parameter is available, allowing to specify the version of the OpenAPI specification to be used for the resolved spec.
+- Since version 2.2.29, `groupsValidationStrategy` parameter is available, allowing to specify the strategy for resolving Validation annotations (`never`, `always`, `neverIfNoContext`).
+- Since version 2.2.29, `validatorProcessorClass` parameter is available, allowing to specify a custom validator processor class, implementation of `io.swagger.v3.core.util.ValidatorProcessor`.

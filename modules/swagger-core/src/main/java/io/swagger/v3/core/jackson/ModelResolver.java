@@ -391,7 +391,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         }
 
         List<Class<?>> composedSchemaReferencedClasses = getComposedSchemaReferencedClasses(type.getRawClass(), annotatedType.getCtxAnnotations(), resolvedSchemaAnnotation);
-        boolean isComposedSchema = composedSchemaReferencedClasses != null;
+        boolean hasCompositionKeywords = composedSchemaReferencedClasses != null;
 
         if (isPrimitive) {
             XML xml = resolveXml(beanDesc.getClassInfo(), annotatedType.getCtxAnnotations(), resolvedSchemaAnnotation);
@@ -411,14 +411,14 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 schema.setItems(model);
                 return schema;
             }
-            if (type.isEnumType() && shouldResolveEnumAsRef(resolvedSchemaAnnotation)) {
+            if (type.isEnumType() && shouldResolveEnumAsRef(resolvedSchemaAnnotation, annotatedType.isResolveEnumAsRef())) {
                 // Store off the ref and add the enum as a top-level model
                 context.defineModel(name, model, annotatedType, null);
                 // Return the model as a ref only property
                 model = openapi31 ? new JsonSchema() : new Schema();
                 model.$ref(Components.COMPONENTS_SCHEMAS_REF + name);
             }
-            if (!isComposedSchema) {
+            if (!hasCompositionKeywords) {
                 if (schemaRefFromAnnotation != null && model != null) {
                     model.raw$ref(schemaRefFromAnnotation);
                 }
@@ -464,7 +464,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
         if (type.isContainerType()) {
             // TODO currently a MapSchema or ArraySchema don't also support composed schema props (oneOf,..)
-            isComposedSchema = false;
+            hasCompositionKeywords = false;
             JavaType keyType = type.getKeyType();
             JavaType valueType = type.getContentType();
             String pName = null;
@@ -540,6 +540,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                         .propertyName(annotatedType.getPropertyName())
                         .jsonViewAnnotation(annotatedType.getJsonViewAnnotation())
                         .components(annotatedType.getComponents())
+                        .resolveEnumAsRef(annotatedType.isResolveEnumAsRef())
                         .parent(annotatedType.getParent()));
 
                 if (items == null) {
@@ -593,7 +594,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                     return null;
                 }
             }
-        } else if (isComposedSchema) {
+        } else if (hasCompositionKeywords) {
             model = openapi31 ? new JsonSchema() : new ComposedSchema();
             model.name(name);
             if (
@@ -750,19 +751,13 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
                 Annotation[] ctxAnnotation31 = null;
                 Schema.SchemaResolution resolvedSchemaResolution = AnnotationsUtils.resolveSchemaResolution(this.schemaResolution, ctxSchema);
-                if (
-                        Schema.SchemaResolution.ALL_OF.equals(resolvedSchemaResolution) ||
-                                Schema.SchemaResolution.ALL_OF_REF.equals(resolvedSchemaResolution) ||
-                                openapi31) {
+                if (AnnotationsUtils.areSiblingsAllowed(resolvedSchemaResolution, openapi31)) {
                     List<Annotation> ctxAnnotations31List = new ArrayList<>();
                     if (annotations != null) {
                         for (Annotation a : annotations) {
                             if (
                                     !(a instanceof io.swagger.v3.oas.annotations.media.Schema) &&
                                             !(a instanceof io.swagger.v3.oas.annotations.media.ArraySchema)) {
-                                ctxAnnotations31List.add(a);
-                            }
-                            if ((ctxSchema != null) && (!ctxSchema.implementation().equals(Void.class) || StringUtils.isNotEmpty(ctxSchema.type()))) {
                                 ctxAnnotations31List.add(a);
                             }
                         }
@@ -794,7 +789,8 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                         .skipSchemaName(true)
                         .schemaProperty(true)
                         .components(annotatedType.getComponents())
-                        .propertyName(propName);
+                        .propertyName(propName)
+                        .resolveEnumAsRef(AnnotationsUtils.computeEnumAsRef(ctxSchema, ctxArraySchema));
                 if (
                         Schema.SchemaResolution.ALL_OF.equals(resolvedSchemaResolution) ||
                                 Schema.SchemaResolution.ALL_OF_REF.equals(resolvedSchemaResolution) ||
@@ -821,6 +817,9 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                         return openapi31 ? new JsonSchema() : new Schema();
                     }
                 });
+
+                boolean areSiblingsAllowed = AnnotationsUtils.areSiblingsAllowed(resolvedSchemaResolution, openapi31);
+                aType = AnnotationsUtils.addTypeWhenSiblingsAllowed(aType, ctxSchema, areSiblingsAllowed);
                 property = context.resolve(aType);
                 property = clone(property);
                 Schema ctxProperty = null;
@@ -1041,9 +1040,9 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             }
         }
 
-        if (isComposedSchema) {
+        if (hasCompositionKeywords) {
 
-            ComposedSchema composedSchema = (ComposedSchema) model;
+            Schema schemaWithCompositionKeys = model;
 
             Class<?>[] allOf = resolvedSchemaAnnotation.allOf();
             Class<?>[] anyOf = resolvedSchemaAnnotation.anyOf();
@@ -1061,12 +1060,12 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                     refSchema = allOfRef;
                 }
                 // allOf could have already being added during subtype resolving
-                if (composedSchema.getAllOf() == null || !composedSchema.getAllOf().contains(refSchema)) {
-                    composedSchema.addAllOfItem(refSchema);
+                if (schemaWithCompositionKeys.getAllOf() == null || !schemaWithCompositionKeys.getAllOf().contains(refSchema)) {
+                    schemaWithCompositionKeys.addAllOfItem(refSchema);
                 }
                 // remove shared properties defined in the parent
                 if (isSubtype(beanDesc.getClassInfo(), c)) {
-                    removeParentProperties(composedSchema, allOfRef);
+                    removeParentProperties(schemaWithCompositionKeys, allOfRef);
                 }
             });
 
@@ -1079,14 +1078,14 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 Schema anyOfRef = context.resolve(new AnnotatedType().components(annotatedType.getComponents()).type(c).jsonViewAnnotation(annotatedType.getJsonViewAnnotation()));
                 if (anyOfRef != null) {
                     if (StringUtils.isNotBlank(anyOfRef.getName())) {
-                        composedSchema.addAnyOfItem(new Schema().$ref(Components.COMPONENTS_SCHEMAS_REF + anyOfRef.getName()));
+                        schemaWithCompositionKeys.addAnyOfItem(new Schema().$ref(Components.COMPONENTS_SCHEMAS_REF + anyOfRef.getName()));
                     } else {
-                        composedSchema.addAnyOfItem(anyOfRef);
+                        schemaWithCompositionKeys.addAnyOfItem(anyOfRef);
                     }
                 }
                 // remove shared properties defined in the parent
                 if (isSubtype(beanDesc.getClassInfo(), c)) {
-                    removeParentProperties(composedSchema, anyOfRef);
+                    removeParentProperties(schemaWithCompositionKeys, anyOfRef);
                 }
 
             });
@@ -1100,25 +1099,26 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 Schema oneOfRef = context.resolve(new AnnotatedType().components(annotatedType.getComponents()).type(c).jsonViewAnnotation(annotatedType.getJsonViewAnnotation()));
                 if (oneOfRef != null) {
                     if (StringUtils.isBlank(oneOfRef.getName())) {
-                        composedSchema.addOneOfItem(oneOfRef);
+                        schemaWithCompositionKeys.addOneOfItem(oneOfRef);
                     } else {
-                        composedSchema.addOneOfItem(new Schema().$ref(Components.COMPONENTS_SCHEMAS_REF + oneOfRef.getName()));
+                        schemaWithCompositionKeys.addOneOfItem(new Schema().$ref(Components.COMPONENTS_SCHEMAS_REF + oneOfRef.getName()));
                     }
                     // remove shared properties defined in the parent
                     if (isSubtype(beanDesc.getClassInfo(), c)) {
-                        removeParentProperties(composedSchema, oneOfRef);
+                        removeParentProperties(schemaWithCompositionKeys, oneOfRef);
                     }
                 }
 
+                dropRootRefIfComposed(schemaWithCompositionKeys);
             });
 
             if (!composedModelPropertiesAsSibling) {
-                if (composedSchema.getAllOf() != null && !composedSchema.getAllOf().isEmpty()) {
-                    if (composedSchema.getProperties() != null && !composedSchema.getProperties().isEmpty()) {
+                if (schemaWithCompositionKeys.getAllOf() != null && !schemaWithCompositionKeys.getAllOf().isEmpty()) {
+                    if (schemaWithCompositionKeys.getProperties() != null && !schemaWithCompositionKeys.getProperties().isEmpty()) {
                         Schema propSchema = openapi31 ? new JsonSchema().typesItem("object") : new ObjectSchema();
-                        propSchema.properties(composedSchema.getProperties());
-                        composedSchema.setProperties(null);
-                        composedSchema.addAllOfItem(propSchema);
+                        propSchema.properties(schemaWithCompositionKeys.getProperties());
+                        schemaWithCompositionKeys.setProperties(null);
+                        schemaWithCompositionKeys.addAllOfItem(propSchema);
                     }
                 }
             }
@@ -1139,7 +1139,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         Schema.SchemaResolution resolvedSchemaResolution = AnnotationsUtils.resolveSchemaResolution(this.schemaResolution, resolvedSchemaAnnotation);
 
         if (model != null && annotatedType.isResolveAsRef() &&
-                (isComposedSchema || isObjectSchema(model) || implicitObject) &&
+                (hasCompositionKeywords || isObjectSchema(model) || implicitObject) &&
                 StringUtils.isNotBlank(model.getName())) {
             if (context.getDefinedModels().containsKey(model.getName())) {
                 if (!Schema.SchemaResolution.INLINE.equals(resolvedSchemaResolution)) {
@@ -1209,6 +1209,38 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         }
     }
 
+    private void dropRootRefIfComposed(Schema<?> s) {
+        if (s == null || s.get$ref() == null) {
+            return;
+        }
+
+        if (!isComposedSchema(s)) {
+            return;
+        }
+
+        String ref = s.get$ref();
+        if (refMatchesAnyComposedItem(s, ref)) {
+            s.set$ref(null);
+        }
+    }
+
+    private boolean isComposedSchema(Schema<?> s) {
+        return (s.getOneOf() != null && !s.getOneOf().isEmpty())
+                || (s.getAnyOf() != null && !s.getAnyOf().isEmpty())
+                || (s.getAllOf() != null && !s.getAllOf().isEmpty());
+    }
+
+    private boolean refMatchesAnyComposedItem(Schema<?> s, String ref) {
+        return refMatchesInList(s.getOneOf(), ref)
+                || refMatchesInList(s.getAllOf(), ref)
+                || refMatchesInList(s.getAnyOf(), ref);
+    }
+
+    private boolean refMatchesInList(List<Schema> schemas, String ref) {
+        return schemas != null && schemas.stream()
+                .anyMatch(schema -> ref.equals(schema.get$ref()));
+    }
+
     private Boolean isRecordType(BeanPropertyDefinition propDef) {
         try {
             if (propDef.getPrimaryMember() != null) {
@@ -1239,8 +1271,8 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 .orElseGet(Stream::of);
     }
 
-    private boolean shouldResolveEnumAsRef(io.swagger.v3.oas.annotations.media.Schema resolvedSchemaAnnotation) {
-        return (resolvedSchemaAnnotation != null && resolvedSchemaAnnotation.enumAsRef()) || ModelResolver.enumsAsRef;
+    private boolean shouldResolveEnumAsRef(io.swagger.v3.oas.annotations.media.Schema resolvedSchemaAnnotation, boolean isResolveEnumAsRef) {
+        return (resolvedSchemaAnnotation != null && resolvedSchemaAnnotation.enumAsRef()) || ModelResolver.enumsAsRef || isResolveEnumAsRef;
     }
 
     protected Type findJsonValueType(final BeanDescription beanDesc) {
@@ -2093,43 +2125,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             ComposedSchema composedSchema = null;
             if (!(subtypeModel instanceof ComposedSchema)) {
                 // create composed schema
-                // TODO #2312 - smarter way needs clone implemented in #2227
-                composedSchema = (ComposedSchema) new ComposedSchema()
-                        .title(subtypeModel.getTitle())
-                        .name(subtypeModel.getName())
-                        .deprecated(subtypeModel.getDeprecated())
-                        .additionalProperties(subtypeModel.getAdditionalProperties())
-                        .description(subtypeModel.getDescription())
-                        .discriminator(subtypeModel.getDiscriminator())
-                        .exclusiveMaximum(subtypeModel.getExclusiveMaximum())
-                        .exclusiveMinimum(subtypeModel.getExclusiveMinimum())
-                        .externalDocs(subtypeModel.getExternalDocs())
-                        .format(subtypeModel.getFormat())
-                        .maximum(subtypeModel.getMaximum())
-                        .maxItems(subtypeModel.getMaxItems())
-                        .maxLength(subtypeModel.getMaxLength())
-                        .maxProperties(subtypeModel.getMaxProperties())
-                        .minimum(subtypeModel.getMinimum())
-                        .minItems(subtypeModel.getMinItems())
-                        .minLength(subtypeModel.getMinLength())
-                        .minProperties(subtypeModel.getMinProperties())
-                        .multipleOf(subtypeModel.getMultipleOf())
-                        .not(subtypeModel.getNot())
-                        .nullable(subtypeModel.getNullable())
-                        .pattern(subtypeModel.getPattern())
-                        .properties(subtypeModel.getProperties())
-                        .readOnly(subtypeModel.getReadOnly())
-                        .required(subtypeModel.getRequired())
-                        .type(subtypeModel.getType())
-                        .uniqueItems(subtypeModel.getUniqueItems())
-                        .writeOnly(subtypeModel.getWriteOnly())
-                        .xml(subtypeModel.getXml())
-                        .extensions(subtypeModel.getExtensions());
-
-                if (subtypeModel.getExample() != null || subtypeModel.getExampleSetFlag()) {
-                    composedSchema.example(subtypeModel.getExample());
-                }
-                composedSchema.setEnum(subtypeModel.getEnum());
+                composedSchema = ComposedSchema.from(subtypeModel);
             } else {
                 composedSchema = (ComposedSchema) subtypeModel;
             }
