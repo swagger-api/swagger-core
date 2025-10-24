@@ -1109,6 +1109,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                     }
                 }
 
+                dropRootRefIfComposed(schemaWithCompositionKeys);
             });
 
             if (!composedModelPropertiesAsSibling) {
@@ -1206,6 +1207,38 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             LOGGER.error("Accessor for record component not found");
             return Stream.empty();
         }
+    }
+
+    private void dropRootRefIfComposed(Schema<?> s) {
+        if (s == null || s.get$ref() == null) {
+            return;
+        }
+
+        if (!isComposedSchema(s)) {
+            return;
+        }
+
+        String ref = s.get$ref();
+        if (refMatchesAnyComposedItem(s, ref)) {
+            s.set$ref(null);
+        }
+    }
+
+    private boolean isComposedSchema(Schema<?> s) {
+        return (s.getOneOf() != null && !s.getOneOf().isEmpty())
+                || (s.getAnyOf() != null && !s.getAnyOf().isEmpty())
+                || (s.getAllOf() != null && !s.getAllOf().isEmpty());
+    }
+
+    private boolean refMatchesAnyComposedItem(Schema<?> s, String ref) {
+        return refMatchesInList(s.getOneOf(), ref)
+                || refMatchesInList(s.getAllOf(), ref)
+                || refMatchesInList(s.getAnyOf(), ref);
+    }
+
+    private boolean refMatchesInList(List<Schema> schemas, String ref) {
+        return schemas != null && schemas.stream()
+                .anyMatch(schema -> ref.equals(schema.get$ref()));
     }
 
     private Boolean isRecordType(BeanPropertyDefinition propDef) {
