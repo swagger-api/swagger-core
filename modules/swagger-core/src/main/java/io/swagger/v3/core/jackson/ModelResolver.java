@@ -828,7 +828,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                     if (reResolvedProperty.isPresent()) {
                         property = reResolvedProperty.get();
                     }
-                    reResolvedProperty = AnnotationsUtils.getArraySchema(ctxArraySchema, annotatedType.getComponents(), null, openapi31, property, true);
+                    reResolvedProperty = AnnotationsUtils.getArraySchema(ctxArraySchema, annotatedType.getComponents(), null, openapi31, property);
                     if (reResolvedProperty.isPresent()) {
                         property = reResolvedProperty.get();
                     }
