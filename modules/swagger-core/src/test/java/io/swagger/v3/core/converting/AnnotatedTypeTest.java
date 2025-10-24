@@ -102,4 +102,50 @@ public class AnnotatedTypeTest {
         assertEquals(parent.hashCode(), child.hashCode(), "Parent and child hash codes should be equal if their properties are the same.");
         assertNotEquals(parent, differentParent, "Objects with different properties should not be equal.");
     }
+
+    @Test
+    public void testEquals_shouldDifferentiatePropertyAndSubtypeContexts() {
+        AnnotatedType typeAsProperty = new AnnotatedType(String.class)
+                .schemaProperty(false)
+                .propertyName("fieldA");
+
+        AnnotatedType typeAsSubtype = new AnnotatedType(String.class)
+                .schemaProperty(true)
+                .propertyName(null);
+
+        assertNotEquals(typeAsProperty, typeAsSubtype,
+                "Objects with different schemaProperty flags must not be equal.");
+        assertNotEquals(typeAsProperty.hashCode(), typeAsSubtype.hashCode(),
+                "Hash codes must be different if schemaProperty flags differ.");
+    }
+
+    @Test
+    public void testEquals_shouldComparePropertyNameWhenSchemaPropertyIsTrue() {
+        AnnotatedType complexPropA = new AnnotatedType(String.class)
+                .schemaProperty(true)
+                .propertyName("fieldA");
+        AnnotatedType complexPropB = new AnnotatedType(String.class)
+                .schemaProperty(true)
+                .propertyName("fieldB");
+
+        assertNotEquals(complexPropA, complexPropB,
+                "When schemaProperty is true, objects with different propertyNames must not be equal.");
+        assertNotEquals(complexPropA.hashCode(), complexPropB.hashCode(),
+                "When schemaProperty is true, hash codes must be different if propertyNames differ.");
+    }
+
+    @Test
+    public void testEquals_shouldBeEqualWhenSchemaPropertyIsTrueAndNamesMatch() {
+        AnnotatedType complexPropA = new AnnotatedType(String.class)
+                .schemaProperty(true)
+                .propertyName("fieldA");
+        AnnotatedType complexPropC = new AnnotatedType(String.class)
+                .schemaProperty(true)
+                .propertyName("fieldA");
+
+        assertEquals(complexPropA, complexPropC,
+                "When schemaProperty is true, objects with the same propertyName must be equal.");
+        assertEquals(complexPropA.hashCode(), complexPropC.hashCode(),
+                "When schemaProperty is true, hash codes must be equal if propertyNames are the same.");
+    }
 }

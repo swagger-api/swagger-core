@@ -264,14 +264,16 @@ public class AnnotatedType {
         List<Annotation> thisAnnotatinons = getProcessedAnnotations(this.ctxAnnotations);
         List<Annotation> thatAnnotatinons = getProcessedAnnotations(that.ctxAnnotations);
         return  includePropertiesWithoutJSONView == that.includePropertiesWithoutJSONView &&
+                schemaProperty == that.schemaProperty &&
                 Objects.equals(type, that.type) &&
                 Objects.equals(thisAnnotatinons, thatAnnotatinons) &&
-                Objects.equals(jsonViewAnnotation, that.jsonViewAnnotation);
+                Objects.equals(jsonViewAnnotation, that.jsonViewAnnotation) &&
+                (!schemaProperty || Objects.equals(propertyName, that.propertyName));
     }
 
     @Override
     public int hashCode() {
         List<Annotation> processedAnnotations = getProcessedAnnotations(this.ctxAnnotations);
-        return Objects.hash(type, jsonViewAnnotation, includePropertiesWithoutJSONView, processedAnnotations);
+        return Objects.hash(type, jsonViewAnnotation, includePropertiesWithoutJSONView, processedAnnotations, schemaProperty, schemaProperty ? propertyName : null);
     }
 }
