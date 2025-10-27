@@ -2930,14 +2930,33 @@ public abstract class AnnotationsUtils {
         return Schema.SchemaResolution.ALL_OF.equals(resolvedSchemaResolution) || Schema.SchemaResolution.ALL_OF_REF.equals(resolvedSchemaResolution) || openapi31;
     }
 
-    public static AnnotatedType addTypeWhenSiblingsAllowed(AnnotatedType aType, io.swagger.v3.oas.annotations.media.Schema ctxSchema, boolean areSiblingsAllowed) {
-        if (areSiblingsAllowed && ctxSchema != null) {
-            if (!Void.class.equals(ctxSchema.implementation())) {
-                aType.setType(ctxSchema.implementation());
-            } else if (StringUtils.isNotBlank(ctxSchema.type())) {
-                aType.setType(ctxSchema.type().getClass());
-            }
+    public static AnnotatedType addTypeWhenSiblingsAllowed(AnnotatedType aType, io.swagger.v3.oas.annotations.media.ArraySchema ctxArraySchema, io.swagger.v3.oas.annotations.media.Schema ctxSchema, boolean areSiblingsAllowed) {
+        if (!areSiblingsAllowed) {
+            return aType;
+        }
+
+        io.swagger.v3.oas.annotations.media.Schema schema = getEffectiveSchema(ctxArraySchema, ctxSchema);
+        if (schema != null) {
+            setTypeFromSchema(aType, schema);
         }
         return aType;
+    }
+
+    private static io.swagger.v3.oas.annotations.media.Schema getEffectiveSchema(io.swagger.v3.oas.annotations.media.ArraySchema ctxArraySchema, io.swagger.v3.oas.annotations.media.Schema ctxSchema) {
+        if (ctxSchema != null) {
+            return ctxSchema;
+        }
+        if (ctxArraySchema != null) {
+            return ctxArraySchema.schema();
+        }
+        return null;
+    }
+
+    private static void setTypeFromSchema(AnnotatedType aType, io.swagger.v3.oas.annotations.media.Schema schema) {
+        if (!Void.class.equals(schema.implementation())) {
+            aType.setType(schema.implementation());
+        } else if (StringUtils.isNotBlank(schema.type())) {
+            aType.setType(schema.type().getClass());
+        }
     }
 }
