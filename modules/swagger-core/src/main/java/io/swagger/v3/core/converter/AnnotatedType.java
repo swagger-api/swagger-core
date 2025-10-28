@@ -29,6 +29,7 @@ public class AnnotatedType {
     private boolean skipSchemaName;
     private boolean skipJsonIdentity;
     private String propertyName;
+    private boolean isSubtype;
 
     private Components components;
 
@@ -243,6 +244,19 @@ public class AnnotatedType {
         return this;
     }
 
+    public boolean isSubtype() {
+        return isSubtype;
+    }
+
+    public void setSubtype(boolean isSubtype) {
+        this.isSubtype = isSubtype;
+    }
+
+    public AnnotatedType subtype(boolean isSubtype) {
+        this.isSubtype = isSubtype;
+        return this;
+    }
+
     private List<Annotation> getProcessedAnnotations(Annotation[] annotations) {
         if (annotations == null || annotations.length == 0) {
             return new ArrayList<>();
@@ -265,6 +279,7 @@ public class AnnotatedType {
         List<Annotation> thatAnnotatinons = getProcessedAnnotations(that.ctxAnnotations);
         return  includePropertiesWithoutJSONView == that.includePropertiesWithoutJSONView &&
                 schemaProperty == that.schemaProperty &&
+                isSubtype == that.isSubtype &&
                 Objects.equals(type, that.type) &&
                 Objects.equals(thisAnnotatinons, thatAnnotatinons) &&
                 Objects.equals(jsonViewAnnotation, that.jsonViewAnnotation) &&
@@ -274,6 +289,6 @@ public class AnnotatedType {
     @Override
     public int hashCode() {
         List<Annotation> processedAnnotations = getProcessedAnnotations(this.ctxAnnotations);
-        return Objects.hash(type, jsonViewAnnotation, includePropertiesWithoutJSONView, processedAnnotations, schemaProperty, schemaProperty ? propertyName : null);
+        return Objects.hash(type, jsonViewAnnotation, includePropertiesWithoutJSONView, processedAnnotations, schemaProperty, isSubtype, schemaProperty ? propertyName : null);
     }
 }
