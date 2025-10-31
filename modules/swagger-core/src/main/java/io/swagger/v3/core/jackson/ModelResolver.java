@@ -141,6 +141,8 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
     protected ValidatorProcessor validatorProcessor;
 
+    protected Set<AnnotatedType> typesBeingResolved = new HashSet<>();
+    
     public ModelResolver(ObjectMapper mapper) {
         super(mapper);
     }
@@ -828,7 +830,17 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                     if (reResolvedProperty.isPresent()) {
                         property = reResolvedProperty.get();
                     }
-                    reResolvedProperty = AnnotationsUtils.getArraySchema(ctxArraySchema, annotatedType.getComponents(), null, openapi31, property);
+                    
+                    boolean processSchemaImplementation = true;
+                    if (typesBeingResolved.contains(annotatedType)) {
+                      processSchemaImplementation = false;
+                    } else {
+                      typesBeingResolved.add(annotatedType);
+                    }
+                    reResolvedProperty = AnnotationsUtils.getArraySchema(ctxArraySchema, annotatedType.getComponents(), null, openapi31, property, processSchemaImplementation);
+                    if (processSchemaImplementation) {
+                      typesBeingResolved.remove(annotatedType);
+                    }
                     if (reResolvedProperty.isPresent()) {
                         property = reResolvedProperty.get();
                     }
