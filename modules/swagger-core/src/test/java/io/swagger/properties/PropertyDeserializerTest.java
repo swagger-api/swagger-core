@@ -5,6 +5,7 @@ import io.swagger.models.properties.ArrayProperty;
 import io.swagger.models.properties.IntegerProperty;
 import io.swagger.models.properties.ObjectProperty;
 import io.swagger.models.properties.Property;
+import io.swagger.models.properties.RefProperty;
 import io.swagger.util.Json;
 
 import org.testng.annotations.DataProvider;
@@ -14,6 +15,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
 public class PropertyDeserializerTest {
@@ -97,6 +99,28 @@ public class PropertyDeserializerTest {
         assertEquals(((ObjectProperty) result).getProperties().get("collectors").getXml().getName(), "cols");
         assertEquals(((ArrayProperty)((ObjectProperty) result).getProperties().get("collectors")).getItems().getXml().getName(), "collector");
     }
+
+    @Test(description = "it should deserialize an allOf property")
+    public void testAllOfProperty() throws IOException {
+        String ref = "#/definitions/Actor";
+        final String json = "{\n" +
+                "  \"allOf\": [\n" +
+                "    {\n" +
+                "      \"$ref\": \"" + ref + "\"\n" +
+                "    }\n" +
+                "  ],\n" +
+                "  \"x-foo\": \"vendor x\",\n" +
+                "  \"readOnly\": true\n" +
+                "}";
+        final Property result = Json.mapper().readValue(json, Property.class);
+        assertTrue(result instanceof RefProperty);
+        assertEquals(((RefProperty) result).get$ref(), ref);
+        assertTrue(result.getVendorExtensions() != null);
+        assertNotNull(result.getVendorExtensions().get("x-foo"));
+        assertEquals(result.getVendorExtensions().get("x-foo"), "vendor x");
+        assertTrue(result.getReadOnly());
+    }
+
 
     @DataProvider
     public Object[][] readOnlyDataProvider() {
