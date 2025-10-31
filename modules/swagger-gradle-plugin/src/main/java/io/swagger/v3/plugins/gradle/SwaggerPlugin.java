@@ -17,7 +17,7 @@ public class SwaggerPlugin implements Plugin<Project> {
         config.defaultDependencies(new Action<DependencySet>() {
             public void execute(DependencySet dependencies) {
                 dependencies.add(project.getDependencies().create("org.apache.commons:commons-lang3:3.18.0"));
-                dependencies.add(project.getDependencies().create("io.swagger.core.v3:swagger-jaxrs2:2.2.40-SNAPSHOT"));
+                dependencies.add(project.getDependencies().create("io.swagger.core.v3:swagger-jaxrs2:2.2.41-SNAPSHOT"));
                 dependencies.add(project.getDependencies().create("javax.ws.rs:javax.ws.rs-api:2.1"));
                 dependencies.add(project.getDependencies().create("javax.servlet:javax.servlet-api:3.1.0"));
             }
