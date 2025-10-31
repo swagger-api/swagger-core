@@ -317,6 +317,6 @@ public class PropertySerializationTest {
                 .addProperties("stringProperty", new StringSchema());
         p.required(Arrays.asList("stringProperty"));
         final String json = "{\"type\":\"object\",\"properties\":{\"stringProperty\":{\"type\":\"string\"}},\"required\":[\"stringProperty\"]}";
-        assertEquals(p, m.readValue(json, Schema.class));
+        JsonAssert.assertJsonEquals(m, m.writeValueAsString(p), json);
     }
 }

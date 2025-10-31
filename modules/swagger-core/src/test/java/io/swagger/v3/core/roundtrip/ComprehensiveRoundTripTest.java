@@ -3,6 +3,7 @@ package io.swagger.v3.core.roundtrip;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.core.util.Json;
+import io.swagger.v3.core.util.JsonAssert;
 import io.swagger.v3.core.util.Json31;
 import io.swagger.v3.core.util.ResourceUtils;
 import io.swagger.v3.core.util.Yaml;
@@ -70,7 +71,7 @@ public class ComprehensiveRoundTripTest {
         String jsonAgain = Json.pretty(deserializedOpenAPI);
         
         // Compare JSON strings
-        assertEquals(json, jsonAgain, "JSON round-trip failed");
+        JsonAssert.assertJsonEquals(Json.mapper(), json, jsonAgain, "JSON round-trip failed");
     }
     
     /**
@@ -106,7 +107,7 @@ public class ComprehensiveRoundTripTest {
         String yamlAgain = Yaml.pretty(deserializedOpenAPI);
         
         // Compare YAML strings
-        assertEquals(yaml, yamlAgain, "YAML round-trip failed");
+        JsonAssert.assertJsonEquals(Yaml.mapper(), yaml, yamlAgain, "YAML round-trip failed");
     }
     
     /**
@@ -148,7 +149,7 @@ public class ComprehensiveRoundTripTest {
         String jsonAgain = Json31.pretty(deserializedOpenAPI);
         
         // Compare JSON strings
-        assertEquals(json, jsonAgain, "JSON round-trip failed");
+        JsonAssert.assertJsonEquals(Json31.mapper(), json, jsonAgain, "JSON round-trip failed");
     }
     
     /**
@@ -190,7 +191,7 @@ public class ComprehensiveRoundTripTest {
         String yamlAgain = Yaml31.pretty(deserializedOpenAPI);
         
         // Compare YAML strings
-        assertEquals(yaml, yamlAgain, "YAML round-trip failed");
+        JsonAssert.assertJsonEquals(Yaml31.mapper(), yaml, yamlAgain, "YAML round-trip failed");
     }
     
     /**
@@ -242,7 +243,7 @@ public class ComprehensiveRoundTripTest {
         String jsonAgain = Json31.pretty(deserializedOpenAPI);
         
         // Compare JSON strings
-        assertEquals(json, jsonAgain, "JSON round-trip failed");
+        JsonAssert.assertJsonEquals(Json31.mapper(), json, jsonAgain, "JSON round-trip failed");
     }
     
     /**
@@ -276,7 +277,7 @@ public class ComprehensiveRoundTripTest {
         String jsonAgain = Json31.pretty(deserializedOpenAPI);
         
         // Compare JSON strings
-        assertEquals(json, jsonAgain, "JSON round-trip failed");
+        JsonAssert.assertJsonEquals(Json.mapper(), json, jsonAgain, "JSON round-trip failed");
     }
     
     /**
@@ -307,7 +308,7 @@ public class ComprehensiveRoundTripTest {
         String jsonAgain = Json31.pretty(deserializedOpenAPI);
         
         // Compare JSON strings
-        assertEquals(json, jsonAgain, "JSON round-trip failed");
+        JsonAssert.assertJsonEquals(Json.mapper(), json, jsonAgain, "JSON round-trip failed");
     }
     
     /**
@@ -350,14 +351,7 @@ public class ComprehensiveRoundTripTest {
         String yamlAgain = Yaml31.pretty(deserializedOpenAPI);
         
         // Compare YAML strings (normalize whitespace)
-        assertEquals(normalizeWhitespace(serializedYaml), normalizeWhitespace(yamlAgain), "YAML round-trip failed");
-    }
-    
-    /**
-     * Helper method to normalize whitespace in YAML strings for comparison
-     */
-    private String normalizeWhitespace(String yaml) {
-        return yaml.replaceAll("\\s+", " ").trim();
+        JsonAssert.assertJsonEquals(Yaml31.mapper(), serializedYaml, yamlAgain, "YAML round-trip failed");
     }
     
     /**
