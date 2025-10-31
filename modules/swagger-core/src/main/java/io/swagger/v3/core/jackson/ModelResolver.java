@@ -787,6 +787,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                         .resolveAsRef(annotatedType.isResolveAsRef())
                         .jsonViewAnnotation(annotatedType.getJsonViewAnnotation())
                         .skipSchemaName(true)
+                        .subtype(annotatedType.isSubtype())
                         .schemaProperty(true)
                         .components(annotatedType.getComponents())
                         .propertyName(propName)
@@ -1560,6 +1561,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                                     .jsonViewAnnotation(type.getJsonViewAnnotation())
                                     .schemaProperty(true)
                                     .components(type.getComponents())
+                                    .subtype(type.isSubtype())
                                     .propertyName(type.getPropertyName());
 
                             return context.resolve(aType);
@@ -2110,8 +2112,10 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 continue;
             }
 
-            final Schema subtypeModel = context.resolve(new AnnotatedType().type(subtypeType)
-                    .jsonViewAnnotation(jsonViewAnnotation));
+            final Schema subtypeModel = context.resolve(new AnnotatedType()
+                    .type(subtypeType)
+                    .jsonViewAnnotation(jsonViewAnnotation)
+                    .subtype(true));
 
             if (StringUtils.isBlank(subtypeModel.getName()) ||
                     subtypeModel.getName().equals(model.getName())) {
