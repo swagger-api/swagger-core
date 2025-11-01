@@ -50,6 +50,8 @@ public class SwaggerConfiguration implements OpenAPIConfiguration {
 
     private String validatorProcessorClass;
 
+    private Boolean ignoreHidden = Boolean.FALSE;
+
 
     @Override
     public String getDefaultResponseCode() {
@@ -471,6 +473,29 @@ public class SwaggerConfiguration implements OpenAPIConfiguration {
         return this;
     }
 
+    /**
+     * @since 2.2.40
+     */
+    @Override
+    public Boolean isIgnoreHidden() {
+        return ignoreHidden;
+    }
+
+    /**
+     * @since 2.2.40
+     */
+    public void setIgnoreHidden(Boolean ignoreHidden) {
+        this.ignoreHidden = ignoreHidden;
+    }
+
+    /**
+     * @since 2.2.40
+     */
+    public SwaggerConfiguration ignoreHidden(Boolean ignoreHidden) {
+        this.ignoreHidden = ignoreHidden;
+        return this;
+    }
+
     public Configuration toConfiguration() {
         Configuration configuration = new Configuration();
 
@@ -483,6 +508,7 @@ public class SwaggerConfiguration implements OpenAPIConfiguration {
         configuration.setOpenAPIVersion(getOpenAPIVersion());
         configuration.setGroupsValidationStrategy(getGroupsValidationStrategy());
         configuration.setValidatorProcessorClass(getValidatorProcessorClass());
+        configuration.setIgnoreHidden(isIgnoreHidden());
 
         return configuration;
     }
