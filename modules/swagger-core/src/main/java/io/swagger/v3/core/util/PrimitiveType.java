@@ -337,7 +337,6 @@ public enum PrimitiveType {
         addKeys(keyClasses, NUMBER, Number.class);
         addKeys(keyClasses, DATE, DateStub.class);
         addKeys(keyClasses, DATE_TIME, java.util.Date.class);
-//        addKeys(keyClasses, PARTIAL_TIME, java.time.LocalTime.class);
         addKeys(keyClasses, FILE, java.io.File.class);
         addKeys(keyClasses, OBJECT, Object.class);
         KEY_CLASSES = Collections.unmodifiableMap(keyClasses);
