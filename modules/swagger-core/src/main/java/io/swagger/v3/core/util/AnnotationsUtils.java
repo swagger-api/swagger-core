@@ -951,10 +951,10 @@ public abstract class AnnotationsUtils {
                 existingSchemaObject = reResolvedSchema.get();
             }
         }
-        boolean doesSchemaHaveTypes = existingSchemaObject.getTypes() == null || existingSchemaObject.getTypes().isEmpty();
+        boolean doesSchemaHaveNullOrEmptyTypes = existingSchemaObject.getTypes() == null || existingSchemaObject.getTypes().isEmpty();
         if (StringUtils.isBlank(existingSchemaObject.get$ref())
                 && StringUtils.isBlank(existingSchemaObject.getType())
-                && doesSchemaHaveTypes) {
+                && doesSchemaHaveNullOrEmptyTypes) {
             // default to string
             existingSchemaObject.setType("string");
         }
