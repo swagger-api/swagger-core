@@ -374,9 +374,6 @@ public enum PrimitiveType {
         addKeys(names, OBJECT, "object");
         NAMES = Collections.unmodifiableMap(names);
 
-        // Add "LocalTime" class mappings
-        enablePartialTime();
-
         if (System.getenv(Schema.EXPLICIT_OBJECT_SCHEMA_PROPERTY) != null) {
             explicitObjectType = Boolean.parseBoolean(System.getenv(Schema.EXPLICIT_OBJECT_SCHEMA_PROPERTY));
         } else if (System.getProperty(Schema.EXPLICIT_OBJECT_SCHEMA_PROPERTY) != null) {
