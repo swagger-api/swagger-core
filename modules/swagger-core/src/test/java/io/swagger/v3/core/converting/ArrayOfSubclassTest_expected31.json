@@ -1,0 +1,106 @@
+{
+  "schema" : {
+    "type" : "object",
+    "description" : "The holder",
+    "properties" : {
+      "name" : {
+        "type" : "string"
+      },
+      "friend" : {
+        "type" : "string"
+      },
+      "baseArray" : {
+        "type" : "array",
+        "description" : "Thingy",
+        "items" : {
+          "$ref" : "#/components/schemas/Base",
+          "description" : "Thingy",
+          "minItems" : 0,
+          "uniqueItems" : true
+        },
+        "minItems" : 0,
+        "uniqueItems" : true
+      }
+    }
+  },
+  "referencedSchemas" : {
+    "Base" : {
+      "type" : "object",
+      "description" : "Stuff",
+      "discriminator" : {
+        "propertyName" : "name",
+        "mapping" : {
+          "a" : "#/components/schemas/SubA",
+          "b" : "#/components/schemas/SubB"
+        }
+      },
+      "properties" : {
+        "name" : {
+          "type" : "string"
+        }
+      }
+    },
+    "Holder" : {
+      "type" : "object",
+      "description" : "The holder",
+      "properties" : {
+        "name" : {
+          "type" : "string"
+        },
+        "friend" : {
+          "type" : "string"
+        },
+        "baseArray" : {
+          "type" : "array",
+          "description" : "Thingy",
+          "items" : {
+            "$ref" : "#/components/schemas/Base",
+            "description" : "Thingy",
+            "minItems" : 0,
+            "uniqueItems" : true
+          },
+          "minItems" : 0,
+          "uniqueItems" : true
+        }
+      }
+    },
+    "SubA" : {
+      "type" : "object",
+      "description" : "The SubA class",
+      "properties" : {
+        "name" : {
+          "type" : "string"
+        },
+        "count" : {
+          "type" : "integer",
+          "format" : "int64"
+        }
+      }
+    },
+    "SubB" : {
+      "type" : "object",
+      "description" : "The SubB class",
+      "properties" : {
+        "name" : {
+          "type" : "string"
+        },
+        "friend" : {
+          "type" : "string"
+        },
+        "baseArray" : {
+          "type" : "array",
+          "description" : "Thingy",
+          "items" : {
+            "$ref" : "#/components/schemas/Base",
+            "description" : "Thingy",
+            "minItems" : 0,
+            "uniqueItems" : true
+          },
+          "minItems" : 0,
+          "uniqueItems" : true
+        }
+      }
+    }
+  }
+}
+
