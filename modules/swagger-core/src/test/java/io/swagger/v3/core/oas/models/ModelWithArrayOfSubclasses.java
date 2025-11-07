@@ -59,7 +59,5 @@ public class ModelWithArrayOfSubclasses {
         public Base[] getBaseArray() {
             return baseArray;
         }
-
     }
-
 }

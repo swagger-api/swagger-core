@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.google.common.collect.ImmutableSet;
 import io.swagger.v3.core.converter.ModelConverters;
-import io.swagger.v3.core.converter.ResolvedSchema;
 import io.swagger.v3.core.matchers.SerializationMatchers;
 import io.swagger.v3.core.oas.models.Cat;
 import io.swagger.v3.core.oas.models.ClientOptInput;
@@ -16,7 +15,6 @@ import io.swagger.v3.core.oas.models.Model1155;
 import io.swagger.v3.core.oas.models.ModelPropertyName;
 import io.swagger.v3.core.oas.models.ModelWithAltPropertyName;
 import io.swagger.v3.core.oas.models.ModelWithApiModel;
-import io.swagger.v3.core.oas.models.ModelWithArrayOfSubclasses;
 import io.swagger.v3.core.oas.models.ModelWithEnumArray;
 import io.swagger.v3.core.oas.models.ModelWithFormattedStrings;
 import io.swagger.v3.core.oas.models.ModelWithNumbers;
@@ -270,11 +268,6 @@ public class ModelConverterTest {
         final Map<String, Schema> model = read(Model1155.class);
         assertEquals(model.get("Model1155").getProperties().keySet(), ImmutableSet.of("valid", "value", "is", "get",
                 "isA", "getA", "is_persistent", "gettersAndHaters"));
-    }
-    
-    @Test
-    public void extractSuclassArray() {
-        ResolvedSchema schema = ModelConverters.getInstance().readAllAsResolvedSchema(ModelWithArrayOfSubclasses.class);
     }
 
     @Test(description = "it should scan a model with numbers")

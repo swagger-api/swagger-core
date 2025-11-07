@@ -142,7 +142,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
     protected ValidatorProcessor validatorProcessor;
 
     protected Set<AnnotatedType> typesBeingResolved = new HashSet<>();
-    
+
     public ModelResolver(ObjectMapper mapper) {
         super(mapper);
     }
@@ -830,17 +830,8 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                     if (reResolvedProperty.isPresent()) {
                         property = reResolvedProperty.get();
                     }
-                    
-                    boolean processSchemaImplementation = true;
-                    if (typesBeingResolved.contains(annotatedType)) {
-                      processSchemaImplementation = false;
-                    } else {
-                      typesBeingResolved.add(annotatedType);
-                    }
-                    reResolvedProperty = AnnotationsUtils.getArraySchema(ctxArraySchema, annotatedType.getComponents(), null, openapi31, property, processSchemaImplementation);
-                    if (processSchemaImplementation) {
-                      typesBeingResolved.remove(annotatedType);
-                    }
+
+                    reResolvedProperty = resolveArraySchemaWithCycleGuard(ctxArraySchema, annotatedType, openapi31, property);
                     if (reResolvedProperty.isPresent()) {
                         property = reResolvedProperty.get();
                     }
@@ -3615,5 +3606,25 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         return !openapi31 ||
                 (Boolean.parseBoolean(System.getProperty(Schema.APPLY_SCHEMA_RESOLUTION_PROPERTY, "false")) ||
                         Boolean.parseBoolean(System.getenv(Schema.APPLY_SCHEMA_RESOLUTION_PROPERTY)));
+    }
+
+    private Optional<Schema> resolveArraySchemaWithCycleGuard(
+            io.swagger.v3.oas.annotations.media.ArraySchema ctxArraySchema,
+            AnnotatedType annotatedType,
+            boolean openapi31,
+            Schema<?> property) {
+        boolean processSchemaImplementation = !typesBeingResolved.contains(annotatedType);
+        Optional<Schema> reResolvedProperty;
+        if (processSchemaImplementation) {
+            typesBeingResolved.add(annotatedType);
+        } try {
+            reResolvedProperty = AnnotationsUtils.getArraySchema(ctxArraySchema, annotatedType.getComponents(), null,
+                    openapi31, property, processSchemaImplementation );
+        } finally {
+            if (processSchemaImplementation) {
+                    typesBeingResolved.remove(annotatedType);
+                }
+        }
+        return reResolvedProperty;
     }
 }
