@@ -177,6 +177,24 @@ public class ModelPropertyTest {
         assertEquals(strSchema.getMaxLength(), Integer.valueOf(10));
     }
 
+    @Test
+    public void testNotBlankNotEmptyWithRequiredModeNotRequired() {
+        final Map<String, Schema> models = ModelConverters.getInstance().readAll(NotBlankNotEmptyWithRequiredModeNotRequiredModel.class);
+        Schema model = models.get("NotBlankNotEmptyWithRequiredModeNotRequiredModel");
+        assertFalse(model.getRequired() != null && model.getRequired().contains("notBlankNotRequired"));
+        assertFalse(model.getRequired() != null && model.getRequired().contains("notEmptyListNotRequired"));
+        assertFalse(model.getRequired() != null && model.getRequired().contains("notEmptySetNotRequired"));
+    }
+
+    @Test
+    public void testNotBlankNotEmptyWithRequiredModeRequired() {
+        final Map<String, Schema> models = ModelConverters.getInstance().readAll(NotBlankNotEmptyWithRequiredModeRequiredModel.class);
+        Schema model = models.get("NotBlankNotEmptyWithRequiredModeRequiredModel");
+        assertTrue(model.getRequired().contains("notBlankRequired"));
+        assertTrue(model.getRequired().contains("notEmptyListRequired"));
+        assertTrue(model.getRequired().contains("notEmptySetRequired"));
+    }
+
     class Family {
         public Date membersSince;
         public List<Person> members;
@@ -227,5 +245,33 @@ public class ModelPropertyTest {
         @NotBlank
         @Size(min = 5, max = 10)
         public String notBlankAndSized;
+    }
+
+    static class NotBlankNotEmptyWithRequiredModeRequiredModel {
+        @NotBlank
+        @io.swagger.v3.oas.annotations.media.Schema(requiredMode = io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED)
+        public String notBlankRequired;
+
+        @NotEmpty
+        @io.swagger.v3.oas.annotations.media.Schema(requiredMode = io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED)
+        public List<String> notEmptyListRequired;
+
+        @NotEmpty
+        @io.swagger.v3.oas.annotations.media.Schema(requiredMode = io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED)
+        public Set<String> notEmptySetRequired;
+    }
+
+    static class NotBlankNotEmptyWithRequiredModeNotRequiredModel {
+        @NotBlank
+        @io.swagger.v3.oas.annotations.media.Schema(requiredMode = io.swagger.v3.oas.annotations.media.Schema.RequiredMode.NOT_REQUIRED)
+        public String notBlankNotRequired;
+
+        @NotEmpty
+        @io.swagger.v3.oas.annotations.media.Schema(requiredMode = io.swagger.v3.oas.annotations.media.Schema.RequiredMode.NOT_REQUIRED)
+        public List<String> notEmptyListNotRequired;
+
+        @NotEmpty
+        @io.swagger.v3.oas.annotations.media.Schema(requiredMode = io.swagger.v3.oas.annotations.media.Schema.RequiredMode.NOT_REQUIRED)
+        public Set<String> notEmptySetNotRequired;
     }
 }
