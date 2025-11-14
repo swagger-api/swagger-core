@@ -55,7 +55,10 @@ public class APIResponsesResourceTest {
     public void testSchemaAPIResource31(String schema) {
         Schema responseSchema = getResponseSchema(schema);
 
+        String fromGetType = responseSchema.getType() == null ? "null" : responseSchema.getType();
+        String fromGetTypes = responseSchema.getTypes() == null ? "null" : responseSchema.getTypes().iterator().next().toString();
+
         // Value of field "type" must equal value of field "types"
-        assertEquals(responseSchema.getType(), responseSchema.getTypes().iterator().next());
+        assertEquals(fromGetType, fromGetTypes);
     }
 }
