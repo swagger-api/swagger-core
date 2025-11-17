@@ -113,6 +113,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
     Logger LOGGER = LoggerFactory.getLogger(ModelResolver.class);
     public static List<String> NOT_NULL_ANNOTATIONS = Arrays.asList("NotNull", "NonNull", "NotBlank", "NotEmpty");
+    public static List<String> NULLABLE_ANNOTATIONS = Arrays.asList("Nullable");
 
     public static final String SET_PROPERTY_OF_COMPOSED_MODEL_AS_SIBLING = "composed-model-properties-as-sibiling";
     public static final String SET_PROPERTY_OF_ENUMS_AS_REF = "enums-as-ref";
@@ -2446,6 +2447,15 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         if (schema != null && schema.nullable()) {
             return schema.nullable();
         }
+        if (annotations != null) {
+            for (Annotation ann : annotations) {
+                boolean isNullable = Arrays.stream(annotations).anyMatch(annotation ->
+                        NULLABLE_ANNOTATIONS.contains(annotation.annotationType().getSimpleName()));
+                if (isNullable) {
+                    return true;
+                }
+            }
+        }
         return null;
     }
 
@@ -3143,6 +3153,9 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         Boolean nullable = resolveNullable(a, annotations, schemaAnnotation);
         if (nullable != null) {
             schema.nullable(nullable);
+            if (openapi31 && nullable) {
+                schema.addType("null");
+            }
         }
         BigDecimal multipleOf = resolveMultipleOf(a, annotations, schemaAnnotation);
         if (multipleOf != null) {

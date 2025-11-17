@@ -825,6 +825,9 @@ public abstract class AnnotationsUtils {
         }
         if (schema.nullable()) {
             schemaObject.setNullable(schema.nullable());
+            if (openapi31) {
+                schemaObject.addType("null");
+            }
         }
         if (StringUtils.isNotBlank(schema.title())) {
             schemaObject.setTitle(schema.title());
