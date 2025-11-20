@@ -1841,7 +1841,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             }
         }
 
-        if (annos.containsKey("javax.validation.constraints.NotEmpty")) {
+        if (annos.containsKey("javax.validation.constraints.NotEmpty") && applyNotNullAnnotations ) {
             NotEmpty anno = (NotEmpty) annos.get("javax.validation.constraints.NotEmpty");
             boolean apply = checkGroupValidation(anno.groups(), invocationGroups, acceptNoGroups);
             if (apply) {
@@ -1867,7 +1867,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             }
         }
 
-        if (annos.containsKey("javax.validation.constraints.NotBlank")) {
+        if (annos.containsKey("javax.validation.constraints.NotBlank") && applyNotNullAnnotations ) {
             NotBlank anno = (NotBlank) annos.get("javax.validation.constraints.NotBlank");
             boolean apply = checkGroupValidation(anno.groups(), invocationGroups, acceptNoGroups);
             if (apply) {
