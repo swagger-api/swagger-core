@@ -1,6 +1,6 @@
 package io.swagger.v3.jaxrs2.resources.jspecify.nullmarked;
 
-import io.swagger.v3.jaxrs2.resources.jspecify.nullunmarked.Address;
+import io.swagger.v3.jaxrs2.resources.jspecify.nullmarked.nullunmarked.Address;
 import org.jspecify.annotations.Nullable;
 
 public class Person {
