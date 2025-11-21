@@ -2329,6 +2329,14 @@ public abstract class AnnotationsUtils {
             }
 
             @Override
+            public String[] nullValues() {
+                if (master.nullValues().length > 0 || patch.nullValues().length == 0) {
+                    return master.nullValues();
+                }
+                return patch.nullValues();
+            }
+
+            @Override
             public io.swagger.v3.oas.annotations.ExternalDocumentation externalDocs() {
                 if (getExternalDocumentation(master.externalDocs()).isPresent() || !getExternalDocumentation(patch.externalDocs()).isPresent()) {
                     return master.externalDocs();
