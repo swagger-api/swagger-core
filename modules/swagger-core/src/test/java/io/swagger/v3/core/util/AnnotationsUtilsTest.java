@@ -108,7 +108,6 @@ public class AnnotationsUtilsTest {
                 return io.swagger.v3.oas.annotations.media.Schema.class;
             }
 
-            // --- 기본 메타데이터 ---
             @Override public String name() { return ""; }
             @Override public String title() { return ""; }
             @Override public String description() { return ""; }
@@ -118,14 +117,13 @@ public class AnnotationsUtilsTest {
             @Override public boolean required() { return false; }
             @Override public io.swagger.v3.oas.annotations.media.Schema.AccessMode accessMode() { return io.swagger.v3.oas.annotations.media.Schema.AccessMode.AUTO; }
             @Override public io.swagger.v3.oas.annotations.media.Schema.RequiredMode requiredMode() { return io.swagger.v3.oas.annotations.media.Schema.RequiredMode.AUTO; }
-            @Override public String example() { return "5 lacs per annum"; } // ✅ 테스트 핵심 값
+            @Override public String example() { return "5 lacs per annum"; }
             @Override public Class<?> implementation() { return java.lang.Void.class; }
             @Override public Class<?> not() { return java.lang.Void.class; }
             @Override public Class<?>[] oneOf() { return new Class<?>[0]; }
             @Override public Class<?>[] anyOf() { return new Class<?>[0]; }
             @Override public Class<?>[] allOf() { return new Class<?>[0]; }
 
-            // --- 수치/크기 제약조건 ---
             @Override public double multipleOf() { return 0; }
             @Override public String maximum() { return ""; }
             @Override public boolean exclusiveMaximum() { return false; }
@@ -137,7 +135,6 @@ public class AnnotationsUtilsTest {
             @Override public int maxProperties() { return 0; }
             @Override public int minProperties() { return 0; }
 
-            // --- 기타 속성들 ---
             @Override public boolean hidden() { return false; }
             @Override public boolean enumAsRef() { return false; }
             @Override public boolean deprecated() { return false; }
@@ -147,11 +144,9 @@ public class AnnotationsUtilsTest {
             @Override public String defaultValue() { return ""; }
             @Override public String discriminatorProperty() { return ""; }
             @Override public String[] allowableValues() { return new String[0]; }
-            
-            // --- ✅ 누락되었던 메서드 (requiredProperties) ---
+
             @Override public String[] requiredProperties() { return new String[0]; }
 
-            // --- 복잡한 객체 반환 메서드들 ---
             @Override public io.swagger.v3.oas.annotations.media.Schema.SchemaResolution schemaResolution() { return io.swagger.v3.oas.annotations.media.Schema.SchemaResolution.DEFAULT; }
             @Override public String _const() { return ""; }
             @Override public String[] examples() { return new String[0]; }
