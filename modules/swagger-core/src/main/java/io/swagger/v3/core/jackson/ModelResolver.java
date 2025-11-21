@@ -141,6 +141,8 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
     protected ValidatorProcessor validatorProcessor;
 
+    protected Set<AnnotatedType> typesBeingResolved = new HashSet<>();
+
     public ModelResolver(ObjectMapper mapper) {
         super(mapper);
     }
@@ -787,6 +789,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                         .resolveAsRef(annotatedType.isResolveAsRef())
                         .jsonViewAnnotation(annotatedType.getJsonViewAnnotation())
                         .skipSchemaName(true)
+                        .subtype(annotatedType.isSubtype())
                         .schemaProperty(true)
                         .components(annotatedType.getComponents())
                         .propertyName(propName)
@@ -828,7 +831,8 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                     if (reResolvedProperty.isPresent()) {
                         property = reResolvedProperty.get();
                     }
-                    reResolvedProperty = AnnotationsUtils.getArraySchema(ctxArraySchema, annotatedType.getComponents(), null, openapi31, property, true);
+
+                    reResolvedProperty = resolveArraySchemaWithCycleGuard(ctxArraySchema, annotatedType, openapi31, property);
                     if (reResolvedProperty.isPresent()) {
                         property = reResolvedProperty.get();
                     }
@@ -1560,6 +1564,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                                     .jsonViewAnnotation(type.getJsonViewAnnotation())
                                     .schemaProperty(true)
                                     .components(type.getComponents())
+                                    .subtype(type.isSubtype())
                                     .propertyName(type.getPropertyName());
 
                             return context.resolve(aType);
@@ -1836,7 +1841,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             }
         }
 
-        if (annos.containsKey("javax.validation.constraints.NotEmpty")) {
+        if (annos.containsKey("javax.validation.constraints.NotEmpty") && applyNotNullAnnotations ) {
             NotEmpty anno = (NotEmpty) annos.get("javax.validation.constraints.NotEmpty");
             boolean apply = checkGroupValidation(anno.groups(), invocationGroups, acceptNoGroups);
             if (apply) {
@@ -1862,7 +1867,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             }
         }
 
-        if (annos.containsKey("javax.validation.constraints.NotBlank")) {
+        if (annos.containsKey("javax.validation.constraints.NotBlank") && applyNotNullAnnotations ) {
             NotBlank anno = (NotBlank) annos.get("javax.validation.constraints.NotBlank");
             boolean apply = checkGroupValidation(anno.groups(), invocationGroups, acceptNoGroups);
             if (apply) {
@@ -2110,8 +2115,10 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 continue;
             }
 
-            final Schema subtypeModel = context.resolve(new AnnotatedType().type(subtypeType)
-                    .jsonViewAnnotation(jsonViewAnnotation));
+            final Schema subtypeModel = context.resolve(new AnnotatedType()
+                    .type(subtypeType)
+                    .jsonViewAnnotation(jsonViewAnnotation)
+                    .subtype(true));
 
             if (StringUtils.isBlank(subtypeModel.getName()) ||
                     subtypeModel.getName().equals(model.getName())) {
@@ -3603,5 +3610,25 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         return !openapi31 ||
                 (Boolean.parseBoolean(System.getProperty(Schema.APPLY_SCHEMA_RESOLUTION_PROPERTY, "false")) ||
                         Boolean.parseBoolean(System.getenv(Schema.APPLY_SCHEMA_RESOLUTION_PROPERTY)));
+    }
+
+    private Optional<Schema> resolveArraySchemaWithCycleGuard(
+            io.swagger.v3.oas.annotations.media.ArraySchema ctxArraySchema,
+            AnnotatedType annotatedType,
+            boolean openapi31,
+            Schema<?> property) {
+        boolean processSchemaImplementation = !typesBeingResolved.contains(annotatedType);
+        Optional<Schema> reResolvedProperty;
+        if (processSchemaImplementation) {
+            typesBeingResolved.add(annotatedType);
+        } try {
+            reResolvedProperty = AnnotationsUtils.getArraySchema(ctxArraySchema, annotatedType.getComponents(), null,
+                    openapi31, property, processSchemaImplementation );
+        } finally {
+            if (processSchemaImplementation) {
+                    typesBeingResolved.remove(annotatedType);
+                }
+        }
+        return reResolvedProperty;
     }
 }
