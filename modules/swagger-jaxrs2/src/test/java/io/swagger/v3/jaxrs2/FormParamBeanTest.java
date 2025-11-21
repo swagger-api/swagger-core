@@ -6,11 +6,11 @@ import io.swagger.v3.oas.models.media.MediaType;
 import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.media.StringSchema;
 import io.swagger.v3.oas.models.parameters.RequestBody;
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import javax.ws.rs.*;
 
-import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 
 public class FormParamBeanTest {
