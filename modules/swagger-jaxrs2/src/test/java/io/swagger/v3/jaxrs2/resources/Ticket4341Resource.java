@@ -47,5 +47,30 @@ public class Ticket4341Resource {
                 schema = @Schema(type = "string")
         )
         public List<String> autoNotRequired;
+
+        @ArraySchema(
+                arraySchema = @Schema(requiredMode = Schema.RequiredMode.REQUIRED)
+        )
+        public List<String> requiredArrayArraySchemaOnly;
+
+        @ArraySchema(
+                schema = @Schema(type = "string", requiredMode = Schema.RequiredMode.REQUIRED)
+        )
+        public List<String> requiredItemsOnlyArray;
+
+        @ArraySchema(
+                arraySchema = @Schema(
+                        description = "array-level description",
+                        deprecated = true,
+                        accessMode = Schema.AccessMode.READ_ONLY
+                ),
+                schema = @Schema(
+                        description = "item-level description",
+                        deprecated = false,
+                        accessMode = Schema.AccessMode.WRITE_ONLY,
+                        format = "email"
+                )
+        )
+        public List<String> metadataArray;
     }
 }
