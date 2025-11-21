@@ -8,6 +8,7 @@ import io.swagger.v3.core.oas.models.composition.AnimalClass;
 import io.swagger.v3.core.oas.models.composition.AnimalWithSchemaSubtypes;
 import io.swagger.v3.core.oas.models.composition.Human;
 import io.swagger.v3.core.oas.models.composition.ModelWithFieldWithSubTypes;
+import io.swagger.v3.core.oas.models.composition.ModelWithDiscriminatorMapping;
 import io.swagger.v3.core.util.Json;
 import io.swagger.v3.core.util.ResourceUtils;
 import io.swagger.v3.oas.models.media.Schema;
@@ -46,6 +47,11 @@ public class CompositionTest {
     @Test(description = "create a ModelWithFieldWithSubTypes")
     public void createModelWithFieldWithSubTypes() throws IOException {
         compareAsJson(ModelWithFieldWithSubTypes.class, "ModelWithFieldWithSubTypes.json");
+    }
+
+    @Test(description = "create a ModelWithDiscriminatorMapping")
+    public void createModelWithDiscriminatorMapping() throws IOException {
+        compareAsJson(ModelWithDiscriminatorMapping.class, "ModelWithDiscriminatorMapping.json");
     }
 
     private void compareAsJson(Class<?> cls, String fileName) throws IOException {
