@@ -145,6 +145,13 @@ public class ResolveTask extends DefaultTask {
     @Optional
     public final Property<String> groupsValidationStrategy = getProject().getObjects().property(String.class);
 
+    /**
+     * @since 2.2.40
+     */
+    @Input
+    @Optional
+    public final Property<Boolean> ignoreHidden = getProject().getObjects().property(Boolean.class);
+
     public Property<String> getOutputFileName() {
         return outputFileName;
     }
@@ -305,6 +312,27 @@ public class ResolveTask extends DefaultTask {
      */
     public void setGroupsValidationStrategy(String groupsValidationStrategy) {
         this.groupsValidationStrategy.set(groupsValidationStrategy);
+    }
+
+    /**
+     * @since 2.2.40
+     */
+    public Property<Boolean> getIgnoreHidden() {
+        return ignoreHidden;
+    }
+
+    /**
+     * @since 2.2.40
+     */
+    public void setIgnoreHidden(Boolean ignoreHidden) {
+        this.ignoreHidden.set(ignoreHidden);
+    }
+
+    /**
+     * @since 2.2.40
+     */
+    public void setIgnoreHidden(@Nullable String ignoreHidden) {
+        setIgnoreHidden(ignoreHidden == null ? null : Boolean.valueOf(ignoreHidden));
     }
 
     public Property<String> getContextId() {
@@ -593,6 +621,11 @@ public class ResolveTask extends DefaultTask {
             if (openAPIVersion.isPresent()) {
                 method = swaggerLoaderClass.getDeclaredMethod("setOpenAPIVersion", String.class);
                 method.invoke(swaggerLoader, openAPIVersion.get());
+            }
+
+            if (ignoreHidden.isPresent()) {
+                method = swaggerLoaderClass.getDeclaredMethod("setIgnoreHidden", Boolean.class);
+                method.invoke(swaggerLoader, ignoreHidden.get());
             }
 
             method = swaggerLoaderClass.getDeclaredMethod("resolve");
