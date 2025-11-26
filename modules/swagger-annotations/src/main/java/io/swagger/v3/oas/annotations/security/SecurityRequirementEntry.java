@@ -7,7 +7,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * The annotation may be applied in {@link SecurityRequirement#entries()} to define combined security requirements for the
+ * The annotation may be applied in {@link SecurityRequirement#combine()} to define combined security requirements for the
  * single operation.
  *
  * @see <a target="_new" href="https://github.com/OAI/OpenAPI-Specification/blob/3.0.4/versions/3.0.4.md#security-requirement-object">Security Requirement (OpenAPI specification)</a>

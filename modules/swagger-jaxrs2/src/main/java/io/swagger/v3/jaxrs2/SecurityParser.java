@@ -29,8 +29,8 @@ public class SecurityParser {
         List<SecurityRequirement> securityRequirements = new ArrayList<>();
         for (io.swagger.v3.oas.annotations.security.SecurityRequirement securityRequirementApi : securityRequirementsApi) {
             SecurityRequirement securityRequirement = new SecurityRequirement();
-            if (securityRequirementApi.entries().length > 0) {
-                for (io.swagger.v3.oas.annotations.security.SecurityRequirementEntry entry : securityRequirementApi.entries()) {
+            if (securityRequirementApi.combine().length > 0) {
+                for (io.swagger.v3.oas.annotations.security.SecurityRequirementEntry entry : securityRequirementApi.combine()) {
                     if (StringUtils.isBlank(entry.name())) {
                         continue;
                     }
