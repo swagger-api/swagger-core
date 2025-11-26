@@ -11,7 +11,7 @@ import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.ElementType.METHOD;
 
 /**
- * The annotation may be applied at class or method level, or in {@link io.swagger.v3.oas.annotations.Operation#security()} ()} to define security requirements for the
+ * The annotation may be applied at class or method level, or in {@link io.swagger.v3.oas.annotations.Operation#security()} to define security requirements for the
  * single operation (when applied at method level) or for all operations of a class (when applied at class level).
  * <p>It can also be used in {@link io.swagger.v3.oas.annotations.OpenAPIDefinition#security()} to define spec level security.</p>
  * <p>{@link SecurityRequirement#entries()} can be used to define multiple security requirements at the same time, requiring each one of them.
@@ -28,10 +28,11 @@ import static java.lang.annotation.ElementType.METHOD;
 public @interface SecurityRequirement {
     /**
      * This name must correspond to a declared SecurityRequirement.
+     * <p>Exactly one of this and {@link #entries()} must be set.</p>
      *
      * @return String name
      */
-    String name();
+    String name() default "";
 
     /**
      * If the security scheme is of type "oauth2" or "openIdConnect", then the value is a list of scope names required for the execution.
@@ -42,8 +43,9 @@ public @interface SecurityRequirement {
     String[] scopes() default {};
 
     /**
-     * If multiple requirements apply at the same time, use this value instead of {@link SecurityRequirement#name()} and {@link SecurityRequirement#scopes()}.
+     * If multiple requirements apply at the same time, use this value instead of {@link #name()} and {@link #scopes()}.
      * If any one of multiple security schemes is required, use multiple {@link SecurityRequirement} annotations instead.
+     * <p>Exactly one of this and {@link #name()} must be set.</p>
      *
      * @return SecurityRequirementEntry array of requirements
      */
