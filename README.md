@@ -129,7 +129,7 @@ If you're interested in the change history of swagger and the Swagger Core frame
 ### Prerequisites
 You need the following installed and available in your $PATH:
 
-* Java 11
+* Java 17
 * Apache maven 3.0.4 or greater
 * Jackson 2.4.5 or greater
 

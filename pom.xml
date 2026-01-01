@@ -94,7 +94,7 @@
         <plugins>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.11.0</version>
+                <version>3.14.1</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -153,14 +153,14 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.6.2</version>
+                <version>${maven-javadoc-plugin-version}</version>
                 <configuration>
                     <aggregate>true</aggregate>
-                    <source>1.8</source>
+                    <source>17</source>
                     <encoding>UTF-8</encoding>
                     <maxmemory>1g</maxmemory>
                     <links>
-                        <link>http://docs.oracle.com/javase/8/docs/api</link>
+                        <link>https://docs.oracle.com/en/java/javase/17/docs/api</link>
                     </links>
                     <excludePackageNames>${javadoc.package.exclude}</excludePackageNames>
                 </configuration>
@@ -326,7 +326,7 @@
                 <plugin>
                     <groupId>org.jacoco</groupId>
                     <artifactId>jacoco-maven-plugin</artifactId>
-                    <version>0.8.6</version>
+                    <version>0.8.14</version>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -412,15 +412,15 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.6.2</version>
+                <version>${maven-javadoc-plugin-version}</version>
                 <configuration>
                     <aggregate>true</aggregate>
-                    <source>1.8</source>
+                    <source>17</source>
                     <encoding>UTF-8</encoding>
                     <maxmemory>1g</maxmemory>
                     <debug>true</debug>
                     <links>
-                        <link>https://docs.oracle.com/javase/8/docs/api</link>
+                        <link>https://docs.oracle.com/en/java/javase/17/docs/api</link>
                     </links>
                     <excludePackageNames/>
                 </configuration>
@@ -618,7 +618,7 @@
         </dependencies>
     </dependencyManagement>
     <properties>
-        <maven.compiler.release>8</maven.compiler.release>
+        <maven.compiler.release>17</maven.compiler.release>
         <joda-version>2.2.4</joda-version>
         <joda-time-version>2.13.0</joda-time-version>
         <snakeyaml-version>2.3</snakeyaml-version>
@@ -647,6 +647,7 @@
         <surefire-version>3.5.0</surefire-version>
         <enforcer-plugin-version>3.2.1</enforcer-plugin-version>
         <failsafe-plugin-version>2.22.2</failsafe-plugin-version>
+        <maven-javadoc-plugin-version>3.12.0</maven-javadoc-plugin-version>
 
         <coverage.complexity.minimum>0.90</coverage.complexity.minimum>
         <coverage.line.minimum>0.90</coverage.line.minimum>
