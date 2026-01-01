@@ -145,7 +145,7 @@ Starting with version 2.3.0, notable changes and fixes are also documented in [C
 ### Prerequisites
 You need the following installed and available in your $PATH:
 
-* Java 11
+* Java 17
 * Apache maven 3.0.4 or greater
 * Jackson 2.4.5 or greater
 
