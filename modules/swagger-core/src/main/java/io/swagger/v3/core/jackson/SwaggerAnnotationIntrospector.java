@@ -1,12 +1,13 @@
 package io.swagger.v3.core.jackson;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.core.Version;
-import com.fasterxml.jackson.databind.AnnotationIntrospector;
-import com.fasterxml.jackson.databind.introspect.Annotated;
-import com.fasterxml.jackson.databind.introspect.AnnotatedClass;
-import com.fasterxml.jackson.databind.introspect.AnnotatedMember;
-import com.fasterxml.jackson.databind.jsontype.NamedType;
+import tools.jackson.core.Version;
+import tools.jackson.databind.AnnotationIntrospector;
+import tools.jackson.databind.cfg.MapperConfig;
+import tools.jackson.databind.introspect.Annotated;
+import tools.jackson.databind.introspect.AnnotatedClass;
+import tools.jackson.databind.introspect.AnnotatedMember;
+import tools.jackson.databind.jsontype.NamedType;
 import io.swagger.v3.core.util.AnnotationsUtils;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -25,7 +26,7 @@ public class SwaggerAnnotationIntrospector extends AnnotationIntrospector {
     }
 
     @Override
-    public Boolean hasRequiredMarker(AnnotatedMember m) {
+    public Boolean hasRequiredMarker(MapperConfig<?> config, AnnotatedMember m) {
         XmlElement elem = m.getAnnotation(XmlElement.class);
         if (elem != null) {
             if (elem.required()) {
@@ -57,7 +58,7 @@ public class SwaggerAnnotationIntrospector extends AnnotationIntrospector {
     }
 
     @Override
-    public String findPropertyDescription(Annotated a) {
+    public String findPropertyDescription(MapperConfig<?> config, Annotated a) {
         Schema model = a.getAnnotation(Schema.class);
         if (model != null && !"".equals(model.description())) {
             return model.description();
@@ -67,7 +68,7 @@ public class SwaggerAnnotationIntrospector extends AnnotationIntrospector {
     }
 
     @Override
-    public List<NamedType> findSubtypes(Annotated a) {
+    public List<NamedType> findSubtypes(MapperConfig<?> config, Annotated a) {
         Schema schema = a.getAnnotation(Schema.class);
         if (schema == null) {
             final ArraySchema arraySchema = a.getAnnotation(ArraySchema.class);
@@ -91,7 +92,7 @@ public class SwaggerAnnotationIntrospector extends AnnotationIntrospector {
     }
 
     @Override
-    public String findTypeName(AnnotatedClass ac) {
+    public String findTypeName(MapperConfig<?> config, AnnotatedClass ac) {
         io.swagger.v3.oas.annotations.media.Schema mp = AnnotationsUtils.getSchemaAnnotation(ac);
         // allow override of name from annotation
         if (mp != null && !mp.name().isEmpty()) {

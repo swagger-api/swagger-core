@@ -1,7 +1,8 @@
 package io.swagger.v3.core.roundtrip;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.StreamReadFeature;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 import io.swagger.v3.core.util.Json;
 import io.swagger.v3.core.util.JsonAssert;
 import io.swagger.v3.core.util.Json31;
@@ -23,6 +24,7 @@ import io.swagger.v3.oas.models.parameters.Parameter;
 import io.swagger.v3.oas.models.responses.ApiResponse;
 import io.swagger.v3.oas.models.responses.ApiResponses;
 import org.testng.annotations.Test;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -268,7 +270,9 @@ public class ComprehensiveRoundTripTest {
         assertTrue(Boolean.TRUE.equals(deserializedOpenAPI.getComponents().getSchemas().get("BooleanSchema").getBooleanSchemaValue()));
         
         // Verify that the schema is serialized as a boolean value
-        ObjectMapper mapper = new ObjectMapper();
+        ObjectMapper mapper = JsonMapper.builder()
+                .enable(StreamReadFeature.INCLUDE_SOURCE_IN_LOCATION)
+                .build();
         JsonNode jsonNode = mapper.readTree(json);
         assertTrue(jsonNode.get("components").get("schemas").get("BooleanSchema").isBoolean());
         assertTrue(jsonNode.get("components").get("schemas").get("BooleanSchema").asBoolean());

@@ -1,6 +1,6 @@
 package io.swagger.v3.core.serialization;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import tools.jackson.databind.JsonNode;
 import io.swagger.v3.core.util.Yaml;
 import org.testng.annotations.Test;
 

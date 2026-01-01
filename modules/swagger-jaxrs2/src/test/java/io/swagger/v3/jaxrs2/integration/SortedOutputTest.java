@@ -5,11 +5,10 @@ import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
-import com.fasterxml.jackson.databind.MapperFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import tools.jackson.databind.MapperFeature;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.SerializationFeature;
+import tools.jackson.databind.annotation.JsonSerialize;
 import io.swagger.v3.core.jackson.PathsSerializer;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -71,7 +70,7 @@ public class SortedOutputTest {
                 .init();
 
         OpenAPI openApi = ctx.read();
-        String sorted = ctx.getOutputYamlMapper().writer(new DefaultPrettyPrinter()).writeValueAsString(openApi);
+        String sorted = ctx.getOutputYamlMapper().writerWithDefaultPrettyPrinter().writeValueAsString(openApi);
 
         openApiConfiguration = new SwaggerConfiguration()
                 .resourcePackages(Collections.singleton("com.my.sorted.resources"));
@@ -80,7 +79,7 @@ public class SortedOutputTest {
                 .openApiConfiguration(openApiConfiguration)
                 .init();
 
-        String notSorted = ctx.getOutputYamlMapper().writer(new DefaultPrettyPrinter()).writeValueAsString(openApi);
+        String notSorted = ctx.getOutputYamlMapper().writerWithDefaultPrettyPrinter().writeValueAsString(openApi);
 
         assertEquals(sorted, expectedSorted);
         assertEquals(notSorted, expectedNotSorted);
@@ -149,19 +148,23 @@ public class SortedOutputTest {
     public static class SortedProcessor implements ObjectMapperProcessor {
 
         @Override
-        public void processOutputJsonObjectMapper(ObjectMapper mapper) {
-            mapper.configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, true);
-            mapper.configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY, true);
-            mapper.addMixIn(OpenAPI.class, SortedOpenAPIMixin.class);
-            mapper.addMixIn(Schema.class, SortedSchemaMixin.class);
+        public ObjectMapper processOutputJsonObjectMapper(ObjectMapper mapper) {
+            return mapper.rebuild()
+                    .configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY, true)
+                    .configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, true)
+                    .addMixIn(OpenAPI.class, SortedOpenAPIMixin.class)
+                    .addMixIn(Schema.class, SortedSchemaMixin.class)
+                    .build();
         }
 
         @Override
-        public void processOutputYamlObjectMapper(ObjectMapper mapper) {
-            mapper.configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, true);
-            mapper.configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY, true);
-            mapper.addMixIn(OpenAPI.class, SortedOpenAPIMixin.class);
-            mapper.addMixIn(Schema.class, SortedSchemaMixin.class);
+        public ObjectMapper processOutputYamlObjectMapper(ObjectMapper mapper) {
+            return mapper.rebuild()
+                    .configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY, true)
+                    .configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, true)
+                    .addMixIn(OpenAPI.class, SortedOpenAPIMixin.class)
+                    .addMixIn(Schema.class, SortedSchemaMixin.class)
+                    .build();
         }
     }
 
@@ -176,7 +179,7 @@ public class SortedOutputTest {
                 .init();
 
         OpenAPI openApi = ctx.read();
-        String sorted = ctx.getOutputYamlMapper().writer(new DefaultPrettyPrinter()).writeValueAsString(openApi);
+        String sorted = ctx.getOutputYamlMapper().writerWithDefaultPrettyPrinter().writeValueAsString(openApi);
 
         openApiConfiguration = new SwaggerConfiguration()
                 .resourcePackages(Collections.singleton("com.my.sorted.resources"));
@@ -185,7 +188,7 @@ public class SortedOutputTest {
                 .openApiConfiguration(openApiConfiguration)
                 .init();
 
-        String notSorted = ctx.getOutputYamlMapper().writer(new DefaultPrettyPrinter()).writeValueAsString(openApi);
+        String notSorted = ctx.getOutputYamlMapper().writerWithDefaultPrettyPrinter().writeValueAsString(openApi);
 
         assertEquals(sorted, expectedSorted);
         assertEquals(notSorted, expectedNotSorted);
