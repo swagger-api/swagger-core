@@ -1,6 +1,6 @@
 package io.swagger.v3.core.converter;
 
-import com.fasterxml.jackson.databind.type.TypeFactory;
+import tools.jackson.databind.type.TypeFactory;
 import io.swagger.v3.core.jackson.ModelResolver;
 import io.swagger.v3.core.util.Configuration;
 import io.swagger.v3.core.util.Json;
@@ -233,7 +233,7 @@ public class ModelConverters {
     }
 
     private boolean shouldProcess(Type type) {
-        final Class<?> cls = TypeFactory.defaultInstance().constructType(type).getRawClass();
+        final Class<?> cls = TypeFactory.createDefaultInstance().constructType(type).getRawClass();
         if (cls.isPrimitive()) {
             return false;
         }

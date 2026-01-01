@@ -1,10 +1,10 @@
 package io.swagger.v3.core.serialization;
 
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.util.DefaultIndenter;
-import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
-import com.fasterxml.jackson.dataformat.yaml.JacksonYAMLParseException;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import org.snakeyaml.engine.v2.api.LoadSettings;
+import tools.jackson.core.util.DefaultPrettyPrinter;
+import tools.jackson.core.json.JsonFactory;
+import tools.jackson.dataformat.yaml.JacksonYAMLParseException;
+import tools.jackson.dataformat.yaml.YAMLFactory;
 import io.swagger.v3.core.matchers.SerializationMatchers;
 import io.swagger.v3.core.util.Json;
 import io.swagger.v3.core.util.ObjectMapperFactory;
@@ -128,10 +128,11 @@ public class JsonSerializationTest {
     @Test
     public void testSerializeYAMLWithCustomFactory() throws Exception {
         // given
-        LoaderOptions loaderOptions = new LoaderOptions();
-        loaderOptions.setCodePointLimit(5 * 1024 * 1024);
+        LoadSettings loadSettings = LoadSettings.builder()
+                .setCodePointLimit(5 * 1024 * 1024)
+                .build();
         YAMLFactory yamlFactory = YAMLFactory.builder()
-                .loaderOptions(loaderOptions)
+                .loadSettings(loadSettings)
                 .build();
         final String yaml = ResourceUtils.loadClassResource(getClass(), "specFiles/null-example.yaml");
 
@@ -145,10 +146,11 @@ public class JsonSerializationTest {
     @Test(expectedExceptions = JacksonYAMLParseException.class)
     public void testSerializeYAMLWithCustomFactoryAndCodePointLimitReached() throws Exception {
         // given
-        LoaderOptions loaderOptions = new LoaderOptions();
-        loaderOptions.setCodePointLimit(1);
+        LoadSettings loadSettings = LoadSettings.builder()
+                .setCodePointLimit(1)
+                .build();
         YAMLFactory yamlFactory = YAMLFactory.builder()
-                .loaderOptions(loaderOptions)
+                .loadSettings(loadSettings)
                 .build();
         final String yaml = ResourceUtils.loadClassResource(getClass(), "specFiles/null-example.yaml");
 
@@ -162,7 +164,7 @@ public class JsonSerializationTest {
     public void testCustomPrettyPrinterIsHonored() {
         //given
         DefaultPrettyPrinter originalPrinter = (DefaultPrettyPrinter) Json.mapper().getSerializationConfig().getDefaultPrettyPrinter();
-        
+
         try {
             DefaultPrettyPrinter printer = new DefaultPrettyPrinter();
             printer.indentObjectsWith(new DefaultIndenter("    ", "\n"));
@@ -177,9 +179,9 @@ public class JsonSerializationTest {
             //then
             assertTrue(json.contains("{\n    \"openapi\""),
                     "Custom four-space indentation should be honored");
-            assertTrue(json.contains("    \"info\" : {"), 
+            assertTrue(json.contains("    \"info\" : {"),
                     "Nested objects should use four-space indentation");
-            assertTrue(json.contains("        \"title\" : \"Pet Store\""), 
+            assertTrue(json.contains("        \"title\" : \"Pet Store\""),
                     "Doubly-nested properties should use eight-space indentation");
         } finally {
             // Restore original pretty printer to avoid affecting other tests

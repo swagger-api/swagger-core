@@ -1,6 +1,8 @@
 package io.swagger.v3.core.resolving;
 
+import io.swagger.v3.core.converter.ModelConverter;
 import io.swagger.v3.core.converter.ModelConverters;
+import io.swagger.v3.core.jackson.ModelResolver;
 import io.swagger.v3.core.resolving.resources.TestObject2616;
 import io.swagger.v3.core.resolving.resources.TestObjectTicket2620;
 import io.swagger.v3.core.resolving.resources.TestObjectTicket2620Subtypes;
@@ -11,7 +13,9 @@ import io.swagger.v3.oas.models.media.ArraySchema;
 import io.swagger.v3.oas.models.media.ComposedSchema;
 import io.swagger.v3.oas.models.media.Schema;
 import org.testng.annotations.Test;
+import tools.jackson.databind.ObjectMapper;
 
+import java.util.List;
 import java.util.Map;
 
 import static org.testng.Assert.assertEquals;
@@ -68,7 +72,16 @@ public class ComposedSchemaTest {
 
     @Test(description = "read composed schem refs #2900")
     public void readComposedSchema_ticket2900() {
-        Json.mapper().addMixIn(TestObjectTicket2900.GsonJsonPrimitive.class, TestObjectTicket2900.GsonJsonPrimitiveMixIn.class);
+        List<ModelConverter> converters = ModelConverters.getInstance().getConverters();
+        for (ModelConverter converter : converters) {
+            ModelConverters.getInstance().removeConverter(converter);
+        }
+        ObjectMapper mapper = Json.mapper()
+                .rebuild()
+                .addMixIn(TestObjectTicket2900.GsonJsonPrimitive.class, TestObjectTicket2900.GsonJsonPrimitiveMixIn.class)
+                .build();
+        ModelConverters.getInstance().addConverter(new ModelResolver(mapper));
+
         Map<String, Schema> schemas = ModelConverters.getInstance().readAll(TestObjectTicket2900.class);
         Schema model = schemas.get("SomeDTO");
         assertNotNull(model);

@@ -1,7 +1,7 @@
 package io.swagger.v3.core.util;
 
-import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.type.TypeFactory;
+import tools.jackson.databind.JavaType;
+import tools.jackson.databind.type.TypeFactory;
 import org.apache.commons.lang3.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -435,7 +435,7 @@ public class ReflectionUtils {
      * @return true if the type is void
      */
     public static boolean isVoid(Type type) {
-        final Class<?> cls = TypeFactory.defaultInstance().constructType(type).getRawClass();
+        final Class<?> cls = TypeFactory.createDefaultInstance().constructType(type).getRawClass();
         return Void.class.isAssignableFrom(cls) || Void.TYPE.isAssignableFrom(cls);
     }
 
