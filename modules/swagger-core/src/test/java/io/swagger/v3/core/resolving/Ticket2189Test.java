@@ -2,7 +2,7 @@ package io.swagger.v3.core.resolving;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;

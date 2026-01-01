@@ -1,6 +1,6 @@
 package io.swagger.v3.oas.integration;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 import io.swagger.v3.core.util.ObjectMapperFactory;
 
 public class IntegrationObjectMapperFactory extends ObjectMapperFactory {

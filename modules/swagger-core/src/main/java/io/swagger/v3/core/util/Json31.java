@@ -1,15 +1,17 @@
 package io.swagger.v3.core.util;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
+import tools.jackson.core.util.DefaultPrettyPrinter;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectWriter;
 import io.swagger.v3.oas.models.media.Schema;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.cfg.MapperBuilder;
 
 import java.util.Map;
+import java.util.function.Consumer;
 
 public class Json31 {
 
@@ -27,12 +29,16 @@ public class Json31 {
         return ObjectMapperHolder.MAPPER;
     }
 
+    public static ObjectMapper mapper(Consumer<MapperBuilder<? extends ObjectMapper, ? extends MapperBuilder<?, ?>>> mapperBuilderCustomizer) {
+        return ObjectMapperFactory.createJson31(mapperBuilderCustomizer);
+    }
+
     public static ObjectMapper converterMapper() {
         return ConverterMapperHolder.MAPPER;
     }
 
     public static ObjectWriter pretty() {
-        return mapper().writer(new DefaultPrettyPrinter());
+        return mapper().writerWithDefaultPrettyPrinter();
     }
 
     public static String pretty(Object o) {
@@ -56,7 +62,7 @@ public class Json31 {
     public static Map<String, Object> jsonSchemaAsMap(String jsonSchema) {
         try {
             return mapper().readValue(jsonSchema, Map.class);
-        } catch (JsonProcessingException e) {
+        } catch (JacksonException e) {
             LOGGER.error("Exception converting jsonSchema to Map", e);
             return null;
         }
@@ -65,7 +71,7 @@ public class Json31 {
     public static Map<String, Object> jsonSchemaAsMap(Schema schema) {
         try {
             return mapper().readValue(mapper().writeValueAsString(schema), Map.class);
-        } catch (JsonProcessingException e) {
+        } catch (JacksonException e) {
             LOGGER.error("Exception converting jsonSchema to Map", e);
             return null;
         }
@@ -74,7 +80,7 @@ public class Json31 {
     public static Map<String, Object> jsonSchemaAsMap(JsonNode schema) {
         try {
             return mapper().readValue(mapper().writeValueAsString(schema), Map.class);
-        } catch (JsonProcessingException e) {
+        } catch (JacksonException e) {
             LOGGER.error("Exception converting jsonSchema to Map", e);
             return null;
         }

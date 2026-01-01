@@ -1,11 +1,12 @@
 package io.swagger.v3.jaxrs2;
 
 import com.fasterxml.jackson.annotation.JsonView;
-import com.fasterxml.jackson.databind.BeanDescription;
-import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.introspect.AnnotatedMethod;
-import com.fasterxml.jackson.databind.introspect.AnnotatedParameter;
-import com.fasterxml.jackson.databind.type.TypeFactory;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.BeanDescription;
+import tools.jackson.databind.JavaType;
+import tools.jackson.databind.introspect.AnnotatedMethod;
+import tools.jackson.databind.introspect.AnnotatedParameter;
+import tools.jackson.databind.type.TypeFactory;
 import io.swagger.v3.core.converter.AnnotatedType;
 import io.swagger.v3.core.converter.ModelConverters;
 import io.swagger.v3.core.converter.ResolvedSchema;
@@ -412,12 +413,12 @@ public class Reader implements OpenApiReader {
         Optional<io.swagger.v3.oas.models.ExternalDocumentation> classExternalDocumentation = AnnotationsUtils.getExternalDocumentation(apiExternalDocs);
 
 
-        JavaType classType = TypeFactory.defaultInstance().constructType(cls);
+        JavaType classType = TypeFactory.createDefaultInstance().constructType(cls);
         BeanDescription bd;
         if (openapi31) {
-            bd = Json31.mapper().getSerializationConfig().introspect(classType);
+            bd = Json31.mapper()._serializationContext().introspectBeanDescription(classType);
         } else {
-            bd = Json.mapper().getSerializationConfig().introspect(classType);
+            bd = Json.mapper()._serializationContext().introspectBeanDescription(classType);
         }
 
         final List<Parameter> globalParameters = new ArrayList<>();
@@ -539,7 +540,7 @@ public class Reader implements OpenApiReader {
                     if (annotatedMethod == null) { // annotatedMethod not null only when method with 0-2 parameters
                         Type[] genericParameterTypes = method.getGenericParameterTypes();
                         for (int i = 0; i < genericParameterTypes.length; i++) {
-                            final Type type = TypeFactory.defaultInstance().constructType(genericParameterTypes[i], cls);
+                            final Type type = TypeFactory.createDefaultInstance().constructType(genericParameterTypes[i]);
                             io.swagger.v3.oas.annotations.Parameter paramAnnotation = AnnotationsUtils.getAnnotation(io.swagger.v3.oas.annotations.Parameter.class, paramAnnotations[i]);
                             Type paramType = ParameterProcessor.getParameterType(paramAnnotation, true);
                             if (paramType == null) {
@@ -569,7 +570,7 @@ public class Reader implements OpenApiReader {
                     } else {
                         for (int i = 0; i < annotatedMethod.getParameterCount(); i++) {
                             AnnotatedParameter param = annotatedMethod.getParameter(i);
-                            final Type type = TypeFactory.defaultInstance().constructType(param.getParameterType(), cls);
+                            final Type type = TypeFactory.createDefaultInstance().constructType(param.getType());
                             io.swagger.v3.oas.annotations.Parameter paramAnnotation = AnnotationsUtils.getAnnotation(io.swagger.v3.oas.annotations.Parameter.class, paramAnnotations[i]);
                             Type paramType = ParameterProcessor.getParameterType(paramAnnotation, true);
                             if (paramType == null) {
@@ -888,7 +889,7 @@ public class Reader implements OpenApiReader {
             Method method,
             List<Parameter> globalParameters,
             JsonView jsonViewAnnotation) {
-        JavaType classType = TypeFactory.defaultInstance().constructType(method.getDeclaringClass());
+        JavaType classType = TypeFactory.createDefaultInstance().constructType(method.getDeclaringClass());
         return parseMethod(
                 classType.getClass(),
                 method,
@@ -925,7 +926,7 @@ public class Reader implements OpenApiReader {
             ApiResponses parentResponses,
             JsonView jsonViewAnnotation,
             io.swagger.v3.oas.annotations.responses.ApiResponse[] classResponses) {
-        JavaType classType = TypeFactory.defaultInstance().constructType(method.getDeclaringClass());
+        JavaType classType = TypeFactory.createDefaultInstance().constructType(method.getDeclaringClass());
         return parseMethod(
                 classType.getClass(),
                 method,
@@ -963,7 +964,7 @@ public class Reader implements OpenApiReader {
             JsonView jsonViewAnnotation,
             io.swagger.v3.oas.annotations.responses.ApiResponse[] classResponses,
             AnnotatedMethod annotatedMethod) {
-        JavaType classType = TypeFactory.defaultInstance().constructType(method.getDeclaringClass());
+        JavaType classType = TypeFactory.createDefaultInstance().constructType(method.getDeclaringClass());
         return parseMethod(
                 classType.getClass(),
                 method,
@@ -1265,7 +1266,7 @@ public class Reader implements OpenApiReader {
             } else {
                 mediaType = Json.mapper().readValue(Json.pretty(mediaType), MediaType.class);
             }
-        } catch (IOException e) {
+        } catch (JacksonException e) {
             LOGGER.error("Could not clone mediaType", e);
         }
         return mediaType;

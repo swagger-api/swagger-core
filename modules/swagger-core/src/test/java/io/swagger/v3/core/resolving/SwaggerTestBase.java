@@ -1,13 +1,16 @@
 package io.swagger.v3.core.resolving;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
+import tools.jackson.core.util.DefaultPrettyPrinter;
+import tools.jackson.databind.MapperFeature;
+import tools.jackson.databind.ObjectMapper;
 import io.swagger.v3.core.jackson.ModelResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.databind.cfg.EnumFeature;
+import tools.jackson.databind.cfg.MapperBuilder;
+import tools.jackson.databind.introspect.DefaultAccessorNamingStrategy;
+import tools.jackson.databind.json.JsonMapper;
 
 public abstract class SwaggerTestBase {
     static ObjectMapper mapper;
@@ -15,10 +18,15 @@ public abstract class SwaggerTestBase {
 
     public static ObjectMapper mapper() {
         if (mapper == null) {
-            mapper = new ObjectMapper();
-            mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-            mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-            mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+            mapper = JsonMapper.builder()
+                    .disable(EnumFeature.WRITE_ENUMS_USING_TO_STRING)
+                    .configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY, false)
+                    .changeDefaultPropertyInclusion(incl -> incl
+                            .withContentInclusion(JsonInclude.Include.NON_NULL)
+                            .withValueInclusion(JsonInclude.Include.NON_NULL))
+                    .accessorNaming(new DefaultAccessorNamingStrategy.Provider()
+                            .withFirstCharAcceptance(true, true))
+                    .build();
         }
         return mapper;
     }
@@ -29,7 +37,7 @@ public abstract class SwaggerTestBase {
 
     protected void prettyPrint(Object o) {
         try {
-            LOGGER.debug(mapper().writer(new DefaultPrettyPrinter()).writeValueAsString(o));
+            LOGGER.debug(mapper().writerWithDefaultPrettyPrinter().writeValueAsString(o));
         } catch (Exception e) {
             LOGGER.error("Failed to pretty print object", e);
         }

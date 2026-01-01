@@ -1,33 +1,29 @@
 package io.swagger.v3.core.jackson;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.JsonSerializer;
-import com.fasterxml.jackson.databind.SerializerProvider;
-import com.fasterxml.jackson.databind.ser.ResolvableSerializer;
+import tools.jackson.core.JacksonException;
+import tools.jackson.core.JsonGenerator;
 import io.swagger.v3.oas.models.media.Schema;
+import tools.jackson.databind.DatabindException;
+import tools.jackson.databind.SerializationContext;
+import tools.jackson.databind.ValueSerializer;
 
-import java.io.IOException;
+public class Schema31Serializer extends ValueSerializer<Schema> {
 
-public class Schema31Serializer extends JsonSerializer<Schema> implements ResolvableSerializer {
+    private ValueSerializer<Object> defaultSerializer;
 
-    private JsonSerializer<Object> defaultSerializer;
-
-    public Schema31Serializer(JsonSerializer<Object> serializer) {
+    public Schema31Serializer(ValueSerializer<Object> serializer) {
         defaultSerializer = serializer;
     }
 
     @Override
-    public void resolve(SerializerProvider serializerProvider) throws JsonMappingException {
-        if (defaultSerializer instanceof ResolvableSerializer) {
-            ((ResolvableSerializer) defaultSerializer).resolve(serializerProvider);
-        }
+    public void resolve(SerializationContext serializerProvider) throws DatabindException {
+        defaultSerializer.resolve(serializerProvider);
     }
 
     @Override
     public void serialize(
-            Schema value, JsonGenerator jgen, SerializerProvider provider)
-            throws IOException {
+            Schema value, JsonGenerator jgen, SerializationContext provider)
+            throws JacksonException {
 
         if (value.getBooleanSchemaValue() != null) {
             jgen.writeBoolean(value.getBooleanSchemaValue());
@@ -36,7 +32,7 @@ public class Schema31Serializer extends JsonSerializer<Schema> implements Resolv
         if (value.getExampleSetFlag() && value.getExample() == null) {
             jgen.writeStartObject();
             defaultSerializer.unwrappingSerializer(null).serialize(value, jgen, provider);
-            jgen.writeNullField("example");
+            jgen.writeNullProperty("example");
             jgen.writeEndObject();
         } else {
             defaultSerializer.serialize(value, jgen, provider);

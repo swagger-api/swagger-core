@@ -14,7 +14,6 @@ import io.swagger.v3.oas.models.media.MediaType;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
-import com.fasterxml.jackson.core.JsonProcessingException;
 
 import java.util.Arrays;
 import java.util.List;
@@ -26,6 +25,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.core.Response;
 
 import org.testng.annotations.Test;
+import tools.jackson.core.JacksonException;
 
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
@@ -157,7 +157,7 @@ public class JsonViewTest {
     }
 
     @Test(description = "check awareness of JsonView")
-    public void shouldSerializeTypeParameter() throws JsonProcessingException {
+    public void shouldSerializeTypeParameter() throws JacksonException {
 
         Reader reader = new Reader(new OpenAPI());
 

@@ -1,6 +1,6 @@
 package io.swagger.v3.core.jackson;
 
-import com.fasterxml.jackson.databind.introspect.Annotated;
+import tools.jackson.databind.introspect.Annotated;
 import io.swagger.v3.core.util.AnnotationsUtils;
 import io.swagger.v3.oas.models.media.ArraySchema;
 import io.swagger.v3.oas.models.media.MapSchema;
