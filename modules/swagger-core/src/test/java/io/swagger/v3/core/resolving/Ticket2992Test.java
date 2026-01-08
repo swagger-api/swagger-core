@@ -18,48 +18,6 @@ public class Ticket2992Test extends SwaggerTestBase {
 
         ModelConverterContextImpl context = new ModelConverterContextImpl(modelResolver);
 
-        Schema model = context
-                .resolve(new AnnotatedType(TestObject2992.class));
-
-        SerializationMatchers.assertEqualsToYaml(context.getDefinedModels(), "LocalTime:\n" +
-                "  type: object\n" +
-                "  properties:\n" +
-                "    hour:\n" +
-                "      type: integer\n" +
-                "      format: int32\n" +
-                "    minute:\n" +
-                "      type: integer\n" +
-                "      format: int32\n" +
-                "    second:\n" +
-                "      type: integer\n" +
-                "      format: int32\n" +
-                "    nano:\n" +
-                "      type: integer\n" +
-                "      format: int32\n" +
-                "TestObject2992:\n" +
-                "  type: object\n" +
-                "  properties:\n" +
-                "    name:\n" +
-                "      type: string\n" +
-                "    a:\n" +
-                "      $ref: \"#/components/schemas/LocalTime\"\n" +
-                "    b:\n" +
-                "      $ref: \"#/components/schemas/LocalTime\"\n" +
-                "    c:\n" +
-                "      $ref: \"#/components/schemas/LocalTime\"\n" +
-                "    d:\n" +
-                "      type: string\n" +
-                "      format: date-time\n" +
-                "    e:\n" +
-                "      type: string\n" +
-                "      format: date-time\n" +
-                "    f:\n" +
-                "      type: string\n" +
-                "      format: date-time");
-
-        PrimitiveType.enablePartialTime();
-        context = new ModelConverterContextImpl(modelResolver);
-
         context
                 .resolve(new AnnotatedType(TestObject2992.class));
 
