@@ -1,10 +1,8 @@
 package io.swagger.test;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
+import tools.jackson.core.util.DefaultPrettyPrinter;
+import tools.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.ExternalDocumentation;
 import io.swagger.v3.oas.models.OpenAPI;
@@ -26,6 +24,7 @@ import io.swagger.v3.oas.models.tags.Tag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.Test;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -127,13 +126,12 @@ public class SimpleBuilderTest {
     }
 
     public static String writeJson(Object value) throws Exception {
-        ObjectMapper mapper = new ObjectMapper();
+        ObjectMapper mapper = JsonMapper.builder()
+                .changeDefaultPropertyInclusion(incl -> incl
+                        .withContentInclusion(JsonInclude.Include.NON_NULL)
+                        .withValueInclusion(JsonInclude.Include.NON_NULL))
+                .build();
 
-        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-        mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-        mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-
-        return mapper.writer(new DefaultPrettyPrinter()).writeValueAsString(value);
+        return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(value);
     }
 }

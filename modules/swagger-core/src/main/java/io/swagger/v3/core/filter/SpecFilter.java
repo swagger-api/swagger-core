@@ -21,6 +21,7 @@ import io.swagger.v3.oas.models.responses.ApiResponse;
 import io.swagger.v3.oas.models.responses.ApiResponses;
 import io.swagger.v3.oas.models.tags.Tag;
 import org.apache.commons.lang3.StringUtils;
+import tools.jackson.core.JacksonException;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -290,7 +291,7 @@ public class SpecFilter {
                     }
                     clonedComponentsSchema.put(key, clonedModel);
 
-                } catch (IOException e) {
+                } catch (JacksonException e) {
                 }
             }
         }

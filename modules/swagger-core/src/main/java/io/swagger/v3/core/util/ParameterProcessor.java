@@ -16,6 +16,7 @@ import io.swagger.v3.oas.models.parameters.Parameter;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.core.JacksonException;
 
 import java.io.IOException;
 import java.lang.annotation.Annotation;
@@ -194,7 +195,7 @@ public class ParameterProcessor {
                 if (StringUtils.isNotBlank(p.example())) {
                     try {
                         parameter.setExample(Json.mapper().readTree(p.example()));
-                    } catch (IOException e) {
+                    } catch (JacksonException e) {
                         parameter.setExample(p.example());
                     }
                 }

@@ -1,6 +1,6 @@
 package io.swagger.v3.core.util;
 
-import com.fasterxml.jackson.databind.type.TypeFactory;
+import tools.jackson.databind.type.TypeFactory;
 import io.swagger.v3.oas.models.media.BinarySchema;
 import io.swagger.v3.oas.models.media.BooleanSchema;
 import io.swagger.v3.oas.models.media.ByteArraySchema;
@@ -452,7 +452,7 @@ public enum PrimitiveType {
     }
 
     public static PrimitiveType fromTypeAndFormat(Type type, String format) {
-        final Class<?> raw = TypeFactory.defaultInstance().constructType(type).getRawClass();
+        final Class<?> raw = TypeFactory.createDefaultInstance().constructType(type).getRawClass();
         final Collection<PrimitiveType> keys = MULTI_KEY_CLASSES.get(raw);
         if (keys == null || keys.isEmpty() || StringUtils.isBlank(format)) {
             return fromType(type);
@@ -466,7 +466,7 @@ public enum PrimitiveType {
     }
     
     public static PrimitiveType fromType(Type type) {
-        final Class<?> raw = TypeFactory.defaultInstance().constructType(type).getRawClass();
+        final Class<?> raw = TypeFactory.createDefaultInstance().constructType(type).getRawClass();
         final PrimitiveType key = KEY_CLASSES.get(raw);
         if (key != null) {
             if (!customExcludedClasses.contains(raw.getName())) {

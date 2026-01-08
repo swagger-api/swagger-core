@@ -78,7 +78,7 @@ public class JakartaTransformer {
     private static final String jakartaValidationRegex = "^.*(<dependency>.*jakarta\\.validation((?!</dependency>).)*</dependency>).*$";
 
     private static final String jacksonJsonDep = "<dependency>\n" +
-            "                <groupId>com.fasterxml.jackson.jakarta.rs</groupId>\n" +
+            "                <groupId>tools.jackson.jakarta.rs</groupId>\n" +
             "                <artifactId>jackson-jakarta-rs-json-provider</artifactId>\n" +
             "                <version>VERSION</version>\n" +
             "                <exclusions>\n" +
@@ -96,7 +96,7 @@ public class JakartaTransformer {
     private static final String jacksonJsonRegex = "^.*(<dependency>.*jackson\\-jaxrs\\-json((?!</dependency>).)*</dependency>).*$";
 
     private static final String jacksonBaseDep = "<dependency>\n" +
-            "                <groupId>com.fasterxml.jackson.jakarta.rs</groupId>\n" +
+            "                <groupId>tools.jackson.jakarta.rs</groupId>\n" +
             "                <artifactId>jackson-jakarta-rs-base</artifactId>\n" +
             "                <version>VERSION</version>\n" +
             "            </dependency>";
@@ -104,7 +104,7 @@ public class JakartaTransformer {
     private static final String jacksonBaseRegex = "^.*(<dependency>.*jackson\\-jaxrs\\-base((?!</dependency>).)*</dependency>).*$";
 
     private static final String jacksonJaxbDep = "<dependency>\n" +
-            "                <groupId>com.fasterxml.jackson.module</groupId>\n" +
+            "                <groupId>tools.jackson.module</groupId>\n" +
             "                <artifactId>jackson-module-jakarta-xmlbind-annotations</artifactId>\n" +
             "                <version>VERSION</version>\n" +
             "                <exclusions>\n" +

@@ -1,6 +1,6 @@
 package io.swagger.v3.core.jackson;
 
-import com.fasterxml.jackson.databind.JavaType;
+import tools.jackson.databind.JavaType;
 import io.swagger.v3.core.util.AnnotationsUtils;
 import io.swagger.v3.core.util.PrimitiveType;
 import org.apache.commons.lang3.StringUtils;

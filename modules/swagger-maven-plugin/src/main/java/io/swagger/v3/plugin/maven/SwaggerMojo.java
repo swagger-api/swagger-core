@@ -1,6 +1,5 @@
 package io.swagger.v3.plugin.maven;
 
-import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import io.swagger.v3.core.filter.OpenAPISpecFilter;
 import io.swagger.v3.core.filter.SpecFilter;
 import io.swagger.v3.core.util.Configuration;
@@ -23,6 +22,7 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.StringUtils;
+import tools.jackson.core.JacksonException;
 
 import java.io.File;
 import java.io.IOException;
@@ -101,14 +101,14 @@ public class SwaggerMojo extends AbstractMojo {
             String openapiYaml = null;
             if (Format.JSON.equals(outputFormat) || Format.JSONANDYAML.equals(outputFormat)) {
                 if (config.isPrettyPrint() != null && config.isPrettyPrint()) {
-                    openapiJson = context.getOutputJsonMapper().writer(new DefaultPrettyPrinter()).writeValueAsString(openAPI);
+                    openapiJson = context.getOutputJsonMapper().writerWithDefaultPrettyPrinter().writeValueAsString(openAPI);
                 } else {
                     openapiJson = context.getOutputJsonMapper().writeValueAsString(openAPI);
                 }
             }
             if (Format.YAML.equals(outputFormat) || Format.JSONANDYAML.equals(outputFormat)) {
                 if (config.isPrettyPrint() != null && config.isPrettyPrint()) {
-                    openapiYaml = context.getOutputYamlMapper().writer(new DefaultPrettyPrinter()).writeValueAsString(openAPI);
+                    openapiYaml = context.getOutputYamlMapper().writerWithDefaultPrettyPrinter().writeValueAsString(openAPI);
                 } else {
                     openapiYaml = context.getOutputYamlMapper().writeValueAsString(openAPI);
                 }
@@ -288,14 +288,14 @@ public class SwaggerMojo extends AbstractMojo {
         list.add((content, typeClass) -> {
             try {
                 return Json.mapper().readValue(content, typeClass);
-            } catch (IOException e) {
+            } catch (JacksonException e) {
                 throw new IllegalStateException(e);
             }
         });
         list.add((content, typeClass) -> {
             try {
                 return Yaml.mapper().readValue(content, typeClass);
-            } catch (IOException e) {
+            } catch (JacksonException e) {
                 throw new IllegalStateException(e);
             }
         });

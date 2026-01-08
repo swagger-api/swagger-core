@@ -1,19 +1,13 @@
 package io.swagger.v3.core.util;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.databind.BeanDescription;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JsonSerializer;
-import com.fasterxml.jackson.databind.Module;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationConfig;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.fasterxml.jackson.databind.ser.BeanSerializerModifier;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import com.fasterxml.jackson.dataformat.yaml.YAMLGenerator;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import tools.jackson.core.StreamWriteFeature;
+import tools.jackson.core.json.JsonFactory;
+import tools.jackson.databind.*;
+import tools.jackson.databind.cfg.MapperBuilder;
+import tools.jackson.databind.introspect.DefaultAccessorNamingStrategy;
+import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.databind.module.SimpleModule;
 import io.swagger.v3.core.jackson.ExampleSerializer;
 import io.swagger.v3.core.jackson.Schema31Serializer;
 import io.swagger.v3.core.jackson.MediaTypeSerializer;
@@ -67,9 +61,16 @@ import io.swagger.v3.oas.models.servers.Server;
 import io.swagger.v3.oas.models.servers.ServerVariable;
 import io.swagger.v3.oas.models.servers.ServerVariables;
 import io.swagger.v3.oas.models.tags.Tag;
+import tools.jackson.core.TokenStreamFactory;
+import tools.jackson.databind.ser.ValueSerializerModifier;
+import tools.jackson.dataformat.yaml.YAMLFactory;
+import tools.jackson.dataformat.yaml.YAMLFactoryBuilder;
+import tools.jackson.dataformat.yaml.YAMLMapper;
+import tools.jackson.dataformat.yaml.YAMLWriteFeature;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.function.Consumer;
 
 public class ObjectMapperFactory {
 
@@ -81,6 +82,10 @@ public class ObjectMapperFactory {
         return create(null, false);
     }
 
+    public static ObjectMapper createJson(Consumer<MapperBuilder<? extends ObjectMapper, ? extends MapperBuilder<?, ?>>> mapperBuilderCustomizer) {
+        return create(null, false, mapperBuilderCustomizer);
+    }
+
     public static ObjectMapper createYaml(YAMLFactory yamlFactory) {
         return create(yamlFactory, false);
     }
@@ -89,22 +94,35 @@ public class ObjectMapperFactory {
         return createYaml(false);
     }
 
-    public static ObjectMapper createYaml(boolean openapi31) {
-        YAMLFactory factory = new YAMLFactory();
-        factory.disable(YAMLGenerator.Feature.WRITE_DOC_START_MARKER);
-        factory.enable(YAMLGenerator.Feature.MINIMIZE_QUOTES);
-        factory.enable(YAMLGenerator.Feature.SPLIT_LINES);
-        factory.enable(YAMLGenerator.Feature.ALWAYS_QUOTE_NUMBERS_AS_STRINGS);
-
-        return create(factory, openapi31);
+    public static ObjectMapper createYaml(Consumer<MapperBuilder<? extends ObjectMapper, ? extends MapperBuilder<?, ?>>> mapperBuilderCustomizer) {
+        return createYaml(false, mapperBuilderCustomizer);
     }
 
-    public static ObjectMapper createJson31(JsonFactory jsonFactory) {
+    public static ObjectMapper createYaml(boolean openapi31) {
+        return createYaml(openapi31, mapperBuilder -> {});
+    }
+
+    public static ObjectMapper createYaml(boolean openapi31, Consumer<MapperBuilder<? extends ObjectMapper, ? extends MapperBuilder<?, ?>>> mapperBuilderCustomizer) {
+        YAMLFactory factory = YAMLFactory.builder()
+                .disable(YAMLWriteFeature.WRITE_DOC_START_MARKER)
+                .enable(YAMLWriteFeature.MINIMIZE_QUOTES)
+                .enable(YAMLWriteFeature.SPLIT_LINES)
+                .enable(YAMLWriteFeature.ALWAYS_QUOTE_NUMBERS_AS_STRINGS)
+                .build();
+
+        return create(factory, openapi31, mapperBuilderCustomizer);
+    }
+
+    public static ObjectMapper createJson31(TokenStreamFactory jsonFactory) {
         return create(jsonFactory, true);
     }
 
     public static ObjectMapper createJson31() {
         return create(null, true);
+    }
+
+    public static ObjectMapper createJson31(Consumer<MapperBuilder<? extends ObjectMapper, ? extends MapperBuilder<?, ?>>> mapperBuilderCustomizer) {
+        return create(null, true, mapperBuilderCustomizer);
     }
 
     public static ObjectMapper createYaml31(YAMLFactory yamlFactory) {
@@ -115,25 +133,36 @@ public class ObjectMapperFactory {
         return createYaml(true);
     }
 
-    public static ObjectMapper create(JsonFactory jsonFactory, boolean openapi31) {
-        ObjectMapper mapper = jsonFactory == null ? new ObjectMapper() : new ObjectMapper(jsonFactory);
+    public static ObjectMapper create(TokenStreamFactory jsonFactory, boolean openapi31) {
+        return create(jsonFactory, openapi31, mapperBuilder -> {});
+    }
+
+    public static ObjectMapper create(TokenStreamFactory jsonFactory, boolean openapi31, Consumer<MapperBuilder<? extends ObjectMapper, ? extends MapperBuilder<?, ?>>> mapperBuilderCustomizer) {
+        MapperBuilder<? extends ObjectMapper, ? extends MapperBuilder<?, ?>> mapperBuilder;
+        if (jsonFactory instanceof JsonFactory factory) {
+            mapperBuilder = JsonMapper.builder(factory);
+        } else if (jsonFactory instanceof YAMLFactory factory) {
+            mapperBuilder = YAMLMapper.builder(factory);
+        } else {
+            mapperBuilder = new ObjectMapper().rebuild();
+        }
 
         if (!openapi31) {
             // handle ref schema serialization skipping all other props
-            mapper.registerModule(new SimpleModule() {
+            mapperBuilder.addModule(new SimpleModule() {
                 @Override
                 public void setupModule(SetupContext context) {
                     super.setupModule(context);
-                    context.addBeanSerializerModifier(new BeanSerializerModifier() {
+                    context.addSerializerModifier(new ValueSerializerModifier() {
                         @Override
-                        public JsonSerializer<?> modifySerializer(
-                                SerializationConfig config, BeanDescription desc, JsonSerializer<?> serializer) {
+                        public ValueSerializer<?> modifySerializer(
+                                SerializationConfig config, BeanDescription.Supplier desc, ValueSerializer<?> serializer) {
                             if (Schema.class.isAssignableFrom(desc.getBeanClass())) {
-                                return new SchemaSerializer((JsonSerializer<Object>) serializer);
+                                return new SchemaSerializer((ValueSerializer<Object>) serializer);
                             } else if (MediaType.class.isAssignableFrom(desc.getBeanClass())) {
-                                return new MediaTypeSerializer((JsonSerializer<Object>) serializer);
+                                return new MediaTypeSerializer((ValueSerializer<Object>) serializer);
                             } else if (Example.class.isAssignableFrom(desc.getBeanClass())) {
-                                return new ExampleSerializer((JsonSerializer<Object>) serializer);
+                                return new ExampleSerializer((ValueSerializer<Object>) serializer);
                             }
                             return serializer;
                         }
@@ -141,20 +170,20 @@ public class ObjectMapperFactory {
                 }
             });
         } else {
-            mapper.registerModule(new SimpleModule() {
+            mapperBuilder.addModule(new SimpleModule() {
                 @Override
                 public void setupModule(SetupContext context) {
                     super.setupModule(context);
-                    context.addBeanSerializerModifier(new BeanSerializerModifier() {
+                    context.addSerializerModifier(new ValueSerializerModifier() {
                         @Override
-                        public JsonSerializer<?> modifySerializer(
-                                SerializationConfig config, BeanDescription desc, JsonSerializer<?> serializer) {
+                        public ValueSerializer<?> modifySerializer(
+                                SerializationConfig config, BeanDescription.Supplier desc, ValueSerializer<?> serializer) {
                             if (Schema.class.isAssignableFrom(desc.getBeanClass())) {
-                                return new Schema31Serializer((JsonSerializer<Object>) serializer);
+                                return new Schema31Serializer((ValueSerializer<Object>) serializer);
                             } else if (MediaType.class.isAssignableFrom(desc.getBeanClass())) {
-                                return new MediaTypeSerializer((JsonSerializer<Object>) serializer);
+                                return new MediaTypeSerializer((ValueSerializer<Object>) serializer);
                             } else if (Example.class.isAssignableFrom(desc.getBeanClass())) {
-                                return new ExampleSerializer((JsonSerializer<Object>) serializer);
+                                return new ExampleSerializer((ValueSerializer<Object>) serializer);
                             }
                             return serializer;
                         }
@@ -164,13 +193,12 @@ public class ObjectMapperFactory {
         }
 
         if (!openapi31) {
-            Module deserializerModule = new DeserializationModule();
-            mapper.registerModule(deserializerModule);
+            JacksonModule deserializerModule = new DeserializationModule();
+            mapperBuilder.addModule(deserializerModule);
         } else {
-            Module deserializerModule = new DeserializationModule31();
-            mapper.registerModule(deserializerModule);
+            JacksonModule deserializerModule = new DeserializationModule31();
+            mapperBuilder.addModule(deserializerModule);
         }
-        mapper.registerModule(new JavaTimeModule());
 
         Map<Class<?>, Class<?>> sourceMixins = new LinkedHashMap<>();
 
@@ -218,26 +246,27 @@ public class ObjectMapperFactory {
             sourceMixins.put(DateSchema.class, DateSchemaMixin.class);
             sourceMixins.put(Discriminator.class, Discriminator31Mixin.class);
         }
-        mapper.setMixIns(sourceMixins);
-        mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-        mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-        mapper.configure(SerializationFeature.WRITE_ENUMS_USING_TO_STRING, true);
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        mapper.configure(SerializationFeature.WRITE_NULL_MAP_VALUES, false);
-        mapper.configure(SerializationFeature.WRITE_BIGDECIMAL_AS_PLAIN, true);
-        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        mapperBuilder.addMixIns(sourceMixins);
+        mapperBuilder.configure(StreamWriteFeature.WRITE_BIGDECIMAL_AS_PLAIN, true);
+        mapperBuilder.configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY, false);
+        mapperBuilder.changeDefaultPropertyInclusion(incl -> incl
+                .withContentInclusion(JsonInclude.Include.NON_NULL)
+                .withValueInclusion(JsonInclude.Include.NON_NULL));
+        mapperBuilder.accessorNaming(new DefaultAccessorNamingStrategy.Provider()
+                .withFirstCharAcceptance(true, true));
 
-        return mapper;
+        mapperBuilderCustomizer.accept(mapperBuilder);
+
+        return mapperBuilder.build();
     }
 
     public static ObjectMapper createJsonConverter() {
 
-        ObjectMapper mapper = new ObjectMapper();
+        JsonMapper.Builder builder = JsonMapper.builder();
 
 
-        Module deserializerModule = new DeserializationModule();
-        mapper.registerModule(deserializerModule);
-        mapper.registerModule(new JavaTimeModule());
+        JacksonModule deserializerModule = new DeserializationModule();
+        builder.addModule(deserializerModule);
 
         Map<Class<?>, Class<?>> sourceMixins = new LinkedHashMap<>();
 
@@ -273,33 +302,21 @@ public class ObjectMapperFactory {
         sourceMixins.put(XML.class, ExtensionsMixin.class);
 
         sourceMixins.put(Schema.class, SchemaConverterMixin.class);
-        mapper.setMixIns(sourceMixins);
-        mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-        mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-        mapper.configure(SerializationFeature.WRITE_ENUMS_USING_TO_STRING, true);
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        mapper.configure(SerializationFeature.WRITE_NULL_MAP_VALUES, false);
-        mapper.configure(SerializationFeature.WRITE_BIGDECIMAL_AS_PLAIN, true);
-        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        builder.addMixIns(sourceMixins);
+        builder.configure(StreamWriteFeature.WRITE_BIGDECIMAL_AS_PLAIN, true);
+        builder.changeDefaultPropertyInclusion(incl -> incl
+                .withContentInclusion(JsonInclude.Include.NON_NULL)
+                .withValueInclusion(JsonInclude.Include.NON_NULL));
 
-        return mapper;
+        return builder.build();
     }
 
 
     public static ObjectMapper buildStrictGenericObjectMapper() {
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-        mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-        mapper.configure(SerializationFeature.WRITE_ENUMS_USING_TO_STRING, true);
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        mapper.configure(SerializationFeature.WRITE_NULL_MAP_VALUES, false);
-        try {
-            mapper.configure(DeserializationFeature.valueOf("FAIL_ON_TRAILING_TOKENS"), true);
-        } catch (Throwable e) {
-            // add only if supported by Jackson version 2.9+
-        }
-        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-        return mapper;
+        JsonMapper.Builder builder = JsonMapper.builder();
+        builder.changeDefaultPropertyInclusion(incl -> incl
+                .withContentInclusion(JsonInclude.Include.NON_NULL)
+                .withValueInclusion(JsonInclude.Include.NON_NULL));
+        return builder.build();
     }
-
 }

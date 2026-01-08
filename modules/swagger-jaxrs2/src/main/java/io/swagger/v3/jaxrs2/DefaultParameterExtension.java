@@ -1,12 +1,12 @@
 package io.swagger.v3.jaxrs2;
 
 import com.fasterxml.jackson.annotation.JsonView;
-import com.fasterxml.jackson.databind.BeanDescription;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.introspect.AnnotatedField;
-import com.fasterxml.jackson.databind.introspect.AnnotatedMethod;
-import com.fasterxml.jackson.databind.introspect.AnnotationMap;
-import com.fasterxml.jackson.databind.introspect.BeanPropertyDefinition;
+import tools.jackson.databind.BeanDescription;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.introspect.AnnotatedField;
+import tools.jackson.databind.introspect.AnnotatedMethod;
+import tools.jackson.databind.introspect.AnnotationMap;
+import tools.jackson.databind.introspect.BeanPropertyDefinition;
 
 import io.swagger.v3.core.util.Json;
 import io.swagger.v3.core.util.ParameterProcessor;
@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Stream;
 
 public class DefaultParameterExtension extends AbstractOpenAPIExtension {
     private static final String QUERY_PARAM = "query";
@@ -165,7 +166,7 @@ public class DefaultParameterExtension extends AbstractOpenAPIExtension {
         boolean processed = false;
         if (BeanParam.class.isAssignableFrom(annotation.getClass())) {
             // Use Jackson's logic for processing Beans
-            final BeanDescription beanDesc = mapper.getSerializationConfig().introspect(constructType(type));
+            final BeanDescription beanDesc = mapper._serializationContext().introspectBeanDescription(constructType(type));
             final List<BeanPropertyDefinition> properties = beanDesc.findProperties();
 
             for (final BeanPropertyDefinition propDef : properties) {
@@ -179,14 +180,9 @@ public class DefaultParameterExtension extends AbstractOpenAPIExtension {
                 // Gather the field's details
                 if (field != null) {
                     paramType = field.getType();
-                    AnnotationMap annotationMap = field.getAllAnnotations();
-                    if (annotationMap != null) {
-                        for (final Annotation fieldAnnotation : annotationMap.annotations()) {
-                            if (!paramAnnotations.contains(fieldAnnotation)) {
-                                paramAnnotations.add(fieldAnnotation);
-                            }
-                        }
-                    }
+                    field.annotations()
+                            .filter(fieldAnnotation -> !paramAnnotations.contains(fieldAnnotation))
+                            .forEach(paramAnnotations::add);
                 }
 
                 // Gather the setter's details but only the ones we need
@@ -196,14 +192,9 @@ public class DefaultParameterExtension extends AbstractOpenAPIExtension {
                         // paramType will stay null if there is no parameter
                         paramType = setter.getParameterType(0);
                     }
-                    AnnotationMap annotationMap = setter.getAllAnnotations();
-                    if (annotationMap != null) {
-                        for (final Annotation fieldAnnotation : annotationMap.annotations()) {
-                            if (!paramAnnotations.contains(fieldAnnotation)) {
-                                paramAnnotations.add(fieldAnnotation);
-                            }
-                        }
-                    }
+                    setter.annotations()
+                            .filter(fieldAnnotation -> !paramAnnotations.contains(fieldAnnotation))
+                            .forEach(paramAnnotations::add);
                 }
 
                 // Gather the getter's details but only the ones we need
@@ -212,14 +203,9 @@ public class DefaultParameterExtension extends AbstractOpenAPIExtension {
                     if (paramType == null) {
                         paramType = getter.getType();
                     }
-                    AnnotationMap annotationMap = getter.getAllAnnotations();
-                    if (annotationMap != null) {
-                        for (final Annotation fieldAnnotation : annotationMap.annotations()) {
-                            if (!paramAnnotations.contains(fieldAnnotation)) {
-                                paramAnnotations.add(fieldAnnotation);
-                            }
-                        }
-                    }
+                    getter.annotations()
+                            .filter(fieldAnnotation -> !paramAnnotations.contains(fieldAnnotation))
+                            .forEach(paramAnnotations::add);
                 }
 
                 if (paramType == null) {

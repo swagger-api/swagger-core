@@ -1,6 +1,6 @@
 package io.swagger.v3.core.util;
 
-import com.fasterxml.jackson.databind.module.SimpleModule;
+import tools.jackson.databind.module.SimpleModule;
 import io.swagger.v3.oas.models.Paths;
 import io.swagger.v3.oas.models.callbacks.Callback;
 import io.swagger.v3.oas.models.headers.Header;

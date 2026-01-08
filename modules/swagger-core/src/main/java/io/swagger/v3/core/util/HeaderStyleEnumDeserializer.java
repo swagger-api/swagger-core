@@ -1,22 +1,23 @@
 package io.swagger.v3.core.util;
 
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonDeserializer;
-import com.fasterxml.jackson.databind.JsonNode;
+import tools.jackson.core.JacksonException;
+import tools.jackson.core.JsonParser;
+import tools.jackson.databind.DeserializationContext;
+import tools.jackson.databind.JsonNode;
 import io.swagger.v3.oas.models.headers.Header;
+import tools.jackson.databind.ValueDeserializer;
 
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
-public class HeaderStyleEnumDeserializer extends JsonDeserializer<Header.StyleEnum> {
+public class HeaderStyleEnumDeserializer extends ValueDeserializer<Header.StyleEnum> {
     @Override
     public Header.StyleEnum deserialize(JsonParser jp, DeserializationContext ctxt)
-            throws IOException {
-        JsonNode node = jp.getCodec().readTree(jp);
+            throws JacksonException {
+        JsonNode node = jp.objectReadContext().readTree(jp);
         if (node != null) {
-            String value = node.asText();
+            String value = node.asString();
             return getStyleEnum(value);
         }
         return null;

@@ -11,8 +11,11 @@ import io.swagger.v3.oas.models.media.ArraySchema;
 import io.swagger.v3.oas.models.media.ComposedSchema;
 import io.swagger.v3.oas.models.media.Schema;
 import org.testng.annotations.Test;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.cfg.MapperBuilder;
 
 import java.util.Map;
+import java.util.function.Consumer;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
@@ -68,8 +71,12 @@ public class ComposedSchemaTest {
 
     @Test(description = "read composed schem refs #2900")
     public void readComposedSchema_ticket2900() {
-        Json.mapper().addMixIn(TestObjectTicket2900.GsonJsonPrimitive.class, TestObjectTicket2900.GsonJsonPrimitiveMixIn.class);
-        Map<String, Schema> schemas = ModelConverters.getInstance().readAll(TestObjectTicket2900.class);
+        ModelConverters.reset();
+
+        Consumer<MapperBuilder<? extends ObjectMapper, ? extends MapperBuilder<?, ?>>> mapperBuilderCustomizer
+                = mapperBuilder -> mapperBuilder
+                .addMixIn(TestObjectTicket2900.GsonJsonPrimitive.class, TestObjectTicket2900.GsonJsonPrimitiveMixIn.class);
+        Map<String, Schema> schemas = ModelConverters.getInstance(mapperBuilderCustomizer).readAll(TestObjectTicket2900.class);
         Schema model = schemas.get("SomeDTO");
         assertNotNull(model);
         Map<String, Schema> properties = model.getProperties();
@@ -89,6 +96,8 @@ public class ComposedSchemaTest {
         assertEquals(((ComposedSchema)model).getOneOf().get(0).getType(), "string");
         assertEquals(((ComposedSchema)model).getOneOf().get(1).getType(), "number");
         assertNull(model.getProperties());
+
+        ModelConverters.reset();
     }
 
     @Test(description = "read composed schem refs #2616")

@@ -1,6 +1,6 @@
 package io.swagger.v3.core.resolving;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;

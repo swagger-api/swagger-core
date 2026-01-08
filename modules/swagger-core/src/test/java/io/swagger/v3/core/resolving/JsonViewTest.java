@@ -1,8 +1,7 @@
 package io.swagger.v3.core.resolving;
 
 import com.fasterxml.jackson.annotation.JsonView;
-import com.fasterxml.jackson.databind.MapperFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 import io.swagger.v3.core.converter.AnnotatedType;
 import io.swagger.v3.core.converter.ModelConverterContextImpl;
 import io.swagger.v3.core.jackson.ModelResolver;
@@ -53,7 +52,6 @@ public class JsonViewTest {
   @JsonView(JsonViewObject.View.Protected.class)
   public void notIncludePropertiesToWhichJsonviewIsNotAnnotated() throws NoSuchMethodException {
     ObjectMapper mapper = mapper();
-    mapper.disable(MapperFeature.DEFAULT_VIEW_INCLUSION);
 
     final ModelResolver modelResolver = new ModelResolver(mapper);
     final ModelConverterContextImpl context = new ModelConverterContextImpl(modelResolver);

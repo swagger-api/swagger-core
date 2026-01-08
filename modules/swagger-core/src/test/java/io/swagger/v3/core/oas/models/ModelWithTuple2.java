@@ -1,8 +1,8 @@
 package io.swagger.v3.core.oas.models;
 
-import com.fasterxml.jackson.databind.BeanDescription;
-import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.BeanDescription;
+import tools.jackson.databind.JavaType;
+import tools.jackson.databind.ObjectMapper;
 import io.swagger.v3.core.converter.AnnotatedType;
 import io.swagger.v3.core.converter.ModelConverter;
 import io.swagger.v3.core.converter.ModelConverterContext;
@@ -12,6 +12,7 @@ import io.swagger.v3.oas.models.media.Schema;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.WordUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import tools.jackson.databind.cfg.MapperBuilder;
 
 import java.util.Iterator;
 import java.util.Set;
@@ -72,7 +73,7 @@ public class ModelWithTuple2 {
                 Schema schema = context.resolve(new AnnotatedType().type(left).schemaProperty(type.isSchemaProperty()));
                 String pName = null;
                 if (left != null) {
-                    BeanDescription valueTypeBeanDesc = _mapper.getSerializationConfig().introspect(left);
+                    BeanDescription valueTypeBeanDesc = _mapper._serializationContext().introspectBeanDescription(left);
                     pName = _typeName(left, valueTypeBeanDesc);
                 }
 
