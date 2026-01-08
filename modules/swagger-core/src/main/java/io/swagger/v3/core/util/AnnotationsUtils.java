@@ -765,16 +765,24 @@ public abstract class AnnotationsUtils {
             schemaObject.setDefault(schema.defaultValue());
         }
         if (StringUtils.isNotBlank(schema.example())) {
-            try {
-                if (openapi31) {
-                    schemaObject.setExample(Json31.mapper().readTree(schema.example()));
-                } else {
-                    schemaObject.setExample(Json.mapper().readTree(schema.example()));
+            String exampleValue = schema.example().trim();
+
+            // Fix: Prevent numeric-starting example strings (e.g. "5 lacs per annum") from being parsed as numbers
+            if (exampleValue.matches("^[0-9].*") && !exampleValue.startsWith("\"")) {
+                schemaObject.setExample(exampleValue);
+            } else {
+                try {
+                    if (openapi31) {
+                        schemaObject.setExample(Json31.mapper().readTree(exampleValue));
+                    } else {
+                        schemaObject.setExample(Json.mapper().readTree(exampleValue));
+                    }
+                } catch (IOException e) {
+                    schemaObject.setExample(exampleValue);
                 }
-            } catch (IOException e) {
-                schemaObject.setExample(schema.example());
             }
         }
+
         if (StringUtils.isNotBlank(schema.format())) {
             schemaObject.setFormat(schema.format());
         }
