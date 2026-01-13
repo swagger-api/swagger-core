@@ -6,6 +6,7 @@ import static org.testng.Assert.*;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class SchemaTest {
@@ -177,5 +178,102 @@ public class SchemaTest {
         schema.setRequired(Arrays.asList("id", "name"));
         schema.setBooleanSchemaValue(true);
         return schema;
+    }
+
+    @Test
+    public void testRequiredNoDuplicates() {
+        Schema<Object> schema = new Schema<>();
+        schema.addRequiredItem("id");
+        schema.addRequiredItem("name");
+        schema.addRequiredItem("id"); // duplicate
+
+        List<String> required = schema.getRequired();
+
+        // Duplicates should be removed
+        assertEquals(2, required.size());
+        assertTrue(required.contains("id"));
+        assertTrue(required.contains("name"));
+    }
+
+    @Test
+    public void testSetRequiredRemovesDuplicates() {
+        Schema<Object> schema = new Schema<>();
+        schema.setRequired(Arrays.asList("id", "name", "id", "email", "name"));
+
+        List<String> required = schema.getRequired();
+
+        // Should contain only unique values: id, name, email
+        assertEquals(3, required.size());
+    }
+
+
+    @Test
+    public void testRequiredIsSorted() {
+        Schema<Object> schema = new Schema<>();
+        schema.addRequiredItem("zebra");
+        schema.addRequiredItem("apple");
+        schema.addRequiredItem("mango");
+
+        List<String> required = schema.getRequired();
+
+        // Should be sorted alphabetically
+        assertEquals(Arrays.asList("apple", "mango", "zebra"), required);
+    }
+
+    @Test
+    public void testSetRequiredWithNull() {
+        Schema<Object> schema = new Schema<>();
+        schema.addRequiredItem("id");
+        schema.setRequired(null);
+
+        // Setting null should clear required
+        assertNull(schema.getRequired());
+    }
+
+    @Test
+    public void testSetRequiredWithEmptyList() {
+        Schema<Object> schema = new Schema<>();
+        schema.setRequired(Arrays.asList());
+
+        // Empty list should result in null
+        assertNull(schema.getRequired());
+    }
+
+    @Test
+    public void testAddRequiredItemIgnoresItemNotInProperties() {
+        Schema<Object> schema = new Schema<>();
+        Schema<String> nameSchema = new Schema<>();
+        schema.addProperty("name", nameSchema);
+
+        schema.addRequiredItem("name");       // exists in properties → accepted
+        schema.addRequiredItem("notAProp");   // not in properties → ignored
+
+        List<String> required = schema.getRequired();
+        assertEquals(1, required.size());
+        assertTrue(required.contains("name"));
+        assertFalse(required.contains("notAProp"));
+    }
+
+    @Test
+    public void testAddRequiredItemAcceptsAllWhenNoProperties() {
+        Schema<Object> schema = new Schema<>();
+        // no properties set → all items accepted
+        schema.addRequiredItem("id");
+        schema.addRequiredItem("name");
+
+        List<String> required = schema.getRequired();
+        assertEquals(2, required.size());
+    }
+
+    @Test
+    public void testGetRequiredReturnsCopy() {
+        Schema<Object> schema = new Schema<>();
+        schema.addRequiredItem("id");
+
+        List<String> copy = schema.getRequired();
+        copy.add("shouldNotAffectSchema");
+
+        // original schema should be unchanged
+        assertEquals(1, schema.getRequired().size());
     }
 }
