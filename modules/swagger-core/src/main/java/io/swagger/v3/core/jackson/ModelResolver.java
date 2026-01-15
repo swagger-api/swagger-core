@@ -1881,11 +1881,13 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                         modified = true;
                     }
                 }
-                modified = updateRequiredItem(parent, property.getName()) || modified;
+                if (applyNotNullAnnotations) {
+                    modified = updateRequiredItem(parent, property.getName()) || modified;
+                }
             }
         }
 
-        if (annos.containsKey("javax.validation.constraints.NotBlank") && applyNotNullAnnotations ) {
+        if (annos.containsKey("javax.validation.constraints.NotBlank")) {
             NotBlank anno = (NotBlank) annos.get("javax.validation.constraints.NotBlank");
             boolean apply = checkGroupValidation(anno.groups(), invocationGroups, acceptNoGroups);
             if (apply) {
@@ -1896,7 +1898,9 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                         modified = true;
                     }
                 }
-                modified = updateRequiredItem(parent, property.getName()) || modified;
+                if (applyNotNullAnnotations) {
+                    modified = updateRequiredItem(parent, property.getName()) || modified;
+                }
             }
         }
         if (annos.containsKey("javax.validation.constraints.Min")) {

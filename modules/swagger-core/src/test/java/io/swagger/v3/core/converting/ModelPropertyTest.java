@@ -184,6 +184,20 @@ public class ModelPropertyTest {
         assertFalse(model.getRequired() != null && model.getRequired().contains("notBlankNotRequired"));
         assertFalse(model.getRequired() != null && model.getRequired().contains("notEmptyListNotRequired"));
         assertFalse(model.getRequired() != null && model.getRequired().contains("notEmptySetNotRequired"));
+
+        // @NotBlank should generate minLength: 1
+        Schema notBlankSchema = (Schema) model.getProperties().get("notBlankNotRequired");
+        assertNotNull(notBlankSchema);
+        assertEquals(notBlankSchema.getMinLength(), Integer.valueOf(1));
+
+        // @NotEmpty should generate minItems: 1
+        ArraySchema listSchema = (ArraySchema) model.getProperties().get("notEmptyListNotRequired");
+        assertNotNull(listSchema);
+        assertEquals(listSchema.getMinItems(), Integer.valueOf(1));
+
+        ArraySchema setSchema = (ArraySchema) model.getProperties().get("notEmptySetNotRequired");
+        assertNotNull(setSchema);
+        assertEquals(setSchema.getMinItems(), Integer.valueOf(1));
     }
 
     @Test
@@ -193,6 +207,20 @@ public class ModelPropertyTest {
         assertTrue(model.getRequired().contains("notBlankRequired"));
         assertTrue(model.getRequired().contains("notEmptyListRequired"));
         assertTrue(model.getRequired().contains("notEmptySetRequired"));
+
+        // @NotBlank should generate minLength: 1
+        Schema notBlankSchema = (Schema) model.getProperties().get("notBlankRequired");
+        assertNotNull(notBlankSchema);
+        assertEquals(notBlankSchema.getMinLength(), Integer.valueOf(1));
+
+        // @NotEmpty should generate minItems: 1
+        ArraySchema listSchema = (ArraySchema) model.getProperties().get("notEmptyListRequired");
+        assertNotNull(listSchema);
+        assertEquals(listSchema.getMinItems(), Integer.valueOf(1));
+
+        ArraySchema setSchema = (ArraySchema) model.getProperties().get("notEmptySetRequired");
+        assertNotNull(setSchema);
+        assertEquals(setSchema.getMinItems(), Integer.valueOf(1));
     }
 
     class Family {
