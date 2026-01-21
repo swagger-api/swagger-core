@@ -217,12 +217,7 @@ public class PropertyDeserializer extends JsonDeserializer<Property> {
 
         JsonNode detailNode = node.get("$ref");
         if (detailNode != null) {
-            RefProperty refProperty = new RefProperty(detailNode.asText());
-            refProperty.setDescription(description);
-            refProperty.setTitle(title);
-            refProperty.setReadOnly(readOnly);
-            refProperty.setXml(xml);
-            return refProperty;
+            return getRefProperty(title, readOnly, description, xml, detailNode);
         }
 
         if (ObjectProperty.isType(type) || node.get("properties") != null || node.get("allOf") != null) {
@@ -276,19 +271,26 @@ public class PropertyDeserializer extends JsonDeserializer<Property> {
                         }
                     }
                 } else if (allOfNode != null) {
-                    ComposedProperty cp = new ComposedProperty().description(description).title(title);
-                    cp.setExample(example);
-                    cp.setDescription(description);
-                    cp.setVendorExtensions(getVendorExtensions(node));
+                    JsonNode refAllOf = allOfNode.get(0).get("$ref");
+                    if (refAllOf != null) {
+                        RefProperty refProperty = getRefProperty(title, readOnly, description, xml, refAllOf);
+                        refProperty.setVendorExtensions(getVendorExtensions(node));
+                        return refProperty;
+                    } else {
+                        ComposedProperty cp = new ComposedProperty().description(description).title(title);
+                        cp.setExample(example);
+                        cp.setDescription(description);
+                        cp.setVendorExtensions(getVendorExtensions(node));
 
-                    List<Property> allOf = new ArrayList<Property>();
-                    for (JsonNode innerNode : allOfNode) {
-                        allOf.add(propertyFromNode(innerNode));
+                        List<Property> allOf = new ArrayList<Property>();
+                        for (JsonNode innerNode : allOfNode) {
+                            allOf.add(propertyFromNode(innerNode));
+                        }
+
+                        cp.setAllOf(allOf);
+
+                        return cp;
                     }
-
-                    cp.setAllOf(allOf);
-
-                    return cp;
                 }
 
                 if("array".equals(detailNodeType)) {
@@ -354,5 +356,14 @@ public class PropertyDeserializer extends JsonDeserializer<Property> {
         output.setDescription(description);
 
         return output;
+    }
+
+    private RefProperty getRefProperty(String title, Boolean readOnly, String description, Xml xml, JsonNode detailNode) {
+        RefProperty refProperty = new RefProperty(detailNode.asText());
+        refProperty.setDescription(description);
+        refProperty.setTitle(title);
+        refProperty.setReadOnly(readOnly);
+        refProperty.setXml(xml);
+        return refProperty;
     }
 }
