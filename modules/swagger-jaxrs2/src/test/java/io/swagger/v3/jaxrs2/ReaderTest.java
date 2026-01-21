@@ -15,6 +15,7 @@ import io.swagger.v3.core.model.ApiDescription;
 import io.swagger.v3.core.util.Configuration;
 import io.swagger.v3.core.util.Json;
 import io.swagger.v3.core.util.PrimitiveType;
+import io.swagger.v3.core.util.Yaml;
 import io.swagger.v3.jaxrs2.matchers.SerializationMatchers;
 import io.swagger.v3.jaxrs2.petstore31.PetResource;
 import io.swagger.v3.jaxrs2.petstore31.TagResource;
@@ -1446,6 +1447,16 @@ public class ReaderTest {
                 "          items:\n" +
                 "            type: string\n";
         SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
+    }
+
+    @Test(description = "array schema required property")
+    public void testMultiDimention() {
+        Reader reader1 = new Reader(new OpenAPI());
+        Reader reader2 = new Reader(new OpenAPI());
+        OpenAPI openAPI1 = reader1.read(MultiDimensionJavaTypeResource.class);
+        OpenAPI openAPI2 = reader2.read(MultiDimensionAnnotationResource.class);
+        String s = Yaml.pretty(openAPI2);
+        assertEquals(Yaml.pretty(openAPI2), Yaml.pretty(openAPI1));
     }
 
     @Test(description = "RequestBody with ref")
