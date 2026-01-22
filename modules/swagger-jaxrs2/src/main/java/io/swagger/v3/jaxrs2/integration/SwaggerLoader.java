@@ -1,6 +1,6 @@
 package io.swagger.v3.jaxrs2.integration;
 
-import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
+import tools.jackson.core.util.DefaultPrettyPrinter;
 import io.swagger.v3.core.filter.OpenAPISpecFilter;
 import io.swagger.v3.core.filter.SpecFilter;
 import io.swagger.v3.core.util.Configuration;
@@ -401,14 +401,14 @@ public class SwaggerLoader {
             String openapiYaml = null;
             if ("JSON".equals(outputFormat) || "JSONANDYAML".equals(outputFormat)) {
                 if (prettyPrint != null && prettyPrint) {
-                    openapiJson = context.getOutputJsonMapper().writer(new DefaultPrettyPrinter()).writeValueAsString(openAPI);
+                    openapiJson = context.getOutputJsonMapper().writerWithDefaultPrettyPrinter().writeValueAsString(openAPI);
                 } else {
                     openapiJson = context.getOutputJsonMapper().writeValueAsString(openAPI);
                 }
             }
             if ("YAML".equals(outputFormat) || "JSONANDYAML".equals(outputFormat)) {
                 if (prettyPrint != null && prettyPrint) {
-                    openapiYaml = context.getOutputYamlMapper().writer(new DefaultPrettyPrinter()).writeValueAsString(openAPI);
+                    openapiYaml = context.getOutputYamlMapper().writerWithDefaultPrettyPrinter().writeValueAsString(openAPI);
                 } else {
                     openapiYaml = context.getOutputYamlMapper().writeValueAsString(openAPI);
                 }

@@ -1,6 +1,6 @@
 package io.swagger.v3.core.serialization.properties;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 import io.swagger.v3.core.util.Json;
 import io.swagger.v3.core.util.JsonAssert;
 import io.swagger.v3.oas.models.media.ArraySchema;

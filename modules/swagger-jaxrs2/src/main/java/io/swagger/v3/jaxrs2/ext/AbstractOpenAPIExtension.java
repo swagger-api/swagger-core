@@ -1,8 +1,8 @@
 package io.swagger.v3.jaxrs2.ext;
 
 import com.fasterxml.jackson.annotation.JsonView;
-import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.type.TypeFactory;
+import tools.jackson.databind.JavaType;
+import tools.jackson.databind.type.TypeFactory;
 import io.swagger.v3.core.util.Configuration;
 import io.swagger.v3.jaxrs2.ResolvedParameter;
 import io.swagger.v3.oas.models.Components;
@@ -65,7 +65,7 @@ public abstract class AbstractOpenAPIExtension implements OpenAPIExtension {
     }
 
     protected JavaType constructType(Type type) {
-        return TypeFactory.defaultInstance().constructType(type);
+        return TypeFactory.createDefaultInstance().constructType(type);
     }
 
     @Override
