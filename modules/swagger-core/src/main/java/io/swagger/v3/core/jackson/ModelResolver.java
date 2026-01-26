@@ -65,7 +65,7 @@ import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.media.StringSchema;
 import io.swagger.v3.oas.models.media.UUIDSchema;
 import io.swagger.v3.oas.models.media.XML;
-import javax.validation.constraints.Email;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.slf4j.Logger;
@@ -80,6 +80,11 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
+import javax.validation.constraints.Negative;
+import javax.validation.constraints.NegativeOrZero;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -1901,6 +1906,40 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 modified = true;
             }
         }
+        if (annos.containsKey("javax.validation.constraints.Positive")) {
+            Positive anno = (Positive) annos.get("javax.validation.constraints.Positive");
+            boolean apply = checkGroupValidation(anno.groups(), invocationGroups, acceptNoGroups);
+            if (apply && isNumberSchema(property)) {
+                property.setMinimum(BigDecimal.ZERO);
+                property.setExclusiveMinimum(true);
+                modified = true;
+            }
+        }
+        if (annos.containsKey("javax.validation.constraints.PositiveOrZero")) {
+            PositiveOrZero anno = (PositiveOrZero) annos.get("javax.validation.constraints.PositiveOrZero");
+            boolean apply = checkGroupValidation(anno.groups(), invocationGroups, acceptNoGroups);
+            if (apply && isNumberSchema(property)) {
+                property.setMinimum(BigDecimal.ZERO);
+                modified = true;
+            }
+        }
+        if (annos.containsKey("javax.validation.constraints.Negative")) {
+            Negative anno = (Negative) annos.get("javax.validation.constraints.Negative");
+            boolean apply = checkGroupValidation(anno.groups(), invocationGroups, acceptNoGroups);
+            if (apply && isNumberSchema(property)) {
+                property.setMaximum(BigDecimal.ZERO);
+                property.setExclusiveMaximum(true);
+                modified = true;
+            }
+        }
+        if (annos.containsKey("javax.validation.constraints.NegativeOrZero")) {
+            NegativeOrZero anno = (NegativeOrZero) annos.get("javax.validation.constraints.NegativeOrZero");
+            boolean apply = checkGroupValidation(anno.groups(), invocationGroups, acceptNoGroups);
+            if (apply && isNumberSchema(property)) {
+                property.setMaximum(BigDecimal.ZERO);
+                modified = true;
+            }
+        }
         if (annos.containsKey("javax.validation.constraints.Size")) {
             Size anno = (Size) annos.get("javax.validation.constraints.Size");
             boolean apply = checkGroupValidation(anno.groups(), invocationGroups, acceptNoGroups);
@@ -2014,6 +2053,32 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             if (isNumberSchema(property)) {
                 Max max = (Max) annos.get("javax.validation.constraints.Max");
                 property.setMaximum(new BigDecimal(max.value()));
+                modified = true;
+            }
+        }
+        if (annos.containsKey("javax.validation.constraints.Positive")) {
+            if (isNumberSchema(property)) {
+                property.setMinimum(BigDecimal.ZERO);
+                property.setExclusiveMinimum(true);
+                modified = true;
+            }
+        }
+        if (annos.containsKey("javax.validation.constraints.PositiveOrZero")) {
+            if (isNumberSchema(property)) {
+                property.setMinimum(BigDecimal.ZERO);
+                modified = true;
+            }
+        }
+        if (annos.containsKey("javax.validation.constraints.Negative")) {
+            if (isNumberSchema(property)) {
+                property.setMaximum(BigDecimal.ZERO);
+                property.setExclusiveMaximum(true);
+                modified = true;
+            }
+        }
+        if (annos.containsKey("javax.validation.constraints.NegativeOrZero")) {
+            if (isNumberSchema(property)) {
+                property.setMaximum(BigDecimal.ZERO);
                 modified = true;
             }
         }

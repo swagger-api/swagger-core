@@ -9,6 +9,10 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
+import javax.validation.constraints.Negative;
+import javax.validation.constraints.NegativeOrZero;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,6 +23,18 @@ public class BeanValidationsModel {
     @Min(13)
     @Max(99)
     protected Integer age;
+
+    @Positive
+    private Double positiveValue;
+
+    @PositiveOrZero
+    private Double positiveOrZeroValue;
+
+    @Negative
+    private Double negativeValue;
+
+    @NegativeOrZero
+    private Double negativeOrZeroValue;
 
     @Pattern(regexp = "(?![-._])[-._a-zA-Z0-9]{3,32}")
     @Nonnull
@@ -133,4 +149,35 @@ public class BeanValidationsModel {
         this.optionalValue = optionalValue;
     }
 
+    public Double getPositiveValue() {
+        return positiveValue;
+    }
+
+    public void setPositiveValue(Double positiveValue) {
+        this.positiveValue = positiveValue;
+    }
+
+    public Double getPositiveOrZeroValue() {
+        return positiveOrZeroValue;
+    }
+
+    public void setPositiveOrZeroValue(Double positiveOrZeroValue) {
+        this.positiveOrZeroValue = positiveOrZeroValue;
+    }
+
+    public Double getNegativeValue() {
+        return negativeValue;
+    }
+
+    public void setNegativeValue(Double negativeValue) {
+        this.negativeValue = negativeValue;
+    }
+
+    public Double getNegativeOrZeroValue() {
+        return negativeOrZeroValue;
+    }
+
+    public void setNegativeOrZeroValue(Double negativeOrZeroValue) {
+        this.negativeOrZeroValue = negativeOrZeroValue;
+    }
 }
