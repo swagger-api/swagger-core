@@ -748,7 +748,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                                         (io.swagger.v3.oas.annotations.media.Schema) propSchemaOrArray;
 
                 io.swagger.v3.oas.annotations.media.Schema.AccessMode accessMode = resolveAccessMode(propDef, type, propResolvedSchemaAnnotation);
-                io.swagger.v3.oas.annotations.media.Schema.RequiredMode requiredMode = resolveRequiredMode(propResolvedSchemaAnnotation);
+                io.swagger.v3.oas.annotations.media.Schema.RequiredMode requiredMode = resolveRequiredMode(propResolvedSchemaAnnotation, propType);
 
                 Annotation[] ctxAnnotation31 = null;
                 Schema.SchemaResolution resolvedSchemaResolution = AnnotationsUtils.resolveSchemaResolution(this.schemaResolution, ctxSchema);
@@ -2492,6 +2492,12 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         return null;
     }
 
+    /**
+     * Resolve the required mode for a schema based upon the schema annotation.
+     *
+     * @param schema A schema annotation
+     * @return The resolved required mode for the schema
+     */
     protected io.swagger.v3.oas.annotations.media.Schema.RequiredMode resolveRequiredMode(io.swagger.v3.oas.annotations.media.Schema schema) {
         if (schema != null && !schema.requiredMode().equals(io.swagger.v3.oas.annotations.media.Schema.RequiredMode.AUTO)) {
             return schema.requiredMode();
@@ -2499,6 +2505,22 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             return io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED;
         }
         return io.swagger.v3.oas.annotations.media.Schema.RequiredMode.AUTO;
+    }
+
+    /**
+     * Resolve the required mode for a schema.
+     * <p>
+     * This method is provided as an extension point for subclasses.
+     * The default implementation ignores the {@link JavaType} parameter
+     * and delegates to {@link #resolveRequiredMode(io.swagger.v3.oas.annotations.media.Schema)}.
+     *
+     * @param schema A schema annotation
+     * @param type The JavaType of the field property that the annotation is tied to
+     * @return The resolved required mode for the schema
+     */
+    protected io.swagger.v3.oas.annotations.media.Schema.RequiredMode resolveRequiredMode(
+            io.swagger.v3.oas.annotations.media.Schema schema, JavaType type) {
+        return resolveRequiredMode(schema);
     }
 
     protected io.swagger.v3.oas.annotations.media.Schema.AccessMode resolveAccessMode(BeanPropertyDefinition propDef, JavaType type, io.swagger.v3.oas.annotations.media.Schema schema) {

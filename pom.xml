@@ -6,7 +6,7 @@
     <packaging>pom</packaging>
     <name>swagger-project</name>
     <description>swagger-project</description>
-    <version>2.2.42-SNAPSHOT</version>
+    <version>2.2.43-SNAPSHOT</version>
     <url>https://github.com/swagger-api/swagger-core</url>
     <scm>
         <connection>scm:git:git@github.com:swagger-api/swagger-core.git</connection>
@@ -634,7 +634,7 @@
         <classgraph-version>4.8.184</classgraph-version>
         <guava-version>32.1.3-jre</guava-version>
         <ant-version>1.10.15</ant-version>
-        <commons-lang-version>3.18.0</commons-lang-version>
+        <commons-lang-version>3.20.0</commons-lang-version>
         <commons-io-version>2.18.0</commons-io-version>
         <slf4j-version>2.0.9</slf4j-version>
         <jetty-version>9.4.56.v20240826</jetty-version>
