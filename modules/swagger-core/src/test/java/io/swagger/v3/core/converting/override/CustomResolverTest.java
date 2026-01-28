@@ -48,12 +48,12 @@ public class CustomResolverTest {
         Schema model = models.get("SuperFoo");
         assertNotNull(model);
         assertEquals(model.getProperties().size(), 4);
-        assertEquals(model.getRequired(), (Collections.singletonList("bar")));
+        assertEquals(model.getRequired(), Collections.singletonList("bar"));
 
         final Schema fooProperty = (Schema) model.getProperties().get("foo");
         assertEquals(fooProperty.get$ref(), "#/components/schemas/Foo");
         Schema fooModel = models.get("Foo");
-        assertEquals(fooModel.getRequired(), (Collections.singletonList("bar")));
+        assertEquals(fooModel.getRequired(), Collections.singletonList("bar"));
 
         final Schema optionalBarProperty = (Schema) model.getProperties().get("optionalBar");
         assertEquals(optionalBarProperty.get$ref(), "#/components/schemas/Bar");
