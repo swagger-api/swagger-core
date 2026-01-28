@@ -8,9 +8,9 @@ import org.testng.annotations.Test;
 import java.util.List;
 import java.util.Map;
 
-public class ObjectFieldOas31ReproTest {
+public class Oas31ObjectFieldTest {
     @Test(description = "Repro #4682: In OAS 3.1, raw Object property should not be rendered as an empty schema")
-    public void oas31_rawObjectProperty_shouldBeObjectSchema() {
+    public void rawObjectPropertyShouldBeObjectSchema() {
         Map<String, Schema> schemas = ModelConverters.getInstance(true).readAll(PojoUsingObjectField.class);
         Schema pojo = schemas.get("PojoUsingObjectField");
         Assert.assertNotNull(pojo, "PojoUsingObjectField schema should exist");
@@ -21,7 +21,7 @@ public class ObjectFieldOas31ReproTest {
     }
 
     @Test(description = "OAS 3.1: List<Object> items schema should be object")
-    public void oas31_listOfObject_items_shouldBeObjectSchema() {
+    public void listOfObjectItemsShouldBeObjectSchema() {
         Map<String, Schema> schemas = ModelConverters.getInstance(true).readAll(PojoUsingListOfObject.class);
         Schema pojo = schemas.get("PojoUsingListOfObject");
         Assert.assertNotNull(pojo, "PojoUsingListOfObject schema should exist");
@@ -33,7 +33,7 @@ public class ObjectFieldOas31ReproTest {
     }
 
     @Test(description = "OAS 3.1: Map<String,Object> additionalProperties schema should be object")
-    public void oas31_mapStringToObject_additionalProperties_shouldBeObjectSchema() {
+    public void mapOfObjectAdditionalPropertiesShouldBeObjectSchema() {
         Map<String, Schema> schemas = ModelConverters.getInstance(true).readAll(PojoUsingMapStringToObject.class);
         Schema pojo = schemas.get("PojoUsingMapStringToObject");
         Assert.assertNotNull(pojo, "PojoUsingMapStringToObject schema should exist");
