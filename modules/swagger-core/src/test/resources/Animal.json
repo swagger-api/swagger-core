@@ -10,7 +10,11 @@
             }
         },
         "discriminator" : {
-            "propertyName" : "type"
+            "propertyName" : "type",
+            "mapping" : {
+                "human" : "#/components/schemas/Human",
+                "pet" : "#/components/schemas/Pet"
+            }
         }
     },
     "Human": {
