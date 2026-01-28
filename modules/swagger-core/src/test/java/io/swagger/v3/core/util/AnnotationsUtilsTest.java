@@ -54,9 +54,9 @@ public class AnnotationsUtilsTest {
     public void resolveSchemaFromType(Class<?> aClass, Map<String, Object> expected) {
         Schema schema = AnnotationsUtils.resolveSchemaFromType(aClass, new Components(), null);
 
-       assertEquals(schema.getType(), expected.get("type"));
-       assertEquals(schema.getFormat(), expected.get("format"));
-       assertEquals(schema.get$ref(), expected.get("$ref"));
+        assertEquals(schema.getType(), expected.get("type"));
+        assertEquals(schema.getFormat(), expected.get("format"));
+        assertEquals(schema.get$ref(), expected.get("$ref"));
     }
 
     @DataProvider
@@ -75,10 +75,10 @@ public class AnnotationsUtilsTest {
         Content annotationContent = method.getAnnotation(ApiResponse.class).content()[0];
         Optional<? extends Schema> schema = AnnotationsUtils.getSchema(annotationContent, new Components(), null, false);
 
-       assertTrue(schema.isPresent());
-       assertEquals(schema.get().getType(), expected.get("type"));
-       assertEquals(schema.get().getFormat(), expected.get("format"));
-       assertEquals(schema.get().get$ref(), expected.get("$ref"));
+        assertTrue(schema.isPresent());
+        assertEquals(schema.get().getType(), expected.get("type"));
+        assertEquals(schema.get().getFormat(), expected.get("format"));
+        assertEquals(schema.get().get$ref(), expected.get("$ref"));
     }
 
     @ApiResponse(content = @Content(schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = Byte.class)))
@@ -98,5 +98,32 @@ public class AnnotationsUtilsTest {
     }
 
     class DummyClass implements Serializable {}
+
+    static class ExampleHolder {
+        @io.swagger.v3.oas.annotations.media.Schema(type = "string", example = "5 lacs per annum")
+        String value;
+    }
+
+    @Test
+    public void testExampleStartingWithNumberShouldBeString() throws Exception {
+        io.swagger.v3.oas.annotations.media.Schema schemaAnnotation =
+                ExampleHolder.class
+                        .getDeclaredField("value")
+                        .getAnnotation(io.swagger.v3.oas.annotations.media.Schema.class);
+
+        Optional<Schema> schema =
+                AnnotationsUtils.getSchemaFromAnnotation(
+                        schemaAnnotation,
+                        null,
+                        null,
+                        false,
+                        null,
+                        Schema.SchemaResolution.DEFAULT,
+                        null
+                );
+
+        assertTrue(schema.isPresent());
+        assertEquals(schema.get().getExample(), "5 lacs per annum");
+    }
 
 }
