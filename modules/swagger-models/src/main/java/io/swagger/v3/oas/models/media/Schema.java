@@ -2258,7 +2258,7 @@ public class Schema<T> {
             sb.append("    dependentSchemas: ").append(toIndentedString(dependentSchemas)).append("\n");
             sb.append("    $comment: ").append(toIndentedString($comment)).append("\n");
             sb.append("    prefixItems: ").append(toIndentedString(prefixItems)).append("\n");
-            sb.append("    booleanSchemaValue").append(toIndentedString(booleanSchemaValue)).append("\n");
+            sb.append("    booleanSchemaValue: ").append(toIndentedString(booleanSchemaValue)).append("\n");
         }
         sb.append("}");
         return sb.toString();
@@ -2346,4 +2346,3 @@ public class Schema<T> {
         return this;
     }
 }
-
