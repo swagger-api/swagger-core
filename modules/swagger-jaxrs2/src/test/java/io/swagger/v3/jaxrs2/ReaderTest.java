@@ -92,6 +92,7 @@ import io.swagger.v3.jaxrs2.resources.Ticket4804CustomClass;
 import io.swagger.v3.jaxrs2.resources.Ticket4804NotBlankResource;
 import io.swagger.v3.jaxrs2.resources.Ticket4804ProcessorResource;
 import io.swagger.v3.jaxrs2.resources.Ticket4804Resource;
+import io.swagger.v3.jaxrs2.resources.Ticket4848ProcessorResource;
 import io.swagger.v3.jaxrs2.resources.Ticket4850Resource;
 import io.swagger.v3.jaxrs2.resources.Ticket4859Resource;
 import io.swagger.v3.jaxrs2.resources.Ticket4878Resource;
@@ -5529,6 +5530,200 @@ public class ReaderTest {
                 "          content:\n" +
                 "            '*/*': {}\n";
         SerializationMatchers.assertEqualsToYaml31(openAPI, yaml);
+        ModelConverters.reset();
+    }
+
+    @Test(description = "Correctly process JSpecify annotations")
+    public void testTicket4848Processor() {
+        ModelConverters.reset();
+        SwaggerConfiguration config = new SwaggerConfiguration().schemaResolution(Schema.SchemaResolution.INLINE);
+        Reader reader = new Reader(config);
+
+        OpenAPI openAPI = reader.read(Ticket4848ProcessorResource.class);
+        String yaml = "openapi: 3.0.1\n" +
+                "paths:\n" +
+                "  /test/createpet:\n" +
+                "    post:\n" +
+                "      operationId: postPet\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          '*/*':\n" +
+                "            schema:\n" +
+                "              required:\n" +
+                "              - address2\n" +
+                "              - street\n" +
+                "              type: object\n" +
+                "              properties:\n" +
+                "                street:\n" +
+                "                  type: string\n" +
+                "                city:\n" +
+                "                  type: string\n" +
+                "                  nullable: true\n" +
+                "                address2:\n" +
+                "                  type: string\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*': {}\n" +
+                "  /test/updateperson:\n" +
+                "    put:\n" +
+                "      operationId: putPerson\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          '*/*':\n" +
+                "            schema:\n" +
+                "              required:\n" +
+                "              - address\n" +
+                "              - department\n" +
+                "              - firstName\n" +
+                "              - id\n" +
+                "              type: object\n" +
+                "              properties:\n" +
+                "                id:\n" +
+                "                  type: integer\n" +
+                "                  format: int64\n" +
+                "                firstName:\n" +
+                "                  type: string\n" +
+                "                lastName:\n" +
+                "                  type: string\n" +
+                "                  nullable: true\n" +
+                "                address:\n" +
+                "                  required:\n" +
+                "                  - address2\n" +
+                "                  type: object\n" +
+                "                  properties:\n" +
+                "                    street:\n" +
+                "                      type: string\n" +
+                "                    city:\n" +
+                "                      type: string\n" +
+                "                      nullable: true\n" +
+                "                    address2:\n" +
+                "                      type: string\n" +
+                "                department:\n" +
+                "                  required:\n" +
+                "                  - address\n" +
+                "                  - id\n" +
+                "                  type: object\n" +
+                "                  properties:\n" +
+                "                    id:\n" +
+                "                      type: integer\n" +
+                "                      format: int64\n" +
+                "                    address:\n" +
+                "                      required:\n" +
+                "                      - address2\n" +
+                "                      type: object\n" +
+                "                      properties:\n" +
+                "                        street:\n" +
+                "                          type: string\n" +
+                "                        city:\n" +
+                "                          type: string\n" +
+                "                          nullable: true\n" +
+                "                        address2:\n" +
+                "                          type: string\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*': {}\n" +
+                "components:\n" +
+                "  schemas:\n" +
+                "    Pet:\n" +
+                "      required:\n" +
+                "      - address2\n" +
+                "      - street\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        street:\n" +
+                "          type: string\n" +
+                "        city:\n" +
+                "          type: string\n" +
+                "          nullable: true\n" +
+                "        address2:\n" +
+                "          type: string\n" +
+                "    Address:\n" +
+                "      required:\n" +
+                "      - address2\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        street:\n" +
+                "          type: string\n" +
+                "        city:\n" +
+                "          type: string\n" +
+                "          nullable: true\n" +
+                "        address2:\n" +
+                "          type: string\n" +
+                "    Department:\n" +
+                "      required:\n" +
+                "      - address\n" +
+                "      - id\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        id:\n" +
+                "          type: integer\n" +
+                "          format: int64\n" +
+                "        address:\n" +
+                "          required:\n" +
+                "          - address2\n" +
+                "          type: object\n" +
+                "          properties:\n" +
+                "            street:\n" +
+                "              type: string\n" +
+                "            city:\n" +
+                "              type: string\n" +
+                "              nullable: true\n" +
+                "            address2:\n" +
+                "              type: string\n" +
+                "    Person:\n" +
+                "      required:\n" +
+                "      - address\n" +
+                "      - department\n" +
+                "      - firstName\n" +
+                "      - id\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        id:\n" +
+                "          type: integer\n" +
+                "          format: int64\n" +
+                "        firstName:\n" +
+                "          type: string\n" +
+                "        lastName:\n" +
+                "          type: string\n" +
+                "          nullable: true\n" +
+                "        address:\n" +
+                "          required:\n" +
+                "          - address2\n" +
+                "          type: object\n" +
+                "          properties:\n" +
+                "            street:\n" +
+                "              type: string\n" +
+                "            city:\n" +
+                "              type: string\n" +
+                "              nullable: true\n" +
+                "            address2:\n" +
+                "              type: string\n" +
+                "        department:\n" +
+                "          required:\n" +
+                "          - address\n" +
+                "          - id\n" +
+                "          type: object\n" +
+                "          properties:\n" +
+                "            id:\n" +
+                "              type: integer\n" +
+                "              format: int64\n" +
+                "            address:\n" +
+                "              required:\n" +
+                "              - address2\n" +
+                "              type: object\n" +
+                "              properties:\n" +
+                "                street:\n" +
+                "                  type: string\n" +
+                "                city:\n" +
+                "                  type: string\n" +
+                "                  nullable: true\n" +
+                "                address2:\n" +
+                "                  type: string\n";
+        SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
         ModelConverters.reset();
     }
 
