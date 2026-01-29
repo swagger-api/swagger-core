@@ -31,15 +31,7 @@ import com.fasterxml.jackson.databind.util.Annotations;
 import io.swagger.v3.core.converter.AnnotatedType;
 import io.swagger.v3.core.converter.ModelConverter;
 import io.swagger.v3.core.converter.ModelConverterContext;
-import io.swagger.v3.core.util.AnnotationsUtils;
-import io.swagger.v3.core.util.Configuration;
-import io.swagger.v3.core.util.Constants;
-import io.swagger.v3.core.util.Json;
-import io.swagger.v3.core.util.ObjectMapperFactory;
-import io.swagger.v3.core.util.ReferenceTypeUtils;
-import io.swagger.v3.core.util.PrimitiveType;
-import io.swagger.v3.core.util.ReflectionUtils;
-import io.swagger.v3.core.util.ValidatorProcessor;
+import io.swagger.v3.core.util.*;
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.StringToClassMapItem;
@@ -3585,7 +3577,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
     }
 
     protected boolean isObjectSchema(Schema schema) {
-        return (schema.getTypes() != null && schema.getTypes().contains("object")) || "object".equals(schema.getType()) || (schema.getType() == null && ((schema.getProperties() != null && !schema.getProperties().isEmpty()) || (schema.getPatternProperties() != null && !schema.getPatternProperties().isEmpty())));
+        return SchemaTypeUtils.isObjectSchema(schema);
     }
 
     protected boolean isInferredObjectSchema(Schema schema) {
@@ -3602,15 +3594,15 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
     }
 
     protected boolean isArraySchema(Schema schema) {
-        return "array".equals(schema.getType()) || (schema.getTypes() != null && schema.getTypes().contains("array"));
+        return SchemaTypeUtils.isArraySchema(schema);
     }
 
     protected boolean isStringSchema(Schema schema) {
-        return "string".equals(schema.getType()) || (schema.getTypes() != null && schema.getTypes().contains("string"));
+        return SchemaTypeUtils.isStringSchema(schema);
     }
 
     protected boolean isNumberSchema(Schema schema) {
-        return "number".equals(schema.getType()) || (schema.getTypes() != null && schema.getTypes().contains("number")) || "integer".equals(schema.getType()) || (schema.getTypes() != null && schema.getTypes().contains("integer"));
+        return SchemaTypeUtils.isNumberSchema(schema);
     }
 
     private AnnotatedMember invokeMethod(final BeanDescription beanDesc, String methodName) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
