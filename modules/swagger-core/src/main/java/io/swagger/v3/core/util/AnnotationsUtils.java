@@ -765,15 +765,7 @@ public abstract class AnnotationsUtils {
             schemaObject.setDefault(schema.defaultValue());
         }
         if (StringUtils.isNotBlank(schema.example())) {
-            try {
-                if (openapi31) {
-                    schemaObject.setExample(Json31.mapper().readTree(schema.example()));
-                } else {
-                    schemaObject.setExample(Json.mapper().readTree(schema.example()));
-                }
-            } catch (IOException e) {
-                schemaObject.setExample(schema.example());
-            }
+            setExampleSchema(schema, openapi31, schemaObject);
         }
         if (StringUtils.isNotBlank(schema.format())) {
             schemaObject.setFormat(schema.format());
@@ -890,6 +882,22 @@ public abstract class AnnotationsUtils {
         }
 
         return Optional.of(schemaObject);
+    }
+
+    private static void setExampleSchema(io.swagger.v3.oas.annotations.media.Schema schema, boolean openapi31, Schema schemaObject) {
+        String exampleValue = schema.example().trim();
+        final ObjectMapper mapper = openapi31 ? Json31.mapper() : Json.mapper();
+
+        try {
+            JsonNode node = mapper.readTree(exampleValue);
+            if (node.isObject() || node.isArray()) {
+                schemaObject.setExample(node);
+            } else {
+                schemaObject.setExample(exampleValue);
+            }
+        } catch (IOException ignored) {
+            schemaObject.setExample(exampleValue);
+        }
     }
 
     public static Schema resolveSchemaFromType(Class<?> schemaImplementation, Components components, JsonView jsonViewAnnotation) {
