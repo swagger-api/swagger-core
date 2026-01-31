@@ -3333,8 +3333,13 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         }
 
         if (openapi31 && schemaAnnotation != null) {
-            for (String type : schemaAnnotation.types()) {
-                schema.addType(type);
+            if (schemaAnnotation.types().length > 0) {
+                schema.setTypes(new LinkedHashSet<>(Arrays.asList(schemaAnnotation.types())));
+                if (schemaAnnotation.types().length == 1) {
+                    schema.setType(schemaAnnotation.types()[0]);
+                } else {
+                    schema.setType(null);
+                }
             }
             BigDecimal exclusiveMaximumValue = resolveExclusiveMaximumValue(a, annotations, schemaAnnotation);
             if (exclusiveMaximumValue != null) {
