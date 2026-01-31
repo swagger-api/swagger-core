@@ -37,7 +37,6 @@ public class ModelResolverOAS31Test extends SwaggerTestBase {
                 "        type: number\n" +
                 "    Status:\n" +
                 "      type:\n" +
-                "      - object\n" + 
                 "      - string\n" +
                 "      - number\n";
 

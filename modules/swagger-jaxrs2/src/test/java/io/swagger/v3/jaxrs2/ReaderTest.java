@@ -3505,8 +3505,8 @@ public class ReaderTest {
                 "          exclusiveMaximum: 4\n" +
                 "        foobar:\n" +
                 "          type:\n" +
-                "          - integer\n" +
                 "          - string\n" +
+                "          - integer\n" +
                 "          format: int32\n" +
                 "    Category:\n" +
                 "      type: object\n" +
@@ -3532,7 +3532,6 @@ public class ReaderTest {
                 "          exclusiveMaximum: 2\n" +
                 "        foobar:\n" +
                 "          type:\n" +
-                "          - integer\n" +
                 "          - string\n" +
                 "          - object\n" +
                 "          format: int32\n" +
@@ -3550,7 +3549,6 @@ public class ReaderTest {
                 "          exclusiveMaximum: 2\n" +
                 "        foobar:\n" +
                 "          type:\n" +
-                "          - integer\n" +
                 "          - string\n" +
                 "          - object\n" +
                 "          format: int32\n" +
@@ -3644,7 +3642,6 @@ public class ReaderTest {
                 "          exclusiveMaximum: 2\n" +
                 "        foobar:\n" +
                 "          type:\n" +
-                "          - integer\n" +
                 "          - string\n" +
                 "          - object\n" +
                 "          format: int32\n" +
@@ -4036,7 +4033,6 @@ public class ReaderTest {
                 "            type: number\n" +
                 "        status:\n" +
                 "          type:\n" +
-                "          - object\n" +
                 "          - string\n" +
                 "          - number\n" +
                 "        intValue:\n" +
