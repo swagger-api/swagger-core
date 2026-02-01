@@ -819,7 +819,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 });
 
                 boolean areSiblingsAllowed = AnnotationsUtils.areSiblingsAllowed(resolvedSchemaResolution, openapi31);
-                aType = AnnotationsUtils.addTypeWhenSiblingsAllowed(aType, ctxSchema, areSiblingsAllowed);
+                aType = AnnotationsUtils.addTypeWhenSiblingsAllowed(aType, ctxArraySchema, ctxSchema, areSiblingsAllowed);
                 property = context.resolve(aType);
                 property = clone(property);
                 Schema ctxProperty = null;
