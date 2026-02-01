@@ -9,10 +9,12 @@ import io.swagger.v3.core.resolving.SwaggerTestBase;
 import io.swagger.v3.core.resolving.resources.TestArrayType;
 import io.swagger.v3.core.resolving.resources.TestObject4715;
 import io.swagger.v3.core.resolving.v31.model.AnnotatedArray;
+import io.swagger.v3.core.resolving.v31.model.AnnotatedArrayProperty;
 import io.swagger.v3.core.resolving.v31.model.ModelWithDependentSchema;
 import io.swagger.v3.core.resolving.v31.model.ModelWithOAS31Stuff;
 import io.swagger.v3.oas.models.media.Schema;
 import org.testng.annotations.Test;
+
 import javax.validation.constraints.DecimalMax;
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.Pattern;
@@ -40,6 +42,33 @@ public class ModelResolverOAS31Test extends SwaggerTestBase {
                 "- type: string\n" +
                 "unevaluatedItems:\n" +
                 "  type: number\n");
+    }
+
+    @Test
+    public void testAnnotatedArrayProperty() {
+        final ModelResolver modelResolver = new ModelResolver(mapper()).openapi31(true);
+        final ModelConverterContextImpl context = new ModelConverterContextImpl(modelResolver);
+        io.swagger.v3.oas.models.media.Schema model = context.resolve(new AnnotatedType(AnnotatedArrayProperty.class));
+        SerializationMatchers.assertEqualsToYaml31(model,
+                "type: object\n" +
+                "properties:\n" +
+                "  randomList:\n" +
+                "    type: array\n" +
+                "    contains:\n" +
+                "      type: string\n" +
+                "    description: arraydescription\n" +
+                "    items:\n" +
+                "      type: string\n" +
+                "      description: itemdescription\n" +
+                "      title: itemtitle\n" +
+                "    maxContains: 10\n" +
+                "    minContains: 1\n" +
+                "    prefixItems:\n" +
+                "    - type: string\n" +
+                "      description: prefixdescription\n" +
+                "    title: arraytitle\n" +
+                "    unevaluatedItems:\n" +
+                "      type: number");
     }
 
     @Test

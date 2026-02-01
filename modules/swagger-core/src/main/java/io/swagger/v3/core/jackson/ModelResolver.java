@@ -753,7 +753,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
                 Annotation[] ctxAnnotation31 = null;
                 Schema.SchemaResolution resolvedSchemaResolution = AnnotationsUtils.resolveSchemaResolution(this.schemaResolution, ctxSchema);
-                if (AnnotationsUtils.areSiblingsAllowed(resolvedSchemaResolution, openapi31)) {
+                if (AnnotationsUtils.areSiblingsAllowed(resolvedSchemaResolution, openapi31) && AnnotationsUtils.isSiblingCandidate(propType)) {
                     List<Annotation> ctxAnnotations31List = new ArrayList<>();
                     if (annotations != null) {
                         for (Annotation a : annotations) {
@@ -794,10 +794,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                         .components(annotatedType.getComponents())
                         .propertyName(propName)
                         .resolveEnumAsRef(AnnotationsUtils.computeEnumAsRef(ctxSchema, ctxArraySchema));
-                if (
-                        Schema.SchemaResolution.ALL_OF.equals(resolvedSchemaResolution) ||
-                                Schema.SchemaResolution.ALL_OF_REF.equals(resolvedSchemaResolution) ||
-                                openapi31) {
+                if (AnnotationsUtils.areSiblingsAllowed(resolvedSchemaResolution, openapi31) && AnnotationsUtils.isSiblingCandidate(propType)) {
                     aType.ctxAnnotations(ctxAnnotation31);
                 } else {
                     aType.ctxAnnotations(annotations);
@@ -822,7 +819,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 });
 
                 boolean areSiblingsAllowed = AnnotationsUtils.areSiblingsAllowed(resolvedSchemaResolution, openapi31);
-                aType = AnnotationsUtils.addTypeWhenSiblingsAllowed(aType, ctxSchema, areSiblingsAllowed);
+                aType = AnnotationsUtils.addTypeWhenSiblingsAllowed(aType, ctxArraySchema, ctxSchema, areSiblingsAllowed);
                 property = context.resolve(aType);
                 property = clone(property);
                 Schema ctxProperty = null;
