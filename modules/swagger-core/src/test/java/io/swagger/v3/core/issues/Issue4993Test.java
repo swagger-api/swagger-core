@@ -13,7 +13,14 @@ import java.util.Map;
 
 import static org.testng.Assert.*;
 
-public class Ticket4993Test {
+/**
+ * Reproduces GitHub Issue #4993
+ * @ArraysSchema.schema with an implementation=... property does not correctly include
+ * the implementation Schema in components for OpenAPI 3.1
+ * <p>
+ * {@see https://github.com/swagger-api/swagger-core/issues/4993}
+ */
+public class Issue4993Test {
 
     @Schema(description = "User resource")
     static class User {
