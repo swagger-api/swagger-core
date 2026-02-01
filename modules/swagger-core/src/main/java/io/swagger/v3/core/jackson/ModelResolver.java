@@ -753,7 +753,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
                 Annotation[] ctxAnnotation31 = null;
                 Schema.SchemaResolution resolvedSchemaResolution = AnnotationsUtils.resolveSchemaResolution(this.schemaResolution, ctxSchema);
-                if (AnnotationsUtils.areSiblingsAllowed(resolvedSchemaResolution, openapi31)) {
+                if (AnnotationsUtils.areSiblingsAllowed(resolvedSchemaResolution, openapi31) && AnnotationsUtils.isSiblingCandidate(propType)) {
                     List<Annotation> ctxAnnotations31List = new ArrayList<>();
                     if (annotations != null) {
                         for (Annotation a : annotations) {
@@ -794,7 +794,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                         .components(annotatedType.getComponents())
                         .propertyName(propName)
                         .resolveEnumAsRef(AnnotationsUtils.computeEnumAsRef(ctxSchema, ctxArraySchema));
-                if (AnnotationsUtils.areSiblingsAllowed(resolvedSchemaResolution, openapi31)) {
+                if (AnnotationsUtils.areSiblingsAllowed(resolvedSchemaResolution, openapi31) && AnnotationsUtils.isSiblingCandidate(propType)) {
                     aType.ctxAnnotations(ctxAnnotation31);
                 } else {
                     aType.ctxAnnotations(annotations);

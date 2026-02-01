@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.introspect.Annotated;
+import com.fasterxml.jackson.databind.util.ClassUtil;
 import io.swagger.v3.core.converter.AnnotatedType;
 import io.swagger.v3.core.converter.ModelConverterContext;
 import io.swagger.v3.core.converter.ModelConverters;
@@ -533,9 +534,11 @@ public abstract class AnnotationsUtils {
             arraySchemaObject.setMinContains(arraySchema.minContains());
         }
         if (arraySchema.prefixItems().length > 0) {
+            List<Schema<?>> prefixSchemas = new ArrayList<>();
             for (io.swagger.v3.oas.annotations.media.Schema prefixItem : arraySchema.prefixItems()) {
-                getSchemaFromAnnotation(prefixItem, components, jsonViewAnnotation, openapi31).ifPresent(arraySchemaObject::addPrefixItem);
+                getSchemaFromAnnotation(prefixItem, components, jsonViewAnnotation, openapi31).ifPresent(prefixSchemas::add);
             }
+            arraySchemaObject.prefixItems(prefixSchemas);
         }
 
         if (arraySchema.extensions().length > 0) {
@@ -2947,5 +2950,38 @@ public abstract class AnnotationsUtils {
             }
         }
         return aType;
+    }
+
+    public static boolean isSiblingCandidate(JavaType type) {
+        // Unwrap containers (List<T>, Set<T>, Optional<T>, arrays)
+        if (type.isContainerType()) {
+            return isSiblingCandidate(type.getContentType());
+        }
+
+        Class<?> raw = type.getRawClass();
+
+        // No siblings for primitives
+        if (raw.isPrimitive()) {
+            return false;
+        }
+
+        // No siblings for String, Number, Boolean, etc.
+        if (raw == String.class || Number.class.isAssignableFrom(raw)
+            || raw == Boolean.class || raw == Character.class) {
+            return false;
+        }
+
+        // No siblings for enums
+        if (raw.isEnum()) {
+            return false;
+        }
+
+        // No siblings for JDK types (Map, UUID, Instant, etc.)
+        if (ClassUtil.isJDKClass(raw)) {
+            return false;
+        }
+
+        // At this point, this is likely a POJO
+        return true;
     }
 }

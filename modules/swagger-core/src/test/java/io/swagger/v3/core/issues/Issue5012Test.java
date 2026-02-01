@@ -36,7 +36,7 @@ public class Issue5012Test {
      * in the generated OAS 3.1 schema for array properties.
      */
     @Test
-    public void testArraySchemaPropertiesMissingInOAS31() throws Exception {
+    public void testArraySchemaPropertiesMissingInOAS31() {
         final ModelResolver modelResolver = new ModelResolver(Json31.mapper()).openapi31(true);
         final ModelConverterContextImpl context = new ModelConverterContextImpl(modelResolver);
 
@@ -50,33 +50,29 @@ public class Issue5012Test {
         assertNotNull(namesProperty, "names property should exist");
 
         // Verify array type
-        Set<String> expected = new java.util.HashSet<>(Collections.singleton("array"));
-        assertEquals(namesProperty.getTypes(), expected, "names should be of type array");
+        Set<String> expectedArrayType = new java.util.HashSet<>(Collections.singleton("array"));
+        assertEquals(namesProperty.getTypes(), expectedArrayType, "names should be of type array");
 
         // Verify arraySchema properties
         assertEquals(namesProperty.getDescription(), "collection description",
                 "arraySchema description should be present");
 
         assertEquals(namesProperty.getDeprecated(), Boolean.TRUE,
-                "arraySchema deprecated should be true"); // FAILS - currently null
+                "arraySchema deprecated should be true");
 
         assertEquals(namesProperty.getReadOnly(), Boolean.TRUE,
-                "arraySchema readOnly (from accessMode) should be true"); // FAILS - currently null
+                "arraySchema readOnly (from accessMode) should be true");
 
-        assertNotNull(namesProperty.getExamples(),
-                "arraySchema examples should be present"); // FAILS - currently null
-        assertEquals(namesProperty.getExamples().size(), 1,
-                "arraySchema should have 1 example");
-        assertEquals(namesProperty.getExamples().get(0), "John",
+        assertEquals(namesProperty.getExample(), "John",
                 "arraySchema example should be 'John'");
 
-        // Verify items schema properties (these work correctly)
-        io.swagger.v3.oas.models.media.Schema itemsSchema = (io.swagger.v3.oas.models.media.Schema) namesProperty.getItems();
+        io.swagger.v3.oas.models.media.Schema itemsSchema = namesProperty.getItems();
         assertNotNull(itemsSchema, "items schema should exist");
-        assertEquals(itemsSchema.getType(), "string", "items should be of type string");
+        Set<String> expectedItemTypes = new java.util.HashSet<>(Collections.singleton("string"));
+        assertEquals(itemsSchema.getTypes(), expectedItemTypes, "items should be of type string");
         assertEquals(itemsSchema.getDescription(), "item description",
                 "item description should be present");
-        assertEquals(itemsSchema.getExamples().get(0), "Jason",
+        assertEquals(itemsSchema.getExample(), "Jason",
                 "item example should be 'Jason'");
     }
 
@@ -87,7 +83,7 @@ public class Issue5012Test {
      * confirming this is a regression in OAS 3.1 handling.
      */
     @Test
-    public void testArraySchemaWorksInOAS30() throws Exception {
+    public void testArraySchemaWorksInOAS30() {
         // Use OAS 3.0 mapper instead of 3.1
         final ModelResolver modelResolver = new ModelResolver(io.swagger.v3.core.util.Json.mapper());
         final ModelConverterContextImpl context = new ModelConverterContextImpl(modelResolver);
