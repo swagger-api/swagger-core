@@ -555,11 +555,28 @@ public abstract class AnnotationsUtils {
         }
 
         if (arraySchema.arraySchema() != null) {
-            if (StringUtils.isNotBlank(arraySchema.arraySchema().description())) {
-                arraySchemaObject.setDescription(arraySchema.arraySchema().description());
+            io.swagger.v3.oas.annotations.media.Schema arraySchemaAnnotation  = arraySchema.arraySchema();
+            if (StringUtils.isNotBlank(arraySchemaAnnotation.description())) {
+                arraySchemaObject.setDescription(arraySchemaAnnotation.description());
             }
-            if (StringUtils.isNotBlank(arraySchema.arraySchema().title())) {
-                arraySchemaObject.setTitle(arraySchema.arraySchema().title());
+            if (StringUtils.isNotBlank(arraySchemaAnnotation.title())) {
+                arraySchemaObject.setTitle(arraySchemaAnnotation.title());
+            }
+            if (arraySchemaAnnotation.deprecated()) {
+                arraySchemaObject.deprecated(true);
+            }
+            if (arraySchemaAnnotation.accessMode().equals(io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_ONLY)) {
+                arraySchemaObject.setReadOnly(true);
+                arraySchemaObject.setWriteOnly(null);
+            } else if (arraySchemaAnnotation.accessMode().equals(io.swagger.v3.oas.annotations.media.Schema.AccessMode.WRITE_ONLY)) {
+                arraySchemaObject.setReadOnly(null);
+                arraySchemaObject.setWriteOnly(true);
+            } else if (arraySchemaAnnotation.accessMode().equals(io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE)) {
+                arraySchemaObject.setReadOnly(null);
+                arraySchemaObject.setWriteOnly(null);
+            }
+            if (arraySchemaAnnotation.examples().length > 0) {
+                arraySchemaObject.setExamples(Arrays.asList(arraySchemaAnnotation.examples()));
             }
         }
 
