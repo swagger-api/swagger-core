@@ -794,10 +794,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                         .components(annotatedType.getComponents())
                         .propertyName(propName)
                         .resolveEnumAsRef(AnnotationsUtils.computeEnumAsRef(ctxSchema, ctxArraySchema));
-                if (
-                        Schema.SchemaResolution.ALL_OF.equals(resolvedSchemaResolution) ||
-                                Schema.SchemaResolution.ALL_OF_REF.equals(resolvedSchemaResolution) ||
-                                openapi31) {
+                if (AnnotationsUtils.areSiblingsAllowed(resolvedSchemaResolution, openapi31)) {
                     aType.ctxAnnotations(ctxAnnotation31);
                 } else {
                     aType.ctxAnnotations(annotations);
