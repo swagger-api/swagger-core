@@ -1,0 +1,156 @@
+Issue Number,State,Title,Type,Functional Areas,Priority,Labels,URL
+5045,OPEN,[Feature]: Need since or reason field in @Hidden annotation,Feature,Annotation Processing,Low/Enhancement,Feature,https://github.com/swagger-api/swagger-core/issues/5045
+5043,OPEN,[Bug]: AnnotatedType equality in ModelConverterContextImpl,Bug,Jakarta Migration; Annotation Processing; Validation,Medium,Bug,https://github.com/swagger-api/swagger-core/issues/5043
+5041,CLOSED,"[Feature]: I want to configure the default value of @Schema RequiredMode to other value, than AUTO",Feature,Jakarta Migration; Annotation Processing; Validation,Low/Enhancement,Feature,https://github.com/swagger-api/swagger-core/issues/5041
+5036,OPEN,[Bug]: Example text is truncated when beginning with numbers,Bug,Annotation Processing; Validation; Examples,Medium,Bug,https://github.com/swagger-api/swagger-core/issues/5036
+5035,OPEN,[Bug]: Jakarta @Positive validation is not present in Swagger,Bug,Jakarta Migration; Validation,Medium,Bug,https://github.com/swagger-api/swagger-core/issues/5035
+5032,CLOSED,[Bug]: @NotEmpty and @NotBlank validation annotations ignored when combined with @Schema(requiredMode = ...),Bug,Jakarta Migration; Annotation Processing; Validation,Medium,Bug,https://github.com/swagger-api/swagger-core/issues/5032
+5028,OPEN,[Bug]: Polymorphic types don&#39;t include composite schema reference,Bug,Polymorphic Types; Jackson; Dependencies,Critical/Regression,Bug,https://github.com/swagger-api/swagger-core/issues/5028
+5027,OPEN,"&#34;required&#34; property in Schema.java should be a Set (SortedSet for example), not a List",Other,Validation; Examples,Medium,,https://github.com/swagger-api/swagger-core/issues/5027
+5017,OPEN,[Bug]: OpenAPI 3.1: Enum used in @Schema#propertyNames removed when filtering unreferenced schemas,Bug,Annotation Processing; Examples,Medium,Bug,https://github.com/swagger-api/swagger-core/issues/5017
+5016,OPEN,[Question]: Duplicate schema names don&#39;t throw but are overwritten,Question,Annotation Processing,High,Question,https://github.com/swagger-api/swagger-core/issues/5016
+5014,OPEN,[Question]: How to specify @Schema.examples where each element is an array?,Question,Annotation Processing; Examples,Question,Question,https://github.com/swagger-api/swagger-core/issues/5014
+5013,OPEN,[Bug]: @ArraysSchema applied on a stream property results in object type in OAS 3.1,Bug,Annotation Processing; Dependencies,Medium,Bug,https://github.com/swagger-api/swagger-core/issues/5013
+5012,OPEN,[Bug]: The OAS 3.1 is missing information from the @ArraysSchema.arraySchema,Bug,Annotation Processing; Examples; Dependencies,Medium,Bug,https://github.com/swagger-api/swagger-core/issues/5012
+5011,OPEN,[Feature]: Drop commons-lang3 dependency and replace its usages with core Java,Feature,Dependencies,Low/Enhancement,Feature,https://github.com/swagger-api/swagger-core/issues/5011
+5007,OPEN,[Bug]: kotlin inline classes produce weird field names,Bug,Jakarta Migration; Annotation Processing; Jackson; Kotlin; Dependencies,Medium,Bug,https://github.com/swagger-api/swagger-core/issues/5007
+5003,CLOSED,[Bug]: Regression: AnnotatedType equality change drops polymorphic subtype allOf entries,Bug,Polymorphic Types; Annotation Processing; Examples,Critical/Regression,Bug,https://github.com/swagger-api/swagger-core/issues/5003
+5001,OPEN,[Bug]: Native support for Jakarta @Nullable annotation to generate proper OAS 3.1 nullable types,Bug,Jakarta Migration; Annotation Processing; Validation; Examples; Dependencies,Medium,Bug,https://github.com/swagger-api/swagger-core/issues/5001
+4999,OPEN,[Bug]: Example value starting with a number is parsed incorrectly,Bug,Jakarta Migration; Annotation Processing; Examples,Medium,Bug,https://github.com/swagger-api/swagger-core/issues/4999
+4993,OPEN,[Bug]: Regression: class specified in @ArraySchema.schema.implementation not rendered in schemas,Bug,Annotation Processing; Dependencies,Critical/Regression,Bug,https://github.com/swagger-api/swagger-core/issues/4993
+4991,OPEN,[Feature] Support Jackson 3.x release line,Feature,Jackson,Critical/Regression,Feature,https://github.com/swagger-api/swagger-core/issues/4991
+4984,OPEN,[Question]: Duplicate records if Class and Operation both has @Path param,Question,Jakarta Migration; Annotation Processing; Examples; Dependencies,Question,Question,https://github.com/swagger-api/swagger-core/issues/4984
+4976,OPEN,[Feature]: Reduce Boilerplate in swagger-core Models (Optional Lombok Support or Alternatives),Feature,Other,Low/Enhancement,Feature,https://github.com/swagger-api/swagger-core/issues/4976
+4967,CLOSED,[Bug]: RequiredMode.NOT_REQUIRED is not respected by properties annotated with @NotBlank and @NotEmpty,Bug,Jakarta Migration; Annotation Processing; Validation; Examples,Medium,Bug,https://github.com/swagger-api/swagger-core/issues/4967
+4966,OPEN,[Feature]: Provide a bom module for managing dependencies,Feature,Examples; Dependencies,Low/Enhancement,Feature,https://github.com/swagger-api/swagger-core/issues/4966
+4965,CLOSED,[Bug]: [swagger-core-jakarta] ModelConverterContextImpl does not properly cache AnnotatedType,Bug,Jakarta Migration; Examples,Medium,Bug,https://github.com/swagger-api/swagger-core/issues/4965
+4964,CLOSED,@Schema does&#39;nt work on non-primitive,Other,Annotation Processing; Examples,Medium,,https://github.com/swagger-api/swagger-core/issues/4964
+4963,OPEN,[Bug]: Primitive boxed type schemas used in @ApiResponse content schema implementations are incorrectly cast to string,Bug,Annotation Processing,Medium,Bug,https://github.com/swagger-api/swagger-core/issues/4963
+4960,OPEN,[Bug]: SpecFilter skips the ApiResponse#$ref field,Bug,Annotation Processing; Validation,Medium,Bug,https://github.com/swagger-api/swagger-core/issues/4960
+4959,CLOSED,[Bug]: Superfluous sibling $ref when using oneOf in Schema annotation - OAS 3.1,Bug,Polymorphic Types; Annotation Processing,Medium,Bug,https://github.com/swagger-api/swagger-core/issues/4959
+4952,CLOSED,[Bug]: swagger-jaxrs2-jakarta Exception in Wildfly/JBoss,Bug,Jakarta Migration; Annotation Processing,High,Bug,https://github.com/swagger-api/swagger-core/issues/4952
+4951,OPEN,[Feature]: support for runtime skip properties inside ModelConverter,Feature,Other,Low/Enhancement,Feature,https://github.com/swagger-api/swagger-core/issues/4951
+4941,CLOSED,Autoswagger,Other,Other,Medium,,https://github.com/swagger-api/swagger-core/issues/4941
+4939,OPEN,Integer enum Schema parsing can fail based upon locale,Question,Examples,Question,Question,https://github.com/swagger-api/swagger-core/issues/4939
+4936,CLOSED,[VULNERABILITY] `org.apache.commons:commons-lang3:3.17.0` holds uncontrolled recursion vulnerability,Other,Dependencies,Medium,,https://github.com/swagger-api/swagger-core/issues/4936
+4935,OPEN,Jackson dependency update results in &#34;java 8 date/time type java.time.LocalDateTime not supported by default&#34;,Question,Jakarta Migration; Annotation Processing; Examples; Jackson; Dependencies,Question,Question,https://github.com/swagger-api/swagger-core/issues/4935
+4933,CLOSED,🔥 @RestControllerAdvice Causes /v3/api-docs 500 Error in SpringDoc OpenAPI UI (Fixed with @Hidden on All Methods),Other,Annotation Processing,Medium,,https://github.com/swagger-api/swagger-core/issues/4933
+4932,CLOSED,Using open api 3.1  - Putting  annotation - `@field:Schema(enumAsRef = true)` - on a property does not result in `$ref`,Other,Annotation Processing; Examples; Kotlin; Dependencies,Medium,,https://github.com/swagger-api/swagger-core/issues/4932
+4928,OPEN,Lack of Friendly Support for Parameter Validation Grouping,Other,Jakarta Migration; Annotation Processing; Validation; Examples,Medium,,https://github.com/swagger-api/swagger-core/issues/4928
+4927,CLOSED,@Path annotation is unrecognizable on OpenApiResource class,Other,Jakarta Migration; Annotation Processing,Medium,,https://github.com/swagger-api/swagger-core/issues/4927
+4926,CLOSED,Ordering of various JSONSchema validation constraints changed in generated OpenAPI spec,Other,Validation,Medium,,https://github.com/swagger-api/swagger-core/issues/4926
+4925,CLOSED,swagger-jaxrs2-jakarta not generating spec when wars exploded on Wildfly/JBoss,Other,Jakarta Migration,Medium,,https://github.com/swagger-api/swagger-core/issues/4925
+4924,OPEN,Ability to remove unused definitions from generated YML,Other,Other,Medium,,https://github.com/swagger-api/swagger-core/issues/4924
+4923,OPEN,Custom UUID wrapper class can&#39;t be used anymore after 2.2.28,Other,Annotation Processing; Examples,Medium,,https://github.com/swagger-api/swagger-core/issues/4923
+4910,OPEN,Create an annotation the add at controller level to summarize information regarding failed http responses.,Other,Annotation Processing; Validation; Examples,Critical/Regression,,https://github.com/swagger-api/swagger-core/issues/4910
+4909,OPEN,Custom NotNull annotations stopped working between 2.2.28 and 2.2.29,Other,Jakarta Migration; Annotation Processing; Validation,Critical/Regression,,https://github.com/swagger-api/swagger-core/issues/4909
+4908,OPEN,defaultValue attribute at enum object generate arbitrary json file,Other,Jakarta Migration; Annotation Processing; Examples; Dependencies,Medium,,https://github.com/swagger-api/swagger-core/issues/4908
+4907,CLOSED,Maven plugin generating wrong openapi version on  plugin version 2.2.30 and 2.2.32,Other,Jakarta Migration; Dependencies,Medium,,https://github.com/swagger-api/swagger-core/issues/4907
+4906,OPEN,java.lang.Object converted to json object (map) type,Other,Other,High,,https://github.com/swagger-api/swagger-core/issues/4906
+4905,OPEN,CustomResolver&#39;s Results get overwritten by default ModelResolver,Other,Annotation Processing; Jackson,Medium,,https://github.com/swagger-api/swagger-core/issues/4905
+4904,OPEN,java.lang.ClassCastException: class io.swagger.v3.oas.models.media.JsonSchema cannot be cast to class io.swagger.v3.oas.models.media.ComposedSchema,Other,Jackson,High,,https://github.com/swagger-api/swagger-core/issues/4904
+4903,OPEN,jackson module not working in 2.2.30,Other,Jakarta Migration; Jackson,High,,https://github.com/swagger-api/swagger-core/issues/4903
+4887,OPEN,Order of `required` properties,Other,Validation,Medium,,https://github.com/swagger-api/swagger-core/issues/4887
+4886,OPEN,Validation Meta annotations not working,Other,Jakarta Migration; Annotation Processing; Validation; Examples,Medium,,https://github.com/swagger-api/swagger-core/issues/4886
+4882,OPEN,swagger-maven-plugin: OPERATION annotation with multiple TAGS does not correctly generate openapi.json using inheritance in Java,Other,Polymorphic Types; Annotation Processing; Dependencies,Medium,,https://github.com/swagger-api/swagger-core/issues/4882
+4878,CLOSED,[BUG] Model resolution for global @PathParam ignores Open API 3.1 setting,Other,Annotation Processing; Validation; Examples,Medium,,https://github.com/swagger-api/swagger-core/issues/4878
+4877,OPEN,2.2.30 - @NotNull(jakarta.validation.constraints.NotNull) assigned to a group should treat field as mandatory,Other,Jakarta Migration; Validation,Medium,,https://github.com/swagger-api/swagger-core/issues/4877
+4865,CLOSED,Regression in 2.2.29 for Pageable (from spring),Other,Annotation Processing; Validation; Dependencies,Critical/Regression,,https://github.com/swagger-api/swagger-core/issues/4865
+4864,OPEN,generate OpenApi yml file with swagger-maven-plugin and with Java 17 #903,Other,Annotation Processing; Dependencies,Medium,,https://github.com/swagger-api/swagger-core/issues/4864
+4863,OPEN,&#34;Override&#34; example value when extending a class,Other,Annotation Processing; Examples,Medium,,https://github.com/swagger-api/swagger-core/issues/4863
+4862,CLOSED,"2.2.29 do not treat @NotBlank as mandatory, breaking change?",Bug,Jakarta Migration; Annotation Processing; Validation,Critical/Regression,"Bug, P2",https://github.com/swagger-api/swagger-core/issues/4862
+4860,CLOSED,breaking change in ModelResolver (2.2.29) - protected method addRequiredItem,Other,Validation; Examples,Critical/Regression,,https://github.com/swagger-api/swagger-core/issues/4860
+4859,CLOSED,Version 2.2.9 defaults minLength to 1 against the actual Schema,Other,Annotation Processing; Validation; Examples; Dependencies,Medium,,https://github.com/swagger-api/swagger-core/issues/4859
+4858,CLOSED,Copy paste bug in Gradle plugin introduced in 2.2.29,Other,Validation; Dependencies,Medium,,https://github.com/swagger-api/swagger-core/issues/4858
+4854,OPEN,Bootstrapped servlet returns empty JSON as of 2.2.24,Other,Annotation Processing; Examples,High,,https://github.com/swagger-api/swagger-core/issues/4854
+4852,CLOSED,StackOverflowError with recursive data model introduced with version 2.2.28,Other,Jakarta Migration; Polymorphic Types; Annotation Processing; Jackson,Medium,,https://github.com/swagger-api/swagger-core/issues/4852
+4851,OPEN,The example value of the request body in swagger has a &#34;string&#34; value,Other,Annotation Processing; Examples,Medium,,https://github.com/swagger-api/swagger-core/issues/4851
+4850,CLOSED,Extensions no longer enforced to be spec compliant between OpenAPI 3 and OpenAPI 3.1,Bug,Annotation Processing; Examples,Critical/Regression,"Bug, P2",https://github.com/swagger-api/swagger-core/issues/4850
+4849,CLOSED,Incorrect version of jakarta.validation-api 3.1.0 instead of 3.0.2 starting with swagger-core-jakarta 2.2.25,Other,Jakarta Migration; Validation; Examples; Dependencies,Medium,,https://github.com/swagger-api/swagger-core/issues/4849
+4848,OPEN,ModelResolver#resolve ignores TYPE_USE annotations on property types,Other,Annotation Processing; Jackson,Medium,,https://github.com/swagger-api/swagger-core/issues/4848
+4847,OPEN,@Schema annotation on custom string type is ignored when using @JsonValue,Other,Annotation Processing; Jackson,Medium,,https://github.com/swagger-api/swagger-core/issues/4847
+4846,OPEN,Swagger adds extra line breaks in yaml generated from annotated code,Other,Jakarta Migration; Annotation Processing; Examples; Dependencies,Medium,,https://github.com/swagger-api/swagger-core/issues/4846
+4845,CLOSED,Missing property $dynamicRef in Schema model for OpenAPI v3.1,Other,Other,Medium,,https://github.com/swagger-api/swagger-core/issues/4845
+4844,OPEN,swagger-annotations: Add annotations to support x-enum-descriptions and x-enum-varnames,Other,Annotation Processing; Examples,Medium,,https://github.com/swagger-api/swagger-core/issues/4844
+4843,OPEN,OpenApi not generated when resourceClasses used,Other,Other,Medium,,https://github.com/swagger-api/swagger-core/issues/4843
+4842,OPEN,OpenApi doc not beeing generated properly,Other,Jakarta Migration; Annotation Processing; Validation; Examples; Jackson; Dependencies,High,,https://github.com/swagger-api/swagger-core/issues/4842
+4841,OPEN,2.2.27 &amp; 2.2.28: org.gradle.api.internal.DefaultMutationGuard$IllegalMutationException: Project#afterEvaluate(Action) on project &#39;:XX&#39; cannot be executed in the current context.,Bug,Validation; Dependencies,High,"Bug, P1",https://github.com/swagger-api/swagger-core/issues/4841
+4840,OPEN,[Feature] Mark type as deprecated if the class is `@Deprecated`,Feature,Examples,Medium,,https://github.com/swagger-api/swagger-core/issues/4840
+4839,OPEN,[Feature/Bug] Forbid mutliple `@ApiResponse` annotations with the same response code,Other,Annotation Processing,Medium,,https://github.com/swagger-api/swagger-core/issues/4839
+4838,OPEN,Empty default values are ignored,Feature,Annotation Processing; Validation,Low/Enhancement,Feature,https://github.com/swagger-api/swagger-core/issues/4838
+4837,OPEN,Is it possible to convert from OAS 3.0 to OAS 3.1 using this lib?,Other,Other,Medium,,https://github.com/swagger-api/swagger-core/issues/4837
+4836,CLOSED,[Bug] Description for array schema is being ignored when generating OpenAPI 3.1,Bug,Annotation Processing,Medium,,https://github.com/swagger-api/swagger-core/issues/4836
+4835,CLOSED,[Bug] Enum values missing in OpenAPI 3.1 schema,Bug,Annotation Processing,Medium,,https://github.com/swagger-api/swagger-core/issues/4835
+4834,CLOSED,Bump classgraph dependency,Other,Jakarta Migration; Dependencies,High,,https://github.com/swagger-api/swagger-core/issues/4834
+4824,OPEN,Bill of material,Other,Jakarta Migration; Annotation Processing; Dependencies,Medium,,https://github.com/swagger-api/swagger-core/issues/4824
+4822,CLOSED,Duplicate Schema References in oneOf - OAS 3.1,Other,Polymorphic Types; Annotation Processing,Medium,,https://github.com/swagger-api/swagger-core/issues/4822
+4820,OPEN,"@Schema(example=&#34;1234&#34;, type=&#34;string&#34;) interpreted as integer",Other,Annotation Processing; Examples,Medium,,https://github.com/swagger-api/swagger-core/issues/4820
+4819,OPEN,Definition for parent interface not generated,Other,Polymorphic Types; Annotation Processing; Validation; Jackson,Medium,,https://github.com/swagger-api/swagger-core/issues/4819
+4817,CLOSED,RemovingUnreferencedDefinitions functionality ignores schema refs from patternProperties,Other,Other,Medium,,https://github.com/swagger-api/swagger-core/issues/4817
+4813,OPEN,Upgrade to v2.2.27: Cannot change dependencies of dependency configuration &#39;&#39; after it has been included in dependency resolution,Bug,Dependencies,Medium,"Bug, P1",https://github.com/swagger-api/swagger-core/issues/4813
+4812,CLOSED,isRemovingUnreferencedDefinitions removes $ref used in oneOf.,Bug,Polymorphic Types; Annotation Processing; Examples; Kotlin,High,"Bug, P3",https://github.com/swagger-api/swagger-core/issues/4812
+4802,CLOSED,Override description for items in array schema,Bug,Annotation Processing,Medium,"Bug, P3, 3.1 spec support",https://github.com/swagger-api/swagger-core/issues/4802
+4800,CLOSED,BUG @Schema annotation is propagated from a property to the class defined in @Schema#implementation ,Bug,Annotation Processing; Examples,Medium,"Bug, P2, 3.1 spec support",https://github.com/swagger-api/swagger-core/issues/4800
+4798,CLOSED,@DefaultValue value is not cast to the correct type for request parameters,Bug,Annotation Processing; Examples,Medium,"Bug, P2",https://github.com/swagger-api/swagger-core/issues/4798
+4792,CLOSED,BUG @Size annotation is ignored for requestBody parameters of collection type ,Other,Annotation Processing; Examples,Medium,,https://github.com/swagger-api/swagger-core/issues/4792
+4789,OPEN,Classes / enums with same name but different package replace each other,Other,Other,Medium,,https://github.com/swagger-api/swagger-core/issues/4789
+4781,CLOSED,Jackson/@JsonUnwrapped - unwrapping fails when innerModel.$ref not null ,Other,Jackson,Medium,,https://github.com/swagger-api/swagger-core/issues/4781
+4768,CLOSED,Support integer enum values,Other,Jackson,Medium,,https://github.com/swagger-api/swagger-core/issues/4768
+4763,OPEN,Explicit schema type specified on `@Parameter` annotation is always ignored,Other,Jakarta Migration; Annotation Processing; Validation; Dependencies,Medium,,https://github.com/swagger-api/swagger-core/issues/4763
+4753,OPEN,@Schema field-level description ignored when using custom type with $ref #2723,Other,Jakarta Migration; Annotation Processing; Validation; Examples,Medium,,https://github.com/swagger-api/swagger-core/issues/4753
+4744,CLOSED,Avoid caching AnnotationIntrospector to support custom module loading,Other,Annotation Processing; Jackson,Medium,,https://github.com/swagger-api/swagger-core/issues/4744
+4711,OPEN,@Schema is processed without enum when implementation and allowableValues exist at the same time,Other,Jakarta Migration; Annotation Processing; Validation,Medium,,https://github.com/swagger-api/swagger-core/issues/4711
+4696,OPEN,Using @JsonUnwrapped with @Schema(implementation = Something) does not unwrap,Other,Annotation Processing; Jackson,Medium,,https://github.com/swagger-api/swagger-core/issues/4696
+4694,CLOSED,Open api 3.1.0 model resolvers are not used when generating models for constructor parameters of jax-rs resources,Other,Annotation Processing,Medium,,https://github.com/swagger-api/swagger-core/issues/4694
+4689,OPEN,BUG Unable to deserialize OpenAPI Parameter,Other,Validation,Medium,,https://github.com/swagger-api/swagger-core/issues/4689
+4682,OPEN,BUG properties of type Object do not have any type information when generating open api 3.1.0,Bug,Examples; Jackson,Medium,"Bug, P2, pull-request-welcome, 3.1 spec support",https://github.com/swagger-api/swagger-core/issues/4682
+4679,CLOSED,BUG @Schema#implementation not processed on properties when generating open api 3.1.0,Other,Annotation Processing; Examples,Medium,,https://github.com/swagger-api/swagger-core/issues/4679
+4649,OPEN,Generated but not references ResponseEntity*** type in schema if rest-api-class is using spring&#39;s ResponseEntity,Other,Jakarta Migration; Annotation Processing; Validation; Examples; Dependencies,Critical/Regression,,https://github.com/swagger-api/swagger-core/issues/4649
+4625,CLOSED,Why does Schema(description=&#34;foo&#34;) change generated openapi enum type to type: object? ,Other,Polymorphic Types; Annotation Processing,Medium,,https://github.com/swagger-api/swagger-core/issues/4625
+4555,OPEN,Could `@Schema(nullable = true)` work when outputting OpenAPI 3.1.0?,Other,Annotation Processing; Validation,Critical/Regression,,https://github.com/swagger-api/swagger-core/issues/4555
+4506,OPEN,Jackson @JsonFormat doesn&#39;t support Enum type,Other,Jackson; Kotlin,Medium,,https://github.com/swagger-api/swagger-core/issues/4506
+4481,CLOSED,Provide documentation for RequiredMode,Other,Annotation Processing; Validation,Medium,,https://github.com/swagger-api/swagger-core/issues/4481
+4457,CLOSED,Java attribute of type object is incorrectly mapped to an OpenApi property of type object,Other,Polymorphic Types; Annotation Processing; Examples,Medium,,https://github.com/swagger-api/swagger-core/issues/4457
+4404,OPEN,Add support for more java.time objects,Other,Other,Medium,,https://github.com/swagger-api/swagger-core/issues/4404
+4367,CLOSED,Gradle plugin should not hardcode task dependencies,Other,Dependencies,Medium,pull-request-welcome,https://github.com/swagger-api/swagger-core/issues/4367
+4358,OPEN,Incorrect mapping of sub-classes when nested as member of another sub-class,Other,Polymorphic Types; Annotation Processing; Examples,Medium,,https://github.com/swagger-api/swagger-core/issues/4358
+4355,OPEN,@ApiResponse cannot infer parametrised type with Java Generics ,Other,Annotation Processing,Medium,,https://github.com/swagger-api/swagger-core/issues/4355
+4352,OPEN,Inconsistent behaviour for oneOf,Other,Polymorphic Types; Annotation Processing; Examples,Medium,,https://github.com/swagger-api/swagger-core/issues/4352
+4341,CLOSED,Whether an array is required or not should be controlled by `ArraySchema.arraySchema.requiredMode` instead of `ArraySchema.schema.requiredMode`,Other,Annotation Processing; Validation; Examples,Medium,,https://github.com/swagger-api/swagger-core/issues/4341
+4334,CLOSED,Springboot + Jersey 3 + Swagger-core - Nested @Beanparam not rendering correctly,Other,Jakarta Migration; Annotation Processing,Medium,,https://github.com/swagger-api/swagger-core/issues/4334
+4333,CLOSED,CVE-2022-4065 (High) detected in testng-7.3.0.jar,Other,Validation; Dependencies,Medium,,https://github.com/swagger-api/swagger-core/issues/4333
+4332,CLOSED,CVE-2022-1471 (High) detected in snakeyaml-1.33.jar,Other,Jakarta Migration; Validation; Dependencies,Medium,,https://github.com/swagger-api/swagger-core/issues/4332
+4330,OPEN,Missing oneOf sections for polymorphic schema,Other,Polymorphic Types; Annotation Processing,Medium,,https://github.com/swagger-api/swagger-core/issues/4330
+4316,CLOSED,Annotating class with @Schema(additionalProperties = AdditionalPropertiesValue.FALSE) does not produce JSON/YAML with additionalProperties: false,Bug,Annotation Processing; Validation; Examples,High,"Bug, P1",https://github.com/swagger-api/swagger-core/issues/4316
+4296,CLOSED,Why does specifying OpenAPI 3.1.0 remove all &#34;type&#34; properties?,Other,Jakarta Migration; Annotation Processing; Examples,Medium,,https://github.com/swagger-api/swagger-core/issues/4296
+4244,OPEN,Ignore JAX-RS method parameters with specific annotations,Other,Annotation Processing; Examples,Medium,,https://github.com/swagger-api/swagger-core/issues/4244
+4215,CLOSED,Fully qualified names for static nested classes produce semantically incorrect component names with the &#39;$&#39; sign,Other,Validation; Examples,Medium,,https://github.com/swagger-api/swagger-core/issues/4215
+4202,CLOSED,Multipart data (files) not rendered correctly in Swagger UI unless an extra parameter is present,Other,Annotation Processing; Validation,Medium,,https://github.com/swagger-api/swagger-core/issues/4202
+4156,OPEN,Sealed kotlin class with oneOf annotation generates a type: object,Other,Polymorphic Types; Annotation Processing; Jackson; Kotlin,Medium,,https://github.com/swagger-api/swagger-core/issues/4156
+4065,CLOSED,Explode does not work correctly with query parameters,Other,Annotation Processing; Examples,Medium,,https://github.com/swagger-api/swagger-core/issues/4065
+4061,OPEN,@Schema not working for boolean fields in Java,Other,Annotation Processing,Medium,,https://github.com/swagger-api/swagger-core/issues/4061
+4014,CLOSED,Support arbitrary-type schema (schema without a type),Other,Polymorphic Types; Jackson,Medium,,https://github.com/swagger-api/swagger-core/issues/4014
+3973,CLOSED,Invalid schema for nested BeanParam (query) parameters,Other,Examples; Jackson; Dependencies,Medium,,https://github.com/swagger-api/swagger-core/issues/3973
+3900,CLOSED,Schema description of one field overrides descriptions of other fields of same class,Other,Annotation Processing; Examples,Medium,,https://github.com/swagger-api/swagger-core/issues/3900
+3834,CLOSED,[ModelConverters] java.lang.Object is an arbitrary type and should be mapped to an arbitrary type,Other,Polymorphic Types,High,,https://github.com/swagger-api/swagger-core/issues/3834
+3828,CLOSED,swagger-gradle-plugin with multiple configurations,Other,Dependencies,High,,https://github.com/swagger-api/swagger-core/issues/3828
+3818,OPEN,Maps that use enums as keys don&#39;t explicitly declare them in the resulting swagger def.,Other,Annotation Processing; Validation; Examples,Medium,,https://github.com/swagger-api/swagger-core/issues/3818
+3689,OPEN,@ArraySchema is ignored in model property (array of abstract class),Other,Polymorphic Types; Annotation Processing,Medium,,https://github.com/swagger-api/swagger-core/issues/3689
+3677,OPEN,How to prevent oneOf() on supertypes leading to recursion in subtypes?,Other,Polymorphic Types; Annotation Processing; Examples; Jackson,Medium,,https://github.com/swagger-api/swagger-core/issues/3677
+3577,OPEN,[bug] Integer enum support,Other,Other,Medium,,https://github.com/swagger-api/swagger-core/issues/3577
+3567,OPEN,Question: Is there a way to specify allowableValues dynamically?,Other,Polymorphic Types; Annotation Processing; Examples,Medium,,https://github.com/swagger-api/swagger-core/issues/3567
+3556,OPEN,Multiple SecurityRequirements annotations with AND condition,Other,Annotation Processing,Medium,,https://github.com/swagger-api/swagger-core/issues/3556
+3530,OPEN,Getting StackOverflowError on ModelResolver,Other,Annotation Processing,Medium,,https://github.com/swagger-api/swagger-core/issues/3530
+3518,CLOSED,Wrong documentation when nullable property is used in a field that maps to object,Other,Annotation Processing; Validation,Medium,,https://github.com/swagger-api/swagger-core/issues/3518
+3496,OPEN,Swagger does not serializes Generic Objects in API response completely.,Other,Annotation Processing,Medium,,https://github.com/swagger-api/swagger-core/issues/3496
+3411,OPEN,Consider the @JsonSubTypes for generating the discriminator mapping,Feature,Polymorphic Types; Annotation Processing; Validation; Jackson; Dependencies,Low/Enhancement,"Feature, Workaround available, P2, :thumbsup: Top Issue!",https://github.com/swagger-api/swagger-core/issues/3411
+3379,CLOSED,Support of multiple @ApiResponse with the same HTTP code,Other,Annotation Processing; Dependencies,Medium,,https://github.com/swagger-api/swagger-core/issues/3379
+3323,OPEN,Generic Response Types,Feature,Annotation Processing; Validation; Examples,Low/Enhancement,Feature,https://github.com/swagger-api/swagger-core/issues/3323
+3089,OPEN,Can&#39;t reference javax.ws.rs.core.Response.Status enum in @ApiResponse.responseCode,Other,Annotation Processing,Medium,,https://github.com/swagger-api/swagger-core/issues/3089
+3025,OPEN,"openapi.json fails to take into account servlet context path, produces bad spec file",Other,Other,Medium,,https://github.com/swagger-api/swagger-core/issues/3025
+2998,OPEN,ApiImplicitParam and ApiImplicitParams for Swagger 2.X,Other,Annotation Processing,Medium,,https://github.com/swagger-api/swagger-core/issues/2998
+2961,OPEN,Field with first letter lower case not recognized,Other,Other,Medium,,https://github.com/swagger-api/swagger-core/issues/2961
+2844,OPEN,disable global security for particular operation,Other,Annotation Processing,Medium,,https://github.com/swagger-api/swagger-core/issues/2844
+2538,CLOSED,Duplicate model names don&#39;t throw but are overwritten,Other,Annotation Processing; Jackson,Medium,:thumbsup: Top Issue!,https://github.com/swagger-api/swagger-core/issues/2538
+2224,CLOSED,[Deleted],Other,Other,Medium,,https://github.com/swagger-api/swagger-core/issues/2224
+2192,OPEN,Field name is getting generated wrongly if field type is &#34;Boolean&#34; (wrapper class for boolean) instead of primitive &#34;boolean&#34; type,Other,Other,Medium,,https://github.com/swagger-api/swagger-core/issues/2192
