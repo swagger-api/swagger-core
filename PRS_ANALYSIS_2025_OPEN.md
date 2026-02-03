@@ -315,6 +315,40 @@ The table below shows each functional area ranked by its average priority score,
 
 **Recommendation:** Focus review effort on the top-ranked functional areas, starting with their High priority PRs.
 
+## Summary: All Open PRs
+
+This section provides a complete list of all open PRs for quick reference.
+
+| # | PR | Type | Priority | Functional Areas | Author |
+|---|-----|------|----------|------------------|---------|
+| 1 | [#5050](https://github.com/swagger-api/swagger-core/pull/5050) | Other | 🟡 Medium | Other | @Copilot |
+| 2 | [#5049](https://github.com/swagger-api/swagger-core/pull/5049) | Bug Fix | 🟠 High | Examples | @Mattias-Sehlstedt |
+| 3 | [#5048](https://github.com/swagger-api/swagger-core/pull/5048) | Other | 🟠 High | Annotation Processing, Examples | @Mattias-Sehlstedt |
+| 4 | [#5047](https://github.com/swagger-api/swagger-core/pull/5047) | Refactor | 🟠 High | Annotation Processing, Validation, ... | @Mattias-Sehlstedt |
+| 5 | [#5044](https://github.com/swagger-api/swagger-core/pull/5044) | Feature | 🟠 High | Jakarta Migration, Validation | @NaMinhyeok |
+| 6 | [#5037](https://github.com/swagger-api/swagger-core/pull/5037) | Feature | 🟠 High | Validation | @yht0827 |
+| 7 | [#5034](https://github.com/swagger-api/swagger-core/pull/5034) | Bug Fix | 🟠 High | Annotation Processing, OAS 3.1 | @xeulbn |
+| 8 | [#5031](https://github.com/swagger-api/swagger-core/pull/5031) | Feature | 🟠 High | Jackson | @vpelikh |
+| 9 | [#5025](https://github.com/swagger-api/swagger-core/pull/5025) | Feature | 🟠 High | Annotation Processing, Validation | @Olfi01 |
+| 10 | [#5020](https://github.com/swagger-api/swagger-core/pull/5020) | Bug Fix | 🟠 High | SpecFilter | @OllieKosh |
+| 11 | [#5018](https://github.com/swagger-api/swagger-core/pull/5018) | Other | 🟠 High | Jakarta Migration, Annotation Processing, ... | @zdary |
+| 12 | [#5015](https://github.com/swagger-api/swagger-core/pull/5015) | Test | 🟢 Low | Annotation Processing, Validation | @ewaostrowska |
+| 13 | [#4997](https://github.com/swagger-api/swagger-core/pull/4997) | Other | 🟠 High | Annotation Processing, Dependencies | @jobayle |
+| 14 | [#4989](https://github.com/swagger-api/swagger-core/pull/4989) | Bug Fix | 🟠 High | Annotation Processing, OAS 3.1 | @K5qu4r3d |
+| 15 | [#4987](https://github.com/swagger-api/swagger-core/pull/4987) | Other | 🟠 High | Jakarta Migration, Annotation Processing, ... | @kuntal1461 |
+| 16 | [#4986](https://github.com/swagger-api/swagger-core/pull/4986) | Bug Fix | 🟠 High | Jakarta Migration, Annotation Processing, ... | @kuntal1461 |
+| 17 | [#4985](https://github.com/swagger-api/swagger-core/pull/4985) | Other | 🟠 High | Jakarta Migration, Annotation Processing, ... | @weberhofer |
+| 18 | [#4983](https://github.com/swagger-api/swagger-core/pull/4983) | Feature | 🟠 High | Polymorphic Types, Annotation Processing, ... | @PatrickFeiring |
+| 19 | [#4977](https://github.com/swagger-api/swagger-core/pull/4977) | Bug Fix | 🟠 High | Annotation Processing, SpecFilter | @kuntal1461 |
+| 20 | [#4974](https://github.com/swagger-api/swagger-core/pull/4974) | Feature | 🟠 High | Annotation Processing, Validation | @juntae6942 |
+| 21 | [#4962](https://github.com/swagger-api/swagger-core/pull/4962) | Other | 🟠 High | Other | @balamuralipopsera |
+| 22 | [#4961](https://github.com/swagger-api/swagger-core/pull/4961) | Other | 🟠 High | Other | @Vishnu-Opsera |
+| 23 | [#4954](https://github.com/swagger-api/swagger-core/pull/4954) | Bug Fix | 🟠 High | Annotation Processing, OAS 3.1 | @JongminChung |
+| 24 | [#4861](https://github.com/swagger-api/swagger-core/pull/4861) | Other | 🟡 Medium | Annotation Processing, Validation | @altro3 |
+| 25 | [#4821](https://github.com/swagger-api/swagger-core/pull/4821) | Other | 🟡 Medium | Other | @MoellJ |
+
+---
+
 ---
 
 ## Detailed Priority Breakdown by Functional Area
