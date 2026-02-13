@@ -10,6 +10,8 @@ import io.swagger.v3.core.resolving.resources.TestArrayType;
 import io.swagger.v3.core.resolving.resources.TestObject4715;
 import io.swagger.v3.core.resolving.v31.model.AnnotatedArray;
 import io.swagger.v3.core.resolving.v31.model.AnnotatedArrayProperty;
+import io.swagger.v3.core.resolving.v31.model.AnnotatedArrayPropertyWriteOnly;
+import io.swagger.v3.core.resolving.v31.model.AnnotatedArrayPropertyReadWrite;
 import io.swagger.v3.core.resolving.v31.model.ModelWithDependentSchema;
 import io.swagger.v3.core.resolving.v31.model.ModelWithOAS31Stuff;
 import io.swagger.v3.oas.models.media.Schema;
@@ -73,6 +75,51 @@ public class ModelResolverOAS31Test extends SwaggerTestBase {
                 "    title: arraytitle\n" +
                 "    unevaluatedItems:\n" +
                 "      type: number");
+    }
+
+    @Test
+    public void testAnnotatedArrayPropertyWriteOnly() {
+        final ModelResolver modelResolver = new ModelResolver(mapper()).openapi31(true);
+        final ModelConverterContextImpl context = new ModelConverterContextImpl(modelResolver);
+        io.swagger.v3.oas.models.media.Schema model = context.resolve(new AnnotatedType(AnnotatedArrayPropertyWriteOnly.class));
+        SerializationMatchers.assertEqualsToYaml31(model,
+                "type: object\n" +
+                "properties:\n" +
+                "  randomList:\n" +
+                "    type: array\n" +
+                "    description: arraydescription\n" +
+                "    examples:\n" +
+                "    - Jane\n" +
+                "    items:\n" +
+                "      type: string\n" +
+                "      description: itemdescription\n" +
+                "      title: itemtitle\n" +
+                "    maxContains: 5\n" +
+                "    minContains: 1\n" +
+                "    title: arraytitle\n" +
+                "    writeOnly: true");
+    }
+
+    @Test
+    public void testAnnotatedArrayPropertyReadWrite() {
+        final ModelResolver modelResolver = new ModelResolver(mapper()).openapi31(true);
+        final ModelConverterContextImpl context = new ModelConverterContextImpl(modelResolver);
+        io.swagger.v3.oas.models.media.Schema model = context.resolve(new AnnotatedType(AnnotatedArrayPropertyReadWrite.class));
+        SerializationMatchers.assertEqualsToYaml31(model,
+                "type: object\n" +
+                "properties:\n" +
+                "  randomList:\n" +
+                "    type: array\n" +
+                "    description: arraydescription\n" +
+                "    examples:\n" +
+                "    - Bob\n" +
+                "    items:\n" +
+                "      type: string\n" +
+                "      description: itemdescription\n" +
+                "      title: itemtitle\n" +
+                "    maxContains: 8\n" +
+                "    minContains: 2\n" +
+                "    title: arraytitle");
     }
 
     @Test
