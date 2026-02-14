@@ -96,6 +96,7 @@ import io.swagger.v3.jaxrs2.resources.Ticket4850Resource;
 import io.swagger.v3.jaxrs2.resources.Ticket4859Resource;
 import io.swagger.v3.jaxrs2.resources.Ticket4878Resource;
 import io.swagger.v3.jaxrs2.resources.Ticket4879Resource;
+import io.swagger.v3.jaxrs2.resources.Ticket5051Resource;
 import io.swagger.v3.jaxrs2.resources.UploadResource;
 import io.swagger.v3.jaxrs2.resources.UrlEncodedResourceWithEncodings;
 import io.swagger.v3.jaxrs2.resources.UserAnnotationResource;
@@ -5607,5 +5608,23 @@ public class ReaderTest {
                 "email",
                 "Items format should come from schema.format"
         );
+    }
+
+    @Test(description = "response array schema description should not leak into items")
+    public void test5051ResponseArraySchemaDescriptionLeak() {
+        Reader reader = new Reader(new OpenAPI());
+        OpenAPI openAPI = reader.read(Ticket5051Resource.class);
+
+        ApiResponse response = openAPI.getPaths().get("/ticket5051/items").getGet().getResponses().get("201");
+        assertNotNull(response, "201 response should be present");
+
+        io.swagger.v3.oas.models.media.MediaType mediaType = response.getContent().get("application/json");
+        assertNotNull(mediaType, "application/json media type should be present");
+        assertTrue(mediaType.getSchema() instanceof ArraySchema, "response schema should be an array");
+
+        ArraySchema arraySchema = (ArraySchema) mediaType.getSchema();
+        assertEquals(arraySchema.getDescription(), "Array description");
+        assertNotNull(arraySchema.getItems(), "items schema should be present");
+        assertEquals(arraySchema.getItems().getDescription(), "Item description");
     }
 }
