@@ -1,6 +1,7 @@
 package io.swagger.v3.core.converter;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import io.swagger.v3.core.util.PrimitiveType;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.media.Schema;
 
@@ -270,6 +271,19 @@ public class AnnotatedType {
                 .collect(Collectors.toList());
     }
 
+    private Object getSchemaPropertyParentKey() {
+        if (!schemaProperty || parent == null || !(type instanceof Class) || PrimitiveType.fromType((Class<?>) type) == null) {
+            return null;
+        }
+        if (parent.getName() != null && !parent.getName().trim().isEmpty()) {
+            return "name:" + parent.getName();
+        }
+        if (parent.get$ref() != null && !parent.get$ref().trim().isEmpty()) {
+            return "ref:" + parent.get$ref();
+        }
+        return null;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -283,12 +297,14 @@ public class AnnotatedType {
                 Objects.equals(type, that.type) &&
                 Objects.equals(thisAnnotatinons, thatAnnotatinons) &&
                 Objects.equals(jsonViewAnnotation, that.jsonViewAnnotation) &&
-                (!schemaProperty || Objects.equals(propertyName, that.propertyName));
+                (!schemaProperty || Objects.equals(propertyName, that.propertyName)) &&
+                // For schema properties, include a stable parent discriminator (name/ref) in cache identity.
+                Objects.equals(getSchemaPropertyParentKey(), that.getSchemaPropertyParentKey());
     }
 
     @Override
     public int hashCode() {
         List<Annotation> processedAnnotations = getProcessedAnnotations(this.ctxAnnotations);
-        return Objects.hash(type, jsonViewAnnotation, includePropertiesWithoutJSONView, processedAnnotations, schemaProperty, isSubtype, schemaProperty ? propertyName : null);
+        return Objects.hash(type, jsonViewAnnotation, includePropertiesWithoutJSONView, processedAnnotations, schemaProperty, isSubtype, schemaProperty ? propertyName : null, getSchemaPropertyParentKey());
     }
 }
