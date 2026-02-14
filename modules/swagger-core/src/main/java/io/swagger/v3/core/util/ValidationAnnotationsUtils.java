@@ -14,6 +14,10 @@ public class ValidationAnnotationsUtils {
     public static final String JAVAX_NOT_BLANK = "javax.validation.constraints.NotBlank";
     public static final String JAVAX_MIN = "javax.validation.constraints.Min";
     public static final String JAVAX_MAX = "javax.validation.constraints.Max";
+    public static final String JAVAX_POSITIVE = "javax.validation.constraints.Positive";
+    public static final String JAVAX_NEGATIVE = "javax.validation.constraints.Negative";
+    public static final String JAVAX_POSITIVE_OR_ZERO = "javax.validation.constraints.PositiveOrZero";
+    public static final String JAVAX_NEGATIVE_OR_ZERO = "javax.validation.constraints.NegativeOrZero";
     public static final String JAVAX_SIZE = "javax.validation.constraints.Size";
     public static final String JAVAX_DECIMAL_MIN = "javax.validation.constraints.DecimalMin";
     public static final String JAVAX_DECIMAL_MAX = "javax.validation.constraints.DecimalMax";
@@ -87,6 +91,90 @@ public class ValidationAnnotationsUtils {
         if (isNumberSchema(schema)) {
             schema.setMaximum(new BigDecimal(annotation.value()));
             return true;
+        }
+        return false;
+    }
+
+    /**
+     * @param schema     the schema
+     * @param annotation the schema's {@link Positive} annotation
+     * @return whether the schema has been modified or not
+     */
+    public static boolean applyPositiveConstraint(Schema schema, Positive annotation) {
+        if (isNumberSchema(schema)) {
+            BigDecimal minimum = schema.getMinimum();
+            if (minimum == null || minimum.compareTo(BigDecimal.ZERO) < 0) {
+                schema.setMinimum(BigDecimal.ZERO);
+                schema.setExclusiveMinimum(true);
+                return true;
+            }
+            if (minimum.compareTo(BigDecimal.ZERO) == 0 && !Boolean.TRUE.equals(schema.getExclusiveMinimum())) {
+                schema.setExclusiveMinimum(true);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * @param schema     the schema
+     * @param annotation the schema's {@link Negative} annotation
+     * @return whether the schema has been modified or not
+     */
+    public static boolean applyNegativeConstraint(Schema schema, Negative annotation) {
+        if (isNumberSchema(schema)) {
+            BigDecimal maximum = schema.getMaximum();
+            if (maximum == null || maximum.compareTo(BigDecimal.ZERO) > 0) {
+                schema.setMaximum(BigDecimal.ZERO);
+                schema.setExclusiveMaximum(true);
+                return true;
+            }
+            if (maximum.compareTo(BigDecimal.ZERO) == 0 && !Boolean.TRUE.equals(schema.getExclusiveMaximum())) {
+                schema.setExclusiveMaximum(true);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * @param schema     the schema
+     * @param annotation the schema's {@link PositiveOrZero} annotation
+     * @return whether the schema has been modified or not
+     */
+    public static boolean applyPositiveOrZeroConstraint(Schema schema, PositiveOrZero annotation) {
+        if (isNumberSchema(schema)) {
+            BigDecimal minimum = schema.getMinimum();
+            if (minimum == null || minimum.compareTo(BigDecimal.ZERO) < 0) {
+                schema.setMinimum(BigDecimal.ZERO);
+                schema.setExclusiveMinimum(false);
+                return true;
+            }
+            if (minimum.compareTo(BigDecimal.ZERO) == 0 && schema.getExclusiveMinimum() == null) {
+                schema.setExclusiveMinimum(false);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * @param schema     the schema
+     * @param annotation the schema's {@link NegativeOrZero} annotation
+     * @return whether the schema has been modified or not
+     */
+    public static boolean applyNegativeOrZeroConstraint(Schema schema, NegativeOrZero annotation) {
+        if (isNumberSchema(schema)) {
+            BigDecimal maximum = schema.getMaximum();
+            if (maximum == null || maximum.compareTo(BigDecimal.ZERO) > 0) {
+                schema.setMaximum(BigDecimal.ZERO);
+                schema.setExclusiveMaximum(false);
+                return true;
+            }
+            if (maximum.compareTo(BigDecimal.ZERO) == 0 && schema.getExclusiveMaximum() == null) {
+                schema.setExclusiveMaximum(false);
+                return true;
+            }
         }
         return false;
     }

@@ -243,6 +243,102 @@ public class ValidationAnnotationsUtilsTest {
         };
     }
 
+    private Positive createPositiveAnnotation() {
+        return new Positive() {
+            @Override
+            public Class<?>[] groups() {
+                return new Class[0];
+            }
+
+            @Override
+            public String message() {
+                return "";
+            }
+
+            @Override
+            public Class<? extends javax.validation.Payload>[] payload() {
+                return new Class[0];
+            }
+
+            @Override
+            public Class<? extends java.lang.annotation.Annotation> annotationType() {
+                return Positive.class;
+            }
+        };
+    }
+
+    private Negative createNegativeAnnotation() {
+        return new Negative() {
+            @Override
+            public Class<?>[] groups() {
+                return new Class[0];
+            }
+
+            @Override
+            public String message() {
+                return "";
+            }
+
+            @Override
+            public Class<? extends javax.validation.Payload>[] payload() {
+                return new Class[0];
+            }
+
+            @Override
+            public Class<? extends java.lang.annotation.Annotation> annotationType() {
+                return Negative.class;
+            }
+        };
+    }
+
+    private PositiveOrZero createPositiveOrZeroAnnotation() {
+        return new PositiveOrZero() {
+            @Override
+            public Class<?>[] groups() {
+                return new Class[0];
+            }
+
+            @Override
+            public String message() {
+                return "";
+            }
+
+            @Override
+            public Class<? extends javax.validation.Payload>[] payload() {
+                return new Class[0];
+            }
+
+            @Override
+            public Class<? extends java.lang.annotation.Annotation> annotationType() {
+                return PositiveOrZero.class;
+            }
+        };
+    }
+
+    private NegativeOrZero createNegativeOrZeroAnnotation() {
+        return new NegativeOrZero() {
+            @Override
+            public Class<?>[] groups() {
+                return new Class[0];
+            }
+
+            @Override
+            public String message() {
+                return "";
+            }
+
+            @Override
+            public Class<? extends javax.validation.Payload>[] payload() {
+                return new Class[0];
+            }
+
+            @Override
+            public Class<? extends java.lang.annotation.Annotation> annotationType() {
+                return NegativeOrZero.class;
+            }
+        };
+    }
+
 
     @Test
     public void testApplyNotEmptyConstraintOnArraySchema() {
@@ -369,6 +465,130 @@ public class ValidationAnnotationsUtilsTest {
         
         assertFalse(modified);
         assertNull(schema.getMaximum());
+    }
+
+    @Test
+    public void testApplyPositiveConstraintOnNumberSchema() {
+        Schema schema = new NumberSchema();
+        Positive positiveAnnotation = createPositiveAnnotation();
+
+        boolean modified = ValidationAnnotationsUtils.applyPositiveConstraint(schema, positiveAnnotation);
+
+        assertTrue(modified);
+        assertEquals(schema.getMinimum(), BigDecimal.ZERO);
+        assertTrue(schema.getExclusiveMinimum());
+    }
+
+    @Test
+    public void testApplyPositiveConstraintOnStringSchema() {
+        Schema schema = new StringSchema();
+        Positive positiveAnnotation = createPositiveAnnotation();
+
+        boolean modified = ValidationAnnotationsUtils.applyPositiveConstraint(schema, positiveAnnotation);
+
+        assertFalse(modified);
+        assertNull(schema.getMinimum());
+        assertNull(schema.getExclusiveMinimum());
+    }
+
+    @Test
+    public void testApplyPositiveConstraintDoesNotLoosenExistingMinimum() {
+        Schema schema = new NumberSchema();
+        schema.setMinimum(new BigDecimal("5"));
+        schema.setExclusiveMinimum(false);
+
+        boolean modified = ValidationAnnotationsUtils.applyPositiveConstraint(schema, createPositiveAnnotation());
+
+        assertFalse(modified);
+        assertEquals(schema.getMinimum(), new BigDecimal("5"));
+        assertFalse(schema.getExclusiveMinimum());
+    }
+
+    @Test
+    public void testApplyNegativeConstraintOnNumberSchema() {
+        Schema schema = new NumberSchema();
+        Negative negativeAnnotation = createNegativeAnnotation();
+
+        boolean modified = ValidationAnnotationsUtils.applyNegativeConstraint(schema, negativeAnnotation);
+
+        assertTrue(modified);
+        assertEquals(schema.getMaximum(), BigDecimal.ZERO);
+        assertTrue(schema.getExclusiveMaximum());
+    }
+
+    @Test
+    public void testApplyNegativeConstraintOnStringSchema() {
+        Schema schema = new StringSchema();
+        Negative negativeAnnotation = createNegativeAnnotation();
+
+        boolean modified = ValidationAnnotationsUtils.applyNegativeConstraint(schema, negativeAnnotation);
+
+        assertFalse(modified);
+        assertNull(schema.getMaximum());
+        assertNull(schema.getExclusiveMaximum());
+    }
+
+    @Test
+    public void testApplyNegativeConstraintDoesNotLoosenExistingMaximum() {
+        Schema schema = new NumberSchema();
+        schema.setMaximum(new BigDecimal("-5"));
+        schema.setExclusiveMaximum(false);
+
+        boolean modified = ValidationAnnotationsUtils.applyNegativeConstraint(schema, createNegativeAnnotation());
+
+        assertFalse(modified);
+        assertEquals(schema.getMaximum(), new BigDecimal("-5"));
+        assertFalse(schema.getExclusiveMaximum());
+    }
+
+    @Test
+    public void testApplyPositiveOrZeroConstraintOnNumberSchema() {
+        Schema schema = new NumberSchema();
+        PositiveOrZero positiveOrZeroAnnotation = createPositiveOrZeroAnnotation();
+
+        boolean modified = ValidationAnnotationsUtils.applyPositiveOrZeroConstraint(schema, positiveOrZeroAnnotation);
+
+        assertTrue(modified);
+        assertEquals(schema.getMinimum(), BigDecimal.ZERO);
+        assertFalse(schema.getExclusiveMinimum());
+    }
+
+    @Test
+    public void testApplyPositiveOrZeroConstraintDoesNotLoosenExistingExclusiveMinimum() {
+        Schema schema = new NumberSchema();
+        schema.setMinimum(BigDecimal.ZERO);
+        schema.setExclusiveMinimum(true);
+
+        boolean modified = ValidationAnnotationsUtils.applyPositiveOrZeroConstraint(schema, createPositiveOrZeroAnnotation());
+
+        assertFalse(modified);
+        assertEquals(schema.getMinimum(), BigDecimal.ZERO);
+        assertTrue(schema.getExclusiveMinimum());
+    }
+
+    @Test
+    public void testApplyNegativeOrZeroConstraintOnNumberSchema() {
+        Schema schema = new NumberSchema();
+        NegativeOrZero negativeOrZeroAnnotation = createNegativeOrZeroAnnotation();
+
+        boolean modified = ValidationAnnotationsUtils.applyNegativeOrZeroConstraint(schema, negativeOrZeroAnnotation);
+
+        assertTrue(modified);
+        assertEquals(schema.getMaximum(), BigDecimal.ZERO);
+        assertFalse(schema.getExclusiveMaximum());
+    }
+
+    @Test
+    public void testApplyNegativeOrZeroConstraintDoesNotLoosenExistingExclusiveMaximum() {
+        Schema schema = new NumberSchema();
+        schema.setMaximum(BigDecimal.ZERO);
+        schema.setExclusiveMaximum(true);
+
+        boolean modified = ValidationAnnotationsUtils.applyNegativeOrZeroConstraint(schema, createNegativeOrZeroAnnotation());
+
+        assertFalse(modified);
+        assertEquals(schema.getMaximum(), BigDecimal.ZERO);
+        assertTrue(schema.getExclusiveMaximum());
     }
 
     @Test

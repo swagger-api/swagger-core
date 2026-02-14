@@ -67,10 +67,14 @@ import javax.validation.constraints.DecimalMax;
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.Negative;
+import javax.validation.constraints.NegativeOrZero;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -1872,6 +1876,34 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 modified = ValidationAnnotationsUtils.applyMaxConstraint(property, anno) || modified;
             }
         }
+        if (annos.containsKey(JAVAX_POSITIVE)) {
+            Positive anno = (Positive) annos.get(JAVAX_POSITIVE);
+            boolean apply = checkGroupValidation(anno.groups(), invocationGroups, acceptNoGroups);
+            if (apply) {
+                modified = ValidationAnnotationsUtils.applyPositiveConstraint(property, anno) || modified;
+            }
+        }
+        if (annos.containsKey(JAVAX_NEGATIVE)) {
+            Negative anno = (Negative) annos.get(JAVAX_NEGATIVE);
+            boolean apply = checkGroupValidation(anno.groups(), invocationGroups, acceptNoGroups);
+            if (apply) {
+                modified = ValidationAnnotationsUtils.applyNegativeConstraint(property, anno) || modified;
+            }
+        }
+        if (annos.containsKey(JAVAX_POSITIVE_OR_ZERO)) {
+            PositiveOrZero anno = (PositiveOrZero) annos.get(JAVAX_POSITIVE_OR_ZERO);
+            boolean apply = checkGroupValidation(anno.groups(), invocationGroups, acceptNoGroups);
+            if (apply) {
+                modified = ValidationAnnotationsUtils.applyPositiveOrZeroConstraint(property, anno) || modified;
+            }
+        }
+        if (annos.containsKey(JAVAX_NEGATIVE_OR_ZERO)) {
+            NegativeOrZero anno = (NegativeOrZero) annos.get(JAVAX_NEGATIVE_OR_ZERO);
+            boolean apply = checkGroupValidation(anno.groups(), invocationGroups, acceptNoGroups);
+            if (apply) {
+                modified = ValidationAnnotationsUtils.applyNegativeOrZeroConstraint(property, anno) || modified;
+            }
+        }
         if (annos.containsKey(JAVAX_SIZE)) {
             Size anno = (Size) annos.get(JAVAX_SIZE);
             boolean apply = checkGroupValidation(anno.groups(), invocationGroups, acceptNoGroups);
@@ -1949,6 +1981,22 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         if (annos.containsKey(JAVAX_MAX)) {
             Max max = (Max) annos.get(JAVAX_MAX);
             modified = ValidationAnnotationsUtils.applyMaxConstraint(property, max) || modified;
+        }
+        if (annos.containsKey(JAVAX_POSITIVE)) {
+            Positive positive = (Positive) annos.get(JAVAX_POSITIVE);
+            modified = ValidationAnnotationsUtils.applyPositiveConstraint(property, positive) || modified;
+        }
+        if (annos.containsKey(JAVAX_NEGATIVE)) {
+            Negative negative = (Negative) annos.get(JAVAX_NEGATIVE);
+            modified = ValidationAnnotationsUtils.applyNegativeConstraint(property, negative) || modified;
+        }
+        if (annos.containsKey(JAVAX_POSITIVE_OR_ZERO)) {
+            PositiveOrZero positiveOrZero = (PositiveOrZero) annos.get(JAVAX_POSITIVE_OR_ZERO);
+            modified = ValidationAnnotationsUtils.applyPositiveOrZeroConstraint(property, positiveOrZero) || modified;
+        }
+        if (annos.containsKey(JAVAX_NEGATIVE_OR_ZERO)) {
+            NegativeOrZero negativeOrZero = (NegativeOrZero) annos.get(JAVAX_NEGATIVE_OR_ZERO);
+            modified = ValidationAnnotationsUtils.applyNegativeOrZeroConstraint(property, negativeOrZero) || modified;
         }
         if (annos.containsKey(JAVAX_SIZE)) {
             Size size = (Size) annos.get(JAVAX_SIZE);
