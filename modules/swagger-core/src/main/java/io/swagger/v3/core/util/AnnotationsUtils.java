@@ -550,9 +550,11 @@ public abstract class AnnotationsUtils {
 
         if (arraySchema.schema() != null) {
             if (arraySchema.schema().implementation().equals(Void.class)) {
-                getSchemaFromAnnotation(arraySchema.schema(), components, jsonViewAnnotation, openapi31, arraySchemaObject.getItems()).ifPresent(arraySchemaObject::setItems);
+                getSchemaFromAnnotation(arraySchema.schema(), components, jsonViewAnnotation, openapi31, arraySchemaObject.getItems())
+                        .ifPresent(arraySchemaObject::setItems);
             } else if (processSchemaImplementation) {
-                getSchema(arraySchema.schema(), arraySchema, false, arraySchema.schema().implementation(), components, jsonViewAnnotation, openapi31).ifPresent(arraySchemaObject::setItems);
+                getSchema(arraySchema.schema(), arraySchema, false, arraySchema.schema().implementation(), components, jsonViewAnnotation, openapi31)
+                        .ifPresent(arraySchemaObject::setItems);
             }
         }
 
@@ -1024,11 +1026,7 @@ public abstract class AnnotationsUtils {
         // Schema existingSchemaObject = clone(schemaObject, openapi31);
         Schema existingSchemaObject = schemaObject;
         if (openapi31) {
-            Optional<Schema> reResolvedSchema = getSchemaFromAnnotation(schemaAnnotation, components, jsonViewAnnotation, openapi31, existingSchemaObject);
-            if (reResolvedSchema.isPresent()) {
-                existingSchemaObject = reResolvedSchema.get();
-            }
-            reResolvedSchema = AnnotationsUtils.getArraySchema(arrayAnnotation, components, null, openapi31, existingSchemaObject);
+            Optional<Schema> reResolvedSchema = resolveSiblings(existingSchemaObject, components, jsonViewAnnotation, openapi31, schemaAnnotation, arrayAnnotation);
             if (reResolvedSchema.isPresent()) {
                 existingSchemaObject = reResolvedSchema.get();
             }
@@ -1038,6 +1036,29 @@ public abstract class AnnotationsUtils {
             existingSchemaObject.setType("string");
         }
         return existingSchemaObject;
+    }
+
+    private static Optional<Schema> resolveSiblings(Schema existingSchemaObject,
+                                                    Components components,
+                                                    JsonView jsonViewAnnotation,
+                                                    boolean openapi31,
+                                                    io.swagger.v3.oas.annotations.media.Schema schemaAnnotation,
+                                                    io.swagger.v3.oas.annotations.media.ArraySchema arrayAnnotation) {
+        Optional<Schema> reResolvedSchema;
+        reResolvedSchema = getSchemaFromAnnotation(schemaAnnotation, components, jsonViewAnnotation, openapi31, existingSchemaObject);
+        // Return the reResolvedSchema if the schemaAnnotation has incurred differences
+        if (reResolvedSchema.isPresent() && !reResolvedSchema.get().equals(existingSchemaObject)) {
+            return reResolvedSchema;
+        }
+        // If there were no changes based upon the schemaAnnotation, check the arrayAnnotation's schema
+        if (arrayAnnotation != null && arrayAnnotation.schema() != null) {
+            reResolvedSchema = getSchemaFromAnnotation(arrayAnnotation.schema(), components, jsonViewAnnotation, openapi31, existingSchemaObject);
+            if (reResolvedSchema.isPresent()) {
+                return reResolvedSchema;
+            }
+        }
+        // If neither of the schema annotations applied any changes, check the arrayAnnotation
+        return getArraySchema(arrayAnnotation, components, null, openapi31, existingSchemaObject);
     }
 
     public static Optional<Set<Tag>> getTags(io.swagger.v3.oas.annotations.tags.Tag[] tags, boolean skipOnlyName) {

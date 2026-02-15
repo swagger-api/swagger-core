@@ -1,0 +1,22 @@
+openapi: 3.1.0
+paths:
+  /arrayresponseinmethod:
+    get:
+      operationId: arrayResponseWithTypeImplementation
+      responses:
+        default:
+          content:
+            '*/*':
+              schema:
+                type: array
+                description: Array description
+                items:
+                  $ref: "#/components/schemas/PetInfo"
+                  description: Item description
+components:
+  schemas:
+    PetInfo:
+      type: object
+      properties:
+        name:
+          type: string

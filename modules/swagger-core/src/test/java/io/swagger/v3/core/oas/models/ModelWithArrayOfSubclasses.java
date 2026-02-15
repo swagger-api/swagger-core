@@ -11,12 +11,12 @@ public class ModelWithArrayOfSubclasses {
     }
   
     @Schema(
-            discriminatorProperty = "name"
-            , discriminatorMapping = {
-              @DiscriminatorMapping(schema = SubA.class, value = "a") 
-              , @DiscriminatorMapping(schema = SubB.class, value = "b") 
-            }
-            , description = "Stuff"
+            discriminatorProperty = "name",
+            discriminatorMapping = {
+                    @DiscriminatorMapping(schema = SubA.class, value = "a"),
+                    @DiscriminatorMapping(schema = SubB.class, value = "b")
+            },
+            description = "Stuff"
     )
     public class Base {
       
@@ -48,13 +48,13 @@ public class ModelWithArrayOfSubclasses {
         }
 
         @ArraySchema(
-                schema = @Schema(implementation = Base.class)
-                , arraySchema = @Schema(
-                        type = "array"
-                        , description = "Thingy"
-                )
-                , minItems = 0
-                , uniqueItems = true
+                schema = @Schema(implementation = Base.class),
+                arraySchema = @Schema(
+                        type = "array",
+                        description = "Thingy"
+                ),
+                minItems = 0,
+                uniqueItems = true
         )
         public Base[] getBaseArray() {
             return baseArray;
