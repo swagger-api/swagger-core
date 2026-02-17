@@ -33,7 +33,8 @@ The OpenAPI Specification has undergone several revisions since initial creation
 
 Swagger core Version | Release Date | OpenAPI Spec compatibility | Notes | Status
 ------------------------- | ------------ | -------------------------- | ----- | ----
-2.2.42 (**current stable**)| 2026-01-19 | 3.x | [tag v2.2.42](https://github.com/swagger-api/swagger-core/tree/v2.2.42) | Supported
+2.2.43 (**current stable**)| 2026-02-17 | 3.x | [tag v2.2.43](https://github.com/swagger-api/swagger-core/tree/v2.2.43) | Supported
+2.2.42 | 2026-01-19 | 3.x | [tag v2.2.42](https://github.com/swagger-api/swagger-core/tree/v2.2.42) | Supported
 2.2.41 | 2025-11-24 | 3.x | [tag v2.2.41](https://github.com/swagger-api/swagger-core/tree/v2.2.41) | Supported
 2.2.40 | 2025-10-28 | 3.x | [tag v2.2.40](https://github.com/swagger-api/swagger-core/tree/v2.2.40) | Supported
 2.2.39 | 2025-10-13 | 3.x | [tag v2.2.39](https://github.com/swagger-api/swagger-core/tree/v2.2.39) | Supported
