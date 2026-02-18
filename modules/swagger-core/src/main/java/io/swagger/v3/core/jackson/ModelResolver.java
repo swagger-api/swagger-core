@@ -31,15 +31,7 @@ import com.fasterxml.jackson.databind.util.Annotations;
 import io.swagger.v3.core.converter.AnnotatedType;
 import io.swagger.v3.core.converter.ModelConverter;
 import io.swagger.v3.core.converter.ModelConverterContext;
-import io.swagger.v3.core.util.AnnotationsUtils;
-import io.swagger.v3.core.util.Configuration;
-import io.swagger.v3.core.util.Constants;
-import io.swagger.v3.core.util.Json;
-import io.swagger.v3.core.util.ObjectMapperFactory;
-import io.swagger.v3.core.util.ReferenceTypeUtils;
-import io.swagger.v3.core.util.PrimitiveType;
-import io.swagger.v3.core.util.ReflectionUtils;
-import io.swagger.v3.core.util.ValidatorProcessor;
+import io.swagger.v3.core.util.*;
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.StringToClassMapItem;
@@ -115,6 +107,7 @@ import java.util.stream.Stream;
 
 import static io.swagger.v3.core.jackson.JAXBAnnotationsHelper.JAXB_DEFAULT;
 import static io.swagger.v3.core.util.RefUtils.constructRef;
+import static io.swagger.v3.core.util.ValidationAnnotationsUtils.*;
 
 public class ModelResolver extends AbstractModelConverter implements ModelConverter {
 
@@ -1825,8 +1818,8 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         }
         boolean acceptNoGroups = !strategy.equals(Configuration.GroupsValidationStrategy.NEVER_IF_NO_CONTEXT);
         // if we get here, validate only if groups match.
-        if (parent != null && annos.containsKey("javax.validation.constraints.NotNull") && applyNotNullAnnotations) {
-            NotNull anno = (NotNull) annos.get("javax.validation.constraints.NotNull");
+        if (parent != null && annos.containsKey(JAVAX_NOT_NULL) && applyNotNullAnnotations) {
+            NotNull anno = (NotNull) annos.get(JAVAX_NOT_NULL);
             if (anno.groups().length == 0 && acceptNoGroups) {
                 ;
                 // no groups, so apply
@@ -1841,131 +1834,77 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             }
         }
 
-        if (annos.containsKey("javax.validation.constraints.NotEmpty")) {
-            NotEmpty anno = (NotEmpty) annos.get("javax.validation.constraints.NotEmpty");
+        if (annos.containsKey(JAVAX_NOT_EMPTY)) {
+            NotEmpty anno = (NotEmpty) annos.get(JAVAX_NOT_EMPTY);
             boolean apply = checkGroupValidation(anno.groups(), invocationGroups, acceptNoGroups);
             if (apply) {
                 io.swagger.v3.oas.annotations.media.Schema ctxSchema = AnnotationsUtils.getSchemaAnnotation(annotations);
                 io.swagger.v3.oas.annotations.media.ArraySchema ctxArraySchema = AnnotationsUtils.getArraySchemaAnnotation(annotations);
-                if (isArraySchema(property)) {
-                    if (ctxArraySchema == null || ctxArraySchema.minItems() == Integer.MAX_VALUE){
-                        property.setMinItems(1);
-                        modified = true;
-                    }
-                } else if (isStringSchema(property)) {
-                    if (ctxSchema == null || ctxSchema.minLength() == 0) {
-                        property.setMinLength(1);
-                        modified = true;
-                    }
-                } else if (isObjectSchema(property)) {
-                    if (ctxSchema == null || ctxSchema.minProperties() == 0) {
-                        property.setMinProperties(1);
-                        modified = true;
-                    }
-                }
+                modified = ValidationAnnotationsUtils.applyNotEmptyConstraint(property, ctxSchema, ctxArraySchema) || modified;
                 if (applyNotNullAnnotations) {
                     modified = updateRequiredItem(parent, property.getName()) || modified;
                 }
             }
         }
 
-        if (annos.containsKey("javax.validation.constraints.NotBlank")) {
-            NotBlank anno = (NotBlank) annos.get("javax.validation.constraints.NotBlank");
+        if (annos.containsKey(JAVAX_NOT_BLANK)) {
+            NotBlank anno = (NotBlank) annos.get(JAVAX_NOT_BLANK);
             boolean apply = checkGroupValidation(anno.groups(), invocationGroups, acceptNoGroups);
             if (apply) {
-                if (isStringSchema(property)) {
-                    io.swagger.v3.oas.annotations.media.Schema ctxSchema = AnnotationsUtils.getSchemaAnnotation(annotations);
-                    if (ctxSchema == null || ctxSchema.minLength() == 0) {
-                        property.setMinLength(1);
-                        modified = true;
-                    }
-                }
+                io.swagger.v3.oas.annotations.media.Schema ctxSchema = AnnotationsUtils.getSchemaAnnotation(annotations);
+                modified = ValidationAnnotationsUtils.applyNotBlankConstraint(property, ctxSchema) || modified;
                 if (applyNotNullAnnotations) {
                     modified = updateRequiredItem(parent, property.getName()) || modified;
                 }
             }
         }
-        if (annos.containsKey("javax.validation.constraints.Min")) {
-            Min anno = (Min) annos.get("javax.validation.constraints.Min");
-            boolean apply = checkGroupValidation(anno.groups(), invocationGroups, acceptNoGroups);
-            if (apply && isNumberSchema(property)) {
-                property.setMinimum(new BigDecimal(anno.value()));
-                modified = true;
-            }
-        }
-        if (annos.containsKey("javax.validation.constraints.Max")) {
-            Max anno = (Max) annos.get("javax.validation.constraints.Max");
-            boolean apply = checkGroupValidation(anno.groups(), invocationGroups, acceptNoGroups);
-            if (apply && isNumberSchema(property)) {
-                property.setMaximum(new BigDecimal(anno.value()));
-                modified = true;
-            }
-        }
-        if (annos.containsKey("javax.validation.constraints.Size")) {
-            Size anno = (Size) annos.get("javax.validation.constraints.Size");
+        if (annos.containsKey(JAVAX_MIN)) {
+            Min anno = (Min) annos.get(JAVAX_MIN);
             boolean apply = checkGroupValidation(anno.groups(), invocationGroups, acceptNoGroups);
             if (apply) {
-                if (isNumberSchema(property)) {
-                    property.setMinimum(new BigDecimal(anno.min()));
-                    property.setMaximum(new BigDecimal(anno.max()));
-                    modified = true;
-                }
-                if (isStringSchema(property)) {
-                    property.setMinLength(Integer.valueOf(anno.min()));
-                    property.setMaxLength(Integer.valueOf(anno.max()));
-                    modified = true;
-                }
-                if (isArraySchema(property)) {
-                    property.setMinItems(anno.min());
-                    property.setMaxItems(anno.max());
-                    modified = true;
-                }
+                modified = ValidationAnnotationsUtils.applyMinConstraint(property, anno) || modified;
             }
         }
-        if (annos.containsKey("javax.validation.constraints.DecimalMin")) {
-            DecimalMin min = (DecimalMin) annos.get("javax.validation.constraints.DecimalMin");
+        if (annos.containsKey(JAVAX_MAX)) {
+            Max anno = (Max) annos.get(JAVAX_MAX);
+            boolean apply = checkGroupValidation(anno.groups(), invocationGroups, acceptNoGroups);
+            if (apply) {
+                modified = ValidationAnnotationsUtils.applyMaxConstraint(property, anno) || modified;
+            }
+        }
+        if (annos.containsKey(JAVAX_SIZE)) {
+            Size anno = (Size) annos.get(JAVAX_SIZE);
+            boolean apply = checkGroupValidation(anno.groups(), invocationGroups, acceptNoGroups);
+            if (apply) {
+                modified = ValidationAnnotationsUtils.applySizeConstraint(property, anno) || modified;
+            }
+        }
+        if (annos.containsKey(JAVAX_DECIMAL_MIN)) {
+            DecimalMin min = (DecimalMin) annos.get(JAVAX_DECIMAL_MIN);
             boolean apply = checkGroupValidation(min.groups(), invocationGroups, acceptNoGroups);
-            if (apply && isNumberSchema(property)) {
-                property.setMinimum(new BigDecimal(min.value()));
-                property.setExclusiveMinimum(!min.inclusive());
-                modified = true;
+            if (apply) {
+                modified = ValidationAnnotationsUtils.applyDecimalMinConstraint(property, min) || modified;
             }
         }
-        if (annos.containsKey("javax.validation.constraints.DecimalMax")) {
-            DecimalMax max = (DecimalMax) annos.get("javax.validation.constraints.DecimalMax");
+        if (annos.containsKey(JAVAX_DECIMAL_MAX)) {
+            DecimalMax max = (DecimalMax) annos.get(JAVAX_DECIMAL_MAX);
             boolean apply = checkGroupValidation(max.groups(), invocationGroups, acceptNoGroups);
-            if (apply && isNumberSchema(property)) {
-                property.setMaximum(new BigDecimal(max.value()));
-                property.setExclusiveMaximum(!max.inclusive());
-                modified = true;
+            if (apply) {
+                modified = ValidationAnnotationsUtils.applyDecimalMaxConstraint(property, max) || modified;
             }
         }
-        if (annos.containsKey("javax.validation.constraints.Pattern")) {
-            Pattern pattern = (Pattern) annos.get("javax.validation.constraints.Pattern");
+        if (annos.containsKey(JAVAX_PATTERN)) {
+            Pattern pattern = (Pattern) annos.get(JAVAX_PATTERN);
             boolean apply = checkGroupValidation(pattern.groups(), invocationGroups, acceptNoGroups);
             if (apply) {
-                if (isStringSchema(property)) {
-                    property.setPattern(pattern.regexp());
-                    modified = true;
-                }
-                if (property.getItems() != null && isStringSchema(property.getItems())) {
-                    property.getItems().setPattern(pattern.regexp());
-                    modified = true;
-                }
+                modified = ValidationAnnotationsUtils.applyPatternConstraint(property, pattern) || modified;
             }
         }
-        if (annos.containsKey("javax.validation.constraints.Email")) {
-            Email email = (Email) annos.get("javax.validation.constraints.Email");
+        if (annos.containsKey(JAVAX_EMAIL)) {
+            Email email = (Email) annos.get(JAVAX_EMAIL);
             boolean apply = checkGroupValidation(email.groups(), invocationGroups, acceptNoGroups);
             if (apply) {
-                if (isStringSchema(property)) {
-                    property.setFormat("email");
-                    modified = true;
-                }
-                if (property.getItems() != null && isStringSchema(property.getItems())) {
-                    property.getItems().setFormat("email");
-                    modified = true;
-                }
+                modified = ValidationAnnotationsUtils.applyEmailConstraint(property, email) || modified;
             }
         }
         if (validatorProcessor != null && validatorProcessor.getMode().equals(ValidatorProcessor.MODE.AFTER)) {
@@ -2003,90 +1942,33 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 modified = updateRequiredItem(parent, property.getName());
             }
         }
-        if (annos.containsKey("javax.validation.constraints.Min")) {
-            if (isNumberSchema(property)) {
-                Min min = (Min) annos.get("javax.validation.constraints.Min");
-                property.setMinimum(new BigDecimal(min.value()));
-                modified = true;
-            }
+        if (annos.containsKey(JAVAX_MIN)) {
+            Min min = (Min) annos.get(JAVAX_MIN);
+            modified = ValidationAnnotationsUtils.applyMinConstraint(property, min) || modified;
         }
-        if (annos.containsKey("javax.validation.constraints.Max")) {
-            if (isNumberSchema(property)) {
-                Max max = (Max) annos.get("javax.validation.constraints.Max");
-                property.setMaximum(new BigDecimal(max.value()));
-                modified = true;
-            }
+        if (annos.containsKey(JAVAX_MAX)) {
+            Max max = (Max) annos.get(JAVAX_MAX);
+            modified = ValidationAnnotationsUtils.applyMaxConstraint(property, max) || modified;
         }
-        if (annos.containsKey("javax.validation.constraints.Size")) {
-            Size size = (Size) annos.get("javax.validation.constraints.Size");
-            if (isNumberSchema(property)) {
-                if (size.min() != 0) {
-                    property.setMinimum(new BigDecimal(size.min()));
-                    modified = true;
-                }
-                if (size.max() != Integer.MAX_VALUE) {
-                    property.setMaximum(new BigDecimal(size.max()));
-                    modified = true;
-                }
-
-            }
-            if (isStringSchema(property)) {
-                if (size.min() != 0) {
-                    property.setMinLength(Integer.valueOf(size.min()));
-                    modified = true;
-                }
-                if (size.max() != Integer.MAX_VALUE) {
-                    property.setMaxLength(Integer.valueOf(size.max()));
-                    modified = true;
-                }
-            }
-            if (isArraySchema(property)) {
-                if (size.min() != 0) {
-                    property.setMinItems(size.min());
-                    modified = true;
-                }
-                if (size.max() != Integer.MAX_VALUE) {
-                    property.setMaxItems(size.max());
-                    modified = true;
-                }
-            }
+        if (annos.containsKey(JAVAX_SIZE)) {
+            Size size = (Size) annos.get(JAVAX_SIZE);
+            modified = ValidationAnnotationsUtils.applySizeConstraint(property, size) || modified;
         }
-        if (annos.containsKey("javax.validation.constraints.DecimalMin")) {
-            DecimalMin min = (DecimalMin) annos.get("javax.validation.constraints.DecimalMin");
-            if (isNumberSchema(property)) {
-                property.setMinimum(new BigDecimal(min.value()));
-                property.setExclusiveMinimum(!min.inclusive());
-                modified = true;
-            }
+        if (annos.containsKey(JAVAX_DECIMAL_MIN)) {
+            DecimalMin min = (DecimalMin) annos.get(JAVAX_DECIMAL_MIN);
+            modified = ValidationAnnotationsUtils.applyDecimalMinConstraint(property, min) || modified;
         }
-        if (annos.containsKey("javax.validation.constraints.DecimalMax")) {
-            DecimalMax max = (DecimalMax) annos.get("javax.validation.constraints.DecimalMax");
-            if (isNumberSchema(property)) {
-                property.setMaximum(new BigDecimal(max.value()));
-                property.setExclusiveMaximum(!max.inclusive());
-                modified = true;
-            }
+        if (annos.containsKey(JAVAX_DECIMAL_MAX)) {
+            DecimalMax max = (DecimalMax) annos.get(JAVAX_DECIMAL_MAX);
+            modified = ValidationAnnotationsUtils.applyDecimalMaxConstraint(property, max) || modified;
         }
-        if (annos.containsKey("javax.validation.constraints.Pattern")) {
-            Pattern pattern = (Pattern) annos.get("javax.validation.constraints.Pattern");
-            if (isStringSchema(property)) {
-                property.setPattern(pattern.regexp());
-                modified = true;
-            }
-            if (property.getItems() != null && isStringSchema(property.getItems())) {
-                property.getItems().setPattern(pattern.regexp());
-                modified = true;
-            }
+        if (annos.containsKey(JAVAX_PATTERN)) {
+            Pattern pattern = (Pattern) annos.get(JAVAX_PATTERN);
+            modified = ValidationAnnotationsUtils.applyPatternConstraint(property, pattern) || modified;
         }
-        if (annos.containsKey("javax.validation.constraints.Email")) {
-            if (isStringSchema(property)) {
-                property.setFormat("email");
-                modified = true;
-            }
-            if (property.getItems() != null && isStringSchema(property.getItems())) {
-                property.getItems().setFormat("email");
-                modified = true;
-            }
+        if (annos.containsKey(JAVAX_EMAIL)) {
+            Email pattern = (Email) annos.get(JAVAX_EMAIL);
+            modified = ValidationAnnotationsUtils.applyEmailConstraint(property, pattern) || modified;
         }
         return modified;
     }
@@ -3590,7 +3472,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
     }
 
     protected boolean isObjectSchema(Schema schema) {
-        return (schema.getTypes() != null && schema.getTypes().contains("object")) || "object".equals(schema.getType()) || (schema.getType() == null && ((schema.getProperties() != null && !schema.getProperties().isEmpty()) || (schema.getPatternProperties() != null && !schema.getPatternProperties().isEmpty())));
+        return SchemaTypeUtils.isObjectSchema(schema);
     }
 
     protected boolean isInferredObjectSchema(Schema schema) {
@@ -3607,15 +3489,15 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
     }
 
     protected boolean isArraySchema(Schema schema) {
-        return "array".equals(schema.getType()) || (schema.getTypes() != null && schema.getTypes().contains("array"));
+        return SchemaTypeUtils.isArraySchema(schema);
     }
 
     protected boolean isStringSchema(Schema schema) {
-        return "string".equals(schema.getType()) || (schema.getTypes() != null && schema.getTypes().contains("string"));
+        return SchemaTypeUtils.isStringSchema(schema);
     }
 
     protected boolean isNumberSchema(Schema schema) {
-        return "number".equals(schema.getType()) || (schema.getTypes() != null && schema.getTypes().contains("number")) || "integer".equals(schema.getType()) || (schema.getTypes() != null && schema.getTypes().contains("integer"));
+        return SchemaTypeUtils.isNumberSchema(schema);
     }
 
     private AnnotatedMember invokeMethod(final BeanDescription beanDesc, String methodName) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
