@@ -1,5 +1,6 @@
 package io.swagger.v3.core.jackson;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -1426,7 +1427,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         if (propertiesToIgnore.contains(propName)) {
             return true;
         }
-        if (member.hasAnnotation(JsonIgnore.class) && member.getAnnotation(JsonIgnore.class).value()) {
+        if ((member.hasAnnotation(JsonIgnore.class) && member.getAnnotation(JsonIgnore.class).value()) || member.hasAnnotation(JsonBackReference.class)) {
             return true;
         }
         if (hasHiddenAnnotation(member)) {
