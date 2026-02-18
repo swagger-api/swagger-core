@@ -38,7 +38,7 @@ public enum PrimitiveType {
         }
         @Override
         public Schema createProperty31() {
-            return new JsonSchema().typesItem("string");
+            return new JsonSchema().typesItem("string").type("string");
         }
     },
     BOOLEAN(Boolean.class, "boolean") {
@@ -48,7 +48,7 @@ public enum PrimitiveType {
         }
         @Override
         public Schema createProperty31() {
-            return new JsonSchema().typesItem("boolean");
+            return new JsonSchema().typesItem("boolean").type("boolean");
         }
     },
     BYTE(Byte.class, "byte") {
@@ -63,7 +63,7 @@ public enum PrimitiveType {
         }
         @Override
         public Schema createProperty31() {
-            return new JsonSchema().typesItem("string").format("byte");
+            return new JsonSchema().typesItem("string").type("string").format("byte");
         }
     },
     BINARY(Byte.class, "binary") {
@@ -78,7 +78,7 @@ public enum PrimitiveType {
         }
         @Override
         public Schema createProperty31() {
-            return new JsonSchema().typesItem("string").format("binary");
+            return new JsonSchema().typesItem("string").type("string").format("binary");
         }
     },
     URI(java.net.URI.class, "uri") {
@@ -88,7 +88,7 @@ public enum PrimitiveType {
         }
         @Override
         public Schema createProperty31() {
-            return new JsonSchema().typesItem("string").format("uri");
+            return new JsonSchema().typesItem("string").type("string").format("uri");
         }
     },
     URL(java.net.URL.class, "url") {
@@ -98,7 +98,7 @@ public enum PrimitiveType {
         }
         @Override
         public Schema createProperty31() {
-            return new JsonSchema().typesItem("string").format("url");
+            return new JsonSchema().typesItem("string").type("string").format("url");
         }
     },
     EMAIL(String.class, "email") {
@@ -108,7 +108,7 @@ public enum PrimitiveType {
         }
         @Override
         public Schema createProperty31() {
-            return new JsonSchema().typesItem("string").format("email");
+            return new JsonSchema().typesItem("string").type("string").format("email");
         }
     },
     UUID(java.util.UUID.class, "uuid") {
@@ -118,7 +118,7 @@ public enum PrimitiveType {
         }
         @Override
         public Schema createProperty31() {
-            return new JsonSchema().typesItem("string").format("uuid");
+            return new JsonSchema().typesItem("string").type("string").format("uuid");
         }
     },
     INT(Integer.class, "integer") {
@@ -128,7 +128,7 @@ public enum PrimitiveType {
         }
         @Override
         public Schema createProperty31() {
-            return new JsonSchema().typesItem("integer").format("int32");
+            return new JsonSchema().typesItem("integer").type("integer").format("int32");
         }
     },
     LONG(Long.class, "long") {
@@ -138,7 +138,7 @@ public enum PrimitiveType {
         }
         @Override
         public Schema createProperty31() {
-            return new JsonSchema().typesItem("integer").format("int64");
+            return new JsonSchema().typesItem("integer").type("integer").format("int64");
         }
     },
     FLOAT(Float.class, "float") {
@@ -148,7 +148,7 @@ public enum PrimitiveType {
         }
         @Override
         public Schema createProperty31() {
-            return new JsonSchema().typesItem("number").format("float");
+            return new JsonSchema().typesItem("number").type("number").format("float");
         }
     },
     DOUBLE(Double.class, "double") {
@@ -158,7 +158,7 @@ public enum PrimitiveType {
         }
         @Override
         public Schema createProperty31() {
-            return new JsonSchema().typesItem("number").format("double");
+            return new JsonSchema().typesItem("number").type("number").format("double");
         }
     },
     INTEGER(java.math.BigInteger.class) {
@@ -168,7 +168,7 @@ public enum PrimitiveType {
         }
         @Override
         public Schema createProperty31() {
-            return new JsonSchema().typesItem("integer");
+            return new JsonSchema().typesItem("integer").type("integer");
         }
     },
     DECIMAL(java.math.BigDecimal.class, "number") {
@@ -178,7 +178,7 @@ public enum PrimitiveType {
         }
         @Override
         public Schema createProperty31() {
-            return new JsonSchema().typesItem("number");
+            return new JsonSchema().typesItem("number").type("number");
         }
     },
     NUMBER(Number.class, "number") {
@@ -188,7 +188,7 @@ public enum PrimitiveType {
         }
         @Override
         public Schema createProperty31() {
-            return new JsonSchema().typesItem("number");
+            return new JsonSchema().typesItem("number").type("number");
         }
     },
     DATE(DateStub.class, "date") {
@@ -198,7 +198,7 @@ public enum PrimitiveType {
         }
         @Override
         public Schema createProperty31() {
-            return new JsonSchema().typesItem("string").format("date");
+            return new JsonSchema().typesItem("object").type("object").format("date");
         }
     },
     DATE_TIME(java.util.Date.class, "date-time") {
@@ -208,7 +208,7 @@ public enum PrimitiveType {
         }
         @Override
         public Schema createProperty31() {
-            return new JsonSchema().typesItem("string").format("date-time");
+            return new JsonSchema().typesItem("object").type("object").format("date-time");
         }
     },
     PARTIAL_TIME(java.time.LocalTime.class, "partial-time") {
@@ -218,7 +218,7 @@ public enum PrimitiveType {
         }
         @Override
         public Schema createProperty31() {
-            return new JsonSchema().typesItem("string").format("partial-time");
+            return new JsonSchema().typesItem("object").type("object").format("partial-time");
         }
     },
     FILE(java.io.File.class, "file") {
@@ -228,7 +228,7 @@ public enum PrimitiveType {
         }
         @Override
         public Schema createProperty31() {
-            return new JsonSchema().typesItem("string").format("binary");
+            return new JsonSchema().typesItem("string").type("string").format("binary");
         }
     },
     OBJECT(Object.class) {
@@ -239,7 +239,7 @@ public enum PrimitiveType {
         }
         @Override
         public Schema createProperty31() {
-            return new JsonSchema();
+            return new JsonSchema().typesItem("object").type("object");
         }
     };
 
@@ -572,7 +572,7 @@ public enum PrimitiveType {
         }
     }
 
-    private static class DateStub {
+    public static class DateStub {
         private DateStub() {
         }
     }

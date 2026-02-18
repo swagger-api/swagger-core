@@ -40,16 +40,24 @@ paths:
                 - string
                 - number
                 - object
-              if: {}
-              then: {}
-              else: {}
+              if: {
+                type: object
+              }
+              then: {
+                type: object
+              }
+              else: {
+                type: object
+              }
               $anchor: parameter $anchor
               $schema: parameter $schema
               description: User description
               example: User Description
               exclusiveMaximum: 100
               exclusiveMinimum: 1
-              unevaluatedProperties: {}
+              unevaluatedProperties: {
+                type: object
+              }
         required: true
       responses:
         default:
