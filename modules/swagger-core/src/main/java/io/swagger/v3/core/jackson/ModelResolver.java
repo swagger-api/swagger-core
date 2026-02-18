@@ -2412,6 +2412,9 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             if (!hasGetter && !hasField && (hasConstructorParameter || hasSetter)) {
                 return io.swagger.v3.oas.annotations.media.Schema.AccessMode.WRITE_ONLY;
             }
+            if (hasGetter && !hasField && !hasConstructorParameter && !hasSetter) {
+                return io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_ONLY;
+            }
             return null;
         } else {
             switch (access) {
