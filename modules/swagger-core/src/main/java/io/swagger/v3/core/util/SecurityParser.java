@@ -1,6 +1,5 @@
-package io.swagger.v3.jaxrs2;
+package io.swagger.v3.core.util;
 
-import io.swagger.v3.core.util.AnnotationsUtils;
 import io.swagger.v3.oas.annotations.security.OAuthScope;
 import io.swagger.v3.oas.models.security.OAuthFlow;
 import io.swagger.v3.oas.models.security.OAuthFlows;
