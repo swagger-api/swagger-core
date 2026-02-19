@@ -3505,8 +3505,8 @@ public class ReaderTest {
                 "          exclusiveMaximum: 4\n" +
                 "        foobar:\n" +
                 "          type:\n" +
-                "          - integer\n" +
                 "          - string\n" +
+                "          - integer\n" +
                 "          format: int32\n" +
                 "    Category:\n" +
                 "      type: object\n" +
@@ -3532,7 +3532,6 @@ public class ReaderTest {
                 "          exclusiveMaximum: 2\n" +
                 "        foobar:\n" +
                 "          type:\n" +
-                "          - integer\n" +
                 "          - string\n" +
                 "          - object\n" +
                 "          format: int32\n" +
@@ -3550,7 +3549,6 @@ public class ReaderTest {
                 "          exclusiveMaximum: 2\n" +
                 "        foobar:\n" +
                 "          type:\n" +
-                "          - integer\n" +
                 "          - string\n" +
                 "          - object\n" +
                 "          format: int32\n" +
@@ -3597,6 +3595,7 @@ public class ReaderTest {
                 "        name:\n" +
                 "          type: string\n" +
                 "        annotated:\n" +
+                "          type: object\n" +
                 "          $ref: \"#/components/schemas/Category\"\n" +
                 "          description: child description\n" +
                 "          properties:\n" +
@@ -3643,7 +3642,6 @@ public class ReaderTest {
                 "          exclusiveMaximum: 2\n" +
                 "        foobar:\n" +
                 "          type:\n" +
-                "          - integer\n" +
                 "          - string\n" +
                 "          - object\n" +
                 "          format: int32\n" +
@@ -3651,6 +3649,7 @@ public class ReaderTest {
                 "      type: object\n" +
                 "      properties:\n" +
                 "        annotated:\n" +
+                "          type: object\n" +
                 "          $ref: \"#/components/schemas/SimpleCategory\"\n" +
                 "          description: child description\n" +
                 "          properties:\n" +
@@ -4113,6 +4112,7 @@ public class ReaderTest {
                 "      type: object\n" +
                 "      properties:\n" +
                 "        country:\n" +
+                "          type: object\n" +
                 "          const: United States\n" +
                 "    CreditCard:\n" +
                 "      type: object\n" +
@@ -4123,11 +4123,13 @@ public class ReaderTest {
                 "      type: object\n" +
                 "      properties:\n" +
                 "        postalCode:\n" +
+                "          type: object\n" +
                 "          pattern: \"[0-9]{5}(-[0-9]{4})?\"\n" +
                 "    PostalCodePattern:\n" +
                 "      type: object\n" +
                 "      properties:\n" +
                 "        postalCode:\n" +
+                "          type: object\n" +
                 "          pattern: \"[A-Z][0-9][A-Z] [0-9][A-Z][0-9]\"\n" +
                 "    PropertyNamesPattern:\n" +
                 "      pattern: \"^[A-Za-z_][A-Za-z0-9_]*$\"\n";

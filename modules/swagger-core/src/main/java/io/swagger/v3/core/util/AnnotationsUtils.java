@@ -678,12 +678,7 @@ public abstract class AnnotationsUtils {
         }
 
         if (schema.types().length > 0) {
-            if (schema.types().length == 1) {
-                schemaObject.setType(schema.types()[0]);
-            }
-            for (String type : schema.types()) {
-                schemaObject.addType(type);
-            }
+            schemaObject.setTypes(new LinkedHashSet<>(Arrays.asList(schema.types())));
         }
         if (StringUtils.isNotBlank(schema.$id())) {
             schemaObject.set$id(schema.$id());

@@ -24,9 +24,11 @@ webhooks:
                 $comment: random comment
                 $id: http://yourdomain.com/schemas/myschema.json
                 dependentSchemas:
-                  pet: {}
+                  pet:
+                    type: object
                 patternProperties:
-                  user: {}
+                  user:
+                    type: object
   webhook1:
     post:
       description: "subscribes a client to updates relevant to the requestor's account,\
