@@ -1782,6 +1782,25 @@ public abstract class AnnotationsUtils {
                schemaObject.setFormat(schemaAnnotation.format());
             }
             if (isArray) {
+                // When array item implementation is provided via @ArraySchema.schema(implementation=...),
+                // merge item-level annotation attributes (description, format, access mode, etc.) into a detached item schema
+                // so shared component schemas are not mutated.
+                if (arrayAnnotation != null && arrayAnnotation.schema() != null) {
+                    Schema itemSchemaObject = clone(schemaObject, openapi31);
+                    Optional<Schema> itemSchemaFromAnnotation = AnnotationsUtils.getSchemaFromAnnotation(
+                            arrayAnnotation.schema(),
+                            components,
+                            jsonViewAnnotation,
+                            openapi31,
+                            itemSchemaObject,
+                            Schema.SchemaResolution.INLINE,
+                            null
+                    );
+                    if (itemSchemaFromAnnotation.isPresent()) {
+                        itemSchemaObject = itemSchemaFromAnnotation.get();
+                    }
+                    schemaObject = itemSchemaObject;
+                }
                 Optional<Schema> arraySchema = AnnotationsUtils.getArraySchema(arrayAnnotation, components, jsonViewAnnotation, openapi31, null);
                 if (arraySchema.isPresent()) {
                     arraySchema.get().setItems(schemaObject);
