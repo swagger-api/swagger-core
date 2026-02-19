@@ -237,6 +237,18 @@ public class ParameterProcessor {
                 if (content.isPresent()) {
                     parameter.setContent(content.get());
                     parameter.setSchema(null);
+                } else {
+                    Class<?> schemaImplementation = p.schema().implementation();
+                    boolean isArray = false;
+                    if (schemaImplementation == Void.class) {
+                        schemaImplementation = p.array().schema().implementation();
+                        if (schemaImplementation != Void.class) {
+                            isArray = true;
+                        }
+                    }
+                    if (p.schema().implementation() != Void.class || isArray) {
+                        AnnotationsUtils.getSchema(p.schema(), p.array(), isArray, schemaImplementation, components, jsonViewAnnotation).ifPresent(parameter::setSchema);
+                    }
                 }
                 setParameterStyle(parameter, p);
                 setParameterExplode(parameter, p);
