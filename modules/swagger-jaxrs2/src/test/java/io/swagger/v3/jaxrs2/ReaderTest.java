@@ -96,6 +96,13 @@ import io.swagger.v3.jaxrs2.resources.Ticket4850Resource;
 import io.swagger.v3.jaxrs2.resources.Ticket4859Resource;
 import io.swagger.v3.jaxrs2.resources.Ticket4878Resource;
 import io.swagger.v3.jaxrs2.resources.Ticket4879Resource;
+import io.swagger.v3.jaxrs2.resources.Ticket5017Resource;
+import io.swagger.v3.jaxrs2.resources.Ticket5017ContentSchemaResource;
+import io.swagger.v3.jaxrs2.resources.Ticket5017UnevaluatedPropertiesResource;
+import io.swagger.v3.jaxrs2.resources.Ticket5017IfThenElseResource;
+import io.swagger.v3.jaxrs2.resources.Ticket5017DependentSchemasResource;
+import io.swagger.v3.jaxrs2.resources.Ticket5017PrefixItemsResource;
+import io.swagger.v3.jaxrs2.resources.Ticket5017ContainsResource;
 import io.swagger.v3.jaxrs2.resources.UploadResource;
 import io.swagger.v3.jaxrs2.resources.UrlEncodedResourceWithEncodings;
 import io.swagger.v3.jaxrs2.resources.UserAnnotationResource;
@@ -5607,5 +5614,334 @@ public class ReaderTest {
                 "email",
                 "Items format should come from schema.format"
         );
+    }
+
+    @Test
+    void testTicket5017() {
+        ModelResolver.enumsAsRef = true;
+        SwaggerConfiguration config = new SwaggerConfiguration().openAPI31(true);
+        Reader reader = new Reader(config);
+        OpenAPI openAPI = reader.read(Ticket5017Resource.class);
+
+        OpenAPISpecFilter filterImpl = new RemoveUnusedSchemasOAS31Filter();
+        SpecFilter f = new SpecFilter();
+        openAPI = f.filter(openAPI, filterImpl, null, null, null);
+
+        String yaml = "openapi: 3.1.0\n" +
+                "paths:\n" +
+                "  /test:\n" +
+                "    get:\n" +
+                "      operationId: myMethod\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          '*/*':\n" +
+                "            schema:\n" +
+                "              $ref: \"#/components/schemas/Example\"\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*': {}\n" +
+                "components:\n" +
+                "  schemas:\n" +
+                "    Example:\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        myMap:\n" +
+                "          type: object\n" +
+                "          additionalProperties:\n" +
+                "            type: string\n" +
+                "          propertyNames:\n" +
+                "            $ref: \"#/components/schemas/MyEnum\"\n" +
+                "    MyEnum:\n" +
+                "      type: string\n" +
+                "      enum:\n" +
+                "      - FOO\n" +
+                "      - BAR\n";
+        SerializationMatchers.assertEqualsToYaml31(openAPI, yaml);
+    }
+
+    @Test
+    void testTicket5017ContentSchema() {
+        ModelResolver.enumsAsRef = true;
+        SwaggerConfiguration config = new SwaggerConfiguration().openAPI31(true);
+        Reader reader = new Reader(config);
+        OpenAPI openAPI = reader.read(Ticket5017ContentSchemaResource.class);
+
+        OpenAPISpecFilter filterImpl = new RemoveUnusedSchemasOAS31Filter();
+        SpecFilter f = new SpecFilter();
+        openAPI = f.filter(openAPI, filterImpl, null, null, null);
+
+        String yaml = "openapi: 3.1.0\n" +
+                "paths:\n" +
+                "  /test:\n" +
+                "    get:\n" +
+                "      operationId: myMethod\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          '*/*':\n" +
+                "            schema:\n" +
+                "              $ref: \"#/components/schemas/Example\"\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*': {}\n" +
+                "components:\n" +
+                "  schemas:\n" +
+                "    Example:\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        myContent:\n" +
+                "          type: string\n" +
+                "          contentSchema:\n" +
+                "            $ref: \"#/components/schemas/MyEnum\"\n" +
+                "    MyEnum:\n" +
+                "      type: string\n" +
+                "      enum:\n" +
+                "      - FOO\n" +
+                "      - BAR\n";
+        SerializationMatchers.assertEqualsToYaml31(openAPI, yaml);
+    }
+
+    @Test
+    void testTicket5017UnevaluatedProperties() {
+        ModelResolver.enumsAsRef = true;
+        SwaggerConfiguration config = new SwaggerConfiguration().openAPI31(true);
+        Reader reader = new Reader(config);
+        OpenAPI openAPI = reader.read(Ticket5017UnevaluatedPropertiesResource.class);
+
+        OpenAPISpecFilter filterImpl = new RemoveUnusedSchemasOAS31Filter();
+        SpecFilter f = new SpecFilter();
+        openAPI = f.filter(openAPI, filterImpl, null, null, null);
+
+        String yaml = "openapi: 3.1.0\n" +
+                "paths:\n" +
+                "  /test:\n" +
+                "    get:\n" +
+                "      operationId: myMethod\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          '*/*':\n" +
+                "            schema:\n" +
+                "              $ref: \"#/components/schemas/Example\"\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*': {}\n" +
+                "components:\n" +
+                "  schemas:\n" +
+                "    Example:\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        myObject:\n" +
+                "          unevaluatedProperties:\n" +
+                "            $ref: \"#/components/schemas/MyEnum\"\n" +
+                "    MyEnum:\n" +
+                "      type: string\n" +
+                "      enum:\n" +
+                "      - FOO\n" +
+                "      - BAR\n";
+        SerializationMatchers.assertEqualsToYaml31(openAPI, yaml);
+    }
+
+    @Test
+    void testTicket5017IfThenElse() {
+        ModelResolver.enumsAsRef = true;
+        SwaggerConfiguration config = new SwaggerConfiguration().openAPI31(true);
+        Reader reader = new Reader(config);
+        OpenAPI openAPI = reader.read(Ticket5017IfThenElseResource.class);
+
+        OpenAPISpecFilter filterImpl = new RemoveUnusedSchemasOAS31Filter();
+        SpecFilter f = new SpecFilter();
+        openAPI = f.filter(openAPI, filterImpl, null, null, null);
+
+        String yaml = "openapi: 3.1.0\n" +
+                "paths:\n" +
+                "  /test:\n" +
+                "    get:\n" +
+                "      operationId: myMethod\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          '*/*':\n" +
+                "            schema:\n" +
+                "              $ref: \"#/components/schemas/Example\"\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*': {}\n" +
+                "components:\n" +
+                "  schemas:\n" +
+                "    ElseSchema:\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        elseValue:\n" +
+                "          type: string\n" +
+                "    Example:\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        myField:\n" +
+                "          type: string\n" +
+                "      if:\n" +
+                "        $ref: \"#/components/schemas/IfCondition\"\n" +
+                "      then:\n" +
+                "        $ref: \"#/components/schemas/ThenSchema\"\n" +
+                "      else:\n" +
+                "        $ref: \"#/components/schemas/ElseSchema\"\n" +
+                "    IfCondition:\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        condition:\n" +
+                "          type: string\n" +
+                "    ThenSchema:\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        thenValue:\n" +
+                "          type: string\n";
+        SerializationMatchers.assertEqualsToYaml31(openAPI, yaml);
+    }
+
+    @Test
+    void testTicket5017DependentSchemas() {
+        ModelResolver.enumsAsRef = true;
+        SwaggerConfiguration config = new SwaggerConfiguration().openAPI31(true);
+        Reader reader = new Reader(config);
+        OpenAPI openAPI = reader.read(Ticket5017DependentSchemasResource.class);
+
+        OpenAPISpecFilter filterImpl = new RemoveUnusedSchemasOAS31Filter();
+        SpecFilter f = new SpecFilter();
+        openAPI = f.filter(openAPI, filterImpl, null, null, null);
+
+        String yaml = "openapi: 3.1.0\n" +
+                "paths:\n" +
+                "  /test:\n" +
+                "    get:\n" +
+                "      operationId: myMethod\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          '*/*':\n" +
+                "            schema:\n" +
+                "              $ref: \"#/components/schemas/Example\"\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*': {}\n" +
+                "components:\n" +
+                "  schemas:\n" +
+                "    Example:\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        myField:\n" +
+                "          type: string\n" +
+                "      dependentSchemas:\n" +
+                "        myKey:\n" +
+                "          $ref: \"#/components/schemas/MyEnum\"\n" +
+                "    MyEnum:\n" +
+                "      type: string\n" +
+                "      enum:\n" +
+                "      - FOO\n" +
+                "      - BAR\n";
+        SerializationMatchers.assertEqualsToYaml31(openAPI, yaml);
+    }
+
+    @Test
+    void testTicket5017PrefixItems() {
+        ModelResolver.enumsAsRef = true;
+        SwaggerConfiguration config = new SwaggerConfiguration().openAPI31(true);
+        Reader reader = new Reader(config);
+        OpenAPI openAPI = reader.read(Ticket5017PrefixItemsResource.class);
+
+        OpenAPISpecFilter filterImpl = new RemoveUnusedSchemasOAS31Filter();
+        SpecFilter f = new SpecFilter();
+        openAPI = f.filter(openAPI, filterImpl, null, null, null);
+
+        String yaml = "openapi: 3.1.0\n" +
+                "paths:\n" +
+                "  /test:\n" +
+                "    get:\n" +
+                "      operationId: myMethod\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          '*/*':\n" +
+                "            schema:\n" +
+                "              $ref: \"#/components/schemas/Example\"\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*': {}\n" +
+                "components:\n" +
+                "  schemas:\n" +
+                "    Example:\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        myList:\n" +
+                "          type: array\n" +
+                "          prefixItems:\n" +
+                "          - $ref: \"#/components/schemas/MyEnum\"\n" +
+                "    MyEnum:\n" +
+                "      type: string\n" +
+                "      enum:\n" +
+                "      - FOO\n" +
+                "      - BAR\n";
+        SerializationMatchers.assertEqualsToYaml31(openAPI, yaml);
+    }
+
+    @Test
+    void testTicket5017Contains() {
+        ModelResolver.enumsAsRef = true;
+        SwaggerConfiguration config = new SwaggerConfiguration().openAPI31(true);
+        Reader reader = new Reader(config);
+        OpenAPI openAPI = reader.read(Ticket5017ContainsResource.class);
+
+        OpenAPISpecFilter filterImpl = new RemoveUnusedSchemasOAS31Filter();
+        SpecFilter f = new SpecFilter();
+        openAPI = f.filter(openAPI, filterImpl, null, null, null);
+
+        String yaml = "openapi: 3.1.0\n" +
+                "paths:\n" +
+                "  /test:\n" +
+                "    get:\n" +
+                "      operationId: myMethod\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          '*/*':\n" +
+                "            schema:\n" +
+                "              $ref: \"#/components/schemas/Example\"\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*': {}\n" +
+                "components:\n" +
+                "  schemas:\n" +
+                "    Example:\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        myList:\n" +
+                "          type: array\n" +
+                "          contains:\n" +
+                "            $ref: \"#/components/schemas/MyEnum\"\n" +
+                "    MyEnum:\n" +
+                "      type: string\n" +
+                "      enum:\n" +
+                "      - FOO\n" +
+                "      - BAR\n";
+        SerializationMatchers.assertEqualsToYaml31(openAPI, yaml);
+    }
+
+    static class RemoveUnusedSchemasOAS31Filter extends AbstractSpecFilter {
+        @Override
+        public boolean isRemovingUnreferencedDefinitions() {
+            return true;
+        }
+
+        @Override
+        public boolean isOpenAPI31Filter() {
+            return true;
+        }
     }
 }
