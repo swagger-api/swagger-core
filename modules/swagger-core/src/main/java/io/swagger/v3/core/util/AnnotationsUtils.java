@@ -824,9 +824,10 @@ public abstract class AnnotationsUtils {
             schemaObject.setMinimum(new BigDecimal(filteredMinimum));
         }
         if (schema.nullable()) {
-            schemaObject.setNullable(schema.nullable());
             if (openapi31) {
                 schemaObject.addType("null");
+            } else {
+                schemaObject.setNullable(true);
             }
         }
         if (StringUtils.isNotBlank(schema.title())) {

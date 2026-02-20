@@ -54,6 +54,10 @@ public class Issue5001Test {
         assertTrue(nullableField.getTypes().contains("string"), "types should include 'string'");
         assertTrue(nullableField.getTypes().contains("null"), "types should include 'null'");
         assertEquals(((Set<?>) nullableField.getTypes()).size(), 2, "Should have exactly 2 types");
+        
+        assertNull(nullableField.getNullable(),
+            "OAS 3.1: @Nullable should NOT set nullable property - only use types array. " +
+            "Setting nullable property is a spec violation in OpenAPI 3.1");
 
         // Non-nullable field should only have string type
         io.swagger.v3.oas.models.media.Schema requiredField =
@@ -112,13 +116,17 @@ public class Issue5001Test {
         assertNotNull(model);
         assertNotNull(model.getProperties());
 
-        // @Schema(nullable=true) should set nullable property and generate types array
+        // @Schema(nullable=true) should generate types array but not set nullable property in OAS 3.1
         io.swagger.v3.oas.models.media.Schema explicitNullable =
                 (io.swagger.v3.oas.models.media.Schema) model.getProperties().get("explicitNullableString");
         assertNotNull(explicitNullable);
-        assertEquals(explicitNullable.getNullable(), Boolean.TRUE, "@Schema(nullable=true) should set nullable");
         assertTrue(explicitNullable.getTypes().contains("string"));
         assertTrue(explicitNullable.getTypes().contains("null"));
+
+        assertNull(explicitNullable.getNullable(),
+            "OAS 3.1 SPEC VIOLATION: @Schema(nullable=true) should NOT set nullable property - " +
+            "only use types array. The nullable keyword doesn't exist in OpenAPI 3.1 spec");
+
 
         // @Schema(types={"string", "null"}) should work
         io.swagger.v3.oas.models.media.Schema explicitTypes =
