@@ -10,7 +10,7 @@ paths:
         content:
           '*/*':
             schema:
-              $ref: '#/components/schemas/User'
+              $ref: "#/components/schemas/User"
         required: true
       responses:
         default:
@@ -45,7 +45,7 @@ paths:
         content:
           '*/*':
             schema:
-              $ref: '#/components/schemas/User'
+              $ref: "#/components/schemas/User"
       responses:
         default:
           description: default response
@@ -79,10 +79,10 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/User'
+              $ref: "#/components/schemas/User"
           application/xml:
             schema:
-              $ref: '#/components/schemas/User'
+              $ref: "#/components/schemas/User"
       responses:
         default:
           description: default response
@@ -97,10 +97,10 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Pet'
+              $ref: "#/components/schemas/Pet"
           application/xml:
             schema:
-              $ref: '#/components/schemas/Pet'
+              $ref: "#/components/schemas/Pet"
       responses:
         default:
           description: default response
@@ -116,10 +116,10 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/User'
+              $ref: "#/components/schemas/User"
           application/xml:
             schema:
-              $ref: '#/components/schemas/User'
+              $ref: "#/components/schemas/User"
       responses:
         default:
           description: default response
@@ -164,7 +164,7 @@ paths:
         content:
           '*/*':
             schema:
-              $ref: '#/components/schemas/User'
+              $ref: "#/components/schemas/User"
         required: true
       responses:
         default:
@@ -224,7 +224,7 @@ components:
           type: integer
           format: int64
         category:
-          $ref: '#/components/schemas/Category'
+          $ref: "#/components/schemas/Category"
         name:
           type: string
         photoUrls:
@@ -240,7 +240,7 @@ components:
           xml:
             wrapped: true
           items:
-            $ref: '#/components/schemas/Tag'
+            $ref: "#/components/schemas/Tag"
         status:
           type: string
           description: pet status in the store

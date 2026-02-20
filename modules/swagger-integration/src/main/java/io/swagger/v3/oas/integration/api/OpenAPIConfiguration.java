@@ -1,6 +1,8 @@
 package io.swagger.v3.oas.integration.api;
 
+import io.swagger.v3.core.util.Configuration;
 import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.media.Schema;
 
 import java.util.Collection;
 import java.util.Map;
@@ -44,4 +46,53 @@ public interface OpenAPIConfiguration {
      */
     Boolean isSortOutput();
 
+    /**
+     * @since 2.1.9
+     */
+    Boolean isAlwaysResolveAppPath();
+
+    /**
+     * @since 2.1.15
+     */
+    Boolean isSkipResolveAppPath();
+
+    /**
+     * @since 2.2.12
+     */
+    Boolean isOpenAPI31();
+
+    /**
+     * @since 2.2.12
+     */
+    Boolean isConvertToOpenAPI31();
+
+    /**
+     * @since 2.2.17
+     */
+    public String getDefaultResponseCode();
+
+    /**
+     * @since 2.2.24
+     */
+    public Schema.SchemaResolution getSchemaResolution();
+
+    /**
+     * @since 2.2.28
+     */
+    public String getOpenAPIVersion();
+
+    /**
+     * @since 2.2.29
+     */
+    public String getValidatorProcessorClass();
+
+    /**
+     * @since 2.2.29
+     */
+    public Configuration.GroupsValidationStrategy getGroupsValidationStrategy();
+
+    /**
+     * @since 2.2.29
+     */
+    public Configuration toConfiguration();
 }

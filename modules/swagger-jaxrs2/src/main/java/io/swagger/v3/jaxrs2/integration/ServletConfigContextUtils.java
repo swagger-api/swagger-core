@@ -32,14 +32,57 @@ public class ServletConfigContextUtils {
     public static final String OPENAPI_CONFIGURATION_SORTOUTPUT_KEY = "openApi.configuration.sortOutput";
 
     /**
+     * @since 2.1.9
+     */
+    public static final String OPENAPI_CONFIGURATION_ALWAYSRESOLVEAPPPATH_KEY = "openApi.configuration.alwaysResolveAppPath";
+
+    /**
+     * @since 2.1.15
+     */
+    public static final String OPENAPI_CONFIGURATION_SKIPRESOLVEAPPPATH_KEY = "openApi.configuration.skipResolveAppPath";
+
+    /**
      * @since 2.0.6
      */
     public static final String OPENAPI_CONFIGURATION_OBJECT_MAPPER_PROCESSOR_KEY = "openApi.configuration.objectMapperProcessorClass";
 
     /**
+     * @since 2.2.17
+     */
+    public static final String OPENAPI_CONFIGURATION_DEFAULT_RESPONSE_CODE_KEY = "openApi.configuration.defaultResponseCode";
+
+    /**
+     * @since 2.2.29
+     */
+    public static final String OPENAPI_CONFIGURATION_GROUPS_VALIDATION_STRATEGY = "openApi.configuration.groupsValidationStrategy";
+
+    /**
+     * @since 2.2.29
+     */
+    public static final String OPENAPI_CONFIGURATION_VALIDATOR_PROCESSOR_CLASS = "openApi.configuration.validatorProcessorClass";
+
+    /**
      * @since 2.0.6
      */
     public static final String OPENAPI_CONFIGURATION_MODEL_CONVERTERS_KEY = "openApi.configuration.modelConverterClasses";
+
+    /**
+     * @since 2.2.0
+     */
+    public static final String OPENAPI_CONFIGURATION_OPENAPI_31_KEY = "openApi.configuration.openAPI31";
+
+    public static final String OPENAPI_CONFIGURATION_CONVERT_TO_OPENAPI_31_KEY = "openApi.configuration.convertToOpenAPI31";
+
+    /**
+     * @since 2.2.24
+     */
+    public static final String OPENAPI_CONFIGURATION_SCHEMA_RESOLUTION_KEY = "openApi.configuration.schemaResolution";
+
+    /**
+     * @since 2.2.28
+     */
+    public static final String OPENAPI_CONFIGURATION_OPENAPI_VERSION_KEY = "openApi.configuration.openAPIVersion";
+
 
     public static Set<String> resolveResourcePackages(ServletConfig servletConfig) {
         if (!isServletConfigAvailable(servletConfig)) {
@@ -116,7 +159,7 @@ public class ServletConfigContextUtils {
         if (StringUtils.isBlank(param)) {
             return null;
         }
-        return Boolean.valueOf(Boolean.parseBoolean(param));
+        return Boolean.parseBoolean(param);
     }
 
     public static Long getLongInitParam(ServletConfig sc, String paramKey) {

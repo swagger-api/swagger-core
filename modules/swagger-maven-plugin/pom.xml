@@ -4,7 +4,7 @@
     <parent>
         <groupId>io.swagger.core.v3</groupId>
         <artifactId>swagger-project</artifactId>
-        <version>2.1.8-SNAPSHOT</version>
+        <version>2.2.44-SNAPSHOT</version>
         <relativePath>../..</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -17,7 +17,7 @@
             <plugin>
                 <groupId>org.codehaus.plexus</groupId>
                 <artifactId>plexus-component-metadata</artifactId>
-                <version>2.0.0</version>
+                <version>2.1.1</version>
                 <executions>
                     <execution>
                         <goals>
@@ -29,7 +29,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-plugin-plugin</artifactId>
-                <version>3.6.0</version>
+                <version>3.7.0</version>
             </plugin>
             <plugin>
                 <groupId>io.swagger.core.v3</groupId>
@@ -88,7 +88,7 @@
         <dependency>
             <groupId>org.apache.maven.plugin-tools</groupId>
             <artifactId>maven-plugin-annotations</artifactId>
-            <version>3.6.0</version>
+            <version>3.15.1</version>
             <scope>provided</scope>
             <exclusions>
                 <exclusion>
@@ -100,7 +100,7 @@
         <dependency>
             <groupId>org.codehaus.plexus</groupId>
             <artifactId>plexus-archiver</artifactId>
-            <version>4.1.0</version>
+            <version>4.10.0</version>
             <scope>test</scope>
             <exclusions>
                 <exclusion>
@@ -140,17 +140,17 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
-            <version>3.7</version>
+            <version>${commons-lang-version}</version>
         </dependency>
         <dependency>
             <groupId>org.codehaus.plexus</groupId>
             <artifactId>plexus-utils</artifactId>
-            <version>3.2.1</version>
+            <version>3.6.0</version>
         </dependency>
         <dependency>
             <groupId>org.codehaus.plexus</groupId>
             <artifactId>plexus-component-annotations</artifactId>
-            <version>2.1.0</version>
+            <version>2.2.0</version>
         </dependency>
         <dependency>
             <groupId>io.swagger.core.v3</groupId>
@@ -214,6 +214,14 @@
                     <groupId>commons-codec</groupId>
                     <artifactId>commons-codec</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>com.github.jknack</groupId>
+                    <artifactId>handlebars-helpers</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.github.jknack</groupId>
+                    <artifactId>handlebars</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -267,13 +275,24 @@
             <artifactId>jakarta.ws.rs-api</artifactId>
             <scope>test</scope>
         </dependency>
-
+        <dependency>
+            <groupId>com.github.jknack</groupId>
+            <artifactId>handlebars-helpers</artifactId>
+            <scope>test</scope>
+            <version>4.4.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.jknack</groupId>
+            <artifactId>handlebars</artifactId>
+            <scope>test</scope>
+            <version>4.4.0</version>
+        </dependency>
     </dependencies>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.version>3.6.3</maven.version>
-        <junit.version>4.13.1</junit.version>
-        <wiremock-jetty-version>9.4.35.v20201120</wiremock-jetty-version>
-        <commons-compress-version>1.20</commons-compress-version>
+        <maven.version>3.9.9</maven.version>
+        <junit.version>4.13.2</junit.version>
+        <wiremock-jetty-version>9.4.57.v20241219</wiremock-jetty-version>
+        <commons-compress-version>1.27.1</commons-compress-version>
     </properties>
 </project>

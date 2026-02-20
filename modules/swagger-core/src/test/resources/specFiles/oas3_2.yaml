@@ -1,4 +1,4 @@
-openapi: 3.0
+openapi: 3.0.0
 servers:
 - url: http://petstore.swagger.io/api
 - url: https://development.gigantic-server.com/api
@@ -49,7 +49,6 @@ info:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
     x-license: license extension
-  version: 1.0.1
 tags:
 - name: pet
   description: Everything about your Pets
@@ -109,7 +108,7 @@ paths:
         content:
           'application/json':
             schema:
-              $ref: '#/components/schemas/Dog'
+              $ref: "#/components/schemas/Dog"
     servers:
     - url: http://petstore.swagger.io/v2
     put:
@@ -127,7 +126,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/VeryComplexType'
+                  $ref: "#/components/schemas/VeryComplexType"
         '404':
           description: Pet not found
         '405':
@@ -549,7 +548,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/User'
+                  $ref: "#/components/schemas/User"
   "/issue-125":
       get:
         parameters: []
@@ -692,7 +691,7 @@ paths:
             schema:
               type: array
               items:
-                $ref: '#/components/schemas/Address'
+                $ref: "#/components/schemas/Address"
         required: true
       responses:
         '200':
@@ -780,7 +779,7 @@ paths:
             schema:
               type: array
               items:
-                $ref: '#/components/schemas/ExtendedAddress'
+                $ref: "#/components/schemas/ExtendedAddress"
         required: false
       responses:
         '200':
@@ -1003,7 +1002,7 @@ components:
       type: object
       x-swagger-router-model: io.swagger.oas.test.models.ExtendedAddress
       allOf:
-        - $ref: '#/components/schemas/Address'
+        - $ref: "#/components/schemas/Address"
         - type: object
           required:
           - gps
@@ -1087,31 +1086,6 @@ components:
         format: int32
       additionalProperties:
         type: integer
-      properties:
-        id:
-          type: integer
-          format: int64
-        petId:
-          type: integer
-          format: int64
-        quantity:
-          type: integer
-          format: int32
-        shipDate:
-          type: string
-          format: date-time
-        status:
-          type: string
-          description: Order Status
-          enum:
-          - placed
-          - approved
-          - delivered
-        complete:
-          type: boolean
-          default: false
-      xml:
-        name: Order
       properties:
         id:
           type: integer
@@ -1221,7 +1195,7 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/ExtendedErrorModel'
+            $ref: "#/components/schemas/ExtendedErrorModel"
   parameters:
     contentParameter:
       in: query
@@ -1229,7 +1203,7 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/ExtendedErrorModel'
+            $ref: "#/components/schemas/ExtendedErrorModel"
       examples:
         cat:
           summary: An example of a cat
@@ -1339,7 +1313,7 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/ExtendedErrorModel'
+            $ref: "#/components/schemas/ExtendedErrorModel"
       examples:
         dog:
           $ref: "#/components/examples/dog"
@@ -1359,7 +1333,7 @@ components:
       '$request.query.heartbeat-url':
         post:
           requestBody:
-            $ref: '#/components/requestBodies/requestBody3'
+            $ref: "#/components/requestBodies/requestBody3"
           responses:
             '200':
               description: Consumer acknowledged the callback
@@ -1367,7 +1341,7 @@ components:
       '$response.body#/failedUrl':
         post:
           requestBody:
-            $ref: '#/components/requestBodies/requestBody3'
+            $ref: "#/components/requestBodies/requestBody3"
           responses:
             '200':
               description: Consumer acknowledged the callback failed
@@ -1375,7 +1349,7 @@ components:
       '$response.body#/successUrl':
         post:
           requestBody:
-            $ref: '#/components/requestBodies/requestBody1'
+            $ref: "#/components/requestBodies/requestBody1"
           responses:
             '200':
               description: Consumer acknowledged the callback

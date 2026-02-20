@@ -1,7 +1,9 @@
 package io.swagger.v3.oas.integration;
 
+import io.swagger.v3.core.util.Configuration;
 import io.swagger.v3.oas.integration.api.OpenAPIConfiguration;
 import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.media.Schema;
 
 import java.util.Collection;
 import java.util.Map;
@@ -31,6 +33,39 @@ public class SwaggerConfiguration implements OpenAPIConfiguration {
     private String objectMapperProcessorClass;
 
     private Boolean sortOutput;
+
+    private Boolean alwaysResolveAppPath;
+
+    private Boolean skipResolveAppPath;
+
+    private Boolean openAPI31 = false;
+
+    private Boolean convertToOpenAPI31;
+
+    private Schema.SchemaResolution schemaResolution = Schema.SchemaResolution.DEFAULT;
+
+    private String openAPIVersion;
+
+    private Configuration.GroupsValidationStrategy groupsValidationStrategy = Configuration.GroupsValidationStrategy.DEFAULT;
+
+    private String validatorProcessorClass;
+
+
+    @Override
+    public String getDefaultResponseCode() {
+        return defaultResponseCode;
+    }
+
+    public void setDefaultResponseCode(String defaultResponseCode) {
+        this.defaultResponseCode = defaultResponseCode;
+    }
+
+    public SwaggerConfiguration defaultResponseCode(String defaultResponseCode) {
+        this.defaultResponseCode = defaultResponseCode;
+        return this;
+    }
+
+    private String defaultResponseCode;
 
     public Long getCacheTTL() {
         return cacheTTL;
@@ -256,4 +291,200 @@ public class SwaggerConfiguration implements OpenAPIConfiguration {
         setSortOutput(sortOutput);
         return this;
     }
+
+    /**
+     * @since 2.1.9
+     */
+    @Override
+    public Boolean isAlwaysResolveAppPath() {
+        return alwaysResolveAppPath;
+    }
+
+    /**
+     * @since 2.1.9
+     */
+    public void setAlwaysResolveAppPath(Boolean alwaysResolveAppPath) {
+        this.alwaysResolveAppPath = alwaysResolveAppPath;
+    }
+
+    /**
+     * @since 2.1.9
+     */
+    public SwaggerConfiguration alwaysResolveAppPath(Boolean alwaysResolveAppPath) {
+        setAlwaysResolveAppPath(alwaysResolveAppPath);
+        return this;
+    }
+
+    /**
+     * @since 2.1.15
+     */
+    @Override
+    public Boolean isSkipResolveAppPath() {
+        return skipResolveAppPath;
+    }
+
+    /**
+     * @since 2.1.15
+     */
+    public void setSkipResolveAppPath(Boolean skipResolveAppPath) {
+        this.skipResolveAppPath = skipResolveAppPath;
+    }
+
+    /**
+     * @since 2.1.15
+     */
+    public SwaggerConfiguration skipResolveAppPath(Boolean skipResolveAppPath) {
+        setSkipResolveAppPath(skipResolveAppPath);
+        return this;
+    }
+
+    /**
+     * @since 2.1.9
+     */
+    public Boolean isOpenAPI31() {
+        return openAPI31;
+    }
+
+    /**
+     * @since 2.1.9
+     */
+    public void setOpenAPI31(Boolean openAPI31) {
+        this.openAPI31 = openAPI31;
+    }
+
+    /**
+     * @since 2.1.9
+     */
+    public SwaggerConfiguration openAPI31(Boolean openAPI31) {
+        this.openAPI31 = openAPI31;
+        return this;
+    }
+
+    /**
+     * @since 2.2.12
+     */
+    public Boolean isConvertToOpenAPI31() {
+        return convertToOpenAPI31;
+    }
+
+    /**
+     * @since 2.2.12
+     */
+    public void setConvertToOpenAPI31(Boolean convertToOpenAPI31) {
+        this.convertToOpenAPI31 = convertToOpenAPI31;
+        if (Boolean.TRUE.equals(convertToOpenAPI31)) {
+            this.openAPI31 = true;
+        }
+    }
+
+    /**
+     * @since 2.2.12
+     */
+    public SwaggerConfiguration convertToOpenAPI31(Boolean convertToOpenAPI31) {
+        this.setConvertToOpenAPI31(convertToOpenAPI31);
+        return this;
+    }
+
+    @Override
+    public Schema.SchemaResolution getSchemaResolution() {
+        return schemaResolution;
+    }
+
+    public void setSchemaResolution(Schema.SchemaResolution schemaResolution) {
+        this.schemaResolution = schemaResolution;
+    }
+
+    public SwaggerConfiguration schemaResolution(Schema.SchemaResolution schemaResolution) {
+        this.setSchemaResolution(schemaResolution);
+        return this;
+    }
+
+    /**
+     * @since 2.2.28
+     */
+    @Override
+    public String getOpenAPIVersion() {
+        return openAPIVersion;
+    }
+
+    /**
+     * @since 2.2.28
+     */
+    public void setOpenAPIVersion(String openAPIVersion) {
+        this.openAPIVersion = openAPIVersion;
+    }
+
+    /**
+     * @since 2.2.28
+     */
+    public SwaggerConfiguration openAPIVersion(String openAPIVersion) {
+        this.setOpenAPIVersion(openAPIVersion);
+        return this;
+    }
+
+    /**
+     * @since 2.2.29
+     */
+    @Override
+    public Configuration.GroupsValidationStrategy getGroupsValidationStrategy() {
+        return groupsValidationStrategy;
+    }
+
+    /**
+     * @since 2.2.29
+     */
+    public void setGroupsValidationStrategy(Configuration.GroupsValidationStrategy groupsValidationStrategy) {
+        this.groupsValidationStrategy = groupsValidationStrategy;
+    }
+
+    /**
+     * @since 2.2.29
+     */
+    public SwaggerConfiguration groupsValidationStrategy(Configuration.GroupsValidationStrategy groupsValidationStrategy) {
+        this.groupsValidationStrategy = groupsValidationStrategy;
+        return this;
+    }
+
+    /**
+     * see io.swagger.v3.core.util.ValidatorProcessor
+     *
+     * @since 2.2.29
+     */
+
+    @Override
+    public String getValidatorProcessorClass() {
+        return validatorProcessorClass;
+    }
+
+    /**
+     * @since 2.2.29
+     */
+    public void setValidatorProcessorClass(String validatorProcessorClass) {
+        this.validatorProcessorClass = validatorProcessorClass;
+    }
+
+    /**
+     * @since 2.2.29
+     */
+    public SwaggerConfiguration validatorProcessorClass(String validatorProcessorClass) {
+        this.validatorProcessorClass = validatorProcessorClass;
+        return this;
+    }
+
+    public Configuration toConfiguration() {
+        Configuration configuration = new Configuration();
+
+        configuration.setOpenAPI(getOpenAPI());
+        configuration.setUserDefinedOptions(getUserDefinedOptions());
+        configuration.setModelConverterClasses(getModelConverterClasses());
+        configuration.setObjectMapperProcessorClass(getObjectMapperProcessorClass());
+        configuration.setOpenAPI31(isOpenAPI31());
+        configuration.setSchemaResolution(getSchemaResolution());
+        configuration.setOpenAPIVersion(getOpenAPIVersion());
+        configuration.setGroupsValidationStrategy(getGroupsValidationStrategy());
+        configuration.setValidatorProcessorClass(getValidatorProcessorClass());
+
+        return configuration;
+    }
+
 }

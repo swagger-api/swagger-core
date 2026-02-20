@@ -5,7 +5,6 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.media.Schema;
-import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -20,6 +19,9 @@ import java.util.Date;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
 public class AnnotationsUtilsTest {
 
@@ -52,9 +54,9 @@ public class AnnotationsUtilsTest {
     public void resolveSchemaFromType(Class<?> aClass, Map<String, Object> expected) {
         Schema schema = AnnotationsUtils.resolveSchemaFromType(aClass, new Components(), null);
 
-        Assert.assertEquals(schema.getType(), expected.get("type"));
-        Assert.assertEquals(schema.getFormat(), expected.get("format"));
-        Assert.assertEquals(schema.get$ref(), expected.get("$ref"));
+        assertEquals(schema.getType(), expected.get("type"));
+        assertEquals(schema.getFormat(), expected.get("format"));
+        assertEquals(schema.get$ref(), expected.get("$ref"));
     }
 
     @DataProvider
@@ -71,12 +73,12 @@ public class AnnotationsUtilsTest {
     public void getSchema(String methodName, Map<String, Object> expected) throws NoSuchMethodException {
         final Method method = getClass().getDeclaredMethod(methodName);
         Content annotationContent = method.getAnnotation(ApiResponse.class).content()[0];
-        Optional<? extends Schema> schema = AnnotationsUtils.getSchema(annotationContent, new Components(), null);
+        Optional<? extends Schema> schema = AnnotationsUtils.getSchema(annotationContent, new Components(), null, false);
 
-        Assert.assertTrue(schema.isPresent());
-        Assert.assertEquals(schema.get().getType(), expected.get("type"));
-        Assert.assertEquals(schema.get().getFormat(), expected.get("format"));
-        Assert.assertEquals(schema.get().get$ref(), expected.get("$ref"));
+        assertTrue(schema.isPresent());
+        assertEquals(schema.get().getType(), expected.get("type"));
+        assertEquals(schema.get().getFormat(), expected.get("format"));
+        assertEquals(schema.get().get$ref(), expected.get("$ref"));
     }
 
     @ApiResponse(content = @Content(schema = @io.swagger.v3.oas.annotations.media.Schema(implementation = Byte.class)))
@@ -96,5 +98,32 @@ public class AnnotationsUtilsTest {
     }
 
     class DummyClass implements Serializable {}
+
+    static class ExampleHolder {
+        @io.swagger.v3.oas.annotations.media.Schema(type = "string", example = "5 lacs per annum")
+        String value;
+    }
+
+    @Test
+    public void testExampleStartingWithNumberShouldBeString() throws Exception {
+        io.swagger.v3.oas.annotations.media.Schema schemaAnnotation =
+                ExampleHolder.class
+                        .getDeclaredField("value")
+                        .getAnnotation(io.swagger.v3.oas.annotations.media.Schema.class);
+
+        Optional<Schema> schema =
+                AnnotationsUtils.getSchemaFromAnnotation(
+                        schemaAnnotation,
+                        null,
+                        null,
+                        false,
+                        null,
+                        Schema.SchemaResolution.DEFAULT,
+                        null
+                );
+
+        assertTrue(schema.isPresent());
+        assertEquals(schema.get().getExample(), "5 lacs per annum");
+    }
 
 }

@@ -3,6 +3,7 @@ package io.swagger.v3.core.converting.override;
 import io.swagger.v3.core.converter.ModelConverters;
 import io.swagger.v3.core.converting.override.resources.MyCustomClass;
 import io.swagger.v3.core.matchers.SerializationMatchers;
+import io.swagger.v3.core.resolving.resources.BidimensionalArray;
 import io.swagger.v3.core.util.Json;
 import io.swagger.v3.oas.models.media.Schema;
 import org.testng.annotations.Test;
@@ -68,5 +69,37 @@ public class ModelPropertyOverrideTest {
 
         public void setMyCustomClass(MyCustomClass myCustomClass) {
         }
+    }
+
+    @Test
+    public void customAnnotationTest() throws Exception {
+        ModelConverters.getInstance().addConverter(new CustomAnnotationConverter(Json.mapper()));
+        final Map<String, Schema> model = ModelConverters.getInstance().read(BidimensionalArray.class);
+        final String expected = "BidimensionalArray:\n" +
+                "  type: object\n" +
+                "  properties:\n" +
+                "    withCustomAnnotation:\n" +
+                "      maxItems: 3\n" +
+                "      type: array\n" +
+                "      items:\n" +
+                "        maxItems: 2\n" +
+                "        type: array\n" +
+                "        items:\n" +
+                "          type: string\n" +
+                "    withHelperClass:\n" +
+                "      maxItems: 3\n" +
+                "      type: array\n" +
+                "      items:\n" +
+                "        maxItems: 2\n" +
+                "        type: array\n" +
+                "        items:\n" +
+                "          type: string\n" +
+                "    sized:\n" +
+                "      maxItems: 2\n" +
+                "      minItems: 0\n" +
+                "      type: array\n" +
+                "      items:\n" +
+                "        type: string\n";
+        SerializationMatchers.assertEqualsToYaml(model, expected);
     }
 }

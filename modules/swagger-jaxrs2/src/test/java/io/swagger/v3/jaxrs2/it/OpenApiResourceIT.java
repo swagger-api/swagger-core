@@ -13,6 +13,7 @@ import org.testng.annotations.Test;
 import java.io.IOException;
 
 import static io.restassured.RestAssured.given;
+import static org.testng.Assert.assertTrue;
 
 /**
  * <p>
@@ -374,7 +375,7 @@ public class OpenApiResourceIT extends AbstractAnnotationTest {
             "              schema:\n" +
             "                type: array\n" +
             "                items:\n" +
-            "                  $ref: '#/components/schemas/Car'\n" +
+            "                  $ref: \"#/components/schemas/Car\"\n" +
             "  /cars/detail:\n" +
             "    get:\n" +
             "      tags:\n" +
@@ -388,7 +389,7 @@ public class OpenApiResourceIT extends AbstractAnnotationTest {
             "              schema:\n" +
             "                type: array\n" +
             "                items:\n" +
-            "                  $ref: '#/components/schemas/Car_Detail'\n" +
+            "                  $ref: \"#/components/schemas/Car_Detail\"\n" +
             "  /cars/sale:\n" +
             "    get:\n" +
             "      tags:\n" +
@@ -402,7 +403,7 @@ public class OpenApiResourceIT extends AbstractAnnotationTest {
             "              schema:\n" +
             "                type: array\n" +
             "                items:\n" +
-            "                  $ref: '#/components/schemas/Car_Summary-or-Sale'\n" +
+            "                  $ref: \"#/components/schemas/Car_Summary-or-Sale\"\n" +
             "  /cars/summary:\n" +
             "    get:\n" +
             "      tags:\n" +
@@ -416,7 +417,7 @@ public class OpenApiResourceIT extends AbstractAnnotationTest {
             "              schema:\n" +
             "                type: array\n" +
             "                items:\n" +
-            "                  $ref: '#/components/schemas/Car_Summary'\n" +
+            "                  $ref: \"#/components/schemas/Car_Summary\"\n" +
             "  /files/attach:\n" +
             "    put:\n" +
             "      operationId: putFile\n" +
@@ -490,7 +491,7 @@ public class OpenApiResourceIT extends AbstractAnnotationTest {
             "          content:\n" +
             "            application/json:\n" +
             "              schema:\n" +
-            "                $ref: '#/components/schemas/Widget'\n" +
+            "                $ref: \"#/components/schemas/Widget\"\n" +
             "components:\n" +
             "  schemas:\n" +
             "    Car:\n" +
@@ -508,7 +509,7 @@ public class OpenApiResourceIT extends AbstractAnnotationTest {
             "        tires:\n" +
             "          type: array\n" +
             "          items:\n" +
-            "            $ref: '#/components/schemas/Tire'\n" +
+            "            $ref: \"#/components/schemas/Tire\"\n" +
             "    Car_Detail:\n" +
             "      type: object\n" +
             "      properties:\n" +
@@ -521,7 +522,7 @@ public class OpenApiResourceIT extends AbstractAnnotationTest {
             "        tires:\n" +
             "          type: array\n" +
             "          items:\n" +
-            "            $ref: '#/components/schemas/Tire_Detail'\n" +
+            "            $ref: \"#/components/schemas/Tire_Detail\"\n" +
             "    Car_Summary:\n" +
             "      type: object\n" +
             "      properties:\n" +
@@ -646,6 +647,56 @@ public class OpenApiResourceIT extends AbstractAnnotationTest {
                 .extract().response().body().asString();
 
         compareAsYaml(formatYaml(actualBody), EXPECTED_YAML);
+    }
+
+    @Test
+    public void testYamlOpenAPI31() throws Exception {
+        final String actualBody = given()
+                .port(jettyPort)
+                .log().all()
+                .accept("application/yaml")
+                .when()
+                .get("/oas/openapi31")
+                .then()
+                .log().all()
+                .assertThat()
+                .statusCode(200)
+                .contentType("application/yaml")
+                .extract().response().body().asString();
+
+        assertTrue(actualBody.contains("openapi: 3.1.0"));
+    }
+
+    @Test
+    public void testServletOpenAPI31() throws Exception {
+        final String actualBody = given()
+                .port(jettyPort)
+                .log().all()
+                .when()
+                .get("/oas/openapi.yaml")
+                .then()
+                .log().all()
+                .assertThat()
+                .statusCode(200)
+                .contentType("application/yaml")
+                .extract().response().body().asString();
+
+        assertTrue(actualBody.contains("openapi: 3.1.0"));
+    }
+
+    @Test
+    public void testYamlOpenAPI31WithBootstrapServlet() throws Exception {
+        final String actualBody = given()
+                .port(jettyPort)
+                .log().all()
+                .when()
+                .get("/bootstrap")
+                .then()
+                .log().all()
+                .assertThat()
+                .statusCode(200)
+                .extract().response().body().asString();
+        assertTrue(actualBody.contains("openapi: 3.1.0"));
     }
 
     private String formatYaml(String source) throws IOException {

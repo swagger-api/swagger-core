@@ -1,23 +1,12 @@
-/**
- * Copyright 2017 SmartBear Software
- * <p>
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package io.swagger.v3.oas.models.examples;
+
+import io.swagger.v3.oas.models.annotations.OpenAPI31;
 
 /**
  * Example
+ *
+ * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.0.4/versions/3.0.4.md#example-object"
+ * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.1.1/versions/3.1.1.md#example-object"
  */
 
 public class Example {
@@ -27,6 +16,8 @@ public class Example {
     private String externalValue = null;
     private String $ref = null;
     private java.util.Map<String, Object> extensions = null;
+
+    private boolean valueSetFlag;
 
     /**
      * returns the summary property from a Example instance.
@@ -78,10 +69,11 @@ public class Example {
 
     public void setValue(Object value) {
         this.value = value;
+        valueSetFlag = true;
     }
 
     public Example value(Object value) {
-        this.value = value;
+        setValue(value);
         return this;
     }
 
@@ -134,6 +126,14 @@ public class Example {
         this.extensions.put(name, value);
     }
 
+    @OpenAPI31
+    public void addExtension31(String name, Object value) {
+        if (name != null && (name.startsWith("x-oas-") || name.startsWith("x-oai-"))) {
+            return;
+        }
+        addExtension(name, value);
+    }
+
     public void setExtensions(java.util.Map<String, Object> extensions) {
         this.extensions = extensions;
     }
@@ -141,6 +141,14 @@ public class Example {
     public Example extensions(java.util.Map<String, Object> extensions) {
         this.extensions = extensions;
         return this;
+    }
+
+    public boolean getValueSetFlag() {
+        return valueSetFlag;
+    }
+
+    public void setValueSetFlag(boolean valueSetFlag) {
+        this.valueSetFlag = valueSetFlag;
     }
 
     @Override

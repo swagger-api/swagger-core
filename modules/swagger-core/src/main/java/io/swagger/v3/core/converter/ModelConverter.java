@@ -13,4 +13,8 @@ public interface ModelConverter {
      * @return null if this ModelConverter cannot convert the given Type
      */
     Schema resolve(AnnotatedType type, ModelConverterContext context, Iterator<ModelConverter> chain);
+
+    default boolean isOpenapi31() {
+        return false;
+    }
 }

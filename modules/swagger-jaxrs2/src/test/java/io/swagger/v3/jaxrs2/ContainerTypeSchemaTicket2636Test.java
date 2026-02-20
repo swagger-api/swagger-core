@@ -1,7 +1,6 @@
 package io.swagger.v3.jaxrs2;
 
 import io.swagger.v3.jaxrs2.annotations.AbstractAnnotationTest;
-import io.swagger.v3.jaxrs2.matchers.SerializationMatchers;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -28,7 +27,7 @@ public class ContainerTypeSchemaTicket2636Test extends AbstractAnnotationTest {
                 "        content:\n" +
                 "          application/json:\n" +
                 "            schema:\n" +
-                "              $ref: '#/components/schemas/MyModel'\n" +
+                "              $ref: \"#/components/schemas/MyModel\"\n" +
                 "        required: true\n" +
                 "      responses:\n" +
                 "        \"200\":\n" +

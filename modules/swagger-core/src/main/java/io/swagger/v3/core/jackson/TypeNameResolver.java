@@ -22,6 +22,10 @@ public class TypeNameResolver {
     protected TypeNameResolver() {
     }
 
+    public boolean getUseFqn() {
+        return this.useFqn;
+    }
+
     public void setUseFqn(boolean useFqn) {
         this.useFqn = useFqn;
     }
@@ -56,7 +60,7 @@ public class TypeNameResolver {
     }
 
     protected String getNameOfClass(Class<?> cls) {
-        return useFqn?cls.getName():cls.getSimpleName();
+        return useFqn ? cls.getName().replace("$", ".") : cls.getSimpleName();
     }
 
     protected String nameForGenericType(JavaType type, Set<Options> options) {

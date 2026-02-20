@@ -359,7 +359,7 @@ public class ExamplesTest extends AbstractAnnotationTest {
                 "        required: true\n" +
                 "        style: simple\n" +
                 "        schema:\n" +
-                "          $ref: '#/components/schemas/SubscriptionResponse'\n" +
+                "          $ref: \"#/components/schemas/SubscriptionResponse\"\n" +
                 "        examples:\n" +
                 "          subscriptionId_1:\n" +
                 "            summary: Subscription number 12345\n" +

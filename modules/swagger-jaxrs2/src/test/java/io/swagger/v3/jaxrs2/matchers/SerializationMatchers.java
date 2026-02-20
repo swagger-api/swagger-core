@@ -6,7 +6,9 @@ import com.fasterxml.jackson.databind.node.NumericNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import io.swagger.v3.core.util.Json;
+import io.swagger.v3.core.util.Json31;
 import io.swagger.v3.core.util.Yaml;
+import io.swagger.v3.core.util.Yaml31;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.io.IOException;
@@ -29,6 +31,14 @@ public class SerializationMatchers {
         apply(objectToSerialize, jsonStr, Json.mapper(), false);
     }
 
+    public static void assertEqualsToYaml31(Object objectToSerialize, String yamlStr) {
+        apply31(objectToSerialize, yamlStr, Yaml31.mapper());
+    }
+
+    public static void assertEqualsToJson31(Object objectToSerialize, String jsonStr) {
+        apply31(objectToSerialize, jsonStr, Json31.mapper());
+    }
+
     private static void apply(Object objectToSerialize, String str, ObjectMapper mapper, boolean exactMatch) {
         final ObjectNode lhs = mapper.convertValue(objectToSerialize, ObjectNode.class);
         ObjectNode rhs = null;
@@ -40,6 +50,19 @@ public class SerializationMatchers {
         if (exactMatch || !lhs.equals(new ObjectNodeComparator(), rhs)) {
             assertEquals(Yaml.pretty(lhs), Yaml.pretty(rhs));
             //fail(String.format("Serialized object:\n%s\ndoes not equal to expected serialized string:\n%s", lhs, rhs));
+        }
+    }
+
+    private static void apply31(Object objectToSerialize, String str, ObjectMapper mapper) {
+        final ObjectNode lhs = mapper.convertValue(objectToSerialize, ObjectNode.class);
+        ObjectNode rhs = null;
+        try {
+            rhs = mapper.readValue(str, ObjectNode.class);
+        } catch (IOException e) {
+            LOGGER.error("Failed to read value", e);
+        }
+        if (!lhs.equals(new ObjectNodeComparator(), rhs)) {
+            assertEquals(Yaml31.pretty(lhs), Yaml31.pretty(rhs));
         }
     }
 

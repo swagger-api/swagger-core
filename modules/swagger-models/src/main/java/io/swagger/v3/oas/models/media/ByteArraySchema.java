@@ -1,21 +1,6 @@
-/**
- * Copyright 2017 SmartBear Software
- * <p>
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package io.swagger.v3.oas.models.media;
 
+import java.util.Base64;
 import java.util.List;
 import java.util.Objects;
 
@@ -52,6 +37,15 @@ public class ByteArraySchema extends Schema<byte[]> {
             try {
                 if (value instanceof byte[]) {
                     return (byte[]) value;
+                } else if (value instanceof String) {
+                    if (
+                            (System.getProperty(BINARY_STRING_CONVERSION_PROPERTY) != null && System.getProperty(BINARY_STRING_CONVERSION_PROPERTY).equals(BynaryStringConversion.BINARY_STRING_CONVERSION_BASE64.toString())) ||
+                            (System.getenv(BINARY_STRING_CONVERSION_PROPERTY) != null && System.getenv(BINARY_STRING_CONVERSION_PROPERTY).equals(BynaryStringConversion.BINARY_STRING_CONVERSION_BASE64.toString()))) {
+                        return Base64.getDecoder().decode((String) value);
+                    }
+                    return value.toString().getBytes();
+                } else {
+                    return value.toString().getBytes();
                 }
             } catch (Exception e) {
             }

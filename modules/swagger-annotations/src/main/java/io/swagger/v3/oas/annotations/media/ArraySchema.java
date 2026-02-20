@@ -1,5 +1,6 @@
 package io.swagger.v3.oas.annotations.media;
 
+import io.swagger.v3.oas.annotations.OpenAPI31;
 import io.swagger.v3.oas.annotations.extensions.Extension;
 
 import java.lang.annotation.Inherited;
@@ -24,13 +25,25 @@ import static java.lang.annotation.ElementType.PARAMETER;
  * <p>The annotation {@link Schema} shall be used for non array elements; {@link ArraySchema} and {@link Schema} cannot
  * coexist</p>
  *
- * @see <a target="_new" href="https://github.com/OAI/OpenAPI-Specification/blob/3.0.1/versions/3.0.1.md#schemaObject">Schema (OpenAPI specification)</a>
+ * @see <a target="_new" href="https://github.com/OAI/OpenAPI-Specification/blob/3.0.4/versions/3.0.4.md#schema-object">Schema (OpenAPI specification)</a>
+ * @see <a target="_new" href="https://github.com/OAI/OpenAPI-Specification/blob/3.1.1/versions/3.1.1.md#schema-object">Schema (OpenAPI specification)</a>
  * @see Schema
  **/
 @Target({FIELD, METHOD, PARAMETER, TYPE, ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
 public @interface ArraySchema {
+
+    /**
+     * The schemas of the items in the array
+     *
+     * @since 2.2.12
+     *
+     * @deprecated since 2.2.21, use {@link #schema()} instead. Marked for removal in future versions.
+     * @return items
+     */
+    @Deprecated
+    Schema items() default @Schema;
 
     /**
      * The schema of the items in the array
@@ -76,4 +89,49 @@ public @interface ArraySchema {
      * @return an optional array of extensions
      */
     Extension[] extensions() default {};
+
+    /**
+     * Specifies contains constrictions expressions.
+     *
+     * @since 2.2.12 / OpenAPI 3.1
+     * @return contains expression.
+     */
+    @OpenAPI31
+    Schema contains() default @Schema;
+
+    /**
+     * Provides max contains related to this schema
+     *
+     * @since 2.2.12 / OpenAPI 3.1
+     * @return max contains
+     */
+    @OpenAPI31
+    int maxContains() default 0;
+
+    /**
+     * Provides min contains related to this schema
+     *
+     * @since 2.2.12 / OpenAPI 3.1
+     * @return min contains
+     */
+    @OpenAPI31
+    int minContains() default 0;
+
+    /**
+     * Provides unevaluted items to this schema
+     *
+     * @since 2.2.12 / OpenAPI 3.1
+     * @return unevaluated items
+     */
+    @OpenAPI31
+    Schema unevaluatedItems() default @Schema;
+
+    /**
+     * Provides prefix items to this schema
+     *
+     * @since 2.2.12 / OpenAPI 3.1
+     * @return prefixItems
+     */
+    @OpenAPI31
+    Schema[] prefixItems() default {};
 }

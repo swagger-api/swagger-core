@@ -8,6 +8,7 @@ import io.swagger.v3.oas.models.media.DateSchema;
 import io.swagger.v3.oas.models.media.DateTimeSchema;
 import io.swagger.v3.oas.models.media.FileSchema;
 import io.swagger.v3.oas.models.media.IntegerSchema;
+import io.swagger.v3.oas.models.media.JsonSchema;
 import io.swagger.v3.oas.models.media.NumberSchema;
 import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.media.StringSchema;
@@ -15,6 +16,8 @@ import io.swagger.v3.oas.models.media.UUIDSchema;
 import org.apache.commons.lang3.StringUtils;
 
 import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -27,10 +30,15 @@ import java.util.concurrent.ConcurrentHashMap;
  * of classes into Swagger primitive types.
  */
 public enum PrimitiveType {
+
     STRING(String.class, "string") {
         @Override
         public Schema createProperty() {
             return new StringSchema();
+        }
+        @Override
+        public Schema createProperty31() {
+            return new JsonSchema().typesItem("string");
         }
     },
     BOOLEAN(Boolean.class, "boolean") {
@@ -38,17 +46,39 @@ public enum PrimitiveType {
         public Schema createProperty() {
             return new BooleanSchema();
         }
+        @Override
+        public Schema createProperty31() {
+            return new JsonSchema().typesItem("boolean");
+        }
     },
     BYTE(Byte.class, "byte") {
         @Override
-        public ByteArraySchema createProperty() {
+        public Schema createProperty() {
+            if (
+                    (System.getProperty(Schema.BINARY_STRING_CONVERSION_PROPERTY) != null && System.getProperty(Schema.BINARY_STRING_CONVERSION_PROPERTY).equals(Schema.BynaryStringConversion.BINARY_STRING_CONVERSION_STRING_SCHEMA.toString())) ||
+                    (System.getenv(Schema.BINARY_STRING_CONVERSION_PROPERTY) != null && System.getenv(Schema.BINARY_STRING_CONVERSION_PROPERTY).equals(Schema.BynaryStringConversion.BINARY_STRING_CONVERSION_STRING_SCHEMA.toString()))) {
+                return new StringSchema().format("byte");
+            }
             return new ByteArraySchema();
+        }
+        @Override
+        public Schema createProperty31() {
+            return new JsonSchema().typesItem("string").format("byte");
         }
     },
     BINARY(Byte.class, "binary") {
         @Override
-        public BinarySchema createProperty() {
+        public Schema createProperty() {
+            if (
+                    (System.getProperty(Schema.BINARY_STRING_CONVERSION_PROPERTY) != null && System.getProperty(Schema.BINARY_STRING_CONVERSION_PROPERTY).equals(Schema.BynaryStringConversion.BINARY_STRING_CONVERSION_STRING_SCHEMA.toString())) ||
+                    (System.getenv(Schema.BINARY_STRING_CONVERSION_PROPERTY) != null && System.getenv(Schema.BINARY_STRING_CONVERSION_PROPERTY).equals(Schema.BynaryStringConversion.BINARY_STRING_CONVERSION_STRING_SCHEMA.toString()))) {
+                return new StringSchema().format("binary");
+            }
             return new BinarySchema();
+        }
+        @Override
+        public Schema createProperty31() {
+            return new JsonSchema().typesItem("string").format("binary");
         }
     },
     URI(java.net.URI.class, "uri") {
@@ -56,11 +86,19 @@ public enum PrimitiveType {
         public Schema createProperty() {
             return new StringSchema().format("uri");
         }
+        @Override
+        public Schema createProperty31() {
+            return new JsonSchema().typesItem("string").format("uri");
+        }
     },
     URL(java.net.URL.class, "url") {
         @Override
         public Schema createProperty() {
             return new StringSchema().format("url");
+        }
+        @Override
+        public Schema createProperty31() {
+            return new JsonSchema().typesItem("string").format("url");
         }
     },
     EMAIL(String.class, "email") {
@@ -68,11 +106,19 @@ public enum PrimitiveType {
         public Schema createProperty() {
             return new StringSchema().format("email");
         }
+        @Override
+        public Schema createProperty31() {
+            return new JsonSchema().typesItem("string").format("email");
+        }
     },
     UUID(java.util.UUID.class, "uuid") {
         @Override
         public UUIDSchema createProperty() {
             return new UUIDSchema();
+        }
+        @Override
+        public Schema createProperty31() {
+            return new JsonSchema().typesItem("string").format("uuid");
         }
     },
     INT(Integer.class, "integer") {
@@ -80,11 +126,19 @@ public enum PrimitiveType {
         public IntegerSchema createProperty() {
             return new IntegerSchema();
         }
+        @Override
+        public Schema createProperty31() {
+            return new JsonSchema().typesItem("integer").format("int32");
+        }
     },
     LONG(Long.class, "long") {
         @Override
         public Schema createProperty() {
             return new IntegerSchema().format("int64");
+        }
+        @Override
+        public Schema createProperty31() {
+            return new JsonSchema().typesItem("integer").format("int64");
         }
     },
     FLOAT(Float.class, "float") {
@@ -92,11 +146,19 @@ public enum PrimitiveType {
         public Schema createProperty() {
             return new NumberSchema().format("float");
         }
+        @Override
+        public Schema createProperty31() {
+            return new JsonSchema().typesItem("number").format("float");
+        }
     },
     DOUBLE(Double.class, "double") {
         @Override
         public Schema createProperty() {
             return new NumberSchema().format("double");
+        }
+        @Override
+        public Schema createProperty31() {
+            return new JsonSchema().typesItem("number").format("double");
         }
     },
     INTEGER(java.math.BigInteger.class) {
@@ -104,11 +166,19 @@ public enum PrimitiveType {
         public Schema createProperty() {
             return new IntegerSchema().format(null);
         }
+        @Override
+        public Schema createProperty31() {
+            return new JsonSchema().typesItem("integer");
+        }
     },
     DECIMAL(java.math.BigDecimal.class, "number") {
         @Override
         public Schema createProperty() {
             return new NumberSchema();
+        }
+        @Override
+        public Schema createProperty31() {
+            return new JsonSchema().typesItem("number");
         }
     },
     NUMBER(Number.class, "number") {
@@ -116,11 +186,19 @@ public enum PrimitiveType {
         public Schema createProperty() {
             return new NumberSchema();
         }
+        @Override
+        public Schema createProperty31() {
+            return new JsonSchema().typesItem("number");
+        }
     },
     DATE(DateStub.class, "date") {
         @Override
         public DateSchema createProperty() {
             return new DateSchema();
+        }
+        @Override
+        public Schema createProperty31() {
+            return new JsonSchema().typesItem("string").format("date");
         }
     },
     DATE_TIME(java.util.Date.class, "date-time") {
@@ -128,11 +206,19 @@ public enum PrimitiveType {
         public DateTimeSchema createProperty() {
             return new DateTimeSchema();
         }
+        @Override
+        public Schema createProperty31() {
+            return new JsonSchema().typesItem("string").format("date-time");
+        }
     },
     PARTIAL_TIME(java.time.LocalTime.class, "partial-time") {
         @Override
         public Schema createProperty() {
             return new StringSchema().format("partial-time");
+        }
+        @Override
+        public Schema createProperty31() {
+            return new JsonSchema().typesItem("string").format("partial-time");
         }
     },
     FILE(java.io.File.class, "file") {
@@ -140,15 +226,26 @@ public enum PrimitiveType {
         public FileSchema createProperty() {
             return new FileSchema();
         }
+        @Override
+        public Schema createProperty31() {
+            return new JsonSchema().typesItem("string").format("binary");
+        }
     },
     OBJECT(Object.class) {
+
         @Override
         public Schema createProperty() {
-            return new Schema().type("object");
+            return explicitObjectType == null || explicitObjectType ? new Schema().type("object"): new Schema();
+        }
+        @Override
+        public Schema createProperty31() {
+            return explicitObjectType == null || explicitObjectType ? new JsonSchema().typesItem("object") : new JsonSchema();
         }
     };
 
+    public static Boolean explicitObjectType;
     private static final Map<Class<?>, PrimitiveType> KEY_CLASSES;
+    private static final Map<Class<?>, Collection<PrimitiveType>> MULTI_KEY_CLASSES;
     private static final Map<Class<?>, PrimitiveType> BASE_CLASSES;
     /**
      * Adds support of a small number of "well-known" types, specifically for
@@ -244,6 +341,11 @@ public enum PrimitiveType {
         addKeys(keyClasses, OBJECT, Object.class);
         KEY_CLASSES = Collections.unmodifiableMap(keyClasses);
 
+        final Map<Class<?>, Collection<PrimitiveType>> multiKeyClasses = new HashMap<>();
+        addMultiKeys(multiKeyClasses, BYTE, byte[].class);
+        addMultiKeys(multiKeyClasses, BINARY, byte[].class);
+        MULTI_KEY_CLASSES = Collections.unmodifiableMap(multiKeyClasses);
+
         final Map<Class<?>, PrimitiveType> baseClasses = new HashMap<>();
         addKeys(baseClasses, DATE_TIME, java.util.Date.class, java.util.Calendar.class);
         BASE_CLASSES = Collections.unmodifiableMap(baseClasses);
@@ -271,6 +373,12 @@ public enum PrimitiveType {
         addKeys(names, INT, "int");
         addKeys(names, OBJECT, "object");
         NAMES = Collections.unmodifiableMap(names);
+
+        if (System.getenv(Schema.EXPLICIT_OBJECT_SCHEMA_PROPERTY) != null) {
+            explicitObjectType = Boolean.parseBoolean(System.getenv(Schema.EXPLICIT_OBJECT_SCHEMA_PROPERTY));
+        } else if (System.getProperty(Schema.EXPLICIT_OBJECT_SCHEMA_PROPERTY) != null) {
+            explicitObjectType = Boolean.parseBoolean(System.getProperty(Schema.EXPLICIT_OBJECT_SCHEMA_PROPERTY));
+        }
     }
 
     private PrimitiveType(Class<?> keyClass) {
@@ -343,12 +451,34 @@ public enum PrimitiveType {
         return nonSystemTypePackages;
     }
 
+    public static PrimitiveType fromTypeAndFormat(Type type, String format) {
+        final Class<?> raw = TypeFactory.defaultInstance().constructType(type).getRawClass();
+        final Collection<PrimitiveType> keys = MULTI_KEY_CLASSES.get(raw);
+        if (keys == null || keys.isEmpty() || StringUtils.isBlank(format)) {
+            return fromType(type);
+        } else {
+            return keys
+                .stream()
+                .filter(t -> t.getCommonName().equalsIgnoreCase(format))
+                .findAny()
+                .orElse(null);
+        }
+    }
+    
     public static PrimitiveType fromType(Type type) {
         final Class<?> raw = TypeFactory.defaultInstance().constructType(type).getRawClass();
         final PrimitiveType key = KEY_CLASSES.get(raw);
         if (key != null) {
             if (!customExcludedClasses.contains(raw.getName())) {
                 return key;
+            }
+        }
+        
+        final Collection<PrimitiveType> keys = MULTI_KEY_CLASSES.get(raw);
+        if (keys != null && !keys.isEmpty()) {
+            final PrimitiveType first = keys.iterator().next();
+            if (!customExcludedClasses.contains(raw.getName())) {
+                return first;
             }
         }
 
@@ -394,13 +524,21 @@ public enum PrimitiveType {
     }
 
     public static Schema createProperty(Type type) {
+        return createProperty(type, false);
+    }
+
+    public static Schema createProperty(Type type, boolean openapi31) {
         final PrimitiveType item = fromType(type);
-        return item == null ? null : item.createProperty();
+        return item == null ? null : openapi31 ? item.createProperty31() : item.createProperty();
     }
 
     public static Schema createProperty(String name) {
+        return createProperty(name, false);
+    }
+
+    public static Schema createProperty(String name, boolean openapi31) {
         final PrimitiveType item = fromName(name);
-        return item == null ? null : item.createProperty();
+        return item == null ? null : openapi31 ? item.createProperty31() : item.createProperty();
     }
 
     public static String getCommonName(Type type) {
@@ -417,10 +555,20 @@ public enum PrimitiveType {
     }
 
     public abstract Schema createProperty();
+    public abstract Schema createProperty31();
 
     private static <K> void addKeys(Map<K, PrimitiveType> map, PrimitiveType type, K... keys) {
         for (K key : keys) {
             map.put(key, type);
+        }
+    }
+
+    private static <K> void addMultiKeys(Map<K, Collection<PrimitiveType>> map, PrimitiveType type, K... keys) {
+        for (K key : keys) {
+            if (!map.containsKey(key)) {
+                map.put(key, new ArrayList<>());
+            }
+            map.get(key).add(type);
         }
     }
 

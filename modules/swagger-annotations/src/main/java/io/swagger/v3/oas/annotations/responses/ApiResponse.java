@@ -1,19 +1,3 @@
-/**
- * Copyright 2017 SmartBear Software
- * <p>
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package io.swagger.v3.oas.annotations.responses;
 
 import io.swagger.v3.oas.annotations.extensions.Extension;
@@ -38,7 +22,7 @@ import static java.lang.annotation.ElementType.TYPE;
  * <p>swagger-jaxrs2 reader engine considers this annotation along with method return type and context as input to
  * resolve the OpenAPI Operation responses.</p>
  *
- * @see <a target="_new" href="https://github.com/OAI/OpenAPI-Specification/blob/3.0.1/versions/3.0.1.md#responseObject">Response (OpenAPI specification)</a>
+ * @see <a target="_new" href="https://github.com/OAI/OpenAPI-Specification/blob/3.0.4/versions/3.0.4.md#response-object">Response (OpenAPI specification)</a>
  * @see io.swagger.v3.oas.annotations.Operation
  **/
 @Target({METHOD, TYPE, ANNOTATION_TYPE})
@@ -95,5 +79,12 @@ public @interface ApiResponse {
      * @return the reference
      **/
     String ref() default "";
+
+    /**
+     * Set to true to resolve the response schema from method return type
+     *
+     * @since 2.2.0
+     **/
+    boolean useReturnTypeSchema() default false;
 
 }

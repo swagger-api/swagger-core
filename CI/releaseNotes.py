@@ -12,13 +12,13 @@ def allPulls(releaseDate):
     baseurl = "https://api.github.com/repos/swagger-api/swagger-core/pulls/"
     content = ghApiClient.readUrl('repos/swagger-api/swagger-core/pulls?state=closed&base=master&per_page=100')
     for l in content:
-      stripped = l["url"][len(baseurl):]
-      mergedAt = l["merged_at"]
-      if mergedAt is not None:
-          if datetime.strptime(mergedAt, '%Y-%m-%dT%H:%M:%SZ') > releaseDate:
-              if not l['title'].startswith("bump snap"):
-                result += '\n'
-                result += "* " + l['title'] + " (#" + stripped + ")"
+        stripped = l["url"][len(baseurl):]
+        mergedAt = l["merged_at"]
+        if mergedAt is not None:
+            if datetime.strptime(mergedAt, '%Y-%m-%dT%H:%M:%SZ') > releaseDate:
+                if not l['title'].startswith("bump snap"):
+                    result += '\n'
+                    result += "* " + l['title'] + " (#" + stripped + ")"
     return result
 
 
@@ -49,3 +49,4 @@ def main(last_release, release_title, tag):
 
 # here start main
 main(sys.argv[1], sys.argv[2], sys.argv[3])
+

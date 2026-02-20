@@ -1,133 +1,59 @@
-/**
- * Copyright 2017 SmartBear Software
- * <p>
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package io.swagger.v3.oas.models.media;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
 
 /**
  * ComposedSchema
  */
 
 public class ComposedSchema extends Schema<Object> {
-    private List<Schema> allOf = null;
-    private List<Schema> anyOf = null;
-    private List<Schema> oneOf = null;
 
-    /**
-     * returns the allOf property from a ComposedSchema instance.
-     *
-     * @return List&lt;Schema&gt; allOf
-     **/
+    public static ComposedSchema from(Schema subtypeModel) {
+        ComposedSchema composedSchema = new ComposedSchema();
+        copySchemaProperties(composedSchema, subtypeModel);
 
-    public List<Schema> getAllOf() {
-        return allOf;
-    }
 
-    public void setAllOf(List<Schema> allOf) {
-        this.allOf = allOf;
-    }
-
-    public ComposedSchema allOf(List<Schema> allOf) {
-        this.allOf = allOf;
-        return this;
-    }
-
-    public ComposedSchema addAllOfItem(Schema allOfItem) {
-        if (this.allOf == null) {
-            this.allOf = new ArrayList<>();
+        if (shouldSetExample(subtypeModel)) {
+            composedSchema.example(subtypeModel.getExample());
         }
-        this.allOf.add(allOfItem);
-        return this;
+        composedSchema.setEnum(subtypeModel.getEnum());
+        return composedSchema;
     }
 
-    /**
-     * returns the anyOf property from a ComposedSchema instance.
-     *
-     * @return List&lt;Schema&gt; anyOf
-     **/
-
-    public List<Schema> getAnyOf() {
-        return anyOf;
+    private static void copySchemaProperties(ComposedSchema target, Schema source) {
+        target.title(source.getTitle())
+                .name(source.getName())
+                .deprecated(source.getDeprecated())
+                .additionalProperties(source.getAdditionalProperties())
+                .description(source.getDescription())
+                .discriminator(source.getDiscriminator())
+                .exclusiveMaximum(source.getExclusiveMaximum())
+                .exclusiveMinimum(source.getExclusiveMinimum())
+                .externalDocs(source.getExternalDocs())
+                .format(source.getFormat())
+                .maximum(source.getMaximum())
+                .maxItems(source.getMaxItems())
+                .maxLength(source.getMaxLength())
+                .maxProperties(source.getMaxProperties())
+                .minimum(source.getMinimum())
+                .minItems(source.getMinItems())
+                .minLength(source.getMinLength())
+                .minProperties(source.getMinProperties())
+                .multipleOf(source.getMultipleOf())
+                .not(source.getNot())
+                .nullable(source.getNullable())
+                .pattern(source.getPattern())
+                .properties(source.getProperties())
+                .readOnly(source.getReadOnly())
+                .required(source.getRequired())
+                .type(source.getType())
+                .uniqueItems(source.getUniqueItems())
+                .writeOnly(source.getWriteOnly())
+                .xml(source.getXml())
+                .extensions(source.getExtensions());
     }
 
-    public void setAnyOf(List<Schema> anyOf) {
-        this.anyOf = anyOf;
-    }
 
-    public ComposedSchema anyOf(List<Schema> anyOf) {
-        this.anyOf = anyOf;
-        return this;
-    }
-
-    public ComposedSchema addAnyOfItem(Schema anyOfItem) {
-        if (this.anyOf == null) {
-            this.anyOf = new ArrayList<>();
-        }
-        this.anyOf.add(anyOfItem);
-        return this;
-    }
-
-    /**
-     * returns the oneOf property from a ComposedSchema instance.
-     *
-     * @return List&lt;Schema&gt; oneOf
-     **/
-
-    public List<Schema> getOneOf() {
-        return oneOf;
-    }
-
-    public void setOneOf(List<Schema> oneOf) {
-        this.oneOf = oneOf;
-    }
-
-    public ComposedSchema oneOf(List<Schema> oneOf) {
-        this.oneOf = oneOf;
-        return this;
-    }
-
-    public ComposedSchema addOneOfItem(Schema oneOfItem) {
-        if (this.oneOf == null) {
-            this.oneOf = new ArrayList<>();
-        }
-        this.oneOf.add(oneOfItem);
-        return this;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        ComposedSchema allOfSchema = (ComposedSchema) o;
-        return Objects.equals(this.allOf, allOfSchema.allOf) &&
-                Objects.equals(this.anyOf, allOfSchema.anyOf) &&
-                Objects.equals(this.oneOf, allOfSchema.oneOf) &&
-                super.equals(o);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(allOf, anyOf, oneOf, super.hashCode());
+    private static boolean shouldSetExample(Schema model) {
+        return model.getExample() != null || model.getExampleSetFlag();
     }
 
     @Override
@@ -135,9 +61,6 @@ public class ComposedSchema extends Schema<Object> {
         StringBuilder sb = new StringBuilder();
         sb.append("class ComposedSchema {\n");
         sb.append("    ").append(toIndentedString(super.toString())).append("\n");
-        sb.append("    allOf: ").append(toIndentedString(allOf)).append("\n");
-        sb.append("    anyOf: ").append(toIndentedString(anyOf)).append("\n");
-        sb.append("    oneOf: ").append(toIndentedString(oneOf)).append("\n");
         sb.append("}");
         return sb.toString();
     }

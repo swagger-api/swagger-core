@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.swagger.v3.oas.models.PathItem;
 import io.swagger.v3.oas.models.callbacks.Callback;
@@ -14,9 +15,19 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class CallbackDeserializer extends JsonDeserializer<Callback> {
+
+    protected boolean openapi31;
+
     @Override
     public Callback deserialize(JsonParser jp, DeserializationContext ctxt)
             throws IOException {
+
+        final ObjectMapper mapper;
+        if (openapi31) {
+            mapper = Json31.mapper();
+        } else {
+            mapper = Json.mapper();
+        }
         Callback result = new Callback();
         JsonNode node = jp.getCodec().readTree(jp);
         ObjectNode objectNode = (ObjectNode)node;
@@ -26,11 +37,11 @@ public class CallbackDeserializer extends JsonDeserializer<Callback> {
             JsonNode child = objectNode.get(childName);
             // if name start with `x-` consider it an extension
             if (childName.startsWith("x-")) {
-                extensions.put(childName, Json.mapper().convertValue(child, Object.class));
+                extensions.put(childName, mapper.convertValue(child, Object.class));
             } else if (childName.equals("$ref")) {
                 result.$ref(child.asText());
             } else {
-                result.put(childName, Json.mapper().convertValue(child, PathItem.class));
+                result.put(childName, mapper.convertValue(child, PathItem.class));
             }
         }
         if (!extensions.isEmpty()) {

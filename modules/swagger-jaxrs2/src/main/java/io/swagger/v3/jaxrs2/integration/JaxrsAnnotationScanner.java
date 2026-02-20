@@ -4,6 +4,7 @@ import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ScanResult;
 import io.swagger.v3.jaxrs2.integration.api.JaxrsOpenApiScanner;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.Webhooks;
 import io.swagger.v3.oas.integration.IgnoredPackages;
 import io.swagger.v3.oas.integration.SwaggerConfiguration;
 import io.swagger.v3.oas.integration.api.OpenAPIConfiguration;
@@ -11,6 +12,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -92,6 +94,10 @@ public class JaxrsAnnotationScanner<T extends JaxrsAnnotationScanner<T>> impleme
         try (ScanResult scanResult = graph.scan()) {
             classes = new HashSet<>(scanResult.getClassesWithAnnotation(javax.ws.rs.Path.class.getName()).loadClasses());
             classes.addAll(new HashSet<>(scanResult.getClassesWithAnnotation(OpenAPIDefinition.class.getName()).loadClasses()));
+            classes.addAll(new HashSet<>(scanResult.getClassesWithAnnotation(Webhooks.class.getName()).loadClasses()));
+            if (Boolean.TRUE.equals(openApiConfiguration.isAlwaysResolveAppPath())) {
+                classes.addAll(new HashSet<>(scanResult.getClassesWithAnnotation(ApplicationPath.class.getName()).loadClasses()));
+            }
         }
 
         for (Class<?> cls : classes) {

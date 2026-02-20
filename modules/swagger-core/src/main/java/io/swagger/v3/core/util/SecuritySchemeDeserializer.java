@@ -5,16 +5,28 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.models.security.OAuthFlows;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
 
 public class SecuritySchemeDeserializer extends JsonDeserializer<SecurityScheme> {
+
+    protected boolean openapi31;
+
     @Override
     public SecurityScheme deserialize(JsonParser jp, DeserializationContext ctxt)
             throws IOException {
+        ObjectMapper mapper = null;
+        if (openapi31) {
+            mapper = Json31.mapper();
+        } else {
+            mapper = Json.mapper();
+        }
         SecurityScheme result = null;
 
         JsonNode node = jp.getCodec().readTree(jp);
@@ -47,7 +59,19 @@ public class SecuritySchemeDeserializer extends JsonDeserializer<SecurityScheme>
             } else if ("oauth2".equals(type)) {
                 result
                         .type(SecurityScheme.Type.OAUTH2)
-                        .flows(Json.mapper().convertValue(node.get("flows"), OAuthFlows.class));
+                        .flows(mapper.convertValue(node.get("flows"), OAuthFlows.class));
+            } else if ("mutualTLS".equals(type)) {
+                result
+                        .type(SecurityScheme.Type.MUTUALTLS);
+            }
+            final Iterator<String> fieldNames = node.fieldNames();
+            while(fieldNames.hasNext()) {
+                final String fieldName = fieldNames.next();
+                if(fieldName.startsWith("x-")) {
+                    final JsonNode fieldValue = node.get(fieldName);
+                    final Object value = Json.mapper().treeToValue(fieldValue, Object.class);
+                    result.addExtension(fieldName, value);
+                }
             }
         }
 

@@ -4,7 +4,7 @@
     <parent>
         <groupId>io.swagger.core.v3</groupId>
         <artifactId>swagger-project-jakarta</artifactId>
-        <version>2.1.8-SNAPSHOT</version>
+        <version>2.2.44-SNAPSHOT</version>
         <relativePath>../..</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -15,6 +15,44 @@
 
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>3.6.1</version>
+                <executions>
+                    <execution>
+                        <id>get-original-artifacts</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>copy</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <!-- Get the original sources JAR -->
+                                <artifactItem>
+                                    <groupId>io.swagger.core.v3</groupId>
+                                    <artifactId>swagger-maven-plugin</artifactId>
+                                    <version>${project.version}</version>
+                                    <classifier>sources</classifier>
+                                    <type>jar</type>
+                                    <outputDirectory>${project.build.directory}</outputDirectory>
+                                    <destFileName>${project.artifactId}-${project.version}-sources.jar</destFileName>
+                                </artifactItem>
+                                <!-- Get the original javadoc JAR -->
+                                <artifactItem>
+                                    <groupId>io.swagger.core.v3</groupId>
+                                    <artifactId>swagger-maven-plugin</artifactId>
+                                    <version>${project.version}</version>
+                                    <classifier>javadoc</classifier>
+                                    <type>jar</type>
+                                    <outputDirectory>${project.build.directory}</outputDirectory>
+                                    <destFileName>${project.artifactId}-${project.version}-javadoc.jar</destFileName>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>com.coderplus.maven.plugins</groupId>
                 <artifactId>copy-rename-maven-plugin</artifactId>
@@ -37,7 +75,8 @@
             </plugin>
             <plugin>
                 <artifactId>maven-resources-plugin</artifactId>
-                <version>3.2.0</version>
+                <!-- keep 3.1.0 until root cause of error is identified. see https://issues.apache.org/jira/browse/MRESOURCES-265 -->
+                <version>3.1.0</version>
                 <executions>
                     <execution>
                         <id>copy-resources</id>
@@ -87,7 +126,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-plugin-plugin</artifactId>
-                <version>3.6.0</version>
+                <version>3.7.0</version>
                 <configuration>
                     <!-- see http://jira.codehaus.org/browse/MNG-5346 -->
                     <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
@@ -98,6 +137,34 @@
                         <goals>
                             <goal>descriptor</goal>
                         </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>3.4.0</version>
+                <executions>
+                    <execution>
+                        <id>attach-artifacts</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>attach-artifact</goal>
+                        </goals>
+                        <configuration>
+                            <artifacts>
+                                <artifact>
+                                    <file>${project.build.directory}/${project.artifactId}-${project.version}-sources.jar</file>
+                                    <type>jar</type>
+                                    <classifier>sources</classifier>
+                                </artifact>
+                                <artifact>
+                                    <file>${project.build.directory}/${project.artifactId}-${project.version}-javadoc.jar</file>
+                                    <type>jar</type>
+                                    <classifier>javadoc</classifier>
+                                </artifact>
+                            </artifacts>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
@@ -140,7 +207,7 @@
         <dependency>
             <groupId>org.apache.maven.plugin-tools</groupId>
             <artifactId>maven-plugin-annotations</artifactId>
-            <version>3.6.0</version>
+            <version>3.15.1</version>
             <scope>provided</scope>
             <exclusions>
                 <exclusion>
@@ -152,17 +219,17 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
-            <version>3.7</version>
+            <version>${commons-lang-version}</version>
         </dependency>
         <dependency>
             <groupId>org.codehaus.plexus</groupId>
             <artifactId>plexus-utils</artifactId>
-            <version>3.2.1</version>
+            <version>3.6.0</version>
         </dependency>
         <dependency>
             <groupId>org.codehaus.plexus</groupId>
             <artifactId>plexus-component-annotations</artifactId>
-            <version>2.1.0</version>
+            <version>2.2.0</version>
         </dependency>
 
         <dependency>
@@ -175,6 +242,6 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.version>3.6.3</maven.version>
+        <maven.version>3.9.9</maven.version>
     </properties>
 </project>

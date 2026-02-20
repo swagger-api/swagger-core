@@ -30,10 +30,19 @@ public class SchemaSerializer extends JsonSerializer<Schema> implements Resolvab
             Schema value, JsonGenerator jgen, SerializerProvider provider)
             throws IOException {
 
-        // handle ref schema serialization skipping all other props
         if (StringUtils.isBlank(value.get$ref())) {
-            defaultSerializer.serialize(value, jgen, provider);
+
+            if (value.getExampleSetFlag() && value.getExample() == null) {
+                jgen.writeStartObject();
+                defaultSerializer.unwrappingSerializer(null).serialize(value, jgen, provider);
+                jgen.writeNullField("example");
+                jgen.writeEndObject();
+            } else {
+                defaultSerializer.serialize(value, jgen, provider);
+            }
+
         } else {
+            // handle ref schema serialization skipping all other props
             jgen.writeStartObject();
             jgen.writeStringField("$ref", value.get$ref());
             jgen.writeEndObject();

@@ -6,13 +6,32 @@ import io.swagger.v3.core.converter.AnnotatedType;
 import io.swagger.v3.core.converter.ModelConverter;
 import io.swagger.v3.core.converter.ModelConverterContextImpl;
 import io.swagger.v3.core.converter.ModelConverters;
+import io.swagger.v3.core.converter.ResolvedSchema;
 import io.swagger.v3.core.filter.AbstractSpecFilter;
 import io.swagger.v3.core.filter.OpenAPISpecFilter;
 import io.swagger.v3.core.filter.SpecFilter;
 import io.swagger.v3.core.jackson.ModelResolver;
 import io.swagger.v3.core.model.ApiDescription;
+import io.swagger.v3.core.util.Configuration;
+import io.swagger.v3.core.util.Json;
 import io.swagger.v3.core.util.PrimitiveType;
 import io.swagger.v3.jaxrs2.matchers.SerializationMatchers;
+import io.swagger.v3.jaxrs2.petstore31.PetResource;
+import io.swagger.v3.jaxrs2.petstore31.TagResource;
+import io.swagger.v3.jaxrs2.resources.ArraySchemaImplementationResource;
+import io.swagger.v3.jaxrs2.resources.DefaultResponseResource;
+import io.swagger.v3.jaxrs2.resources.Misc31Resource;
+import io.swagger.v3.jaxrs2.resources.ParameterMaximumValueResource;
+import io.swagger.v3.jaxrs2.resources.ResponseReturnTypeResource;
+import io.swagger.v3.jaxrs2.resources.SchemaAdditionalPropertiesBooleanResource;
+import io.swagger.v3.jaxrs2.resources.SchemaAdditionalPropertiesResource;
+import io.swagger.v3.jaxrs2.resources.SchemaPropertiesResource;
+import io.swagger.v3.jaxrs2.resources.SiblingPropResource;
+import io.swagger.v3.jaxrs2.resources.SiblingsResource;
+import io.swagger.v3.jaxrs2.resources.SiblingsResourceRequestBody;
+import io.swagger.v3.jaxrs2.resources.SiblingsResourceRequestBodyMultiple;
+import io.swagger.v3.jaxrs2.resources.SiblingsResourceResponse;
+import io.swagger.v3.jaxrs2.resources.SiblingsResourceSimple;
 import io.swagger.v3.jaxrs2.resources.SingleExampleResource;
 import io.swagger.v3.jaxrs2.resources.BasicFieldsResource;
 import io.swagger.v3.jaxrs2.resources.BookStoreTicket2646;
@@ -64,9 +83,24 @@ import io.swagger.v3.jaxrs2.resources.Ticket3015Resource;
 import io.swagger.v3.jaxrs2.resources.Ticket3587Resource;
 import io.swagger.v3.jaxrs2.resources.Ticket3731BisResource;
 import io.swagger.v3.jaxrs2.resources.Ticket3731Resource;
+import io.swagger.v3.jaxrs2.resources.Ticket4065Resource;
+import io.swagger.v3.jaxrs2.resources.Ticket4341Resource;
+import io.swagger.v3.jaxrs2.resources.Ticket4412Resource;
+import io.swagger.v3.jaxrs2.resources.Ticket4446Resource;
+import io.swagger.v3.jaxrs2.resources.Ticket4483Resource;
+import io.swagger.v3.jaxrs2.resources.Ticket4804CustomClass;
+import io.swagger.v3.jaxrs2.resources.Ticket4804NotBlankResource;
+import io.swagger.v3.jaxrs2.resources.Ticket4804ProcessorResource;
+import io.swagger.v3.jaxrs2.resources.Ticket4804Resource;
+import io.swagger.v3.jaxrs2.resources.Ticket4850Resource;
+import io.swagger.v3.jaxrs2.resources.Ticket4859Resource;
+import io.swagger.v3.jaxrs2.resources.Ticket4878Resource;
+import io.swagger.v3.jaxrs2.resources.Ticket4879Resource;
+import io.swagger.v3.jaxrs2.resources.Ticket5017Resource;
 import io.swagger.v3.jaxrs2.resources.UploadResource;
 import io.swagger.v3.jaxrs2.resources.UrlEncodedResourceWithEncodings;
 import io.swagger.v3.jaxrs2.resources.UserAnnotationResource;
+import io.swagger.v3.jaxrs2.resources.WebHookResource;
 import io.swagger.v3.jaxrs2.resources.extensions.ExtensionsResource;
 import io.swagger.v3.jaxrs2.resources.extensions.OperationExtensionsResource;
 import io.swagger.v3.jaxrs2.resources.extensions.ParameterExtensionsResource;
@@ -81,6 +115,7 @@ import io.swagger.v3.jaxrs2.resources.generics.ticket3694.Ticket3694ResourceSimp
 import io.swagger.v3.jaxrs2.resources.rs.ProcessTokenRestService;
 import io.swagger.v3.jaxrs2.resources.ticket3624.Service;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.integration.SwaggerConfiguration;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.ExternalDocumentation;
 import io.swagger.v3.oas.models.OpenAPI;
@@ -123,6 +158,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import static org.testng.Assert.assertEquals;
@@ -369,7 +405,7 @@ public class ReaderTest {
                 "          content:\n" +
                 "            application/json:\n" +
                 "              schema:\n" +
-                "                $ref: '#/components/schemas/SampleResponseSchema'\n" +
+                "                $ref: \"#/components/schemas/SampleResponseSchema\"\n" +
                 "        \"404\":\n" +
                 "          description: not found!\n" +
                 "        \"400\":\n" +
@@ -377,7 +413,7 @@ public class ReaderTest {
                 "          content:\n" +
                 "            '*/*':\n" +
                 "              schema:\n" +
-                "                $ref: '#/components/schemas/GenericError'\n" +
+                "                $ref: \"#/components/schemas/GenericError\"\n" +
                 "      deprecated: true\n" +
                 "components:\n" +
                 "  schemas:\n" +
@@ -408,13 +444,13 @@ public class ReaderTest {
                 "          content:\n" +
                 "            application/json:\n" +
                 "              schema:\n" +
-                "                $ref: '#/components/schemas/SampleResponseSchema'\n" +
+                "                $ref: \"#/components/schemas/SampleResponseSchema\"\n" +
                 "        default:\n" +
                 "          description: boo\n" +
                 "          content:\n" +
                 "            '*/*':\n" +
                 "              schema:\n" +
-                "                $ref: '#/components/schemas/GenericError'\n" +
+                "                $ref: \"#/components/schemas/GenericError\"\n" +
                 "      deprecated: true\n" +
                 "  /allOf:\n" +
                 "    get:\n" +
@@ -436,8 +472,8 @@ public class ReaderTest {
                 "            application/json:\n" +
                 "              schema:\n" +
                 "                allOf:\n" +
-                "                - $ref: '#/components/schemas/MultipleSub1Bean'\n" +
-                "                - $ref: '#/components/schemas/MultipleSub2Bean'\n" +
+                "                - $ref: \"#/components/schemas/MultipleSub1Bean\"\n" +
+                "                - $ref: \"#/components/schemas/MultipleSub2Bean\"\n" +
                 "  /anyOf:\n" +
                 "    get:\n" +
                 "      summary: Test inheritance / polymorphism\n" +
@@ -458,8 +494,8 @@ public class ReaderTest {
                 "            application/json:\n" +
                 "              schema:\n" +
                 "                anyOf:\n" +
-                "                - $ref: '#/components/schemas/MultipleSub1Bean'\n" +
-                "                - $ref: '#/components/schemas/MultipleSub2Bean'\n" +
+                "                - $ref: \"#/components/schemas/MultipleSub1Bean\"\n" +
+                "                - $ref: \"#/components/schemas/MultipleSub2Bean\"\n" +
                 "  /oneOf:\n" +
                 "    get:\n" +
                 "      summary: Test inheritance / polymorphism\n" +
@@ -480,8 +516,8 @@ public class ReaderTest {
                 "            application/json:\n" +
                 "              schema:\n" +
                 "                oneOf:\n" +
-                "                - $ref: '#/components/schemas/MultipleSub1Bean'\n" +
-                "                - $ref: '#/components/schemas/MultipleSub2Bean'\n" +
+                "                - $ref: \"#/components/schemas/MultipleSub1Bean\"\n" +
+                "                - $ref: \"#/components/schemas/MultipleSub2Bean\"\n" +
                 "components:\n" +
                 "  schemas:\n" +
                 "    SampleResponseSchema:\n" +
@@ -492,7 +528,7 @@ public class ReaderTest {
                 "      type: object\n" +
                 "      description: MultipleSub1Bean\n" +
                 "      allOf:\n" +
-                "      - $ref: '#/components/schemas/MultipleBaseBean'\n" +
+                "      - $ref: \"#/components/schemas/MultipleBaseBean\"\n" +
                 "      - type: object\n" +
                 "        properties:\n" +
                 "          c:\n" +
@@ -502,7 +538,7 @@ public class ReaderTest {
                 "      type: object\n" +
                 "      description: MultipleSub2Bean\n" +
                 "      allOf:\n" +
-                "      - $ref: '#/components/schemas/MultipleBaseBean'\n" +
+                "      - $ref: \"#/components/schemas/MultipleBaseBean\"\n" +
                 "      - type: object\n" +
                 "        properties:\n" +
                 "          d:\n" +
@@ -715,6 +751,36 @@ public class ReaderTest {
         }
     }
 
+    @Test
+    public void testClassWithCompletableFuture() {
+        Reader reader = new Reader(new OpenAPI());
+        OpenAPI openAPI = reader.read(ClassWithCompletableFuture.class);
+        assertNotNull(openAPI);
+
+        assertEquals(
+            openAPI.getPaths()
+                    .get("/myApi")
+                    .getGet()
+                    .getResponses()
+                    .get("default")
+                    .getContent()
+                    .get("application/json")
+                    .getSchema()
+                    .get$ref(),
+                "#/components/schemas/Ret"
+        );
+    }
+
+    static class ClassWithCompletableFuture {
+        @Path("/myApi")
+        @Produces("application/json")
+        @Consumes("application/json")
+        @GET
+        public CompletableFuture<Ret> myApi(A a) {
+            return CompletableFuture.completedFuture(new Ret());
+        }
+    }
+
     @Test(description = "test resource with array in response content")
     public void test2497() {
         Reader reader = new Reader(new OpenAPI());
@@ -730,6 +796,32 @@ public class ReaderTest {
         assertEquals(schema.getItems().get$ref(), "#/components/schemas/User");
 
         assertEquals(openAPI.getComponents().getSchemas().get("User").getRequired().get(0), "issue3438");
+    }
+
+    @Test(description = "array required property resolved from ArraySchema.arraySchema.requiredMode")
+    public void test4341() {
+        Reader reader = new Reader(new OpenAPI());
+        OpenAPI openAPI = reader.read(Ticket4341Resource.class);
+        Schema userSchema = openAPI.getComponents().getSchemas().get("User");
+        List<String> required = userSchema.getRequired();
+
+        assertTrue(required.contains("requiredArray"));
+        assertFalse(required.contains("notRequiredArray"));
+        assertFalse(required.contains("notRequiredArrayWithNotNull"));
+        assertTrue(required.contains("autoRequiredWithNotNull"));
+        assertFalse(required.contains("autoNotRequired"));
+
+        assertTrue(
+                required.contains("requiredArrayArraySchemaOnly"),
+                "arraySchema.requiredMode=REQUIRED should make the array property required " +
+                        "even when items schema is not explicitly provided"
+        );
+
+        assertFalse(
+                required.contains("requiredItemsOnlyArray"),
+                "schema(requiredMode=REQUIRED) on items must not make the array property required; " +
+                        "requiredness is controlled by arraySchema.requiredMode"
+        );
     }
 
     @Test(description = "test resource with subresources")
@@ -1023,7 +1115,7 @@ public class ReaderTest {
                 "        content:\n" +
                 "          application/json:\n" +
                 "            schema:\n" +
-                "              $ref: '#/components/schemas/Animal'\n" +
+                "              $ref: \"#/components/schemas/Animal\"\n" +
                 "      responses:\n" +
                 "        default:\n" +
                 "          description: default response\n" +
@@ -1045,7 +1137,7 @@ public class ReaderTest {
                 "    Cat:\n" +
                 "      type: object\n" +
                 "      allOf:\n" +
-                "      - $ref: '#/components/schemas/Animal'\n" +
+                "      - $ref: \"#/components/schemas/Animal\"\n" +
                 "      - type: object\n" +
                 "        properties:\n" +
                 "          lives:\n" +
@@ -1054,7 +1146,7 @@ public class ReaderTest {
                 "    Dog:\n" +
                 "      type: object\n" +
                 "      allOf:\n" +
-                "      - $ref: '#/components/schemas/Animal'\n" +
+                "      - $ref: \"#/components/schemas/Animal\"\n" +
                 "      - type: object\n" +
                 "        properties:\n" +
                 "          barkVolume:\n" +
@@ -1079,7 +1171,7 @@ public class ReaderTest {
                 "          content:\n" +
                 "            '*/*':\n" +
                 "              schema:\n" +
-                "                $ref: '#/components/schemas/Test'\n" +
+                "                $ref: \"#/components/schemas/Test\"\n" +
                 "components:\n" +
                 "  schemas:\n" +
                 "    Test:\n" +
@@ -1130,7 +1222,7 @@ public class ReaderTest {
                 "        content:\n" +
                 "          '*/*':\n" +
                 "            schema:\n" +
-                "              $ref: '#/components/schemas/Book'\n" +
+                "              $ref: \"#/components/schemas/Book\"\n" +
                 "        required: true\n" +
                 "      responses:\n" +
                 "        default:\n" +
@@ -1144,7 +1236,7 @@ public class ReaderTest {
                 "        content:\n" +
                 "          '*/*':\n" +
                 "            schema:\n" +
-                "              $ref: '#/components/schemas/Book'\n" +
+                "              $ref: \"#/components/schemas/Book\"\n" +
                 "        required: true\n" +
                 "      responses:\n" +
                 "        default:\n" +
@@ -1180,7 +1272,7 @@ public class ReaderTest {
                 "          content:\n" +
                 "            application/json:\n" +
                 "              schema:\n" +
-                "                $ref: '#/components/schemas/DistancesResponse'\n" +
+                "                $ref: \"#/components/schemas/DistancesResponse\"\n" +
                 "components:\n" +
                 "  schemas:\n" +
                 "    DistancesResponse:\n" +
@@ -1234,15 +1326,15 @@ public class ReaderTest {
                 "          content:\n" +
                 "            application/json:\n" +
                 "              schema:\n" +
-                "                $ref: '#/components/schemas/SampleResponseSchema'\n" +
+                "                $ref: \"#/components/schemas/SampleResponseSchema\"\n" +
                 "        default:\n" +
                 "          description: boo\n" +
                 "          content:\n" +
                 "            '*/*':\n" +
                 "              schema:\n" +
-                "                $ref: '#/components/schemas/GenericError'\n" +
+                "                $ref: \"#/components/schemas/GenericError\"\n" +
                 "        \"401\":\n" +
-                "          $ref: '#/components/responses/invalidJWT'\n" +
+                "          $ref: \"#/components/responses/invalidJWT\"\n" +
                 "      deprecated: true\n" +
                 "components:\n" +
                 "  schemas:\n" +
@@ -1288,15 +1380,15 @@ public class ReaderTest {
                 "          content:\n" +
                 "            application/json:\n" +
                 "              schema:\n" +
-                "                $ref: '#/components/schemas/SampleResponseSchema'\n" +
+                "                $ref: \"#/components/schemas/SampleResponseSchema\"\n" +
                 "        default:\n" +
                 "          description: boo\n" +
                 "          content:\n" +
                 "            '*/*':\n" +
                 "              schema:\n" +
-                "                $ref: '#/components/schemas/GenericError'\n" +
+                "                $ref: \"#/components/schemas/GenericError\"\n" +
                 "        \"401\":\n" +
-                "          $ref: '#/components/responses/invalidJWT'\n" +
+                "          $ref: \"#/components/responses/invalidJWT\"\n" +
                 "      deprecated: true\n" +
                 "components:\n" +
                 "  schemas:\n" +
@@ -1340,7 +1432,7 @@ public class ReaderTest {
                 "          content:\n" +
                 "            '*/*':\n" +
                 "              schema:\n" +
-                "                $ref: '#/components/schemas/Town'\n" +
+                "                $ref: \"#/components/schemas/Town\"\n" +
                 "components:\n" +
                 "  schemas:\n" +
                 "    Town:\n" +
@@ -1378,7 +1470,7 @@ public class ReaderTest {
                 "      description: Defines a simple get operation with a payload complex input object\n" +
                 "      operationId: sendPayload\n" +
                 "      requestBody:\n" +
-                "        $ref: '#/components/requestBodies/User'\n" +
+                "        $ref: \"#/components/requestBodies/User\"\n" +
                 "      responses:\n" +
                 "        default:\n" +
                 "          description: default response\n" +
@@ -1442,7 +1534,7 @@ public class ReaderTest {
                 "      description: Defines a simple get operation with a payload complex input object\n" +
                 "      operationId: sendPayload\n" +
                 "      requestBody:\n" +
-                "        $ref: '#/components/requestBodies/User'\n" +
+                "        $ref: \"#/components/requestBodies/User\"\n" +
                 "      responses:\n" +
                 "        default:\n" +
                 "          description: default response\n" +
@@ -1520,7 +1612,7 @@ public class ReaderTest {
                 "      description: Defines a simple get operation with a payload complex input object\n" +
                 "      operationId: sendPayload\n" +
                 "      parameters:\n" +
-                "      - $ref: '#/components/parameters/id'\n" +
+                "      - $ref: \"#/components/parameters/id\"\n" +
                 "      responses:\n" +
                 "        default:\n" +
                 "          description: default response\n" +
@@ -1571,7 +1663,7 @@ public class ReaderTest {
                 "      description: Defines a simple get operation with a payload complex input object\n" +
                 "      operationId: sendPayload\n" +
                 "      parameters:\n" +
-                "      - $ref: '#/components/parameters/id'\n" +
+                "      - $ref: \"#/components/parameters/id\"\n" +
                 "      responses:\n" +
                 "        default:\n" +
                 "          description: default response\n" +
@@ -1641,7 +1733,7 @@ public class ReaderTest {
                 "            description: subscriptionId_1\n" +
                 "            value: 12345\n" +
                 "            externalValue: Subscription external value 1\n" +
-                "            $ref: '#/components/examples/Id'\n" +
+                "            $ref: \"#/components/examples/Id\"\n" +
                 "        example: example\n" +
                 "      requestBody:\n" +
                 "        content:\n" +
@@ -1655,7 +1747,7 @@ public class ReaderTest {
                 "          content:\n" +
                 "            '*/*':\n" +
                 "              schema:\n" +
-                "                $ref: '#/components/schemas/SubscriptionResponse'\n" +
+                "                $ref: \"#/components/schemas/SubscriptionResponse\"\n" +
                 "components:\n" +
                 "  schemas:\n" +
                 "    SubscriptionResponse:\n" +
@@ -1697,7 +1789,7 @@ public class ReaderTest {
                 "      operationId: subscribe\n" +
                 "      parameters:\n" +
                 "      - example:\n" +
-                "          $ref: '#/components/examples/Id'\n" +
+                "          $ref: \"#/components/examples/Id\"\n" +
                 "      requestBody:\n" +
                 "        content:\n" +
                 "          '*/*':\n" +
@@ -1710,7 +1802,7 @@ public class ReaderTest {
                 "          content:\n" +
                 "            '*/*':\n" +
                 "              schema:\n" +
-                "                $ref: '#/components/schemas/SubscriptionResponse'\n" +
+                "                $ref: \"#/components/schemas/SubscriptionResponse\"\n" +
                 "components:\n" +
                 "  schemas:\n" +
                 "    SubscriptionResponse:\n" +
@@ -1768,7 +1860,7 @@ public class ReaderTest {
                 "          headers:\n" +
                 "            Rate-Limit-Limit:\n" +
                 "              description: The number of allowed requests in the current period\n" +
-                "              $ref: '#/components/headers/Header'\n" +
+                "              $ref: \"#/components/headers/Header\"\n" +
                 "              style: simple\n" +
                 "              schema:\n" +
                 "                type: integer\n" +
@@ -1818,7 +1910,7 @@ public class ReaderTest {
                 "    myOauth2Security:\n" +
                 "      type: oauth2\n" +
                 "      description: myOauthSecurity Description\n" +
-                "      $ref: '#/components/securitySchemes/Security'\n" +
+                "      $ref: \"#/components/securitySchemes/Security\"\n" +
                 "      in: header\n" +
                 "      flows:\n" +
                 "        implicit:\n" +
@@ -1857,13 +1949,13 @@ public class ReaderTest {
                 "          content:\n" +
                 "            '*/*':\n" +
                 "              schema:\n" +
-                "                $ref: '#/components/schemas/User'\n" +
+                "                $ref: \"#/components/schemas/User\"\n" +
                 "          links:\n" +
                 "            address:\n" +
                 "              operationId: getAddress\n" +
                 "              parameters:\n" +
                 "                userId: $request.query.userId\n" +
-                "              $ref: '#/components/links/Link'\n" +
+                "              $ref: \"#/components/links/Link\"\n" +
                 "components:\n" +
                 "  links:\n" +
                 "    Link:\n" +
@@ -1896,7 +1988,7 @@ public class ReaderTest {
                 "          description: voila!\n" +
                 "      callbacks:\n" +
                 "        testCallback1:\n" +
-                "          $ref: '#/components/callbacks/Callback'\n" +
+                "          $ref: \"#/components/callbacks/Callback\"\n" +
                 "components:\n" +
                 "  callbacks:\n" +
                 "    Callback:\n" +
@@ -2012,7 +2104,7 @@ public class ReaderTest {
                 "      summary: Simple get operation\n" +
                 "      operationId: sendPayload2\n" +
                 "      parameters:\n" +
-                "      - $ref: '#/components/parameters/id'\n" +
+                "      - $ref: \"#/components/parameters/id\"\n" +
                 "      responses:\n" +
                 "        default:\n" +
                 "          description: default response\n" +
@@ -2023,7 +2115,7 @@ public class ReaderTest {
                 "      summary: Simple get operation\n" +
                 "      operationId: sendPayload1\n" +
                 "      parameters:\n" +
-                "      - $ref: '#/components/parameters/id'\n" +
+                "      - $ref: \"#/components/parameters/id\"\n" +
                 "      responses:\n" +
                 "        default:\n" +
                 "          description: default response\n" +
@@ -2056,14 +2148,14 @@ public class ReaderTest {
                 "        content:\n" +
                 "          application/json:\n" +
                 "            schema:\n" +
-                "              $ref: '#/components/schemas/ProcessTokenDTO'\n" +
+                "              $ref: \"#/components/schemas/ProcessTokenDTO\"\n" +
                 "      responses:\n" +
                 "        default:\n" +
                 "          description: default response\n" +
                 "          content:\n" +
                 "            application/json:\n" +
                 "              schema:\n" +
-                "                $ref: '#/components/schemas/ProcessTokenDTO'\n" +
+                "                $ref: \"#/components/schemas/ProcessTokenDTO\"\n" +
                 "components:\n" +
                 "  schemas:\n" +
                 "    ProcessTokenDTO:\n" +
@@ -2102,7 +2194,7 @@ public class ReaderTest {
                 "        content:\n" +
                 "          application/json:\n" +
                 "            schema:\n" +
-                "              $ref: '#/components/schemas/User'\n" +
+                "              $ref: \"#/components/schemas/User\"\n" +
                 "            example:\n" +
                 "              foo: foo\n" +
                 "              bar: bar\n" +
@@ -2118,7 +2210,7 @@ public class ReaderTest {
                 "        content:\n" +
                 "          application/json:\n" +
                 "            schema:\n" +
-                "              $ref: '#/components/schemas/User'\n" +
+                "              $ref: \"#/components/schemas/User\"\n" +
                 "            example:\n" +
                 "              foo: foo\n" +
                 "              bar: bar\n" +
@@ -2175,7 +2267,7 @@ public class ReaderTest {
                 "                name:\n" +
                 "                  type: string\n" +
                 "                picture:\n" +
-                "                  $ref: '#/components/schemas/picture'\n" +
+                "                  $ref: \"#/components/schemas/picture\"\n" +
                 "      responses:\n" +
                 "        default:\n" +
                 "          description: default response\n" +
@@ -2188,7 +2280,7 @@ public class ReaderTest {
                 "        content:\n" +
                 "          multipart/form-data:\n" +
                 "            schema:\n" +
-                "              $ref: '#/components/schemas/UploadRequest'\n" +
+                "              $ref: \"#/components/schemas/UploadRequest\"\n" +
                 "      responses:\n" +
                 "        default:\n" +
                 "          description: default response\n" +
@@ -2269,7 +2361,7 @@ public class ReaderTest {
                 "          content:\n" +
                 "            application/json:\n" +
                 "              schema:\n" +
-                "                $ref: '#/components/schemas/Response'\n" +
+                "                $ref: \"#/components/schemas/Response\"\n" +
                 "  /example/model/by/ids:\n" +
                 "    get:\n" +
                 "      tags:\n" +
@@ -2282,7 +2374,7 @@ public class ReaderTest {
                 "          content:\n" +
                 "            application/json:\n" +
                 "              schema:\n" +
-                "                $ref: '#/components/schemas/ByIdResponse'\n" +
+                "                $ref: \"#/components/schemas/ByIdResponse\"\n" +
                 "  /example/containerized/model:\n" +
                 "    get:\n" +
                 "      tags:\n" +
@@ -2295,7 +2387,7 @@ public class ReaderTest {
                 "          content:\n" +
                 "            application/json:\n" +
                 "              schema:\n" +
-                "                $ref: '#/components/schemas/ContainerizedResponse'\n" +
+                "                $ref: \"#/components/schemas/ContainerizedResponse\"\n" +
                 "components:\n" +
                 "  schemas:\n" +
                 "    Model:\n" +
@@ -2308,11 +2400,11 @@ public class ReaderTest {
                 "        active:\n" +
                 "          type: boolean\n" +
                 "        schemaParent:\n" +
-                "          $ref: '#/components/schemas/Model'\n" +
+                "          $ref: \"#/components/schemas/Model\"\n" +
                 "        optionalString:\n" +
                 "          type: string\n" +
                 "        parent:\n" +
-                "          $ref: '#/components/schemas/Model'\n" +
+                "          $ref: \"#/components/schemas/Model\"\n" +
                 "        id:\n" +
                 "          type: integer\n" +
                 "          format: int32\n" +
@@ -2325,14 +2417,14 @@ public class ReaderTest {
                 "        models:\n" +
                 "          type: array\n" +
                 "          items:\n" +
-                "            $ref: '#/components/schemas/Model'\n" +
+                "            $ref: \"#/components/schemas/Model\"\n" +
                 "    ByIdResponse:\n" +
                 "      type: object\n" +
                 "      properties:\n" +
                 "        modelsById:\n" +
                 "          type: object\n" +
                 "          additionalProperties:\n" +
-                "            $ref: '#/components/schemas/Model'\n" +
+                "            $ref: \"#/components/schemas/Model\"\n" +
                 "    ContainerizedResponse:\n" +
                 "      type: object\n" +
                 "      properties:\n" +
@@ -2342,14 +2434,14 @@ public class ReaderTest {
                 "        containerizedModels:\n" +
                 "          type: array\n" +
                 "          items:\n" +
-                "            $ref: '#/components/schemas/ModelContainer'\n" +
+                "            $ref: \"#/components/schemas/ModelContainer\"\n" +
                 "    ModelContainer:\n" +
                 "      type: object\n" +
                 "      properties:\n" +
                 "        text:\n" +
                 "          type: string\n" +
                 "        model:\n" +
-                "          $ref: '#/components/schemas/Model'\n" +
+                "          $ref: \"#/components/schemas/Model\"\n" +
                 "        id:\n" +
                 "          type: integer\n" +
                 "          format: int32";
@@ -2604,7 +2696,7 @@ public class ReaderTest {
                 "          content:\n" +
                 "            '*/*':\n" +
                 "              schema:\n" +
-                "                $ref: '#/components/schemas/ItemWithChildren'\n" +
+                "                $ref: \"#/components/schemas/ItemWithChildren\"\n" +
                 "  /item/nogeneric/{id}:\n" +
                 "    get:\n" +
                 "      operationId: getByIdNoGeneric\n" +
@@ -2620,7 +2712,7 @@ public class ReaderTest {
                 "          content:\n" +
                 "            '*/*':\n" +
                 "              schema:\n" +
-                "                $ref: '#/components/schemas/ItemWithChildren'\n" +
+                "                $ref: \"#/components/schemas/ItemWithChildren\"\n" +
                 "  /item/nogenericsamereturn/{id}:\n" +
                 "    get:\n" +
                 "      operationId: getByIdNoGenericSameReturn\n" +
@@ -2636,7 +2728,7 @@ public class ReaderTest {
                 "          content:\n" +
                 "            '*/*':\n" +
                 "              schema:\n" +
-                "                $ref: '#/components/schemas/BaseDTO'\n" +
+                "                $ref: \"#/components/schemas/BaseDTO\"\n" +
                 "  /item/genericparam:\n" +
                 "    post:\n" +
                 "      operationId: genericParam\n" +
@@ -2644,14 +2736,14 @@ public class ReaderTest {
                 "        content:\n" +
                 "          '*/*':\n" +
                 "            schema:\n" +
-                "              $ref: '#/components/schemas/ItemWithChildren'\n" +
+                "              $ref: \"#/components/schemas/ItemWithChildren\"\n" +
                 "      responses:\n" +
                 "        default:\n" +
                 "          description: default response\n" +
                 "          content:\n" +
                 "            '*/*':\n" +
                 "              schema:\n" +
-                "                $ref: '#/components/schemas/BaseDTO'\n" +
+                "                $ref: \"#/components/schemas/BaseDTO\"\n" +
                 "components:\n" +
                 "  schemas:\n" +
                 "    ItemWithChildren:\n" +
@@ -2685,7 +2777,7 @@ public class ReaderTest {
                 "        content:\n" +
                 "          '*/*':\n" +
                 "            schema:\n" +
-                "              $ref: '#/components/schemas/SampleDTO'\n" +
+                "              $ref: \"#/components/schemas/SampleDTO\"\n" +
                 "      responses:\n" +
                 "        \"201\":\n" +
                 "          description: Created\n" +
@@ -2704,7 +2796,7 @@ public class ReaderTest {
                 "        content:\n" +
                 "          '*/*':\n" +
                 "            schema:\n" +
-                "              $ref: '#/components/schemas/SampleOtherDTO'\n" +
+                "              $ref: \"#/components/schemas/SampleOtherDTO\"\n" +
                 "      responses:\n" +
                 "        \"200\":\n" +
                 "          description: OK\n" +
@@ -2723,7 +2815,7 @@ public class ReaderTest {
                 "        content:\n" +
                 "          '*/*':\n" +
                 "            schema:\n" +
-                "              $ref: '#/components/schemas/SampleOtherDTO'\n" +
+                "              $ref: \"#/components/schemas/SampleOtherDTO\"\n" +
                 "      responses:\n" +
                 "        \"200\":\n" +
                 "          description: OK\n" +
@@ -2810,5 +2902,2770 @@ public class ReaderTest {
         reader = new Reader(new OpenAPI());
         openAPI = reader.read(Ticket3731BisResource.class);
         SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
+    }
+
+    @Test(description = "Test SchemaProperties and additionalProperties annotations")
+    public void testSchemaProperties() {
+        Reader reader = new Reader(new OpenAPI());
+
+        OpenAPI openAPI = reader.read(SchemaPropertiesResource.class);
+        String yaml = "openapi: 3.0.1\n" +
+                "paths:\n" +
+                "  /:\n" +
+                "    get:\n" +
+                "      summary: Simple get operation\n" +
+                "      description: Defines a simple get operation with no inputs and a complex output\n" +
+                "        object\n" +
+                "      operationId: getWithPayloadResponse\n" +
+                "      responses:\n" +
+                "        \"200\":\n" +
+                "          description: voila!\n" +
+                "          content:\n" +
+                "            application/json:\n" +
+                "              schema:\n" +
+                "                type: object\n" +
+                "                properties:\n" +
+                "                  foo:\n" +
+                "                    maximum: 1\n" +
+                "                    type: integer\n" +
+                "        default:\n" +
+                "          description: boo\n" +
+                "          content:\n" +
+                "            application/json:\n" +
+                "              schema:\n" +
+                "                maxProperties: 3\n" +
+                "                type: object\n" +
+                "                properties:\n" +
+                "                  foo:\n" +
+                "                    maximum: 1\n" +
+                "                    type: integer\n" +
+                "                description: various properties\n" +
+                "        \"400\":\n" +
+                "          description: additionalProperties schema\n" +
+                "          content:\n" +
+                "            application/json:\n" +
+                "              schema:\n" +
+                "                maxProperties: 2\n" +
+                "                type: object\n" +
+                "                additionalProperties:\n" +
+                "                  type: string\n" +
+                "        \"401\":\n" +
+                "          description: additionalProperties boolean\n" +
+                "          content:\n" +
+                "            application/json:\n" +
+                "              schema:\n" +
+                "                maxProperties: 2\n" +
+                "                type: object\n" +
+                "                additionalProperties: false\n" +
+                "      deprecated: true\n" +
+                "  /one:\n" +
+                "    get:\n" +
+                "      operationId: requestBodySchemaPropertyNoSchema\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          application/yaml:\n" +
+                "            schema:\n" +
+                "              type: object\n" +
+                "              properties:\n" +
+                "                foo:\n" +
+                "                  type: string\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            application/json:\n" +
+                "              schema:\n" +
+                "                $ref: \"#/components/schemas/MultipleBaseBean\"\n" +
+                "  /two:\n" +
+                "    get:\n" +
+                "      operationId: requestBodySchemaPropertySchema\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          application/yaml:\n" +
+                "            schema:\n" +
+                "              required:\n" +
+                "              - foo\n" +
+                "              type: object\n" +
+                "              properties:\n" +
+                "                foo:\n" +
+                "                  type: string\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            application/json:\n" +
+                "              schema:\n" +
+                "                $ref: \"#/components/schemas/MultipleBaseBean\"\n" +
+                "  /three:\n" +
+                "    get:\n" +
+                "      operationId: requestBodySchemaPropertySchemaArray\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          application/yaml:\n" +
+                "            schema:\n" +
+                "              type: array\n" +
+                "              items:\n" +
+                "                required:\n" +
+                "                - foo\n" +
+                "                type: object\n" +
+                "                properties:\n" +
+                "                  foo:\n" +
+                "                    type: string\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            application/json:\n" +
+                "              schema:\n" +
+                "                $ref: \"#/components/schemas/MultipleBaseBean\"\n" +
+                "components:\n" +
+                "  schemas:\n" +
+                "    MultipleBaseBean:\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        beanType:\n" +
+                "          type: string\n" +
+                "        a:\n" +
+                "          type: integer\n" +
+                "          format: int32\n" +
+                "        b:\n" +
+                "          type: string\n" +
+                "      description: MultipleBaseBean\n" +
+                "    MultipleSub1Bean:\n" +
+                "      type: object\n" +
+                "      description: MultipleSub1Bean\n" +
+                "      allOf:\n" +
+                "      - $ref: \"#/components/schemas/MultipleBaseBean\"\n" +
+                "      - type: object\n" +
+                "        properties:\n" +
+                "          c:\n" +
+                "            type: integer\n" +
+                "            format: int32\n" +
+                "    MultipleSub2Bean:\n" +
+                "      type: object\n" +
+                "      description: MultipleSub2Bean\n" +
+                "      allOf:\n" +
+                "      - $ref: \"#/components/schemas/MultipleBaseBean\"\n" +
+                "      - type: object\n" +
+                "        properties:\n" +
+                "          d:\n" +
+                "            type: integer\n" +
+                "            format: int32\n";
+        SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
+    }
+
+    @Test(description = "Test Schema AdditionalProperties annotations")
+    public void testSchemaAdditionalProperties() {
+        Reader reader = new Reader(new OpenAPI());
+
+        OpenAPI openAPI = reader.read(SchemaAdditionalPropertiesResource.class);
+        String yaml = "openapi: 3.0.1\n" +
+                "paths:\n" +
+                "  /arraySchemaImpl:\n" +
+                "    get:\n" +
+                "      operationId: arraySchemaImpl\n" +
+                "      responses:\n" +
+                "        \"200\":\n" +
+                "          description: voila!\n" +
+                "          content:\n" +
+                "            application/json:\n" +
+                "              schema:\n" +
+                "                type: object\n" +
+                "                additionalProperties:\n" +
+                "                  type: array\n" +
+                "                  items:\n" +
+                "                    $ref: \"#/components/schemas/Pet\"\n" +
+                "  /fromtResponseType:\n" +
+                "    get:\n" +
+                "      operationId: fromtResponseType\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*':\n" +
+                "              schema:\n" +
+                "                type: object\n" +
+                "                additionalProperties:\n" +
+                "                  type: array\n" +
+                "                  items:\n" +
+                "                    $ref: \"#/components/schemas/Pet\"\n" +
+                "  /schemaImpl:\n" +
+                "    get:\n" +
+                "      operationId: schemaImpl\n" +
+                "      responses:\n" +
+                "        \"200\":\n" +
+                "          description: voila!\n" +
+                "          content:\n" +
+                "            application/json:\n" +
+                "              schema:\n" +
+                "                type: object\n" +
+                "                additionalProperties:\n" +
+                "                  $ref: \"#/components/schemas/Pet\"\n" +
+                "  /schemaNotImpl:\n" +
+                "    get:\n" +
+                "      operationId: schemaNotImpl\n" +
+                "      responses:\n" +
+                "        \"200\":\n" +
+                "          description: voila!\n" +
+                "          content:\n" +
+                "            application/json:\n" +
+                "              schema:\n" +
+                "                type: object\n" +
+                "                additionalProperties:\n" +
+                "                  $ref: \"#/components/schemas/Pet\"\n" +
+                "components:\n" +
+                "  schemas:\n" +
+                "    Pet:\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        foo:\n" +
+                "          type: string\n";
+        SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
+    }
+
+    @Test(description = "Test Schema AdditionalProperties annotations")
+    public void testSchemaAdditionalPropertiesBoolean() {
+        ModelConverters.reset();
+        SwaggerConfiguration config = new SwaggerConfiguration().openAPI(new OpenAPI()).schemaResolution(Schema.SchemaResolution.ALL_OF);
+        Reader reader = new Reader(config);
+
+        OpenAPI openAPI = reader.read(SchemaAdditionalPropertiesBooleanResource.class);
+        String yaml = "openapi: 3.0.1\n" +
+                "paths:\n" +
+                "  /test:\n" +
+                "    get:\n" +
+                "      operationId: test\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*':\n" +
+                "              schema:\n" +
+                "                $ref: \"#/components/schemas/Pet\"\n" +
+                "components:\n" +
+                "  schemas:\n" +
+                "    Bar:\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        foo:\n" +
+                "          type: string\n" +
+                "    Pet:\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        bar:\n" +
+                "          allOf:\n" +
+                "          - additionalProperties:\n" +
+                "              $ref: \"#/components/schemas/Bar\"\n" +
+                "          - $ref: \"#/components/schemas/Bar\"\n" +
+                "        vbar:\n" +
+                "          allOf:\n" +
+                "          - additionalProperties: false\n" +
+                "          - $ref: \"#/components/schemas/Bar\"\n" +
+                "      additionalProperties: false\n";
+        SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
+        ModelConverters.reset();
+    }
+
+    @Test(description = "Test ArraySchema implementation annotations")
+    public void testArraySchemaImplementation() {
+        SwaggerConfiguration config = new SwaggerConfiguration().openAPI31(true).openAPI(new OpenAPI());
+        Reader reader = new Reader(config);
+
+        OpenAPI openAPI = reader.read(ArraySchemaImplementationResource.class);
+        String yaml = "openapi: 3.1.0\n" +
+                "paths:\n" +
+                "  /test:\n" +
+                "    get:\n" +
+                "      operationId: test\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*':\n" +
+                "              schema:\n" +
+                "                $ref: \"#/components/schemas/Pet\"\n" +
+                "components:\n" +
+                "  schemas:\n" +
+                "    Pet:\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        cars:\n" +
+                "          type: array\n" +
+                "          items:\n" +
+                "            type: integer\n" +
+                "            format: int32\n" +
+                "            description: A house in a street\n";
+        SerializationMatchers.assertEqualsToYaml31(openAPI, yaml);
+    }
+
+    @Test(description = "Responses schema resolved from return type")
+    public void testResponseReturnType() {
+        Reader reader = new Reader(new OpenAPI());
+
+        OpenAPI openAPI = reader.read(ResponseReturnTypeResource.class);
+        String yaml = "openapi: 3.0.1\n" +
+                "paths:\n" +
+                "  /sample/{id}:\n" +
+                "    get:\n" +
+                "      summary: Find by id\n" +
+                "      description: Find by id operation\n" +
+                "      operationId: find\n" +
+                "      parameters:\n" +
+                "      - name: id\n" +
+                "        in: path\n" +
+                "        description: ID\n" +
+                "        required: true\n" +
+                "        schema:\n" +
+                "          type: integer\n" +
+                "          format: int32\n" +
+                "      responses:\n" +
+                "        \"200\":\n" +
+                "          description: Ok\n" +
+                "          content:\n" +
+                "            application/json:\n" +
+                "              schema:\n" +
+                "                $ref: \"#/components/schemas/TestDTO\"\n" +
+                "        \"201\":\n" +
+                "          description: \"201\"\n" +
+                "          content:\n" +
+                "            application/json:\n" +
+                "              schema:\n" +
+                "                $ref: \"#/components/schemas/TestDTO\"\n" +
+                "        \"204\":\n" +
+                "          description: No Content\n" +
+                "          content:\n" +
+                "            application/json: {}\n" +
+                "  /sample/{id}/default:\n" +
+                "    get:\n" +
+                "      summary: Find by id (default)\n" +
+                "      description: Find by id operation (default)\n" +
+                "      operationId: findDefault\n" +
+                "      parameters:\n" +
+                "      - name: id\n" +
+                "        in: path\n" +
+                "        description: ID\n" +
+                "        required: true\n" +
+                "        schema:\n" +
+                "          type: integer\n" +
+                "          format: int32\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            application/json:\n" +
+                "              schema:\n" +
+                "                $ref: \"#/components/schemas/TestDTO\"\n" +
+                "components:\n" +
+                "  schemas:\n" +
+                "    TestDTO:\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        foo:\n" +
+                "          type: string";
+        SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
+    }
+
+    @Test(description = "Responses Default Status")
+    public void testResponseDefaultStatus() {
+        SwaggerConfiguration config = new SwaggerConfiguration().defaultResponseCode("200");
+        Reader reader = new Reader(config);
+
+        OpenAPI openAPI = reader.read(DefaultResponseResource.class);
+        String yaml = "openapi: 3.0.1\n" +
+                "paths:\n" +
+                "  /:\n" +
+                "    get:\n" +
+                "      operationId: test\n" +
+                "      responses:\n" +
+                "        \"200\":\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*':\n" +
+                "              schema:\n" +
+                "                type: string\n";
+        SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
+    }
+
+    @Test
+    public void test4412PathWildcards() {
+        Reader reader = new Reader(new OpenAPI());
+
+        OpenAPI openAPI = reader.read(Ticket4412Resource.class);
+        String yaml = "openapi: 3.0.1\n" +
+                "paths:\n" +
+                "  /test/sws/{var}:\n" +
+                "    get:\n" +
+                "      operationId: getCart\n" +
+                "      parameters:\n" +
+                "      - name: var\n" +
+                "        in: path\n" +
+                "        required: true\n" +
+                "        schema:\n" +
+                "          pattern: .*\n" +
+                "          type: string\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            text/xml:\n" +
+                "              schema:\n" +
+                "                type: array\n" +
+                "                items:\n" +
+                "                  type: string";
+        SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
+    }
+
+    @Test
+    public void testOas31Petstore() {
+        SwaggerConfiguration config = new SwaggerConfiguration().openAPI31(true).openAPI(new OpenAPI());
+        Reader reader = new Reader(config);
+
+        OpenAPI openAPI = reader.read(PetResource.class);
+        String yaml = "openapi: 3.1.0\n" +
+                "paths:\n" +
+                "  /pet:\n" +
+                "    put:\n" +
+                "      summary: Update an existing pet\n" +
+                "      operationId: updatePet\n" +
+                "      requestBody:\n" +
+                "        description: Pet object that needs to be added to the store\n" +
+                "        content:\n" +
+                "          application/json:\n" +
+                "            schema:\n" +
+                "              $ref: \"#/components/schemas/Pet\"\n" +
+                "        required: true\n" +
+                "      responses:\n" +
+                "        \"400\":\n" +
+                "          description: Invalid ID supplied\n" +
+                "        \"404\":\n" +
+                "          description: Pet not found\n" +
+                "        \"405\":\n" +
+                "          description: Validation exception\n" +
+                "    post:\n" +
+                "      summary: Add a new pet to the store\n" +
+                "      operationId: addPet\n" +
+                "      requestBody:\n" +
+                "        description: Pet object that needs to be added to the store\n" +
+                "        content:\n" +
+                "          application/json:\n" +
+                "            schema:\n" +
+                "              $ref: \"#/components/schemas/Pet\"\n" +
+                "          application/xml:\n" +
+                "            schema:\n" +
+                "              $ref: \"#/components/schemas/Pet\"\n" +
+                "        required: true\n" +
+                "      responses:\n" +
+                "        \"405\":\n" +
+                "          description: Invalid input\n" +
+                "  /pet/bodyid:\n" +
+                "    post:\n" +
+                "      summary: Add a new pet to the store passing an integer with generic parameter\n" +
+                "        annotation\n" +
+                "      operationId: addPetByInteger\n" +
+                "      requestBody:\n" +
+                "        description: Pet object that needs to be added to the store\n" +
+                "        content:\n" +
+                "          application/json:\n" +
+                "            schema:\n" +
+                "              type: integer\n" +
+                "              format: int32\n" +
+                "          application/xml:\n" +
+                "            schema:\n" +
+                "              type: integer\n" +
+                "              format: int32\n" +
+                "        required: true\n" +
+                "      responses:\n" +
+                "        \"405\":\n" +
+                "          description: Invalid input\n" +
+                "  /pet/bodyidnoannotation:\n" +
+                "    post:\n" +
+                "      summary: Add a new pet to the store passing an integer without parameter annotation\n" +
+                "      operationId: addPetByIntegerNoAnnotation\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          application/json:\n" +
+                "            schema:\n" +
+                "              type: integer\n" +
+                "              format: int32\n" +
+                "          application/xml:\n" +
+                "            schema:\n" +
+                "              type: integer\n" +
+                "              format: int32\n" +
+                "      responses:\n" +
+                "        \"405\":\n" +
+                "          description: Invalid input\n" +
+                "  /pet/bodynoannotation:\n" +
+                "    post:\n" +
+                "      summary: Add a new pet to the store no annotation\n" +
+                "      operationId: addPetNoAnnotation\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          application/json:\n" +
+                "            schema:\n" +
+                "              $ref: \"#/components/schemas/Pet\"\n" +
+                "          application/xml:\n" +
+                "            schema:\n" +
+                "              $ref: \"#/components/schemas/Pet\"\n" +
+                "      responses:\n" +
+                "        \"405\":\n" +
+                "          description: Invalid input\n" +
+                "  /pet/findByStatus:\n" +
+                "    get:\n" +
+                "      summary: Finds Pets by status\n" +
+                "      description: Multiple status values can be provided with comma separated strings\n" +
+                "      operationId: findPetsByStatus\n" +
+                "      parameters:\n" +
+                "      - name: status\n" +
+                "        in: query\n" +
+                "        description: Status values that need to be considered for filter\n" +
+                "        required: true\n" +
+                "        schema:\n" +
+                "          type: string\n" +
+                "      - name: skip\n" +
+                "        in: query\n" +
+                "        schema:\n" +
+                "          type: integer\n" +
+                "          format: int32\n" +
+                "      - name: limit\n" +
+                "        in: query\n" +
+                "        schema:\n" +
+                "          type: integer\n" +
+                "          format: int32\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          content:\n" +
+                "            application/json:\n" +
+                "              schema:\n" +
+                "                $ref: \"#/components/schemas/Pet\"\n" +
+                "        \"400\":\n" +
+                "          description: Invalid status value\n" +
+                "  /pet/findByTags:\n" +
+                "    get:\n" +
+                "      summary: Finds Pets by tags\n" +
+                "      description: \"Multiple tags can be provided with comma separated strings. Use\\\n" +
+                "        \\ tag1, tag2, tag3 for testing.\"\n" +
+                "      operationId: findPetsByTags\n" +
+                "      parameters:\n" +
+                "      - name: tags\n" +
+                "        in: query\n" +
+                "        description: Tags to filter by\n" +
+                "        required: true\n" +
+                "        schema:\n" +
+                "          type: string\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: Pets matching criteria\n" +
+                "          content:\n" +
+                "            application/json:\n" +
+                "              schema:\n" +
+                "                $ref: \"#/components/schemas/Pet\"\n" +
+                "        \"400\":\n" +
+                "          description: Invalid tag value\n" +
+                "      deprecated: true\n" +
+                "  /pet/{petId}:\n" +
+                "    get:\n" +
+                "      summary: Find pet by ID\n" +
+                "      description: Returns a pet when 0 < ID <= 10.  ID > 10 or nonintegers will simulate\n" +
+                "        API error conditions\n" +
+                "      operationId: getPetById\n" +
+                "      parameters:\n" +
+                "      - name: petId\n" +
+                "        in: path\n" +
+                "        description: ID of pet that needs to be fetched\n" +
+                "        required: true\n" +
+                "        schema:\n" +
+                "          type: integer\n" +
+                "          format: int64\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: The pet\n" +
+                "          content:\n" +
+                "            application/json:\n" +
+                "              schema:\n" +
+                "                $ref: \"#/components/schemas/Pet\"\n" +
+                "            application/xml:\n" +
+                "              schema:\n" +
+                "                $ref: \"#/components/schemas/Pet\"\n" +
+                "        \"400\":\n" +
+                "          description: Invalid ID supplied\n" +
+                "        \"404\":\n" +
+                "          description: Pet not found\n" +
+                "components:\n" +
+                "  schemas:\n" +
+                "    Bar:\n" +
+                "      type: object\n" +
+                "      deprecated: true\n" +
+                "      description: Bar\n" +
+                "      properties:\n" +
+                "        foo:\n" +
+                "          type: string\n" +
+                "          const: bar\n" +
+                "        bar:\n" +
+                "          type: integer\n" +
+                "          format: int32\n" +
+                "          exclusiveMaximum: 4\n" +
+                "        foobar:\n" +
+                "          type:\n" +
+                "          - string\n" +
+                "          - integer\n" +
+                "          format: int32\n" +
+                "    Category:\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        id:\n" +
+                "          type: integer\n" +
+                "          format: int64\n" +
+                "        name:\n" +
+                "          type: string\n" +
+                "      xml:\n" +
+                "        name: Category\n" +
+                "    Foo:\n" +
+                "      type: object\n" +
+                "      deprecated: true\n" +
+                "      description: Foo\n" +
+                "      properties:\n" +
+                "        foo:\n" +
+                "          type: string\n" +
+                "          const: foo\n" +
+                "        bar:\n" +
+                "          type: integer\n" +
+                "          format: int32\n" +
+                "          exclusiveMaximum: 2\n" +
+                "        foobar:\n" +
+                "          type:\n" +
+                "          - string\n" +
+                "          - object\n" +
+                "          format: int32\n" +
+                "    IfSchema:\n" +
+                "      type: object\n" +
+                "      deprecated: true\n" +
+                "      description: if schema\n" +
+                "      properties:\n" +
+                "        foo:\n" +
+                "          type: string\n" +
+                "          const: foo\n" +
+                "        bar:\n" +
+                "          type: integer\n" +
+                "          format: int32\n" +
+                "          exclusiveMaximum: 2\n" +
+                "        foobar:\n" +
+                "          type:\n" +
+                "          - string\n" +
+                "          - object\n" +
+                "          format: int32\n" +
+                "    Pet:\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        id:\n" +
+                "          type: integer\n" +
+                "          format: int64\n" +
+                "        category:\n" +
+                "          $ref: \"#/components/schemas/Category\"\n" +
+                "        name:\n" +
+                "          type: string\n" +
+                "        photoUrls:\n" +
+                "          type: array\n" +
+                "          items:\n" +
+                "            type: string\n" +
+                "            xml:\n" +
+                "              name: photoUrl\n" +
+                "          xml:\n" +
+                "            wrapped: true\n" +
+                "        tags:\n" +
+                "          type: array\n" +
+                "          items:\n" +
+                "            $ref: \"#/components/schemas/Tag\"\n" +
+                "          xml:\n" +
+                "            wrapped: true\n" +
+                "        status:\n" +
+                "          type: string\n" +
+                "          if:\n" +
+                "            $ref: \"#/components/schemas/IfSchema\"\n" +
+                "          $id: idtest\n" +
+                "          description: pet status in the store\n" +
+                "          enum:\n" +
+                "          - \"available,pending,sold\"\n" +
+                "      xml:\n" +
+                "        name: Pet\n" +
+                "    Tag:\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        id:\n" +
+                "          type: integer\n" +
+                "          format: int64\n" +
+                "        name:\n" +
+                "          type: string\n" +
+                "        annotated:\n" +
+                "          type: object\n" +
+                "          $ref: \"#/components/schemas/Category\"\n" +
+                "          description: child description\n" +
+                "          properties:\n" +
+                "            foo:\n" +
+                "              $ref: \"#/components/schemas/Foo\"\n" +
+                "            bar:\n" +
+                "              $ref: \"#/components/schemas/Bar\"\n" +
+                "      xml:\n" +
+                "        name: Tag\n";
+        SerializationMatchers.assertEqualsToYaml31(openAPI, yaml);
+    }
+
+    @Test
+    public void test31RefSiblings() {
+        SwaggerConfiguration config = new SwaggerConfiguration().openAPI31(true).openAPI(new OpenAPI());
+        Reader reader = new Reader(config);
+
+        OpenAPI openAPI = reader.read(TagResource.class);
+        String yaml = "openapi: 3.1.0\n" +
+                "paths:\n" +
+                "  /tag/tag:\n" +
+                "    get:\n" +
+                "      operationId: getTag\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*':\n" +
+                "              schema:\n" +
+                "                $ref: \"#/components/schemas/SimpleTag\"\n" +
+                "components:\n" +
+                "  schemas:\n" +
+                "    Foo:\n" +
+                "      type: object\n" +
+                "      deprecated: true\n" +
+                "      description: Foo\n" +
+                "      properties:\n" +
+                "        foo:\n" +
+                "          type: string\n" +
+                "          const: foo\n" +
+                "        bar:\n" +
+                "          type: integer\n" +
+                "          format: int32\n" +
+                "          exclusiveMaximum: 2\n" +
+                "        foobar:\n" +
+                "          type:\n" +
+                "          - string\n" +
+                "          - object\n" +
+                "          format: int32\n" +
+                "    SimpleTag:\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        annotated:\n" +
+                "          type: object\n" +
+                "          $ref: \"#/components/schemas/SimpleCategory\"\n" +
+                "          description: child description\n" +
+                "          properties:\n" +
+                "            foo:\n" +
+                "              $ref: \"#/components/schemas/Foo\"\n" +
+                "    SimpleCategory: {}\n";
+        SerializationMatchers.assertEqualsToYaml31(openAPI, yaml);
+    }
+
+    @Test
+    public void testSiblings() {
+        Reader reader = new Reader(new SwaggerConfiguration().openAPI(new OpenAPI()).openAPI31(true));
+
+        OpenAPI openAPI = reader.read(SiblingsResource.class);
+        String yaml = "openapi: 3.1.0\n" +
+                "paths:\n" +
+                "  /test:\n" +
+                "    get:\n" +
+                "      operationId: getCart\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*':\n" +
+                "              schema:\n" +
+                "                $ref: \"#/components/schemas/Pet\"\n" +
+                "components:\n" +
+                "  schemas:\n" +
+                "    Category:\n" +
+                "      type: object\n" +
+                "      description: parent\n" +
+                "      properties:\n" +
+                "        id:\n" +
+                "          type: integer\n" +
+                "          format: int64\n" +
+                "    Pet:\n" +
+                "      type: object\n" +
+                "      description: Pet\n" +
+                "      properties:\n" +
+                "        category:\n" +
+                "          $ref: \"#/components/schemas/Category\"\n" +
+                "          description: child\n";
+        SerializationMatchers.assertEqualsToYaml31(openAPI, yaml);
+    }
+
+    @Test
+    public void testSiblingsOnResource() {
+        Reader reader = new Reader(new SwaggerConfiguration().openAPI(new OpenAPI()).openAPI31(true));
+
+        OpenAPI openAPI = reader.read(SiblingsResourceSimple.class);
+        String yaml = "openapi: 3.1.0\n" +
+                "paths:\n" +
+                "  /test:\n" +
+                "    get:\n" +
+                "      operationId: getCart\n" +
+                "      responses:\n" +
+                "        \"300\":\n" +
+                "          description: aaa\n" +
+                "          content:\n" +
+                "            '*/*':\n" +
+                "              schema:\n" +
+                "                $ref: \"#/components/schemas/PetSimple\"\n" +
+                "                description: resource pet\n" +
+                "                readOnly: true\n" +
+                "  /test/impl:\n" +
+                "    get:\n" +
+                "      operationId: getCartImpl\n" +
+                "      responses:\n" +
+                "        \"300\":\n" +
+                "          description: aaa\n" +
+                "          content:\n" +
+                "            '*/*':\n" +
+                "              schema:\n" +
+                "                $ref: \"#/components/schemas/PetSimple\"\n" +
+                "                description: resource pet\n" +
+                "                readOnly: true\n" +
+                "components:\n" +
+                "  schemas:\n" +
+                "    PetSimple:\n" +
+                "      description: Pet\n";
+        SerializationMatchers.assertEqualsToYaml31(openAPI, yaml);
+    }
+
+    @Test
+    public void testSiblingsOnResourceResponse() {
+        Reader reader = new Reader(new SwaggerConfiguration().openAPI(new OpenAPI()).openAPI31(true));
+
+        OpenAPI openAPI = reader.read(SiblingsResourceResponse.class);
+        String yaml = "openapi: 3.1.0\n" +
+                "paths:\n" +
+                "  /test:\n" +
+                "    get:\n" +
+                "      operationId: getCart\n" +
+                "      responses:\n" +
+                "        \"300\":\n" +
+                "          description: aaa\n" +
+                "          content:\n" +
+                "            application/json:\n" +
+                "              schema:\n" +
+                "                $ref: \"#/components/schemas/PetSimple\"\n" +
+                "                description: resource pet\n" +
+                "                readOnly: true\n" +
+                "            application/xml:\n" +
+                "              schema:\n" +
+                "                $ref: \"#/components/schemas/PetSimple\"\n" +
+                "                description: resource pet xml\n" +
+                "                readOnly: true\n" +
+                "  /test/impl:\n" +
+                "    get:\n" +
+                "      operationId: getCartImpl\n" +
+                "      responses:\n" +
+                "        \"300\":\n" +
+                "          description: aaa\n" +
+                "          content:\n" +
+                "            application/json:\n" +
+                "              schema:\n" +
+                "                $ref: \"#/components/schemas/PetSimple\"\n" +
+                "                description: resource pet\n" +
+                "                readOnly: true\n" +
+                "            application/xml:\n" +
+                "              schema:\n" +
+                "                $ref: \"#/components/schemas/PetSimple\"\n" +
+                "                description: resource pet xml\n" +
+                "                readOnly: true\n" +
+                "components:\n" +
+                "  schemas:\n" +
+                "    PetSimple:\n" +
+                "      description: Pet\n";
+        SerializationMatchers.assertEqualsToYaml31(openAPI, yaml);
+    }
+
+    @Test
+    public void testSiblingsOnResourceRequestBody() {
+        Reader reader = new Reader(new SwaggerConfiguration().openAPI(new OpenAPI()).openAPI31(true));
+
+        OpenAPI openAPI = reader.read(SiblingsResourceRequestBody.class);
+        String yaml = "openapi: 3.1.0\n" +
+                "paths:\n" +
+                "  /test/bodyimpl:\n" +
+                "    get:\n" +
+                "      operationId: getBodyImpl\n" +
+                "      requestBody:\n" +
+                "        description: aaa\n" +
+                "        content:\n" +
+                "          application/json:\n" +
+                "            schema:\n" +
+                "              $ref: \"#/components/schemas/PetSimple\"\n" +
+                "              description: resource pet\n" +
+                "              writeOnly: true\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*': {}\n" +
+                "  /test/bodyimplparam:\n" +
+                "    get:\n" +
+                "      operationId: getBodyImplParam\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          '*/*':\n" +
+                "            schema:\n" +
+                "              $ref: \"#/components/schemas/PetSimple\"\n" +
+                "              description: resource pet\n" +
+                "              writeOnly: true\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*': {}\n" +
+                "components:\n" +
+                "  schemas:\n" +
+                "    PetSimple:\n" +
+                "      description: Pet\n";
+        SerializationMatchers.assertEqualsToYaml31(openAPI, yaml);
+    }
+
+    @Test
+    public void testSiblingsOnResourceRequestBodyMultiple() {
+        Reader reader = new Reader(new SwaggerConfiguration().openAPI(new OpenAPI()).openAPI31(true));
+
+        OpenAPI openAPI = reader.read(SiblingsResourceRequestBodyMultiple.class);
+        String yaml = "openapi: 3.1.0\n" +
+                "paths:\n" +
+                "  /test/bodyimpl:\n" +
+                "    get:\n" +
+                "      operationId: getBodyImpl\n" +
+                "      requestBody:\n" +
+                "        description: aaa\n" +
+                "        content:\n" +
+                "          application/json:\n" +
+                "            schema:\n" +
+                "              $ref: \"#/components/schemas/PetSimple\"\n" +
+                "              description: resource pet\n" +
+                "              writeOnly: true\n" +
+                "          application/xml:\n" +
+                "            schema:\n" +
+                "              $ref: \"#/components/schemas/PetSimple\"\n" +
+                "              description: resource pet xml\n" +
+                "              writeOnly: true\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*': {}\n" +
+                "  /test/bodyimplparam:\n" +
+                "    get:\n" +
+                "      operationId: getBodyImplParam\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          application/json:\n" +
+                "            schema:\n" +
+                "              $ref: \"#/components/schemas/PetSimple\"\n" +
+                "              description: resource pet\n" +
+                "              writeOnly: true\n" +
+                "          application/xml:\n" +
+                "            schema:\n" +
+                "              $ref: \"#/components/schemas/PetSimple\"\n" +
+                "              description: resource pet xml\n" +
+                "              writeOnly: true\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*': {}\n" +
+                "  /test/bodyparam:\n" +
+                "    get:\n" +
+                "      operationId: getBodyParam\n" +
+                "      requestBody:\n" +
+                "        description: test\n" +
+                "        content:\n" +
+                "          application/json:\n" +
+                "            schema:\n" +
+                "              $ref: \"#/components/schemas/PetSimple\"\n" +
+                "              description: resource pet\n" +
+                "              writeOnly: true\n" +
+                "          application/xml:\n" +
+                "            schema:\n" +
+                "              $ref: \"#/components/schemas/PetSimple\"\n" +
+                "              description: resource pet xml\n" +
+                "              writeOnly: true\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*': {}\n" +
+                "components:\n" +
+                "  schemas:\n" +
+                "    PetSimple:\n" +
+                "      description: Pet\n";
+        SerializationMatchers.assertEqualsToYaml31(openAPI, yaml);
+    }
+
+    @Test
+    public void testSiblingsOnProperty() {
+        Reader reader = new Reader(new SwaggerConfiguration().openAPI(new OpenAPI()).openAPI31(true));
+        Set<Class<?>> classes = new HashSet<>(Arrays.asList(SiblingPropResource.class, WebHookResource.class));
+        OpenAPI openAPI = reader.read(classes);
+        String yaml = "openapi: 3.1.0\n" +
+                "paths:\n" +
+                "  /pet:\n" +
+                "    put:\n" +
+                "      tags:\n" +
+                "      - pet\n" +
+                "      summary: Update an existing pet\n" +
+                "      operationId: updatePet\n" +
+                "      requestBody:\n" +
+                "        description: Pet object that needs to be updated in the store\n" +
+                "        content:\n" +
+                "          application/json:\n" +
+                "            schema:\n" +
+                "              $ref: \"#/components/schemas/Pet\"\n" +
+                "              description: A Pet in JSON Format\n" +
+                "              required:\n" +
+                "              - id\n" +
+                "              writeOnly: true\n" +
+                "          application/xml:\n" +
+                "            schema:\n" +
+                "              $ref: \"#/components/schemas/Pet\"\n" +
+                "              description: A Pet in XML Format\n" +
+                "              required:\n" +
+                "              - id\n" +
+                "              writeOnly: true\n" +
+                "        required: true\n" +
+                "      responses:\n" +
+                "        \"200\":\n" +
+                "          description: Successful operation\n" +
+                "          content:\n" +
+                "            application/xml:\n" +
+                "              schema:\n" +
+                "                $ref: \"#/components/schemas/Pet\"\n" +
+                "                description: A Pet in XML Format\n" +
+                "                readOnly: true\n" +
+                "            application/json:\n" +
+                "              schema:\n" +
+                "                $ref: \"#/components/schemas/Pet\"\n" +
+                "                description: A Pet in JSON Format\n" +
+                "                readOnly: true\n" +
+                "        \"400\":\n" +
+                "          description: Invalid ID supplied\n" +
+                "        \"404\":\n" +
+                "          description: Pet not found\n" +
+                "        \"405\":\n" +
+                "          description: Validation exception\n" +
+                "      security:\n" +
+                "      - petstore_auth:\n" +
+                "        - write:pets\n" +
+                "        - read:pets\n" +
+                "      - mutual_tls: []\n" +
+                "components:\n" +
+                "  schemas:\n" +
+                "    Category:\n" +
+                "      type: object\n" +
+                "      description: parent\n" +
+                "      properties:\n" +
+                "        id:\n" +
+                "          type: integer\n" +
+                "          format: int64\n" +
+                "    Pet:\n" +
+                "      type: object\n" +
+                "      description: Pet\n" +
+                "      properties:\n" +
+                "        category:\n" +
+                "          $ref: \"#/components/schemas/Category\"\n" +
+                "          description: child\n" +
+                "webhooks:\n" +
+                "  newPet:\n" +
+                "    post:\n" +
+                "      requestBody:\n" +
+                "        description: Information about a new pet in the system\n" +
+                "        content:\n" +
+                "          application/json:\n" +
+                "            schema:\n" +
+                "              $ref: \"#/components/schemas/Pet\"\n" +
+                "              description: Webhook Pet\n" +
+                "      responses:\n" +
+                "        \"200\":\n" +
+                "          description: Return a 200 status to indicate that the data was received\n" +
+                "            successfully\n";
+        SerializationMatchers.assertEqualsToYaml31(openAPI, yaml);
+    }
+
+    @Test
+    public void testMisc31() {
+        Reader reader = new Reader(new SwaggerConfiguration().openAPI(new OpenAPI()).openAPI31(true));
+        Set<Class<?>> classes = new HashSet<>(Arrays.asList(Misc31Resource.class));
+        OpenAPI openAPI = reader.read(classes);
+        String yaml = "openapi: 3.1.0\n" +
+                "paths:\n" +
+                "  /pet:\n" +
+                "    put:\n" +
+                "      operationId: updatePet\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            application/json:\n" +
+                "              schema:\n" +
+                "                $ref: \"#/components/schemas/ModelWithOAS31Stuff\"\n" +
+                "            application/xml:\n" +
+                "              schema:\n" +
+                "                $ref: \"#/components/schemas/ModelWithOAS31Stuff\"\n" +
+                "components:\n" +
+                "  schemas:\n" +
+                "    ModelWithOAS31Stuff:\n" +
+                "      type: object\n" +
+                "      $comment: Random comment at schema level\n" +
+                "      $id: http://yourdomain.com/schemas/myschema.json\n" +
+                "      description: this is model for testing OAS 3.1 resolving\n" +
+                "      properties:\n" +
+                "        randomList:\n" +
+                "          type: array\n" +
+                "          contains:\n" +
+                "            type: string\n" +
+                "          items:\n" +
+                "            type: string\n" +
+                "          maxContains: 10\n" +
+                "          minContains: 1\n" +
+                "          prefixItems:\n" +
+                "          - type: string\n" +
+                "          unevaluatedItems:\n" +
+                "            type: number\n" +
+                "        status:\n" +
+                "          type:\n" +
+                "          - string\n" +
+                "          - number\n" +
+                "        intValue:\n" +
+                "          type: integer\n" +
+                "          format: int32\n" +
+                "          $anchor: intValue\n" +
+                "          $comment: comment at schema property level\n" +
+                "          exclusiveMaximum: 100\n" +
+                "          exclusiveMinimum: 1\n" +
+                "        text:\n" +
+                "          type: string\n" +
+                "          contentEncoding: plan/text\n" +
+                "          contentMediaType: base64\n" +
+                "        encodedString:\n" +
+                "          type: string\n" +
+                "          contentMediaType: application/jwt\n" +
+                "          contentSchema:\n" +
+                "            $ref: \"#/components/schemas/MultipleBaseBean\"\n" +
+                "        address:\n" +
+                "          $ref: \"#/components/schemas/Address\"\n" +
+                "        client:\n" +
+                "          type: string\n" +
+                "          dependentSchemas:\n" +
+                "            creditCard:\n" +
+                "              $ref: \"#/components/schemas/CreditCard\"\n" +
+                "    MultipleBaseBean:\n" +
+                "      type: object\n" +
+                "      description: MultipleBaseBean\n" +
+                "      properties:\n" +
+                "        beanType:\n" +
+                "          type: string\n" +
+                "        a:\n" +
+                "          type: integer\n" +
+                "          format: int32\n" +
+                "        b:\n" +
+                "          type: string\n" +
+                "    MultipleSub1Bean:\n" +
+                "      allOf:\n" +
+                "      - $ref: \"#/components/schemas/MultipleBaseBean\"\n" +
+                "      - type: object\n" +
+                "        properties:\n" +
+                "          c:\n" +
+                "            type: integer\n" +
+                "            format: int32\n" +
+                "      description: MultipleSub1Bean\n" +
+                "    MultipleSub2Bean:\n" +
+                "      allOf:\n" +
+                "      - $ref: \"#/components/schemas/MultipleBaseBean\"\n" +
+                "      - type: object\n" +
+                "        properties:\n" +
+                "          d:\n" +
+                "            type: integer\n" +
+                "            format: int32\n" +
+                "      description: MultipleSub2Bean\n" +
+                "    Address:\n" +
+                "      type: object\n" +
+                "      if:\n" +
+                "        $ref: \"#/components/schemas/AnnotatedCountry\"\n" +
+                "      then:\n" +
+                "        $ref: \"#/components/schemas/PostalCodeNumberPattern\"\n" +
+                "      else:\n" +
+                "        $ref: \"#/components/schemas/PostalCodePattern\"\n" +
+                "      dependentRequired:\n" +
+                "        street:\n" +
+                "        - country\n" +
+                "      properties:\n" +
+                "        street:\n" +
+                "          type: string\n" +
+                "        country:\n" +
+                "          type: string\n" +
+                "          enum:\n" +
+                "          - United States of America\n" +
+                "          - Canada\n" +
+                "      propertyNames:\n" +
+                "        pattern: \"^[A-Za-z_][A-Za-z0-9_]*$\"\n" +
+                "    AnnotatedCountry:\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        country:\n" +
+                "          type: object\n" +
+                "          const: United States\n" +
+                "    CreditCard:\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        billingAddress:\n" +
+                "          type: string\n" +
+                "    PostalCodeNumberPattern:\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        postalCode:\n" +
+                "          type: object\n" +
+                "          pattern: \"[0-9]{5}(-[0-9]{4})?\"\n" +
+                "    PostalCodePattern:\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        postalCode:\n" +
+                "          type: object\n" +
+                "          pattern: \"[A-Z][0-9][A-Z] [0-9][A-Z][0-9]\"\n" +
+                "    PropertyNamesPattern:\n" +
+                "      pattern: \"^[A-Za-z_][A-Za-z0-9_]*$\"\n";
+        SerializationMatchers.assertEqualsToYaml31(openAPI, yaml);
+    }
+
+    @Test
+    public void test4446CyclicProp() {
+        Reader reader = new Reader(new OpenAPI());
+
+        OpenAPI openAPI = reader.read(Ticket4446Resource.class);
+        String yaml = "openapi: 3.0.1\n" +
+                "paths:\n" +
+                "  /test/test:\n" +
+                "    get:\n" +
+                "      operationId: getCart\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*':\n" +
+                "              schema:\n" +
+                "                $ref: \"#/components/schemas/MyPojo\"\n" +
+                "components:\n" +
+                "  schemas:\n" +
+                "    MyPojo:\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        someStrings:\n" +
+                "          type: array\n" +
+                "          items:\n" +
+                "            type: string\n" +
+                "        morePojos:\n" +
+                "          type: array\n" +
+                "          items:\n" +
+                "            $ref: \"#/components/schemas/MyPojo\"\n";
+        SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
+    }
+
+    @Test
+    public void testParameterMaximumValue() {
+        Reader reader = new Reader(new SwaggerConfiguration().openAPI(new OpenAPI()).openAPI31(true));
+
+        OpenAPI openAPI = reader.read(ParameterMaximumValueResource.class);
+        String yaml = "openapi: 3.1.0\n" +
+                "paths:\n" +
+                "  /test/{petId}:\n" +
+                "    get:\n" +
+                "      operationId: getPetById\n" +
+                "      parameters:\n" +
+                "      - name: petId\n" +
+                "        in: path\n" +
+                "        description: ID of pet that needs to be fetched\n" +
+                "        required: true\n" +
+                "        schema:\n" +
+                "          type: integer\n" +
+                "          format: int64\n" +
+                "          exclusiveMaximum: 10\n" +
+                "          exclusiveMinimum: 1\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*': {}\n";
+        SerializationMatchers.assertEqualsToYaml31(openAPI, yaml);
+    }
+
+    @Test
+    public void test4483Response() {
+        Reader reader = new Reader(new OpenAPI());
+
+        OpenAPI openAPI = reader.read(Ticket4483Resource.class);
+        String yaml = "openapi: 3.0.1\n" +
+                "tags:\n" +
+                "- name: Dummy\n" +
+                "  description: Dummy resource for testing setup\n" +
+                "paths:\n" +
+                "  /test:\n" +
+                "    get:\n" +
+                "      tags:\n" +
+                "      - Dummy\n" +
+                "      description: Dummy GET\n" +
+                "      operationId: dummy\n" +
+                "      responses:\n" +
+                "        \"401\":\n" +
+                "          description: Authentication is required\n" +
+                "          content:\n" +
+                "            application/json:\n" +
+                "              schema:\n" +
+                "                type: array\n" +
+                "                items:\n" +
+                "                  $ref: \"#/components/schemas/LocalizedError\"\n" +
+                "        \"200\":\n" +
+                "          description: test\n" +
+                "          content:\n" +
+                "            application/json:\n" +
+                "              schema:\n" +
+                "                type: object\n" +
+                "                additionalProperties:\n" +
+                "                  type: boolean\n" +
+                "  /test/opresp:\n" +
+                "    get:\n" +
+                "      tags:\n" +
+                "      - Dummy\n" +
+                "      operationId: dummyopresp\n" +
+                "      responses:\n" +
+                "        \"401\":\n" +
+                "          description: Authentication is required\n" +
+                "          content:\n" +
+                "            application/json:\n" +
+                "              schema:\n" +
+                "                type: array\n" +
+                "                items:\n" +
+                "                  $ref: \"#/components/schemas/LocalizedError\"\n" +
+                "        \"200\":\n" +
+                "          description: Dummy GET opresp\n" +
+                "          content:\n" +
+                "            application/json:\n" +
+                "              schema:\n" +
+                "                type: object\n" +
+                "                additionalProperties:\n" +
+                "                  type: boolean\n" +
+                "  /test/oprespnodesc:\n" +
+                "    get:\n" +
+                "      tags:\n" +
+                "      - Dummy\n" +
+                "      operationId: oprespnodesc\n" +
+                "      responses:\n" +
+                "        \"401\":\n" +
+                "          description: Authentication is required\n" +
+                "          content:\n" +
+                "            application/json:\n" +
+                "              schema:\n" +
+                "                type: array\n" +
+                "                items:\n" +
+                "                  $ref: \"#/components/schemas/LocalizedError\"\n" +
+                "components:\n" +
+                "  schemas:\n" +
+                "    LocalizedError:\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        code:\n" +
+                "          type: string\n" +
+                "        message:\n" +
+                "          type: string\n";
+        SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
+    }
+
+    @Test(description = "openAPIVersion")
+    public void testOpenAPIVersion() {
+        SwaggerConfiguration config = new SwaggerConfiguration().openAPIVersion("3.0.4");
+        Reader reader = new Reader(config);
+
+        OpenAPI openAPI = reader.read(DefaultResponseResource.class);
+        String yaml = "openapi: 3.0.4\n" +
+                "paths:\n" +
+                "  /:\n" +
+                "    get:\n" +
+                "      operationId: test\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*':\n" +
+                "              schema:\n" +
+                "                type: string\n";
+        SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
+    }
+
+    @Test(description = "Constraints annotations with groups - Inline")
+    public void testTicket4804Inline() {
+        ModelConverters.reset();
+        SwaggerConfiguration config = new SwaggerConfiguration().schemaResolution(Schema.SchemaResolution.INLINE);
+        Reader reader = new Reader(config);
+
+        OpenAPI openAPI = reader.read(Ticket4804Resource.class);
+        String yaml = "openapi: 3.0.1\n" +
+                "paths:\n" +
+                "  /test/barcart:\n" +
+                "    put:\n" +
+                "      operationId: barCart\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          '*/*':\n" +
+                "            schema:\n" +
+                "              required:\n" +
+                "              - notNullcartDetails\n" +
+                "              type: object\n" +
+                "              properties:\n" +
+                "                pageSize:\n" +
+                "                  type: integer\n" +
+                "                  format: int32\n" +
+                "                cartDetails:\n" +
+                "                  required:\n" +
+                "                  - description\n" +
+                "                  type: object\n" +
+                "                  properties:\n" +
+                "                    name:\n" +
+                "                      type: string\n" +
+                "                    description:\n" +
+                "                      type: string\n" +
+                "                notNullcartDetails:\n" +
+                "                  required:\n" +
+                "                  - description\n" +
+                "                  type: object\n" +
+                "                  properties:\n" +
+                "                    name:\n" +
+                "                      type: string\n" +
+                "                    description:\n" +
+                "                      type: string\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*': {}\n" +
+                "  /test/foocart:\n" +
+                "    put:\n" +
+                "      operationId: fooCart\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          '*/*':\n" +
+                "            schema:\n" +
+                "              required:\n" +
+                "              - cartDetails\n" +
+                "              - notNullcartDetails\n" +
+                "              type: object\n" +
+                "              properties:\n" +
+                "                pageSize:\n" +
+                "                  type: integer\n" +
+                "                  format: int32\n" +
+                "                cartDetails:\n" +
+                "                  required:\n" +
+                "                  - description\n" +
+                "                  type: object\n" +
+                "                  properties:\n" +
+                "                    name:\n" +
+                "                      type: string\n" +
+                "                    description:\n" +
+                "                      type: string\n" +
+                "                notNullcartDetails:\n" +
+                "                  required:\n" +
+                "                  - description\n" +
+                "                  type: object\n" +
+                "                  properties:\n" +
+                "                    name:\n" +
+                "                      type: string\n" +
+                "                    description:\n" +
+                "                      type: string\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*': {}\n" +
+                "  /test/createcart:\n" +
+                "    post:\n" +
+                "      operationId: postCart\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          '*/*':\n" +
+                "            schema:\n" +
+                "              required:\n" +
+                "              - notNullcartDetails\n" +
+                "              - pageSize\n" +
+                "              type: object\n" +
+                "              properties:\n" +
+                "                pageSize:\n" +
+                "                  type: integer\n" +
+                "                  format: int32\n" +
+                "                cartDetails:\n" +
+                "                  required:\n" +
+                "                  - description\n" +
+                "                  - name\n" +
+                "                  type: object\n" +
+                "                  properties:\n" +
+                "                    name:\n" +
+                "                      type: string\n" +
+                "                    description:\n" +
+                "                      type: string\n" +
+                "                notNullcartDetails:\n" +
+                "                  required:\n" +
+                "                  - description\n" +
+                "                  - name\n" +
+                "                  type: object\n" +
+                "                  properties:\n" +
+                "                    name:\n" +
+                "                      type: string\n" +
+                "                    description:\n" +
+                "                      type: string\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*': {}\n" +
+                "  /test/updatecart:\n" +
+                "    put:\n" +
+                "      operationId: putCart\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          '*/*':\n" +
+                "            schema:\n" +
+                "              required:\n" +
+                "              - notNullcartDetails\n" +
+                "              type: object\n" +
+                "              properties:\n" +
+                "                pageSize:\n" +
+                "                  type: integer\n" +
+                "                  format: int32\n" +
+                "                cartDetails:\n" +
+                "                  required:\n" +
+                "                  - description\n" +
+                "                  type: object\n" +
+                "                  properties:\n" +
+                "                    name:\n" +
+                "                      type: string\n" +
+                "                    description:\n" +
+                "                      type: string\n" +
+                "                notNullcartDetails:\n" +
+                "                  required:\n" +
+                "                  - description\n" +
+                "                  type: object\n" +
+                "                  properties:\n" +
+                "                    name:\n" +
+                "                      type: string\n" +
+                "                    description:\n" +
+                "                      type: string\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*': {}\n" +
+                "components:\n" +
+                "  schemas:\n" +
+                "    Cart:\n" +
+                "      required:\n" +
+                "      - notNullcartDetails\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        pageSize:\n" +
+                "          type: integer\n" +
+                "          format: int32\n" +
+                "        cartDetails:\n" +
+                "          required:\n" +
+                "          - description\n" +
+                "          type: object\n" +
+                "          properties:\n" +
+                "            name:\n" +
+                "              type: string\n" +
+                "            description:\n" +
+                "              type: string\n" +
+                "        notNullcartDetails:\n" +
+                "          required:\n" +
+                "          - description\n" +
+                "          type: object\n" +
+                "          properties:\n" +
+                "            name:\n" +
+                "              type: string\n" +
+                "            description:\n" +
+                "              type: string\n" +
+                "    CartDetails:\n" +
+                "      required:\n" +
+                "      - description\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        name:\n" +
+                "          type: string\n" +
+                "        description:\n" +
+                "          type: string\n";
+        SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
+        ModelConverters.reset();
+    }
+
+    @Test(description = "Constraints annotations with groups - Default")
+    public void testTicket4804Default() {
+        ModelConverters.reset();
+        SwaggerConfiguration config = new SwaggerConfiguration();
+        Reader reader = new Reader(config);
+
+        OpenAPI openAPI = reader.read(Ticket4804Resource.class);
+        String yaml = "openapi: 3.0.1\n" +
+                "paths:\n" +
+                "  /test/barcart:\n" +
+                "    put:\n" +
+                "      operationId: barCart\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          '*/*':\n" +
+                "            schema:\n" +
+                "              $ref: \"#/components/schemas/Cart\"\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*': {}\n" +
+                "  /test/foocart:\n" +
+                "    put:\n" +
+                "      operationId: fooCart\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          '*/*':\n" +
+                "            schema:\n" +
+                "              $ref: \"#/components/schemas/Cart\"\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*': {}\n" +
+                "  /test/createcart:\n" +
+                "    post:\n" +
+                "      operationId: postCart\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          '*/*':\n" +
+                "            schema:\n" +
+                "              $ref: \"#/components/schemas/Cart\"\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*': {}\n" +
+                "  /test/updatecart:\n" +
+                "    put:\n" +
+                "      operationId: putCart\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          '*/*':\n" +
+                "            schema:\n" +
+                "              $ref: \"#/components/schemas/Cart\"\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*': {}\n" +
+                "components:\n" +
+                "  schemas:\n" +
+                "    Cart:\n" +
+                "      required:\n" +
+                "      - notNullcartDetails\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        pageSize:\n" +
+                "          type: integer\n" +
+                "          format: int32\n" +
+                "        cartDetails:\n" +
+                "          $ref: \"#/components/schemas/CartDetails\"\n" +
+                "        notNullcartDetails:\n" +
+                "          $ref: \"#/components/schemas/CartDetails\"\n" +
+                "    CartDetails:\n" +
+                "      required:\n" +
+                "      - description\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        name:\n" +
+                "          type: string\n" +
+                "        description:\n" +
+                "          type: string\n";
+        SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
+        ModelConverters.reset();
+    }
+
+    @Test(description = "Constraints annotations with groups - Default NotBlank")
+    public void testTicket4804DefaultNotBlank() {
+        ModelConverters.reset();
+        SwaggerConfiguration config = new SwaggerConfiguration();
+        Reader reader = new Reader(config);
+
+        OpenAPI openAPI = reader.read(Ticket4804NotBlankResource.class);
+        String yaml = "openapi: 3.0.1\n" +
+                "paths:\n" +
+                "  /test/barcart:\n" +
+                "    put:\n" +
+                "      operationId: barCart\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          '*/*':\n" +
+                "            schema:\n" +
+                "              $ref: \"#/components/schemas/Cart\"\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*': {}\n" +
+                "  /test/createcart:\n" +
+                "    post:\n" +
+                "      operationId: postCart\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          '*/*':\n" +
+                "            schema:\n" +
+                "              $ref: \"#/components/schemas/Cart\"\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*': {}\n" +
+                "  /test/updatecart:\n" +
+                "    put:\n" +
+                "      operationId: putCart\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          '*/*':\n" +
+                "            schema:\n" +
+                "              $ref: \"#/components/schemas/Cart\"\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*': {}\n" +
+                "components:\n" +
+                "  schemas:\n" +
+                "    Cart:\n" +
+                "      required:\n" +
+                "      - notNullcartDetails\n" +
+                "      - pageSizes\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        pageSizes:\n" +
+                "          type: array\n" +
+                "          items:\n" +
+                "            type: integer\n" +
+                "            format: int32\n" +
+                "        notNullcartDetails:\n" +
+                "          $ref: \"#/components/schemas/CartDetails\"\n" +
+                "    CartDetails:\n" +
+                "      required:\n" +
+                "      - description\n" +
+                "      - name\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        name:\n" +
+                "          minLength: 1\n" +
+                "          type: string\n" +
+                "        description:\n" +
+                "          minItems: 1\n" +
+                "          type: array\n" +
+                "          items:\n" +
+                "            type: string\n";
+        SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
+        ModelConverters.reset();
+    }
+
+    @Test(description = "Constraints annotations with groups - Always")
+    public void testTicket4804Always() {
+        ModelConverters.reset();
+        SwaggerConfiguration config = new SwaggerConfiguration().groupsValidationStrategy(Configuration.GroupsValidationStrategy.ALWAYS);
+        Reader reader = new Reader(config);
+
+        OpenAPI openAPI = reader.read(Ticket4804Resource.class);
+        String yaml = "openapi: 3.0.1\n" +
+                "paths:\n" +
+                "  /test/barcart:\n" +
+                "    put:\n" +
+                "      operationId: barCart\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          '*/*':\n" +
+                "            schema:\n" +
+                "              $ref: \"#/components/schemas/Cart\"\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*': {}\n" +
+                "  /test/foocart:\n" +
+                "    put:\n" +
+                "      operationId: fooCart\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          '*/*':\n" +
+                "            schema:\n" +
+                "              $ref: \"#/components/schemas/Cart\"\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*': {}\n" +
+                "  /test/createcart:\n" +
+                "    post:\n" +
+                "      operationId: postCart\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          '*/*':\n" +
+                "            schema:\n" +
+                "              $ref: \"#/components/schemas/Cart\"\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*': {}\n" +
+                "  /test/updatecart:\n" +
+                "    put:\n" +
+                "      operationId: putCart\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          '*/*':\n" +
+                "            schema:\n" +
+                "              $ref: \"#/components/schemas/Cart\"\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*': {}\n" +
+                "components:\n" +
+                "  schemas:\n" +
+                "    Cart:\n" +
+                "      required:\n" +
+                "      - cartDetails\n" +
+                "      - notNullcartDetails\n" +
+                "      - pageSize\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        pageSize:\n" +
+                "          type: integer\n" +
+                "          format: int32\n" +
+                "        cartDetails:\n" +
+                "          $ref: \"#/components/schemas/CartDetails\"\n" +
+                "        notNullcartDetails:\n" +
+                "          $ref: \"#/components/schemas/CartDetails\"\n" +
+                "    CartDetails:\n" +
+                "      required:\n" +
+                "      - description\n" +
+                "      - name\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        name:\n" +
+                "          type: string\n" +
+                "        description:\n" +
+                "          type: string\n";
+        SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
+        ModelConverters.reset();
+    }
+
+    @Test(description = "Constraints annotations with groups - Never")
+    public void testTicket4804Never() {
+        ModelConverters.reset();
+        SwaggerConfiguration config = new SwaggerConfiguration().groupsValidationStrategy(Configuration.GroupsValidationStrategy.NEVER);
+        Reader reader = new Reader(config);
+
+        OpenAPI openAPI = reader.read(Ticket4804Resource.class);
+        String yaml = "openapi: 3.0.1\n" +
+                "paths:\n" +
+                "  /test/barcart:\n" +
+                "    put:\n" +
+                "      operationId: barCart\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          '*/*':\n" +
+                "            schema:\n" +
+                "              $ref: \"#/components/schemas/Cart\"\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*': {}\n" +
+                "  /test/foocart:\n" +
+                "    put:\n" +
+                "      operationId: fooCart\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          '*/*':\n" +
+                "            schema:\n" +
+                "              $ref: \"#/components/schemas/Cart\"\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*': {}\n" +
+                "  /test/createcart:\n" +
+                "    post:\n" +
+                "      operationId: postCart\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          '*/*':\n" +
+                "            schema:\n" +
+                "              $ref: \"#/components/schemas/Cart\"\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*': {}\n" +
+                "  /test/updatecart:\n" +
+                "    put:\n" +
+                "      operationId: putCart\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          '*/*':\n" +
+                "            schema:\n" +
+                "              $ref: \"#/components/schemas/Cart\"\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*': {}\n" +
+                "components:\n" +
+                "  schemas:\n" +
+                "    Cart:\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        pageSize:\n" +
+                "          type: integer\n" +
+                "          format: int32\n" +
+                "        cartDetails:\n" +
+                "          $ref: \"#/components/schemas/CartDetails\"\n" +
+                "        notNullcartDetails:\n" +
+                "          $ref: \"#/components/schemas/CartDetails\"\n" +
+                "    CartDetails:\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        name:\n" +
+                "          type: string\n" +
+                "        description:\n" +
+                "          type: string\n";
+        SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
+        ModelConverters.reset();
+    }
+
+    @Test(description = "Constraints annotations with groups - NeverNoContext")
+    public void testTicket4804NeverNoContext() {
+        ModelConverters.reset();
+        SwaggerConfiguration config =
+                new SwaggerConfiguration()
+                        .groupsValidationStrategy(Configuration.GroupsValidationStrategy.NEVER_IF_NO_CONTEXT)
+                        .schemaResolution(Schema.SchemaResolution.INLINE);
+        Reader reader = new Reader(config);
+
+        OpenAPI openAPI = reader.read(Ticket4804Resource.class);
+        String yaml = "openapi: 3.0.1\n" +
+                "paths:\n" +
+                "  /test/barcart:\n" +
+                "    put:\n" +
+                "      operationId: barCart\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          '*/*':\n" +
+                "            schema:\n" +
+                "              type: object\n" +
+                "              properties:\n" +
+                "                pageSize:\n" +
+                "                  type: integer\n" +
+                "                  format: int32\n" +
+                "                cartDetails:\n" +
+                "                  type: object\n" +
+                "                  properties:\n" +
+                "                    name:\n" +
+                "                      type: string\n" +
+                "                    description:\n" +
+                "                      type: string\n" +
+                "                notNullcartDetails:\n" +
+                "                  type: object\n" +
+                "                  properties:\n" +
+                "                    name:\n" +
+                "                      type: string\n" +
+                "                    description:\n" +
+                "                      type: string\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*': {}\n" +
+                "  /test/foocart:\n" +
+                "    put:\n" +
+                "      operationId: fooCart\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          '*/*':\n" +
+                "            schema:\n" +
+                "              required:\n" +
+                "              - cartDetails\n" +
+                "              type: object\n" +
+                "              properties:\n" +
+                "                pageSize:\n" +
+                "                  type: integer\n" +
+                "                  format: int32\n" +
+                "                cartDetails:\n" +
+                "                  type: object\n" +
+                "                  properties:\n" +
+                "                    name:\n" +
+                "                      type: string\n" +
+                "                    description:\n" +
+                "                      type: string\n" +
+                "                notNullcartDetails:\n" +
+                "                  type: object\n" +
+                "                  properties:\n" +
+                "                    name:\n" +
+                "                      type: string\n" +
+                "                    description:\n" +
+                "                      type: string\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*': {}\n" +
+                "  /test/createcart:\n" +
+                "    post:\n" +
+                "      operationId: postCart\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          '*/*':\n" +
+                "            schema:\n" +
+                "              required:\n" +
+                "              - pageSize\n" +
+                "              type: object\n" +
+                "              properties:\n" +
+                "                pageSize:\n" +
+                "                  type: integer\n" +
+                "                  format: int32\n" +
+                "                cartDetails:\n" +
+                "                  required:\n" +
+                "                  - name\n" +
+                "                  type: object\n" +
+                "                  properties:\n" +
+                "                    name:\n" +
+                "                      type: string\n" +
+                "                    description:\n" +
+                "                      type: string\n" +
+                "                notNullcartDetails:\n" +
+                "                  required:\n" +
+                "                  - name\n" +
+                "                  type: object\n" +
+                "                  properties:\n" +
+                "                    name:\n" +
+                "                      type: string\n" +
+                "                    description:\n" +
+                "                      type: string\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*': {}\n" +
+                "  /test/updatecart:\n" +
+                "    put:\n" +
+                "      operationId: putCart\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          '*/*':\n" +
+                "            schema:\n" +
+                "              type: object\n" +
+                "              properties:\n" +
+                "                pageSize:\n" +
+                "                  type: integer\n" +
+                "                  format: int32\n" +
+                "                cartDetails:\n" +
+                "                  type: object\n" +
+                "                  properties:\n" +
+                "                    name:\n" +
+                "                      type: string\n" +
+                "                    description:\n" +
+                "                      type: string\n" +
+                "                notNullcartDetails:\n" +
+                "                  type: object\n" +
+                "                  properties:\n" +
+                "                    name:\n" +
+                "                      type: string\n" +
+                "                    description:\n" +
+                "                      type: string\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*': {}\n" +
+                "components:\n" +
+                "  schemas:\n" +
+                "    Cart:\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        pageSize:\n" +
+                "          type: integer\n" +
+                "          format: int32\n" +
+                "        cartDetails:\n" +
+                "          type: object\n" +
+                "          properties:\n" +
+                "            name:\n" +
+                "              type: string\n" +
+                "            description:\n" +
+                "              type: string\n" +
+                "        notNullcartDetails:\n" +
+                "          type: object\n" +
+                "          properties:\n" +
+                "            name:\n" +
+                "              type: string\n" +
+                "            description:\n" +
+                "              type: string\n" +
+                "    CartDetails:\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        name:\n" +
+                "          type: string\n" +
+                "        description:\n" +
+                "          type: string\n";
+        SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
+        ModelConverters.reset();
+    }
+
+    @Test(description = "Constraints annotations with groups - Processor")
+    public void testTicket4804Processor() {
+        ModelConverters.reset();
+        SwaggerConfiguration config =
+                new SwaggerConfiguration()
+                        .validatorProcessorClass(Ticket4804ProcessorResource.CustomValidatorProcessor.class.getName())
+                        .schemaResolution(Schema.SchemaResolution.INLINE);
+        Reader reader = new Reader(config);
+
+        OpenAPI openAPI = reader.read(Ticket4804ProcessorResource.class);
+        String yaml = "openapi: 3.0.1\n" +
+                "paths:\n" +
+                "  /test/barcart:\n" +
+                "    put:\n" +
+                "      operationId: barCart\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          '*/*':\n" +
+                "            schema:\n" +
+                "              type: object\n" +
+                "              properties:\n" +
+                "                pageSize:\n" +
+                "                  type: integer\n" +
+                "                  format: int32\n" +
+                "                cartDetails:\n" +
+                "                  type: object\n" +
+                "                  properties:\n" +
+                "                    name:\n" +
+                "                      type: string\n" +
+                "                    description:\n" +
+                "                      type: string\n" +
+                "                notNullcartDetails:\n" +
+                "                  type: object\n" +
+                "                  properties:\n" +
+                "                    name:\n" +
+                "                      type: string\n" +
+                "                    description:\n" +
+                "                      type: string\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*': {}\n" +
+                "  /test/foocart:\n" +
+                "    put:\n" +
+                "      operationId: fooCart\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          '*/*':\n" +
+                "            schema:\n" +
+                "              type: object\n" +
+                "              properties:\n" +
+                "                pageSize:\n" +
+                "                  type: integer\n" +
+                "                  format: int32\n" +
+                "                cartDetails:\n" +
+                "                  type: object\n" +
+                "                  properties:\n" +
+                "                    name:\n" +
+                "                      type: string\n" +
+                "                    description:\n" +
+                "                      type: string\n" +
+                "                notNullcartDetails:\n" +
+                "                  type: object\n" +
+                "                  properties:\n" +
+                "                    name:\n" +
+                "                      type: string\n" +
+                "                    description:\n" +
+                "                      type: string\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*': {}\n" +
+                "  /test/createcart:\n" +
+                "    post:\n" +
+                "      operationId: postCart\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          '*/*':\n" +
+                "            schema:\n" +
+                "              type: object\n" +
+                "              properties:\n" +
+                "                pageSize:\n" +
+                "                  type: integer\n" +
+                "                  format: int32\n" +
+                "                cartDetails:\n" +
+                "                  type: object\n" +
+                "                  properties:\n" +
+                "                    name:\n" +
+                "                      type: string\n" +
+                "                    description:\n" +
+                "                      type: string\n" +
+                "                notNullcartDetails:\n" +
+                "                  type: object\n" +
+                "                  properties:\n" +
+                "                    name:\n" +
+                "                      type: string\n" +
+                "                    description:\n" +
+                "                      type: string\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*': {}\n" +
+                "  /test/updatecart:\n" +
+                "    put:\n" +
+                "      operationId: putCart\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          '*/*':\n" +
+                "            schema:\n" +
+                "              required:\n" +
+                "              - cartDetails\n" +
+                "              type: object\n" +
+                "              properties:\n" +
+                "                pageSize:\n" +
+                "                  type: integer\n" +
+                "                  format: int32\n" +
+                "                cartDetails:\n" +
+                "                  type: object\n" +
+                "                  properties:\n" +
+                "                    name:\n" +
+                "                      type: string\n" +
+                "                    description:\n" +
+                "                      type: string\n" +
+                "                notNullcartDetails:\n" +
+                "                  type: object\n" +
+                "                  properties:\n" +
+                "                    name:\n" +
+                "                      type: string\n" +
+                "                    description:\n" +
+                "                      type: string\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*': {}\n" +
+                "components:\n" +
+                "  schemas:\n" +
+                "    Cart:\n" +
+                "      required:\n" +
+                "      - cartDetails\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        pageSize:\n" +
+                "          type: integer\n" +
+                "          format: int32\n" +
+                "        cartDetails:\n" +
+                "          type: object\n" +
+                "          properties:\n" +
+                "            name:\n" +
+                "              type: string\n" +
+                "            description:\n" +
+                "              type: string\n" +
+                "        notNullcartDetails:\n" +
+                "          type: object\n" +
+                "          properties:\n" +
+                "            name:\n" +
+                "              type: string\n" +
+                "            description:\n" +
+                "              type: string\n" +
+                "    CartDetails:\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        name:\n" +
+                "          type: string\n" +
+                "        description:\n" +
+                "          type: string\n";
+        SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
+        ModelConverters.reset();
+    }
+
+    @Test
+    public void shouldIncludeOnlyNonGroupedJakartaValidatedFieldsAsMandatoryByDefault() {
+        ModelConverters.reset();
+        ResolvedSchema schema = ModelConverters.getInstance(false).resolveAsResolvedSchema(new AnnotatedType().type(Ticket4804CustomClass.class));
+        String expectedYaml = "schema:\n" +
+                "  required:\n" +
+                "  - nonGroupValidatedField\n" +
+                "  type: object\n" +
+                "  properties:\n" +
+                "    nonGroupValidatedField:\n" +
+                "      type: string\n" +
+                "    singleGroupValidatedField:\n" +
+                "      type: integer\n" +
+                "      format: int32\n" +
+                "    multipleGroupValidatedField:\n" +
+                "      type: number\n" +
+                "    otherGroupValidatedField:\n" +
+                "      type: string\n" +
+                "    singleGroupValidatedField2:\n" +
+                "      type: string\n" +
+                "referencedSchemas:\n" +
+                "  Ticket4804CustomClass:\n" +
+                "    required:\n" +
+                "    - nonGroupValidatedField\n" +
+                "    type: object\n" +
+                "    properties:\n" +
+                "      nonGroupValidatedField:\n" +
+                "        type: string\n" +
+                "      singleGroupValidatedField:\n" +
+                "        type: integer\n" +
+                "        format: int32\n" +
+                "      multipleGroupValidatedField:\n" +
+                "        type: number\n" +
+                "      otherGroupValidatedField:\n" +
+                "        type: string\n" +
+                "      singleGroupValidatedField2:\n" +
+                "        type: string\n";
+        SerializationMatchers.assertEqualsToYaml(schema, expectedYaml);
+        ModelConverters.reset();
+    }
+
+    @Test(description = "test schema.minLength applied")
+    public void testTicket4859() {
+        ModelConverters.reset();
+        SwaggerConfiguration config = new SwaggerConfiguration();
+        Reader reader = new Reader(config);
+
+        OpenAPI openAPI = reader.read(Ticket4859Resource.class);
+        String yaml = "openapi: 3.0.1\n" +
+                "paths:\n" +
+                "  /test/minlength:\n" +
+                "    put:\n" +
+                "      operationId: minlength\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          '*/*':\n" +
+                "            schema:\n" +
+                "              $ref: \"#/components/schemas/Minlength\"\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*': {}\n" +
+                "components:\n" +
+                "  schemas:\n" +
+                "    Minlength:\n" +
+                "      required:\n" +
+                "      - name\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        name:\n" +
+                "          maxLength: 19\n" +
+                "          minLength: 12\n" +
+                "          type: string\n" +
+                "          example: \"4242424242424242\"\n";
+        SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
+        ModelConverters.reset();
+    }
+
+    @Test(description = "test default value type")
+    public void testTicket4879() {
+        ModelConverters.reset();
+        SwaggerConfiguration config = new SwaggerConfiguration().openAPI31(true);
+        Reader reader = new Reader(config);
+
+        OpenAPI openAPI = reader.read(Ticket4879Resource.class);
+        String yaml = "openapi: 3.1.0\n" +
+                "paths:\n" +
+                "  /test/test:\n" +
+                "    put:\n" +
+                "      operationId: test\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          '*/*':\n" +
+                "            schema:\n" +
+                "              $ref: \"#/components/schemas/DefaultClass\"\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*': {}\n" +
+                "  /test/testDefaultValueAnnotation:\n" +
+                "    get:\n" +
+                "      operationId: testDefault\n" +
+                "      parameters:\n" +
+                "      - name: myBool\n" +
+                "        in: query\n" +
+                "        schema:\n" +
+                "          type: boolean\n" +
+                "          default: true\n" +
+                "      - name: myInt\n" +
+                "        in: query\n" +
+                "        schema:\n" +
+                "          type: integer\n" +
+                "          format: int32\n" +
+                "          default: 1\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*': {}\n" +
+                "  /test/testsize:\n" +
+                "    get:\n" +
+                "      operationId: testSize\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          '*/*':\n" +
+                "            schema:\n" +
+                "              type: array\n" +
+                "              items:\n" +
+                "                type: string\n" +
+                "              maxItems: 100\n" +
+                "              minItems: 1\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*': {}\n" +
+                "components:\n" +
+                "  schemas:\n" +
+                "    DefaultClass:\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        name:\n" +
+                "          type: boolean\n" +
+                "          default: true\n";
+        SerializationMatchers.assertEqualsToYaml31(openAPI, yaml);
+        ModelConverters.reset();
+    }
+
+    @Test(description = "test explode FALSE")
+    public void testTicket4065() {
+        ModelConverters.reset();
+        SwaggerConfiguration config = new SwaggerConfiguration();
+        Reader reader = new Reader(config);
+
+        OpenAPI openAPI = reader.read(Ticket4065Resource.class);
+        String yaml = "openapi: 3.0.1\n" +
+                "paths:\n" +
+                "  /bar:\n" +
+                "    get:\n" +
+                "      operationId: test\n" +
+                "      parameters:\n" +
+                "      - name: blub\n" +
+                "        in: query\n" +
+                "        explode: false\n" +
+                "        schema:\n" +
+                "          type: array\n" +
+                "          items:\n" +
+                "            type: integer\n" +
+                "            format: int64\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            application/json: {}\n";
+        SerializationMatchers.assertEqualsToYaml31(openAPI, yaml);
+        ModelConverters.reset();
+    }
+
+    @Test(description = "Extensions Tests OAS 3.1")
+    public void testExtensionsOAS31() {
+        SwaggerConfiguration config = new SwaggerConfiguration().openAPI31(true);
+        Reader reader = new Reader(config);
+
+        OpenAPI openAPI = reader.read(Ticket4850Resource.class);
+        assertNotNull(openAPI);
+
+        String yaml = "openapi: 3.1.0\n" +
+                "paths:\n" +
+                "  /bar:\n" +
+                "    get:\n" +
+                "      operationId: test\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*':\n" +
+                "              schema:\n" +
+                "                $ref: \"#/components/schemas/ExtensionsResource\"\n" +
+                "components:\n" +
+                "  schemas:\n" +
+                "    ExtensionsResource:\n" +
+                "      description: ExtensionsResource\n" +
+                "      x-user:\n" +
+                "        name: Josh\n" +
+                "      user-extensions:\n" +
+                "        lastName: Hart\n" +
+                "        address: House";
+        SerializationMatchers.assertEqualsToYaml31(openAPI, yaml);
+    }
+    @Test(description = "Test model resolution for global path parameters with openAPI 3.1")
+    public void testTicket4878() {
+        ModelConverters.reset();
+        SwaggerConfiguration config = new SwaggerConfiguration().openAPI31(true);
+        Reader reader = new Reader(config);
+
+        OpenAPI openAPI = reader.read(Ticket4878Resource.class);
+        String yaml = "openapi: 3.1.0\n" +
+                "paths:\n" +
+                "  /{globalPathParam}/{localPathParam}:\n" +
+                "    get:\n" +
+                "      operationId: getMethod\n" +
+                "      parameters:\n" +
+                "      - name: globalPathParam\n" +
+                "        in: path\n" +
+                "        required: true\n" +
+                "        schema:\n" +
+                "          type: string\n" +
+                "          $comment: 3.1 property for global path param\n" +
+                "      - name: localPathParam\n" +
+                "        in: path\n" +
+                "        required: true\n" +
+                "        schema:\n" +
+                "          type: string\n" +
+                "          $comment: 3.1 property for local path param\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*': {}\n";
+        SerializationMatchers.assertEqualsToYaml31(openAPI, yaml);
+        ModelConverters.reset();
+    }
+
+    @Test(description = "Test model resolution for global path parameters with openAPI 3.1")
+    public void testTicket4907() {
+        ModelConverters.reset();
+
+        // openAPI31 true and no other config
+        SwaggerConfiguration config = new SwaggerConfiguration().openAPI31(true);
+        Reader reader = new Reader(config);
+        OpenAPI openAPI = reader.read(Ticket4878Resource.class);
+        String yaml = "openapi: 3.1.0\n" +
+                "paths:\n" +
+                "  /{globalPathParam}/{localPathParam}:\n" +
+                "    get:\n" +
+                "      operationId: getMethod\n" +
+                "      parameters:\n" +
+                "      - name: globalPathParam\n" +
+                "        in: path\n" +
+                "        required: true\n" +
+                "        schema:\n" +
+                "          type: string\n" +
+                "          $comment: 3.1 property for global path param\n" +
+                "      - name: localPathParam\n" +
+                "        in: path\n" +
+                "        required: true\n" +
+                "        schema:\n" +
+                "          type: string\n" +
+                "          $comment: 3.1 property for local path param\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*': {}\n";
+        SerializationMatchers.assertEqualsToYaml31(openAPI, yaml);
+
+        // openAPI31 true and openAPI set
+        config.setOpenAPI(new OpenAPI().openapi("3.1.1"));
+        reader = new Reader(config);
+        openAPI = reader.read(Ticket4878Resource.class);
+        yaml = "openapi: 3.1.1\n" +
+                "paths:\n" +
+                "  /{globalPathParam}/{localPathParam}:\n" +
+                "    get:\n" +
+                "      operationId: getMethod\n" +
+                "      parameters:\n" +
+                "      - name: globalPathParam\n" +
+                "        in: path\n" +
+                "        required: true\n" +
+                "        schema:\n" +
+                "          type: string\n" +
+                "          $comment: 3.1 property for global path param\n" +
+                "      - name: localPathParam\n" +
+                "        in: path\n" +
+                "        required: true\n" +
+                "        schema:\n" +
+                "          type: string\n" +
+                "          $comment: 3.1 property for local path param\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*': {}\n";
+        SerializationMatchers.assertEqualsToYaml31(openAPI, yaml);
+
+        // openAPI31 true and openAPIVersion set
+        config.setOpenAPI(null);
+        config.setOpenAPIVersion("3.1.1");
+        reader = new Reader(config);
+        openAPI = reader.read(Ticket4878Resource.class);
+        yaml = "openapi: 3.1.1\n" +
+                "paths:\n" +
+                "  /{globalPathParam}/{localPathParam}:\n" +
+                "    get:\n" +
+                "      operationId: getMethod\n" +
+                "      parameters:\n" +
+                "      - name: globalPathParam\n" +
+                "        in: path\n" +
+                "        required: true\n" +
+                "        schema:\n" +
+                "          type: string\n" +
+                "          $comment: 3.1 property for global path param\n" +
+                "      - name: localPathParam\n" +
+                "        in: path\n" +
+                "        required: true\n" +
+                "        schema:\n" +
+                "          type: string\n" +
+                "          $comment: 3.1 property for local path param\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*': {}\n";
+        SerializationMatchers.assertEqualsToYaml31(openAPI, yaml);
+        ModelConverters.reset();
+    }
+
+    @Test(description = "array property metadata is resolved from ArraySchema.arraySchema, items metadata from ArraySchema.schema")
+    public void test4341ArraySchemaOtherAttributes() {
+        Reader reader = new Reader(new OpenAPI());
+        OpenAPI openAPI = reader.read(Ticket4341Resource.class);
+        System.out.println(Json.pretty(openAPI));
+
+        Schema userSchema = openAPI.getComponents().getSchemas().get("User");
+        assertNotNull(userSchema, "User schema should be present");
+
+        @SuppressWarnings("unchecked")
+        Map<String, Schema> properties = userSchema.getProperties();
+        assertNotNull(properties, "User properties should not be null");
+
+        Schema metadataArray = properties.get("metadataArray");
+        assertNotNull(metadataArray, "metadataArray property should be present");
+        assertTrue(metadataArray instanceof ArraySchema, "metadataArray should be an ArraySchema");
+
+        // Property-level assertions
+        assertEquals(
+                metadataArray.getDescription(),
+                "array-level description",
+                "Array property description should come from arraySchema, not items schema"
+        );
+
+        assertEquals(
+                metadataArray.getDeprecated(),
+                Boolean.TRUE,
+                "Array property deprecated should come from arraySchema"
+        );
+
+        assertEquals(
+                metadataArray.getReadOnly(),
+                Boolean.TRUE,
+                "Array property readOnly should be true from arraySchema.accessMode=READ_ONLY"
+        );
+        assertNotEquals(
+                metadataArray.getWriteOnly(),
+                Boolean.TRUE,
+                "Array property writeOnly should not be true when accessMode=READ_ONLY"
+        );
+
+        // Item-level assertions
+
+        ArraySchema metadataArraySchema = (ArraySchema) metadataArray;
+        Schema items = metadataArraySchema.getItems();
+        assertNotNull(items, "Items schema should not be null");
+
+        assertEquals(
+                items.getDescription(),
+                "item-level description",
+                "Items description should come from schema element of @ArraySchema"
+        );
+
+        assertNotEquals(
+                items.getDeprecated(),
+                Boolean.TRUE,
+                "Items deprecated should not be true when schema.deprecated=false"
+        );
+
+        assertEquals(
+                items.getWriteOnly(),
+                Boolean.TRUE,
+                "Items writeOnly should be true from schema.accessMode=WRITE_ONLY"
+        );
+        assertNotEquals(
+                items.getReadOnly(),
+                Boolean.TRUE,
+                "Items readOnly should not be true when accessMode=WRITE_ONLY"
+        );
+
+        assertEquals(
+                items.getFormat(),
+                "email",
+                "Items format should come from schema.format"
+        );
+    }
+
+    @Test
+    void testTicket5017() {
+        ModelResolver.enumsAsRef = true;
+        SwaggerConfiguration config = new SwaggerConfiguration().openAPI31(true);
+        Reader reader = new Reader(config);
+        OpenAPI openAPI = reader.read(Ticket5017Resource.class);
+
+        OpenAPISpecFilter filterImpl = new RemoveUnusedSchemasOAS31Filter();
+        SpecFilter f = new SpecFilter();
+        openAPI = f.filter(openAPI, filterImpl, null, null, null);
+
+        String yaml = "openapi: 3.1.0\n" +
+                "paths:\n" +
+                "  /test:\n" +
+                "    get:\n" +
+                "      operationId: myMethod\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          '*/*':\n" +
+                "            schema:\n" +
+                "              $ref: \"#/components/schemas/Example\"\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*': {}\n" +
+                "components:\n" +
+                "  schemas:\n" +
+                "    Example:\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        myMap:\n" +
+                "          type: object\n" +
+                "          additionalProperties:\n" +
+                "            type: string\n" +
+                "          propertyNames:\n" +
+                "            $ref: \"#/components/schemas/MyEnum\"\n" +
+                "    MyEnum:\n" +
+                "      type: string\n" +
+                "      enum:\n" +
+                "      - FOO\n" +
+                "      - BAR\n";
+        SerializationMatchers.assertEqualsToYaml31(openAPI, yaml);
+    }
+
+    static class RemoveUnusedSchemasOAS31Filter extends AbstractSpecFilter {
+        @Override
+        public boolean isRemovingUnreferencedDefinitions() {
+            return true;
+        }
+
+        @Override
+        public boolean isOpenAPI31Filter() {
+            return true;
+        }
     }
 }

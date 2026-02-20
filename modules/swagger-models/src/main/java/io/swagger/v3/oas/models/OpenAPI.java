@@ -1,21 +1,7 @@
-/**
- * Copyright 2017 SmartBear Software
- * <p>
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package io.swagger.v3.oas.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.swagger.v3.oas.models.annotations.OpenAPI31;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
@@ -24,13 +10,16 @@ import io.swagger.v3.oas.models.servers.Server;
 import io.swagger.v3.oas.models.tags.Tag;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 /**
  * OpenAPI
  *
- * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.0.1/versions/3.0.1.md"
+ * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.0.4/versions/3.0.4.md"
+ * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.1.1/versions/3.1.1.md"
  */
 
 public class OpenAPI {
@@ -43,6 +32,36 @@ public class OpenAPI {
     private Paths paths = null;
     private Components components = null;
     private java.util.Map<String, Object> extensions = null;
+
+    /**
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
+    @OpenAPI31
+    private String jsonSchemaDialect;
+
+    public OpenAPI() {}
+    public OpenAPI(SpecVersion specVersion) { this.specVersion = specVersion;}
+    private SpecVersion specVersion = SpecVersion.V30;
+
+    @JsonIgnore
+    public SpecVersion getSpecVersion() {
+        return this.specVersion;
+    }
+
+    public void setSpecVersion(SpecVersion specVersion) {
+        this.specVersion = specVersion;
+    }
+
+    public OpenAPI specVersion(SpecVersion specVersion) {
+        this.setSpecVersion(specVersion);
+        return this;
+    }
+
+    /**
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
+    @OpenAPI31
+    private java.util.Map<String, PathItem> webhooks = null;
 
     /**
      * returns the openapi property from a OpenAPI instance.
@@ -249,6 +268,61 @@ public class OpenAPI {
         return this;
     }
 
+    /**
+     * returns the webhooks property from a OpenAPI instance.
+     *
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     * @return Map&lt;String, PathItem&gt; webhooks
+     **/
+
+    @OpenAPI31
+    public Map<String, PathItem> getWebhooks() {
+        return webhooks;
+    }
+
+    @OpenAPI31
+    public void setWebhooks(Map<String, PathItem> webhooks) {
+        this.webhooks = webhooks;
+    }
+
+    @OpenAPI31
+    public OpenAPI webhooks(Map<String, PathItem> webhooks) {
+        this.webhooks = webhooks;
+        return this;
+    }
+
+    @OpenAPI31
+    public OpenAPI addWebhooks(String key, PathItem pathItem) {
+        if (this.webhooks == null) {
+            this.webhooks = new LinkedHashMap<>();
+        }
+        this.webhooks.put(key, pathItem);
+        return this;
+    }
+
+    /**
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
+    @OpenAPI31
+    public String getJsonSchemaDialect() {
+        return jsonSchemaDialect;
+    }
+
+    /**
+     * @since 2.2.0 (OpenAPI 3.1.0)
+     */
+    @OpenAPI31
+    public void setJsonSchemaDialect(String jsonSchemaDialect) {
+        this.jsonSchemaDialect = jsonSchemaDialect;
+    }
+
+    @OpenAPI31
+    public OpenAPI jsonSchemaDialect(String jsonSchemaDialect) {
+        this.jsonSchemaDialect = jsonSchemaDialect;
+        return this;
+    }
+
+
     @Override
     public boolean equals(java.lang.Object o) {
         if (this == o) {
@@ -266,12 +340,14 @@ public class OpenAPI {
                 Objects.equals(this.tags, openAPI.tags) &&
                 Objects.equals(this.paths, openAPI.paths) &&
                 Objects.equals(this.components, openAPI.components) &&
-                Objects.equals(this.extensions, openAPI.extensions);
+                Objects.equals(this.webhooks, openAPI.webhooks) &&
+                Objects.equals(this.extensions, openAPI.extensions) &&
+                Objects.equals(this.jsonSchemaDialect, openAPI.jsonSchemaDialect);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(openapi, info, externalDocs, servers, security, tags, paths, components, extensions);
+        return Objects.hash(openapi, info, externalDocs, servers, security, tags, paths, components, webhooks, extensions, jsonSchemaDialect);
     }
 
     public java.util.Map<String, Object> getExtensions() {
@@ -286,6 +362,14 @@ public class OpenAPI {
             this.extensions = new java.util.LinkedHashMap<>();
         }
         this.extensions.put(name, value);
+    }
+
+    @OpenAPI31
+    public void addExtension31(String name, Object value) {
+        if (name != null && (name.startsWith("x-oas-") || name.startsWith("x-oai-"))) {
+            return;
+        }
+        addExtension(name, value);
     }
 
     public void setExtensions(java.util.Map<String, Object> extensions) {
@@ -310,6 +394,8 @@ public class OpenAPI {
         sb.append("    tags: ").append(toIndentedString(tags)).append("\n");
         sb.append("    paths: ").append(toIndentedString(paths)).append("\n");
         sb.append("    components: ").append(toIndentedString(components)).append("\n");
+        if (specVersion == SpecVersion.V31) sb.append("    webhooks: ").append(toIndentedString(webhooks)).append("\n");
+        if (specVersion == SpecVersion.V31) sb.append("    jsonSchemaDialect: ").append(toIndentedString(jsonSchemaDialect)).append("\n");
         sb.append("}");
         return sb.toString();
     }

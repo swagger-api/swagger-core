@@ -1,21 +1,8 @@
-/**
- * Copyright 2017 SmartBear Software
- * <p>
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package io.swagger.v3.oas.annotations.headers;
 
+import io.swagger.v3.oas.annotations.enums.Explode;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.lang.annotation.Inherited;
@@ -28,7 +15,7 @@ import java.lang.annotation.Target;
  * encoding by defining it as field {@link io.swagger.v3.oas.annotations.responses.ApiResponse#headers()} or {@link io.swagger.v3.oas.annotations.media.Content#encoding()}.
  * <p>Please note that request headers are defined as Header {@link io.swagger.v3.oas.annotations.Parameter}.</p>
  *
- * @see <a target="_new" href="https://github.com/OAI/OpenAPI-Specification/blob/3.0.1/versions/3.0.1.md#headerObject">Header (OpenAPI specification)</a>
+ * @see <a target="_new" href="https://github.com/OAI/OpenAPI-Specification/blob/3.0.4/versions/3.0.4.md#header-object">Header (OpenAPI specification)</a>
  * @see io.swagger.v3.oas.annotations.responses.ApiResponse
  * @see io.swagger.v3.oas.annotations.Parameter
  * @see io.swagger.v3.oas.annotations.media.Encoding
@@ -79,5 +66,41 @@ public @interface Header {
      * @return the reference
      **/
     String ref() default "";
+
+
+    /**
+     * When this is true, parameter values of type array or object generate separate parameters for each value of the array or key-value pair of the map. For other types of parameters this property has no effect. When style is form, the default value is true. For all other styles, the default value is false.  Ignored if the properties content or array are specified.
+     *
+     * @return whether or not to expand individual array members
+     **/
+    Explode explode() default Explode.DEFAULT;
+
+    /**
+     * Allows this header to be marked as hidden
+     *
+     * @return whether or not this header is hidden
+     */
+    boolean hidden() default false;
+
+    /**
+     * Provides an example of the schema.  When associated with a specific media type, the example string shall be parsed by the consumer to be treated as an object or an array.  Ignored if the properties examples, content or array are specified.
+     *
+     * @return an example of the header
+     **/
+    String example() default "";
+
+    /**
+     * An array of examples  of the schema used to show the use of the associated schema.
+     *
+     * @return array of examples of the header
+     **/
+    ExampleObject[] examples() default {};
+
+    /**
+     * The schema of the array that defines this header.  Ignored if the property content is specified.
+     *
+     * @return the schema of the array
+     */
+    ArraySchema array() default @ArraySchema();
 
 }

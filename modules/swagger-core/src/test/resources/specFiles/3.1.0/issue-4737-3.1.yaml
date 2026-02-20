@@ -1,0 +1,29 @@
+openapi: 3.1.0
+info:
+  title: OpenAPI definition
+  version: v0
+servers:
+  - url: http://localhost
+    description: Generated server url
+paths: {}
+components:
+  schemas:
+    RequestDto:
+      properties:
+        personalNumber:
+          type: string
+webhooks:
+  newPet:
+    post:
+      requestBody:
+        description: Information about a new pet in the system
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RequestDto"
+              description: Webhook Pet
+      responses:
+        '200':
+          description: >-
+            Return a 200 status to indicate that the data was received
+            successfully

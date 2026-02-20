@@ -1,0 +1,831 @@
+# Comprehensive OpenAPI 3.1 and JSON Schema 2020/12 Example
+# This file demonstrates a comprehensive OpenAPI 3.1 document with JSON Schema 2020/12 features
+# It includes all keywords defined in both specifications and uses both internal and external references
+
+openapi: 3.1.0
+jsonSchemaDialect: https://json-schema.org/draft/2020-12/schema
+
+# Basic information about the API
+info:
+  title: Comprehensive Pet Store API
+  version: 1.0.0
+  summary: A comprehensive example of an OpenAPI 3.1 document with JSON Schema 2020/12 features
+  description: |
+    This is a comprehensive example of an OpenAPI 3.1 document that includes all keywords defined in both
+    OpenAPI 3.1 and JSON Schema 2020/12 specifications. It demonstrates the use of both internal and external
+    references, as well as seldom used constructs like $schema, $id, and $dynamicAnchor.
+
+    The API allows you to manage pets, users, and orders in a pet store.
+  termsOfService: https://example.com/terms/
+  contact:
+    name: API Support
+    url: https://example.com/support
+    email: support@example.com
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0.html
+    identifier: Apache-2.0
+
+# Server information
+servers:
+  - url: https://api.example.com/v1
+    description: Production server
+  - url: https://staging-api.example.com/v1
+    description: Staging server
+    variables:
+      port:
+        enum:
+          - '8443'
+          - '443'
+        default: '443'
+      basePath:
+        default: v1
+  - url: https://dev-api.example.com/v1
+    description: Development server
+  - url: http://localhost:{port}/{basePath}
+    description: Local development server
+    variables:
+      port:
+        enum:
+          - '8080'
+          - '8081'
+        default: '8080'
+      basePath:
+        default: v1
+
+# External documentation
+externalDocs:
+  description: Find more info here
+  url: https://example.com/docs
+
+# Tags for API documentation control and organization
+tags:
+  - name: pets
+    description: Pet operations
+    externalDocs:
+      description: Find more info about pets
+      url: https://example.com/docs/pets
+  - name: users
+    description: User operations
+    externalDocs:
+      description: Find more info about users
+      url: https://example.com/docs/users
+  - name: orders
+    description: Order operations
+    externalDocs:
+      description: Find more info about orders
+      url: https://example.com/docs/orders
+
+# Security schemes
+security:
+  - petstore_auth:
+      - read:pets
+      - write:pets
+  - user_auth:
+      - read:users
+      - write:users
+  - order_auth:
+      - read:orders
+      - write:orders
+  - api_key: []
+
+# Paths
+paths:
+  # Pet paths
+  /pets:
+    $ref: "./paths/pet-paths.yaml#/~1pets"
+  /pets/{petId}:
+    $ref: "./paths/pet-paths.yaml#/~1pets~1{petId}"
+  /pets/findByStatus:
+    $ref: "./paths/pet-paths.yaml#/~1pets~1findByStatus"
+  /pets/findByTags:
+    $ref: "./paths/pet-paths.yaml#/~1pets~1findByTags"
+  /pets/{petId}/uploadImage:
+    $ref: "./paths/pet-paths.yaml#/~1pets~1{petId}~1uploadImage"
+
+  # User paths
+  /users:
+    $ref: "./paths/user-paths.yaml#/~1users"
+  /users/{userId}:
+    $ref: "./paths/user-paths.yaml#/~1users~1{userId}"
+  /users/login:
+    $ref: "./paths/user-paths.yaml#/~1users~1login"
+  /users/logout:
+    $ref: "./paths/user-paths.yaml#/~1users~1logout"
+  /users/{userId}/preferences:
+    $ref: "./paths/user-paths.yaml#/~1users~1{userId}~1preferences"
+
+  # Order paths
+  /orders:
+    $ref: "./paths/order-paths.yaml#/~1orders"
+  /orders/{orderId}:
+    $ref: "./paths/order-paths.yaml#/~1orders~1{orderId}"
+  /orders/{orderId}/status:
+    $ref: "./paths/order-paths.yaml#/~1orders~1{orderId}~1status"
+  /orders/{orderId}/invoice:
+    $ref: "./paths/order-paths.yaml#/~1orders~1{orderId}~1invoice"
+  /orders/{orderId}/shipment:
+    $ref: "./paths/order-paths.yaml#/~1orders~1{orderId}~1shipment"
+
+  # Additional path with inline definition
+  /health:
+    get:
+      summary: Health check
+      description: Returns the health status of the API
+      operationId: healthCheck
+      tags:
+        - system
+      responses:
+        '200':
+          description: Health check response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    enum: [ok, degraded, down]
+                  version:
+                    type: string
+                  timestamp:
+                    type: string
+                    format: date-time
+                required:
+                  - status
+                  - version
+                  - timestamp
+              examples:
+                healthy:
+                  summary: Healthy response
+                  value:
+                    status: ok
+                    version: 1.0.0
+                    timestamp: "2023-01-01T12:00:00Z"
+                degraded:
+                  summary: Degraded response
+                  value:
+                    status: degraded
+                    version: 1.0.0
+                    timestamp: "2023-01-01T12:00:00Z"
+      security: []
+
+# Webhooks
+webhooks:
+  newPet:
+    post:
+      summary: New pet webhook
+      description: Webhook for when a new pet is created
+      operationId: newPetWebhook
+      tags:
+        - pets
+        - webhooks
+      requestBody:
+        description: Information about the new pet
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "./schemas/pet-schemas.yaml#/Pet"
+      responses:
+        '200':
+          description: Webhook processed successfully
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/common-schemas.yaml#/Error"
+  updatedPet:
+    post:
+      summary: Updated pet webhook
+      description: Webhook for when a pet is updated
+      operationId: updatedPetWebhook
+      tags:
+        - pets
+        - webhooks
+      requestBody:
+        description: Information about the updated pet
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "./schemas/pet-schemas.yaml#/Pet"
+      responses:
+        '200':
+          description: Webhook processed successfully
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/common-schemas.yaml#/Error"
+  newOrder:
+    post:
+      summary: New order webhook
+      description: Webhook for when a new order is created
+      operationId: newOrderWebhook
+      tags:
+        - orders
+        - webhooks
+      requestBody:
+        description: Information about the new order
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "./schemas/order-schemas.yaml#/Order"
+      responses:
+        '200':
+          description: Webhook processed successfully
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "./schemas/common-schemas.yaml#/Error"
+
+# Components
+components:
+  # Schemas
+  schemas:
+    # Common schemas
+    Error:
+      $ref: "./schemas/common-schemas.yaml#/Error"
+    Identifiable:
+      $ref: "./schemas/common-schemas.yaml#/Identifiable"
+    ExtendedSchema:
+      $ref: "./schemas/common-schemas.yaml#/ExtendedSchema"
+    CommentedSchema:
+      $ref: "./schemas/common-schemas.yaml#/CommentedSchema"
+    SchemaWithDefs:
+      $ref: "./schemas/common-schemas.yaml#/SchemaWithDefs"
+    ValidationSchema:
+      $ref: "./schemas/common-schemas.yaml#/ValidationSchema"
+    ApplicatorSchema:
+      $ref: "./schemas/common-schemas.yaml#/ApplicatorSchema"
+
+    # Pet schemas
+    Pet:
+      $ref: "./schemas/pet-schemas.yaml#/Pet"
+    Category:
+      $ref: "./schemas/pet-schemas.yaml#/Category"
+    Tag:
+      $ref: "./schemas/pet-schemas.yaml#/Tag"
+    Dog:
+      $ref: "./schemas/pet-schemas.yaml#/Dog"
+    Cat:
+      $ref: "./schemas/pet-schemas.yaml#/Cat"
+    Bird:
+      $ref: "./schemas/pet-schemas.yaml#/Bird"
+    Pets:
+      $ref: "./schemas/pet-schemas.yaml#/Pets"
+    PetWithValidation:
+      $ref: "./schemas/pet-schemas.yaml#/PetWithValidation"
+    PetWithConditional:
+      $ref: "./schemas/pet-schemas.yaml#/PetWithConditional"
+
+    # User schemas
+    User:
+      $ref: "./schemas/user-schemas.yaml#/User"
+    Address:
+      $ref: "./schemas/user-schemas.yaml#/Address"
+    UserArray:
+      $ref: "./schemas/user-schemas.yaml#/UserArray"
+    UserWithRoles:
+      $ref: "./schemas/user-schemas.yaml#/UserWithRoles"
+    Role:
+      $ref: "./schemas/user-schemas.yaml#/Role"
+    Permission:
+      $ref: "./schemas/user-schemas.yaml#/Permission"
+    UserCredentials:
+      $ref: "./schemas/user-schemas.yaml#/UserCredentials"
+    UserPreferences:
+      $ref: "./schemas/user-schemas.yaml#/UserPreferences"
+    UserWithPreferences:
+      $ref: "./schemas/user-schemas.yaml#/UserWithPreferences"
+
+    # Order schemas
+    Order:
+      $ref: "./schemas/order-schemas.yaml#/Order"
+    OrderItem:
+      $ref: "./schemas/order-schemas.yaml#/OrderItem"
+    OrderWithItems:
+      $ref: "./schemas/order-schemas.yaml#/OrderWithItems"
+    OrderStatus:
+      $ref: "./schemas/order-schemas.yaml#/OrderStatus"
+    OrderArray:
+      $ref: "./schemas/order-schemas.yaml#/OrderArray"
+    OrderSummary:
+      $ref: "./schemas/order-schemas.yaml#/OrderSummary"
+    Invoice:
+      $ref: "./schemas/order-schemas.yaml#/Invoice"
+    Payment:
+      $ref: "./schemas/order-schemas.yaml#/Payment"
+    Shipment:
+      $ref: "./schemas/order-schemas.yaml#/Shipment"
+
+    # External JSON Schema reference
+    JsonSchema:
+      $ref: "./schemas/json-schema.yaml"
+
+    # Additional inline schemas with JSON Schema 2020/12 features
+    BooleanSchema:
+      $schema: "https://json-schema.org/draft/2020-12/schema"
+      $id: "https://example.com/schemas/BooleanSchema"
+      $anchor: "BooleanSchema"
+      title: "Boolean Schema"
+      description: "A schema that is just a boolean value"
+      type: boolean
+
+    NullSchema:
+      $schema: "https://json-schema.org/draft/2020-12/schema"
+      $id: "https://example.com/schemas/NullSchema"
+      $anchor: "NullSchema"
+      title: "Null Schema"
+      description: "A schema that is just a null value"
+      type: "null"
+
+    MultiTypeSchema:
+      $schema: "https://json-schema.org/draft/2020-12/schema"
+      $id: "https://example.com/schemas/MultiTypeSchema"
+      $anchor: "MultiTypeSchema"
+      title: "Multi-Type Schema"
+      description: "A schema that accepts multiple types"
+      type: [string, number, boolean, "null"]
+
+    RecursiveSchema:
+      $schema: "https://json-schema.org/draft/2020-12/schema"
+      $id: "https://example.com/schemas/RecursiveSchema"
+      $anchor: "RecursiveSchema"
+      title: "Recursive Schema"
+      description: "A schema that references itself"
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        children:
+          type: array
+          items:
+            $ref: "#/components/schemas/RecursiveSchema"
+      required:
+        - id
+        - name
+
+    UnevaluatedSchema:
+      $schema: "https://json-schema.org/draft/2020-12/schema"
+      $id: "https://example.com/schemas/UnevaluatedSchema"
+      $anchor: "UnevaluatedSchema"
+      title: "Unevaluated Schema"
+      description: "A schema that uses unevaluatedProperties and unevaluatedItems"
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+      unevaluatedProperties: false
+      allOf:
+        - properties:
+            age:
+              type: integer
+          unevaluatedProperties: false
+
+    ContentSchema:
+      $schema: "https://json-schema.org/draft/2020-12/schema"
+      $id: "https://example.com/schemas/ContentSchema"
+      $anchor: "ContentSchema"
+      title: "Content Schema"
+      description: "A schema that uses contentEncoding and contentMediaType"
+      type: string
+      contentEncoding: base64
+      contentMediaType: image/png
+
+    DynamicRefSchema:
+      $schema: "https://json-schema.org/draft/2020-12/schema"
+      $id: "https://example.com/schemas/DynamicRefSchema"
+      $anchor: "DynamicRefSchema"
+      title: "Dynamic Ref Schema"
+      description: "A schema that uses $dynamicRef"
+      type: object
+      properties:
+        entity:
+          $dynamicRef: "#Identifiable"
+      required:
+        - entity
+
+  # Path items
+  pathItems:
+    petPath:
+      summary: Pet path item
+      description: Path item for pet operations
+      get:
+        summary: Get pet
+        description: Returns a pet
+        operationId: getPet
+        tags:
+          - pets
+        parameters:
+          - name: petId
+            in: path
+            description: ID of pet to return
+            required: true
+            schema:
+              type: integer
+              format: int64
+              minimum: 1
+        responses:
+          '200':
+            description: Successful operation
+            content:
+              application/json:
+                schema:
+                  $ref: "./schemas/pet-schemas.yaml#/Pet"
+          '400':
+            description: Invalid ID supplied
+            content:
+              application/json:
+                schema:
+                  $ref: "./schemas/common-schemas.yaml#/Error"
+          '404':
+            description: Pet not found
+            content:
+              application/json:
+                schema:
+                  $ref: "./schemas/common-schemas.yaml#/Error"
+        security:
+          - petstore_auth:
+              - read:pets
+          - api_key: []
+    userPath:
+      summary: User path item
+      description: Path item for user operations
+      get:
+        summary: Get user
+        description: Returns a user
+        operationId: getUser
+        tags:
+          - users
+        parameters:
+          - name: userId
+            in: path
+            description: ID of user to return
+            required: true
+            schema:
+              type: integer
+              format: int64
+              minimum: 1
+        responses:
+          '200':
+            description: Successful operation
+            content:
+              application/json:
+                schema:
+                  $ref: "./schemas/user-schemas.yaml#/User"
+          '400':
+            description: Invalid ID supplied
+            content:
+              application/json:
+                schema:
+                  $ref: "./schemas/common-schemas.yaml#/Error"
+          '404':
+            description: User not found
+            content:
+              application/json:
+                schema:
+                  $ref: "./schemas/common-schemas.yaml#/Error"
+        security:
+          - user_auth:
+              - read:users
+          - api_key: []
+    orderPath:
+      summary: Order path item
+      description: Path item for order operations
+      get:
+        summary: Get order
+        description: Returns an order
+        operationId: getOrder
+        tags:
+          - orders
+        parameters:
+          - name: orderId
+            in: path
+            description: ID of order to return
+            required: true
+            schema:
+              type: integer
+              format: int64
+              minimum: 1
+        responses:
+          '200':
+            description: Successful operation
+            content:
+              application/json:
+                schema:
+                  $ref: "./schemas/order-schemas.yaml#/Order"
+          '400':
+            description: Invalid ID supplied
+            content:
+              application/json:
+                schema:
+                  $ref: "./schemas/common-schemas.yaml#/Error"
+          '404':
+            description: Order not found
+            content:
+              application/json:
+                schema:
+                  $ref: "./schemas/common-schemas.yaml#/Error"
+        security:
+          - order_auth:
+              - read:orders
+          - api_key: []
+
+  # Parameters
+  parameters:
+    limitParam:
+      name: limit
+      in: query
+      description: Maximum number of items to return
+      required: false
+      schema:
+        type: integer
+        format: int32
+        minimum: 1
+        maximum: 100
+        default: 20
+    offsetParam:
+      name: offset
+      in: query
+      description: Offset for pagination
+      required: false
+      schema:
+        type: integer
+        format: int32
+        minimum: 0
+        default: 0
+    petIdParam:
+      name: petId
+      in: path
+      description: ID of pet to return
+      required: true
+      schema:
+        type: integer
+        format: int64
+        minimum: 1
+    userIdParam:
+      name: userId
+      in: path
+      description: ID of user to return
+      required: true
+      schema:
+        type: integer
+        format: int64
+        minimum: 1
+    orderIdParam:
+      name: orderId
+      in: path
+      description: ID of order to return
+      required: true
+      schema:
+        type: integer
+        format: int64
+        minimum: 1
+
+  # Request bodies
+  requestBodies:
+    petRequestBody:
+      description: Pet object that needs to be added to the store
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "./schemas/pet-schemas.yaml#/Pet"
+    userRequestBody:
+      description: User object that needs to be added to the system
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "./schemas/user-schemas.yaml#/User"
+    orderRequestBody:
+      description: Order object that needs to be added to the store
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "./schemas/order-schemas.yaml#/Order"
+
+  # Responses
+  responses:
+    notFound:
+      description: The specified resource was not found
+      content:
+        application/json:
+          schema:
+            $ref: "./schemas/common-schemas.yaml#/Error"
+    badRequest:
+      description: The request was invalid
+      content:
+        application/json:
+          schema:
+            $ref: "./schemas/common-schemas.yaml#/Error"
+    unauthorized:
+      description: Authentication information is missing or invalid
+      headers:
+        WWW-Authenticate:
+          schema:
+            type: string
+      content:
+        application/json:
+          schema:
+            $ref: "./schemas/common-schemas.yaml#/Error"
+    forbidden:
+      description: The server understood the request but refuses to authorize it
+      content:
+        application/json:
+          schema:
+            $ref: "./schemas/common-schemas.yaml#/Error"
+    serverError:
+      description: An unexpected error occurred
+      content:
+        application/json:
+          schema:
+            $ref: "./schemas/common-schemas.yaml#/Error"
+
+  # Headers
+  headers:
+    X-Rate-Limit:
+      description: Calls per hour allowed by the user
+      schema:
+        type: integer
+        format: int32
+    X-Expires-After:
+      description: Date in UTC when token expires
+      schema:
+        type: string
+        format: date-time
+    X-Total-Count:
+      description: Total number of items
+      schema:
+        type: integer
+        format: int32
+        minimum: 0
+
+  # Security schemes
+  securitySchemes:
+    petstore_auth:
+      type: oauth2
+      description: OAuth2 authentication for pet operations
+      flows:
+        implicit:
+          authorizationUrl: https://example.com/oauth/authorize
+          scopes:
+            read:pets: read your pets
+            write:pets: modify pets in your account
+    user_auth:
+      type: oauth2
+      description: OAuth2 authentication for user operations
+      flows:
+        implicit:
+          authorizationUrl: https://example.com/oauth/authorize
+          scopes:
+            read:users: read user information
+            write:users: modify user information
+    order_auth:
+      type: oauth2
+      description: OAuth2 authentication for order operations
+      flows:
+        implicit:
+          authorizationUrl: https://example.com/oauth/authorize
+          scopes:
+            read:orders: read your orders
+            write:orders: modify orders in your account
+    api_key:
+      type: apiKey
+      description: API key authentication
+      name: api_key
+      in: header
+
+  # Examples
+  examples:
+    pet:
+      summary: Example of a pet
+      value:
+        id: 1
+        name: Fluffy
+        status: available
+    user:
+      summary: Example of a user
+      value:
+        id: 1
+        username: john_doe
+        email: john@example.com
+    order:
+      summary: Example of an order
+      value:
+        id: 1
+        petId: 1
+        quantity: 1
+        shipDate: "2023-01-01T12:00:00Z"
+        status: placed
+        complete: false
+
+  # Links
+  links:
+    getPetById:
+      operationId: getPetById
+      parameters:
+        petId: $response.body#/id
+      description: The `id` value returned in the response can be used as the `petId` parameter in `GET /pets/{petId}`
+    getUserById:
+      operationId: getUserById
+      parameters:
+        userId: $response.body#/id
+      description: The `id` value returned in the response can be used as the `userId` parameter in `GET /users/{userId}`
+    getOrderById:
+      operationId: getOrderById
+      parameters:
+        orderId: $response.body#/id
+      description: The `id` value returned in the response can be used as the `orderId` parameter in `GET /orders/{orderId}`
+
+  # Callbacks
+  callbacks:
+    petStatusChanged:
+      '{$request.body#/status}':
+        post:
+          summary: Pet status changed callback
+          description: Callback for when a pet's status changes
+          operationId: petStatusChangedCallback
+          requestBody:
+            description: Pet status change information
+            required: true
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    petId:
+                      type: integer
+                      format: int64
+                    oldStatus:
+                      type: string
+                    newStatus:
+                      type: string
+                  required:
+                    - petId
+                    - oldStatus
+                    - newStatus
+          responses:
+            '200':
+              description: Callback processed successfully
+            '400':
+              description: Bad request
+              content:
+                application/json:
+                  schema:
+                    $ref: "./schemas/common-schemas.yaml#/Error"
+    orderStatusChanged:
+      '{$request.body#/status}':
+        post:
+          summary: Order status changed callback
+          description: Callback for when an order's status changes
+          operationId: orderStatusChangedCallback
+          requestBody:
+            description: Order status change information
+            required: true
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    orderId:
+                      type: integer
+                      format: int64
+                    oldStatus:
+                      type: string
+                    newStatus:
+                      type: string
+                  required:
+                    - orderId
+                    - oldStatus
+                    - newStatus
+          responses:
+            '200':
+              description: Callback processed successfully
+            '400':
+              description: Bad request
+              content:
+                application/json:
+                  schema:
+                    $ref: "./schemas/common-schemas.yaml#/Error"
+
+# Extensions
+x-api-version: 1.0.0
+x-generated-at: "2023-01-01T12:00:00Z"
+x-generated-by: "OpenAPI Generator"
+x-logo:
+  url: "https://example.com/logo.png"
+  backgroundColor: "#FFFFFF"
+  altText: "Example API Logo"

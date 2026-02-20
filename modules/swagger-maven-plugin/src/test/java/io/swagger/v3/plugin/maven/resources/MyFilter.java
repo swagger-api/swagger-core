@@ -22,8 +22,6 @@ public class MyFilter extends AbstractSpecFilter {
                 Map<String, List<String>> headers) {
             openAPI.getInfo().setTitle("UPDATEDBYFILTER");
             return Optional.of(openAPI);
-            //  some processing
-            //return super.filterOpenAPI(openAPI, params, cookies, headers);
         }
 
         @Override

@@ -13,7 +13,6 @@ import io.swagger.v3.oas.models.responses.ApiResponse;
 import io.swagger.v3.oas.models.media.ArraySchema;
 import io.swagger.v3.oas.models.media.Content;
 import io.swagger.v3.oas.models.media.MediaType;
-import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -21,6 +20,10 @@ import org.testng.annotations.Test;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Iterator;
+
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertNull;
 
 public class DecoratorExtensionTest {
 
@@ -115,15 +118,15 @@ public class DecoratorExtensionTest {
     public void scanSimpleResourceWithDecorator() {
         final OpenAPI openAPI = getOpenAPI(SimpleResourceWithVendorAnnotation.class);
 
-        Assert.assertEquals(openAPI.getPaths().size(), 2);
+        assertEquals(openAPI.getPaths().size(), 2);
 
         final Operation get = getGet(openAPI, "/{id}");
-        Assert.assertNotNull(get);
-        Assert.assertEquals(get.getParameters().size(), 2);
+        assertNotNull(get);
+        assertEquals(get.getParameters().size(), 2);
 
         final ApiResponse response = get.getResponses().get(RESPONSE_STATUS_401);
-        Assert.assertNotNull(response);
-        Assert.assertEquals(response.getDescription(), RESPONSE_DESCRIPTION);
+        assertNotNull(response);
+        assertEquals(response.getDescription(), RESPONSE_DESCRIPTION);
     }
 
     /**
@@ -133,13 +136,13 @@ public class DecoratorExtensionTest {
     public void scanSimpleResourceWithoutDecorator() {
         final OpenAPI openAPI = getOpenAPI(SimpleResourceWithVendorAnnotation.class);
 
-        Assert.assertEquals(openAPI.getPaths().size(), 2);
+        assertEquals(openAPI.getPaths().size(), 2);
 
         final Operation get = getGet(openAPI, "/{id}/value");
-        Assert.assertNotNull(get);
+        assertNotNull(get);
 
         final ApiResponse response = get.getResponses().get(RESPONSE_STATUS_401);
-        Assert.assertNull(response);
+        assertNull(response);
     }
 
     /**
@@ -150,15 +153,15 @@ public class DecoratorExtensionTest {
         final ConcreteResource res = new ConcreteResource();
         final OpenAPI openAPI = getOpenAPI(ConcreteResource.class);
 
-        Assert.assertEquals(openAPI.getPaths().size(), 1);
+        assertEquals(openAPI.getPaths().size(), 1);
 
         final Operation get = getGet(openAPI, "/path");
-        Assert.assertNotNull(get);
-        Assert.assertEquals(get.getSummary(), res.getPluralName());
-        Assert.assertEquals(get.getOperationId(), res.getSingularName() + OPERATION_ID_POSTFIX);
+        assertNotNull(get);
+        assertEquals(get.getSummary(), res.getPluralName());
+        assertEquals(get.getOperationId(), res.getSingularName() + OPERATION_ID_POSTFIX);
 
         final ApiResponse response = get.getResponses().get(RESPONSE_STATUS_200);
-        Assert.assertNotNull(response);
-        Assert.assertEquals(response.getDescription(), res.getPluralName());
+        assertNotNull(response);
+        assertEquals(response.getDescription(), res.getPluralName());
     }
 }

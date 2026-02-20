@@ -45,7 +45,7 @@ sed -i -e "s/$sc_find/$sc_replace/g" $CUR/README.md
 # update readme with a line for the new release replacing the previous
 CURDATE=$(date +"%Y-%m-%d")
 sc_find="------------------------- | ------------ | -------------------------- | ----- | ----"
-sc_add="$SC_VERSION (**current stable**)| $CURDATE   | 3.0           | [tag v$SC_VERSION](https:\/\/github.com\/swagger-api\/swagger-core\/tree\/v$SC_VERSION) | Supported"
+sc_add="$SC_VERSION (**current stable**)| $CURDATE   | 3.x           | [tag v$SC_VERSION](https:\/\/github.com\/swagger-api\/swagger-core\/tree\/v$SC_VERSION) | Supported"
 sc_replace="$sc_find\n$sc_add"
 sed -i -e "s/$sc_find/$sc_replace/g" $CUR/README.md
 
@@ -65,13 +65,18 @@ sc_find="io.swagger.core.v3:swagger-jaxrs2:$SC_VERSION-SNAPSHOT"
 sc_replace="io.swagger.core.v3:swagger-jaxrs2:$SC_VERSION"
 sed -i -e "s/$sc_find/$sc_replace/g" $CUR/modules/swagger-gradle-plugin/src/main/java/io/swagger/v3/plugins/gradle/SwaggerPlugin.java
 
-sc_find="name: 'swagger-jaxrs2', version:'$SC_VERSION-SNAPSHOT"
-sc_replace="name: 'swagger-jaxrs2', version:'$SC_VERSION"
+sc_find="io.swagger.core.v3:swagger-jaxrs2:$SC_VERSION-SNAPSHOT"
+sc_replace="io.swagger.core.v3:swagger-jaxrs2:$SC_VERSION"
 sed -i -e "s/$sc_find/$sc_replace/g" $CUR/modules/swagger-gradle-plugin/src/test/java/io/swagger/v3/plugins/gradle/SwaggerResolveTest.java
 
 sc_find="<version>$SC_LAST_RELEASE<\/version>"
 sc_replace="<version>$SC_VERSION<\/version>"
 sed -i -e "s/$sc_find/$sc_replace/g" $CUR/modules/swagger-maven-plugin/README.md
+
+sc_find="<version>$SC_LAST_RELEASE<\/version>"
+sc_replace="<version>$SC_VERSION<\/version>"
+sed -i -e "s/$sc_find/$sc_replace/g" $CUR/modules/swagger-java17-support/pom.xml
+rm -f $CUR/modules/swagger-java17-support/pom.xml.versionsBackup
 
 #####################
 ### build and test maven ###

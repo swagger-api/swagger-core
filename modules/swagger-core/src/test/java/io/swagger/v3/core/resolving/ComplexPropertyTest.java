@@ -24,12 +24,6 @@ public class ComplexPropertyTest extends SwaggerTestBase {
         public InnerBean inner;
     }
 
-  /*
-  /**********************************************************
-  /* Test methods
-  /**********************************************************
-   */
-
     static class InnerBean {
         public int d;
         public int a;

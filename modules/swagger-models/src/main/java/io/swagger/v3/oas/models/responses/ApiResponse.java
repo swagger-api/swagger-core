@@ -1,21 +1,6 @@
-/**
- * Copyright 2017 SmartBear Software
- * <p>
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package io.swagger.v3.oas.models.responses;
 
+import io.swagger.v3.oas.models.annotations.OpenAPI31;
 import io.swagger.v3.oas.models.headers.Header;
 import io.swagger.v3.oas.models.links.Link;
 import io.swagger.v3.oas.models.media.Content;
@@ -27,7 +12,8 @@ import java.util.Objects;
 /**
  * ApiResponse
  *
- * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.0.1/versions/3.0.1.md#responseObject"
+ * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.0.4/versions/3.0.4.md#response-object"
+ * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.1.1/versions/3.1.1.md#response-object"
  */
 
 public class ApiResponse {
@@ -109,20 +95,29 @@ public class ApiResponse {
      * @return Link links
      **/
 
-    public java.util.Map<String, Link> getLinks() {
+    public Map<String, Link> getLinks() {
         return links;
     }
 
-    public void setLinks(java.util.Map<String, Link> links) {
+    public void setLinks(Map<String, Link> links) {
         this.links = links;
     }
 
-    public ApiResponse link(String name, Link link) {
+    public ApiResponse links(Map<String, Link> links) {
+        this.links = links;
+        return this;
+    }
+
+    public ApiResponse addLink(String name, Link link) {
         if (this.links == null) {
             this.links = new LinkedHashMap<>();
         }
         this.links.put(name, link);
         return this;
+    }
+
+    public ApiResponse link(String name, Link link) {
+        return this.addLink(name, link);
     }
 
     /**
@@ -180,6 +175,14 @@ public class ApiResponse {
             this.extensions = new java.util.LinkedHashMap<>();
         }
         this.extensions.put(name, value);
+    }
+
+    @OpenAPI31
+    public void addExtension31(String name, Object value) {
+        if (name != null && (name.startsWith("x-oas-") || name.startsWith("x-oai-"))) {
+            return;
+        }
+        addExtension(name, value);
     }
 
     public void setExtensions(java.util.Map<String, Object> extensions) {

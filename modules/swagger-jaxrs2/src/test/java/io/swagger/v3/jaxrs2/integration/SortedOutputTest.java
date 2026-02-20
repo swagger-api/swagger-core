@@ -11,10 +11,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import io.swagger.v3.core.jackson.PathsSerializer;
-import io.swagger.v3.core.util.Yaml;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.integration.GenericOpenApiContext;
 import io.swagger.v3.oas.integration.SwaggerConfiguration;
 import io.swagger.v3.oas.integration.api.ObjectMapperProcessor;
 import io.swagger.v3.oas.integration.api.OpenApiContext;
@@ -27,6 +25,7 @@ import org.testng.annotations.Test;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Application;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Map;
@@ -115,8 +114,35 @@ public class SortedOutputTest {
         @JsonIgnore
         public abstract boolean getExampleSetFlag();
 
-        @JsonInclude(JsonInclude.Include.CUSTOM)
+        @JsonInclude(value = JsonInclude.Include.NON_NULL, content = JsonInclude.Include.ALWAYS)
         public abstract Object getExample();
+
+        @JsonIgnore
+        public abstract Map<String, Object> getJsonSchema();
+
+        @JsonIgnore
+        public abstract BigDecimal getExclusiveMinimumValue();
+
+        @JsonIgnore
+        public abstract BigDecimal getExclusiveMaximumValue();
+
+        @JsonIgnore
+        public abstract Map<String, Schema> getPatternProperties();
+
+        @JsonIgnore
+        public abstract Schema getContains();
+        @JsonIgnore
+        public abstract String get$id();
+        @JsonIgnore
+        public abstract String get$anchor();
+        @JsonIgnore
+        public abstract String get$schema();
+        @JsonIgnore
+        public abstract Set<String> getTypes();
+
+        @JsonIgnore
+        public abstract Object getJsonSchemaImpl();
+
 
     }
 
@@ -175,7 +201,7 @@ public class SortedOutputTest {
             "          content:\n" +
             "            '*/*':\n" +
             "              schema:\n" +
-            "                $ref: '#/components/schemas/Pet'\n" +
+            "                $ref: \"#/components/schemas/Pet\"\n" +
             "          description: default response\n" +
             "components:\n" +
             "  schemas:\n" +
@@ -193,7 +219,7 @@ public class SortedOutputTest {
             "      type: object\n" +
             "      properties:\n" +
             "        category:\n" +
-            "          $ref: '#/components/schemas/Category'\n" +
+            "          $ref: \"#/components/schemas/Category\"\n" +
             "        id:\n" +
             "          type: integer\n" +
             "          format: int64\n" +
@@ -215,7 +241,7 @@ public class SortedOutputTest {
             "        tags:\n" +
             "          type: array\n" +
             "          items:\n" +
-            "            $ref: '#/components/schemas/Tag'\n" +
+            "            $ref: \"#/components/schemas/Tag\"\n" +
             "          xml:\n" +
             "            wrapped: true\n" +
             "      xml:\n" +
@@ -242,7 +268,7 @@ public class SortedOutputTest {
             "          content:\n" +
             "            '*/*':\n" +
             "              schema:\n" +
-            "                $ref: '#/components/schemas/Pet'\n" +
+            "                $ref: \"#/components/schemas/Pet\"\n" +
             "components:\n" +
             "  schemas:\n" +
             "    Category:\n" +
@@ -262,7 +288,7 @@ public class SortedOutputTest {
             "          type: integer\n" +
             "          format: int64\n" +
             "        category:\n" +
-            "          $ref: '#/components/schemas/Category'\n" +
+            "          $ref: \"#/components/schemas/Category\"\n" +
             "        name:\n" +
             "          type: string\n" +
             "        photoUrls:\n" +
@@ -278,7 +304,7 @@ public class SortedOutputTest {
             "          xml:\n" +
             "            wrapped: true\n" +
             "          items:\n" +
-            "            $ref: '#/components/schemas/Tag'\n" +
+            "            $ref: \"#/components/schemas/Tag\"\n" +
             "        status:\n" +
             "          type: string\n" +
             "          description: pet status in the store\n" +

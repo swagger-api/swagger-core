@@ -10,20 +10,21 @@ paths:
       - name: arrayParameter
         in: query
         required: true
+        explode: true
         schema:
           maxItems: 10
           minItems: 1
           uniqueItems: true
           type: array
           items:
-            $ref: '#/components/schemas/SubscriptionResponse'
+            $ref: "#/components/schemas/SubscriptionResponse"
       responses:
         default:
           description: test description
           content:
             '*/*':
               schema:
-                $ref: '#/components/schemas/SubscriptionResponse'
+                $ref: "#/components/schemas/SubscriptionResponse"
 components:
   schemas:
     SubscriptionResponse:

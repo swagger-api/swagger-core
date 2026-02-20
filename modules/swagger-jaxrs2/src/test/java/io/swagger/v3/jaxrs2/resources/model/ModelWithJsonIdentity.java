@@ -142,4 +142,12 @@ public class ModelWithJsonIdentity {
         public String driver;
         public String name;
     }
+
+    @JsonProperty("IntSequenceGeneratorAtClassLevel")
+    public SourceDefinition11 testIntSequenceGeneratorAtClassLevel;
+
+    @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class)
+    public class SourceDefinition11 {
+        public String name;
+    }
 }

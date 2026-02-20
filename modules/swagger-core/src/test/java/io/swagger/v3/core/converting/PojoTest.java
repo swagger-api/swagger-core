@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.testng.annotations.Test;
 
+import javax.validation.constraints.Pattern;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.Date;
@@ -427,7 +428,7 @@ public class PojoTest {
                 "  type: object\n" +
                 "  properties:\n" +
                 "    exampleJson:\n" +
-                "      $ref: '#/components/schemas/ExampleJson'\n" +
+                "      $ref: \"#/components/schemas/ExampleJson\"\n" +
                 "  example:\n" +
                 "    id: 19877734";
         SerializationMatchers.assertEqualsToYaml(readAll(modelWithPropertyExampleOverrideJson.class), yaml);
@@ -463,7 +464,7 @@ public class PojoTest {
                 "  type: object\n" +
                 "  properties:\n" +
                 "    exampleJson:\n" +
-                "      $ref: '#/components/schemas/ExampleJson'\n";
+                "      $ref: \"#/components/schemas/ExampleJson\"\n";
         SerializationMatchers.assertEqualsToYaml(readAll(modelWithPropertyImplExampleOverrideJson.class), yaml);
     }
 
@@ -480,6 +481,65 @@ public class PojoTest {
             this.exampleJson = exampleJson;
         }
 
+    }
+
+    /**
+     * Test schema with json object defaultValue and example.
+     */
+    @Test(description = "Shows how to provide model examples as json")
+    public void testModelPropertyExampleDefaultJson() {
+
+        String json = "{\"ExampleJsonExtended\": {" +
+                            "\"type\":\"object\"," +
+                            "\"properties\":{" +
+                                "\"id\":{" +
+                                    "\"type\":\"integer\"," +
+                                    "\"format\":\"int32\"" +
+                                "}," +
+                                "\"idType\":{" +
+                                    "\"type\":\"string\"" +
+                                "}," +
+                                "\"isActive\":{" +
+                                    "\"type\":\"boolean\"" +
+                                "}" +
+                            "}," +
+                            "\"example\":{" +
+                                "\"id\":19877734," +
+                                "\"idType\":\"employee code\"," +
+                                "\"isActive\":false" +
+                            "}," +
+                            "\"default\":{" +
+                                "\"id\":19877734," +
+                                "\"idType\":\"employee code\"," +
+                                "\"isActive\":false" +
+                            "}" +
+                        "}," +
+                        "\"modelWithPropertyExampleDefaultJson\":{" +
+                            "\"type\":\"object\"," +
+                            "\"properties\":{" +
+                                "\"exampleJsonExtended\":{" +
+                                    "\"$ref\":\"#/components/schemas/ExampleJsonExtended\"" +
+                                "}" +
+                            "}" +
+                        "}" +
+                    "}";
+        SerializationMatchers.assertEqualsToJson(readAll(modelWithPropertyExampleDefaultJson.class), json);
+    }
+
+    static class modelWithPropertyExampleDefaultJson {
+        final String SAMPLE = "{\"id\": 19877734, \"idType\":\"employee code\", \"isActive\":false}";
+        ExampleJsonExtended tester = new ExampleJsonExtended();
+
+        @Schema( example = SAMPLE, defaultValue = SAMPLE)
+        private ExampleJsonExtended exampleJsonExtended;
+
+        public ExampleJsonExtended getExampleJsonExtended() {
+            return exampleJsonExtended;
+        }
+
+        public void setExampleJsonExtended(ExampleJsonExtended exampleJsonExtended) {
+            this.exampleJsonExtended = exampleJsonExtended;
+        }
     }
 
     @Test(description = "Shows how to provide model examples as json")
@@ -524,6 +584,37 @@ public class PojoTest {
 
     }
 
+    static class ExampleJsonExtended {
+        private int id;
+        private String idType;
+        private boolean isActive;
+
+        public int getId() {
+            return id;
+        }
+
+        public void setId(int id) {
+            this.id = id;
+        }
+
+        public String getIdType() {
+            return idType;
+        }
+
+        public void setIdType(String idType) {
+            this.idType = idType;
+        }
+
+        public boolean getIsActive() {
+            return isActive;
+        }
+
+        public void setIsActive(boolean isActive) {
+            this.isActive = isActive;
+        }
+
+    }
+
     @Test(description = "Shows how to provide an example array")
     public void testExampleArray() {
 
@@ -544,6 +635,35 @@ public class PojoTest {
 
     static class modelExampleArray {
         @ArraySchema(arraySchema = @Schema(example = "[\"abc-123\", \"zz-aa-bb\"]"))
+        private String[] ids;
+
+        public String[] getIds() {
+            return ids;
+        }
+
+        public void setIds(String[] ids) {
+            this.ids = ids;
+        }
+    }
+
+    @Test(description = "Shows how to provide an array with specific format")
+    public void testArrayWithPattern() {
+
+        String yaml =
+                "modelArrayWithPattern:\n" +
+                        "  type: object\n" +
+                        "  properties:\n" +
+                        "    ids:\n" +
+                        "      type: array\n" +
+                        "      items:\n" +
+                        "        pattern: \"[a-zA-Z]*\"\n" +
+                        "        type: string";
+        Map<String, io.swagger.v3.oas.models.media.Schema> schemaMap = readAll(modelArrayWithPattern.class);
+        SerializationMatchers.assertEqualsToYaml(schemaMap, yaml);
+    }
+
+    static class modelArrayWithPattern {
+        @Pattern(regexp="[a-zA-Z]*")
         private String[] ids;
 
         public String[] getIds() {
@@ -583,5 +703,51 @@ public class PojoTest {
             this.id = id;
         }
     }
+
+    @Test
+    public void testModelWithBoolean() {
+
+        String yaml = "ClassWithBoolean:\n" +
+                "  required:\n" +
+                "    - booleanObject\n" +
+                "    - booleanType\n" +
+                "  type: object\n" +
+                "  properties:\n" +
+                "    booleanObject:\n" +
+                "      type: boolean\n" +
+                "      description: my Boolean object field\n" +
+                "    booleanType:\n" +
+                "      type: boolean\n" +
+                "      description: my boolean type field\n";
+        SerializationMatchers.assertEqualsToYaml(read(ClassWithBoolean.class), yaml);
+
+    }
+
+    @Schema
+    static class ClassWithBoolean {
+
+        @Schema(required = true, description = "my Boolean object field")
+        private Boolean booleanObject;
+
+        @Schema(required = true, description = "my boolean type field")
+        private boolean booleanType;
+
+        public Boolean getBooleanObject() {
+            return booleanObject;
+        }
+
+        public void setBooleanObject(Boolean booleanObject) {
+            this.booleanObject = booleanObject;
+        }
+
+        public boolean getBooleanType() {
+            return booleanType;
+        }
+
+        public void setBooleanType(boolean booleanType) {
+            this.booleanType = booleanType;
+        }
+    }
+
 
 }

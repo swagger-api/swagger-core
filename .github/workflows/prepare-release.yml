@@ -10,25 +10,26 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
     - uses: tibdex/github-app-token@v1
       id: generate-token
       with:
         app_id: ${{ secrets.APP_ID }}
         private_key: ${{ secrets.APP_PRIVATE_KEY }}
-    - name: Set up Python 2.7
-      uses: actions/setup-python@v2
+    - name: Set up Python 3.10
+      uses: actions/setup-python@v4
       with:
-        python-version: 2.x
-    - name: Set up Java 8
-      uses: actions/setup-java@v1
+        python-version: '3.10'
+    - name: Set up Java 11
+      uses: actions/setup-java@v4
       with:
-        java-version: 8
-        server-id: ossrh
+        java-version: 11
+        distribution: temurin
+        server-id: central
         server-username: MAVEN_USERNAME
         server-password: MAVEN_PASSWORD
     - name: Cache local Maven repository
-      uses: actions/cache@v2
+      uses: actions/cache@v4
       with:
         path: ~/.m2/repository
         key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
@@ -49,7 +50,7 @@ jobs:
         echo "SC_VERSION=$SC_VERSION" >> $GITHUB_ENV
         echo "SC_NEXT_VERSION=$SC_NEXT_VERSION" >> $GITHUB_ENV
     - name: Create Prepare Release Pull Request
-      uses: peter-evans/create-pull-request@v2
+      uses: peter-evans/create-pull-request@v4
       if: env.PREPARE_RELEASE_OK == 'yes'
       with:
         token: ${{ steps.generate-token.outputs.token }}
@@ -58,9 +59,8 @@ jobs:
         branch: prepare-release-${{ env.SC_VERSION }}
     env:
       ACTIONS_ALLOW_UNSECURE_COMMANDS:  true
-      MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
-      MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
+      MAVEN_USERNAME: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
+      MAVEN_PASSWORD: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       SC_VERSION:
       SC_NEXT_VERSION:
-
