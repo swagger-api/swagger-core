@@ -13,10 +13,7 @@
         "type" : "array",
         "description" : "Thingy",
         "items" : {
-          "$ref" : "#/components/schemas/Base",
-          "description" : "Thingy",
-          "minItems" : 0,
-          "uniqueItems" : true
+          "$ref" : "#/components/schemas/Base"
         },
         "minItems" : 0,
         "uniqueItems" : true
@@ -54,10 +51,7 @@
           "type" : "array",
           "description" : "Thingy",
           "items" : {
-            "$ref" : "#/components/schemas/Base",
-            "description" : "Thingy",
-            "minItems" : 0,
-            "uniqueItems" : true
+            "$ref" : "#/components/schemas/Base"
           },
           "minItems" : 0,
           "uniqueItems" : true
@@ -91,10 +85,7 @@
           "type" : "array",
           "description" : "Thingy",
           "items" : {
-            "$ref" : "#/components/schemas/Base",
-            "description" : "Thingy",
-            "minItems" : 0,
-            "uniqueItems" : true
+            "$ref" : "#/components/schemas/Base"
           },
           "minItems" : 0,
           "uniqueItems" : true
