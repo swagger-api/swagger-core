@@ -2448,10 +2448,8 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             return schema.nullable();
         }
         if (annotations != null) {
-            for (Annotation ann : annotations) {
-                boolean isNullable = Arrays.stream(annotations).anyMatch(annotation ->
-                        NULLABLE_ANNOTATIONS.contains(annotation.annotationType().getSimpleName()));
-                if (isNullable) {
+            for (Annotation annotation : annotations) {
+                if (NULLABLE_ANNOTATIONS.contains(annotation.annotationType().getSimpleName())) {
                     return true;
                 }
             }

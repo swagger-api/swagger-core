@@ -4,37 +4,36 @@ import io.swagger.v3.core.converter.AnnotatedType;
 import io.swagger.v3.core.converter.ModelConverterContextImpl;
 import io.swagger.v3.core.jackson.ModelResolver;
 import io.swagger.v3.core.util.Configuration;
+import io.swagger.v3.core.util.Json;
 import io.swagger.v3.core.util.Json31;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.testng.annotations.Test;
 
 import javax.annotation.Nullable;
-import java.util.List;
 import java.util.Set;
 
 import static org.testng.Assert.*;
 
 /**
  * Reproduces GitHub Issue #5001
- * Native support for Jakarta @Nullable annotation to generate proper OAS 3.1 nullable types
+ * Native support for @Nullable annotations to generate proper nullable types
  *
- * Bug: Fields annotated with @Nullable are not automatically recognized as nullable
- * in the generated OpenAPI schema. Users must explicitly add @Schema(nullable = true)
- * or @Schema(types = {"string", "null"}), creating annotation redundancy.
+ * Tests that @Nullable annotation is recognized and generates appropriate nullable output:
+ * - OAS 3.0: nullable keyword
+ * - OAS 3.1: type array with "null"
+ *
+ * Note: This test uses javax.annotation.Nullable which is automatically transformed to
+ * jakarta.annotation.Nullable in the swagger-core-jakarta module via the Eclipse Transformer.
  *
  * @see <a href="https://github.com/swagger-api/swagger-core/issues/5001">...</a>
  */
 public class Issue5001Test {
 
     /**
-     * Test 1: @Nullable annotation not recognized in OAS 3.1
-     * 
-     * Tests that a field annotated only with @Nullable should generate a nullable
-     * type in OpenAPI 3.1 (type: ["string", "null"]) without requiring explicit
-     * @Schema annotations.
+     * Tests @Nullable annotation with OAS 3.1 (type array output)
      */
     @Test
-    public void testNullableAnnotationNotRecognized() throws Exception {
+    public void testNullableWithOAS31() throws Exception {
         final ModelResolver modelResolver = new ModelResolver(Json31.mapper());
         Configuration configuration = new Configuration();
         configuration.setOpenAPI31(true);
@@ -42,54 +41,65 @@ public class Issue5001Test {
         final ModelConverterContextImpl context = new ModelConverterContextImpl(modelResolver);
 
         final io.swagger.v3.oas.models.media.Schema model = context
-                .resolve(new AnnotatedType(ExampleModel.class));
+                .resolve(new AnnotatedType(NullableModel.class));
 
         assertNotNull(model);
         assertNotNull(model.getProperties());
 
-        // Test field with only @Nullable annotation
+        // Field with @Nullable should generate type array ["string", "null"]
         io.swagger.v3.oas.models.media.Schema nullableField =
-                (io.swagger.v3.oas.models.media.Schema) model.getProperties().get("stringThatCouldBeNull");
-        assertNotNull(nullableField, "stringThatCouldBeNull property should exist");
-
-        // BUG: @Nullable is not recognized, so types array is not generated
-        // Expected: types should be ["string", "null"] in OAS 3.1
-        assertNotNull(nullableField.getTypes(), "@Nullable should generate types array");
-
+                (io.swagger.v3.oas.models.media.Schema) model.getProperties().get("nullableString");
+        assertNotNull(nullableField, "nullableString property should exist");
+        assertNotNull(nullableField.getTypes(), "@Nullable should generate types array in OAS 3.1");
         assertTrue(nullableField.getTypes().contains("string"), "types should include 'string'");
         assertTrue(nullableField.getTypes().contains("null"), "types should include 'null'");
+        assertEquals(((Set<?>) nullableField.getTypes()).size(), 2, "Should have exactly 2 types");
 
-        // Test field with explicit @Schema(nullable = true)
-        io.swagger.v3.oas.models.media.Schema explicitNullable =
-                (io.swagger.v3.oas.models.media.Schema) model.getProperties().get("explicitNullableString");
-        assertNotNull(explicitNullable, "explicitNullableString property should exist");
-
-        // This should work (explicit annotation)
-        assertEquals(explicitNullable.getNullable(), Boolean.TRUE,
-                "Explicit @Schema(nullable=true) should work");
-        assertTrue(explicitNullable.getTypes().contains("string"), "types should include 'string'");
-        assertTrue(explicitNullable.getTypes().contains("null"), "types should include 'null'");
-
-        // Test field with both @Nullable and @Schema(types)
-        io.swagger.v3.oas.models.media.Schema bothAnnotations = 
-                (io.swagger.v3.oas.models.media.Schema) model.getProperties().get("bothAnnotationsString");
-        assertNotNull(bothAnnotations, "bothAnnotationsString property should exist");
-        
-        // This should work (explicit types)
-        assertNotNull(bothAnnotations.getTypes(),
-                "Explicit @Schema(types) should generate types array");
-        assertTrue(bothAnnotations.getTypes().contains("string"), "types should include 'string'");
-        assertTrue(bothAnnotations.getTypes().contains("null"), "types should include 'null'");
+        // Non-nullable field should only have string type
+        io.swagger.v3.oas.models.media.Schema requiredField =
+                (io.swagger.v3.oas.models.media.Schema) model.getProperties().get("requiredString");
+        assertNotNull(requiredField);
+        assertNotNull(requiredField.getTypes());
+        assertTrue(requiredField.getTypes().contains("string"));
+        assertFalse(requiredField.getTypes().contains("null"), "Non-nullable field should not have 'null' type");
     }
 
     /**
-     * Test 2: Explicit @Schema annotations work correctly (baseline)
-     * 
-     * Validates that explicit @Schema annotations work correctly to establish
-     * baseline behavior for comparison.
+     * Tests @Nullable annotation with OAS 3.0 (nullable keyword output)
      */
     @Test
-    public void testExplicitSchemaAnnotationsWork() throws Exception {
+    public void testNullableWithOAS30() throws Exception {
+        final ModelResolver modelResolver = new ModelResolver(Json.mapper());
+        Configuration configuration = new Configuration();
+        configuration.setOpenAPI31(false);
+        modelResolver.setConfiguration(configuration);
+        final ModelConverterContextImpl context = new ModelConverterContextImpl(modelResolver);
+
+        final io.swagger.v3.oas.models.media.Schema model = context
+                .resolve(new AnnotatedType(NullableModel.class));
+
+        assertNotNull(model);
+        assertNotNull(model.getProperties());
+
+        // Field with @Nullable should set nullable=true in OAS 3.0
+        io.swagger.v3.oas.models.media.Schema nullableField =
+                (io.swagger.v3.oas.models.media.Schema) model.getProperties().get("nullableString");
+        assertNotNull(nullableField, "nullableString property should exist");
+        assertEquals(nullableField.getNullable(), Boolean.TRUE, "@Nullable should set nullable=true in OAS 3.0");
+        assertEquals(nullableField.getType(), "string", "type should be 'string'");
+
+        // Non-nullable field should not have nullable property
+        io.swagger.v3.oas.models.media.Schema requiredField =
+                (io.swagger.v3.oas.models.media.Schema) model.getProperties().get("requiredString");
+        assertNotNull(requiredField);
+        assertNotEquals(requiredField.getNullable(), Boolean.TRUE, "Non-nullable field should not be nullable");
+    }
+
+    /**
+     * Tests explicit @Schema annotations with OAS 3.1
+     */
+    @Test
+    public void testExplicitSchemaAnnotationsWithOAS31() throws Exception {
         final ModelResolver modelResolver = new ModelResolver(Json31.mapper());
         Configuration configuration = new Configuration();
         configuration.setOpenAPI31(true);
@@ -97,63 +107,65 @@ public class Issue5001Test {
         final ModelConverterContextImpl context = new ModelConverterContextImpl(modelResolver);
 
         final io.swagger.v3.oas.models.media.Schema model = context
-                .resolve(new AnnotatedType(ExampleModel.class));
+                .resolve(new AnnotatedType(ExplicitSchemaModel.class));
 
         assertNotNull(model);
-        
-        // Verify explicit @Schema(nullable=true) works
-        io.swagger.v3.oas.models.media.Schema explicitField = 
-                (io.swagger.v3.oas.models.media.Schema) model.getProperties().get("explicitNullableString");
-        
-        assertEquals(explicitField.getNullable(), Boolean.TRUE,
-                "Explicit @Schema(nullable=true) should set nullable property");
-        
-        // Verify explicit @Schema(types=...) works
-        io.swagger.v3.oas.models.media.Schema typesField = 
-                (io.swagger.v3.oas.models.media.Schema) model.getProperties().get("bothAnnotationsString");
-        
-        assertNotNull(typesField.getTypes(),
-                "Explicit @Schema(types) should generate types array");
-        
-        Set<String> types = (Set<String>) typesField.getTypes();
-        assertTrue(types.contains("string"), "Should include 'string' type");
-        assertTrue(types.contains("null"), "Should include 'null' type");
-        assertEquals(types.size(), 2, "Should have 2 types");
+        assertNotNull(model.getProperties());
 
+        // @Schema(nullable=true) should set nullable property and generate types array
+        io.swagger.v3.oas.models.media.Schema explicitNullable =
+                (io.swagger.v3.oas.models.media.Schema) model.getProperties().get("explicitNullableString");
+        assertNotNull(explicitNullable);
+        assertEquals(explicitNullable.getNullable(), Boolean.TRUE, "@Schema(nullable=true) should set nullable");
+        assertTrue(explicitNullable.getTypes().contains("string"));
+        assertTrue(explicitNullable.getTypes().contains("null"));
+
+        // @Schema(types={"string", "null"}) should work
+        io.swagger.v3.oas.models.media.Schema explicitTypes =
+                (io.swagger.v3.oas.models.media.Schema) model.getProperties().get("explicitTypesString");
+        assertNotNull(explicitTypes);
+        assertNotNull(explicitTypes.getTypes());
+        assertTrue(explicitTypes.getTypes().contains("string"));
+        assertTrue(explicitTypes.getTypes().contains("null"));
     }
 
-    // Minimal test model - Java 11 compatible syntax
-    
     /**
-     * Model demonstrating @Nullable annotation handling
+     * Model using @Nullable annotation
+     * Note: Uses javax.annotation.Nullable which gets transformed to jakarta.annotation.Nullable
+     * in the swagger-core-jakarta module
      */
-    public static class ExampleModel {
-        
-        // Field with only Jakarta @Nullable - BUG: not recognized
+    public static class NullableModel {
         @Nullable
-        private String stringThatCouldBeNull;
+        private String nullableString;
 
-        // Field with explicit @Schema(nullable = true) - works correctly
+        private String requiredString;
+
+        public String getNullableString() {
+            return nullableString;
+        }
+
+        public void setNullableString(String nullableString) {
+            this.nullableString = nullableString;
+        }
+
+        public String getRequiredString() {
+            return requiredString;
+        }
+
+        public void setRequiredString(String requiredString) {
+            this.requiredString = requiredString;
+        }
+    }
+
+    /**
+     * Model using explicit @Schema annotations
+     */
+    public static class ExplicitSchemaModel {
         @Schema(nullable = true)
         private String explicitNullableString;
 
-        // Field with both @Nullable and @Schema(types) - works correctly
-        @Nullable
         @Schema(types = {"string", "null"})
-        private String bothAnnotationsString;
-
-        // Regular non-nullable field for comparison
-        private String requiredString;
-
-        // Getters and setters (Java 11 compatible)
-        
-        public String getStringThatCouldBeNull() {
-            return stringThatCouldBeNull;
-        }
-
-        public void setStringThatCouldBeNull(String stringThatCouldBeNull) {
-            this.stringThatCouldBeNull = stringThatCouldBeNull;
-        }
+        private String explicitTypesString;
 
         public String getExplicitNullableString() {
             return explicitNullableString;
@@ -163,20 +175,12 @@ public class Issue5001Test {
             this.explicitNullableString = explicitNullableString;
         }
 
-        public String getBothAnnotationsString() {
-            return bothAnnotationsString;
+        public String getExplicitTypesString() {
+            return explicitTypesString;
         }
 
-        public void setBothAnnotationsString(String bothAnnotationsString) {
-            this.bothAnnotationsString = bothAnnotationsString;
-        }
-
-        public String getRequiredString() {
-            return requiredString;
-        }
-
-        public void setRequiredString(String requiredString) {
-            this.requiredString = requiredString;
+        public void setExplicitTypesString(String explicitTypesString) {
+            this.explicitTypesString = explicitTypesString;
         }
     }
 }
