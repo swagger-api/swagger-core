@@ -31,10 +31,7 @@ public class EnumTest {
             "      - name: tasktype\n" +
             "        in: query\n" +
             "        schema:\n" +
-            "          type: string\n" +
-            "          enum:\n" +
-            "          - A\n" +
-            "          - B\n" +
+            "          $ref: \"#/components/schemas/TaskType\"\n" +
             "      responses:\n" +
             "        \"200\":\n" +
             "          content:\n" +
@@ -48,5 +45,10 @@ public class EnumTest {
             "components:\n" +
             "  schemas:\n" +
             "    TaskDTO:\n" +
-            "      type: object\n";
+            "      type: object\n" + 
+            "    TaskType:\n" + 
+            "      type: string\n" +
+            "      enum:\n" +
+            "      - A\n" +
+            "      - B\n";
 }

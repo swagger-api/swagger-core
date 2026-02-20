@@ -660,11 +660,7 @@ public class Reader implements OpenApiReader {
                         continue;
                     }
 
-                    final Iterator<OpenAPIExtension> chain = OpenAPIExtensions.chain();
-                    if (chain.hasNext()) {
-                        final OpenAPIExtension extension = chain.next();
-                        extension.decorateOperation(operation, method, chain);
-                    }
+                    decorateOperation(cls, operation, method);
 
                     PathItem pathItemObject;
                     if (openAPI.getPaths() != null && openAPI.getPaths().get(operationPath) != null) {
@@ -735,6 +731,20 @@ public class Reader implements OpenApiReader {
         return openAPI;
     }
 
+    protected void decorateOperation(Class<?> cls, Operation operation, Method method) {
+        final Iterator<OpenAPIExtension> chain = OpenAPIExtensions.chain();
+        if (chain.hasNext()) {
+            final OpenAPIExtension extension = chain.next();
+            extension.decorateOperation(operation, method, chain);
+        }
+
+        final Iterator<OpenAPIExtension> chain2 = OpenAPIExtensions.chain();
+        if (chain2.hasNext()) {
+            final OpenAPIExtension extension = chain2.next();
+            extension.decorateOperation(cls, operation, method, chain2);
+        }
+    }
+
     protected void applyPathParamsPatterns(Operation operation, Map<String, String> patternsMap) {
         if (operation.getParameters() == null) {
             return;
@@ -748,6 +758,7 @@ public class Reader implements OpenApiReader {
                 .filter(p -> "string".equals(p.getSchema().getType()) || (p.getSchema().getTypes() != null && p.getSchema().getTypes().contains("string")))
                 .forEach(p -> p.getSchema().setPattern(patternsMap.get(p.getName())));
     }
+
     protected Content processContent(Content content, Schema<?> schema, Consumes methodConsumes, Consumes classConsumes) {
         if (content == null) {
             content = new Content();
