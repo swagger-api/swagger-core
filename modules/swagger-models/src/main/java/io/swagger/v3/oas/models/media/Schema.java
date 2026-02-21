@@ -10,13 +10,13 @@ import io.swagger.v3.oas.models.SpecVersion;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * Schema
@@ -91,7 +91,7 @@ public class Schema<T> {
     private Boolean uniqueItems = null;
     private Integer maxProperties = null;
     private Integer minProperties = null;
-    private List<String> required = null;
+    private Set<String> required = null;
     @OpenAPI30
     private String type = null;
     private Schema not = null;
@@ -1229,36 +1229,36 @@ public class Schema<T> {
      **/
 
     public List<String> getRequired() {
-        return required;
+        if (required == null) {
+            return null;
+        }
+        return new ArrayList<>(required);
     }
 
     public void setRequired(List<String> required) {
-        List<String> list = new ArrayList<>();
-        if (required != null) {
-            for (String req : required) {
-                if (this.properties == null || this.properties.containsKey(req)) {
-                    list.add(req);
-                }
+        if (required == null) {
+            this.required = null;
+            return;
+        }
+        Set<String> set = new TreeSet<>();
+        for (String req : required) {
+            if (this.properties == null || this.properties.containsKey(req)) {
+                set.add(req);
             }
         }
-        Collections.sort(list);
-        if (list.isEmpty()) {
-            list = null;
-        }
-        this.required = list;
+        this.required = set.isEmpty() ? null : set;
     }
 
     public Schema required(List<String> required) {
-        this.required = required;
+        this.setRequired(required);
         return this;
     }
 
     public Schema addRequiredItem(String requiredItem) {
         if (this.required == null) {
-            this.required = new ArrayList<>();
+            this.required = new TreeSet<>();
         }
         this.required.add(requiredItem);
-        Collections.sort(required);
         return this;
     }
 
