@@ -28,14 +28,28 @@ public class SecurityParser {
         }
         List<SecurityRequirement> securityRequirements = new ArrayList<>();
         for (io.swagger.v3.oas.annotations.security.SecurityRequirement securityRequirementApi : securityRequirementsApi) {
-            if (StringUtils.isBlank(securityRequirementApi.name())) {
-                continue;
-            }
             SecurityRequirement securityRequirement = new SecurityRequirement();
-            if (securityRequirementApi.scopes().length > 0) {
-                securityRequirement.addList(securityRequirementApi.name(), Arrays.asList(securityRequirementApi.scopes()));
-            } else {
-                securityRequirement.addList(securityRequirementApi.name());
+            if (securityRequirementApi.combine().length > 0) {
+                for (io.swagger.v3.oas.annotations.security.SecurityRequirementEntry entry : securityRequirementApi.combine()) {
+                    if (StringUtils.isBlank(entry.name())) {
+                        continue;
+                    }
+                    if (entry.scopes().length > 0) {
+                        securityRequirement.addList(entry.name(), Arrays.asList(entry.scopes()));
+                    } else {
+                        securityRequirement.addList(entry.name());
+                    }
+                }
+            }
+            else {
+                if (StringUtils.isBlank(securityRequirementApi.name())) {
+                    continue;
+                }
+                if (securityRequirementApi.scopes().length > 0) {
+                    securityRequirement.addList(securityRequirementApi.name(), Arrays.asList(securityRequirementApi.scopes()));
+                } else {
+                    securityRequirement.addList(securityRequirementApi.name());
+                }
             }
             securityRequirements.add(securityRequirement);
         }
