@@ -2443,8 +2443,8 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
     }
 
     protected Boolean resolveNullable(Annotated a, Annotation[] annotations, io.swagger.v3.oas.annotations.media.Schema schema) {
-        if (schema != null && schema.nullable()) {
-            return schema.nullable();
+        if (schema != null && (schema.nullable() || io.swagger.v3.oas.annotations.media.Schema.RequiredMode.NOT_REQUIRED.equals(schema.requiredMode()))) {
+            return true;
         }
         return null;
     }
