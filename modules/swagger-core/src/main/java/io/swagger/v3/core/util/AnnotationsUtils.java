@@ -773,11 +773,11 @@ public abstract class AnnotationsUtils {
             schemaObject.setUnevaluatedProperties(resolveSchemaFromType(schema.unevaluatedProperties(), components, jsonViewAnnotation, openapi31, null, null, context));
         }
         if (schema.examples().length > 0) {
-            schemaObject.setExamples(Arrays.asList(schema.examples()));
+            schemaObject.setExamples(parseExamplesArray(schema, openapi31));
         }
 
         if (StringUtils.isNotBlank(schema.defaultValue())) {
-            schemaObject.setDefault(schema.defaultValue());
+            setDefaultSchema(schema, openapi31, schemaObject);
         }
         if (StringUtils.isNotBlank(schema.example())) {
             setExampleSchema(schema, openapi31, schemaObject);
@@ -909,7 +909,10 @@ public abstract class AnnotationsUtils {
 
         try {
             JsonNode node = mapper.readTree(exampleValue);
-            if (node.isObject() || node.isArray()) {
+            // Only parse "null" as null value when nullable=true
+            if (node.isNull() && schema.nullable()) {
+                schemaObject.setExample(null);
+            } else if (node.isObject() || node.isArray()) {
                 schemaObject.setExample(node);
             } else {
                 schemaObject.setExample(exampleValue);
@@ -917,6 +920,55 @@ public abstract class AnnotationsUtils {
         } catch (IOException ignored) {
             schemaObject.setExample(exampleValue);
         }
+    }
+
+    private static void setDefaultSchema(io.swagger.v3.oas.annotations.media.Schema schema, boolean openapi31, Schema schemaObject) {
+        String defaultValue = schema.defaultValue().trim();
+        final ObjectMapper mapper = openapi31 ? Json31.mapper() : Json.mapper();
+
+        try {
+            JsonNode node = mapper.readTree(defaultValue);
+            // Only parse "null" as null value when nullable=true
+            if (node.isNull() && schema.nullable()) {
+                schemaObject.setDefault(null);
+            } else if (node.isObject() || node.isArray()) {
+                schemaObject.setDefault(node);
+            } else {
+                schemaObject.setDefault(defaultValue);
+            }
+        } catch (IOException ignored) {
+            schemaObject.setDefault(defaultValue);
+        }
+    }
+
+    private static List<Object> parseExamplesArray(io.swagger.v3.oas.annotations.media.Schema schema, boolean openapi31) {
+        String[] examplesArray = schema.examples();
+        List<Object> parsedExamples = new ArrayList<>();
+        final ObjectMapper mapper = openapi31 ? Json31.mapper() : Json.mapper();
+
+        for (String exampleStr : examplesArray) {
+            if (StringUtils.isBlank(exampleStr)) {
+                parsedExamples.add(exampleStr);
+                continue;
+            }
+
+            String trimmed = exampleStr.trim();
+            try {
+                JsonNode node = mapper.readTree(trimmed);
+                // Only parse "null" as null value when nullable=true
+                if (node.isNull() && schema.nullable()) {
+                    parsedExamples.add(null);
+                } else if (node.isObject() || node.isArray()) {
+                    parsedExamples.add(node);
+                } else {
+                    parsedExamples.add(trimmed);
+                }
+            } catch (IOException ignored) {
+                parsedExamples.add(trimmed);
+            }
+        }
+
+        return parsedExamples;
     }
 
     public static Schema resolveSchemaFromType(Class<?> schemaImplementation, Components components, JsonView jsonViewAnnotation) {
