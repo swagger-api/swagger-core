@@ -1,14 +1,11 @@
 package io.swagger.v3.core.issues;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.core.converter.AnnotatedType;
 import io.swagger.v3.core.converter.ModelConverterContextImpl;
 import io.swagger.v3.core.jackson.ModelResolver;
 import io.swagger.v3.core.util.Configuration;
 import io.swagger.v3.core.util.Json;
 import io.swagger.v3.core.util.Json31;
-import io.swagger.v3.core.util.Yaml;
-import io.swagger.v3.core.util.Yaml31;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.testng.annotations.Test;
 
@@ -523,6 +520,170 @@ public class Issue4339Test {
                 "Default should be the string \"null\", not null value");
     }
 
+    // ========== Test for Issue #4229 (same root cause as #4339) ==========
+
+    /**
+     * Test case from Issue #4229: Nullable Integer ignores example value "null" and defaults to 0
+     * https://github.com/swagger-api/swagger-core/issues/4229
+     * This should now be fixed by the same changes that fix #4339
+     */
+    @Test
+    public void testIssue4229_NullableIntegerWithNullExample() throws Exception {
+        final ModelResolver modelResolver = new ModelResolver(Json.mapper());
+        Configuration configuration = new Configuration();
+        configuration.setOpenAPI31(false);
+        modelResolver.setConfiguration(configuration);
+        final ModelConverterContextImpl context = new ModelConverterContextImpl(modelResolver);
+
+        final io.swagger.v3.oas.models.media.Schema model = context
+                .resolve(new AnnotatedType(Issue4229TestData.class));
+
+        assertNotNull(model);
+        assertNotNull(model.getProperties());
+
+        io.swagger.v3.oas.models.media.Schema idSchema =
+                (io.swagger.v3.oas.models.media.Schema) model.getProperties().get("id");
+        assertNotNull(idSchema, "id property should exist");
+        assertEquals(idSchema.getNullable(), Boolean.TRUE, "Field should be nullable");
+
+        // Issue #4229: exampleSetFlag should be true and example should be null, not 0
+        assertTrue(idSchema.getExampleSetFlag(),
+                "exampleSetFlag should be true when example=\"null\" is set");
+        assertNull(idSchema.getExample(),
+                "Example should be null, not 0 (fixes issue #4229)");
+    }
+
+    // ========== Tests for OAS 3.1 "examples" array field ==========
+
+    /**
+     * Test OAS 3.1 examples array with null value
+     * In OAS 3.1, there's an "examples" array field in addition to the single "example" field
+     */
+    @Test
+    public void testNullableStringWithNullInExamplesArray_OAS31() throws Exception {
+        final ModelResolver modelResolver = new ModelResolver(Json31.mapper());
+        Configuration configuration = new Configuration();
+        configuration.setOpenAPI31(true);
+        modelResolver.setConfiguration(configuration);
+        final ModelConverterContextImpl context = new ModelConverterContextImpl(modelResolver);
+
+        final io.swagger.v3.oas.models.media.Schema model = context
+                .resolve(new AnnotatedType(NullableStringWithExamplesModel.class));
+
+        assertNotNull(model);
+        assertNotNull(model.getProperties());
+
+        io.swagger.v3.oas.models.media.Schema stringField =
+                (io.swagger.v3.oas.models.media.Schema) model.getProperties().get("stringField");
+        assertNotNull(stringField, "stringField property should exist");
+        assertTrue(isNullableInOAS31(stringField), "Field should be nullable (type array should contain 'null')");
+
+        assertNotNull(stringField.getExamples(), "examples array should exist");
+        assertEquals(stringField.getExamples().size(), 3, "examples array should have 3 elements");
+
+        assertTrue(stringField.getExamples().contains("validValue"), "examples should contain 'validValue'");
+        assertTrue(stringField.getExamples().contains(null), "examples should contain null value");
+        assertTrue(stringField.getExamples().contains("anotherValue"), "examples should contain 'anotherValue'");
+    }
+
+    /**
+     * Test OAS 3.1 examples array with multiple values including null
+     */
+    @Test
+    public void testNullableIntegerWithMultipleExamplesIncludingNull_OAS31() throws Exception {
+        final ModelResolver modelResolver = new ModelResolver(Json31.mapper());
+        Configuration configuration = new Configuration();
+        configuration.setOpenAPI31(true);
+        modelResolver.setConfiguration(configuration);
+        final ModelConverterContextImpl context = new ModelConverterContextImpl(modelResolver);
+
+        final io.swagger.v3.oas.models.media.Schema model = context
+                .resolve(new AnnotatedType(NullableIntegerWithMultipleExamplesModel.class));
+
+        assertNotNull(model);
+        assertNotNull(model.getProperties());
+
+        io.swagger.v3.oas.models.media.Schema integerField =
+                (io.swagger.v3.oas.models.media.Schema) model.getProperties().get("integerField");
+        assertNotNull(integerField, "integerField property should exist");
+
+        assertNotNull(integerField.getExamples(), "examples array should exist");
+        assertEquals(integerField.getExamples().size(), 3, "examples array should have 3 elements");
+
+        assertTrue(integerField.getExamples().contains("1"), "examples should contain '1' as string");
+        assertTrue(integerField.getExamples().contains(null), "examples should contain null value");
+        assertTrue(integerField.getExamples().contains("100"), "examples should contain '100' as string");
+    }
+
+    /**
+     * Test that examples array is NOT set in OAS 3.0 (only OAS 3.1)
+     * 
+     * Note: In OAS 3.0, the 'examples' field (plural, as array) is only valid on:
+     * - Parameter Object (parameters[*].examples) - as Map<String, Example>
+     * - Media Type Object (content[media-type].examples) - as Map<String, Example>
+     * - Header Object (headers[*].examples) - as Map<String, Example>
+     * 
+     * For Schema objects, OAS 3.0 only supports the singular 'example' field.
+     * The 'examples' array was added to Schema objects in OAS 3.1.
+     */
+    @Test
+    public void testExamplesArrayNotSetInOAS30() throws Exception {
+        final ModelResolver modelResolver = new ModelResolver(Json.mapper());
+        Configuration configuration = new Configuration();
+        configuration.setOpenAPI31(false);
+        modelResolver.setConfiguration(configuration);
+        final ModelConverterContextImpl context = new ModelConverterContextImpl(modelResolver);
+
+        final io.swagger.v3.oas.models.media.Schema model = context
+                .resolve(new AnnotatedType(NullableStringWithExamplesModel.class));
+
+        assertNotNull(model);
+        assertNotNull(model.getProperties());
+
+        io.swagger.v3.oas.models.media.Schema stringField =
+                (io.swagger.v3.oas.models.media.Schema) model.getProperties().get("stringField");
+        assertNotNull(stringField, "stringField property should exist");
+        assertEquals(stringField.getNullable(), Boolean.TRUE, "Field should be nullable");
+
+        assertNull(stringField.getExamples(), "examples array should NOT be set in OAS 3.0");
+    }
+
+    /**
+     * Test that when both example and examples are set, only examples is used in OAS 3.1
+     * The single example field is ignored by design when examples array is present
+     */
+    @Test
+    public void testExamplesArrayTakesPrecedenceOverExample_OAS31() throws Exception {
+        final ModelResolver modelResolver = new ModelResolver(Json31.mapper());
+        Configuration configuration = new Configuration();
+        configuration.setOpenAPI31(true);
+        modelResolver.setConfiguration(configuration);
+        final ModelConverterContextImpl context = new ModelConverterContextImpl(modelResolver);
+
+        final io.swagger.v3.oas.models.media.Schema model = context
+                .resolve(new AnnotatedType(BothExampleAndExamplesModel.class));
+
+        assertNotNull(model);
+        assertNotNull(model.getProperties());
+
+        io.swagger.v3.oas.models.media.Schema stringField =
+                (io.swagger.v3.oas.models.media.Schema) model.getProperties().get("stringField");
+        assertNotNull(stringField, "stringField property should exist");
+        assertTrue(isNullableInOAS31(stringField), "Field should be nullable (type array should contain 'null')");
+
+        assertNull(stringField.getExample(),
+                "example field should be null/not set when examples array is present");
+        assertNotNull(stringField.getExamples(), "examples array should be set");
+        assertEquals(stringField.getExamples().size(), 3, "examples array should have 3 elements");
+
+        assertTrue(stringField.getExamples().contains("arrayValue1"), "examples should contain 'arrayValue1'");
+        assertTrue(stringField.getExamples().contains(null), "examples should contain null");
+        assertTrue(stringField.getExamples().contains("arrayValue3"), "examples should contain 'arrayValue3'");
+
+        assertFalse(stringField.getExamples().contains("singleExampleValue"),
+                "examples should NOT contain the value from single example field");
+    }
+
     private boolean isNullableInOAS31(io.swagger.v3.oas.models.media.Schema schema) {
         if (schema.getTypes() != null && schema.getTypes().contains("null")) {
             return true;
@@ -701,101 +862,6 @@ public class Issue4339Test {
         }
     }
 
-    // ========== Test for Issue #4229 (same root cause as #4339) ==========
-
-    /**
-     * Test case from Issue #4229: Nullable Integer ignores example value "null" and defaults to 0
-     * https://github.com/swagger-api/swagger-core/issues/4229
-     * This should now be fixed by the same changes that fix #4339
-     */
-    @Test
-    public void testIssue4229_NullableIntegerWithNullExample() throws Exception {
-        final ModelResolver modelResolver = new ModelResolver(Json.mapper());
-        Configuration configuration = new Configuration();
-        configuration.setOpenAPI31(false);
-        modelResolver.setConfiguration(configuration);
-        final ModelConverterContextImpl context = new ModelConverterContextImpl(modelResolver);
-
-        final io.swagger.v3.oas.models.media.Schema model = context
-                .resolve(new AnnotatedType(Issue4229TestData.class));
-
-        assertNotNull(model);
-        assertNotNull(model.getProperties());
-
-        io.swagger.v3.oas.models.media.Schema idSchema =
-                (io.swagger.v3.oas.models.media.Schema) model.getProperties().get("id");
-        assertNotNull(idSchema, "id property should exist");
-        assertEquals(idSchema.getNullable(), Boolean.TRUE, "Field should be nullable");
-
-        // Issue #4229: exampleSetFlag should be true and example should be null, not 0
-        assertTrue(idSchema.getExampleSetFlag(), 
-            "exampleSetFlag should be true when example=\"null\" is set");
-        assertNull(idSchema.getExample(), 
-            "Example should be null, not 0 (fixes issue #4229)");
-    }
-
-    // ========== Tests for OAS 3.1 "examples" array field ==========
-
-    /**
-     * Test OAS 3.1 examples array with null value
-     * In OAS 3.1, there's an "examples" array field in addition to the single "example" field
-     */
-    @Test
-    public void testNullableStringWithNullInExamplesArray_OAS31() throws Exception {
-        final ModelResolver modelResolver = new ModelResolver(Json31.mapper());
-        Configuration configuration = new Configuration();
-        configuration.setOpenAPI31(true);
-        modelResolver.setConfiguration(configuration);
-        final ModelConverterContextImpl context = new ModelConverterContextImpl(modelResolver);
-
-        final io.swagger.v3.oas.models.media.Schema model = context
-                .resolve(new AnnotatedType(NullableStringWithExamplesModel.class));
-
-        assertNotNull(model);
-        assertNotNull(model.getProperties());
-
-        io.swagger.v3.oas.models.media.Schema stringField =
-                (io.swagger.v3.oas.models.media.Schema) model.getProperties().get("stringField");
-        assertNotNull(stringField, "stringField property should exist");
-        assertTrue(isNullableInOAS31(stringField), "Field should be nullable (type array should contain 'null')");
-
-        assertNotNull(stringField.getExamples(), "examples array should exist");
-        assertEquals(stringField.getExamples().size(), 3, "examples array should have 3 elements");
-
-        assertTrue(stringField.getExamples().contains("validValue"), "examples should contain 'validValue'");
-        assertTrue(stringField.getExamples().contains(null), "examples should contain null value");
-        assertTrue(stringField.getExamples().contains("anotherValue"), "examples should contain 'anotherValue'");
-    }
-
-    /**
-     * Test OAS 3.1 examples array with multiple values including null
-     */
-    @Test
-    public void testNullableIntegerWithMultipleExamplesIncludingNull_OAS31() throws Exception {
-        final ModelResolver modelResolver = new ModelResolver(Json31.mapper());
-        Configuration configuration = new Configuration();
-        configuration.setOpenAPI31(true);
-        modelResolver.setConfiguration(configuration);
-        final ModelConverterContextImpl context = new ModelConverterContextImpl(modelResolver);
-
-        final io.swagger.v3.oas.models.media.Schema model = context
-                .resolve(new AnnotatedType(NullableIntegerWithMultipleExamplesModel.class));
-
-        assertNotNull(model);
-        assertNotNull(model.getProperties());
-
-        io.swagger.v3.oas.models.media.Schema integerField =
-                (io.swagger.v3.oas.models.media.Schema) model.getProperties().get("integerField");
-        assertNotNull(integerField, "integerField property should exist");
-
-        assertNotNull(integerField.getExamples(), "examples array should exist");
-        assertEquals(integerField.getExamples().size(), 3, "examples array should have 3 elements");
-
-        assertTrue(integerField.getExamples().contains("1"), "examples should contain '1' as string");
-        assertTrue(integerField.getExamples().contains(null), "examples should contain null value");
-        assertTrue(integerField.getExamples().contains("100"), "examples should contain '100' as string");
-    }
-
     /**
      * Test model class for Issue #4229
      * Matches the exact example from the issue report
@@ -842,6 +908,24 @@ public class Issue4339Test {
 
         public void setIntegerField(Integer integerField) {
             this.integerField = integerField;
+        }
+    }
+
+
+    /**
+     * Test model with both example and examples set
+     * Only examples should be used in the generated OpenAPI
+     */
+    public static class BothExampleAndExamplesModel {
+        @Schema(nullable = true, example = "singleExampleValue", examples = {"arrayValue1", "null", "arrayValue3"})
+        private String stringField;
+
+        public String getStringField() {
+            return stringField;
+        }
+
+        public void setStringField(String stringField) {
+            this.stringField = stringField;
         }
     }
 }

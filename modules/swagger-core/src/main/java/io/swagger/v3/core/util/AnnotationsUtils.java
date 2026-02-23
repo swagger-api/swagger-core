@@ -555,13 +555,13 @@ public abstract class AnnotationsUtils {
         }
 
         if (arraySchema.arraySchema() != null) {
-            applyArraySchemaAnnotation(arraySchema.arraySchema(), arraySchemaObject);
+            applyArraySchemaAnnotation(arraySchema.arraySchema(), arraySchemaObject, openapi31);
         }
 
         return Optional.of(arraySchemaObject);
     }
 
-    private static void applyArraySchemaAnnotation(io.swagger.v3.oas.annotations.media.Schema arraySchemaAnnotation, Schema arraySchemaObject) {
+    private static void applyArraySchemaAnnotation(io.swagger.v3.oas.annotations.media.Schema arraySchemaAnnotation, Schema arraySchemaObject, boolean openapi31) {
         if (StringUtils.isNotBlank(arraySchemaAnnotation.description())) {
             arraySchemaObject.setDescription(arraySchemaAnnotation.description());
         }
@@ -581,8 +581,8 @@ public abstract class AnnotationsUtils {
             arraySchemaObject.setReadOnly(null);
             arraySchemaObject.setWriteOnly(null);
         }
-        if (arraySchemaAnnotation.examples().length > 0) {
-            arraySchemaObject.setExamples(Arrays.asList(arraySchemaAnnotation.examples()));
+        if (openapi31 && arraySchemaAnnotation.examples().length > 0) {
+            arraySchemaObject.setExamples(parseExamplesArray(arraySchemaAnnotation));
         }
     }
 
@@ -772,14 +772,15 @@ public abstract class AnnotationsUtils {
         if (!schema.unevaluatedProperties().equals(Void.class)) {
             schemaObject.setUnevaluatedProperties(resolveSchemaFromType(schema.unevaluatedProperties(), components, jsonViewAnnotation, openapi31, null, null, context));
         }
-        if (schema.examples().length > 0) {
-            schemaObject.setExamples(parseExamplesArray(schema, openapi31));
+        if (openapi31 && schema.examples().length > 0) {
+            schemaObject.setExamples(parseExamplesArray(schema));
         }
 
         if (StringUtils.isNotBlank(schema.defaultValue())) {
             setDefaultSchema(schema, openapi31, schemaObject);
         }
-        if (StringUtils.isNotBlank(schema.example())) {
+        if (StringUtils.isNotBlank(schema.example()) && 
+            (!openapi31 || schema.examples().length == 0)) {
             setExampleSchema(schema, openapi31, schemaObject);
         }
         if (StringUtils.isNotBlank(schema.format())) {
@@ -941,10 +942,10 @@ public abstract class AnnotationsUtils {
         }
     }
 
-    private static List<Object> parseExamplesArray(io.swagger.v3.oas.annotations.media.Schema schema, boolean openapi31) {
+    public static List<Object> parseExamplesArray(io.swagger.v3.oas.annotations.media.Schema schema) {
         String[] examplesArray = schema.examples();
         List<Object> parsedExamples = new ArrayList<>();
-        final ObjectMapper mapper = openapi31 ? Json31.mapper() : Json.mapper();
+        final ObjectMapper mapper = Json31.mapper();
 
         for (String exampleStr : examplesArray) {
             if (StringUtils.isBlank(exampleStr)) {

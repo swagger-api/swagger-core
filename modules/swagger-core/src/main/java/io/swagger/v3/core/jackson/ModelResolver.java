@@ -3299,10 +3299,11 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 schema.setContentMediaType(contentMediaType);
             }
             if (schemaAnnotation.examples().length > 0) {
+                List<Object> parsedExamples = io.swagger.v3.core.util.AnnotationsUtils.parseExamplesArray(schemaAnnotation);
                 if (schema.getExamples() == null || schema.getExamples().isEmpty()) {
-                    schema.setExamples(Arrays.asList(schemaAnnotation.examples()));
+                    schema.setExamples(parsedExamples);
                 } else {
-                    schema.getExamples().addAll(Arrays.asList(schemaAnnotation.examples()));
+                    schema.getExamples().addAll(parsedExamples);
                 }
             }
             String _const = resolveConst(a, annotations, schemaAnnotation);
