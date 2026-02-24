@@ -555,15 +555,35 @@ public abstract class AnnotationsUtils {
         }
 
         if (arraySchema.arraySchema() != null) {
-            if (StringUtils.isNotBlank(arraySchema.arraySchema().description())) {
-                arraySchemaObject.setDescription(arraySchema.arraySchema().description());
-            }
-            if (StringUtils.isNotBlank(arraySchema.arraySchema().title())) {
-                arraySchemaObject.setTitle(arraySchema.arraySchema().title());
-            }
+            applyArraySchemaAnnotation(arraySchema.arraySchema(), arraySchemaObject);
         }
 
         return Optional.of(arraySchemaObject);
+    }
+
+    private static void applyArraySchemaAnnotation(io.swagger.v3.oas.annotations.media.Schema arraySchemaAnnotation, Schema arraySchemaObject) {
+        if (StringUtils.isNotBlank(arraySchemaAnnotation.description())) {
+            arraySchemaObject.setDescription(arraySchemaAnnotation.description());
+        }
+        if (StringUtils.isNotBlank(arraySchemaAnnotation.title())) {
+            arraySchemaObject.setTitle(arraySchemaAnnotation.title());
+        }
+        if (arraySchemaAnnotation.deprecated()) {
+            arraySchemaObject.deprecated(true);
+        }
+        if (arraySchemaAnnotation.accessMode().equals(io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_ONLY)) {
+            arraySchemaObject.setReadOnly(true);
+            arraySchemaObject.setWriteOnly(null);
+        } else if (arraySchemaAnnotation.accessMode().equals(io.swagger.v3.oas.annotations.media.Schema.AccessMode.WRITE_ONLY)) {
+            arraySchemaObject.setReadOnly(null);
+            arraySchemaObject.setWriteOnly(true);
+        } else if (arraySchemaAnnotation.accessMode().equals(io.swagger.v3.oas.annotations.media.Schema.AccessMode.READ_WRITE)) {
+            arraySchemaObject.setReadOnly(null);
+            arraySchemaObject.setWriteOnly(null);
+        }
+        if (arraySchemaAnnotation.examples().length > 0) {
+            arraySchemaObject.setExamples(Arrays.asList(arraySchemaAnnotation.examples()));
+        }
     }
 
     public static Optional<Schema> getSchemaFromAnnotation(io.swagger.v3.oas.annotations.media.Schema schema, JsonView jsonViewAnnotation) {
@@ -658,12 +678,7 @@ public abstract class AnnotationsUtils {
         }
 
         if (schema.types().length > 0) {
-            if (schema.types().length == 1) {
-                schemaObject.setType(schema.types()[0]);
-            }
-            for (String type : schema.types()) {
-                schemaObject.addType(type);
-            }
+            schemaObject.setTypes(new LinkedHashSet<>(Arrays.asList(schema.types())));
         }
         if (StringUtils.isNotBlank(schema.$id())) {
             schemaObject.set$id(schema.$id());
@@ -765,15 +780,7 @@ public abstract class AnnotationsUtils {
             schemaObject.setDefault(schema.defaultValue());
         }
         if (StringUtils.isNotBlank(schema.example())) {
-            try {
-                if (openapi31) {
-                    schemaObject.setExample(Json31.mapper().readTree(schema.example()));
-                } else {
-                    schemaObject.setExample(Json.mapper().readTree(schema.example()));
-                }
-            } catch (IOException e) {
-                schemaObject.setExample(schema.example());
-            }
+            setExampleSchema(schema, openapi31, schemaObject);
         }
         if (StringUtils.isNotBlank(schema.format())) {
             schemaObject.setFormat(schema.format());
@@ -817,7 +824,11 @@ public abstract class AnnotationsUtils {
             schemaObject.setMinimum(new BigDecimal(filteredMinimum));
         }
         if (schema.nullable()) {
-            schemaObject.setNullable(schema.nullable());
+            if (openapi31) {
+                schemaObject.addType("null");
+            } else {
+                schemaObject.setNullable(true);
+            }
         }
         if (StringUtils.isNotBlank(schema.title())) {
             schemaObject.setTitle(schema.title());
@@ -890,6 +901,22 @@ public abstract class AnnotationsUtils {
         }
 
         return Optional.of(schemaObject);
+    }
+
+    private static void setExampleSchema(io.swagger.v3.oas.annotations.media.Schema schema, boolean openapi31, Schema schemaObject) {
+        String exampleValue = schema.example().trim();
+        final ObjectMapper mapper = openapi31 ? Json31.mapper() : Json.mapper();
+
+        try {
+            JsonNode node = mapper.readTree(exampleValue);
+            if (node.isObject() || node.isArray()) {
+                schemaObject.setExample(node);
+            } else {
+                schemaObject.setExample(exampleValue);
+            }
+        } catch (IOException ignored) {
+            schemaObject.setExample(exampleValue);
+        }
     }
 
     public static Schema resolveSchemaFromType(Class<?> schemaImplementation, Components components, JsonView jsonViewAnnotation) {

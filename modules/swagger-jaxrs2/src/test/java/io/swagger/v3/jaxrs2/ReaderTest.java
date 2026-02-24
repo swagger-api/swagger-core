@@ -96,6 +96,7 @@ import io.swagger.v3.jaxrs2.resources.Ticket4850Resource;
 import io.swagger.v3.jaxrs2.resources.Ticket4859Resource;
 import io.swagger.v3.jaxrs2.resources.Ticket4878Resource;
 import io.swagger.v3.jaxrs2.resources.Ticket4879Resource;
+import io.swagger.v3.jaxrs2.resources.Ticket5017Resource;
 import io.swagger.v3.jaxrs2.resources.UploadResource;
 import io.swagger.v3.jaxrs2.resources.UrlEncodedResourceWithEncodings;
 import io.swagger.v3.jaxrs2.resources.UserAnnotationResource;
@@ -3505,8 +3506,8 @@ public class ReaderTest {
                 "          exclusiveMaximum: 4\n" +
                 "        foobar:\n" +
                 "          type:\n" +
-                "          - integer\n" +
                 "          - string\n" +
+                "          - integer\n" +
                 "          format: int32\n" +
                 "    Category:\n" +
                 "      type: object\n" +
@@ -3532,7 +3533,6 @@ public class ReaderTest {
                 "          exclusiveMaximum: 2\n" +
                 "        foobar:\n" +
                 "          type:\n" +
-                "          - integer\n" +
                 "          - string\n" +
                 "          - object\n" +
                 "          format: int32\n" +
@@ -3550,7 +3550,6 @@ public class ReaderTest {
                 "          exclusiveMaximum: 2\n" +
                 "        foobar:\n" +
                 "          type:\n" +
-                "          - integer\n" +
                 "          - string\n" +
                 "          - object\n" +
                 "          format: int32\n" +
@@ -3597,6 +3596,7 @@ public class ReaderTest {
                 "        name:\n" +
                 "          type: string\n" +
                 "        annotated:\n" +
+                "          type: object\n" +
                 "          $ref: \"#/components/schemas/Category\"\n" +
                 "          description: child description\n" +
                 "          properties:\n" +
@@ -3643,7 +3643,6 @@ public class ReaderTest {
                 "          exclusiveMaximum: 2\n" +
                 "        foobar:\n" +
                 "          type:\n" +
-                "          - integer\n" +
                 "          - string\n" +
                 "          - object\n" +
                 "          format: int32\n" +
@@ -3651,6 +3650,7 @@ public class ReaderTest {
                 "      type: object\n" +
                 "      properties:\n" +
                 "        annotated:\n" +
+                "          type: object\n" +
                 "          $ref: \"#/components/schemas/SimpleCategory\"\n" +
                 "          description: child description\n" +
                 "          properties:\n" +
@@ -4113,6 +4113,7 @@ public class ReaderTest {
                 "      type: object\n" +
                 "      properties:\n" +
                 "        country:\n" +
+                "          type: object\n" +
                 "          const: United States\n" +
                 "    CreditCard:\n" +
                 "      type: object\n" +
@@ -4123,11 +4124,13 @@ public class ReaderTest {
                 "      type: object\n" +
                 "      properties:\n" +
                 "        postalCode:\n" +
+                "          type: object\n" +
                 "          pattern: \"[0-9]{5}(-[0-9]{4})?\"\n" +
                 "    PostalCodePattern:\n" +
                 "      type: object\n" +
                 "      properties:\n" +
                 "        postalCode:\n" +
+                "          type: object\n" +
                 "          pattern: \"[A-Z][0-9][A-Z] [0-9][A-Z][0-9]\"\n" +
                 "    PropertyNamesPattern:\n" +
                 "      pattern: \"^[A-Za-z_][A-Za-z0-9_]*$\"\n";
@@ -5607,5 +5610,62 @@ public class ReaderTest {
                 "email",
                 "Items format should come from schema.format"
         );
+    }
+
+    @Test
+    void testTicket5017() {
+        ModelResolver.enumsAsRef = true;
+        SwaggerConfiguration config = new SwaggerConfiguration().openAPI31(true);
+        Reader reader = new Reader(config);
+        OpenAPI openAPI = reader.read(Ticket5017Resource.class);
+
+        OpenAPISpecFilter filterImpl = new RemoveUnusedSchemasOAS31Filter();
+        SpecFilter f = new SpecFilter();
+        openAPI = f.filter(openAPI, filterImpl, null, null, null);
+
+        String yaml = "openapi: 3.1.0\n" +
+                "paths:\n" +
+                "  /test:\n" +
+                "    get:\n" +
+                "      operationId: myMethod\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          '*/*':\n" +
+                "            schema:\n" +
+                "              $ref: \"#/components/schemas/Example\"\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*': {}\n" +
+                "components:\n" +
+                "  schemas:\n" +
+                "    Example:\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        myMap:\n" +
+                "          type: object\n" +
+                "          additionalProperties:\n" +
+                "            type: string\n" +
+                "          propertyNames:\n" +
+                "            $ref: \"#/components/schemas/MyEnum\"\n" +
+                "    MyEnum:\n" +
+                "      type: string\n" +
+                "      enum:\n" +
+                "      - FOO\n" +
+                "      - BAR\n";
+        SerializationMatchers.assertEqualsToYaml31(openAPI, yaml);
+    }
+
+    static class RemoveUnusedSchemasOAS31Filter extends AbstractSpecFilter {
+        @Override
+        public boolean isRemovingUnreferencedDefinitions() {
+            return true;
+        }
+
+        @Override
+        public boolean isOpenAPI31Filter() {
+            return true;
+        }
     }
 }
