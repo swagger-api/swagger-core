@@ -29,7 +29,7 @@ public class Issue4339Test {
 
     //OAS 3.0 Tests
     @Test
-    public void testNullableStringWithNullExampleAndDefault_OAS30() throws Exception {
+    public void testNullableStringWithNullExampleAndDefault_OAS30() {
         final ModelResolver modelResolver = new ModelResolver(Json.mapper());
         Configuration configuration = new Configuration();
         configuration.setOpenAPI31(false);
@@ -54,7 +54,7 @@ public class Issue4339Test {
     }
 
     @Test
-    public void testNullableIntegerWithNullExampleAndDefault_OAS30() throws Exception {
+    public void testNullableIntegerWithNullExampleAndDefault_OAS30() {
         final ModelResolver modelResolver = new ModelResolver(Json.mapper());
         Configuration configuration = new Configuration();
         configuration.setOpenAPI31(false);
@@ -80,7 +80,7 @@ public class Issue4339Test {
 
 
     @Test
-    public void testNullableBigDecimalWithNullExampleAndDefault_OAS30() throws Exception {
+    public void testNullableBigDecimalWithNullExampleAndDefault_OAS30() {
         final ModelResolver modelResolver = new ModelResolver(Json.mapper());
         Configuration configuration = new Configuration();
         configuration.setOpenAPI31(false);
@@ -105,7 +105,7 @@ public class Issue4339Test {
     }
 
     @Test
-    public void testNullableBooleanWithNullExampleAndDefault_OAS30() throws Exception {
+    public void testNullableBooleanWithNullExampleAndDefault_OAS30() {
         final ModelResolver modelResolver = new ModelResolver(Json.mapper());
         Configuration configuration = new Configuration();
         configuration.setOpenAPI31(false);
@@ -131,7 +131,7 @@ public class Issue4339Test {
     }
 
     @Test
-    public void testNullableObjectWithNullExampleAndDefault_OAS30() throws Exception {
+    public void testNullableObjectWithNullExampleAndDefault_OAS30() {
         final ModelResolver modelResolver = new ModelResolver(Json.mapper());
         Configuration configuration = new Configuration();
         configuration.setOpenAPI31(false);
@@ -157,7 +157,7 @@ public class Issue4339Test {
 
 
     @Test
-    public void testNullableStringWithNullExampleAndDefault_OAS31() throws Exception {
+    public void testNullableStringWithNullExampleAndDefault_OAS31() {
         final ModelResolver modelResolver = new ModelResolver(Json31.mapper());
         Configuration configuration = new Configuration();
         configuration.setOpenAPI31(true);
@@ -182,7 +182,7 @@ public class Issue4339Test {
     }
 
     @Test
-    public void testNullableIntegerWithNullExampleAndDefault_OAS31() throws Exception {
+    public void testNullableIntegerWithNullExampleAndDefault_OAS31() {
         final ModelResolver modelResolver = new ModelResolver(Json31.mapper());
         Configuration configuration = new Configuration();
         configuration.setOpenAPI31(true);
@@ -207,7 +207,7 @@ public class Issue4339Test {
     }
 
     @Test
-    public void testNullableBigDecimalWithNullExampleAndDefault_OAS31() throws Exception {
+    public void testNullableBigDecimalWithNullExampleAndDefault_OAS31() {
         final ModelResolver modelResolver = new ModelResolver(Json31.mapper());
         Configuration configuration = new Configuration();
         configuration.setOpenAPI31(true);
@@ -233,7 +233,7 @@ public class Issue4339Test {
 
 
     @Test
-    public void testNullableBooleanWithNullExampleAndDefault_OAS31() throws Exception {
+    public void testNullableBooleanWithNullExampleAndDefault_OAS31() {
         final ModelResolver modelResolver = new ModelResolver(Json31.mapper());
         Configuration configuration = new Configuration();
         configuration.setOpenAPI31(true);
@@ -260,7 +260,7 @@ public class Issue4339Test {
 
 
     @Test
-    public void testNullableObjectWithNullExampleAndDefault_OAS31() throws Exception {
+    public void testNullableObjectWithNullExampleAndDefault_OAS31() {
         final ModelResolver modelResolver = new ModelResolver(Json31.mapper());
         Configuration configuration = new Configuration();
         configuration.setOpenAPI31(true);
@@ -286,7 +286,7 @@ public class Issue4339Test {
 
 
     @Test
-    public void testNullableWithoutExampleOrDefault_OAS30() throws Exception {
+    public void testNullableWithoutExampleOrDefault_OAS30() {
         final ModelResolver modelResolver = new ModelResolver(Json.mapper());
         Configuration configuration = new Configuration();
         configuration.setOpenAPI31(false);
@@ -322,7 +322,7 @@ public class Issue4339Test {
     }
 
     @Test
-    public void testNullableWithoutExampleOrDefault_OAS31() throws Exception {
+    public void testNullableWithoutExampleOrDefault_OAS31() {
         final ModelResolver modelResolver = new ModelResolver(Json31.mapper());
         Configuration configuration = new Configuration();
         configuration.setOpenAPI31(true);
@@ -358,7 +358,7 @@ public class Issue4339Test {
     }
 
     @Test
-    public void testNullableWithDefaultOnly_OAS30() throws Exception {
+    public void testNullableWithDefaultOnly_OAS30() {
         final ModelResolver modelResolver = new ModelResolver(Json.mapper());
         Configuration configuration = new Configuration();
         configuration.setOpenAPI31(false);
@@ -379,7 +379,7 @@ public class Issue4339Test {
     }
 
     @Test
-    public void testNullableWithExampleOnly_OAS30() throws Exception {
+    public void testNullableWithExampleOnly_OAS30() {
         final ModelResolver modelResolver = new ModelResolver(Json.mapper());
         Configuration configuration = new Configuration();
         configuration.setOpenAPI31(false);
@@ -407,7 +407,7 @@ public class Issue4339Test {
      * It should be treated as the literal string "null"
      */
     @Test
-    public void testNonNullableStringWithNullExampleAndDefault_OAS30() throws Exception {
+    public void testNonNullableStringWithNullExampleAndDefault_OAS30() {
         final ModelResolver modelResolver = new ModelResolver(Json.mapper());
         Configuration configuration = new Configuration();
         configuration.setOpenAPI31(false);
@@ -438,7 +438,7 @@ public class Issue4339Test {
      * When nullable=false, "null" string should NOT be parsed as null value
      */
     @Test
-    public void testNonNullableStringWithNullExampleAndDefault_OAS31() throws Exception {
+    public void testNonNullableStringWithNullExampleAndDefault_OAS31() {
         final ModelResolver modelResolver = new ModelResolver(Json31.mapper());
         Configuration configuration = new Configuration();
         configuration.setOpenAPI31(true);
@@ -467,7 +467,7 @@ public class Issue4339Test {
      * Test non-nullable Boolean field - OAS 3.0
      */
     @Test
-    public void testNonNullableBooleanWithNullExampleAndDefault_OAS30() throws Exception {
+    public void testNonNullableBooleanWithNullExampleAndDefault_OAS30() {
         final ModelResolver modelResolver = new ModelResolver(Json.mapper());
         Configuration configuration = new Configuration();
         configuration.setOpenAPI31(false);
@@ -497,7 +497,7 @@ public class Issue4339Test {
      * Should treat "null" as string, not parse to null value
      */
     @Test
-    public void testNonNullableIntegerWithNullExampleAndDefault_OAS31() throws Exception {
+    public void testNonNullableIntegerWithNullExampleAndDefault_OAS31() {
         final ModelResolver modelResolver = new ModelResolver(Json31.mapper());
         Configuration configuration = new Configuration();
         configuration.setOpenAPI31(true);
@@ -528,7 +528,7 @@ public class Issue4339Test {
      * This should now be fixed by the same changes that fix #4339
      */
     @Test
-    public void testIssue4229_NullableIntegerWithNullExample() throws Exception {
+    public void testIssue4229_NullableIntegerWithNullExample() {
         final ModelResolver modelResolver = new ModelResolver(Json.mapper());
         Configuration configuration = new Configuration();
         configuration.setOpenAPI31(false);
@@ -560,7 +560,7 @@ public class Issue4339Test {
      * In OAS 3.1, there's an "examples" array field in addition to the single "example" field
      */
     @Test
-    public void testNullableStringWithNullInExamplesArray_OAS31() throws Exception {
+    public void testNullableStringWithNullInExamplesArray_OAS31() {
         final ModelResolver modelResolver = new ModelResolver(Json31.mapper());
         Configuration configuration = new Configuration();
         configuration.setOpenAPI31(true);
@@ -590,7 +590,7 @@ public class Issue4339Test {
      * Test OAS 3.1 examples array with multiple values including null
      */
     @Test
-    public void testNullableIntegerWithMultipleExamplesIncludingNull_OAS31() throws Exception {
+    public void testNullableIntegerWithMultipleExamplesIncludingNull_OAS31() {
         final ModelResolver modelResolver = new ModelResolver(Json31.mapper());
         Configuration configuration = new Configuration();
         configuration.setOpenAPI31(true);
@@ -627,7 +627,7 @@ public class Issue4339Test {
      * The 'examples' array was added to Schema objects in OAS 3.1.
      */
     @Test
-    public void testExamplesArrayNotSetInOAS30() throws Exception {
+    public void testExamplesArrayNotSetInOAS30() {
         final ModelResolver modelResolver = new ModelResolver(Json.mapper());
         Configuration configuration = new Configuration();
         configuration.setOpenAPI31(false);
@@ -653,7 +653,7 @@ public class Issue4339Test {
      * The single example field is ignored by design when examples array is present
      */
     @Test
-    public void testExamplesArrayTakesPrecedenceOverExample_OAS31() throws Exception {
+    public void testExamplesArrayTakesPrecedenceOverExample_OAS31() {
         final ModelResolver modelResolver = new ModelResolver(Json31.mapper());
         Configuration configuration = new Configuration();
         configuration.setOpenAPI31(true);

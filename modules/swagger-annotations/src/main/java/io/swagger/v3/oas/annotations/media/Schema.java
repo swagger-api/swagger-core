@@ -38,6 +38,8 @@ import static java.lang.annotation.ElementType.PARAMETER;
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
 public @interface Schema {
+
+    String DEFAULT_SENTINEL = "##default";
     /**
      * Provides a java class as implementation for this schema.  When provided, additional information in the Schema annotation (except for type information) will augment the java class after introspection.
      *
@@ -291,7 +293,7 @@ public @interface Schema {
      *
      * @return the default value of this schema
      */
-    String defaultValue() default "";
+    String defaultValue() default DEFAULT_SENTINEL;
 
     /**
      * Provides a discriminator property value.

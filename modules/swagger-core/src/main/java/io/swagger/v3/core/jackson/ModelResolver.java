@@ -109,6 +109,7 @@ import java.util.stream.Stream;
 import static io.swagger.v3.core.jackson.JAXBAnnotationsHelper.JAXB_DEFAULT;
 import static io.swagger.v3.core.util.RefUtils.constructRef;
 import static io.swagger.v3.core.util.ValidationAnnotationsUtils.*;
+import static io.swagger.v3.oas.annotations.media.Schema.DEFAULT_SENTINEL;
 
 public class ModelResolver extends AbstractModelConverter implements ModelConverter {
 
@@ -2294,8 +2295,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
     }
 
     protected Object resolveDefaultValue(Annotated a, Annotation[] annotations, io.swagger.v3.oas.annotations.media.Schema schema) {
-        if (schema != null) {
-            if (!schema.defaultValue().isEmpty()) {
+        if (schema != null && !DEFAULT_SENTINEL.equals(schema.defaultValue())) {
                 try {
                     ObjectMapper mapper = ObjectMapperFactory.buildStrictGenericObjectMapper();
                     JsonNode node = mapper.readTree(schema.defaultValue());
@@ -2312,7 +2312,6 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 } catch (IOException e) {
                     return schema.defaultValue();
                 }
-            }
         }
         if (a == null) {
             return null;

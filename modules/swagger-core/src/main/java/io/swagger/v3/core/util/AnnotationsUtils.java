@@ -57,6 +57,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+import static io.swagger.v3.oas.annotations.media.Schema.DEFAULT_SENTINEL;
+
 public abstract class AnnotationsUtils {
 
     private static Logger LOGGER = LoggerFactory.getLogger(AnnotationsUtils.class);
@@ -90,7 +92,7 @@ public abstract class AnnotationsUtils {
                 && schema.accessMode().equals(io.swagger.v3.oas.annotations.media.Schema.AccessMode.AUTO)
                 && !schema.deprecated()
                 && schema.allowableValues().length == 0
-                && StringUtils.isBlank(schema.defaultValue())
+                && DEFAULT_SENTINEL.equals(schema.defaultValue())
                 && schema.implementation().equals(Void.class)
                 && StringUtils.isBlank(schema.example())
                 && StringUtils.isBlank(schema.pattern())
@@ -776,10 +778,10 @@ public abstract class AnnotationsUtils {
             schemaObject.setExamples(parseExamplesArray(schema));
         }
 
-        if (StringUtils.isNotBlank(schema.defaultValue())) {
+        if (!DEFAULT_SENTINEL.equals(schema.defaultValue())){
             setDefaultSchema(schema, openapi31, schemaObject);
         }
-        if (StringUtils.isNotBlank(schema.example()) && 
+        if (StringUtils.isNotBlank(schema.example()) &&
             (!openapi31 || schema.examples().length == 0)) {
             setExampleSchema(schema, openapi31, schemaObject);
         }
