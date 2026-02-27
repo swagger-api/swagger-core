@@ -135,6 +135,50 @@ public class AnnotationsUtilsTest {
         assertEquals(schema.get().getExample(), "5 lacs per annum");
     }
 
+    @Test
+    public void testExampleWithNumberTypeShouldHaveExampleAsNumber() throws Exception {
+        io.swagger.v3.oas.annotations.media.Schema schemaAnnotation =
+                ExampleHolder.class
+                        .getDeclaredField("numberValue")
+                        .getAnnotation(io.swagger.v3.oas.annotations.media.Schema.class);
+
+        Optional<Schema> schema =
+                AnnotationsUtils.getSchemaFromAnnotation(
+                        schemaAnnotation,
+                        null,
+                        null,
+                        false,
+                        null,
+                        Schema.SchemaResolution.DEFAULT,
+                        null
+                );
+
+        assertTrue(schema.isPresent());
+        assertEquals(schema.get().getExample(), IntNode.valueOf(10));
+    }
+
+    @Test
+    public void testExampleWithIntegerTypeShouldHaveExampleAsNumber() throws Exception {
+        io.swagger.v3.oas.annotations.media.Schema schemaAnnotation =
+                ExampleHolder.class
+                        .getDeclaredField("integerValue")
+                        .getAnnotation(io.swagger.v3.oas.annotations.media.Schema.class);
+
+        Optional<Schema> schema =
+                AnnotationsUtils.getSchemaFromAnnotation(
+                        schemaAnnotation,
+                        null,
+                        null,
+                        false,
+                        null,
+                        Schema.SchemaResolution.DEFAULT,
+                        null
+                );
+
+        assertTrue(schema.isPresent());
+        assertEquals(schema.get().getExample(), IntNode.valueOf(5));
+    }
+
     // --- mergeSchemaAnnotations defaultValue tests ---
 
     @io.swagger.v3.oas.annotations.media.Schema(description = "type-level description")
@@ -238,50 +282,6 @@ public class AnnotationsUtilsTest {
         assertTrue(resolvedSchema.isPresent());
         assertNotEquals(resolvedSchema.get().getDefault(), DEFAULT_SENTINEL,
                 "Sentinel value must never appear in resolved schema default");
-    }
-
-    @Test
-    public void testExampleWithNumberTypeShouldHaveExampleAsNumber() throws Exception {
-        io.swagger.v3.oas.annotations.media.Schema schemaAnnotation =
-                ExampleHolder.class
-                        .getDeclaredField("numberValue")
-                        .getAnnotation(io.swagger.v3.oas.annotations.media.Schema.class);
-
-        Optional<Schema> schema =
-                AnnotationsUtils.getSchemaFromAnnotation(
-                        schemaAnnotation,
-                        null,
-                        null,
-                        false,
-                        null,
-                        Schema.SchemaResolution.DEFAULT,
-                        null
-                );
-
-        assertTrue(schema.isPresent());
-        assertEquals(schema.get().getExample(), IntNode.valueOf(10));
-    }
-
-    @Test
-    public void testExampleWithIntegerTypeShouldHaveExampleAsNumber() throws Exception {
-        io.swagger.v3.oas.annotations.media.Schema schemaAnnotation =
-                ExampleHolder.class
-                        .getDeclaredField("integerValue")
-                        .getAnnotation(io.swagger.v3.oas.annotations.media.Schema.class);
-
-        Optional<Schema> schema =
-                AnnotationsUtils.getSchemaFromAnnotation(
-                        schemaAnnotation,
-                        null,
-                        null,
-                        false,
-                        null,
-                        Schema.SchemaResolution.DEFAULT,
-                        null
-                );
-
-        assertTrue(schema.isPresent());
-        assertEquals(schema.get().getExample(), IntNode.valueOf(5));
     }
 
 }
