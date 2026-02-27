@@ -7,8 +7,8 @@ These github actions are configured in `.github/workflows`:
 
 * maven.yml : Build Test Deploy master
 * maven-pulls.yml Build Test PR
-* maven-v1.yml : Build Test Deploy 1.5 (must exist in in `1.5` branch)
-* maven-v1-pulls.yml Build Test PR 1.5 (must exist in in `1.5` branch)
+* maven-v1.yml : Build Test Deploy 1.5 (must exist in `1.5` branch)
+* maven-v1-pulls.yml Build Test PR 1.5 (must exist in `1.5` branch)
 
 
 These actions use available actions in combination with short bash scripts.
