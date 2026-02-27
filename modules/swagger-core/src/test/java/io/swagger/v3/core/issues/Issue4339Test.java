@@ -1,5 +1,6 @@
 package io.swagger.v3.core.issues;
 
+import com.fasterxml.jackson.databind.node.NullNode;
 import io.swagger.v3.core.converter.AnnotatedType;
 import io.swagger.v3.core.converter.ModelConverterContextImpl;
 import io.swagger.v3.core.jackson.ModelResolver;
@@ -514,8 +515,8 @@ public class Issue4339Test {
                 (io.swagger.v3.oas.models.media.Schema) model.getProperties().get("integerField");
         assertNotNull(integerField, "integerField property should exist");
 
-        assertEquals(integerField.getExample(), "null",
-                "Example should be the string \"null\", not null value");
+        assertEquals(integerField.getExample(), NullNode.getInstance(),
+                "Example should be the NullNode \"null\", not null value");
         assertEquals(integerField.getDefault(), "null",
                 "Default should be the string \"null\", not null value");
     }
