@@ -108,6 +108,7 @@ import java.util.stream.Stream;
 
 import static io.swagger.v3.core.jackson.JAXBAnnotationsHelper.JAXB_DEFAULT;
 import static io.swagger.v3.core.util.RefUtils.constructRef;
+import static io.swagger.v3.core.util.SiblingAnnotationFilter.filterSiblingAnnotations;
 import static io.swagger.v3.core.util.ValidationAnnotationsUtils.*;
 import static io.swagger.v3.oas.annotations.media.Schema.DEFAULT_SENTINEL;
 
@@ -749,29 +750,10 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 io.swagger.v3.oas.annotations.media.Schema.AccessMode accessMode = resolveAccessMode(propDef, type, propResolvedSchemaAnnotation);
                 io.swagger.v3.oas.annotations.media.Schema.RequiredMode requiredMode = resolveRequiredMode(propResolvedSchemaAnnotation, propType);
 
-                Annotation[] ctxFilteredSiblingAnnotations = null;
-                
-                Schema.SchemaResolution resolvedSchemaResolution = AnnotationsUtils.resolveSchemaResolution(this.schemaResolution, ctxSchema);
-
-                if (AnnotationsUtils.areSiblingsAllowed(resolvedSchemaResolution, openapi31)) {
-                    List<Annotation> filteredAnnotationsList = new ArrayList<>();
-                    
-                    if (annotations != null) {
-                        boolean isStreamWithArraySchema = isStreamType(propType) && ctxArraySchema != null;
-
-                        for (Annotation a : annotations) {
-                            boolean isSchemaAnnotation = a instanceof io.swagger.v3.oas.annotations.media.Schema;
-                            boolean isArraySchemaAnnotation = a instanceof io.swagger.v3.oas.annotations.media.ArraySchema;
-                            boolean shouldIncludeAnnotation = (!isSchemaAnnotation && !isArraySchemaAnnotation) || isStreamWithArraySchema;
-                            
-                            if (shouldIncludeAnnotation) {
-                                filteredAnnotationsList.add(a);
-                            }
-                        }
-                        
-                        ctxFilteredSiblingAnnotations = filteredAnnotationsList.toArray(new Annotation[filteredAnnotationsList.size()]);
-                    }
-                }
+                SiblingAnnotationFilter.FilterResult filterResult = filterSiblingAnnotations(
+                        annotations, propType, ctxSchema, ctxArraySchema, this.schemaResolution, openapi31);
+                Annotation[] ctxFilteredSiblingAnnotations = filterResult.getFilteredAnnotations();
+                Schema.SchemaResolution resolvedSchemaResolution = filterResult.getResolvedSchemaResolution();
                 Set<Annotation> validationInvocationAnnotations = null;
                 if (validatorProcessor != null) {
                     validationInvocationAnnotations = validatorProcessor.resolveInvocationAnnotations(annotations);
@@ -800,10 +782,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                         .components(annotatedType.getComponents())
                         .propertyName(propName)
                         .resolveEnumAsRef(AnnotationsUtils.computeEnumAsRef(ctxSchema, ctxArraySchema));
-                if (
-                        Schema.SchemaResolution.ALL_OF.equals(resolvedSchemaResolution) ||
-                                Schema.SchemaResolution.ALL_OF_REF.equals(resolvedSchemaResolution) ||
-                                openapi31) {
+                if (AnnotationsUtils.areSiblingsAllowed(resolvedSchemaResolution, openapi31)) {
                     aType.ctxAnnotations(ctxFilteredSiblingAnnotations);
                 } else {
                     aType.ctxAnnotations(annotations);
@@ -3593,19 +3572,5 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         return type != null && 
                type.getRawClass() != null && 
                java.util.stream.Stream.class.isAssignableFrom(type.getRawClass());
-    }
-
-    /**
-     * Extracts the element type from a Stream type parameter.
-     * Returns null if the Stream has no type parameter.
-     *
-     * @param type the JavaType representing a Stream
-     * @return the element type of the Stream, or null if not available
-     */
-    private JavaType getStreamElementType(JavaType type) {
-        if (type.getBindings() != null && type.getBindings().size() > 0) {
-            return type.getBindings().getBoundType(0);
-        }
-        return null;
     }
 }
