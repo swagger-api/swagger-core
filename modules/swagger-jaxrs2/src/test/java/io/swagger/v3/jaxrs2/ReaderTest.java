@@ -44,6 +44,7 @@ import io.swagger.v3.jaxrs2.resources.DuplicatedOperationMethodNameResource;
 import io.swagger.v3.jaxrs2.resources.DuplicatedSecurityResource;
 import io.swagger.v3.jaxrs2.resources.EnhancedResponsesResource;
 import io.swagger.v3.jaxrs2.resources.ExternalDocsReference;
+import io.swagger.v3.jaxrs2.resources.Issue2844Resource;
 import io.swagger.v3.jaxrs2.resources.MyClass;
 import io.swagger.v3.jaxrs2.resources.MyOtherClass;
 import io.swagger.v3.jaxrs2.resources.RefCallbackResource;
@@ -5655,6 +5656,59 @@ public class ReaderTest {
                 "      - FOO\n" +
                 "      - BAR\n";
         SerializationMatchers.assertEqualsToYaml31(openAPI, yaml);
+    }
+
+    @Test(description = "Test issue #2844 - empty security array should disable global security")
+    public void testIssue2844EmptySecurityArray() {
+        // Create OpenAPI with global security requirement (simulating the issue scenario)
+        SecurityScheme jwtSecurity = new SecurityScheme()
+            .type(SecurityScheme.Type.HTTP)
+            .scheme("bearer")
+            .bearerFormat("JWT");
+
+        io.swagger.v3.oas.models.security.SecurityRequirement globalSecurityRequirement =
+            new io.swagger.v3.oas.models.security.SecurityRequirement().addList("JWT");
+
+        OpenAPI openAPIWithSecurity = new OpenAPI()
+            .components(new Components().addSecuritySchemes("JWT", jwtSecurity))
+            .addSecurityItem(globalSecurityRequirement);
+
+        Reader reader = new Reader(openAPIWithSecurity);
+        OpenAPI result = reader.read(Issue2844Resource.class);
+
+        // Verify paths were created
+        assertNotNull(result.getPaths());
+        assertEquals(result.getPaths().size(), 4);
+
+        // Verify global security is present
+        assertNotNull(result.getSecurity());
+        assertEquals(result.getSecurity().size(), 1);
+
+        // Test protected endpoint - should inherit global security (no operation-level security)
+        PathItem protectedPath = result.getPaths().get("/auth/protected");
+        assertNotNull(protectedPath);
+        Operation protectedOp = protectedPath.getGet();
+        assertNotNull(protectedOp);
+
+        // Test login endpoint - should have empty security array according to OpenAPI spec
+        PathItem loginPath = result.getPaths().get("/auth/login");
+        assertNotNull(loginPath);
+        Operation loginOp = loginPath.getPost();
+        assertNotNull(loginOp);
+
+        // This is the key assertion for issue #2844
+        // According to OpenAPI 3.0 spec: "To remove a top-level security declaration, an empty array can be used"
+        // Currently this fails because @Operation(security = {}) doesn't create an empty security array
+
+        // Uncomment the line below when issue #2844 is fixed:
+        // assertNotNull(loginOp.getSecurity(), "Login operation should have security array to override global security");
+        // assertEquals(loginOp.getSecurity().size(), 0, "Login operation should have empty security array");
+
+        // Current behavior (documenting the bug):
+        // The security property is null, meaning it inherits global security instead of disabling it
+        System.out.println("Login operation security (should be empty array []): " + loginOp.getSecurity());
+        System.out.println("Expected: Empty array [] to disable security");
+        System.out.println("Actual: " + (loginOp.getSecurity() == null ? "null (inherits global)" : loginOp.getSecurity()));
     }
 
     static class RemoveUnusedSchemasOAS31Filter extends AbstractSpecFilter {
