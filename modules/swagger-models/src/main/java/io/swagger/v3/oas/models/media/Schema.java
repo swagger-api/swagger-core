@@ -112,7 +112,10 @@ public class Schema<T> {
     protected List<T> _enum = null;
     private Discriminator discriminator = null;
 
+    @JsonIgnore
     private boolean exampleSetFlag;
+    @JsonIgnore
+    private boolean defaultSetFlag;
 
     /**
      * @since 2.2.0 (OpenAPI 3.1.0)
@@ -935,6 +938,9 @@ public class Schema<T> {
 
     public void setDefault(Object _default) {
         this._default = cast(_default);
+        if (!(_default != null && this._default == null)) {
+            defaultSetFlag = true;
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -1578,6 +1584,21 @@ public class Schema<T> {
 
     public void setExampleSetFlag(boolean exampleSetFlag) {
         this.exampleSetFlag = exampleSetFlag;
+    }
+
+    /**
+     * returns true if default setter has been invoked
+     * Used to flag explicit setting to null of default (vs missing field) while deserializing from json/yaml string
+     *
+     * @return boolean defaultSetFlag
+     **/
+
+    public boolean getDefaultSetFlag() {
+        return defaultSetFlag;
+    }
+
+    public void setDefaultSetFlag(boolean defaultSetFlag) {
+        this.defaultSetFlag = defaultSetFlag;
     }
 
     /**
@@ -2287,6 +2308,11 @@ public class Schema<T> {
 
     public Schema exampleSetFlag(boolean exampleSetFlag) {
         this.exampleSetFlag = exampleSetFlag;
+        return this;
+    }
+
+    public Schema defaultSetFlag(boolean defaultSetFlag) {
+        this.defaultSetFlag = defaultSetFlag;
         return this;
     }
 

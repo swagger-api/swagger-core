@@ -15,6 +15,7 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.fasterxml.jackson.databind.AnnotationIntrospector;
 import com.fasterxml.jackson.databind.BeanDescription;
 import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyMetadata;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -108,6 +109,7 @@ import java.util.stream.Stream;
 import static io.swagger.v3.core.jackson.JAXBAnnotationsHelper.JAXB_DEFAULT;
 import static io.swagger.v3.core.util.RefUtils.constructRef;
 import static io.swagger.v3.core.util.ValidationAnnotationsUtils.*;
+import static io.swagger.v3.oas.annotations.media.Schema.DEFAULT_SENTINEL;
 
 public class ModelResolver extends AbstractModelConverter implements ModelConverter {
 
@@ -2293,15 +2295,23 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
     }
 
     protected Object resolveDefaultValue(Annotated a, Annotation[] annotations, io.swagger.v3.oas.annotations.media.Schema schema) {
-        if (schema != null) {
-            if (!schema.defaultValue().isEmpty()) {
+        if (schema != null && !DEFAULT_SENTINEL.equals(schema.defaultValue())) {
                 try {
                     ObjectMapper mapper = ObjectMapperFactory.buildStrictGenericObjectMapper();
-                    return mapper.readTree(schema.defaultValue());
+                    JsonNode node = mapper.readTree(schema.defaultValue());
+                    // Only return null for "null" string when nullable=true
+                    if (node.isNull()) {
+                        if (schema.nullable()) {
+                            return null;
+                        } else {
+                            // When nullable=false, treat "null" as literal string
+                            return schema.defaultValue();
+                        }
+                    }
+                    return node;
                 } catch (IOException e) {
                     return schema.defaultValue();
                 }
-            }
         }
         if (a == null) {
             return null;
@@ -2331,7 +2341,15 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             if (!schema.example().isEmpty()) {
                 try {
                     ObjectMapper mapper = ObjectMapperFactory.buildStrictGenericObjectMapper();
-                    return mapper.readTree(schema.example());
+                    JsonNode node = mapper.readTree(schema.example());
+                    if (node.isNull()) {
+                        if (schema.nullable()) {
+                            return null;
+                        } else {
+                            return schema.example();
+                        }
+                    }
+                    return node;
                 } catch (IOException e) {
                     return schema.example();
                 }
@@ -3139,10 +3157,16 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         Object defaultValue = resolveDefaultValue(a, annotations, schemaAnnotation);
         if (defaultValue != null) {
             schema.setDefault(defaultValue);
+        } else if (schemaAnnotation != null && "null".equals(schemaAnnotation.defaultValue().trim()) && schemaAnnotation.nullable()) {
+            // Explicitly set to null when defaultValue="null" AND nullable=true
+            schema.setDefault(null);
         }
         Object example = resolveExample(a, annotations, schemaAnnotation);
         if (example != null) {
             schema.example(example);
+        } else if (schemaAnnotation != null && "null".equals(schemaAnnotation.example().trim()) && schemaAnnotation.nullable()) {
+            // Explicitly set to null when example="null" AND nullable=true
+            schema.example(null);
         }
         Boolean readOnly = resolveReadOnly(a, annotations, schemaAnnotation);
         if (readOnly != null) {
@@ -3274,10 +3298,11 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 schema.setContentMediaType(contentMediaType);
             }
             if (schemaAnnotation.examples().length > 0) {
+                List<Object> parsedExamples = io.swagger.v3.core.util.AnnotationsUtils.parseExamplesArray(schemaAnnotation);
                 if (schema.getExamples() == null || schema.getExamples().isEmpty()) {
-                    schema.setExamples(Arrays.asList(schemaAnnotation.examples()));
+                    schema.setExamples(parsedExamples);
                 } else {
-                    schema.getExamples().addAll(Arrays.asList(schemaAnnotation.examples()));
+                    schema.getExamples().addAll(parsedExamples);
                 }
             }
             String _const = resolveConst(a, annotations, schemaAnnotation);
