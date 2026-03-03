@@ -5,6 +5,7 @@ import io.swagger.v3.core.converter.ModelConverters;
 import io.swagger.v3.core.matchers.SerializationMatchers;
 import io.swagger.v3.core.oas.models.Person;
 import io.swagger.v3.core.util.Json;
+import io.swagger.v3.core.util.JsonAssert;
 import io.swagger.v3.core.util.OutputReplacer;
 import io.swagger.v3.core.util.ResourceUtils;
 import io.swagger.v3.oas.models.Components;
@@ -172,7 +173,7 @@ public class SwaggerSerializerTest {
 
         final String swaggerJson = Json.mapper().writeValueAsString(swagger);
         final OpenAPI rebuilt = Json.mapper().readValue(swaggerJson, OpenAPI.class);
-        assertEquals(Json.pretty(rebuilt), Json.pretty(swagger));
+        JsonAssert.assertJsonEquals(Json.mapper(), Json.pretty(rebuilt), Json.pretty(swagger));
     }
 
     @Test

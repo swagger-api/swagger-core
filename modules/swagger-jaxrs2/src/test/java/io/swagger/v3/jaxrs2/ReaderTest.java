@@ -13,6 +13,7 @@ import io.swagger.v3.core.filter.SpecFilter;
 import io.swagger.v3.core.jackson.ModelResolver;
 import io.swagger.v3.core.model.ApiDescription;
 import io.swagger.v3.core.util.Configuration;
+import io.swagger.v3.core.util.Json;
 import io.swagger.v3.core.util.PrimitiveType;
 import io.swagger.v3.jaxrs2.matchers.SerializationMatchers;
 import io.swagger.v3.jaxrs2.petstore31.PetResource;
@@ -83,6 +84,7 @@ import io.swagger.v3.jaxrs2.resources.Ticket3587Resource;
 import io.swagger.v3.jaxrs2.resources.Ticket3731BisResource;
 import io.swagger.v3.jaxrs2.resources.Ticket3731Resource;
 import io.swagger.v3.jaxrs2.resources.Ticket4065Resource;
+import io.swagger.v3.jaxrs2.resources.Ticket4341Resource;
 import io.swagger.v3.jaxrs2.resources.Ticket4412Resource;
 import io.swagger.v3.jaxrs2.resources.Ticket4446Resource;
 import io.swagger.v3.jaxrs2.resources.Ticket4483Resource;
@@ -94,6 +96,7 @@ import io.swagger.v3.jaxrs2.resources.Ticket4850Resource;
 import io.swagger.v3.jaxrs2.resources.Ticket4859Resource;
 import io.swagger.v3.jaxrs2.resources.Ticket4878Resource;
 import io.swagger.v3.jaxrs2.resources.Ticket4879Resource;
+import io.swagger.v3.jaxrs2.resources.Ticket5017Resource;
 import io.swagger.v3.jaxrs2.resources.UploadResource;
 import io.swagger.v3.jaxrs2.resources.UrlEncodedResourceWithEncodings;
 import io.swagger.v3.jaxrs2.resources.UserAnnotationResource;
@@ -793,6 +796,32 @@ public class ReaderTest {
         assertEquals(schema.getItems().get$ref(), "#/components/schemas/User");
 
         assertEquals(openAPI.getComponents().getSchemas().get("User").getRequired().get(0), "issue3438");
+    }
+
+    @Test(description = "array required property resolved from ArraySchema.arraySchema.requiredMode")
+    public void test4341() {
+        Reader reader = new Reader(new OpenAPI());
+        OpenAPI openAPI = reader.read(Ticket4341Resource.class);
+        Schema userSchema = openAPI.getComponents().getSchemas().get("User");
+        List<String> required = userSchema.getRequired();
+
+        assertTrue(required.contains("requiredArray"));
+        assertFalse(required.contains("notRequiredArray"));
+        assertFalse(required.contains("notRequiredArrayWithNotNull"));
+        assertTrue(required.contains("autoRequiredWithNotNull"));
+        assertFalse(required.contains("autoNotRequired"));
+
+        assertTrue(
+                required.contains("requiredArrayArraySchemaOnly"),
+                "arraySchema.requiredMode=REQUIRED should make the array property required " +
+                        "even when items schema is not explicitly provided"
+        );
+
+        assertFalse(
+                required.contains("requiredItemsOnlyArray"),
+                "schema(requiredMode=REQUIRED) on items must not make the array property required; " +
+                        "requiredness is controlled by arraySchema.requiredMode"
+        );
     }
 
     @Test(description = "test resource with subresources")
@@ -3477,8 +3506,8 @@ public class ReaderTest {
                 "          exclusiveMaximum: 4\n" +
                 "        foobar:\n" +
                 "          type:\n" +
-                "          - integer\n" +
                 "          - string\n" +
+                "          - integer\n" +
                 "          format: int32\n" +
                 "    Category:\n" +
                 "      type: object\n" +
@@ -3504,7 +3533,6 @@ public class ReaderTest {
                 "          exclusiveMaximum: 2\n" +
                 "        foobar:\n" +
                 "          type:\n" +
-                "          - integer\n" +
                 "          - string\n" +
                 "          - object\n" +
                 "          format: int32\n" +
@@ -3522,7 +3550,6 @@ public class ReaderTest {
                 "          exclusiveMaximum: 2\n" +
                 "        foobar:\n" +
                 "          type:\n" +
-                "          - integer\n" +
                 "          - string\n" +
                 "          - object\n" +
                 "          format: int32\n" +
@@ -3569,6 +3596,7 @@ public class ReaderTest {
                 "        name:\n" +
                 "          type: string\n" +
                 "        annotated:\n" +
+                "          type: object\n" +
                 "          $ref: \"#/components/schemas/Category\"\n" +
                 "          description: child description\n" +
                 "          properties:\n" +
@@ -3615,7 +3643,6 @@ public class ReaderTest {
                 "          exclusiveMaximum: 2\n" +
                 "        foobar:\n" +
                 "          type:\n" +
-                "          - integer\n" +
                 "          - string\n" +
                 "          - object\n" +
                 "          format: int32\n" +
@@ -3623,6 +3650,7 @@ public class ReaderTest {
                 "      type: object\n" +
                 "      properties:\n" +
                 "        annotated:\n" +
+                "          type: object\n" +
                 "          $ref: \"#/components/schemas/SimpleCategory\"\n" +
                 "          description: child description\n" +
                 "          properties:\n" +
@@ -4085,6 +4113,7 @@ public class ReaderTest {
                 "      type: object\n" +
                 "      properties:\n" +
                 "        country:\n" +
+                "          type: object\n" +
                 "          const: United States\n" +
                 "    CreditCard:\n" +
                 "      type: object\n" +
@@ -4095,11 +4124,13 @@ public class ReaderTest {
                 "      type: object\n" +
                 "      properties:\n" +
                 "        postalCode:\n" +
+                "          type: object\n" +
                 "          pattern: \"[0-9]{5}(-[0-9]{4})?\"\n" +
                 "    PostalCodePattern:\n" +
                 "      type: object\n" +
                 "      properties:\n" +
                 "        postalCode:\n" +
+                "          type: object\n" +
                 "          pattern: \"[A-Z][0-9][A-Z] [0-9][A-Z][0-9]\"\n" +
                 "    PropertyNamesPattern:\n" +
                 "      pattern: \"^[A-Za-z_][A-Za-z0-9_]*$\"\n";
@@ -5502,5 +5533,139 @@ public class ReaderTest {
                 "            '*/*': {}\n";
         SerializationMatchers.assertEqualsToYaml31(openAPI, yaml);
         ModelConverters.reset();
+    }
+
+    @Test(description = "array property metadata is resolved from ArraySchema.arraySchema, items metadata from ArraySchema.schema")
+    public void test4341ArraySchemaOtherAttributes() {
+        Reader reader = new Reader(new OpenAPI());
+        OpenAPI openAPI = reader.read(Ticket4341Resource.class);
+        System.out.println(Json.pretty(openAPI));
+
+        Schema userSchema = openAPI.getComponents().getSchemas().get("User");
+        assertNotNull(userSchema, "User schema should be present");
+
+        @SuppressWarnings("unchecked")
+        Map<String, Schema> properties = userSchema.getProperties();
+        assertNotNull(properties, "User properties should not be null");
+
+        Schema metadataArray = properties.get("metadataArray");
+        assertNotNull(metadataArray, "metadataArray property should be present");
+        assertTrue(metadataArray instanceof ArraySchema, "metadataArray should be an ArraySchema");
+
+        // Property-level assertions
+        assertEquals(
+                metadataArray.getDescription(),
+                "array-level description",
+                "Array property description should come from arraySchema, not items schema"
+        );
+
+        assertEquals(
+                metadataArray.getDeprecated(),
+                Boolean.TRUE,
+                "Array property deprecated should come from arraySchema"
+        );
+
+        assertEquals(
+                metadataArray.getReadOnly(),
+                Boolean.TRUE,
+                "Array property readOnly should be true from arraySchema.accessMode=READ_ONLY"
+        );
+        assertNotEquals(
+                metadataArray.getWriteOnly(),
+                Boolean.TRUE,
+                "Array property writeOnly should not be true when accessMode=READ_ONLY"
+        );
+
+        // Item-level assertions
+
+        ArraySchema metadataArraySchema = (ArraySchema) metadataArray;
+        Schema items = metadataArraySchema.getItems();
+        assertNotNull(items, "Items schema should not be null");
+
+        assertEquals(
+                items.getDescription(),
+                "item-level description",
+                "Items description should come from schema element of @ArraySchema"
+        );
+
+        assertNotEquals(
+                items.getDeprecated(),
+                Boolean.TRUE,
+                "Items deprecated should not be true when schema.deprecated=false"
+        );
+
+        assertEquals(
+                items.getWriteOnly(),
+                Boolean.TRUE,
+                "Items writeOnly should be true from schema.accessMode=WRITE_ONLY"
+        );
+        assertNotEquals(
+                items.getReadOnly(),
+                Boolean.TRUE,
+                "Items readOnly should not be true when accessMode=WRITE_ONLY"
+        );
+
+        assertEquals(
+                items.getFormat(),
+                "email",
+                "Items format should come from schema.format"
+        );
+    }
+
+    @Test
+    void testTicket5017() {
+        ModelResolver.enumsAsRef = true;
+        SwaggerConfiguration config = new SwaggerConfiguration().openAPI31(true);
+        Reader reader = new Reader(config);
+        OpenAPI openAPI = reader.read(Ticket5017Resource.class);
+
+        OpenAPISpecFilter filterImpl = new RemoveUnusedSchemasOAS31Filter();
+        SpecFilter f = new SpecFilter();
+        openAPI = f.filter(openAPI, filterImpl, null, null, null);
+
+        String yaml = "openapi: 3.1.0\n" +
+                "paths:\n" +
+                "  /test:\n" +
+                "    get:\n" +
+                "      operationId: myMethod\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          '*/*':\n" +
+                "            schema:\n" +
+                "              $ref: \"#/components/schemas/Example\"\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*': {}\n" +
+                "components:\n" +
+                "  schemas:\n" +
+                "    Example:\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        myMap:\n" +
+                "          type: object\n" +
+                "          additionalProperties:\n" +
+                "            type: string\n" +
+                "          propertyNames:\n" +
+                "            $ref: \"#/components/schemas/MyEnum\"\n" +
+                "    MyEnum:\n" +
+                "      type: string\n" +
+                "      enum:\n" +
+                "      - FOO\n" +
+                "      - BAR\n";
+        SerializationMatchers.assertEqualsToYaml31(openAPI, yaml);
+    }
+
+    static class RemoveUnusedSchemasOAS31Filter extends AbstractSpecFilter {
+        @Override
+        public boolean isRemovingUnreferencedDefinitions() {
+            return true;
+        }
+
+        @Override
+        public boolean isOpenAPI31Filter() {
+            return true;
+        }
     }
 }
