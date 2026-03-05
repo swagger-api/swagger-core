@@ -1,0 +1,49 @@
+{
+  "schema" : {
+    "type" : "object",
+    "properties" : {
+      "nullableModel" : {
+        "$ref" : "#/components/schemas/NestedModel"
+      },
+      "model" : {
+        "$ref" : "#/components/schemas/NestedModel"
+      },
+      "nullableModel2" : {
+        "$ref" : "#/components/schemas/NestedModel2"
+      }
+    }
+  },
+  "referencedSchemas" : {
+    "ModelWithObjectThatHasNullableInSchemaAnnotationOAS30" : {
+      "type" : "object",
+      "properties" : {
+        "nullableModel" : {
+          "$ref" : "#/components/schemas/NestedModel"
+        },
+        "model" : {
+          "$ref" : "#/components/schemas/NestedModel"
+        },
+        "nullableModel2" : {
+          "$ref" : "#/components/schemas/NestedModel2"
+        }
+      }
+    },
+    "NestedModel" : {
+      "type" : "object",
+      "properties" : {
+        "field" : {
+          "type" : "string"
+        }
+      }
+    },
+    "NestedModel2" : {
+      "type" : "object",
+      "properties" : {
+        "field2" : {
+          "type" : "string"
+        }
+      },
+      "nullable" : true
+    }
+  }
+}
