@@ -1,5 +1,6 @@
 package io.swagger.v3.core.util;
 
+import com.fasterxml.jackson.databind.node.IntNode;
 import com.google.common.collect.ImmutableMap;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -102,6 +103,12 @@ public class AnnotationsUtilsTest {
     static class ExampleHolder {
         @io.swagger.v3.oas.annotations.media.Schema(type = "string", example = "5 lacs per annum")
         String value;
+
+        @io.swagger.v3.oas.annotations.media.Schema(type = "number", example = "10")
+        String numberValue;
+
+        @io.swagger.v3.oas.annotations.media.Schema(type = "integer", example = "5")
+        String integerValue;
     }
 
     @Test
@@ -124,6 +131,50 @@ public class AnnotationsUtilsTest {
 
         assertTrue(schema.isPresent());
         assertEquals(schema.get().getExample(), "5 lacs per annum");
+    }
+
+    @Test
+    public void testExampleWithNumberTypeShouldHaveExampleAsNumber() throws Exception {
+        io.swagger.v3.oas.annotations.media.Schema schemaAnnotation =
+                ExampleHolder.class
+                        .getDeclaredField("numberValue")
+                        .getAnnotation(io.swagger.v3.oas.annotations.media.Schema.class);
+
+        Optional<Schema> schema =
+                AnnotationsUtils.getSchemaFromAnnotation(
+                        schemaAnnotation,
+                        null,
+                        null,
+                        false,
+                        null,
+                        Schema.SchemaResolution.DEFAULT,
+                        null
+                );
+
+        assertTrue(schema.isPresent());
+        assertEquals(schema.get().getExample(), IntNode.valueOf(10));
+    }
+
+    @Test
+    public void testExampleWithIntegerTypeShouldHaveExampleAsNumber() throws Exception {
+        io.swagger.v3.oas.annotations.media.Schema schemaAnnotation =
+                ExampleHolder.class
+                        .getDeclaredField("integerValue")
+                        .getAnnotation(io.swagger.v3.oas.annotations.media.Schema.class);
+
+        Optional<Schema> schema =
+                AnnotationsUtils.getSchemaFromAnnotation(
+                        schemaAnnotation,
+                        null,
+                        null,
+                        false,
+                        null,
+                        Schema.SchemaResolution.DEFAULT,
+                        null
+                );
+
+        assertTrue(schema.isPresent());
+        assertEquals(schema.get().getExample(), IntNode.valueOf(5));
     }
 
 }
