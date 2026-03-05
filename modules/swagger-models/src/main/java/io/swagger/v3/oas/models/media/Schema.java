@@ -141,7 +141,7 @@ public class Schema<T> {
         this.specVersion = specVersion;
     }
 
-    public Schema specVersion(SpecVersion specVersion) {
+    public Schema<T> specVersion(SpecVersion specVersion) {
         this.setSpecVersion(specVersion);
         return this;
     }
@@ -419,7 +419,7 @@ public class Schema<T> {
      * @since 2.2.0 (OpenAPI 3.1.0)
      */
     @OpenAPI31
-    public Schema exclusiveMaximumValue(BigDecimal exclusiveMaximumValue) {
+    public Schema<T> exclusiveMaximumValue(BigDecimal exclusiveMaximumValue) {
         this.exclusiveMaximumValue = exclusiveMaximumValue;
         return this;
     }
@@ -450,7 +450,7 @@ public class Schema<T> {
      * @since 2.2.0 (OpenAPI 3.1.0)
      */
     @OpenAPI31
-    public Schema exclusiveMinimumValue(BigDecimal exclusiveMinimumValue) {
+    public Schema<T> exclusiveMinimumValue(BigDecimal exclusiveMinimumValue) {
         this.exclusiveMinimumValue = exclusiveMinimumValue;
         return this;
     }
@@ -480,7 +480,7 @@ public class Schema<T> {
      * @since 2.2.0 (OpenAPI 3.1.0)
      */
     @OpenAPI31
-    public Schema patternProperties(Map<String, Schema> patternProperties) {
+    public Schema<T> patternProperties(Map<String, Schema> patternProperties) {
         this.patternProperties = patternProperties;
         return this;
     }
@@ -490,7 +490,7 @@ public class Schema<T> {
      * @since 2.2.0 (OpenAPI 3.1.0)
      */
     @OpenAPI31
-    public Schema addPatternProperty(String key, Schema patternPropertiesItem) {
+    public Schema<T> addPatternProperty(String key, Schema patternPropertiesItem) {
         if (this.patternProperties == null) {
             this.patternProperties = new LinkedHashMap<>();
         }
@@ -503,7 +503,7 @@ public class Schema<T> {
      * @since 2.2.0 (OpenAPI 3.1.0)
      */
     @OpenAPI31
-    public Schema contains(Schema contains) {
+    public Schema<T> contains(Schema contains) {
         this.contains = contains;
         return this;
     }
@@ -513,7 +513,7 @@ public class Schema<T> {
      * @since 2.2.0 (OpenAPI 3.1.0)
      */
     @OpenAPI31
-    public Schema $id(String $id) {
+    public Schema<T> $id(String $id) {
         this.$id = $id;
         return this;
     }
@@ -563,7 +563,7 @@ public class Schema<T> {
      * @since 2.2.0 (OpenAPI 3.1.0)
      */
     @OpenAPI31
-    public Schema $schema(String $schema) {
+    public Schema<T> $schema(String $schema) {
         this.$schema = $schema;
         return this;
     }
@@ -591,7 +591,7 @@ public class Schema<T> {
      * @since 2.2.8 (OpenAPI 3.1.0)
      */
     @OpenAPI31
-    public Schema $vocabulary(String $vocabulary) {
+    public Schema<T> $vocabulary(String $vocabulary) {
         this.$vocabulary = $vocabulary;
         return this;
     }
@@ -619,7 +619,7 @@ public class Schema<T> {
      * @since 2.2.8 (OpenAPI 3.1.0)
      */
     @OpenAPI31
-    public Schema $dynamicAnchor(String $dynamicAnchor) {
+    public Schema<T> $dynamicAnchor(String $dynamicAnchor) {
         this.$dynamicAnchor = $dynamicAnchor;
         return this;
     }
@@ -657,7 +657,7 @@ public class Schema<T> {
      * @since 2.2.0 (OpenAPI 3.1.0)
      */
     @OpenAPI31
-    public Schema $anchor(String $anchor) {
+    public Schema<T> $anchor(String $anchor) {
         this.$anchor = $anchor;
         return this;
     }
@@ -667,7 +667,7 @@ public class Schema<T> {
      * @since 2.2.0 (OpenAPI 3.1.0)
      */
     @OpenAPI31
-    public Schema types(Set<String> types) {
+    public Schema<T> types(Set<String> types) {
         this.types = types;
         return this;
     }
@@ -702,7 +702,7 @@ public class Schema<T> {
      * @since 2.2.0 (OpenAPI 3.1.0)
      */
     @OpenAPI31
-    public Schema jsonSchema(Map<String, Object> jsonSchema) {
+    public Schema<T> jsonSchema(Map<String, Object> jsonSchema) {
         this.jsonSchema = jsonSchema;
         return this;
     }
@@ -733,7 +733,7 @@ public class Schema<T> {
      * @since 2.2.0 (OpenAPI 3.1.0)
      */
     @OpenAPI31
-    public Schema jsonSchemaImpl(Object jsonSchemaImpl) {
+    public Schema<T> jsonSchemaImpl(Object jsonSchemaImpl) {
         setJsonSchemaImpl(jsonSchemaImpl);
         return this;
     }
@@ -781,12 +781,12 @@ public class Schema<T> {
         this.allOf = allOf;
     }
 
-    public Schema allOf(List<Schema> allOf) {
+    public Schema<T> allOf(List<Schema> allOf) {
         this.allOf = allOf;
         return this;
     }
 
-    public Schema addAllOfItem(Schema allOfItem) {
+    public Schema<T> addAllOfItem(Schema allOfItem) {
         if (this.allOf == null) {
             this.allOf = new ArrayList<>();
         }
@@ -808,12 +808,12 @@ public class Schema<T> {
         this.anyOf = anyOf;
     }
 
-    public Schema anyOf(List<Schema> anyOf) {
+    public Schema<T> anyOf(List<Schema> anyOf) {
         this.anyOf = anyOf;
         return this;
     }
 
-    public Schema addAnyOfItem(Schema anyOfItem) {
+    public Schema<T> addAnyOfItem(Schema anyOfItem) {
         if (this.anyOf == null) {
             this.anyOf = new ArrayList<>();
         }
@@ -835,12 +835,12 @@ public class Schema<T> {
         this.oneOf = oneOf;
     }
 
-    public Schema oneOf(List<Schema> oneOf) {
+    public Schema<T> oneOf(List<Schema> oneOf) {
         this.oneOf = oneOf;
         return this;
     }
 
-    public Schema addOneOfItem(Schema oneOfItem) {
+    public Schema<T> addOneOfItem(Schema oneOfItem) {
         if (this.oneOf == null) {
             this.oneOf = new ArrayList<>();
         }
@@ -863,7 +863,7 @@ public class Schema<T> {
         this.items = items;
     }
 
-    public Schema items(Schema<?> items) {
+    public Schema<T> items(Schema<?> items) {
         this.items = items;
         return this;
     }
@@ -883,7 +883,7 @@ public class Schema<T> {
         this.name = name;
     }
 
-    public Schema name(String name) {
+    public Schema<T> name(String name) {
         this.setName(name);
         return this;
     }
@@ -902,7 +902,7 @@ public class Schema<T> {
         this.discriminator = discriminator;
     }
 
-    public Schema discriminator(Discriminator discriminator) {
+    public Schema<T> discriminator(Discriminator discriminator) {
         this.discriminator = discriminator;
         return this;
     }
@@ -921,7 +921,7 @@ public class Schema<T> {
         this.title = title;
     }
 
-    public Schema title(String title) {
+    public Schema<T> title(String title) {
         this.title = title;
         return this;
     }
@@ -979,7 +979,7 @@ public class Schema<T> {
         this.multipleOf = multipleOf;
     }
 
-    public Schema multipleOf(BigDecimal multipleOf) {
+    public Schema<T> multipleOf(BigDecimal multipleOf) {
         this.multipleOf = multipleOf;
         return this;
     }
@@ -998,7 +998,7 @@ public class Schema<T> {
         this.maximum = maximum;
     }
 
-    public Schema maximum(BigDecimal maximum) {
+    public Schema<T> maximum(BigDecimal maximum) {
         this.maximum = maximum;
         return this;
     }
@@ -1019,7 +1019,7 @@ public class Schema<T> {
     }
 
     @OpenAPI30
-    public Schema exclusiveMaximum(Boolean exclusiveMaximum) {
+    public Schema<T> exclusiveMaximum(Boolean exclusiveMaximum) {
         this.exclusiveMaximum = exclusiveMaximum;
         return this;
     }
@@ -1038,7 +1038,7 @@ public class Schema<T> {
         this.minimum = minimum;
     }
 
-    public Schema minimum(BigDecimal minimum) {
+    public Schema<T> minimum(BigDecimal minimum) {
         this.minimum = minimum;
         return this;
     }
@@ -1058,7 +1058,7 @@ public class Schema<T> {
         this.exclusiveMinimum = exclusiveMinimum;
     }
 
-    public Schema exclusiveMinimum(Boolean exclusiveMinimum) {
+    public Schema<T> exclusiveMinimum(Boolean exclusiveMinimum) {
         this.exclusiveMinimum = exclusiveMinimum;
         return this;
     }
@@ -1080,7 +1080,7 @@ public class Schema<T> {
         this.maxLength = maxLength;
     }
 
-    public Schema maxLength(Integer maxLength) {
+    public Schema<T> maxLength(Integer maxLength) {
         this.maxLength = maxLength;
         return this;
     }
@@ -1101,7 +1101,7 @@ public class Schema<T> {
         this.minLength = minLength;
     }
 
-    public Schema minLength(Integer minLength) {
+    public Schema<T> minLength(Integer minLength) {
         this.minLength = minLength;
         return this;
     }
@@ -1120,7 +1120,7 @@ public class Schema<T> {
         this.pattern = pattern;
     }
 
-    public Schema pattern(String pattern) {
+    public Schema<T> pattern(String pattern) {
         this.pattern = pattern;
         return this;
     }
@@ -1141,7 +1141,7 @@ public class Schema<T> {
         this.maxItems = maxItems;
     }
 
-    public Schema maxItems(Integer maxItems) {
+    public Schema<T> maxItems(Integer maxItems) {
         this.maxItems = maxItems;
         return this;
     }
@@ -1162,7 +1162,7 @@ public class Schema<T> {
         this.minItems = minItems;
     }
 
-    public Schema minItems(Integer minItems) {
+    public Schema<T> minItems(Integer minItems) {
         this.minItems = minItems;
         return this;
     }
@@ -1181,7 +1181,7 @@ public class Schema<T> {
         this.uniqueItems = uniqueItems;
     }
 
-    public Schema uniqueItems(Boolean uniqueItems) {
+    public Schema<T> uniqueItems(Boolean uniqueItems) {
         this.uniqueItems = uniqueItems;
         return this;
     }
@@ -1202,7 +1202,7 @@ public class Schema<T> {
         this.maxProperties = maxProperties;
     }
 
-    public Schema maxProperties(Integer maxProperties) {
+    public Schema<T> maxProperties(Integer maxProperties) {
         this.maxProperties = maxProperties;
         return this;
     }
@@ -1223,7 +1223,7 @@ public class Schema<T> {
         this.minProperties = minProperties;
     }
 
-    public Schema minProperties(Integer minProperties) {
+    public Schema<T> minProperties(Integer minProperties) {
         this.minProperties = minProperties;
         return this;
     }
@@ -1254,12 +1254,12 @@ public class Schema<T> {
         this.required = list;
     }
 
-    public Schema required(List<String> required) {
+    public Schema<T> required(List<String> required) {
         this.required = required;
         return this;
     }
 
-    public Schema addRequiredItem(String requiredItem) {
+    public Schema<T> addRequiredItem(String requiredItem) {
         if (this.required == null) {
             this.required = new ArrayList<>();
         }
@@ -1286,7 +1286,7 @@ public class Schema<T> {
         this.type = type;
     }
 
-    public Schema type(String type) {
+    public Schema<T> type(String type) {
         this.type = type;
         return this;
     }
@@ -1305,7 +1305,7 @@ public class Schema<T> {
         this.not = not;
     }
 
-    public Schema not(Schema not) {
+    public Schema<T> not(Schema not) {
         this.not = not;
         return this;
     }
@@ -1324,7 +1324,7 @@ public class Schema<T> {
         this.properties = properties;
     }
 
-    public Schema properties(Map<String, Schema> properties) {
+    public Schema<T> properties(Map<String, Schema> properties) {
         this.properties = properties;
         return this;
     }
@@ -1338,7 +1338,7 @@ public class Schema<T> {
      *
      * @since 2.2.0
      */
-    public Schema addProperty(String key, Schema property) {
+    public Schema<T> addProperty(String key, Schema property) {
         if (this.properties == null) {
             this.properties = new LinkedHashMap<>();
         }
@@ -1363,7 +1363,7 @@ public class Schema<T> {
         this.additionalProperties = additionalProperties;
     }
 
-    public Schema additionalProperties(Object additionalProperties) {
+    public Schema<T> additionalProperties(Object additionalProperties) {
         setAdditionalProperties(additionalProperties);
         return this;
     }
@@ -1382,7 +1382,7 @@ public class Schema<T> {
         this.description = description;
     }
 
-    public Schema description(String description) {
+    public Schema<T> description(String description) {
         this.description = description;
         return this;
     }
@@ -1401,7 +1401,7 @@ public class Schema<T> {
         this.format = format;
     }
 
-    public Schema format(String format) {
+    public Schema<T> format(String format) {
         this.format = format;
         return this;
     }
@@ -1422,13 +1422,12 @@ public class Schema<T> {
         this.$ref = $ref;
     }
 
-    public Schema $ref(String $ref) {
-
+    public Schema<T> $ref(String $ref) {
         set$ref($ref);
         return this;
     }
 
-    public Schema raw$ref(String $ref) {
+    public Schema<T> raw$ref(String $ref) {
         this.$ref = $ref;
         return this;
     }
@@ -1449,7 +1448,7 @@ public class Schema<T> {
     }
 
     @OpenAPI30
-    public Schema nullable(Boolean nullable) {
+    public Schema<T> nullable(Boolean nullable) {
         this.nullable = nullable;
         return this;
     }
@@ -1468,7 +1467,7 @@ public class Schema<T> {
         this.readOnly = readOnly;
     }
 
-    public Schema readOnly(Boolean readOnly) {
+    public Schema<T> readOnly(Boolean readOnly) {
         this.readOnly = readOnly;
         return this;
     }
@@ -1487,7 +1486,7 @@ public class Schema<T> {
         this.writeOnly = writeOnly;
     }
 
-    public Schema writeOnly(Boolean writeOnly) {
+    public Schema<T> writeOnly(Boolean writeOnly) {
         this.writeOnly = writeOnly;
         return this;
     }
@@ -1509,7 +1508,7 @@ public class Schema<T> {
         }
     }
 
-    public Schema example(Object example) {
+    public Schema<T> example(Object example) {
         setExample(example);
         return this;
     }
@@ -1528,7 +1527,7 @@ public class Schema<T> {
         this.externalDocs = externalDocs;
     }
 
-    public Schema externalDocs(ExternalDocumentation externalDocs) {
+    public Schema<T> externalDocs(ExternalDocumentation externalDocs) {
         this.externalDocs = externalDocs;
         return this;
     }
@@ -1547,7 +1546,7 @@ public class Schema<T> {
         this.deprecated = deprecated;
     }
 
-    public Schema deprecated(Boolean deprecated) {
+    public Schema<T> deprecated(Boolean deprecated) {
         this.deprecated = deprecated;
         return this;
     }
@@ -1566,7 +1565,7 @@ public class Schema<T> {
         this.xml = xml;
     }
 
-    public Schema xml(XML xml) {
+    public Schema<T> xml(XML xml) {
         this.xml = xml;
         return this;
     }
@@ -1624,7 +1623,7 @@ public class Schema<T> {
      * @since 2.2.0 (OpenAPI 3.1.0)
      */
     @OpenAPI31
-    public Schema prefixItems(List<Schema> prefixItems) {
+    public Schema<T> prefixItems(List<Schema> prefixItems) {
         this.prefixItems = prefixItems;
         return this;
     }
@@ -1634,7 +1633,7 @@ public class Schema<T> {
      * @since 2.2.12 (OpenAPI 3.1.0)
      */
     @OpenAPI31
-    public Schema addPrefixItem(Schema prefixItem) {
+    public Schema<T> addPrefixItem(Schema prefixItem) {
         if (this.prefixItems == null) {
             this.prefixItems = new ArrayList<>();
         }
@@ -1665,7 +1664,7 @@ public class Schema<T> {
      * @since 2.2.0 (OpenAPI 3.1.0)
      */
     @OpenAPI31
-    public Schema contentEncoding(String contentEncoding) {
+    public Schema<T> contentEncoding(String contentEncoding) {
         this.contentEncoding = contentEncoding;
         return this;
     }
@@ -1693,7 +1692,7 @@ public class Schema<T> {
      * @since 2.2.0 (OpenAPI 3.1.0)
      */
     @OpenAPI31
-    public Schema contentMediaType(String contentMediaType) {
+    public Schema<T> contentMediaType(String contentMediaType) {
         this.contentMediaType = contentMediaType;
         return this;
     }
@@ -1721,7 +1720,7 @@ public class Schema<T> {
      * @since 2.2.0 (OpenAPI 3.1.0)
      */
     @OpenAPI31
-    public Schema contentSchema(Schema contentSchema) {
+    public Schema<T> contentSchema(Schema contentSchema) {
         this.contentSchema = contentSchema;
         return this;
     }
@@ -1749,7 +1748,7 @@ public class Schema<T> {
      * @since 2.2.0 (OpenAPI 3.1.0)
      */
     @OpenAPI31
-    public Schema propertyNames(Schema propertyNames) {
+    public Schema<T> propertyNames(Schema propertyNames) {
         this.propertyNames = propertyNames;
         return this;
     }
@@ -1777,7 +1776,7 @@ public class Schema<T> {
      * @since 2.2.0 (OpenAPI 3.1.0)
      */
     @OpenAPI31
-    public Schema unevaluatedProperties(Schema unevaluatedProperties) {
+    public Schema<T> unevaluatedProperties(Schema unevaluatedProperties) {
         this.unevaluatedProperties = unevaluatedProperties;
         return this;
     }
@@ -1805,7 +1804,7 @@ public class Schema<T> {
      * @since 2.2.0 (OpenAPI 3.1.0)
      */
     @OpenAPI31
-    public Schema maxContains(Integer maxContains) {
+    public Schema<T> maxContains(Integer maxContains) {
         this.maxContains = maxContains;
         return this;
     }
@@ -1833,7 +1832,7 @@ public class Schema<T> {
      * @since 2.2.0 (OpenAPI 3.1.0)
      */
     @OpenAPI31
-    public Schema minContains(Integer minContains) {
+    public Schema<T> minContains(Integer minContains) {
         this.minContains = minContains;
         return this;
     }
@@ -1861,7 +1860,7 @@ public class Schema<T> {
      * @since 2.2.0 (OpenAPI 3.1.0)
      */
     @OpenAPI31
-    public Schema additionalItems(Schema additionalItems) {
+    public Schema<T> additionalItems(Schema additionalItems) {
         this.additionalItems = additionalItems;
         return this;
     }
@@ -1889,7 +1888,7 @@ public class Schema<T> {
      * @since 2.2.0 (OpenAPI 3.1.0)
      */
     @OpenAPI31
-    public Schema unevaluatedItems(Schema unevaluatedItems) {
+    public Schema<T> unevaluatedItems(Schema unevaluatedItems) {
         this.unevaluatedItems = unevaluatedItems;
         return this;
     }
@@ -1917,7 +1916,7 @@ public class Schema<T> {
      * @since 2.2.0 (OpenAPI 3.1.0)
      */
     @OpenAPI31
-    public Schema _if(Schema _if) {
+    public Schema<T> _if(Schema _if) {
         this._if = _if;
         return this;
     }
@@ -1945,7 +1944,7 @@ public class Schema<T> {
      * @since 2.2.0 (OpenAPI 3.1.0)
      */
     @OpenAPI31
-    public Schema _else(Schema _else) {
+    public Schema<T> _else(Schema _else) {
         this._else = _else;
         return this;
     }
@@ -1973,7 +1972,7 @@ public class Schema<T> {
      * @since 2.2.0 (OpenAPI 3.1.0)
      */
     @OpenAPI31
-    public Schema then(Schema then) {
+    public Schema<T> then(Schema then) {
         this.then = then;
         return this;
     }
@@ -2001,7 +2000,7 @@ public class Schema<T> {
      * @since 2.2.0 (OpenAPI 3.1.0)
      */
     @OpenAPI31
-    public Schema dependentSchemas(Map<String, Schema> dependentSchemas) {
+    public Schema<T> dependentSchemas(Map<String, Schema> dependentSchemas) {
         this.dependentSchemas = dependentSchemas;
         return this;
     }
@@ -2029,7 +2028,7 @@ public class Schema<T> {
      * @since 2.2.0 (OpenAPI 3.1.0)
      */
     @OpenAPI31
-    public Schema dependentRequired(Map<String, List<String>> dependentRequired) {
+    public Schema<T> dependentRequired(Map<String, List<String>> dependentRequired) {
         this.dependentRequired = dependentRequired;
         return this;
     }
@@ -2057,7 +2056,7 @@ public class Schema<T> {
      * @since 2.2.0 (OpenAPI 3.1.0)
      */
     @OpenAPI31
-    public Schema $comment(String $comment) {
+    public Schema<T> $comment(String $comment) {
         this.$comment = $comment;
         return this;
     }
@@ -2211,7 +2210,7 @@ public class Schema<T> {
         this.extensions = extensions;
     }
 
-    public Schema extensions(java.util.Map<String, Object> extensions) {
+    public Schema<T> extensions(java.util.Map<String, Object> extensions) {
         this.extensions = extensions;
         return this;
     }
@@ -2296,17 +2295,17 @@ public class Schema<T> {
         return o.toString().replace("\n", "\n    ");
     }
 
-    public Schema _default(T _default) {
+    public Schema<T> _default(T _default) {
         this._default = _default;
         return this;
     }
 
-    public Schema _enum(List<T> _enum) {
+    public Schema<T> _enum(List<T> _enum) {
         this._enum = _enum;
         return this;
     }
 
-    public Schema exampleSetFlag(boolean exampleSetFlag) {
+    public Schema<T> exampleSetFlag(boolean exampleSetFlag) {
         this.exampleSetFlag = exampleSetFlag;
         return this;
     }
@@ -2339,7 +2338,7 @@ public class Schema<T> {
      * @since 2.2.0 (OpenAPI 3.1.0)
      */
     @OpenAPI31
-    public Schema _const(Object _const) {
+    public Schema<T> _const(Object _const) {
         this._const = cast(_const);
         return this;
     }
@@ -2367,7 +2366,7 @@ public class Schema<T> {
      * @since 2.2.2 (OpenAPI 3.1.0)
      */
     @OpenAPI31
-    public Schema booleanSchemaValue(Boolean booleanSchemaValue) {
+    public Schema<T> booleanSchemaValue(Boolean booleanSchemaValue) {
         this.booleanSchemaValue = booleanSchemaValue;
         return this;
     }
