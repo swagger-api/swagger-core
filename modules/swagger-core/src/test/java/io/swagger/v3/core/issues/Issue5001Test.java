@@ -2,6 +2,8 @@ package io.swagger.v3.core.issues;
 
 import io.swagger.v3.core.converter.AnnotatedType;
 import io.swagger.v3.core.converter.ModelConverterContextImpl;
+import io.swagger.v3.core.converter.ModelConverters;
+import io.swagger.v3.core.converter.ResolvedSchema;
 import io.swagger.v3.core.jackson.ModelResolver;
 import io.swagger.v3.core.util.Configuration;
 import io.swagger.v3.core.util.Json;
@@ -10,6 +12,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import org.testng.annotations.Test;
 
 import javax.annotation.Nullable;
+import java.util.List;
 import java.util.Set;
 
 import static org.testng.Assert.*;
@@ -18,11 +21,11 @@ import static org.testng.Assert.*;
  * Reproduces GitHub Issue #5001
  * Native support for @Nullable annotations to generate proper nullable types
  *
- * Tests that @Nullable annotation is recognized and generates appropriate nullable output:
+ * <p>Tests that @Nullable annotation is recognized and generates appropriate nullable output:
  * - OAS 3.0: nullable keyword
  * - OAS 3.1: type array with "null"
  *
- * Note: This test uses javax.annotation.Nullable which is automatically transformed to
+ * <p>Note: This test uses javax.annotation.Nullable which is automatically transformed to
  * jakarta.annotation.Nullable in the swagger-core-jakarta module via the Eclipse Transformer.
  *
  * @see <a href="https://github.com/swagger-api/swagger-core/issues/5001">...</a>
@@ -33,7 +36,7 @@ public class Issue5001Test {
      * Tests @Nullable annotation with OAS 3.1 (type array output)
      */
     @Test
-    public void testNullableWithOAS31() throws Exception {
+    public void testNullableWithOAS31() {
         final ModelResolver modelResolver = new ModelResolver(Json31.mapper());
         Configuration configuration = new Configuration();
         configuration.setOpenAPI31(true);
@@ -72,7 +75,7 @@ public class Issue5001Test {
      * Tests @Nullable annotation with OAS 3.0 (nullable keyword output)
      */
     @Test
-    public void testNullableWithOAS30() throws Exception {
+    public void testNullableWithOAS30() {
         final ModelResolver modelResolver = new ModelResolver(Json.mapper());
         Configuration configuration = new Configuration();
         configuration.setOpenAPI31(false);
@@ -103,7 +106,7 @@ public class Issue5001Test {
      * Tests explicit @Schema annotations with OAS 3.1
      */
     @Test
-    public void testExplicitSchemaAnnotationsWithOAS31() throws Exception {
+    public void testExplicitSchemaAnnotationsWithOAS31() {
         final ModelResolver modelResolver = new ModelResolver(Json31.mapper());
         Configuration configuration = new Configuration();
         configuration.setOpenAPI31(true);
