@@ -1,0 +1,26 @@
+PR Number,Title,Type,Functional Areas,Priority,Priority Score,Author,Created At,URL
+5050,Analyze 2025 open issues with combined functional area + priority ranking,Other,Other,Medium,3,Copilot,2026-02-03T11:41:00Z,https://github.com/swagger-api/swagger-core/pull/5050
+5049,fix: add missing @ArraysSchema.arraySchema properties,Bug Fix,Examples,High,4,Mattias-Sehlstedt,2026-02-01T19:11:24Z,https://github.com/swagger-api/swagger-core/pull/5049
+5048,Ignore sibling logic if the property type is not a valid sibling candidate,Other,Annotation Processing; Examples,High,4,Mattias-Sehlstedt,2026-02-01T17:32:55Z,https://github.com/swagger-api/swagger-core/pull/5048
+5047,refactor: introduce class responsible for how bean validation annotations affect schemas,Refactor,Annotation Processing; Validation; Jackson,High,4,Mattias-Sehlstedt,2026-01-30T17:32:23Z,https://github.com/swagger-api/swagger-core/pull/5047
+5044,"feat: add support for Positive, PositiveOrZero, Negative, and NegativeOrZero constraints in model validation",Feature,Jakarta Migration; Validation,High,4,NaMinhyeok,2026-01-26T13:10:26Z,https://github.com/swagger-api/swagger-core/pull/5044
+5037,feat: change Schema.required from List to Set (#5027),Feature,Validation,High,4,yht0827,2026-01-17T03:10:23Z,https://github.com/swagger-api/swagger-core/pull/5037
+5034,fix: OAS 3.1 schema generation for raw Object properties,Bug Fix,Annotation Processing; OAS 3.1,High,4,xeulbn,2026-01-10T09:31:48Z,https://github.com/swagger-api/swagger-core/pull/5034
+5031,feat: migrate to jackson 3,Feature,Jackson,High,4,vpelikh,2026-01-01T13:41:09Z,https://github.com/swagger-api/swagger-core/pull/5031
+5025,feat: Multiple SecurityRequirement annotations with AND condition #3556,Feature,Annotation Processing; Validation,High,4,Olfi01,2025-11-26T15:06:43Z,https://github.com/swagger-api/swagger-core/pull/5025
+5020,bug fix propertyNames schema is not removed as unreferenced by SpecFilter #5017,Bug Fix,SpecFilter,High,4,OllieKosh,2025-11-18T19:31:20Z,https://github.com/swagger-api/swagger-core/pull/5020
+5018,5001: Add support for @Nullable annotations in OpenAPI 3.1 schemas,Other,Jakarta Migration; Annotation Processing; Validation; OAS 3.1,High,4,zdary,2025-11-17T01:07:53Z,https://github.com/swagger-api/swagger-core/pull/5018
+5015,Tests for issue #4341: ArraySchema.arraySchema.requiredMode not working,Test,Annotation Processing; Validation,Low,2,ewaostrowska,2025-11-06T11:00:53Z,https://github.com/swagger-api/swagger-core/pull/5015
+4997,Add parameter ignoreHidden,Other,Annotation Processing; Dependencies,High,4,jobayle,2025-10-16T08:03:32Z,https://github.com/swagger-api/swagger-core/pull/4997
+4989, fix: resolve PrimitiveType casting for OpenAPI 3.1 schemas (#4963),Bug Fix,Annotation Processing; OAS 3.1,High,4,K5qu4r3d,2025-10-07T19:05:34Z,https://github.com/swagger-api/swagger-core/pull/4989
+4987,[Feature]: Provide a BOM module for managing dependencies (#4966),Other,Jakarta Migration; Annotation Processing; Examples; Dependencies,High,4,kuntal1461,2025-10-07T18:18:34Z,https://github.com/swagger-api/swagger-core/pull/4987
+4986,fix: resolve Validation Meta annotations not working (#4886),Bug Fix,Jakarta Migration; Annotation Processing; Validation; Examples; Jackson; Dependencies,High,4,kuntal1461,2025-10-07T14:30:36Z,https://github.com/swagger-api/swagger-core/pull/4986
+4985,Add support for jspecify annotations,Other,Jakarta Migration; Annotation Processing; Validation,High,4,weberhofer,2025-10-07T14:23:44Z,https://github.com/swagger-api/swagger-core/pull/4985
+4983,feat: Infer discriminator mapping,Feature,Polymorphic Types; Annotation Processing; Jackson,High,4,PatrickFeiring,2025-10-04T12:23:13Z,https://github.com/swagger-api/swagger-core/pull/4983
+4977,fix(core): SpecFilter follows ApiResponse $ref to avoid pruning referenced schemas,Bug Fix,Annotation Processing; SpecFilter,High,4,kuntal1461,2025-09-28T09:04:37Z,https://github.com/swagger-api/swagger-core/pull/4977
+4974,feat: allow empty string as defaultValue in @Schema,Feature,Annotation Processing; Validation,High,4,juntae6942,2025-09-18T06:11:07Z,https://github.com/swagger-api/swagger-core/pull/4974
+4962,MCP Server Opsera,Other,Other,High,4,balamuralipopsera,2025-08-21T13:43:31Z,https://github.com/swagger-api/swagger-core/pull/4962
+4961,MCP Server for Swagger Core,Other,Other,High,4,Vishnu-Opsera,2025-08-21T09:29:58Z,https://github.com/swagger-api/swagger-core/pull/4961
+4954,fix: Java Byte to OAS integer data type,Bug Fix,Annotation Processing; OAS 3.1,High,4,JongminChung,2025-08-14T16:02:31Z,https://github.com/swagger-api/swagger-core/pull/4954
+4861,Added ability to set name for ApiResponse and RequestBody annotations,Other,Annotation Processing; Validation,Medium,3,altro3,2025-03-13T06:52:53Z,https://github.com/swagger-api/swagger-core/pull/4861
+4821,Add DurationSchema for java.time.Duration as PrimitiveType,Other,Other,Medium,3,MoellJ,2025-01-09T11:50:06Z,https://github.com/swagger-api/swagger-core/pull/4821
