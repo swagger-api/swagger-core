@@ -2465,10 +2465,13 @@ public abstract class AnnotationsUtils {
 
             @Override
             public String defaultValue() {
-                if (StringUtils.isNotBlank(master.defaultValue()) || StringUtils.isBlank(patch.defaultValue())) {
+                if (!DEFAULT_SENTINEL.equals(master.defaultValue())) {
                     return master.defaultValue();
                 }
-                return patch.defaultValue();
+                if (!DEFAULT_SENTINEL.equals(patch.defaultValue())) {
+                    return patch.defaultValue();
+                }
+                return master.defaultValue();
             }
 
             @Override
