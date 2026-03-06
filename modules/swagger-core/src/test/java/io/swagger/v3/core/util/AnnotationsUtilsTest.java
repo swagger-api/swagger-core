@@ -20,7 +20,9 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
+import static io.swagger.v3.oas.annotations.media.Schema.DEFAULT_SENTINEL;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotEquals;
 import static org.testng.Assert.assertTrue;
 
 public class AnnotationsUtilsTest {
@@ -124,6 +126,111 @@ public class AnnotationsUtilsTest {
 
         assertTrue(schema.isPresent());
         assertEquals(schema.get().getExample(), "5 lacs per annum");
+    }
+
+    // --- mergeSchemaAnnotations defaultValue tests ---
+
+    @io.swagger.v3.oas.annotations.media.Schema(description = "type-level description")
+    static class TypeWithDescriptionOnly {}
+
+    static class FieldHolderWithDefault {
+        @io.swagger.v3.oas.annotations.media.Schema(defaultValue = "myDefault")
+        TypeWithDescriptionOnly field;
+    }
+
+    static class FieldHolderWithEmptyDefault {
+        @io.swagger.v3.oas.annotations.media.Schema(defaultValue = "")
+        TypeWithDescriptionOnly field;
+    }
+
+    @io.swagger.v3.oas.annotations.media.Schema(defaultValue = "typeDefault")
+    static class TypeWithDefault {}
+
+    static class FieldHolderWithTypeDefault {
+        @io.swagger.v3.oas.annotations.media.Schema(description = "field-level description")
+        TypeWithDefault field;
+    }
+
+    @Test
+    public void mergedDefaultValueShouldUsePatchWhenMasterHasSentinel() throws Exception {
+        io.swagger.v3.oas.annotations.media.Schema master =
+                TypeWithDescriptionOnly.class.getAnnotation(io.swagger.v3.oas.annotations.media.Schema.class);
+        io.swagger.v3.oas.annotations.media.Schema patch =
+                FieldHolderWithDefault.class.getDeclaredField("field")
+                        .getAnnotation(io.swagger.v3.oas.annotations.media.Schema.class);
+
+        io.swagger.v3.oas.annotations.media.Schema merged =
+                AnnotationsUtils.mergeSchemaAnnotations(master, patch);
+
+        assertEquals(merged.defaultValue(), "myDefault",
+                "When master has no defaultValue (sentinel) and patch has one, the patch value should win");
+    }
+
+    @Test
+    public void mergedDefaultValueShouldUseMasterWhenMasterHasRealValue() throws Exception {
+        io.swagger.v3.oas.annotations.media.Schema master =
+                TypeWithDefault.class.getAnnotation(io.swagger.v3.oas.annotations.media.Schema.class);
+        io.swagger.v3.oas.annotations.media.Schema patch =
+                FieldHolderWithDefault.class.getDeclaredField("field")
+                        .getAnnotation(io.swagger.v3.oas.annotations.media.Schema.class);
+
+        io.swagger.v3.oas.annotations.media.Schema merged =
+                AnnotationsUtils.mergeSchemaAnnotations(master, patch);
+
+        assertEquals(merged.defaultValue(), "typeDefault",
+                "When master has a real defaultValue, it should take precedence over patch");
+    }
+
+    @Test
+    public void mergedDefaultValueShouldReturnSentinelWhenBothHaveSentinel() throws Exception {
+        io.swagger.v3.oas.annotations.media.Schema master =
+                TypeWithDescriptionOnly.class.getAnnotation(io.swagger.v3.oas.annotations.media.Schema.class);
+        io.swagger.v3.oas.annotations.media.Schema patch =
+                FieldHolderWithTypeDefault.class.getDeclaredField("field")
+                        .getAnnotation(io.swagger.v3.oas.annotations.media.Schema.class);
+
+        io.swagger.v3.oas.annotations.media.Schema merged =
+                AnnotationsUtils.mergeSchemaAnnotations(master, patch);
+
+        assertEquals(merged.defaultValue(), DEFAULT_SENTINEL,
+                "When both master and patch have sentinel, the merged result should also have sentinel");
+    }
+
+    @Test
+    public void mergedDefaultValueShouldUseEmptyStringFromPatch() throws Exception {
+        io.swagger.v3.oas.annotations.media.Schema master =
+                TypeWithDescriptionOnly.class.getAnnotation(io.swagger.v3.oas.annotations.media.Schema.class);
+        io.swagger.v3.oas.annotations.media.Schema patch =
+                FieldHolderWithEmptyDefault.class.getDeclaredField("field")
+                        .getAnnotation(io.swagger.v3.oas.annotations.media.Schema.class);
+
+        io.swagger.v3.oas.annotations.media.Schema merged =
+                AnnotationsUtils.mergeSchemaAnnotations(master, patch);
+
+        assertEquals(merged.defaultValue(), "",
+                "When master has sentinel and patch has empty string, empty string should win");
+    }
+
+    @Test
+    public void sentinelShouldNeverAppearInResolvedSchema() throws Exception {
+        io.swagger.v3.oas.annotations.media.Schema master =
+                TypeWithDescriptionOnly.class.getAnnotation(io.swagger.v3.oas.annotations.media.Schema.class);
+        io.swagger.v3.oas.annotations.media.Schema patch =
+                FieldHolderWithDefault.class.getDeclaredField("field")
+                        .getAnnotation(io.swagger.v3.oas.annotations.media.Schema.class);
+
+        io.swagger.v3.oas.annotations.media.Schema merged =
+                AnnotationsUtils.mergeSchemaAnnotations(master, patch);
+
+        assertNotEquals(merged.defaultValue(), DEFAULT_SENTINEL,
+                "Sentinel should never be the result when patch has a real defaultValue");
+
+        Optional<Schema> resolvedSchema = AnnotationsUtils.getSchemaFromAnnotation(
+                merged, null, null, false, null, Schema.SchemaResolution.DEFAULT, null);
+
+        assertTrue(resolvedSchema.isPresent());
+        assertNotEquals(resolvedSchema.get().getDefault(), DEFAULT_SENTINEL,
+                "Sentinel value must never appear in resolved schema default");
     }
 
 }
