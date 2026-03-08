@@ -1544,7 +1544,7 @@ public abstract class AnnotationsUtils {
         return Optional.of(headerObject);
     }
 
-    public static void setHeaderExplode (Header header, io.swagger.v3.oas.annotations.headers.Header h) {
+    public static void setHeaderExplode(Header header, io.swagger.v3.oas.annotations.headers.Header h) {
         if (isHeaderExplodable(h, header)) {
             if (Explode.TRUE.equals(h.explode())) {
                 header.setExplode(Boolean.TRUE);
@@ -1560,12 +1560,20 @@ public abstract class AnnotationsUtils {
         if (schema != null) {
             Class implementation = schema.implementation();
             if (implementation == Void.class) {
-                if (!schema.type().equals("object") && !schema.type().equals("array")) {
+                if (!isExplodableOAS30(schema)) {
                     explode = false;
                 }
             }
         }
         return explode;
+    }
+
+    public static boolean isExplodableOAS30(io.swagger.v3.oas.annotations.media.Schema schema) {
+        return schema.type().equals("object") || schema.type().equals("array");
+    }
+
+    public static boolean isExplodableOAS31(io.swagger.v3.oas.annotations.media.Schema schema) {
+        return Arrays.asList(schema.types()).contains("object") || Arrays.asList(schema.types()).contains("array");
     }
 
     public static void addEncodingToMediaType(MediaType mediaType, io.swagger.v3.oas.annotations.media.Encoding encoding, JsonView jsonViewAnnotation) {
