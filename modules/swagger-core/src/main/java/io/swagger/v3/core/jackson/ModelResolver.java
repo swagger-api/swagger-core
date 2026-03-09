@@ -1339,10 +1339,8 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         boolean useIndex = _mapper.isEnabled(SerializationFeature.WRITE_ENUMS_USING_INDEX);
         boolean useToString = _mapper.isEnabled(SerializationFeature.WRITE_ENUMS_USING_TO_STRING);
 
-        Optional<Method> jsonValueMethod = Arrays.stream(enumClass.getDeclaredMethods())
-                .filter(m -> m.isAnnotationPresent(JsonValue.class))
-                .filter(m -> m.getAnnotation(JsonValue.class).value())
-                .findFirst();
+		Optional<Method> jsonValueMethod = ReflectionUtils.getAnnotatedMethods(enumClass, JsonValue.class).stream()
+				.findFirst();
 
         Optional<Field> jsonValueField = Arrays.stream(enumClass.getDeclaredFields())
                 .filter(f -> f.isAnnotationPresent(JsonValue.class))
@@ -3569,8 +3567,8 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
      * Checks if the given JavaType represents a java.util.stream.Stream
      */
     private boolean isStreamType(JavaType type) {
-        return type != null && 
-               type.getRawClass() != null && 
+        return type != null &&
+               type.getRawClass() != null &&
                java.util.stream.Stream.class.isAssignableFrom(type.getRawClass());
     }
 }
