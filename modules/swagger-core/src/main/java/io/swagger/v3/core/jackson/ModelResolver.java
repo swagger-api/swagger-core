@@ -108,6 +108,7 @@ import java.util.stream.Stream;
 
 import static io.swagger.v3.core.jackson.JAXBAnnotationsHelper.JAXB_DEFAULT;
 import static io.swagger.v3.core.util.RefUtils.constructRef;
+import static io.swagger.v3.core.util.SiblingAnnotationFilter.filterSiblingAnnotations;
 import static io.swagger.v3.core.util.ValidationAnnotationsUtils.*;
 import static io.swagger.v3.oas.annotations.media.Schema.DEFAULT_SENTINEL;
 
@@ -460,6 +461,8 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             return context.resolve(aType);
         }
 
+        boolean isStreamWithArrayAnnotation = resolvedArrayAnnotation != null && isStreamType(type);
+
         if (type.isContainerType()) {
             // TODO currently a MapSchema or ArraySchema don't also support composed schema props (oneOf,..)
             hasCompositionKeywords = false;
@@ -525,7 +528,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 mapModel.name(name);
                 model = mapModel;
             } else if (valueType != null) {
-                if (ReflectionUtils.isSystemTypeNotArray(type) && !annotatedType.isSchemaProperty() && !annotatedType.isResolveAsRef()) {
+                if (!isStreamWithArrayAnnotation && ReflectionUtils.isSystemTypeNotArray(type) && !annotatedType.isSchemaProperty() && !annotatedType.isResolveAsRef()) {
                     context.resolve(new AnnotatedType().components(annotatedType.getComponents()).type(valueType).jsonViewAnnotation(annotatedType.getJsonViewAnnotation()));
                     return null;
                 }
@@ -747,21 +750,10 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 io.swagger.v3.oas.annotations.media.Schema.AccessMode accessMode = resolveAccessMode(propDef, type, propResolvedSchemaAnnotation);
                 io.swagger.v3.oas.annotations.media.Schema.RequiredMode requiredMode = resolveRequiredMode(propResolvedSchemaAnnotation, propType);
 
-                Annotation[] ctxAnnotation31 = null;
-                Schema.SchemaResolution resolvedSchemaResolution = AnnotationsUtils.resolveSchemaResolution(this.schemaResolution, ctxSchema);
-                if (AnnotationsUtils.areSiblingsAllowed(resolvedSchemaResolution, openapi31)) {
-                    List<Annotation> ctxAnnotations31List = new ArrayList<>();
-                    if (annotations != null) {
-                        for (Annotation a : annotations) {
-                            if (
-                                    !(a instanceof io.swagger.v3.oas.annotations.media.Schema) &&
-                                            !(a instanceof io.swagger.v3.oas.annotations.media.ArraySchema)) {
-                                ctxAnnotations31List.add(a);
-                            }
-                        }
-                        ctxAnnotation31 = ctxAnnotations31List.toArray(new Annotation[ctxAnnotations31List.size()]);
-                    }
-                }
+                SiblingAnnotationFilter.FilterResult filterResult = filterSiblingAnnotations(
+                        annotations, propType, ctxSchema, ctxArraySchema, this.schemaResolution, openapi31);
+                Annotation[] ctxFilteredSiblingAnnotations = filterResult.getFilteredAnnotations();
+                Schema.SchemaResolution resolvedSchemaResolution = filterResult.getResolvedSchemaResolution();
                 Set<Annotation> validationInvocationAnnotations = null;
                 if (validatorProcessor != null) {
                     validationInvocationAnnotations = validatorProcessor.resolveInvocationAnnotations(annotations);
@@ -776,8 +768,8 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                     validationInvocationAnnotations.addAll(resolveValidationInvocationAnnotations(annotatedType.getCtxAnnotations()));
                 }
                 annotations = Stream.concat(Arrays.stream(annotations), Arrays.stream(validationInvocationAnnotations.toArray(new Annotation[0]))).toArray(Annotation[]::new);
-                if (ctxAnnotation31 != null) {
-                    ctxAnnotation31 = Stream.concat(Arrays.stream(ctxAnnotation31), Arrays.stream(validationInvocationAnnotations.toArray(new Annotation[0]))).toArray(Annotation[]::new);
+                if (ctxFilteredSiblingAnnotations != null) {
+                    ctxFilteredSiblingAnnotations = Stream.concat(Arrays.stream(ctxFilteredSiblingAnnotations), Arrays.stream(validationInvocationAnnotations.toArray(new Annotation[0]))).toArray(Annotation[]::new);
                 }
                 AnnotatedType aType = new AnnotatedType()
                         .type(propType)
@@ -790,11 +782,8 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                         .components(annotatedType.getComponents())
                         .propertyName(propName)
                         .resolveEnumAsRef(AnnotationsUtils.computeEnumAsRef(ctxSchema, ctxArraySchema));
-                if (
-                        Schema.SchemaResolution.ALL_OF.equals(resolvedSchemaResolution) ||
-                                Schema.SchemaResolution.ALL_OF_REF.equals(resolvedSchemaResolution) ||
-                                openapi31) {
-                    aType.ctxAnnotations(ctxAnnotation31);
+                if (AnnotationsUtils.areSiblingsAllowed(resolvedSchemaResolution, openapi31)) {
+                    aType.ctxAnnotations(ctxFilteredSiblingAnnotations);
                 } else {
                     aType.ctxAnnotations(annotations);
                 }
@@ -3574,5 +3563,14 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 }
         }
         return reResolvedProperty;
+    }
+
+    /**
+     * Checks if the given JavaType represents a java.util.stream.Stream
+     */
+    private boolean isStreamType(JavaType type) {
+        return type != null && 
+               type.getRawClass() != null && 
+               java.util.stream.Stream.class.isAssignableFrom(type.getRawClass());
     }
 }
