@@ -20,6 +20,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Map;
 
 import static org.testng.Assert.assertEquals;
@@ -235,5 +236,10 @@ public class EnumPropertyTest {
         assertTrue(sixthEnumProperty instanceof StringSchema);
         final StringSchema sixthStringProperty = (StringSchema) sixthEnumProperty;
         assertEquals(sixthStringProperty.getEnum(), Arrays.asList("one", "two", "three"));
+
+        final Schema seventhEnumProperty = (Schema) model.getProperties().get("seventhEnumValue");
+        assertTrue(seventhEnumProperty instanceof IntegerSchema);
+        final IntegerSchema seventhEnumStringProperty = (IntegerSchema) seventhEnumProperty;
+        assertEquals(seventhEnumStringProperty.getEnum(), Collections.singletonList(10));
     }
 }
