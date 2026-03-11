@@ -6,6 +6,7 @@ import static org.testng.Assert.*;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class SchemaTest {
@@ -177,5 +178,64 @@ public class SchemaTest {
         schema.setRequired(Arrays.asList("id", "name"));
         schema.setBooleanSchemaValue(true);
         return schema;
+    }
+
+    @Test
+    public void testRequiredNoDuplicates() {
+        Schema<Object> schema = new Schema<>();
+        schema.addRequiredItem("id");
+        schema.addRequiredItem("name");
+        schema.addRequiredItem("id"); // duplicate
+
+        List<String> required = schema.getRequired();
+
+        // Duplicates should be removed
+        assertEquals(2, required.size());
+        assertTrue(required.contains("id"));
+        assertTrue(required.contains("name"));
+    }
+
+    @Test
+    public void testSetRequiredRemovesDuplicates() {
+        Schema<Object> schema = new Schema<>();
+        schema.setRequired(Arrays.asList("id", "name", "id", "email", "name"));
+
+        List<String> required = schema.getRequired();
+
+        // Should contain only unique values: id, name, email
+        assertEquals(3, required.size());
+    }
+
+
+    @Test
+    public void testRequiredIsSorted() {
+        Schema<Object> schema = new Schema<>();
+        schema.addRequiredItem("zebra");
+        schema.addRequiredItem("apple");
+        schema.addRequiredItem("mango");
+
+        List<String> required = schema.getRequired();
+
+        // Should be sorted alphabetically
+        assertEquals(Arrays.asList("apple", "mango", "zebra"), required);
+    }
+
+    @Test
+    public void testSetRequiredWithNull() {
+        Schema<Object> schema = new Schema<>();
+        schema.addRequiredItem("id");
+        schema.setRequired(null);
+
+        // Setting null should clear required
+        assertNull(schema.getRequired());
+    }
+
+    @Test
+    public void testSetRequiredWithEmptyList() {
+        Schema<Object> schema = new Schema<>();
+        schema.setRequired(Arrays.asList());
+
+        // Empty list should result in null
+        assertNull(schema.getRequired());
     }
 }
