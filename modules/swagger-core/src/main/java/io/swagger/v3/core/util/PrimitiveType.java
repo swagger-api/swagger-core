@@ -6,6 +6,7 @@ import io.swagger.v3.oas.models.media.BooleanSchema;
 import io.swagger.v3.oas.models.media.ByteArraySchema;
 import io.swagger.v3.oas.models.media.DateSchema;
 import io.swagger.v3.oas.models.media.DateTimeSchema;
+import io.swagger.v3.oas.models.media.DurationSchema;
 import io.swagger.v3.oas.models.media.FileSchema;
 import io.swagger.v3.oas.models.media.IntegerSchema;
 import io.swagger.v3.oas.models.media.JsonSchema;
@@ -211,6 +212,12 @@ public enum PrimitiveType {
             return new JsonSchema().typesItem("string").format("date-time");
         }
     },
+    DURATION(java.time.Duration.class, "duration") {
+        @Override
+        public DurationSchema createProperty() {
+            return new DurationSchema();
+        }
+    },
     PARTIAL_TIME(java.time.LocalTime.class, "partial-time") {
         @Override
         public Schema createProperty() {
@@ -315,6 +322,7 @@ public enum PrimitiveType {
         dms.put("string_uuid", "uuid");
         dms.put("string_date", "date");
         dms.put("string_date-time", "date-time");
+        dms.put("string_duration", "duration");
         dms.put("string_partial-time", "partial-time");
         dms.put("string_password", "password");
         dms.put("boolean_", "boolean");
@@ -361,6 +369,7 @@ public enum PrimitiveType {
                 "org.joda.time.ReadableDateTime",
                 "org.joda.time.DateTime",
                 "java.time.Instant");
+        addKeys(externalClasses, DURATION, "org.joda.time.Duration", "java.time.Duration");
         EXTERNAL_CLASSES = Collections.unmodifiableMap(externalClasses);
 
         final Map<String, PrimitiveType> names = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
