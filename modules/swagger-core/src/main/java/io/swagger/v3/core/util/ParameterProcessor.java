@@ -172,6 +172,9 @@ public class ParameterProcessor {
         }
 
         for (Annotation annotation : annotations) {
+            if (annotation instanceof io.swagger.v3.oas.annotations.Hidden) {
+                return null;
+            }
             if (annotation instanceof io.swagger.v3.oas.annotations.Parameter) {
                 io.swagger.v3.oas.annotations.Parameter p = (io.swagger.v3.oas.annotations.Parameter) annotation;
                 if (p.hidden()) {
