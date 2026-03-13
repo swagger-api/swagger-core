@@ -917,7 +917,7 @@ public abstract class AnnotationsUtils {
             // Only parse "null" as null value when nullable=true
             if (node.isNull() && schema.nullable()) {
                 schemaObject.setExample(null);
-            } else if (node.isObject() || node.isArray()) {
+            } else if (node.isObject() || node.isArray() || SchemaTypeUtils.isNumberSchema(schemaObject)) {
                 schemaObject.setExample(node);
             } else {
                 schemaObject.setExample(exampleValue);
@@ -983,7 +983,12 @@ public abstract class AnnotationsUtils {
     public static Schema resolveSchemaFromType(Class<?> schemaImplementation, Components components, JsonView jsonViewAnnotation, boolean openapi31) {
         return resolveSchemaFromType(schemaImplementation, components, jsonViewAnnotation, openapi31, null, null, null);
     }
-    public static Schema resolveSchemaFromType(Class<?> schemaImplementation, Components components, JsonView jsonViewAnnotation, boolean openapi31, io.swagger.v3.oas.annotations.media.Schema schemaAnnotation, io.swagger.v3.oas.annotations.media.ArraySchema arrayAnnotation, ModelConverterContext context) {
+    public static Schema resolveSchemaFromType(Class<?> schemaImplementation,
+                                               Components components,
+                                               JsonView jsonViewAnnotation,
+                                               boolean openapi31,
+                                               io.swagger.v3.oas.annotations.media.Schema schemaAnnotation,
+                                               io.swagger.v3.oas.annotations.media.ArraySchema arrayAnnotation, ModelConverterContext context) {
         Schema schemaObject;
         PrimitiveType primitiveType = PrimitiveType.fromType(schemaImplementation);
         if (primitiveType != null) {
