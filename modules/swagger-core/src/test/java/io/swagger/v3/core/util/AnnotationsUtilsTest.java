@@ -1,7 +1,13 @@
 package io.swagger.v3.core.util;
 
 import com.google.common.collect.ImmutableMap;
+import io.swagger.v3.oas.annotations.ExternalDocumentation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.StringToClassMapItem;
+import io.swagger.v3.oas.annotations.extensions.Extension;
 import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.DependentRequired;
+import io.swagger.v3.oas.annotations.media.DiscriminatorMapping;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.media.Schema;
@@ -10,6 +16,7 @@ import org.testng.annotations.Test;
 
 import java.io.File;
 import java.io.Serializable;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -204,6 +211,402 @@ public class AnnotationsUtilsTest {
 
         assertTrue(schema.isPresent());
         assertTrue(schema.get().getDefaultSetFlag());
+        assertNull(schema.get().getDefault());
+    }
+
+    @Test
+    public void testOverrideSoGetDefaultValueReturnsNull() throws NoSuchFieldException {
+        io.swagger.v3.oas.annotations.media.Schema schemaAnnotation =
+                DefaultHolder.class
+                        .getDeclaredField("noDefault")
+                        .getAnnotation(io.swagger.v3.oas.annotations.media.Schema.class);
+
+        io.swagger.v3.oas.annotations.media.Schema nullableDefaultSchema = new io.swagger.v3.oas.annotations.media.Schema() {
+
+            @Override
+            public Class<? extends Annotation> annotationType() {
+                return schemaAnnotation.annotationType();
+            }
+
+            @Override
+            public Class<?> implementation() {
+                return schemaAnnotation.implementation();
+            }
+
+            @Override
+            public Class<?> not() {
+                return schemaAnnotation.not();
+            }
+
+            @Override
+            public Class<?>[] oneOf() {
+                return schemaAnnotation.oneOf();
+            }
+
+            @Override
+            public Class<?>[] anyOf() {
+                return schemaAnnotation.anyOf();
+            }
+
+            @Override
+            public Class<?>[] allOf() {
+                return schemaAnnotation.allOf();
+            }
+
+            @Override
+            public String name() {
+                return schemaAnnotation.name();
+            }
+
+            @Override
+            public String title() {
+                return schemaAnnotation.title();
+            }
+
+            @Override
+            public double multipleOf() {
+                return schemaAnnotation.multipleOf();
+            }
+
+            @Override
+            public String maximum() {
+                return schemaAnnotation.maximum();
+            }
+
+            @Override
+            public boolean exclusiveMaximum() {
+                return schemaAnnotation.exclusiveMaximum();
+            }
+
+            @Override
+            public String minimum() {
+                return schemaAnnotation.minimum();
+            }
+
+            @Override
+            public boolean exclusiveMinimum() {
+                return schemaAnnotation.exclusiveMinimum();
+            }
+
+            @Override
+            public int maxLength() {
+                return schemaAnnotation.maxLength();
+            }
+
+            @Override
+            public int minLength() {
+                return schemaAnnotation.minLength();
+            }
+
+            @Override
+            public String pattern() {
+                return schemaAnnotation.pattern();
+            }
+
+            @Override
+            public int maxProperties() {
+                return schemaAnnotation.maxProperties();
+            }
+
+            @Override
+            public int minProperties() {
+                return schemaAnnotation.minProperties();
+            }
+
+            @Override
+            public String[] requiredProperties() {
+                return schemaAnnotation.requiredProperties();
+            }
+
+            @Override
+            public boolean required() {
+                return schemaAnnotation.required();
+            }
+
+            @Override
+            public RequiredMode requiredMode() {
+                return schemaAnnotation.requiredMode();
+            }
+
+            @Override
+            public String description() {
+                return schemaAnnotation.description();
+            }
+
+            @Override
+            public String format() {
+                return schemaAnnotation.format();
+            }
+
+            @Override
+            public String ref() {
+                return schemaAnnotation.ref();
+            }
+
+            @Override
+            public boolean nullable() {
+                return schemaAnnotation.nullable();
+            }
+
+            @Override
+            public boolean readOnly() {
+                return schemaAnnotation.readOnly();
+            }
+
+            @Override
+            public boolean writeOnly() {
+                return schemaAnnotation.writeOnly();
+            }
+
+            @Override
+            public AccessMode accessMode() {
+                return schemaAnnotation.accessMode();
+            }
+
+            @Override
+            public String example() {
+                return schemaAnnotation.example();
+            }
+
+            @Override
+            public ExternalDocumentation externalDocs() {
+                return schemaAnnotation.externalDocs();
+            }
+
+            @Override
+            public boolean deprecated() {
+                return schemaAnnotation.deprecated();
+            }
+
+            @Override
+            public String type() {
+                return schemaAnnotation.type();
+            }
+
+            @Override
+            public String[] allowableValues() {
+                return schemaAnnotation.allowableValues();
+            }
+
+            @Override
+            public String defaultValue() {
+                return null;
+            }
+
+            @Override
+            public String discriminatorProperty() {
+                return schemaAnnotation.discriminatorProperty();
+            }
+
+            @Override
+            public DiscriminatorMapping[] discriminatorMapping() {
+                return schemaAnnotation.discriminatorMapping();
+            }
+
+            @Override
+            public boolean hidden() {
+                return schemaAnnotation.hidden();
+            }
+
+            @Override
+            public boolean enumAsRef() {
+                return schemaAnnotation.enumAsRef();
+            }
+
+            @Override
+            public Class<?>[] subTypes() {
+                return schemaAnnotation.subTypes();
+            }
+
+            @Override
+            public Extension[] extensions() {
+                return schemaAnnotation.extensions();
+            }
+
+            @Override
+            public Class<?>[] prefixItems() {
+                return schemaAnnotation.prefixItems();
+            }
+
+            @Override
+            public String[] types() {
+                return schemaAnnotation.types();
+            }
+
+            @Override
+            public int exclusiveMaximumValue() {
+                return schemaAnnotation.exclusiveMaximumValue();
+            }
+
+            @Override
+            public int exclusiveMinimumValue() {
+                return schemaAnnotation.exclusiveMinimumValue();
+            }
+
+            @Override
+            public Class<?> contains() {
+                return schemaAnnotation.contains();
+            }
+
+            @Override
+            public String $id() {
+                return schemaAnnotation.$id();
+            }
+
+            @Override
+            public String $schema() {
+                return schemaAnnotation.$schema();
+            }
+
+            @Override
+            public String $anchor() {
+                return schemaAnnotation.$anchor();
+            }
+
+            @Override
+            public String $vocabulary() {
+                return schemaAnnotation.$vocabulary();
+            }
+
+            @Override
+            public String $dynamicAnchor() {
+                return schemaAnnotation.$dynamicAnchor();
+            }
+
+            @Override
+            public String $dynamicRef() {
+                return schemaAnnotation.$dynamicRef();
+            }
+
+            @Override
+            public String contentEncoding() {
+                return schemaAnnotation.contentEncoding();
+            }
+
+            @Override
+            public String contentMediaType() {
+                return schemaAnnotation.contentMediaType();
+            }
+
+            @Override
+            public Class<?> contentSchema() {
+                return schemaAnnotation.contentSchema();
+            }
+
+            @Override
+            public Class<?> propertyNames() {
+                return schemaAnnotation.propertyNames();
+            }
+
+            @Override
+            public int maxContains() {
+                return schemaAnnotation.maxContains();
+            }
+
+            @Override
+            public int minContains() {
+                return schemaAnnotation.minContains();
+            }
+
+            @Override
+            public Class<?> additionalItems() {
+                return schemaAnnotation.additionalItems();
+            }
+
+            @Override
+            public Class<?> unevaluatedItems() {
+                return schemaAnnotation.unevaluatedItems();
+            }
+
+            @Override
+            public Class<?> _if() {
+                return schemaAnnotation._if();
+            }
+
+            @Override
+            public Class<?> _else() {
+                return schemaAnnotation._else();
+            }
+
+            @Override
+            public Class<?> then() {
+                return schemaAnnotation.then();
+            }
+
+            @Override
+            public String $comment() {
+                return schemaAnnotation.$comment();
+            }
+
+            @Override
+            public Class<?>[] exampleClasses() {
+                return schemaAnnotation.exampleClasses();
+            }
+
+            @Override
+            public AdditionalPropertiesValue additionalProperties() {
+                return schemaAnnotation.additionalProperties();
+            }
+
+            @Override
+            public DependentRequired[] dependentRequiredMap() {
+                return schemaAnnotation.dependentRequiredMap();
+            }
+
+            @Override
+            public StringToClassMapItem[] dependentSchemas() {
+                return schemaAnnotation.dependentSchemas();
+            }
+
+            @Override
+            public StringToClassMapItem[] patternProperties() {
+                return schemaAnnotation.patternProperties();
+            }
+
+            @Override
+            public StringToClassMapItem[] properties() {
+                return schemaAnnotation.properties();
+            }
+
+            @Override
+            public Class<?> unevaluatedProperties() {
+                return schemaAnnotation.unevaluatedProperties();
+            }
+
+            @Override
+            public Class<?> additionalPropertiesSchema() {
+                return schemaAnnotation.additionalPropertiesSchema();
+            }
+
+            @Override
+            public String[] examples() {
+                return schemaAnnotation.examples();
+            }
+
+            @Override
+            public String _const() {
+                return schemaAnnotation._const();
+            }
+
+            @Override
+            public SchemaResolution schemaResolution() {
+                return schemaAnnotation.schemaResolution();
+            }
+        };
+
+        Optional<Schema> schema =
+                AnnotationsUtils.getSchemaFromAnnotation(
+                        nullableDefaultSchema,
+                        null,
+                        null,
+                        false,
+                        null,
+                        Schema.SchemaResolution.DEFAULT,
+                        null
+                );
+
+        assertTrue(schema.isPresent());
+        assertFalse(schema.get().getDefaultSetFlag());
         assertNull(schema.get().getDefault());
     }
 
