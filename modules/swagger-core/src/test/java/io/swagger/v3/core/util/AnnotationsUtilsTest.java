@@ -21,9 +21,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static io.swagger.v3.oas.annotations.media.Schema.DEFAULT_SENTINEL;
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotEquals;
-import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.*;
 
 public class AnnotationsUtilsTest {
 
@@ -126,6 +124,87 @@ public class AnnotationsUtilsTest {
 
         assertTrue(schema.isPresent());
         assertEquals(schema.get().getExample(), "5 lacs per annum");
+    }
+
+    static class DefaultHolder {
+
+        @io.swagger.v3.oas.annotations.media.Schema(type = "string")
+        String noDefault;
+
+        @io.swagger.v3.oas.annotations.media.Schema(type = "string", defaultValue = "null")
+        String nullDefaultValue;
+
+        @io.swagger.v3.oas.annotations.media.Schema(type = "string", nullable = true, defaultValue = "null")
+        String nullDefaultNullableValue;
+    }
+
+    @Test
+    public void testNoDefaultSet() throws NoSuchFieldException {
+        io.swagger.v3.oas.annotations.media.Schema schemaAnnotation =
+                DefaultHolder.class
+                        .getDeclaredField("noDefault")
+                        .getAnnotation(io.swagger.v3.oas.annotations.media.Schema.class);
+
+        Optional<Schema> schema =
+                AnnotationsUtils.getSchemaFromAnnotation(
+                        schemaAnnotation,
+                        null,
+                        null,
+                        false,
+                        null,
+                        Schema.SchemaResolution.DEFAULT,
+                        null
+                );
+
+        assertTrue(schema.isPresent());
+        assertFalse(schema.get().getDefaultSetFlag());
+        assertNull(schema.get().getDefault());
+    }
+
+    @Test
+    public void testSetDefaultNullWithoutNullable() throws NoSuchFieldException {
+        io.swagger.v3.oas.annotations.media.Schema schemaAnnotation =
+                DefaultHolder.class
+                        .getDeclaredField("nullDefaultValue")
+                        .getAnnotation(io.swagger.v3.oas.annotations.media.Schema.class);
+
+        Optional<Schema> schema =
+                AnnotationsUtils.getSchemaFromAnnotation(
+                        schemaAnnotation,
+                        null,
+                        null,
+                        false,
+                        null,
+                        Schema.SchemaResolution.DEFAULT,
+                        null
+                );
+
+        assertTrue(schema.isPresent());
+        assertTrue(schema.get().getDefaultSetFlag());
+        assertEquals(schema.get().getDefault(), "null");
+    }
+
+    @Test
+    public void testSetDefaultNullWithNullable() throws NoSuchFieldException {
+        io.swagger.v3.oas.annotations.media.Schema schemaAnnotation =
+                DefaultHolder.class
+                        .getDeclaredField("nullDefaultNullableValue")
+                        .getAnnotation(io.swagger.v3.oas.annotations.media.Schema.class);
+
+        Optional<Schema> schema =
+                AnnotationsUtils.getSchemaFromAnnotation(
+                        schemaAnnotation,
+                        null,
+                        null,
+                        false,
+                        null,
+                        Schema.SchemaResolution.DEFAULT,
+                        null
+                );
+
+        assertTrue(schema.isPresent());
+        assertTrue(schema.get().getDefaultSetFlag());
+        assertNull(schema.get().getDefault());
     }
 
     // --- mergeSchemaAnnotations defaultValue tests ---
