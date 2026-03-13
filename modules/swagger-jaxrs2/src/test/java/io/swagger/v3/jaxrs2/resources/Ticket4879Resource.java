@@ -28,6 +28,10 @@ public class Ticket4879Resource {
     @Path("/testsize")
     public void testSize(@Size(min = 1, max = 100) List<String> myList) {}
 
+    @GET
+    @Path("/teststringsize")
+    public void testStringSize(@Size(min = 1, max = 50) String myString) {}
+
     public static class DefaultClass {
         @Schema(defaultValue = "true")
         public Boolean name;
