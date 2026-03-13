@@ -780,7 +780,7 @@ public abstract class AnnotationsUtils {
             schemaObject.setExamples(parseExamplesArray(schema));
         }
 
-        if (!DEFAULT_SENTINEL.equals(schema.defaultValue())){
+        if (schema.defaultValue() != null && !DEFAULT_SENTINEL.equals(schema.defaultValue())) {
             setDefaultSchema(schema, openapi31, schemaObject);
         }
         if (StringUtils.isNotBlank(schema.example()) &&
