@@ -5655,6 +5655,7 @@ public class ReaderTest {
                 "      - FOO\n" +
                 "      - BAR\n";
         SerializationMatchers.assertEqualsToYaml31(openAPI, yaml);
+        ModelResolver.enumsAsRef = false;
     }
 
     static class RemoveUnusedSchemasOAS31Filter extends AbstractSpecFilter {
