@@ -263,8 +263,8 @@ public class AnnotatedType {
         }
         return Arrays.stream(annotations)
                 .filter(a -> {
-                    String pkg = a.annotationType().getPackage().getName();
-                    return !pkg.startsWith("java.") && !pkg.startsWith("jdk.") && !pkg.startsWith("sun.");
+                    Package pkg = a.annotationType().getPackage();
+                    return a.annotationType().equals(Deprecated.class) || processableAnnotationPackage(pkg);
                 })
                 .sorted(Comparator.comparing(a -> a.annotationType().getName()))
                 .collect(Collectors.toList());
@@ -275,13 +275,13 @@ public class AnnotatedType {
         if (this == o) return true;
         if (!(o instanceof AnnotatedType)) return false;
         AnnotatedType that = (AnnotatedType) o;
-        List<Annotation> thisAnnotatinons = getProcessedAnnotations(this.ctxAnnotations);
-        List<Annotation> thatAnnotatinons = getProcessedAnnotations(that.ctxAnnotations);
+        List<Annotation> thisAnnotations = getProcessedAnnotations(this.ctxAnnotations);
+        List<Annotation> thatAnnotations = getProcessedAnnotations(that.ctxAnnotations);
         return  includePropertiesWithoutJSONView == that.includePropertiesWithoutJSONView &&
                 schemaProperty == that.schemaProperty &&
                 isSubtype == that.isSubtype &&
                 Objects.equals(type, that.type) &&
-                Objects.equals(thisAnnotatinons, thatAnnotatinons) &&
+                Objects.equals(thisAnnotations, thatAnnotations) &&
                 Objects.equals(jsonViewAnnotation, that.jsonViewAnnotation) &&
                 (!schemaProperty || Objects.equals(propertyName, that.propertyName));
     }
@@ -290,5 +290,10 @@ public class AnnotatedType {
     public int hashCode() {
         List<Annotation> processedAnnotations = getProcessedAnnotations(this.ctxAnnotations);
         return Objects.hash(type, jsonViewAnnotation, includePropertiesWithoutJSONView, processedAnnotations, schemaProperty, isSubtype, schemaProperty ? propertyName : null);
+    }
+
+    private boolean processableAnnotationPackage(Package pkg) {
+        String pkgName = pkg.getName();
+        return !pkgName.startsWith("java.") && !pkgName.startsWith("jdk.") && !pkgName.startsWith("sun.");
     }
 }
