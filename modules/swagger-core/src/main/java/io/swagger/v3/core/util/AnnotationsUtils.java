@@ -130,6 +130,7 @@ public abstract class AnnotationsUtils {
                 && StringUtils.isBlank(schema._const())
                 && schema.additionalProperties().equals(io.swagger.v3.oas.annotations.media.Schema.AdditionalPropertiesValue.USE_ADDITIONAL_PROPERTIES_ANNOTATION)
                 && schema.additionalPropertiesSchema().equals(Void.class)
+                && schema.examples().length == 0
                 ) {
             return false;
         }
@@ -586,7 +587,7 @@ public abstract class AnnotationsUtils {
             arraySchemaObject.setWriteOnly(null);
         }
         if (openapi31 && arraySchemaAnnotation.examples().length > 0) {
-            arraySchemaObject.setExamples(parseExamplesArray(arraySchemaAnnotation));
+            arraySchemaObject.setExamples(parseExamplesArray(arraySchemaAnnotation, arraySchemaObject));
         }
     }
 
@@ -777,7 +778,7 @@ public abstract class AnnotationsUtils {
             schemaObject.setUnevaluatedProperties(resolveSchemaFromType(schema.unevaluatedProperties(), components, jsonViewAnnotation, openapi31, null, null, context));
         }
         if (openapi31 && schema.examples().length > 0) {
-            schemaObject.setExamples(parseExamplesArray(schema));
+            schemaObject.setExamples(parseExamplesArray(schema, schemaObject));
         }
 
         if (schema.defaultValue() != null && !DEFAULT_SENTINEL.equals(schema.defaultValue())) {
@@ -917,7 +918,7 @@ public abstract class AnnotationsUtils {
             // Only parse "null" as null value when nullable=true
             if (node.isNull() && schema.nullable()) {
                 schemaObject.setExample(null);
-            } else if (node.isObject() || node.isArray() || SchemaTypeUtils.isNumberSchema(schemaObject)) {
+            } else if (shouldUseNodeAsExample(node, schemaObject)) {
                 schemaObject.setExample(node);
             } else {
                 schemaObject.setExample(exampleValue);
@@ -925,6 +926,19 @@ public abstract class AnnotationsUtils {
         } catch (IOException ignored) {
             schemaObject.setExample(exampleValue);
         }
+    }
+
+    private static boolean shouldUseNodeAsExample(JsonNode node, Schema schemaObject) {
+        if (node.isObject() || node.isArray()) {
+            return true;
+        }
+        if (schemaObject != null && SchemaTypeUtils.isNumberSchema(schemaObject)) {
+            return true;
+        }
+        if (schemaObject != null && SchemaTypeUtils.isStringSchema(schemaObject)) {
+            return false;
+        }
+        return node.isNumber();
     }
 
     private static void setDefaultSchema(io.swagger.v3.oas.annotations.media.Schema schema, boolean openapi31, Schema schemaObject) {
@@ -947,6 +961,10 @@ public abstract class AnnotationsUtils {
     }
 
     public static List<Object> parseExamplesArray(io.swagger.v3.oas.annotations.media.Schema schema) {
+        return parseExamplesArray(schema, null);
+    }
+
+    public static List<Object> parseExamplesArray(io.swagger.v3.oas.annotations.media.Schema schema, Schema schemaObject) {
         String[] examplesArray = schema.examples();
         List<Object> parsedExamples = new ArrayList<>();
         final ObjectMapper mapper = Json31.mapper();
@@ -963,7 +981,9 @@ public abstract class AnnotationsUtils {
                 // Only parse "null" as null value when nullable=true
                 if (node.isNull() && schema.nullable()) {
                     parsedExamples.add(null);
-                } else if (node.isObject() || node.isArray()) {
+                } else if (schemaObject == null && "string".equals(schema.type())) {
+                    parsedExamples.add(trimmed);
+                } else if (shouldUseNodeAsExample(node, schemaObject)) {
                     parsedExamples.add(node);
                 } else {
                     parsedExamples.add(trimmed);

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.core.converter.ModelConverters;
 import io.swagger.v3.core.converter.ResolvedSchema;
+import io.swagger.v3.core.util.Json;
 import io.swagger.v3.core.util.Json31;
 import org.testng.annotations.Test;
 
@@ -49,12 +50,91 @@ public class Issue5061Test {
         assertExampleIsNumber(bigDecimalFieldType);
     }
 
+    @Test
+    public void testDefaultValueNumericConversionThroughModelResolver() throws Exception {
+        ResolvedSchema schema = ModelConverters.getInstance(false).readAllAsResolvedSchema(
+                ModelWithDefaultValues.class
+        );
+
+        assertNotNull(schema, "Schema should resolve");
+        String json = Json.pretty(schema);
+        assertNotNull(json);
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode root = mapper.readTree(json);
+
+        JsonNode bigDecimalDefault = root.at("/schema/properties/bigDecimalWithDefault");
+        assertTrue(bigDecimalDefault.get("default").isNumber(),
+                "default on BigDecimal field should be serialized as a JSON number");
+
+        JsonNode stringDefault = root.at("/schema/properties/stringWithDefault");
+        assertTrue(stringDefault.get("default").isTextual(),
+                "default on explicit type=\"string\" field should remain a JSON string");
+    }
+
+    @Test
+    public void testExamplesArrayValuesAreSerializedAsJsonNumbers() throws Exception {
+        ResolvedSchema schema = ModelConverters.getInstance(true).readAllAsResolvedSchema(
+                ModelWithExamplesArray.class
+        );
+
+        assertNotNull(schema, "Schema should resolve");
+        String json = Json31.pretty(schema);
+        assertNotNull(json);
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode root = mapper.readTree(json);
+
+        JsonNode bigDecimalExamples = root.at("/schema/properties/bigDecimalWithExamples");
+        assertNotNull(bigDecimalExamples.get("examples"), "examples key should exist in JSON, full node: " + bigDecimalExamples);
+        assertTrue(bigDecimalExamples.get("examples").get(0).isNumber(),
+                "examples on BigDecimal field should be serialized as JSON numbers");
+        assertTrue(bigDecimalExamples.get("examples").get(1).isNumber(),
+                "examples on BigDecimal field should be serialized as JSON numbers");
+
+        JsonNode stringExamples = root.at("/schema/properties/stringWithExamples");
+        assertTrue(stringExamples.get("examples").get(0).isTextual(),
+                "examples on explicit type=\"string\" field should remain JSON strings");
+    }
+
     private void assertExampleIsNumber(JsonNode node) {
         assertTrue(node.get("example").isNumber(), "should be a number");
     }
 
     private void assertExampleIsString(JsonNode node) {
         assertTrue(node.get("example").isTextual(), "should be a string");
+    }
+
+    public static class ModelWithDefaultValues {
+
+        @io.swagger.v3.oas.annotations.media.Schema(defaultValue = "10.00")
+        BigDecimal bigDecimalWithDefault;
+
+        @io.swagger.v3.oas.annotations.media.Schema(defaultValue = "42", type = "string")
+        String stringWithDefault;
+
+        public BigDecimal getBigDecimalWithDefault() {
+            return bigDecimalWithDefault;
+        }
+
+        public String getStringWithDefault() {
+            return stringWithDefault;
+        }
+    }
+
+    public static class ModelWithExamplesArray {
+
+        @io.swagger.v3.oas.annotations.media.Schema(examples = {"10.00", "20.50"})
+        BigDecimal bigDecimalWithExamples;
+
+        @io.swagger.v3.oas.annotations.media.Schema(examples = {"hello", "world"}, type = "string")
+        String stringWithExamples;
+
+        public BigDecimal getBigDecimalWithExamples() {
+            return bigDecimalWithExamples;
+        }
+
+        public String getStringWithExamples() {
+            return stringWithExamples;
+        }
     }
 
     public static class ModelWithDifferentCombinationOfNumberFieldsWithExamples {

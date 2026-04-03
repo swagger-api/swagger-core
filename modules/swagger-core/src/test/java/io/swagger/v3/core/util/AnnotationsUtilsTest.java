@@ -1,5 +1,6 @@
 package io.swagger.v3.core.util;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.IntNode;
 import com.google.common.collect.ImmutableMap;
 import io.swagger.v3.oas.annotations.ExternalDocumentation;
@@ -24,12 +25,17 @@ import java.math.BigInteger;
 import java.net.URI;
 import java.net.URL;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
 import static io.swagger.v3.oas.annotations.media.Schema.DEFAULT_SENTINEL;
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNotEquals;
+import static org.testng.Assert.assertTrue;
+import static org.testng.AssertJUnit.assertNull;
 
 public class AnnotationsUtilsTest {
 
@@ -116,6 +122,24 @@ public class AnnotationsUtilsTest {
 
         @io.swagger.v3.oas.annotations.media.Schema(type = "integer", example = "5")
         String integerValue;
+
+        @io.swagger.v3.oas.annotations.media.Schema(example = "10.00")
+        BigDecimal bigDecimalValue;
+
+        @io.swagger.v3.oas.annotations.media.Schema(example = "42", type = "string")
+        String stringWith42;
+
+        @io.swagger.v3.oas.annotations.media.Schema(defaultValue = "10.00")
+        BigDecimal bigDecimalDefault;
+
+        @io.swagger.v3.oas.annotations.media.Schema(defaultValue = "42", type = "string")
+        String stringDefaultWith42;
+
+        @io.swagger.v3.oas.annotations.media.Schema(examples = {"10.00", "20.50"})
+        BigDecimal bigDecimalExamples;
+
+        @io.swagger.v3.oas.annotations.media.Schema(examples = {"42"}, type = "string")
+        String stringExamplesWith42;
     }
 
     @Test
@@ -659,6 +683,96 @@ public class AnnotationsUtilsTest {
         assertTrue(schema.isPresent());
         assertFalse(schema.get().getDefaultSetFlag());
         assertNull(schema.get().getDefault());
+    }
+
+    @Test
+    public void testExampleOnBigDecimalFieldWithoutExplicitTypeShouldBeNumber() throws Exception {
+        io.swagger.v3.oas.annotations.media.Schema schemaAnnotation =
+                ExampleHolder.class
+                        .getDeclaredField("bigDecimalValue")
+                        .getAnnotation(io.swagger.v3.oas.annotations.media.Schema.class);
+
+        Optional<Schema> schema =
+                AnnotationsUtils.getSchemaFromAnnotation(
+                        schemaAnnotation,
+                        null,
+                        null,
+                        false,
+                        null,
+                        Schema.SchemaResolution.DEFAULT,
+                        null
+                );
+
+        assertTrue(schema.isPresent());
+        Object example = schema.get().getExample();
+        assertTrue(example instanceof JsonNode, "Example should be a JsonNode, not a plain String");
+        assertTrue(((JsonNode) example).isNumber(), "Example should be a numeric node for a BigDecimal field");
+    }
+
+    @Test
+    public void testExampleWithExplicitStringTypeShouldNotProduceNumericNode() throws Exception {
+        // Regression guard for #4999: explicit type="string" must never yield a numeric node
+        io.swagger.v3.oas.annotations.media.Schema schemaAnnotation =
+                ExampleHolder.class
+                        .getDeclaredField("stringWith42")
+                        .getAnnotation(io.swagger.v3.oas.annotations.media.Schema.class);
+
+        Optional<Schema> schema =
+                AnnotationsUtils.getSchemaFromAnnotation(
+                        schemaAnnotation,
+                        null,
+                        null,
+                        false,
+                        null,
+                        Schema.SchemaResolution.DEFAULT,
+                        null
+                );
+
+        assertTrue(schema.isPresent());
+        Object example = schema.get().getExample();
+        assertFalse(example instanceof JsonNode && ((JsonNode) example).isNumber(),
+                "Example must not be a numeric node when type is explicitly 'string'");
+        assertEquals(example, "42", "Example should be the string \"42\"");
+    }
+
+    @Test
+    public void testDefaultWithExplicitStringTypeShouldNotProduceNumericNode() throws Exception {
+        io.swagger.v3.oas.annotations.media.Schema schemaAnnotation =
+                ExampleHolder.class
+                        .getDeclaredField("stringDefaultWith42")
+                        .getAnnotation(io.swagger.v3.oas.annotations.media.Schema.class);
+
+        Optional<Schema> schema =
+                AnnotationsUtils.getSchemaFromAnnotation(
+                        schemaAnnotation,
+                        null,
+                        null,
+                        false,
+                        null,
+                        Schema.SchemaResolution.DEFAULT,
+                        null
+                );
+
+        assertTrue(schema.isPresent());
+        Object defaultValue = schema.get().getDefault();
+        assertFalse(defaultValue instanceof JsonNode && ((JsonNode) defaultValue).isNumber(),
+                "Default must not be a numeric node when type is explicitly 'string'");
+        assertEquals(defaultValue, "42", "Default should be the string \"42\"");
+    }
+
+    @Test
+    public void testExamplesArrayWithExplicitStringTypeShouldNotProduceNumericNodes31() throws Exception {
+        io.swagger.v3.oas.annotations.media.Schema schemaAnnotation =
+                ExampleHolder.class
+                        .getDeclaredField("stringExamplesWith42")
+                        .getAnnotation(io.swagger.v3.oas.annotations.media.Schema.class);
+
+        List<Object> examples = AnnotationsUtils.parseExamplesArray(schemaAnnotation);
+
+        assertEquals(examples.size(), 1);
+        assertFalse(examples.get(0) instanceof JsonNode && ((JsonNode) examples.get(0)).isNumber(),
+                "Example must not be a numeric JsonNode");
+        assertEquals(examples.get(0), "42", "Example should be the string \"42\"");
     }
 
     // --- mergeSchemaAnnotations defaultValue tests ---
