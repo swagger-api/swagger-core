@@ -602,9 +602,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         } else if (hasCompositionKeywords) {
             model = openapi31 ? new JsonSchema() : new ComposedSchema();
             model.name(name);
-            if (
-                    (openapi31 && Boolean.TRUE.equals(PrimitiveType.explicitObjectType)) ||
-                    (!openapi31 && (!Boolean.FALSE.equals(PrimitiveType.explicitObjectType)))) {
+            if (isExplicitObjectType()) {
                 if (openapi31 && resolvedArrayAnnotation == null) {
                     model.addType("object");
                 } else {
@@ -620,8 +618,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 return model;
             } else {
                 model = openapi31 ? new JsonSchema().name(name) : new Schema().name(name);
-                if ((openapi31 && Boolean.TRUE.equals(PrimitiveType.explicitObjectType)) ||
-                    (!openapi31 && (!Boolean.FALSE.equals(PrimitiveType.explicitObjectType)))) {
+                if (isExplicitObjectType()) {
                     if (openapi31 && resolvedArrayAnnotation == null) {
                         model.addType("object");
                     } else {
@@ -3571,5 +3568,10 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         return type != null &&
                type.getRawClass() != null &&
                java.util.stream.Stream.class.isAssignableFrom(type.getRawClass());
+    }
+
+    private boolean isExplicitObjectType() {
+        return (openapi31 && Boolean.TRUE.equals(PrimitiveType.explicitObjectType)) ||
+               (!openapi31 && (!Boolean.FALSE.equals(PrimitiveType.explicitObjectType)));
     }
 }
