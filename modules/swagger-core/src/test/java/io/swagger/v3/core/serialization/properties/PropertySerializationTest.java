@@ -6,6 +6,7 @@ import io.swagger.v3.core.util.JsonAssert;
 import io.swagger.v3.oas.models.media.ArraySchema;
 import io.swagger.v3.oas.models.media.BooleanSchema;
 import io.swagger.v3.oas.models.media.DateSchema;
+import io.swagger.v3.oas.models.media.DateTimeLocalSchema;
 import io.swagger.v3.oas.models.media.DateTimeSchema;
 import io.swagger.v3.oas.models.media.IntegerSchema;
 import io.swagger.v3.oas.models.media.MapSchema;
@@ -78,6 +79,23 @@ public class PropertySerializationTest {
         assertEquals(p.getType(), "string");
         assertEquals(p.getFormat(), "date-time");
         assertEquals(p.getClass(), DateTimeSchema.class);
+        JsonAssert.assertJsonEquals(m, m.writeValueAsString(p), json);
+    }
+
+    @Test(description = "it should serialize a DateTimeLocalProperty")
+    public void serializeDateTimeLocalProperty() throws IOException {
+        final DateTimeLocalSchema p = new DateTimeLocalSchema();
+        final String json = "{\"type\":\"string\",\"format\":\"date-time-local\"}";
+        JsonAssert.assertJsonEquals(m, m.writeValueAsString(p), json);
+    }
+
+    @Test(description = "it should deserialize a DateTimeLocalProperty")
+    public void deserializeDateTimeLocalProperty() throws IOException {
+        final String json = "{\"type\":\"string\",\"format\":\"date-time-local\"}";
+        final Schema p = m.readValue(json, Schema.class);
+        assertEquals(p.getType(), "string");
+        assertEquals(p.getFormat(), "date-time-local");
+        assertEquals(p.getClass(), DateTimeLocalSchema.class);
         JsonAssert.assertJsonEquals(m, m.writeValueAsString(p), json);
     }
 
