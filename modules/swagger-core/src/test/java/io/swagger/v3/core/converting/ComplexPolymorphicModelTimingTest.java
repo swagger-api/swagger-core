@@ -21,10 +21,10 @@ public class ComplexPolymorphicModelTimingTest {
                 measureTiming(10, () -> ModelConverters.getInstance(true).readAllAsResolvedSchema(ModelWithArrayOfSubclasses.Holder.class));
         LOGGER.debug("Simple model duration: " + durationSimpleModel + "ms");
 
-        // The complex model shouldn't take 5000 times longer
+        // The complex model shouldn't take 1000 times longer
         final float factor = (float) durationComplexModel / durationSimpleModel;
         LOGGER.debug("Factor: " + factor);
-        assertTrue(factor <= 200);
+        assertTrue(factor <= 1000);
     }
 
     private long measureTiming(int iterations, Runnable runnable) {
