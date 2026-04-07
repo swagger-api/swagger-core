@@ -87,7 +87,7 @@ public class ModelConverterContextImpl implements ModelConverterContext {
             processedTypes.add(type);
         }
         if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug(String.format("resolve %s", System.identityHashCode(this)));
+            LOGGER.debug(String.format("resolve %s", type.getType()));
         }
         Iterator<ModelConverter> converters = this.getConverters();
         Schema resolved = null;
