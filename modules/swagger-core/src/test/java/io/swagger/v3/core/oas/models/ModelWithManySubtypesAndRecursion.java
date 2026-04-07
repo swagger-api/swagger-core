@@ -19,8 +19,8 @@ public class ModelWithManySubtypesAndRecursion {
                     @DiscriminatorMapping(schema = SubF.class, value = "f"),
                     @DiscriminatorMapping(schema = SubG.class, value = "g"),
                     @DiscriminatorMapping(schema = SubH.class, value = "h"),
-                    //@DiscriminatorMapping(schema = SubI.class, value = "i"),
-                    //@DiscriminatorMapping(schema = SubJ.class, value = "j"),
+                    @DiscriminatorMapping(schema = SubI.class, value = "i"),
+                    @DiscriminatorMapping(schema = SubJ.class, value = "j"),
             },
             description = "Stuff"
     )
