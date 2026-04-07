@@ -1,0 +1,70 @@
+{
+  "schema" : {
+    "type" : "object",
+    "properties" : {
+      "nullableString" : {
+        "type" : "string",
+        "nullable" : true
+      },
+      "requiredString" : {
+        "type" : "string"
+      },
+      "nullableModel" : {
+        "$ref" : "#/components/schemas/Model"
+      },
+      "strings" : {
+        "type" : "array",
+        "nullable" : true,
+        "items" : {
+          "type" : "string"
+        }
+      },
+      "models" : {
+        "type" : "array",
+        "nullable" : true,
+        "items" : {
+          "$ref" : "#/components/schemas/Model"
+        }
+      }
+    }
+  },
+  "referencedSchemas" : {
+    "Model" : {
+      "type" : "object",
+      "properties" : {
+        "field" : {
+          "type" : "string"
+        }
+      }
+    },
+    "ModelWithObjectAndList" : {
+      "type" : "object",
+      "properties" : {
+        "nullableString" : {
+          "type" : "string",
+          "nullable" : true
+        },
+        "requiredString" : {
+          "type" : "string"
+        },
+        "nullableModel" : {
+          "$ref" : "#/components/schemas/Model"
+        },
+        "strings" : {
+          "type" : "array",
+          "nullable" : true,
+          "items" : {
+            "type" : "string"
+          }
+        },
+        "models" : {
+          "type" : "array",
+          "nullable" : true,
+          "items" : {
+            "$ref" : "#/components/schemas/Model"
+          }
+        }
+      }
+    }
+  }
+}
