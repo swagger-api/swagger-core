@@ -23,6 +23,11 @@ python $CUR/CI/publishRelease.py "$SC_RELEASE_TAG"
 ./mvnw versions:set -DnewVersion="${SC_NEXT_VERSION}-SNAPSHOT"
 ./mvnw versions:commit
 
+cd modules/swagger-bom
+../../mvnw versions:set -DnewVersion="${SC_NEXT_VERSION}-SNAPSHOT"
+../../mvnw versions:commit
+cd ../..
+
 cd modules/swagger-project-jakarta
 ../../mvnw versions:set -DnewVersion="${SC_NEXT_VERSION}-SNAPSHOT"
 ../../mvnw versions:commit
