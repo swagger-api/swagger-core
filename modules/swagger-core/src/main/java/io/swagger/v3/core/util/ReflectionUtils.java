@@ -491,24 +491,24 @@ public class ReflectionUtils {
     public static List<Method> getAnnotatedMethods(Class<?> type, Class<? extends Annotation> annotation) {
         List<Method> methods = new ArrayList<>();
         for (Class<?> clazz = type; clazz != Object.class; clazz = clazz.getSuperclass()) {
-            for (Method method : clazz.getDeclaredMethods()) {
-                if (method.isAnnotationPresent(annotation)) {
-                    methods.add(method);
-                }
-            }
+            collectAnnotatedDeclaredMethods(clazz, annotation, methods);
         }
-        getAnnotatedMethodsFromInterfaces(type, annotation, methods);
+        collectAnnotatedMethodsFromInterfaces(type, annotation, methods);
         return methods;
     }
 
-    private static void getAnnotatedMethodsFromInterfaces(Class<?> type, Class<? extends Annotation> annotation, List<Method> methods) {
+    private static void collectAnnotatedMethodsFromInterfaces(Class<?> type, Class<? extends Annotation> annotation, List<Method> methods) {
         for (Class<?> iface : type.getInterfaces()) {
-            for (Method method : iface.getDeclaredMethods()) {
-                if (method.isAnnotationPresent(annotation)) {
-                    methods.add(method);
-                }
+            collectAnnotatedDeclaredMethods(iface, annotation, methods);
+            collectAnnotatedMethodsFromInterfaces(iface, annotation, methods);
+        }
+    }
+
+    private static void collectAnnotatedDeclaredMethods(Class<?> cls, Class<? extends Annotation> annotation, List<Method> methods) {
+        for (Method method : cls.getDeclaredMethods()) {
+            if (method.isAnnotationPresent(annotation)) {
+                methods.add(method);
             }
-            getAnnotatedMethodsFromInterfaces(iface, annotation, methods);
         }
     }
 }

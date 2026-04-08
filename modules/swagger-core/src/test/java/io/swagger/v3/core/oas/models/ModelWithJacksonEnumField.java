@@ -11,4 +11,5 @@ public class ModelWithJacksonEnumField {
     public JacksonIntegerValueFieldEnum fifthEnumValue;
     public JacksonValuePrivateEnum sixthEnumValue;
     public JacksonValueInInterfaceEnum seventhEnumValue;
+    public JacksonValueDefaultMethodEnum eighthEnumValue;
 }
