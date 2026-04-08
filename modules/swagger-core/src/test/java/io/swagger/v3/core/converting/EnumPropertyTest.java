@@ -7,6 +7,8 @@ import io.swagger.v3.core.converter.ModelConverters;
 import io.swagger.v3.core.jackson.ModelResolver;
 import io.swagger.v3.core.jackson.TypeNameResolver;
 import io.swagger.v3.core.matchers.SerializationMatchers;
+import io.swagger.v3.core.oas.models.JacksonValueDefaultMethodEnum;
+import io.swagger.v3.core.oas.models.JacksonValuePrivateEnum;
 import io.swagger.v3.core.oas.models.Model1979;
 import io.swagger.v3.core.oas.models.ModelWithEnumField;
 import io.swagger.v3.core.oas.models.ModelWithEnumProperty;
@@ -20,9 +22,11 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Map;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
 public class EnumPropertyTest {
@@ -235,5 +239,31 @@ public class EnumPropertyTest {
         assertTrue(sixthEnumProperty instanceof StringSchema);
         final StringSchema sixthStringProperty = (StringSchema) sixthEnumProperty;
         assertEquals(sixthStringProperty.getEnum(), Arrays.asList("one", "two", "three"));
+
+        final Schema seventhEnumProperty = (Schema) model.getProperties().get("seventhEnumValue");
+        assertTrue(seventhEnumProperty instanceof IntegerSchema);
+        final IntegerSchema seventhEnumStringProperty = (IntegerSchema) seventhEnumProperty;
+        assertEquals(seventhEnumStringProperty.getEnum(), Collections.singletonList(10));
+
+        final Schema eighthEnumProperty = (Schema) model.getProperties().get("eighthEnumValue");
+        assertTrue(eighthEnumProperty instanceof StringSchema);
+        final StringSchema eighthStringProperty = (StringSchema) eighthEnumProperty;
+        assertEquals(eighthStringProperty.getEnum(), Arrays.asList("alpha", "beta", "gamma"));
+    }
+
+    @Test(description = "it should extract enum values from a private @JsonValue method declared directly on the enum (issue #3998)")
+    public void testJsonValueOnPrivateMethodIsRecognized() {
+        final Schema schema = context.resolve(new AnnotatedType(JacksonValuePrivateEnum.class));
+        assertNotNull(schema);
+        assertEquals(schema.getType(), "string");
+        assertEquals(schema.getEnum(), Arrays.asList("one", "two", "three"));
+    }
+
+    @Test(description = "it should extract enum values from a @JsonValue default method declared on an implemented interface")
+    public void testJsonValueOnInterfaceDefaultMethodIsRecognized() {
+        final Schema schema = context.resolve(new AnnotatedType(JacksonValueDefaultMethodEnum.class));
+        assertNotNull(schema);
+        assertEquals(schema.getType(), "string");
+        assertEquals(schema.getEnum(), Arrays.asList("alpha", "beta", "gamma"));
     }
 }
