@@ -5334,6 +5334,21 @@ public class ReaderTest {
                 "          description: default response\n" +
                 "          content:\n" +
                 "            '*/*': {}\n" +
+                "  /test/teststringsize:\n" +
+                "    get:\n" +
+                "      operationId: testStringSize\n" +
+                "      requestBody:\n" +
+                "        content:\n" +
+                "          '*/*':\n" +
+                "            schema:\n" +
+                "              type: string\n" +
+                "              maxLength: 50\n" +
+                "              minLength: 1\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*': {}\n" +
                 "components:\n" +
                 "  schemas:\n" +
                 "    DefaultClass:\n" +
