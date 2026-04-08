@@ -213,10 +213,6 @@ Import it once and omit versions on all individual Swagger dependencies.
     <groupId>io.swagger.core.v3</groupId>
     <artifactId>swagger-jaxrs2-servlet-initializer-v2</artifactId>
   </dependency>
-  <dependency>
-    <groupId>io.swagger.core.v3</groupId>
-    <artifactId>swagger-java17-support</artifactId>
-  </dependency>
   <!-- Jakarta namespace artifacts (use instead of, or alongside, the javax ones above) -->
   <dependency>
     <groupId>io.swagger.core.v3</groupId>

@@ -405,6 +405,7 @@
         <module>modules/swagger-maven-plugin</module>
         <module>modules/swagger-eclipse-transformer-maven-plugin</module>
         <module>modules/swagger-project-jakarta</module>
+        <module>modules/swagger-bom-integration-test</module>
 
     </modules>
     <reporting>
