@@ -156,6 +156,111 @@ Of course if you don't want to build locally you can grab artifacts from maven c
 
 `https://repo1.maven.org/maven2/io/swagger/core/`
 
+### Maven BOM
+
+The `swagger-bom` artifact is a Bill of Materials that manages **both** the `javax` and Jakarta (`-jakarta` suffix) artifact families.
+Import it once and omit versions on all individual Swagger dependencies.
+
+> **Note:** Maven and Gradle build plugins (`swagger-maven-plugin`, `swagger-gradle-plugin`,
+> `swagger-eclipse-transformer-maven-plugin`) are intentionally **excluded** from the BOM.
+> Plugins are applied via `<build><plugins>` or `plugins {}`, not via `<dependencyManagement>`,
+> so including them in the BOM would be misleading and could conflict with the plugin
+> management section of a consumer's build.
+
+#### Maven
+
+```xml
+<dependencyManagement>
+  <dependencies>
+    <dependency>
+      <groupId>io.swagger.core.v3</groupId>
+      <artifactId>swagger-bom</artifactId>
+      <version>${swagger-openapiv3.version}</version>
+      <type>pom</type>
+      <scope>import</scope>
+    </dependency>
+  </dependencies>
+</dependencyManagement>
+
+<!-- Then declare Swagger dependencies without explicit versions -->
+<dependencies>
+  <!-- javax artifacts -->
+  <dependency>
+    <groupId>io.swagger.core.v3</groupId>
+    <artifactId>swagger-annotations</artifactId>
+  </dependency>
+  <dependency>
+    <groupId>io.swagger.core.v3</groupId>
+    <artifactId>swagger-models</artifactId>
+  </dependency>
+  <dependency>
+    <groupId>io.swagger.core.v3</groupId>
+    <artifactId>swagger-core</artifactId>
+  </dependency>
+  <dependency>
+    <groupId>io.swagger.core.v3</groupId>
+    <artifactId>swagger-integration</artifactId>
+  </dependency>
+  <dependency>
+    <groupId>io.swagger.core.v3</groupId>
+    <artifactId>swagger-jaxrs2</artifactId>
+  </dependency>
+  <dependency>
+    <groupId>io.swagger.core.v3</groupId>
+    <artifactId>swagger-jaxrs2-servlet-initializer</artifactId>
+  </dependency>
+  <dependency>
+    <groupId>io.swagger.core.v3</groupId>
+    <artifactId>swagger-jaxrs2-servlet-initializer-v2</artifactId>
+  </dependency>
+  <!-- Jakarta namespace artifacts (use instead of, or alongside, the javax ones above) -->
+  <dependency>
+    <groupId>io.swagger.core.v3</groupId>
+    <artifactId>swagger-annotations-jakarta</artifactId>
+  </dependency>
+  <dependency>
+    <groupId>io.swagger.core.v3</groupId>
+    <artifactId>swagger-models-jakarta</artifactId>
+  </dependency>
+  <dependency>
+    <groupId>io.swagger.core.v3</groupId>
+    <artifactId>swagger-core-jakarta</artifactId>
+  </dependency>
+  <dependency>
+    <groupId>io.swagger.core.v3</groupId>
+    <artifactId>swagger-integration-jakarta</artifactId>
+  </dependency>
+  <dependency>
+    <groupId>io.swagger.core.v3</groupId>
+    <artifactId>swagger-jaxrs2-jakarta</artifactId>
+  </dependency>
+  <dependency>
+    <groupId>io.swagger.core.v3</groupId>
+    <artifactId>swagger-jaxrs2-servlet-initializer-jakarta</artifactId>
+  </dependency>
+  <dependency>
+    <groupId>io.swagger.core.v3</groupId>
+    <artifactId>swagger-jaxrs2-servlet-initializer-v2-jakarta</artifactId>
+  </dependency>
+</dependencies>
+```
+
+#### Gradle
+
+```kotlin
+dependencies {
+    implementation(platform("io.swagger.core.v3:swagger-bom:${swaggerOpenapiv3Version}"))
+
+    // javax artifacts — no version needed
+    implementation("io.swagger.core.v3:swagger-annotations")
+    implementation("io.swagger.core.v3:swagger-core")
+
+    // Jakarta namespace artifacts — no version needed
+    implementation("io.swagger.core.v3:swagger-annotations-jakarta")
+    implementation("io.swagger.core.v3:swagger-core-jakarta")
+}
+```
+
 ## Sample Apps
 The samples have moved to [a new repository](https://github.com/swagger-api/swagger-samples/tree/2.0) and contain various integrations and configurations.
 

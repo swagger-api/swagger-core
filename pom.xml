@@ -401,9 +401,11 @@
         <module>modules/swagger-jaxrs2</module>
         <module>modules/swagger-jaxrs2-servlet-initializer</module>
         <module>modules/swagger-jaxrs2-servlet-initializer-v2</module>
+        <module>modules/swagger-bom</module>
         <module>modules/swagger-maven-plugin</module>
         <module>modules/swagger-eclipse-transformer-maven-plugin</module>
         <module>modules/swagger-project-jakarta</module>
+        <module>modules/swagger-bom-integration-test</module>
 
     </modules>
     <reporting>
