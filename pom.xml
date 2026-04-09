@@ -391,6 +391,12 @@
                 <module>modules/swagger-java17-support</module>
             </modules>
         </profile>
+        <profile>
+            <id>bom-it</id>
+            <modules>
+                <module>modules/swagger-bom-integration-test</module>
+            </modules>
+        </profile>
 
     </profiles>
     <modules>
@@ -405,7 +411,6 @@
         <module>modules/swagger-maven-plugin</module>
         <module>modules/swagger-eclipse-transformer-maven-plugin</module>
         <module>modules/swagger-project-jakarta</module>
-        <module>modules/swagger-bom-integration-test</module>
 
     </modules>
     <reporting>

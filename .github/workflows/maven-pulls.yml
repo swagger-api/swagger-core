@@ -45,3 +45,5 @@ jobs:
         cd ./modules/swagger-gradle-plugin
         ./gradlew build --info
         cd ../..
+    - name: Verify BOM integration test
+      run: ./mvnw --no-transfer-progress -B validate -Pbom-it
