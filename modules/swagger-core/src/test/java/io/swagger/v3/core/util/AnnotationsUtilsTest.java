@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.IntNode;
 import com.google.common.collect.ImmutableMap;
 import io.swagger.v3.oas.annotations.ExternalDocumentation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.StringToClassMapItem;
 import io.swagger.v3.oas.annotations.extensions.Extension;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -30,7 +29,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
-import static io.swagger.v3.oas.annotations.media.Schema.DEFAULT_SENTINEL;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotEquals;
@@ -839,8 +837,8 @@ public class AnnotationsUtilsTest {
         io.swagger.v3.oas.annotations.media.Schema merged =
                 AnnotationsUtils.mergeSchemaAnnotations(master, patch);
 
-        assertEquals(merged.defaultValue(), DEFAULT_SENTINEL,
-                "When both master and patch have sentinel, the merged result should also have sentinel");
+        assertEquals(merged.defaultValue(), "",
+                "When both master and patch are empty, the merged result should also be empty");
     }
 
     @Test
@@ -869,14 +867,14 @@ public class AnnotationsUtilsTest {
         io.swagger.v3.oas.annotations.media.Schema merged =
                 AnnotationsUtils.mergeSchemaAnnotations(master, patch);
 
-        assertNotEquals(merged.defaultValue(), DEFAULT_SENTINEL,
+        assertNotEquals(merged.defaultValue(), "",
                 "Sentinel should never be the result when patch has a real defaultValue");
 
         Optional<Schema> resolvedSchema = AnnotationsUtils.getSchemaFromAnnotation(
                 merged, null, null, false, null, Schema.SchemaResolution.DEFAULT, null);
 
         assertTrue(resolvedSchema.isPresent());
-        assertNotEquals(resolvedSchema.get().getDefault(), DEFAULT_SENTINEL,
+        assertNotEquals(resolvedSchema.get().getDefault(), "",
                 "Sentinel value must never appear in resolved schema default");
     }
 

@@ -21,7 +21,7 @@ import static org.testng.Assert.assertTrue;
 public class Issue4838Test {
 
     @Test
-    public void defaultValueShouldBeEmptyForStringFieldInOas30() {
+    public void defaultValueShouldBeNullForEmptyStringFieldInOas30() {
         final ModelConverterContextImpl context = getModelConverterContext(Json.mapper(), false);
 
         final io.swagger.v3.oas.models.media.Schema model = context
@@ -32,8 +32,7 @@ public class Issue4838Test {
 
         assertNotNull(nullableStringField);
         assertTrue(nullableStringField.getNullable());
-        assertNotNull(nullableStringField.getDefault());
-        assertEquals(nullableStringField.getDefault(), "");
+        assertNull(nullableStringField.getDefault());
     }
 
     @Test
@@ -87,7 +86,7 @@ public class Issue4838Test {
     }
 
     @Test
-    public void defaultValueShouldBeEmptyForStringFieldInOas31() {
+    public void defaultValueShouldBeNullForEmptyStringFieldInOas31() {
         final ModelConverterContextImpl context = getModelConverterContext(Json31.mapper(), true);
 
         final io.swagger.v3.oas.models.media.Schema model = context
@@ -98,8 +97,7 @@ public class Issue4838Test {
 
         assertNotNull(nullableStringField);
         assertTrue(isNullableInOAS31(nullableStringField));
-        assertNotNull(nullableStringField.getDefault());
-        assertEquals(nullableStringField.getDefault(), "");
+        assertNull(nullableStringField.getDefault());
     }
 
     @Test
