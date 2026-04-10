@@ -111,7 +111,6 @@ import static io.swagger.v3.core.jackson.JAXBAnnotationsHelper.JAXB_DEFAULT;
 import static io.swagger.v3.core.util.RefUtils.constructRef;
 import static io.swagger.v3.core.util.SiblingAnnotationFilter.filterSiblingAnnotations;
 import static io.swagger.v3.core.util.ValidationAnnotationsUtils.*;
-import static io.swagger.v3.oas.annotations.media.Schema.DEFAULT_SENTINEL;
 
 public class ModelResolver extends AbstractModelConverter implements ModelConverter {
 
@@ -2287,7 +2286,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
     }
 
     protected Object resolveDefaultValue(Annotated a, Annotation[] annotations, io.swagger.v3.oas.annotations.media.Schema schema) {
-        if (schema != null && !DEFAULT_SENTINEL.equals(schema.defaultValue())) {
+        if (schema != null && StringUtils.isNotBlank(schema.defaultValue())) {
             try {
                 ObjectMapper mapper = ObjectMapperFactory.buildStrictGenericObjectMapper();
                 JsonNode node = mapper.readTree(schema.defaultValue());
@@ -3119,15 +3118,11 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             }
             final Map<String, Schema> patternProperties = resolvePatternProperties(a, annotations, schemaAnnotation, annotatedType, context, next);
             if (patternProperties != null && !patternProperties.isEmpty()) {
-                for (String key : patternProperties.keySet()) {
-                    schema.addPatternProperty(key, buildRefSchemaIfObject(patternProperties.get(key), context));
-                }
+                patternProperties.keySet().forEach(key -> schema.addPatternProperty(key, buildRefSchemaIfObject(patternProperties.get(key), context)));
             }
             final Map<String, Schema> properties = resolveProperties(a, annotations, schemaAnnotation, annotatedType, context, next);
             if (properties != null && !properties.isEmpty()) {
-                for (String key : properties.keySet()) {
-                    schema.addProperty(key, buildRefSchemaIfObject(properties.get(key), context));
-                }
+                properties.keySet().forEach(key -> schema.addProperty(key, buildRefSchemaIfObject(properties.get(key), context)));
             }
         }
     }
