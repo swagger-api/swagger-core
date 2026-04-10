@@ -179,19 +179,9 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         }
 
         final Annotation resolvedSchemaOrArrayAnnotation = AnnotationsUtils.mergeSchemaAnnotations(annotatedType.getCtxAnnotations(), type);
-        final io.swagger.v3.oas.annotations.media.Schema resolvedSchemaAnnotation =
-                resolvedSchemaOrArrayAnnotation == null ?
-                        null :
-                        resolvedSchemaOrArrayAnnotation instanceof io.swagger.v3.oas.annotations.media.ArraySchema ?
-                                ((io.swagger.v3.oas.annotations.media.ArraySchema) resolvedSchemaOrArrayAnnotation).schema() :
-                                (io.swagger.v3.oas.annotations.media.Schema) resolvedSchemaOrArrayAnnotation;
+        final io.swagger.v3.oas.annotations.media.Schema resolvedSchemaAnnotation = getSchemaAnnotation(resolvedSchemaOrArrayAnnotation);
 
-        final io.swagger.v3.oas.annotations.media.ArraySchema resolvedArrayAnnotation =
-                resolvedSchemaOrArrayAnnotation == null ?
-                        null :
-                        resolvedSchemaOrArrayAnnotation instanceof io.swagger.v3.oas.annotations.media.ArraySchema ?
-                                (io.swagger.v3.oas.annotations.media.ArraySchema) resolvedSchemaOrArrayAnnotation :
-                                null;
+        final io.swagger.v3.oas.annotations.media.ArraySchema resolvedArrayAnnotation = getArraySchemaAnnotation(resolvedSchemaOrArrayAnnotation);
 
         final BeanDescription beanDesc;
         {
@@ -741,12 +731,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                     propName = propSchemaName;
                 }
                 Annotation propSchemaOrArray = AnnotationsUtils.mergeSchemaAnnotations(annotations, propType);
-                final io.swagger.v3.oas.annotations.media.Schema propResolvedSchemaAnnotation =
-                        propSchemaOrArray == null ?
-                                null :
-                                propSchemaOrArray instanceof io.swagger.v3.oas.annotations.media.ArraySchema ?
-                                        ((io.swagger.v3.oas.annotations.media.ArraySchema) propSchemaOrArray).arraySchema() :
-                                        (io.swagger.v3.oas.annotations.media.Schema) propSchemaOrArray;
+                final io.swagger.v3.oas.annotations.media.Schema propResolvedSchemaAnnotation = getSchemaAnnotationForArray(propSchemaOrArray);
 
                 io.swagger.v3.oas.annotations.media.Schema.AccessMode accessMode = resolveAccessMode(propDef, type, propResolvedSchemaAnnotation);
                 io.swagger.v3.oas.annotations.media.Schema.RequiredMode requiredMode = resolveRequiredMode(propResolvedSchemaAnnotation, propType);
@@ -3037,12 +3022,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         }
 
         final Annotation resolvedSchemaOrArrayAnnotation = AnnotationsUtils.mergeSchemaAnnotations(annotatedType.getCtxAnnotations(), type);
-        final io.swagger.v3.oas.annotations.media.Schema schemaAnnotation =
-                resolvedSchemaOrArrayAnnotation == null ?
-                        null :
-                        resolvedSchemaOrArrayAnnotation instanceof io.swagger.v3.oas.annotations.media.ArraySchema ?
-                                ((io.swagger.v3.oas.annotations.media.ArraySchema) resolvedSchemaOrArrayAnnotation).schema() :
-                                (io.swagger.v3.oas.annotations.media.Schema) resolvedSchemaOrArrayAnnotation;
+        final io.swagger.v3.oas.annotations.media.Schema schemaAnnotation = getSchemaAnnotation(resolvedSchemaOrArrayAnnotation);
 
         final BeanDescription beanDesc = _mapper.getSerializationConfig().introspect(type);
         Annotated a = beanDesc.getClassInfo();
@@ -3559,6 +3539,36 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             }
         }
         return reResolvedProperty;
+    }
+
+    private io.swagger.v3.oas.annotations.media.Schema getSchemaAnnotationForArray(Annotation annotation) {
+        if (annotation == null) {
+            return null;
+        } else {
+            return annotation instanceof io.swagger.v3.oas.annotations.media.ArraySchema ?
+                    ((io.swagger.v3.oas.annotations.media.ArraySchema) annotation).arraySchema() :
+                    (io.swagger.v3.oas.annotations.media.Schema) annotation;
+        }
+    }
+
+    private io.swagger.v3.oas.annotations.media.Schema getSchemaAnnotation(Annotation annotation) {
+        if (annotation == null) {
+            return null;
+        } else {
+            return annotation instanceof io.swagger.v3.oas.annotations.media.ArraySchema ?
+                    ((io.swagger.v3.oas.annotations.media.ArraySchema) annotation).schema() :
+                    (io.swagger.v3.oas.annotations.media.Schema) annotation;
+        }
+    }
+
+    private io.swagger.v3.oas.annotations.media.ArraySchema getArraySchemaAnnotation(Annotation annotation) {
+        if (annotation == null) {
+            return null;
+        } else {
+            return annotation instanceof io.swagger.v3.oas.annotations.media.ArraySchema ?
+                    (io.swagger.v3.oas.annotations.media.ArraySchema) annotation :
+                    null;
+        }
     }
 
     /**
