@@ -207,4 +207,58 @@ public class ModelWithManySubtypesAndRecursion {
             return baseArray;
         }
     }
+
+    @Schema(description = "Target class exclusively referenced via arraySchema.allOf")
+    public static class AllOfTarget {
+        @Schema(description = "A value")
+        public String value;
+    }
+
+    public static class HolderWithAllOfInArraySchema {
+        @ArraySchema(
+                contains = @Schema(allOf = {AllOfTarget.class})
+        )
+        public String[] getItems() { return null; }
+    }
+
+    public static class HolderWithAllOfInItemsSchema {
+        @ArraySchema(
+                schema = @Schema(allOf = {AllOfTarget.class})
+        )
+        public String[] getItems() { return null; }
+    }
+
+    @Schema(description = "A node with direct recursive references")
+    public static class RecursiveNode {
+        private String name;
+        private RecursiveNode parent;
+        private RecursiveNode[] children;
+
+        @Schema(description = "The node name")
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        @Schema(description = "The parent node", nullable = true)
+        public RecursiveNode getParent() {
+            return parent;
+        }
+
+        public void setParent(RecursiveNode parent) {
+            this.parent = parent;
+        }
+
+        @Schema(description = "Child nodes")
+        public RecursiveNode[] getChildren() {
+            return children;
+        }
+
+        public void setChildren(RecursiveNode[] children) {
+            this.children = children;
+        }
+    }
 }

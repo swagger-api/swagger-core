@@ -626,7 +626,7 @@ public abstract class AnnotationsUtils {
             boolean openapi31,
             Schema existingSchema,
             ModelConverterContext context) {
-        return getSchemaFromAnnotation(schema, components, jsonViewAnnotation, openapi31, existingSchema, Schema.SchemaResolution.DEFAULT, null);
+        return getSchemaFromAnnotation(schema, components, jsonViewAnnotation, openapi31, existingSchema, Schema.SchemaResolution.DEFAULT, context);
     }
 
     public static Optional<Schema> getSchemaFromAnnotation(
