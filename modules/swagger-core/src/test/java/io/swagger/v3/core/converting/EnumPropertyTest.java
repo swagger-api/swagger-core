@@ -7,6 +7,7 @@ import io.swagger.v3.core.converter.ModelConverters;
 import io.swagger.v3.core.jackson.ModelResolver;
 import io.swagger.v3.core.jackson.TypeNameResolver;
 import io.swagger.v3.core.matchers.SerializationMatchers;
+import io.swagger.v3.core.oas.models.JacksonValueBridgeMethodEnum;
 import io.swagger.v3.core.oas.models.JacksonValueDefaultMethodEnum;
 import io.swagger.v3.core.oas.models.JacksonValuePrivateEnum;
 import io.swagger.v3.core.oas.models.Model1979;
@@ -265,5 +266,13 @@ public class EnumPropertyTest {
         assertNotNull(schema);
         assertEquals(schema.getType(), "string");
         assertEquals(schema.getEnum(), Arrays.asList("alpha", "beta", "gamma"));
+    }
+
+    @Test(description = "it should handle @JsonValue on enum implementing generic interface with bridge method (issue #5127)")
+    public void testJsonValueWithBridgeMethodFromGenericInterface() {
+        final Schema schema = context.resolve(new AnnotatedType(JacksonValueBridgeMethodEnum.class));
+        assertNotNull(schema);
+        assertEquals(schema.getType(), "string");
+        assertEquals(schema.getEnum(), Arrays.asList("created", "in_progress", "confirmed"));
     }
 }
