@@ -1,5 +1,6 @@
 {
   "schema" : {
+    "type" : "object",
     "description" : "The holder",
     "properties" : {
       "name" : {
@@ -21,6 +22,7 @@
   },
   "referencedSchemas" : {
     "Base" : {
+      "type" : "object",
       "description" : "Stuff",
       "discriminator" : {
         "propertyName" : "name",
@@ -36,6 +38,7 @@
       }
     },
     "Holder" : {
+      "type" : "object",
       "description" : "The holder",
       "properties" : {
         "name" : {
@@ -56,6 +59,7 @@
       }
     },
     "SubA" : {
+      "type" : "object",
       "description" : "The SubA class",
       "properties" : {
         "name" : {
@@ -68,6 +72,7 @@
       }
     },
     "SubB" : {
+      "type" : "object",
       "description" : "The SubB class",
       "properties" : {
         "name" : {
@@ -75,8 +80,18 @@
         },
         "friend" : {
           "type" : "string"
+        },
+        "baseArray" : {
+          "type" : "array",
+          "description" : "Thingy",
+          "items" : {
+            "$ref" : "#/components/schemas/Base"
+          },
+          "minItems" : 0,
+          "uniqueItems" : true
         }
       }
     }
   }
 }
+

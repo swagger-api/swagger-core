@@ -39,13 +39,7 @@ import io.swagger.v3.jaxrs2.petstore.requestbody.RequestBody31Resource;
 import io.swagger.v3.jaxrs2.petstore.requestbody.RequestBodyMethodPriorityResource;
 import io.swagger.v3.jaxrs2.petstore.requestbody.RequestBodyParameterPriorityResource;
 import io.swagger.v3.jaxrs2.petstore.requestbody.RequestBodyResource;
-import io.swagger.v3.jaxrs2.petstore.responses.ComplexResponseResource;
-import io.swagger.v3.jaxrs2.petstore.responses.ImplementationResponseResource;
-import io.swagger.v3.jaxrs2.petstore.responses.MethodResponseResource;
-import io.swagger.v3.jaxrs2.petstore.responses.NoImplementationResponseResource;
-import io.swagger.v3.jaxrs2.petstore.responses.NoResponseResource;
-import io.swagger.v3.jaxrs2.petstore.responses.OperationResponseResource;
-import io.swagger.v3.jaxrs2.petstore.responses.PriorityResponseResource;
+import io.swagger.v3.jaxrs2.petstore.responses.*;
 import io.swagger.v3.jaxrs2.petstore.security.SecurityResource;
 import io.swagger.v3.jaxrs2.petstore.tags.CompleteTagResource;
 import io.swagger.v3.jaxrs2.petstore.tags.TagClassResource;
@@ -296,6 +290,11 @@ public class PetResourceTest extends AbstractAnnotationTest {
     @Test(description = "Test webhook resources")
     public void testWebhooksResource() {
         compare(WebHookResource.class, PETSTORE_SOURCE, true);
+    }
+
+    @Test(description = "Test method resources with array annotations")
+    public void testMethodArrayResponseResource() {
+        compare(MethodArrayResponseResource.class, RESPONSES_SOURCE, true);
     }
 
     /**

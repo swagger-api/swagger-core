@@ -1,7 +1,6 @@
 {
   "schema" : {
     "type" : "object",
-    "description" : "The holder",
     "properties" : {
       "name" : {
         "type" : "string"
@@ -10,22 +9,25 @@
         "type" : "string"
       },
       "baseArray" : {
+        "minItems" : 0,
+        "uniqueItems" : true,
         "type" : "array",
         "description" : "Thingy",
         "items" : {
-          "$ref" : "#/components/schemas/Base",
-          "description" : "Thingy",
-          "minItems" : 0,
-          "uniqueItems" : true
-        },
-        "minItems" : 0,
-        "uniqueItems" : true
+          "$ref" : "#/components/schemas/Base"
+        }
       }
-    }
+    },
+    "description" : "The holder"
   },
   "referencedSchemas" : {
     "Base" : {
       "type" : "object",
+      "properties" : {
+        "name" : {
+          "type" : "string"
+        }
+      },
       "description" : "Stuff",
       "discriminator" : {
         "propertyName" : "name",
@@ -33,16 +35,10 @@
           "a" : "#/components/schemas/SubA",
           "b" : "#/components/schemas/SubB"
         }
-      },
-      "properties" : {
-        "name" : {
-          "type" : "string"
-        }
       }
     },
     "Holder" : {
       "type" : "object",
-      "description" : "The holder",
       "properties" : {
         "name" : {
           "type" : "string"
@@ -51,22 +47,19 @@
           "type" : "string"
         },
         "baseArray" : {
+          "minItems" : 0,
+          "uniqueItems" : true,
           "type" : "array",
           "description" : "Thingy",
           "items" : {
-            "$ref" : "#/components/schemas/Base",
-            "description" : "Thingy",
-            "minItems" : 0,
-            "uniqueItems" : true
-          },
-          "minItems" : 0,
-          "uniqueItems" : true
+            "$ref" : "#/components/schemas/Base"
+          }
         }
-      }
+      },
+      "description" : "The holder"
     },
     "SubA" : {
       "type" : "object",
-      "description" : "The SubA class",
       "properties" : {
         "name" : {
           "type" : "string"
@@ -75,32 +68,20 @@
           "type" : "integer",
           "format" : "int64"
         }
-      }
+      },
+      "description" : "The SubA class"
     },
     "SubB" : {
       "type" : "object",
-      "description" : "The SubB class",
       "properties" : {
         "name" : {
           "type" : "string"
         },
         "friend" : {
           "type" : "string"
-        },
-        "baseArray" : {
-          "type" : "array",
-          "description" : "Thingy",
-          "items" : {
-            "$ref" : "#/components/schemas/Base",
-            "description" : "Thingy",
-            "minItems" : 0,
-            "uniqueItems" : true
-          },
-          "minItems" : 0,
-          "uniqueItems" : true
         }
-      }
+      },
+      "description" : "The SubB class"
     }
   }
 }
-
