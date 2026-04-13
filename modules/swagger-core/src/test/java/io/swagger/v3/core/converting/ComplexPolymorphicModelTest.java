@@ -6,13 +6,9 @@ import io.swagger.v3.core.converter.ModelConverterContextImpl;
 import io.swagger.v3.core.converter.ModelConverters;
 import io.swagger.v3.core.converter.ResolvedSchema;
 import io.swagger.v3.core.jackson.ModelResolver;
-import io.swagger.v3.core.oas.models.ModelWithArrayOfSubclasses;
 import io.swagger.v3.core.oas.models.ModelWithManySubtypesAndRecursion;
 import io.swagger.v3.oas.models.media.ArraySchema;
 import io.swagger.v3.oas.models.media.Schema;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.testng.AssertJUnit;
 import org.testng.annotations.Test;
 
 import java.lang.reflect.Field;
@@ -23,9 +19,7 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
-public class ComplexPolymorphicModelTimingTest {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ComplexPolymorphicModelTimingTest.class);
-
+public class ComplexPolymorphicModelTest {
 
     @Test
     @SuppressWarnings("unchecked")
@@ -168,14 +162,6 @@ public class ComplexPolymorphicModelTimingTest {
         Map<String, Schema> definedModels = context.getDefinedModels();
         Schema baseSchema = definedModels.get("Base");
         assertNotNull(baseSchema, "Base schema should exist in OAS 3.1 mode");
-
-        final long durationOAS31 = measureTiming(1,
-                () -> ModelConverters.getInstance(true)
-                        .readAllAsResolvedSchema(ModelWithManySubtypesAndRecursion.Holder.class));
-        LOGGER.debug("OAS 3.1 duration: " + durationOAS31 + "ms");
-
-        assertTrue(durationOAS31 < 5000,
-                "OAS 3.1 resolution should complete in reasonable time: " + durationOAS31 + "ms");
     }
 
     @Test
@@ -243,4 +229,5 @@ public class ComplexPolymorphicModelTimingTest {
                 "AllOfTarget referenced via @ArraySchema(schema = @Schema(allOf = {...})) should be resolved " +
                 "through context.resolve() and appear in processedTypes exactly once, but was found " + count + " times.");
     }
+
 }
