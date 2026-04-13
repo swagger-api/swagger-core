@@ -493,6 +493,10 @@ public abstract class AnnotationsUtils {
     }
 
     public static Optional<Schema> getArraySchema(io.swagger.v3.oas.annotations.media.ArraySchema arraySchema, Components components, JsonView jsonViewAnnotation, boolean openapi31, Schema existingSchema, boolean processSchemaImplementation) {
+        return getArraySchema(arraySchema, components, jsonViewAnnotation, openapi31, existingSchema, processSchemaImplementation, null);
+    }
+
+    public static Optional<Schema> getArraySchema(io.swagger.v3.oas.annotations.media.ArraySchema arraySchema, Components components, JsonView jsonViewAnnotation, boolean openapi31, Schema existingSchema, boolean processSchemaImplementation, ModelConverterContext context) {
         if (arraySchema == null || !hasArrayAnnotation(arraySchema)) {
             if (existingSchema == null) {
                 return Optional.empty();
@@ -525,8 +529,8 @@ public abstract class AnnotationsUtils {
             arraySchemaObject.setMinItems(arraySchema.minItems());
         }
 
-        getSchemaFromAnnotation(arraySchema.contains(), components, jsonViewAnnotation, openapi31).ifPresent(arraySchemaObject::setContains);
-        getSchemaFromAnnotation(arraySchema.unevaluatedItems(), components, jsonViewAnnotation, openapi31).ifPresent(arraySchemaObject::setUnevaluatedItems);
+        getSchemaFromAnnotation(arraySchema.contains(), components, jsonViewAnnotation, openapi31, null, context).ifPresent(arraySchemaObject::setContains);
+        getSchemaFromAnnotation(arraySchema.unevaluatedItems(), components, jsonViewAnnotation, openapi31, null, context).ifPresent(arraySchemaObject::setUnevaluatedItems);
 
         if (arraySchema.maxContains() > 0) {
             arraySchemaObject.setMaxContains(arraySchema.maxContains());
@@ -536,7 +540,7 @@ public abstract class AnnotationsUtils {
         }
         if (arraySchema.prefixItems().length > 0) {
             for (io.swagger.v3.oas.annotations.media.Schema prefixItem : arraySchema.prefixItems()) {
-                getSchemaFromAnnotation(prefixItem, components, jsonViewAnnotation, openapi31).ifPresent(arraySchemaObject::addPrefixItem);
+                getSchemaFromAnnotation(prefixItem, components, jsonViewAnnotation, openapi31, null, context).ifPresent(arraySchemaObject::addPrefixItem);
             }
         }
 
@@ -550,10 +554,10 @@ public abstract class AnnotationsUtils {
 
         if (arraySchema.schema() != null) {
             if (arraySchema.schema().implementation().equals(Void.class)) {
-                getSchemaFromAnnotation(arraySchema.schema(), components, jsonViewAnnotation, openapi31, arraySchemaObject.getItems())
+                getSchemaFromAnnotation(arraySchema.schema(), components, jsonViewAnnotation, openapi31, arraySchemaObject.getItems(), context)
                         .ifPresent(arraySchemaObject::setItems);
             } else if (processSchemaImplementation) {
-                getSchema(arraySchema.schema(), arraySchema, false, arraySchema.schema().implementation(), components, jsonViewAnnotation, openapi31)
+                getSchema(arraySchema.schema(), arraySchema, false, arraySchema.schema().implementation(), components, jsonViewAnnotation, openapi31, context)
                         .ifPresent(arraySchemaObject::setItems);
             }
         }
@@ -622,7 +626,7 @@ public abstract class AnnotationsUtils {
             boolean openapi31,
             Schema existingSchema,
             ModelConverterContext context) {
-        return getSchemaFromAnnotation(schema, components, jsonViewAnnotation, openapi31, existingSchema, Schema.SchemaResolution.DEFAULT, null);
+        return getSchemaFromAnnotation(schema, components, jsonViewAnnotation, openapi31, existingSchema, Schema.SchemaResolution.DEFAULT, context);
     }
 
     public static Optional<Schema> getSchemaFromAnnotation(
@@ -1888,7 +1892,6 @@ public abstract class AnnotationsUtils {
         return getSchema(schemaAnnotation, arrayAnnotation, isArray, schemaImplementation, components, jsonViewAnnotation, false);
 
     }
-
     public static Optional<? extends Schema> getSchema(io.swagger.v3.oas.annotations.media.Schema schemaAnnotation,
                                                        io.swagger.v3.oas.annotations.media.ArraySchema arrayAnnotation,
                                                        boolean isArray,
@@ -1896,13 +1899,24 @@ public abstract class AnnotationsUtils {
                                                        Components components,
                                                        JsonView jsonViewAnnotation,
                                                        boolean openapi31) {
+        return getSchema(schemaAnnotation, arrayAnnotation, isArray, schemaImplementation, components, jsonViewAnnotation, openapi31, null);
+    }
+
+    public static Optional<? extends Schema> getSchema(io.swagger.v3.oas.annotations.media.Schema schemaAnnotation,
+                                                       io.swagger.v3.oas.annotations.media.ArraySchema arrayAnnotation,
+                                                       boolean isArray,
+                                                       Class<?> schemaImplementation,
+                                                       Components components,
+                                                       JsonView jsonViewAnnotation,
+                                                       boolean openapi31,
+                                                       ModelConverterContext context) {
         if (schemaImplementation != Void.class) {
-            Schema schemaObject = resolveSchemaFromType(schemaImplementation, components, jsonViewAnnotation, openapi31, schemaAnnotation, arrayAnnotation, null);
+            Schema schemaObject = resolveSchemaFromType(schemaImplementation, components, jsonViewAnnotation, openapi31, schemaAnnotation, arrayAnnotation, context);
             if (StringUtils.isNotBlank(schemaAnnotation.format())) {
                 schemaObject.setFormat(schemaAnnotation.format());
             }
             if (isArray) {
-                Optional<Schema> arraySchema = AnnotationsUtils.getArraySchema(arrayAnnotation, components, jsonViewAnnotation, openapi31, null);
+                Optional<Schema> arraySchema = AnnotationsUtils.getArraySchema(arrayAnnotation, components, jsonViewAnnotation, openapi31, null, false, context);
                 if (arraySchema.isPresent()) {
                     arraySchema.get().setItems(schemaObject);
                     return arraySchema;
@@ -1914,7 +1928,7 @@ public abstract class AnnotationsUtils {
             }
 
         } else {
-            Optional<Schema> schemaFromAnnotation = AnnotationsUtils.getSchemaFromAnnotation(schemaAnnotation, components, jsonViewAnnotation, openapi31);
+            Optional<Schema> schemaFromAnnotation = AnnotationsUtils.getSchemaFromAnnotation(schemaAnnotation, components, jsonViewAnnotation, openapi31, null, context);
             if (schemaFromAnnotation.isPresent()) {
                 if (StringUtils.isBlank(schemaFromAnnotation.get().get$ref()) && StringUtils.isBlank(schemaFromAnnotation.get().getType()) && !(schemaFromAnnotation.get() instanceof ComposedSchema)) {
                     // default to string
@@ -1922,7 +1936,7 @@ public abstract class AnnotationsUtils {
                 }
                 return Optional.of(schemaFromAnnotation.get());
             } else {
-                Optional<Schema> arraySchemaFromAnnotation = AnnotationsUtils.getArraySchema(arrayAnnotation, components, jsonViewAnnotation, openapi31, null);
+                Optional<Schema> arraySchemaFromAnnotation = AnnotationsUtils.getArraySchema(arrayAnnotation, components, jsonViewAnnotation, openapi31, null, false, context);
                 if (arraySchemaFromAnnotation.isPresent()) {
                     if (arraySchemaFromAnnotation.get().getItems() != null && StringUtils.isBlank(arraySchemaFromAnnotation.get().getItems().get$ref()) && StringUtils.isBlank(arraySchemaFromAnnotation.get().getItems().getType())) {
                         // default to string

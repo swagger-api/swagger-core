@@ -821,7 +821,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                         property = reResolvedProperty.get();
                     }
 
-                    reResolvedProperty = resolveArraySchemaWithCycleGuard(ctxArraySchema, annotatedType, openapi31, property);
+                    reResolvedProperty = resolveArraySchemaWithCycleGuard(ctxArraySchema, annotatedType, openapi31, property, context);
                     if (reResolvedProperty.isPresent()) {
                         property = reResolvedProperty.get();
                     }
@@ -3547,7 +3547,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             io.swagger.v3.oas.annotations.media.ArraySchema ctxArraySchema,
             AnnotatedType annotatedType,
             boolean openapi31,
-            Schema<?> property) {
+            Schema<?> property, ModelConverterContext context) {
         boolean processSchemaImplementation = !typesBeingResolved.contains(annotatedType);
         Optional<Schema> reResolvedProperty;
         if (processSchemaImplementation) {
@@ -3555,7 +3555,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         }
         try {
             reResolvedProperty = AnnotationsUtils.getArraySchema(ctxArraySchema, annotatedType.getComponents(), null,
-                    openapi31, property, processSchemaImplementation);
+                    openapi31, property, processSchemaImplementation, context);
         } finally {
             if (processSchemaImplementation) {
                 typesBeingResolved.remove(annotatedType);
