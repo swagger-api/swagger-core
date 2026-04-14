@@ -239,7 +239,7 @@ public enum PrimitiveType {
         }
         @Override
         public Schema createProperty31() {
-            return explicitObjectType == null || explicitObjectType ? new JsonSchema().typesItem("object") : new JsonSchema();
+            return Boolean.TRUE.equals(explicitObjectType) ? new JsonSchema().typesItem("object") : new JsonSchema();
         }
     };
 
