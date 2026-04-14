@@ -35,7 +35,7 @@ public class ResolveTask extends DefaultTask {
 
     @Input
     @Optional
-    public final Property<String> outputFileName = getProject().getObjects().property(String.class);
+    public final Property<String> outputFileName = getProject().getObjects().property(String.class).convention("openapi");
     @OutputDirectory
     public final DirectoryProperty outputDir = getProject().getObjects().directoryProperty();
     @InputFile
@@ -44,7 +44,7 @@ public class ResolveTask extends DefaultTask {
     public final RegularFileProperty openApiFile = getProject().getObjects().fileProperty();
     @Input
     @Optional
-    public final Property<Format> outputFormat = getProject().getObjects().property(Format.class);
+    public final Property<Format> outputFormat = getProject().getObjects().property(Format.class).convention(Format.JSON);
     @Input
     @Optional
     public final SetProperty<String> resourcePackages = getProject().getObjects().setProperty(String.class);
@@ -83,11 +83,11 @@ public class ResolveTask extends DefaultTask {
     @Deprecated
     @Input
     @Optional
-    public final Property<Boolean> skip = getProject().getObjects().property(Boolean.class);
+    public final Property<Boolean> skip = getProject().getObjects().property(Boolean.class).convention(false);
     @Input
     @Optional
 
-    public final Property<String> encoding = getProject().getObjects().property(String.class).convention(StandardCharsets.UTF_8.name());
+    public final Property<String> encoding = getProject().getObjects().property(String.class).convention(Charset.defaultCharset().name());
     /**
      * @since 2.0.6
      */
@@ -114,14 +114,14 @@ public class ResolveTask extends DefaultTask {
     public final Property<String> contextId = getProject().getObjects().property(String.class);
     @Input
     @Optional
-    public final Property<Boolean> openAPI31 = getProject().getObjects().property(Boolean.class);
+    public final Property<Boolean> openAPI31 = getProject().getObjects().property(Boolean.class).convention(false);
 
     /**
      * @since 2.2.12
      */
     @Input
     @Optional
-    public final Property<Boolean> convertToOpenAPI31 = getProject().getObjects().property(Boolean.class);
+    public final Property<Boolean> convertToOpenAPI31 = getProject().getObjects().property(Boolean.class).convention(false);
 
     /**
      * @since 2.2.24
