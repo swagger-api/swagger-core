@@ -3571,7 +3571,8 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
     }
 
     private boolean isExplicitObjectType() {
-        return (openapi31 && Boolean.TRUE.equals(PrimitiveType.explicitObjectType)) ||
-               (!openapi31 && (!Boolean.FALSE.equals(PrimitiveType.explicitObjectType)));
+        return openapi31
+                ? Boolean.TRUE.equals(PrimitiveType.explicitObjectType)
+                : !Boolean.FALSE.equals(PrimitiveType.explicitObjectType);
     }
 }
