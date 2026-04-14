@@ -62,8 +62,8 @@ jobs:
         else
           echo "not building and maven publishing project as it is a release version: " ${MY_JAVA_VERSION}
         fi
-    - name: Verify BOM integration test
-      run: ./mvnw --no-transfer-progress -B validate -Pbom-it
       env:
         MAVEN_USERNAME: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
         MAVEN_PASSWORD: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
+    - name: Verify BOM integration test
+      run: ./mvnw --no-transfer-progress -B validate -Pbom-it
