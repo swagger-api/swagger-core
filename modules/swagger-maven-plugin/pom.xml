@@ -290,7 +290,7 @@
     </dependencies>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.version>3.9.9</maven.version>
+        <maven.version>3.9.14</maven.version>
         <junit.version>4.13.2</junit.version>
         <wiremock-jetty-version>9.4.57.v20241219</wiremock-jetty-version>
         <commons-compress-version>1.27.1</commons-compress-version>
