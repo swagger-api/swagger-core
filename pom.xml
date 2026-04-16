@@ -125,11 +125,11 @@
                 <version>3.12.0</version>
                 <configuration>
                     <aggregate>true</aggregate>
-                    <source>1.7</source>
+                    <source>11</source>
                     <encoding>UTF-8</encoding>
                     <maxmemory>1g</maxmemory>
                     <links>
-                        <link>https://docs.oracle.com/javase/7/docs/api/</link>
+                        <link>https://docs.oracle.com/en/java/javase/11/docs/api/</link>
                     </links>
                     <excludePackageNames>${javadoc.package.exclude}</excludePackageNames>
                 </configuration>
@@ -583,7 +583,7 @@
     </dependencyManagement>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.release>7</maven.compiler.release>
+        <maven.compiler.release>11</maven.compiler.release>
         <joda-version>2.2.4</joda-version>
         <joda-time-version>2.14.1</joda-time-version>
 
@@ -611,7 +611,7 @@
         <coverage.complexity.minimum>0.90</coverage.complexity.minimum>
         <coverage.line.minimum>0.90</coverage.line.minimum>
         <coverage.missed.classes>0</coverage.missed.classes>
-        <commons-io-version>2.11.0</commons-io-version>
+        <commons-io-version>2.21.0</commons-io-version>
         <enforcer-plugin-version>3.4.1</enforcer-plugin-version>
         <failsafe-plugin-version>2.22.2</failsafe-plugin-version>
         <validation-api-version>1.1.0.Final</validation-api-version>
