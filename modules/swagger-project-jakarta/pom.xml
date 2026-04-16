@@ -463,7 +463,7 @@
         <maven.compiler.release>8</maven.compiler.release>
         <joda-version>2.2.4</joda-version>
         <joda-time-version>2.13.0</joda-time-version>
-        <snakeyaml-version>2.3</snakeyaml-version>
+        <snakeyaml-version>2.6</snakeyaml-version>
         <jakarta.ws-version>3.1.0</jakarta.ws-version>
         <jakarta.validation-version>3.0.2</jakarta.validation-version>
         <jakarta.xml.bind-api-version>3.0.1</jakarta.xml.bind-api-version>
