@@ -104,7 +104,7 @@
             <plugin>
                 <groupId>org.sonatype.central</groupId>
                 <artifactId>central-publishing-maven-plugin</artifactId>
-                <version>0.7.0</version>
+                <version>0.10.0</version>
                 <extensions>true</extensions>
                 <configuration>
                     <publishingServerId>central</publishingServerId>
@@ -498,7 +498,7 @@
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <transformer-maven-plugin-version>0.5.0</transformer-maven-plugin-version>
-        <maven.version>3.9.9</maven.version>
+        <maven.version>3.9.14</maven.version>
         <commons-compress-version>1.27.1</commons-compress-version>
     </properties>
 </project>

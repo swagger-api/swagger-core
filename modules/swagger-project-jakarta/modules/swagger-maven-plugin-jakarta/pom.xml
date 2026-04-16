@@ -243,6 +243,6 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.version>3.9.9</maven.version>
+        <maven.version>3.9.14</maven.version>
     </properties>
 </project>
