@@ -616,7 +616,7 @@
         <failsafe-plugin-version>2.22.2</failsafe-plugin-version>
         <validation-api-version>1.1.0.Final</validation-api-version>
         <powermock.version>2.0.9</powermock.version>
-        <mockito-version>5.11.0</mockito-version>
+        <mockito-version>5.23.0</mockito-version>
         <jakarta.xml.bind-api-version>2.3.3</jakarta.xml.bind-api-version>
     </properties>
 </project>
