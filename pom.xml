@@ -521,7 +521,7 @@
             <dependency>
                 <groupId>org.immutables</groupId>
                 <artifactId>value</artifactId>
-                <version>2.10.1</version>
+                <version>2.12.1</version>
             </dependency>
             <dependency>
                 <groupId>javax.ws.rs</groupId>
