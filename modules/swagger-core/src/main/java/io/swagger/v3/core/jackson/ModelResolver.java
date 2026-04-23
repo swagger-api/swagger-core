@@ -2468,7 +2468,11 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 return true;
             }
             if (mode == io.swagger.v3.oas.annotations.media.Schema.NullableMode.NOT_NULLABLE) {
-                return false;
+                // Explicit override: skip both legacy nullable and auto-detection. Returning null
+                // (not Boolean.FALSE) avoids the caller emitting `"nullable": false` literally;
+                // the actual clearing of any prior nullable indication happens in AnnotationsUtils
+                // when the @Schema annotation is processed.
+                return null;
             }
             // mode == AUTO: honor legacy nullable boolean if set, otherwise fall through to heuristics.
             if (effectiveSchema.nullable()) {
@@ -2487,9 +2491,9 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
     /**
      * Returns true if the @Schema annotation effectively declares nullable, honoring
-     * the {@code nullableMode} field with precedence over the legacy {@code nullable}
-     * boolean. Returns false if the annotation explicitly declares not-nullable, or
-     * if no nullability intent is expressed.
+     * {@code nullableMode} with precedence over the legacy {@code nullable} boolean.
+     * Returns false if the annotation explicitly declares not-nullable (NullableMode.NOT_NULLABLE)
+     * or if no nullability intent is expressed.
      *
      * <p>Used for derivative decisions (e.g. whether a "null" defaultValue/example
      * literal should be treated as actual null). Does not consult auto-detected

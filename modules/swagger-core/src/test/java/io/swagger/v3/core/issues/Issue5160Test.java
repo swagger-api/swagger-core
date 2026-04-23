@@ -59,8 +59,10 @@ public class Issue5160Test {
         io.swagger.v3.oas.models.media.Schema field =
                 (io.swagger.v3.oas.models.media.Schema) model.getProperties().get("modeNotNullableWithAnnotation");
         assertNotNull(field);
-        assertNotEquals(field.getNullable(), Boolean.TRUE,
-                "nullableMode=NOT_NULLABLE must override @Nullable auto-detection in OAS 3.0");
+        // Stricter than `!= true`: nullable must be unset (null), not explicitly false,
+        // so the spec output omits the field rather than emitting `"nullable": false`.
+        assertNull(field.getNullable(),
+                "nullableMode=NOT_NULLABLE must clear nullable to null in OAS 3.0 (not Boolean.FALSE)");
     }
 
     @Test
@@ -104,6 +106,16 @@ public class Issue5160Test {
         assertNotNull(field);
         assertNotEquals(field.getNullable(), Boolean.TRUE,
                 "nullableMode=AUTO with no signals must not be nullable");
+    }
+
+    @Test
+    public void testModeNotNullableWithoutAnnotationIsNotNullableOAS30() {
+        io.swagger.v3.oas.models.media.Schema model = resolve30(NullableModeModel.class);
+        io.swagger.v3.oas.models.media.Schema field =
+                (io.swagger.v3.oas.models.media.Schema) model.getProperties().get("modeNotNullableOnly");
+        assertNotNull(field);
+        assertNull(field.getNullable(),
+                "nullableMode=NOT_NULLABLE with no @Nullable must leave nullable unset (not Boolean.FALSE)");
     }
 
     @Test
@@ -159,6 +171,9 @@ public class Issue5160Test {
         @Schema(nullableMode = Schema.NullableMode.NOT_NULLABLE)
         private String modeNotNullableWithAnnotation;
 
+        @Schema(nullableMode = Schema.NullableMode.NOT_NULLABLE)
+        private String modeNotNullableOnly;
+
         @Nullable
         @Schema(description = "auto with annotation")
         private String modeAutoWithAnnotation;
@@ -175,6 +190,9 @@ public class Issue5160Test {
 
         public String getModeNotNullableWithAnnotation() { return modeNotNullableWithAnnotation; }
         public void setModeNotNullableWithAnnotation(String s) { this.modeNotNullableWithAnnotation = s; }
+
+        public String getModeNotNullableOnly() { return modeNotNullableOnly; }
+        public void setModeNotNullableOnly(String s) { this.modeNotNullableOnly = s; }
 
         public String getModeAutoWithAnnotation() { return modeAutoWithAnnotation; }
         public void setModeAutoWithAnnotation(String s) { this.modeAutoWithAnnotation = s; }
