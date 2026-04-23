@@ -86,6 +86,7 @@ public abstract class AnnotationsUtils {
                 && !schema.required()
                 && schema.requiredMode().equals(io.swagger.v3.oas.annotations.media.Schema.RequiredMode.AUTO)
                 && !schema.nullable()
+                && schema.nullableMode().equals(io.swagger.v3.oas.annotations.media.Schema.NullableMode.AUTO)
                 && !schema.readOnly()
                 && !schema.writeOnly()
                 && schema.accessMode().equals(io.swagger.v3.oas.annotations.media.Schema.AccessMode.AUTO)
@@ -291,6 +292,9 @@ public abstract class AnnotationsUtils {
             return false;
         }
         if (thisSchema.nullable() != thatSchema.nullable()) {
+            return false;
+        }
+        if (!thisSchema.nullableMode().equals(thatSchema.nullableMode())) {
             return false;
         }
         if (thisSchema.readOnly() != thatSchema.readOnly()) {
@@ -835,12 +839,28 @@ public abstract class AnnotationsUtils {
             String filteredMinimum = schema.minimum().replace(Constants.COMMA, StringUtils.EMPTY);
             schemaObject.setMinimum(new BigDecimal(filteredMinimum));
         }
-        if (schema.nullable()) {
+        // Honor nullableMode (NULLABLE/NOT_NULLABLE) with precedence over legacy nullable boolean.
+        io.swagger.v3.oas.annotations.media.Schema.NullableMode nullableMode = schema.nullableMode();
+        boolean effectiveNullable;
+        if (nullableMode == io.swagger.v3.oas.annotations.media.Schema.NullableMode.NULLABLE) {
+            effectiveNullable = true;
+        } else if (nullableMode == io.swagger.v3.oas.annotations.media.Schema.NullableMode.NOT_NULLABLE) {
+            effectiveNullable = false;
+        } else {
+            effectiveNullable = schema.nullable();
+        }
+        if (effectiveNullable) {
             if (openapi31) {
                 schemaObject.addType("null");
             } else {
                 schemaObject.setNullable(true);
             }
+        } else if (nullableMode == io.swagger.v3.oas.annotations.media.Schema.NullableMode.NOT_NULLABLE) {
+            // Explicit NOT_NULLABLE overrides prior nullable indications (e.g. from @Nullable auto-detection).
+            if (openapi31 && schemaObject.getTypes() != null) {
+                schemaObject.getTypes().remove("null");
+            }
+            schemaObject.setNullable(null);
         }
         if (StringUtils.isNotBlank(schema.title())) {
             schemaObject.setTitle(schema.title());
@@ -2403,6 +2423,14 @@ public abstract class AnnotationsUtils {
                     return master.requiredMode();
                 }
                 return patch.requiredMode();
+            }
+
+            @Override
+            public NullableMode nullableMode() {
+                if (!master.nullableMode().equals(NullableMode.AUTO) || patch.nullableMode().equals(NullableMode.AUTO)) {
+                    return master.nullableMode();
+                }
+                return patch.nullableMode();
             }
 
             @Override
