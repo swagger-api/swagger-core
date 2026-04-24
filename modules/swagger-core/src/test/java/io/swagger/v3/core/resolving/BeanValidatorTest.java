@@ -56,5 +56,19 @@ public class BeanValidatorTest {
         final StringSchema optionalValue = (StringSchema) properties.get("optionalValue");
         assertEquals((int) optionalValue.getMinLength(), 1);
         assertEquals((int) optionalValue.getMaxLength(), 10);
+
+        final NumberSchema positiveAmount = (NumberSchema) properties.get("positiveAmount");
+        assertEquals(positiveAmount.getMinimum(), BigDecimal.ZERO);
+        assertTrue(positiveAmount.getExclusiveMinimum());
+
+        final NumberSchema positiveOrZeroAmount = (NumberSchema) properties.get("positiveOrZeroAmount");
+        assertEquals(positiveOrZeroAmount.getMinimum(), BigDecimal.ZERO);
+
+        final NumberSchema negativeAmount = (NumberSchema) properties.get("negativeAmount");
+        assertEquals(negativeAmount.getMaximum(), BigDecimal.ZERO);
+        assertTrue(negativeAmount.getExclusiveMaximum());
+
+        final NumberSchema negativeOrZeroAmount = (NumberSchema) properties.get("negativeOrZeroAmount");
+        assertEquals(negativeOrZeroAmount.getMaximum(), BigDecimal.ZERO);
     }
 }

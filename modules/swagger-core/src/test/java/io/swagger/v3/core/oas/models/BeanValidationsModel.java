@@ -6,9 +6,14 @@ import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.Negative;
+import javax.validation.constraints.NegativeOrZero;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import javax.validation.constraints.Size;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -39,6 +44,18 @@ public class BeanValidationsModel {
     protected Double maxBalance;
 
     protected Integer birthYear;
+
+    @Positive
+    protected BigDecimal positiveAmount;
+
+    @PositiveOrZero
+    protected BigDecimal positiveOrZeroAmount;
+
+    @Negative
+    protected BigDecimal negativeAmount;
+
+    @NegativeOrZero
+    protected BigDecimal negativeOrZeroAmount;
 
     @Size(min = 2, max = 10)
     private List<@Size(min = 3, max = 4) String> items;
@@ -115,6 +132,38 @@ public class BeanValidationsModel {
 
     public void setBirthYear(Integer birthYear) {
         this.birthYear = birthYear;
+    }
+
+    public BigDecimal getPositiveAmount() {
+        return positiveAmount;
+    }
+
+    public void setPositiveAmount(BigDecimal positiveAmount) {
+        this.positiveAmount = positiveAmount;
+    }
+
+    public BigDecimal getPositiveOrZeroAmount() {
+        return positiveOrZeroAmount;
+    }
+
+    public void setPositiveOrZeroAmount(BigDecimal positiveOrZeroAmount) {
+        this.positiveOrZeroAmount = positiveOrZeroAmount;
+    }
+
+    public BigDecimal getNegativeAmount() {
+        return negativeAmount;
+    }
+
+    public void setNegativeAmount(BigDecimal negativeAmount) {
+        this.negativeAmount = negativeAmount;
+    }
+
+    public BigDecimal getNegativeOrZeroAmount() {
+        return negativeOrZeroAmount;
+    }
+
+    public void setNegativeOrZeroAmount(BigDecimal negativeOrZeroAmount) {
+        this.negativeOrZeroAmount = negativeOrZeroAmount;
     }
 
     public List<String> getItems() {
