@@ -585,4 +585,130 @@ public class ValidationAnnotationsUtilsTest {
         assertFalse(modified);
         assertNull(schema.getFormat());
     }
+
+    // --- @Positive tests ---
+
+    @Test
+    public void testApplyPositiveConstraintOnNumberSchema() {
+        Schema schema = new NumberSchema();
+        boolean modified = ValidationAnnotationsUtils.applyPositiveConstraint(schema);
+
+        assertTrue(modified);
+        assertEquals(schema.getMinimum(), BigDecimal.ZERO);
+        assertTrue(schema.getExclusiveMinimum());
+    }
+
+    @Test
+    public void testApplyPositiveConstraintOnIntegerSchema() {
+        Schema schema = new IntegerSchema();
+        boolean modified = ValidationAnnotationsUtils.applyPositiveConstraint(schema);
+
+        assertTrue(modified);
+        assertEquals(schema.getMinimum(), BigDecimal.ZERO);
+        assertTrue(schema.getExclusiveMinimum());
+    }
+
+    @Test
+    public void testApplyPositiveConstraintOnStringSchema() {
+        Schema schema = new StringSchema();
+        boolean modified = ValidationAnnotationsUtils.applyPositiveConstraint(schema);
+
+        assertFalse(modified);
+        assertNull(schema.getMinimum());
+        assertNull(schema.getExclusiveMinimum());
+    }
+
+    // --- @PositiveOrZero tests ---
+
+    @Test
+    public void testApplyPositiveOrZeroConstraintOnNumberSchema() {
+        Schema schema = new NumberSchema();
+        boolean modified = ValidationAnnotationsUtils.applyPositiveOrZeroConstraint(schema);
+
+        assertTrue(modified);
+        assertEquals(schema.getMinimum(), BigDecimal.ZERO);
+        assertNull(schema.getExclusiveMinimum()); // inclusive — no exclusiveMinimum flag
+    }
+
+    @Test
+    public void testApplyPositiveOrZeroConstraintOnIntegerSchema() {
+        Schema schema = new IntegerSchema();
+        boolean modified = ValidationAnnotationsUtils.applyPositiveOrZeroConstraint(schema);
+
+        assertTrue(modified);
+        assertEquals(schema.getMinimum(), BigDecimal.ZERO);
+        assertNull(schema.getExclusiveMinimum());
+    }
+
+    @Test
+    public void testApplyPositiveOrZeroConstraintOnStringSchema() {
+        Schema schema = new StringSchema();
+        boolean modified = ValidationAnnotationsUtils.applyPositiveOrZeroConstraint(schema);
+
+        assertFalse(modified);
+        assertNull(schema.getMinimum());
+    }
+
+    // --- @Negative tests ---
+
+    @Test
+    public void testApplyNegativeConstraintOnNumberSchema() {
+        Schema schema = new NumberSchema();
+        boolean modified = ValidationAnnotationsUtils.applyNegativeConstraint(schema);
+
+        assertTrue(modified);
+        assertEquals(schema.getMaximum(), BigDecimal.ZERO);
+        assertTrue(schema.getExclusiveMaximum());
+    }
+
+    @Test
+    public void testApplyNegativeConstraintOnIntegerSchema() {
+        Schema schema = new IntegerSchema();
+        boolean modified = ValidationAnnotationsUtils.applyNegativeConstraint(schema);
+
+        assertTrue(modified);
+        assertEquals(schema.getMaximum(), BigDecimal.ZERO);
+        assertTrue(schema.getExclusiveMaximum());
+    }
+
+    @Test
+    public void testApplyNegativeConstraintOnStringSchema() {
+        Schema schema = new StringSchema();
+        boolean modified = ValidationAnnotationsUtils.applyNegativeConstraint(schema);
+
+        assertFalse(modified);
+        assertNull(schema.getMaximum());
+        assertNull(schema.getExclusiveMaximum());
+    }
+
+    // --- @NegativeOrZero tests ---
+
+    @Test
+    public void testApplyNegativeOrZeroConstraintOnNumberSchema() {
+        Schema schema = new NumberSchema();
+        boolean modified = ValidationAnnotationsUtils.applyNegativeOrZeroConstraint(schema);
+
+        assertTrue(modified);
+        assertEquals(schema.getMaximum(), BigDecimal.ZERO);
+        assertNull(schema.getExclusiveMaximum()); // inclusive — no exclusiveMaximum flag
+    }
+
+    @Test
+    public void testApplyNegativeOrZeroConstraintOnIntegerSchema() {
+        Schema schema = new IntegerSchema();
+        boolean modified = ValidationAnnotationsUtils.applyNegativeOrZeroConstraint(schema);
+
+        assertTrue(modified);
+        assertEquals(schema.getMaximum(), BigDecimal.ZERO);
+        assertNull(schema.getExclusiveMaximum());
+    }
+
+    @Test
+    public void testApplyNegativeOrZeroConstraintOnStringSchema() {
+        Schema schema = new StringSchema();
+        boolean modified = ValidationAnnotationsUtils.applyNegativeOrZeroConstraint(schema);
+
+        assertFalse(modified);
+        assertNull(schema.getMaximum());
+    }
 }
