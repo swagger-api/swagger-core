@@ -68,10 +68,14 @@ import javax.validation.constraints.DecimalMax;
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.Negative;
+import javax.validation.constraints.NegativeOrZero;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -1898,6 +1902,34 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 modified = ValidationAnnotationsUtils.applyEmailConstraint(property, email) || modified;
             }
         }
+        if (annos.containsKey(JAVAX_POSITIVE)) {
+            Positive positive = (Positive) annos.get(JAVAX_POSITIVE);
+            boolean apply = checkGroupValidation(positive.groups(), invocationGroups, acceptNoGroups);
+            if (apply) {
+                modified = ValidationAnnotationsUtils.applyPositiveConstraint(property) || modified;
+            }
+        }
+        if (annos.containsKey(JAVAX_POSITIVE_OR_ZERO)) {
+            PositiveOrZero positiveOrZero = (PositiveOrZero) annos.get(JAVAX_POSITIVE_OR_ZERO);
+            boolean apply = checkGroupValidation(positiveOrZero.groups(), invocationGroups, acceptNoGroups);
+            if (apply) {
+                modified = ValidationAnnotationsUtils.applyPositiveOrZeroConstraint(property) || modified;
+            }
+        }
+        if (annos.containsKey(JAVAX_NEGATIVE)) {
+            Negative negative = (Negative) annos.get(JAVAX_NEGATIVE);
+            boolean apply = checkGroupValidation(negative.groups(), invocationGroups, acceptNoGroups);
+            if (apply) {
+                modified = ValidationAnnotationsUtils.applyNegativeConstraint(property) || modified;
+            }
+        }
+        if (annos.containsKey(JAVAX_NEGATIVE_OR_ZERO)) {
+            NegativeOrZero negativeOrZero = (NegativeOrZero) annos.get(JAVAX_NEGATIVE_OR_ZERO);
+            boolean apply = checkGroupValidation(negativeOrZero.groups(), invocationGroups, acceptNoGroups);
+            if (apply) {
+                modified = ValidationAnnotationsUtils.applyNegativeOrZeroConstraint(property) || modified;
+            }
+        }
         if (validatorProcessor != null && validatorProcessor.getMode().equals(ValidatorProcessor.MODE.AFTER)) {
             modified = validatorProcessor.applyBeanValidatorAnnotations(property, annotations, parent, applyNotNullAnnotations) || modified;
         }
@@ -1960,6 +1992,18 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         if (annos.containsKey(JAVAX_EMAIL)) {
             Email pattern = (Email) annos.get(JAVAX_EMAIL);
             modified = ValidationAnnotationsUtils.applyEmailConstraint(property, pattern) || modified;
+        }
+        if (annos.containsKey(JAVAX_POSITIVE)) {
+            modified = ValidationAnnotationsUtils.applyPositiveConstraint(property) || modified;
+        }
+        if (annos.containsKey(JAVAX_POSITIVE_OR_ZERO)) {
+            modified = ValidationAnnotationsUtils.applyPositiveOrZeroConstraint(property) || modified;
+        }
+        if (annos.containsKey(JAVAX_NEGATIVE)) {
+            modified = ValidationAnnotationsUtils.applyNegativeConstraint(property) || modified;
+        }
+        if (annos.containsKey(JAVAX_NEGATIVE_OR_ZERO)) {
+            modified = ValidationAnnotationsUtils.applyNegativeOrZeroConstraint(property) || modified;
         }
         return modified;
     }

@@ -14,6 +14,7 @@ import java.math.BigDecimal;
 import java.util.Map;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
 
 public class BeanValidatorTest {
@@ -56,5 +57,41 @@ public class BeanValidatorTest {
         final StringSchema optionalValue = (StringSchema) properties.get("optionalValue");
         assertEquals((int) optionalValue.getMinLength(), 1);
         assertEquals((int) optionalValue.getMaxLength(), 10);
+
+        final NumberSchema positiveAmount = (NumberSchema) properties.get("positiveAmount");
+        assertEquals(positiveAmount.getMinimum(), BigDecimal.ZERO);
+        assertTrue(positiveAmount.getExclusiveMinimum());
+
+        final NumberSchema positiveOrZeroAmount = (NumberSchema) properties.get("positiveOrZeroAmount");
+        assertEquals(positiveOrZeroAmount.getMinimum(), BigDecimal.ZERO);
+        assertNull(positiveOrZeroAmount.getExclusiveMinimum());
+
+        final NumberSchema negativeAmount = (NumberSchema) properties.get("negativeAmount");
+        assertEquals(negativeAmount.getMaximum(), BigDecimal.ZERO);
+        assertTrue(negativeAmount.getExclusiveMaximum());
+
+        final NumberSchema negativeOrZeroAmount = (NumberSchema) properties.get("negativeOrZeroAmount");
+        assertEquals(negativeOrZeroAmount.getMaximum(), BigDecimal.ZERO);
+        assertNull(negativeOrZeroAmount.getExclusiveMaximum());
+
+        final NumberSchema positiveWithMin = (NumberSchema) properties.get("positiveWithMin");
+        assertEquals(positiveWithMin.getMinimum(), new BigDecimal("5"));
+        assertNull(positiveWithMin.getExclusiveMinimum());
+
+        final NumberSchema positiveWithDecimalMin = (NumberSchema) properties.get("positiveWithDecimalMin");
+        assertEquals(positiveWithDecimalMin.getMinimum(), new BigDecimal("5.5"));
+        assertTrue(positiveWithDecimalMin.getExclusiveMinimum());
+
+        final NumberSchema positiveOrZeroWithMin = (NumberSchema) properties.get("positiveOrZeroWithMin");
+        assertEquals(positiveOrZeroWithMin.getMinimum(), new BigDecimal("3"));
+        assertNull(positiveOrZeroWithMin.getExclusiveMinimum());
+
+        final NumberSchema negativeWithMax = (NumberSchema) properties.get("negativeWithMax");
+        assertEquals(negativeWithMax.getMaximum(), new BigDecimal("-3"));
+        assertNull(negativeWithMax.getExclusiveMaximum());
+
+        final NumberSchema negativeOrZeroWithMax = (NumberSchema) properties.get("negativeOrZeroWithMax");
+        assertEquals(negativeOrZeroWithMax.getMaximum(), new BigDecimal("-2"));
+        assertNull(negativeOrZeroWithMax.getExclusiveMaximum());
     }
 }
