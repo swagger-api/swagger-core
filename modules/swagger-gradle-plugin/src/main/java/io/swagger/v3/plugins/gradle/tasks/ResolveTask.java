@@ -62,7 +62,7 @@ public class ResolveTask extends DefaultTask {
     public final Property<String> scannerClass = getProject().getObjects().property(String.class);
     @Input
     @Optional
-    public final Property<Boolean> prettyPrint = getProject().getObjects().property(Boolean.class).convention(false);
+    public final Property<Boolean> prettyPrint = getProject().getObjects().property(Boolean.class).convention(true);
     @Input
     @Optional
     public final Property<Boolean> readAllResources = getProject().getObjects().property(Boolean.class).convention(false);
