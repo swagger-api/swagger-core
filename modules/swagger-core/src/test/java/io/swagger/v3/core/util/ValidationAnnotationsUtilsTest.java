@@ -711,4 +711,134 @@ public class ValidationAnnotationsUtilsTest {
         assertFalse(modified);
         assertNull(schema.getMaximum());
     }
+
+    // --- @Positive with existing minimum (stricter-bound logic) ---
+
+    @Test
+    public void testApplyPositiveConstraintKeepsStricterMinFromMin() {
+        Schema schema = new NumberSchema();
+        schema.setMinimum(new BigDecimal("10"));
+
+        ValidationAnnotationsUtils.applyPositiveConstraint(schema);
+
+        assertEquals(schema.getMinimum(), new BigDecimal("10"));
+        assertNull(schema.getExclusiveMinimum());
+    }
+
+    @Test
+    public void testApplyPositiveConstraintKeepsStricterMinFromDecimalMin() {
+        Schema schema = new NumberSchema();
+        schema.setMinimum(new BigDecimal("5.5"));
+        schema.setExclusiveMinimum(false);
+
+        ValidationAnnotationsUtils.applyPositiveConstraint(schema);
+
+        assertEquals(schema.getMinimum(), new BigDecimal("5.5"));
+        assertFalse(schema.getExclusiveMinimum());
+    }
+
+    @Test
+    public void testApplyPositiveConstraintOverridesNegativeMin() {
+        Schema schema = new NumberSchema();
+        schema.setMinimum(new BigDecimal("-5"));
+
+        ValidationAnnotationsUtils.applyPositiveConstraint(schema);
+
+        assertEquals(schema.getMinimum(), BigDecimal.ZERO);
+        assertTrue(schema.getExclusiveMinimum());
+    }
+
+    @Test
+    public void testApplyPositiveConstraintTightensZeroInclusiveToExclusive() {
+        Schema schema = new NumberSchema();
+        schema.setMinimum(BigDecimal.ZERO);
+
+        ValidationAnnotationsUtils.applyPositiveConstraint(schema);
+
+        assertEquals(schema.getMinimum(), BigDecimal.ZERO);
+        assertTrue(schema.getExclusiveMinimum());
+    }
+
+    // --- @PositiveOrZero with existing minimum ---
+
+    @Test
+    public void testApplyPositiveOrZeroConstraintKeepsStricterMinFromMin() {
+        Schema schema = new NumberSchema();
+        schema.setMinimum(new BigDecimal("5"));
+
+        ValidationAnnotationsUtils.applyPositiveOrZeroConstraint(schema);
+
+        assertEquals(schema.getMinimum(), new BigDecimal("5"));
+        assertNull(schema.getExclusiveMinimum());
+    }
+
+    @Test
+    public void testApplyPositiveOrZeroConstraintOverridesNegativeMin() {
+        Schema schema = new NumberSchema();
+        schema.setMinimum(new BigDecimal("-3"));
+
+        ValidationAnnotationsUtils.applyPositiveOrZeroConstraint(schema);
+
+        assertEquals(schema.getMinimum(), BigDecimal.ZERO);
+        assertNull(schema.getExclusiveMinimum());
+    }
+
+    // --- @Negative with existing maximum (stricter-bound logic) ---
+
+    @Test
+    public void testApplyNegativeConstraintKeepsStricterMaxFromMax() {
+        Schema schema = new NumberSchema();
+        schema.setMaximum(new BigDecimal("-5"));
+
+        ValidationAnnotationsUtils.applyNegativeConstraint(schema);
+
+        assertEquals(schema.getMaximum(), new BigDecimal("-5"));
+        assertNull(schema.getExclusiveMaximum());
+    }
+
+    @Test
+    public void testApplyNegativeConstraintOverridesPositiveMax() {
+        Schema schema = new NumberSchema();
+        schema.setMaximum(new BigDecimal("10"));
+
+        ValidationAnnotationsUtils.applyNegativeConstraint(schema);
+
+        assertEquals(schema.getMaximum(), BigDecimal.ZERO);
+        assertTrue(schema.getExclusiveMaximum());
+    }
+
+    @Test
+    public void testApplyNegativeConstraintTightensZeroInclusiveToExclusive() {
+        Schema schema = new NumberSchema();
+        schema.setMaximum(BigDecimal.ZERO);
+
+        ValidationAnnotationsUtils.applyNegativeConstraint(schema);
+
+        assertEquals(schema.getMaximum(), BigDecimal.ZERO);
+        assertTrue(schema.getExclusiveMaximum());
+    }
+
+    // --- @NegativeOrZero with existing maximum ---
+
+    @Test
+    public void testApplyNegativeOrZeroConstraintKeepsStricterMaxFromMax() {
+        Schema schema = new NumberSchema();
+        schema.setMaximum(new BigDecimal("-2"));
+
+        ValidationAnnotationsUtils.applyNegativeOrZeroConstraint(schema);
+
+        assertEquals(schema.getMaximum(), new BigDecimal("-2"));
+        assertNull(schema.getExclusiveMaximum());
+    }
+
+    @Test
+    public void testApplyNegativeOrZeroConstraintOverridesPositiveMax() {
+        Schema schema = new NumberSchema();
+        schema.setMaximum(new BigDecimal("5"));
+
+        ValidationAnnotationsUtils.applyNegativeOrZeroConstraint(schema);
+
+        assertEquals(schema.getMaximum(), BigDecimal.ZERO);
+        assertNull(schema.getExclusiveMaximum());
+    }
 }

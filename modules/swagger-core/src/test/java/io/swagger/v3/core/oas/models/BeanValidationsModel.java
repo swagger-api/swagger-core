@@ -57,6 +57,26 @@ public class BeanValidationsModel {
     @NegativeOrZero
     protected BigDecimal negativeOrZeroAmount;
 
+    @Positive
+    @Min(5)
+    protected BigDecimal positiveWithMin;
+
+    @Positive
+    @DecimalMin(value = "5.5", inclusive = false)
+    protected BigDecimal positiveWithDecimalMin;
+
+    @PositiveOrZero
+    @Min(3)
+    protected BigDecimal positiveOrZeroWithMin;
+
+    @Negative
+    @Max(-3)
+    protected BigDecimal negativeWithMax;
+
+    @NegativeOrZero
+    @Max(-2)
+    protected BigDecimal negativeOrZeroWithMax;
+
     @Size(min = 2, max = 10)
     private List<@Size(min = 3, max = 4) String> items;
 
@@ -164,6 +184,46 @@ public class BeanValidationsModel {
 
     public void setNegativeOrZeroAmount(BigDecimal negativeOrZeroAmount) {
         this.negativeOrZeroAmount = negativeOrZeroAmount;
+    }
+
+    public BigDecimal getPositiveWithMin() {
+        return positiveWithMin;
+    }
+
+    public void setPositiveWithMin(BigDecimal positiveWithMin) {
+        this.positiveWithMin = positiveWithMin;
+    }
+
+    public BigDecimal getPositiveWithDecimalMin() {
+        return positiveWithDecimalMin;
+    }
+
+    public void setPositiveWithDecimalMin(BigDecimal positiveWithDecimalMin) {
+        this.positiveWithDecimalMin = positiveWithDecimalMin;
+    }
+
+    public BigDecimal getPositiveOrZeroWithMin() {
+        return positiveOrZeroWithMin;
+    }
+
+    public void setPositiveOrZeroWithMin(BigDecimal positiveOrZeroWithMin) {
+        this.positiveOrZeroWithMin = positiveOrZeroWithMin;
+    }
+
+    public BigDecimal getNegativeWithMax() {
+        return negativeWithMax;
+    }
+
+    public void setNegativeWithMax(BigDecimal negativeWithMax) {
+        this.negativeWithMax = negativeWithMax;
+    }
+
+    public BigDecimal getNegativeOrZeroWithMax() {
+        return negativeOrZeroWithMax;
+    }
+
+    public void setNegativeOrZeroWithMax(BigDecimal negativeOrZeroWithMax) {
+        this.negativeOrZeroWithMax = negativeOrZeroWithMax;
     }
 
     public List<String> getItems() {

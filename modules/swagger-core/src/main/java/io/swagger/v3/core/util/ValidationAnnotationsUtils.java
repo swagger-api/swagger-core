@@ -183,8 +183,13 @@ public class ValidationAnnotationsUtils {
 
     public static boolean applyPositiveConstraint(Schema schema) {
         if (isNumberSchema(schema)) {
-            schema.setMinimum(BigDecimal.ZERO);
-            schema.setExclusiveMinimum(true);
+            BigDecimal current = schema.getMinimum();
+            if (current == null || current.compareTo(BigDecimal.ZERO) < 0) {
+                schema.setMinimum(BigDecimal.ZERO);
+                schema.setExclusiveMinimum(true);
+            } else if (current.compareTo(BigDecimal.ZERO) == 0 && !Boolean.TRUE.equals(schema.getExclusiveMinimum())) {
+                schema.setExclusiveMinimum(true);
+            }
             return true;
         }
         return false;
@@ -192,7 +197,10 @@ public class ValidationAnnotationsUtils {
 
     public static boolean applyPositiveOrZeroConstraint(Schema schema) {
         if (isNumberSchema(schema)) {
-            schema.setMinimum(BigDecimal.ZERO);
+            BigDecimal current = schema.getMinimum();
+            if (current == null || current.compareTo(BigDecimal.ZERO) < 0) {
+                schema.setMinimum(BigDecimal.ZERO);
+            }
             return true;
         }
         return false;
@@ -200,8 +208,13 @@ public class ValidationAnnotationsUtils {
 
     public static boolean applyNegativeConstraint(Schema schema) {
         if (isNumberSchema(schema)) {
-            schema.setMaximum(BigDecimal.ZERO);
-            schema.setExclusiveMaximum(true);
+            BigDecimal current = schema.getMaximum();
+            if (current == null || current.compareTo(BigDecimal.ZERO) > 0) {
+                schema.setMaximum(BigDecimal.ZERO);
+                schema.setExclusiveMaximum(true);
+            } else if (current.compareTo(BigDecimal.ZERO) == 0 && !Boolean.TRUE.equals(schema.getExclusiveMaximum())) {
+                schema.setExclusiveMaximum(true);
+            }
             return true;
         }
         return false;
@@ -209,7 +222,10 @@ public class ValidationAnnotationsUtils {
 
     public static boolean applyNegativeOrZeroConstraint(Schema schema) {
         if (isNumberSchema(schema)) {
-            schema.setMaximum(BigDecimal.ZERO);
+            BigDecimal current = schema.getMaximum();
+            if (current == null || current.compareTo(BigDecimal.ZERO) > 0) {
+                schema.setMaximum(BigDecimal.ZERO);
+            }
             return true;
         }
         return false;
