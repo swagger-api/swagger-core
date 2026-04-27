@@ -19,6 +19,10 @@ public class ValidationAnnotationsUtils {
     public static final String JAVAX_DECIMAL_MAX = "javax.validation.constraints.DecimalMax";
     public static final String JAVAX_PATTERN = "javax.validation.constraints.Pattern";
     public static final String JAVAX_EMAIL = "javax.validation.constraints.Email";
+    public static final String JAVAX_POSITIVE = "javax.validation.constraints.Positive";
+    public static final String JAVAX_POSITIVE_OR_ZERO = "javax.validation.constraints.PositiveOrZero";
+    public static final String JAVAX_NEGATIVE = "javax.validation.constraints.Negative";
+    public static final String JAVAX_NEGATIVE_OR_ZERO = "javax.validation.constraints.NegativeOrZero";
 
     private static final String SCHEMA_EMAIL_FORMAT_NAME = "email";
 
@@ -172,6 +176,56 @@ public class ValidationAnnotationsUtils {
         }
         if (schema.getItems() != null && isStringSchema(schema.getItems())) {
             schema.getItems().setFormat(SCHEMA_EMAIL_FORMAT_NAME);
+            return true;
+        }
+        return false;
+    }
+
+    public static boolean applyPositiveConstraint(Schema schema) {
+        if (isNumberSchema(schema)) {
+            BigDecimal current = schema.getMinimum();
+            if (current == null || current.compareTo(BigDecimal.ZERO) < 0) {
+                schema.setMinimum(BigDecimal.ZERO);
+                schema.setExclusiveMinimum(true);
+            } else if (current.compareTo(BigDecimal.ZERO) == 0 && !Boolean.TRUE.equals(schema.getExclusiveMinimum())) {
+                schema.setExclusiveMinimum(true);
+            }
+            return true;
+        }
+        return false;
+    }
+
+    public static boolean applyPositiveOrZeroConstraint(Schema schema) {
+        if (isNumberSchema(schema)) {
+            BigDecimal current = schema.getMinimum();
+            if (current == null || current.compareTo(BigDecimal.ZERO) < 0) {
+                schema.setMinimum(BigDecimal.ZERO);
+            }
+            return true;
+        }
+        return false;
+    }
+
+    public static boolean applyNegativeConstraint(Schema schema) {
+        if (isNumberSchema(schema)) {
+            BigDecimal current = schema.getMaximum();
+            if (current == null || current.compareTo(BigDecimal.ZERO) > 0) {
+                schema.setMaximum(BigDecimal.ZERO);
+                schema.setExclusiveMaximum(true);
+            } else if (current.compareTo(BigDecimal.ZERO) == 0 && !Boolean.TRUE.equals(schema.getExclusiveMaximum())) {
+                schema.setExclusiveMaximum(true);
+            }
+            return true;
+        }
+        return false;
+    }
+
+    public static boolean applyNegativeOrZeroConstraint(Schema schema) {
+        if (isNumberSchema(schema)) {
+            BigDecimal current = schema.getMaximum();
+            if (current == null || current.compareTo(BigDecimal.ZERO) > 0) {
+                schema.setMaximum(BigDecimal.ZERO);
+            }
             return true;
         }
         return false;
