@@ -486,6 +486,29 @@ public class ReflectionUtils {
         } catch (IllegalAccessException e) {
             return Optional.empty();
         }
+    }
 
+    public static List<Method> getAnnotatedMethods(Class<?> type, Class<? extends Annotation> annotation) {
+        List<Method> methods = new ArrayList<>();
+        for (Class<?> clazz = type; clazz != Object.class; clazz = clazz.getSuperclass()) {
+            collectAnnotatedDeclaredMethods(clazz, annotation, methods);
+        }
+        collectAnnotatedMethodsFromInterfaces(type, annotation, methods);
+        return methods;
+    }
+
+    private static void collectAnnotatedMethodsFromInterfaces(Class<?> type, Class<? extends Annotation> annotation, List<Method> methods) {
+        for (Class<?> iface : type.getInterfaces()) {
+            collectAnnotatedDeclaredMethods(iface, annotation, methods);
+            collectAnnotatedMethodsFromInterfaces(iface, annotation, methods);
+        }
+    }
+
+    private static void collectAnnotatedDeclaredMethods(Class<?> cls, Class<? extends Annotation> annotation, List<Method> methods) {
+        for (Method method : cls.getDeclaredMethods()) {
+            if (!method.isBridge() && method.isAnnotationPresent(annotation)) {
+                methods.add(method);
+            }
+        }
     }
 }

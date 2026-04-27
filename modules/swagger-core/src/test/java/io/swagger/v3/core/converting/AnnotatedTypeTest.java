@@ -3,11 +3,7 @@ package io.swagger.v3.core.converting;
 import io.swagger.v3.core.converter.AnnotatedType;
 import org.testng.annotations.Test;
 
-import java.lang.annotation.Annotation;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.lang.annotation.*;
 import java.lang.reflect.Type;
 import java.util.HashSet;
 import java.util.Set;
@@ -49,20 +45,22 @@ public class AnnotatedTypeTest {
     }
 
     /**
-     * Tests that JDK/internal annotations are filtered out for equals() and hashCode() comparison.
+     * Tests that the JDK Deprecated annotation is considered for equals() and hashCode() comparison.
      */
     @Test
-    public void testEqualsAndHashCode_shouldIgnoreJdkInternalAnnotations() {
+    public void testEqualsAndHashCode_shouldIncludeJdkDeprecatedAnnotations() {
         Annotation annA = getAnnotationInstance(TestAnnA.class);
         Annotation deprecated = getAnnotationInstance(Deprecated.class);
         AnnotatedType typeWithUserAnn = new AnnotatedType(String.class).ctxAnnotations(new Annotation[]{annA});
-        AnnotatedType typeWithJdkAnn = new AnnotatedType(String.class).ctxAnnotations(new Annotation[]{annA, deprecated});
+        AnnotatedType typeWithJdkAnnAndUserAnn = new AnnotatedType(String.class).ctxAnnotations(new Annotation[]{deprecated, annA});
+        AnnotatedType typeWithUserAnnAndJdkAnn = new AnnotatedType(String.class).ctxAnnotations(new Annotation[]{annA, deprecated});
         AnnotatedType typeWithOnlyJdkAnn = new AnnotatedType(String.class).ctxAnnotations(new Annotation[]{deprecated});
         AnnotatedType typeWithNoAnn = new AnnotatedType(String.class);
-        assertEquals(typeWithUserAnn, typeWithJdkAnn, "JDK annotations should be ignored in equality comparison.");
-        assertEquals(typeWithUserAnn.hashCode(), typeWithJdkAnn.hashCode(), "JDK annotations should be ignored in hashCode calculation.");
-        assertEquals(typeWithOnlyJdkAnn, typeWithNoAnn, "An object with only JDK annotations should be equal to one with no annotations.");
-        assertEquals(typeWithOnlyJdkAnn.hashCode(), typeWithNoAnn.hashCode(), "The hash code of an object with only JDK annotations should be the same as one with no annotations.");
+        assertNotEquals(typeWithUserAnn, typeWithJdkAnnAndUserAnn, "JDK Deprecated annotation should be included in equality comparison.");
+        assertNotEquals(typeWithUserAnn.hashCode(), typeWithJdkAnnAndUserAnn.hashCode(), "JDK Deprecated annotation should be included in hashCode calculation.");
+        assertNotEquals(typeWithOnlyJdkAnn, typeWithNoAnn, "An object with only JDK Deprecated annotation should not be equal to one with no annotations.");
+        assertNotEquals(typeWithOnlyJdkAnn.hashCode(), typeWithNoAnn.hashCode(), "The hash code of an object with only a JDK Deprecated annotation should not be the same as one with no annotations.");
+        assertEquals(typeWithJdkAnnAndUserAnn, typeWithUserAnnAndJdkAnn, "Hash codes should be equal even if annotation order is different.");
     }
 
     /**
