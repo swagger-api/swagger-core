@@ -24,7 +24,7 @@ public class SwaggerPlugin implements Plugin<Project> {
         });
         TaskProvider<ResolveTask> lazyTask = project.getTasks().register("resolve", ResolveTask.class,task -> {
             task.buildClasspath.setFrom(config);
-            task.classpath.setFrom(project.getExtensions().findByType(SourceSetContainer.class).getByName("main").getRuntimeClasspath().getFiles());
+            task.classpath.setFrom(project.getExtensions().findByType(SourceSetContainer.class).getByName("main").getRuntimeClasspath());
             task.prettyPrint.convention(false);
             task.readAllResources.convention(true);
             task.outputFormat.convention(ResolveTask.Format.JSON);
