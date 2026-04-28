@@ -18,8 +18,8 @@ public class SchemaTest {
         schema1.setBooleanSchemaValue(true);
         schema2.setBooleanSchemaValue(false);
 
-        assertFalse(schema1.equals(schema2));
-        assertFalse(schema2.equals(schema1));
+        assertNotEquals(schema2, schema1);
+        assertNotEquals(schema1, schema2);
         assertNotEquals(schema1.hashCode(), schema2.hashCode());
     }
 
@@ -32,8 +32,8 @@ public class SchemaTest {
         schema1.setBooleanSchemaValue(true);
         schema2.setBooleanSchemaValue(null);
 
-        assertFalse(schema1.equals(schema2));
-        assertFalse(schema2.equals(schema1));
+        assertNotEquals(schema2, schema1);
+        assertNotEquals(schema1, schema2);
         assertNotEquals(schema1.hashCode(), schema2.hashCode());
     }
 
@@ -47,15 +47,15 @@ public class SchemaTest {
         schemaTrue.setBooleanSchemaValue(true);
 
         // These should be different
-        assertFalse(schemaFalse.equals(schemaTrue));
-        assertFalse(schemaTrue.equals(schemaFalse));
+        assertNotEquals(schemaTrue, schemaFalse);
+        assertNotEquals(schemaFalse, schemaTrue);
 
         // Hash codes should be different to prevent collisions in maps
         assertNotEquals(schemaFalse.hashCode(), schemaTrue.hashCode());
 
         // Verify the actual values
-        assertEquals(Boolean.FALSE, schemaFalse.getBooleanSchemaValue());
-        assertEquals(Boolean.TRUE, schemaTrue.getBooleanSchemaValue());
+        assertEquals(schemaFalse.getBooleanSchemaValue(), Boolean.FALSE);
+        assertEquals(schemaTrue.getBooleanSchemaValue(), Boolean.TRUE);
     }
 
     @Test
@@ -64,14 +64,14 @@ public class SchemaTest {
         Schema<Object> schema2 = createComplexSchema();
 
         // Initially they should be equal
-        assertTrue(schema1.equals(schema2));
+        assertEquals(schema2, schema1);
         assertEquals(schema1.hashCode(), schema2.hashCode());
 
         // Change only booleanSchemaValue
         schema2.setBooleanSchemaValue(false);
 
         // Now they should be different
-        assertFalse(schema1.equals(schema2));
+        assertNotEquals(schema2, schema1);
         assertNotEquals(schema1.hashCode(), schema2.hashCode());
     }
 
@@ -165,6 +165,35 @@ public class SchemaTest {
         anotherTrue.setBooleanSchemaValue(true);
         schemaSet.add(anotherTrue);
         assertEquals(schemaSet.size(), 2);
+    }
+
+    @Test
+    public void testAddRequiredItemDeduplicates() {
+        Schema<Object> schema = new Schema<>();
+        schema.addRequiredItem("id");
+        schema.addRequiredItem("name");
+        schema.addRequiredItem("id");
+        assertEquals(schema.getRequired().size(), 2);
+        assertTrue(schema.getRequired().contains("id"));
+        assertTrue(schema.getRequired().contains("name"));
+    }
+
+    @Test
+    public void testSetRequiredDeduplicates() {
+        Schema<Object> schema = new Schema<>();
+        schema.setRequired(Arrays.asList("id", "name", "id"));
+        assertEquals(schema.getRequired().size(), 2);
+        assertTrue(schema.getRequired().contains("id"));
+        assertTrue(schema.getRequired().contains("name"));
+    }
+
+    @Test
+    public void testRequiredBuilderDeduplicates() {
+        Schema<Object> schema = new Schema<>();
+        schema.required(Arrays.asList("id", "name", "id"));
+        assertEquals(schema.getRequired().size(), 2);
+        assertTrue(schema.getRequired().contains("id"));
+        assertTrue(schema.getRequired().contains("name"));
     }
 
     private Schema<Object> createComplexSchema() {
