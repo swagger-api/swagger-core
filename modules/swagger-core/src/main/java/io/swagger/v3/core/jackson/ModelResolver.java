@@ -2450,32 +2450,25 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
     }
 
     protected Boolean resolveNullable(Annotated a, Annotation[] annotations, io.swagger.v3.oas.annotations.media.Schema schema) {
-        // Resolve the effective @Schema annotation - prefer the one passed directly, otherwise scan the annotations array.
-        // Some callers (notably property-level resolution) pass schema=null and put @Schema in the annotations array instead.
-        io.swagger.v3.oas.annotations.media.Schema effectiveSchema = schema;
-        if (effectiveSchema == null && annotations != null) {
-            for (Annotation annotation : annotations) {
-                if (annotation instanceof io.swagger.v3.oas.annotations.media.Schema) {
-                    effectiveSchema = (io.swagger.v3.oas.annotations.media.Schema) annotation;
-                    break;
-                }
-            }
-        }
-        // NullableMode takes precedence over both the legacy nullable boolean and auto-detection.
-        if (effectiveSchema != null) {
-            io.swagger.v3.oas.annotations.media.Schema.NullableMode mode = effectiveSchema.nullableMode();
+        // NullableMode on the explicit @Schema parameter takes precedence over both the legacy
+        // nullable boolean and auto-detection. NullableMode handling for property-level @Schema
+        // (when this method is called with schema=null) is centralized in AnnotationsUtils, where
+        // the @Schema annotation is the canonical source - per the project convention that
+        // @Schema must not be scanned out of the annotations array (sibling handling depends on
+        // that separation).
+        if (schema != null) {
+            io.swagger.v3.oas.annotations.media.Schema.NullableMode mode = schema.nullableMode();
             if (mode == io.swagger.v3.oas.annotations.media.Schema.NullableMode.NULLABLE) {
                 return true;
             }
             if (mode == io.swagger.v3.oas.annotations.media.Schema.NullableMode.NOT_NULLABLE) {
-                // Explicit override: skip both legacy nullable and auto-detection. Returning null
-                // (not Boolean.FALSE) avoids the caller emitting `"nullable": false` literally;
-                // the actual clearing of any prior nullable indication happens in AnnotationsUtils
-                // when the @Schema annotation is processed.
+                // Returning null (not Boolean.FALSE) avoids the caller emitting `"nullable": false`
+                // literally; AnnotationsUtils clears any prior nullable indication when it processes
+                // the @Schema annotation.
                 return null;
             }
             // mode == AUTO: honor legacy nullable boolean if set, otherwise fall through to heuristics.
-            if (effectiveSchema.nullable()) {
+            if (schema.nullable()) {
                 return true;
             }
         }
