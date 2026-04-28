@@ -203,6 +203,74 @@ public class SwaggerResolveTest {
         assertTrue(strContent.contains("\"openapi\" : \"3.0.1\""));
     }
 
+    /**
+     * Tests that ResolveTask works with minimal configuration, relying on
+     * .convention() defaults for prettyPrint, sortOutput, encoding,
+     * readAllResources, alwaysResolveAppPath, skipResolveAppPath,
+     * openAPI31, convertToOpenAPI31, outputFormat, and skip.
+     * This validates Gradle 9 compatibility where Property.get() on an
+     * unset property without a convention throws an error.
+     */
+    @Test
+    public void testSwaggerResolveTaskWithConventionDefaults() throws IOException {
+        outputDir = testProjectDir.toString() + "/target";
+        String resolveTask = "resolve";
+
+        String buildFileContent =
+                "plugins {\n" +
+                "    id 'java'\n" +
+                "    id 'io.swagger.core.v3.swagger-gradle-plugin'\n" +
+                "}\n" +
+                "sourceSets {\n" +
+                "    test {\n" +
+                "        java {\n" +
+                "            srcDirs('" + toNormalizedPath(new File("src/test/java").getAbsolutePath()) + "')\n" +
+                "            exclude('**/*Test.java')\n" +
+                "        }\n" +
+                "    }\n" +
+                "}\n" +
+                "repositories {\n" +
+                "    mavenLocal()\n" +
+                "    mavenCentral()\n" +
+                "}\n" +
+                "dependencies {  \n" +
+                "    implementation 'io.swagger.core.v3:swagger-jaxrs2:2.2.47-SNAPSHOT'\n" +
+                "    implementation 'javax.ws.rs:javax.ws.rs-api:2.1'\n" +
+                "    implementation 'javax.servlet:javax.servlet-api:3.1.0'\n" +
+                "}\n" +
+                resolveTask + " {\n" +
+                "    outputFileName = 'PetStoreAPIDefaults'\n" +
+                "    classpath = sourceSets.test.runtimeClasspath\n" +
+                "    resourcePackages = ['io.swagger.v3.plugins.gradle.petstore']\n" +
+                "    outputPath = \'" + toNormalizedPath(outputDir) + "\'\n" +
+                "}";
+
+        String settingsFileContent = "pluginManagement {\n" +
+                "    repositories {\n" +
+                "        maven {\n" +
+                "            url mavenLocal().url\n" +
+                "        }\n" +
+                "        mavenCentral()\n" +
+                "        gradlePluginPortal()\n" +
+                "    }\n" +
+                "}\n" +
+                "rootProject.name = 'gradle-test'\n" +
+                "\n";
+        writeFile(buildFile, buildFileContent);
+        writeFile(settingsFile, settingsFileContent);
+
+        BuildResult result = GradleRunner.create()
+                .withPluginClasspath()
+                .withProjectDir(testProjectDir.toFile())
+                .withDebug(true)
+                .withArguments(resolveTask, "--stacktrace", "--info")
+                .forwardOutput()
+                .build();
+
+        assertTrue(result.taskPaths(SUCCESS).contains(format(":%s", resolveTask)));
+        assertTrue(new File(outputDir + "/PetStoreAPIDefaults.json").exists());
+    }
+
     private static void writeFile(Path destination, String content) throws IOException {
         try (BufferedWriter output = new BufferedWriter(new FileWriter(destination.toFile()))) {
             output.write(content);
