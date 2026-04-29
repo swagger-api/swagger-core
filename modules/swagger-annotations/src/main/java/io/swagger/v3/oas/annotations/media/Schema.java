@@ -215,7 +215,7 @@ public @interface Schema {
     /**
      * If true, designates a value as possibly null.
      *
-     * @deprecated As of 2.2.49, replaced by {@link #nullableMode()}
+     * @deprecated As of 2.2.50, replaced by {@link #nullableMode()}
      *
      * @return whether or not this schema is nullable
      **/
