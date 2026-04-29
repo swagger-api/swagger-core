@@ -2331,12 +2331,12 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             try {
                 ObjectMapper mapper = ObjectMapperFactory.buildStrictGenericObjectMapper();
                 JsonNode node = mapper.readTree(schema.defaultValue());
-                // Only return null for "null" string when nullable=true
+                // Only return null for "null" string when the schema is effectively nullable
                 if (node.isNull()) {
-                    if (schema.nullable()) {
+                    if (isSchemaAnnotationNullable(schema)) {
                         return null;
                     } else {
-                        // When nullable=false, treat "null" as literal string
+                        // When not nullable, treat "null" as literal string
                         return schema.defaultValue();
                     }
                 }
@@ -2375,7 +2375,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                     ObjectMapper mapper = ObjectMapperFactory.buildStrictGenericObjectMapper();
                     JsonNode node = mapper.readTree(schema.example());
                     if (node.isNull()) {
-                        if (schema.nullable()) {
+                        if (isSchemaAnnotationNullable(schema)) {
                             return null;
                         } else {
                             return schema.example();
@@ -2494,8 +2494,27 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
     }
 
     protected Boolean resolveNullable(Annotated a, Annotation[] annotations, io.swagger.v3.oas.annotations.media.Schema schema) {
-        if (schema != null && schema.nullable()) {
-            return true;
+        // NullableMode on the explicit @Schema parameter takes precedence over both the legacy
+        // nullable boolean and auto-detection. NullableMode handling for property-level @Schema
+        // (when this method is called with schema=null) is centralized in AnnotationsUtils, where
+        // the @Schema annotation is the canonical source - per the project convention that
+        // @Schema must not be scanned out of the annotations array (sibling handling depends on
+        // that separation).
+        if (schema != null) {
+            io.swagger.v3.oas.annotations.media.Schema.NullableMode mode = schema.nullableMode();
+            if (mode == io.swagger.v3.oas.annotations.media.Schema.NullableMode.NULLABLE) {
+                return true;
+            }
+            if (mode == io.swagger.v3.oas.annotations.media.Schema.NullableMode.NOT_NULLABLE) {
+                // Returning null (not Boolean.FALSE) avoids the caller emitting `"nullable": false`
+                // literally; AnnotationsUtils clears any prior nullable indication when it processes
+                // the @Schema annotation.
+                return null;
+            }
+            // mode == AUTO: honor legacy nullable boolean if set, otherwise fall through to heuristics.
+            if (schema.nullable()) {
+                return true;
+            }
         }
         if (annotations != null) {
             for (Annotation annotation : annotations) {
@@ -2505,6 +2524,30 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             }
         }
         return null;
+    }
+
+    /**
+     * Returns true if the @Schema annotation effectively declares nullable, honoring
+     * {@code nullableMode} with precedence over the legacy {@code nullable} boolean.
+     * Returns false if the annotation explicitly declares not-nullable (NullableMode.NOT_NULLABLE)
+     * or if no nullability intent is expressed.
+     *
+     * <p>Used for derivative decisions (e.g. whether a "null" defaultValue/example
+     * literal should be treated as actual null). Does not consult auto-detected
+     * @Nullable annotations - for full resolution use {@link #resolveNullable}.
+     */
+    private static boolean isSchemaAnnotationNullable(io.swagger.v3.oas.annotations.media.Schema schema) {
+        if (schema == null) {
+            return false;
+        }
+        io.swagger.v3.oas.annotations.media.Schema.NullableMode mode = schema.nullableMode();
+        if (mode == io.swagger.v3.oas.annotations.media.Schema.NullableMode.NULLABLE) {
+            return true;
+        }
+        if (mode == io.swagger.v3.oas.annotations.media.Schema.NullableMode.NOT_NULLABLE) {
+            return false;
+        }
+        return schema.nullable();
     }
 
     protected BigDecimal resolveMultipleOf(Annotated a, Annotation[] annotations, io.swagger.v3.oas.annotations.media.Schema schema) {
@@ -3185,15 +3228,15 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         Object defaultValue = resolveDefaultValue(a, annotations, schemaAnnotation);
         if (defaultValue != null) {
             schema.setDefault(defaultValue);
-        } else if (schemaAnnotation != null && "null".equals(schemaAnnotation.defaultValue().trim()) && schemaAnnotation.nullable()) {
-            // Explicitly set to null when defaultValue="null" AND nullable=true
+        } else if (schemaAnnotation != null && "null".equals(schemaAnnotation.defaultValue().trim()) && isSchemaAnnotationNullable(schemaAnnotation)) {
+            // Explicitly set to null when defaultValue="null" AND the schema is effectively nullable
             schema.setDefault(null);
         }
         Object example = resolveExample(a, annotations, schemaAnnotation);
         if (example != null) {
             schema.example(example);
-        } else if (schemaAnnotation != null && "null".equals(schemaAnnotation.example().trim()) && schemaAnnotation.nullable()) {
-            // Explicitly set to null when example="null" AND nullable=true
+        } else if (schemaAnnotation != null && "null".equals(schemaAnnotation.example().trim()) && isSchemaAnnotationNullable(schemaAnnotation)) {
+            // Explicitly set to null when example="null" AND the schema is effectively nullable
             schema.example(null);
         }
         Boolean readOnly = resolveReadOnly(a, annotations, schemaAnnotation);
