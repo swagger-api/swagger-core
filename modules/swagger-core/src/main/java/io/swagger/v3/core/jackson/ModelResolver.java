@@ -705,12 +705,10 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
             if (member != null && !ignore(member, xmlAccessorTypeAnnotation, propName, propertiesToIgnore, propDef)) {
 
-                List<Annotation> annotationList = new ArrayList<>();
-                for (Annotation a : member.annotations()) {
-                    annotationList.add(a);
-                }
+                List<Annotation> memberAnnotations = new ArrayList<>();
+                resolveAnnotateMemberAnnotations(member, memberAnnotations, true);
 
-                annotations = annotationList.toArray(new Annotation[annotationList.size()]);
+                annotations = memberAnnotations.toArray(new Annotation[memberAnnotations.size()]);
 
                 if (hiddenByJsonView(annotations, annotatedType)) {
                     continue;
@@ -1164,6 +1162,10 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         model = resolveWrapping(type, context, model);
 
         return model;
+    }
+
+    protected void resolveAnnotateMemberAnnotations(AnnotatedMember member, List<Annotation> output, boolean includeDefault) {
+        AnnotationsIntrospector.getAnnotations(member, output, includeDefault);
     }
 
     private Annotation[] addGenericTypeArgumentAnnotationsForOptionalField(BeanPropertyDefinition propDef, Annotation[] annotations) {
@@ -1829,7 +1831,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             }
         }
 
-        if (annos.containsKey(JAVAX_NOT_EMPTY)) {
+        if (annos.containsKey(JAVAX_NOT_EMPTY) && applyNotNullAnnotations) {
             NotEmpty anno = (NotEmpty) annos.get(JAVAX_NOT_EMPTY);
             boolean apply = checkGroupValidation(anno.groups(), invocationGroups, acceptNoGroups);
             if (apply) {
@@ -1965,6 +1967,22 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 modified = updateRequiredItem(parent, property.getName());
             }
         }
+
+        // jspecify
+        if (parent != null && annotations != null && applyNotNullAnnotations) {
+            boolean nullable = annos.containsKey("org.jspecify.annotations.Nullable");
+            boolean nonnull = annos.containsKey("org.jspecify.annotations.NonNull");
+            boolean nullmarked = annos.containsKey("org.jspecify.annotations.NullMarked") && !annos.containsKey("org.jspecify.annotations.NullUnmarked");
+            if ((nullmarked && !nullable) || nonnull) {
+                modified = updateRequiredItem(parent, property.getName()) || modified;
+            }
+            if (nullable) {
+                property.setNullable(true);
+                property.addType("null");
+                modified = true;
+            }
+        }
+
         if (annos.containsKey(JAVAX_MIN)) {
             Min min = (Min) annos.get(JAVAX_MIN);
             modified = ValidationAnnotationsUtils.applyMinConstraint(property, min) || modified;
