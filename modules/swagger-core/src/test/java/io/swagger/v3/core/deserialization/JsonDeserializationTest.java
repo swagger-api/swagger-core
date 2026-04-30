@@ -273,6 +273,7 @@ public class JsonDeserializationTest {
         Map<String, Schema> props = swagger.getComponents().getSchemas().get("MyModel").getProperties();
         assertTrue(Yaml.pretty().writeValueAsString(props.get("date")).contains("example: 2019-08-05"));
         assertTrue(Yaml.pretty().writeValueAsString(props.get("dateTime")).contains("example: 2019-08-05T12:34:56Z"));
+        assertTrue(Yaml.pretty().writeValueAsString(props.get("dateTimeLocal")).contains("example: 2019-08-05T12:34:56"));
 
     }
 
