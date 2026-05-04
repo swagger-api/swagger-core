@@ -5,6 +5,7 @@ import io.swagger.v3.oas.models.media.BinarySchema;
 import io.swagger.v3.oas.models.media.BooleanSchema;
 import io.swagger.v3.oas.models.media.ByteArraySchema;
 import io.swagger.v3.oas.models.media.DateSchema;
+import io.swagger.v3.oas.models.media.DateTimeLocalSchema;
 import io.swagger.v3.oas.models.media.DateTimeSchema;
 import io.swagger.v3.oas.models.media.FileSchema;
 import io.swagger.v3.oas.models.media.IntegerSchema;
@@ -221,6 +222,16 @@ public enum PrimitiveType {
             return new JsonSchema().typesItem("string").format("partial-time");
         }
     },
+    DATE_TIME_LOCAL(java.time.LocalDateTime.class, "date-time-local") {
+        @Override
+        public Schema createProperty() {
+            return new DateTimeLocalSchema();
+        }
+        @Override
+        public Schema createProperty31() {
+            return new JsonSchema().typesItem("string").format("date-time-local");
+        }
+    },
     FILE(java.io.File.class, "file") {
         @Override
         public FileSchema createProperty() {
@@ -316,6 +327,7 @@ public enum PrimitiveType {
         dms.put("string_date", "date");
         dms.put("string_date-time", "date-time");
         dms.put("string_partial-time", "partial-time");
+        dms.put("string_date-time-local", "date-time-local");
         dms.put("string_password", "password");
         dms.put("boolean_", "boolean");
         dms.put("object_", "object");
@@ -353,14 +365,13 @@ public enum PrimitiveType {
         final Map<String, PrimitiveType> externalClasses = new HashMap<>();
         addKeys(externalClasses, DATE, "org.joda.time.LocalDate", "java.time.LocalDate");
         addKeys(externalClasses, DATE_TIME,
-                "java.time.LocalDateTime",
                 "java.time.ZonedDateTime",
                 "java.time.OffsetDateTime",
                 "javax.xml.datatype.XMLGregorianCalendar",
-                "org.joda.time.LocalDateTime",
                 "org.joda.time.ReadableDateTime",
                 "org.joda.time.DateTime",
                 "java.time.Instant");
+        addKeys(externalClasses, DATE_TIME_LOCAL, "java.time.LocalDateTime", "org.joda.time.LocalDateTime");
         EXTERNAL_CLASSES = Collections.unmodifiableMap(externalClasses);
 
         final Map<String, PrimitiveType> names = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
