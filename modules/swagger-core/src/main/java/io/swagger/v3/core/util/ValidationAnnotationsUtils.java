@@ -1,5 +1,6 @@
 package io.swagger.v3.core.util;
 
+import io.swagger.v3.oas.models.SpecVersion;
 import io.swagger.v3.oas.models.media.Schema;
 
 import javax.validation.constraints.*;
@@ -184,11 +185,21 @@ public class ValidationAnnotationsUtils {
     public static boolean applyPositiveConstraint(Schema schema) {
         if (isNumberSchema(schema)) {
             BigDecimal current = schema.getMinimum();
-            if (current == null || current.compareTo(BigDecimal.ZERO) < 0) {
-                schema.setMinimum(BigDecimal.ZERO);
-                schema.setExclusiveMinimum(true);
-            } else if (current.compareTo(BigDecimal.ZERO) == 0 && !Boolean.TRUE.equals(schema.getExclusiveMinimum())) {
-                schema.setExclusiveMinimum(true);
+            if (schema.getSpecVersion().equals(SpecVersion.V30)) {
+                if (currentMinimumOutsidePositiveRange(current)) {
+                    schema.setMinimum(BigDecimal.ZERO);
+                    schema.setExclusiveMinimum(true);
+                } else if (current.compareTo(BigDecimal.ZERO) == 0 && !Boolean.TRUE.equals(schema.getExclusiveMinimum())) {
+                    schema.setExclusiveMinimum(true);
+                }
+            } else {
+                // OpenAPI 3.1: use exclusiveMinimumValue as a numeric value
+                if (schema.getExclusiveMinimumValue() == null && currentMinimumOutsidePositiveRange(current)) {
+                    schema.setExclusiveMinimumValue(BigDecimal.ZERO);
+                    return true;
+                }
+                // If currentExclusive is already 0 or positive, keep the stricter bound
+                return false;
             }
             return true;
         }
@@ -209,11 +220,21 @@ public class ValidationAnnotationsUtils {
     public static boolean applyNegativeConstraint(Schema schema) {
         if (isNumberSchema(schema)) {
             BigDecimal current = schema.getMaximum();
-            if (current == null || current.compareTo(BigDecimal.ZERO) > 0) {
-                schema.setMaximum(BigDecimal.ZERO);
-                schema.setExclusiveMaximum(true);
-            } else if (current.compareTo(BigDecimal.ZERO) == 0 && !Boolean.TRUE.equals(schema.getExclusiveMaximum())) {
-                schema.setExclusiveMaximum(true);
+            if (schema.getSpecVersion().equals(SpecVersion.V30)) {
+                if (currentMaximumOutsideNegativeRange(current)) {
+                    schema.setMaximum(BigDecimal.ZERO);
+                    schema.setExclusiveMaximum(true);
+                } else if (current.compareTo(BigDecimal.ZERO) == 0 && !Boolean.TRUE.equals(schema.getExclusiveMaximum())) {
+                    schema.setExclusiveMaximum(true);
+                }
+            } else {
+                // OpenAPI 3.1: use exclusiveMaximumValue as a numeric value
+                if (schema.getExclusiveMaximumValue() == null && currentMaximumOutsideNegativeRange(current)) {
+                    schema.setExclusiveMaximumValue(BigDecimal.ZERO);
+                    return true;
+                }
+                // If currentExclusive is already 0 or negative, keep the stricter bound
+                return false;
             }
             return true;
         }
@@ -229,6 +250,14 @@ public class ValidationAnnotationsUtils {
             return true;
         }
         return false;
+    }
+
+    private static boolean currentMinimumOutsidePositiveRange(BigDecimal currentMinimum) {
+        return currentMinimum == null || currentMinimum.compareTo(BigDecimal.ZERO) < 0;
+    }
+
+    private static boolean currentMaximumOutsideNegativeRange(BigDecimal currentMaximum) {
+        return currentMaximum == null || currentMaximum.compareTo(BigDecimal.ZERO) > 0;
     }
 
 }
