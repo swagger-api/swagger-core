@@ -497,6 +497,7 @@
         <coverage.missed.classes>0</coverage.missed.classes>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.build.outputTimestamp>2026-03-09T21:24:00Z</project.build.outputTimestamp>
         <transformer-maven-plugin-version>0.5.0</transformer-maven-plugin-version>
         <maven.version>3.9.14</maven.version>
         <commons-compress-version>1.27.1</commons-compress-version>
