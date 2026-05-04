@@ -938,13 +938,18 @@ public abstract class AnnotationsUtils {
         if (node.isObject() || node.isArray()) {
             return true;
         }
-        if (schemaObject != null && SchemaTypeUtils.isNumberSchema(schemaObject)) {
-            return true;
+        if (schemaObject != null) {
+            if (SchemaTypeUtils.isNumberSchema(schemaObject)) {
+                return true;
+            }
+            if (SchemaTypeUtils.isBooleanSchema(schemaObject)) {
+                return true;
+            }
+            if (SchemaTypeUtils.isStringSchema(schemaObject)) {
+                return false;
+            }
         }
-        if (schemaObject != null && SchemaTypeUtils.isStringSchema(schemaObject)) {
-            return false;
-        }
-        return node.isNumber();
+        return node.isNumber() || node.isBoolean();
     }
 
     private static void setDefaultSchema(io.swagger.v3.oas.annotations.media.Schema schema, boolean openapi31, Schema schemaObject) {
