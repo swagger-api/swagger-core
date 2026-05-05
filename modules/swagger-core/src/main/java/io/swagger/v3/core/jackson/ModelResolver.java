@@ -128,6 +128,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
     public static boolean composedModelPropertiesAsSibling = System.getProperty(SET_PROPERTY_OF_COMPOSED_MODEL_AS_SIBLING) != null;
 
     private static final int SCHEMA_COMPONENT_PREFIX = "#/components/schemas/".length();
+    private static final String OBJECT_TYPE = "object";
 
     private static final Predicate<Annotation> ANNOTATIONS_THAT_SHOULD_BE_STRIPPED_FOR_CONTAINER_ITEMS = annotation ->
             annotation.annotationType().getName().startsWith("io.swagger") ||
@@ -183,19 +184,9 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         }
 
         final Annotation resolvedSchemaOrArrayAnnotation = AnnotationsUtils.mergeSchemaAnnotations(annotatedType.getCtxAnnotations(), type);
-        final io.swagger.v3.oas.annotations.media.Schema resolvedSchemaAnnotation =
-                resolvedSchemaOrArrayAnnotation == null ?
-                        null :
-                        resolvedSchemaOrArrayAnnotation instanceof io.swagger.v3.oas.annotations.media.ArraySchema ?
-                                ((io.swagger.v3.oas.annotations.media.ArraySchema) resolvedSchemaOrArrayAnnotation).schema() :
-                                (io.swagger.v3.oas.annotations.media.Schema) resolvedSchemaOrArrayAnnotation;
+        final io.swagger.v3.oas.annotations.media.Schema resolvedSchemaAnnotation = getSchemaAnnotation(resolvedSchemaOrArrayAnnotation);
 
-        final io.swagger.v3.oas.annotations.media.ArraySchema resolvedArrayAnnotation =
-                resolvedSchemaOrArrayAnnotation == null ?
-                        null :
-                        resolvedSchemaOrArrayAnnotation instanceof io.swagger.v3.oas.annotations.media.ArraySchema ?
-                                (io.swagger.v3.oas.annotations.media.ArraySchema) resolvedSchemaOrArrayAnnotation :
-                                null;
+        final io.swagger.v3.oas.annotations.media.ArraySchema resolvedArrayAnnotation = getArraySchemaAnnotation(resolvedSchemaOrArrayAnnotation);
 
         final BeanDescription beanDesc;
         {
@@ -745,12 +736,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                     propName = propSchemaName;
                 }
                 Annotation propSchemaOrArray = AnnotationsUtils.mergeSchemaAnnotations(annotations, propType);
-                final io.swagger.v3.oas.annotations.media.Schema propResolvedSchemaAnnotation =
-                        propSchemaOrArray == null ?
-                                null :
-                                propSchemaOrArray instanceof io.swagger.v3.oas.annotations.media.ArraySchema ?
-                                        ((io.swagger.v3.oas.annotations.media.ArraySchema) propSchemaOrArray).arraySchema() :
-                                        (io.swagger.v3.oas.annotations.media.Schema) propSchemaOrArray;
+                final io.swagger.v3.oas.annotations.media.Schema propResolvedSchemaAnnotation = getSchemaAnnotationForArray(propSchemaOrArray);
 
                 io.swagger.v3.oas.annotations.media.Schema.AccessMode accessMode = resolveAccessMode(propDef, type, propResolvedSchemaAnnotation);
                 io.swagger.v3.oas.annotations.media.Schema.RequiredMode requiredMode = resolveRequiredMode(propResolvedSchemaAnnotation, propType);
@@ -1124,11 +1110,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         }
         // check if it has "object" related keywords
         if (isInferredObjectSchema(model) && model.get$ref() == null) {
-            if (openapi31 && model.getTypes() == null) {
-                model.addType("object");
-            } else if (!openapi31 && model.getType() == null) {
-                model.type("object");
-            }
+            setSchemaTypeForObjectSchema(model, resolvedSchemaAnnotation);
         }
         Schema.SchemaResolution resolvedSchemaResolution = AnnotationsUtils.resolveSchemaResolution(this.schemaResolution, resolvedSchemaAnnotation);
 
@@ -1164,6 +1146,24 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         model = resolveWrapping(type, context, model);
 
         return model;
+    }
+
+    private void setSchemaTypeForObjectSchema(Schema model, io.swagger.v3.oas.annotations.media.Schema schemaAnnotation) {
+        if (openapi31) {
+            if (model.getTypes() == null) {
+                model.addType(OBJECT_TYPE);
+            }
+            if (!isNullableSchema(model, schemaAnnotation)) {
+                model.setTypes(new LinkedHashSet<>(Collections.singletonList(OBJECT_TYPE)));
+            }
+        } else {
+            if (model.getType() == null) {
+                model.type(OBJECT_TYPE);
+            }
+            if (!isNullableSchema(model, schemaAnnotation)) {
+                model.setNullable(null);
+            }
+        }
     }
 
     private Annotation[] addGenericTypeArgumentAnnotationsForOptionalField(BeanPropertyDefinition propDef, Annotation[] annotations) {
@@ -3081,12 +3081,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         }
 
         final Annotation resolvedSchemaOrArrayAnnotation = AnnotationsUtils.mergeSchemaAnnotations(annotatedType.getCtxAnnotations(), type);
-        final io.swagger.v3.oas.annotations.media.Schema schemaAnnotation =
-                resolvedSchemaOrArrayAnnotation == null ?
-                        null :
-                        resolvedSchemaOrArrayAnnotation instanceof io.swagger.v3.oas.annotations.media.ArraySchema ?
-                                ((io.swagger.v3.oas.annotations.media.ArraySchema) resolvedSchemaOrArrayAnnotation).schema() :
-                                (io.swagger.v3.oas.annotations.media.Schema) resolvedSchemaOrArrayAnnotation;
+        final io.swagger.v3.oas.annotations.media.Schema schemaAnnotation = getSchemaAnnotation(resolvedSchemaOrArrayAnnotation);
 
         final BeanDescription beanDesc = _mapper.getSerializationConfig().introspect(type);
         Annotated a = beanDesc.getClassInfo();
@@ -3530,6 +3525,24 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         }
     }
 
+    /**
+     * Currently {@code null} is not a valid type for any {@code object} other than {@code AdditionalProperties}.
+     * This since the resolver currently does not produce proper nullable ref:s with allOf (OAS3.0) or oneOf (OAS3.1)
+     *
+     * @param schema The schema that should be classified
+     * @param schemaAnnotation The schema annotation
+     * @return Whether the schema is considered valid for having the {@code null} type
+     */
+    private boolean isNullableSchema(Schema schema, io.swagger.v3.oas.annotations.media.Schema schemaAnnotation) {
+        if (!openapi31) {
+            // If the schema annotation has explicitly set nullable to true, then keep that setting
+            if (schemaAnnotation != null && schemaAnnotation.nullable()) {
+                return true;
+            }
+        }
+        return isObjectSchema(schema) && schema.getAdditionalProperties() != null;
+    }
+
     protected boolean isObjectSchema(Schema schema) {
         return SchemaTypeUtils.isObjectSchema(schema);
     }
@@ -3603,6 +3616,36 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             }
         }
         return reResolvedProperty;
+    }
+
+    private io.swagger.v3.oas.annotations.media.Schema getSchemaAnnotationForArray(Annotation annotation) {
+        if (annotation == null) {
+            return null;
+        } else {
+            return annotation instanceof io.swagger.v3.oas.annotations.media.ArraySchema ?
+                    ((io.swagger.v3.oas.annotations.media.ArraySchema) annotation).arraySchema() :
+                    (io.swagger.v3.oas.annotations.media.Schema) annotation;
+        }
+    }
+
+    private io.swagger.v3.oas.annotations.media.Schema getSchemaAnnotation(Annotation annotation) {
+        if (annotation == null) {
+            return null;
+        } else {
+            return annotation instanceof io.swagger.v3.oas.annotations.media.ArraySchema ?
+                    ((io.swagger.v3.oas.annotations.media.ArraySchema) annotation).schema() :
+                    (io.swagger.v3.oas.annotations.media.Schema) annotation;
+        }
+    }
+
+    private io.swagger.v3.oas.annotations.media.ArraySchema getArraySchemaAnnotation(Annotation annotation) {
+        if (annotation == null) {
+            return null;
+        } else {
+            return annotation instanceof io.swagger.v3.oas.annotations.media.ArraySchema ?
+                    (io.swagger.v3.oas.annotations.media.ArraySchema) annotation :
+                    null;
+        }
     }
 
     /**
