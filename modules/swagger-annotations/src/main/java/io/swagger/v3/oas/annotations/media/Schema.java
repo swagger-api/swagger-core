@@ -215,9 +215,24 @@ public @interface Schema {
     /**
      * If true, designates a value as possibly null.
      *
+     * @deprecated As of 2.2.50, replaced by {@link #nullableMode()}
+     *
      * @return whether or not this schema is nullable
      **/
+    @Deprecated
     boolean nullable() default false;
+
+    /**
+     * Allows to specify the nullable mode (NullableMode.AUTO, NULLABLE, NOT_NULLABLE)
+     *
+     * NullableMode.AUTO: will let the library decide based on its heuristics (e.g. @Nullable annotation auto-detection).
+     * NullableMode.NULLABLE: will force the item to be considered as nullable regardless of heuristics.
+     * NullableMode.NOT_NULLABLE: will force the item to be considered as not nullable regardless of heuristics.
+     *
+     * @return the nullableMode for this schema (property)
+     *
+     */
+    NullableMode nullableMode() default NullableMode.AUTO;
 
     /**
      * Sets whether the value should only be read during a response but not read to during a request.
@@ -565,6 +580,12 @@ public @interface Schema {
         AUTO,
         REQUIRED,
         NOT_REQUIRED;
+    }
+
+    enum NullableMode {
+        AUTO,
+        NULLABLE,
+        NOT_NULLABLE;
     }
 
     enum SchemaResolution {
