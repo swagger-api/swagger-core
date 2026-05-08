@@ -36,7 +36,6 @@ import java.util.stream.Collectors;
 
 public class SpecFilter {
 
-    private OpenAPI _ctxOpenAPI;
     public OpenAPI filter(OpenAPI openAPI, OpenAPISpecFilter filter, Map<String, List<String>> params, Map<String, String> cookies, Map<String, List<String>> headers) {
         OpenAPI filteredOpenAPI = filterOpenAPI(filter, openAPI, params, cookies, headers);
         if (filteredOpenAPI == null) {
@@ -404,26 +403,6 @@ public class SpecFilter {
     }
 
     private void addApiResponseSchemaRef(ApiResponse response, Set<String> referencedDefinitions) {
-       if (response == null)  return;
-       String respRef = response.get$ref();
-       if (respRef != null && !respRef.isEmpty() && _ctxOpenAPI != null) {
-        String name = (String) RefUtils.extractSimpleName(respRef).getLeft();
-        referencedDefinitions.add(name);
-        Components comps = _ctxOpenAPI.getComponents();
-        ApiResponse resolved = (comps != null && comps.getResponses() != null)
-                ? comps.getResponses().get(name)
-                : null;
-        if (resolved != null) {
-            if (resolved.getHeaders() != null) {
-                for (Header h : resolved.getHeaders().values()) {
-                    addHeaderSchemaRef(h, referencedDefinitions);
-                }
-            }
-            addContentSchemaRef(resolved.getContent(), referencedDefinitions);
-        }
-        return;
-       }
-       
         if (response.getHeaders() != null) {
             for (String keyHeaders : response.getHeaders().keySet()) {
                 Header header = response.getHeaders().get(keyHeaders);
@@ -494,7 +473,6 @@ public class SpecFilter {
     }
 
     protected OpenAPI removeBrokenReferenceDefinitions(OpenAPI openApi) {
-        this._ctxOpenAPI = openApi;
         if (openApi == null || openApi.getComponents() == null || openApi.getComponents().getSchemas() == null) {
             return openApi;
         }
@@ -524,7 +502,6 @@ public class SpecFilter {
                 .retainAll(referencedDefinitions.stream()
                         .map(s -> (String) RefUtils.extractSimpleName(s).getLeft())
                         .collect(Collectors.toSet()));
-        this._ctxOpenAPI = null;
         return openApi;
     }
 

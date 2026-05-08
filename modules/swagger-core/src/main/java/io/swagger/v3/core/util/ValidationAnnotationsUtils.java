@@ -3,7 +3,14 @@ package io.swagger.v3.core.util;
 import io.swagger.v3.oas.models.media.Schema;
 
 import javax.validation.constraints.*;
+import java.lang.annotation.Annotation;
 import java.math.BigDecimal;
+import java.util.ArrayDeque;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Queue;
+import java.util.Set;
 
 import static io.swagger.v3.core.util.SchemaTypeUtils.*;
 
@@ -218,6 +225,46 @@ public class ValidationAnnotationsUtils {
             return true;
         }
         return false;
+    }
+
+    /**
+     * Expands annotations to include bean-validation constraint annotations present as meta-annotations
+     * on custom composed constraints (e.g. a custom {@code @ValidStoreId} annotated with {@code @Min}/{@code @Max}).
+     * Direct annotations take priority over meta-annotations (putIfAbsent).
+     */
+    public static Annotation[] expandValidationMetaAnnotations(Annotation[] annotations) {
+        if (annotations == null || annotations.length == 0) {
+            return annotations;
+        }
+        Map<String, Annotation> merged = new LinkedHashMap<>();
+        for (Annotation a : annotations) {
+            if (a != null) {
+                merged.put(a.annotationType().getName(), a);
+            }
+        }
+        try {
+            Set<Class<?>> visited = new HashSet<>();
+            Queue<Annotation> queue = new ArrayDeque<>();
+            for (Annotation a : annotations) {
+                if (a != null) queue.add(a);
+            }
+            while (!queue.isEmpty()) {
+                Annotation a = queue.poll();
+                if (!visited.add(a.annotationType())) continue;
+                for (Annotation meta : a.annotationType().getAnnotations()) {
+                    if (meta == null) continue;
+                    String name = meta.annotationType().getName();
+                    if (name.startsWith("javax.validation.constraints")) {
+                        merged.putIfAbsent(name, meta);
+                    } else {
+                        queue.add(meta);
+                    }
+                }
+            }
+        } catch (Throwable t) {
+            return annotations;
+        }
+        return merged.values().toArray(new Annotation[0]);
     }
 
     public static boolean applyNegativeOrZeroConstraint(Schema schema) {
