@@ -7,6 +7,7 @@ import io.swagger.v3.core.converter.ModelConverterContextImpl;
 import io.swagger.v3.oas.models.media.Schema;
 import org.testng.annotations.Test;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.Iterator;
 import java.util.Set;
@@ -68,5 +69,58 @@ public class AnnotatedTypeCachingTest {
                 .filter(annotatedType -> annotatedType.getType().equals(String.class))
                 .count();
         assertEquals(stringTypeCount, 1, "With the correct equals/hashCode, String type should be added to the cache only once.");
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testNoCacheHitForAFieldThatIsMarkedAsDeprecated() throws Exception {
+        ModelConverterContextImpl context = new ModelConverterContextImpl(new FooBarDummyModelConverter());
+        Schema fooSchema = context.resolve(new AnnotatedType(Foo.class));
+        assertNotNull(fooSchema);
+        Field processedTypesField = ModelConverterContextImpl.class.getDeclaredField("processedTypes");
+        processedTypesField.setAccessible(true);
+        Set<AnnotatedType> processedTypes = (Set<AnnotatedType>) processedTypesField.get(context);
+        long stringTypeCount = processedTypes.stream()
+                .filter(annotatedType -> annotatedType.getType().equals(String.class))
+                .count();
+        assertEquals(stringTypeCount, 2, "With the correct equals/hashCode, String type should be added to the cache twice, since one of them is deprecated.");
+    }
+
+    private static class FooBarDummyModelConverter implements ModelConverter {
+        @Override
+        public Schema resolve(AnnotatedType type, ModelConverterContext context, Iterator<ModelConverter> chain) {
+            if (type.getType().equals(Foo.class)) {
+                context.resolve(new AnnotatedType(String.class).propertyName("fizz").ctxAnnotations(new Annotation[]{getAnnotationInstance(Deprecated.class)}));
+                context.resolve(new AnnotatedType(String.class).propertyName("buzz"));
+                context.resolve(new AnnotatedType(Bar.class).propertyName("bar"));
+                return new Schema();
+            }
+            if (type.getType().equals(Bar.class)) {
+                context.resolve(new AnnotatedType(String.class).propertyName("fizz"));
+                context.resolve(new AnnotatedType(String.class).propertyName("buzz"));
+                return new Schema();
+            }
+            return new Schema();
+        }
+    }
+
+    private static Annotation getAnnotationInstance(Class<? extends Annotation> clazz) {
+        try {
+            return Foo.class.getDeclaredField("fizz").getAnnotation(clazz);
+        } catch (NoSuchFieldException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    static class Foo {
+        @Deprecated
+        public String fizz;
+        public String buzz;
+        public Bar bar;
+    }
+
+    static class Bar {
+        public String fizz;
+        public String buzz;
     }
 }

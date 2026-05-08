@@ -3,6 +3,10 @@ package io.swagger.v3.core.oas.models;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+
+import java.util.List;
 import java.util.Optional;
 
 public class RequiredFields {
@@ -42,4 +46,12 @@ public class RequiredFields {
     @Schema(description = "mode not required with annotation", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
     @NotNull
     public Long modeNotRequiredWithAnnotation;
+
+    @Schema(description = "mode not required with annotation for NotBlank", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+    @NotBlank
+    public String modeNotRequiredWithAnnotationForNotBlank;
+
+    @Schema(description = "mode not required with annotation for NotEmpty", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+    @NotEmpty
+    public List<String>  modeNotRequiredWithAnnotationForNotEmpty;
 }

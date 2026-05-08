@@ -1,5 +1,6 @@
 package io.swagger.v3.core.util.reflection;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import io.swagger.v3.core.util.ReflectionUtils;
 import io.swagger.v3.core.util.reflection.resources.Child;
 import io.swagger.v3.core.util.reflection.resources.IParent;
@@ -191,6 +192,83 @@ public class ReflectionUtilsTest {
         assertTrue(parameterAnnotations[0][0] instanceof AnnotationInterface);
         assertEquals(((AnnotationInterface)parameterAnnotations[0][0]).value(), "level4");
     }
+
+    @Test
+    public void getAnnotatedMethods_returnsEmptyWhenNoMethodHasAnnotation() {
+        List<Method> methods = ReflectionUtils.getAnnotatedMethods(String.class, JsonValue.class);
+        assertTrue(methods.isEmpty());
+    }
+
+    @Test
+    public void getAnnotatedMethods_findsAnnotationInSuperclass() {
+        List<Method> methods = ReflectionUtils.getAnnotatedMethods(SubclassWithoutJsonValue.class, JsonValue.class);
+        assertEquals(methods.size(), 1);
+        assertEquals(methods.get(0).getName(), "getJsonValue");
+    }
+
+    @Test
+    public void getAnnotatedMethods_findsMultipleMatchesAcrossClassHierarchy() {
+        List<Method> methods = ReflectionUtils.getAnnotatedMethods(SubclassWithOwnJsonValue.class, JsonValue.class);
+        assertEquals(methods.size(), 2);
+        List<String> names = methods.stream().map(Method::getName).collect(Collectors.toList());
+        assertTrue(names.contains("getJsonValue"));
+        assertTrue(names.contains("getSubJsonValue"));
+    }
+
+    @Test
+    public void getAnnotatedMethods_findsDefaultMethodAnnotationFromInterface() {
+        List<Method> methods = ReflectionUtils.getAnnotatedMethods(ImplementorWithoutOverride.class, JsonValue.class);
+        assertEquals(methods.size(), 1);
+        assertEquals(methods.get(0).getName(), "toValue");
+    }
+
+    @Test
+    public void getAnnotatedMethods_excludesBridgeMethodsFromGenericInterface() {
+        // GenericValueEnum implements PersistableEnum<String> which causes the compiler
+        // to generate a bridge method Object getValue() alongside String getValue().
+        // Both may carry @JsonValue, but only the non-bridge method should be returned.
+        List<Method> methods = ReflectionUtils.getAnnotatedMethods(GenericValueEnum.class, JsonValue.class);
+        assertEquals(methods.size(), 1, "should find exactly one @JsonValue method (excluding bridge)");
+        assertEquals(methods.get(0).getReturnType(), String.class, "should find the String-returning method, not the Object bridge");
+    }
+
+    // --- Support classes for getAnnotatedMethods tests ---
+
+    private interface GenericPersistableEnum<T> {
+        T getValue();
+    }
+
+    private enum GenericValueEnum implements GenericPersistableEnum<String> {
+        A("alpha"), B("beta");
+        private final String value;
+        GenericValueEnum(String value) { this.value = value; }
+        @JsonValue
+        @Override
+        public String getValue() { return value; }
+    }
+
+    private static class SuperclassWithJsonValue {
+        @JsonValue
+        public String getJsonValue() { return "super"; }
+    }
+
+    private static class SubclassWithoutJsonValue extends SuperclassWithJsonValue {
+        public String getOtherMethod() { return "other"; }
+    }
+
+    private static class SubclassWithOwnJsonValue extends SuperclassWithJsonValue {
+        @JsonValue
+        public String getSubJsonValue() { return "sub"; }
+    }
+
+    private interface InterfaceWithDefaultJsonValue {
+        @JsonValue
+        default String toValue() { return "from-interface"; }
+    }
+
+    private static class ImplementorWithoutOverride implements InterfaceWithDefaultJsonValue {}
+
+    // ---
 
     @Tag(name = "inherited tag")
     private interface AnnotatedInterface {}

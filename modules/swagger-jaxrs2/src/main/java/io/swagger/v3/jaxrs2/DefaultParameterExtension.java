@@ -258,17 +258,8 @@ public class DefaultParameterExtension extends AbstractOpenAPIExtension {
                         resolvedParameter.parameters;
 
                 for (Parameter p : extractedParameters) {
-                    Parameter processedParam = ParameterProcessor.applyAnnotations(
-                            p,
-                            paramType,
-                            paramAnnotations,
-                            components,
-                            classConsumes == null ? new String[0] : classConsumes.value(),
-                            methodConsumes == null ? new String[0] : methodConsumes.value(),
-                            jsonViewAnnotation,
-                            configuration);
-                    if (processedParam != null) {
-                        parameters.add(processedParam);
+                    if (p != null) {
+                        parameters.add(p);
                     }
                 }
 
@@ -276,18 +267,8 @@ public class DefaultParameterExtension extends AbstractOpenAPIExtension {
                         resolvedParameter.formParameters;
 
                 for (Parameter p : extractedFormParameters) {
-                    Parameter processedParam = ParameterProcessor.applyAnnotations(
-                            p,
-                            paramType,
-                            paramAnnotations,
-                            components,
-                            classConsumes == null ? new String[0] : classConsumes.value(),
-                            methodConsumes == null ? new String[0] : methodConsumes.value(),
-                            jsonViewAnnotation,
-                            openapi31,
-                            this.schemaResolution);
-                    if (processedParam != null) {
-                        formParameters.add(processedParam);
+                    if (p != null) {
+                        formParameters.add(p);
                     }
                 }
 

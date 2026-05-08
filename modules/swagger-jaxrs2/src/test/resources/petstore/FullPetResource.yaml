@@ -1184,7 +1184,19 @@ paths:
               schema:
                 $ref: "#/components/schemas/GenericError"
       deprecated: true
-  /responseinmethod:
+  "/arrayresponseinmethod":
+    get:
+      operationId: arrayResponseWithTypeImplementation
+      responses:
+        default:
+          content:
+            "*/*":
+              schema:
+                type: array
+                description: Array description
+                items:
+                  "$ref": "#/components/schemas/PetInfo"
+  "/responseinmethod":
     get:
       summary: Find pets
       description: Returns the Pets
@@ -1423,6 +1435,11 @@ components:
       type: object
     GenericError:
       type: object
+    PetInfo:
+      type: object
+      properties:
+        name:
+          type: string
   securitySchemes:
     myOauth2Security:
       type: oauth2
