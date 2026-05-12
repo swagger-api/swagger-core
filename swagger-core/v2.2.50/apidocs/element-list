@@ -1,0 +1,13 @@
+io.swagger.v3.oas.annotations
+io.swagger.v3.oas.annotations.callbacks
+io.swagger.v3.oas.annotations.enums
+io.swagger.v3.oas.annotations.extensions
+io.swagger.v3.oas.annotations.headers
+io.swagger.v3.oas.annotations.info
+io.swagger.v3.oas.annotations.links
+io.swagger.v3.oas.annotations.media
+io.swagger.v3.oas.annotations.parameters
+io.swagger.v3.oas.annotations.responses
+io.swagger.v3.oas.annotations.security
+io.swagger.v3.oas.annotations.servers
+io.swagger.v3.oas.annotations.tags
