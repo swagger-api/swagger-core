@@ -3,8 +3,10 @@ package io.swagger.v3.core.util;
 import io.swagger.v3.oas.models.SpecVersion;
 import io.swagger.v3.oas.models.media.Schema;
 
+import javax.validation.OverridesAttribute;
 import javax.validation.constraints.*;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.util.ArrayDeque;
 import java.util.HashSet;
@@ -12,25 +14,28 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
+import java.util.List;
+import java.util.ArrayList;
 
 import static io.swagger.v3.core.util.SchemaTypeUtils.*;
 
 public class ValidationAnnotationsUtils {
 
-    public static final String JAVAX_NOT_NULL = "javax.validation.constraints.NotNull";
-    public static final String JAVAX_NOT_EMPTY = "javax.validation.constraints.NotEmpty";
-    public static final String JAVAX_NOT_BLANK = "javax.validation.constraints.NotBlank";
-    public static final String JAVAX_MIN = "javax.validation.constraints.Min";
-    public static final String JAVAX_MAX = "javax.validation.constraints.Max";
-    public static final String JAVAX_SIZE = "javax.validation.constraints.Size";
-    public static final String JAVAX_DECIMAL_MIN = "javax.validation.constraints.DecimalMin";
-    public static final String JAVAX_DECIMAL_MAX = "javax.validation.constraints.DecimalMax";
-    public static final String JAVAX_PATTERN = "javax.validation.constraints.Pattern";
-    public static final String JAVAX_EMAIL = "javax.validation.constraints.Email";
-    public static final String JAVAX_POSITIVE = "javax.validation.constraints.Positive";
-    public static final String JAVAX_POSITIVE_OR_ZERO = "javax.validation.constraints.PositiveOrZero";
-    public static final String JAVAX_NEGATIVE = "javax.validation.constraints.Negative";
-    public static final String JAVAX_NEGATIVE_OR_ZERO = "javax.validation.constraints.NegativeOrZero";
+    private static final String JAVAX_PACKAGE_BASE = "javax.validation.constraints";
+    public static final String JAVAX_NOT_NULL = JAVAX_PACKAGE_BASE + ".NotNull";
+    public static final String JAVAX_NOT_EMPTY = JAVAX_PACKAGE_BASE + ".NotEmpty";
+    public static final String JAVAX_NOT_BLANK = JAVAX_PACKAGE_BASE + ".NotBlank";
+    public static final String JAVAX_MIN = JAVAX_PACKAGE_BASE + ".Min";
+    public static final String JAVAX_MAX = JAVAX_PACKAGE_BASE + ".Max";
+    public static final String JAVAX_SIZE = JAVAX_PACKAGE_BASE + ".Size";
+    public static final String JAVAX_DECIMAL_MIN = JAVAX_PACKAGE_BASE + ".DecimalMin";
+    public static final String JAVAX_DECIMAL_MAX = JAVAX_PACKAGE_BASE + ".DecimalMax";
+    public static final String JAVAX_PATTERN = JAVAX_PACKAGE_BASE + ".Pattern";
+    public static final String JAVAX_EMAIL = JAVAX_PACKAGE_BASE + ".Email";
+    public static final String JAVAX_POSITIVE = JAVAX_PACKAGE_BASE + ".Positive";
+    public static final String JAVAX_POSITIVE_OR_ZERO = JAVAX_PACKAGE_BASE + ".PositiveOrZero";
+    public static final String JAVAX_NEGATIVE = JAVAX_PACKAGE_BASE + ".Negative";
+    public static final String JAVAX_NEGATIVE_OR_ZERO = JAVAX_PACKAGE_BASE + ".NegativeOrZero";
 
     private static final String SCHEMA_EMAIL_FORMAT_NAME = "email";
 
@@ -338,13 +343,16 @@ public class ValidationAnnotationsUtils {
                 if (a != null) queue.add(a);
             }
             while (!queue.isEmpty()) {
-                Annotation a = queue.poll();
-                if (!visited.add(a.annotationType())) continue;
-                for (Annotation meta : a.annotationType().getAnnotations()) {
+                Annotation annotation = queue.poll();
+                if (!visited.add(annotation.annotationType())) continue;
+                List<Class<? extends Annotation>> annotationsThatRelyOnOverride = findOverrides(annotation);
+                for (Annotation meta : annotation.annotationType().getAnnotations()) {
                     if (meta == null) continue;
                     String name = meta.annotationType().getName();
-                    if (name.startsWith("javax.validation.constraints")) {
-                        merged.putIfAbsent(name, meta);
+                    if (name.startsWith(JAVAX_PACKAGE_BASE)) {
+                        if (!annotationsThatRelyOnOverride.contains(meta.annotationType())) {
+                            merged.putIfAbsent(name, meta);
+                        }
                     } else {
                         queue.add(meta);
                     }
@@ -373,6 +381,27 @@ public class ValidationAnnotationsUtils {
 
     private static boolean currentMaximumOutsideNegativeRange(BigDecimal currentMaximum) {
         return currentMaximum == null || currentMaximum.compareTo(BigDecimal.ZERO) > 0;
+    }
+
+    /**
+     *
+     * @param annotation the composed constraint annotation
+     * @return the composing annotations that are overridden with {@link OverridesAttribute}
+     */
+    private static List<Class<? extends Annotation>> findOverrides(Annotation annotation) {
+        List<Class<? extends Annotation>> overriddenConstraintAnnotations = new ArrayList<>();
+
+        Class<? extends Annotation> type = annotation.annotationType();
+
+        for (Method method : type.getDeclaredMethods()) {
+            OverridesAttribute oa = method.getAnnotation(OverridesAttribute.class);
+
+            if (oa != null) {
+                overriddenConstraintAnnotations.add(oa.constraint());
+            }
+        }
+
+        return overriddenConstraintAnnotations;
     }
 
 }
