@@ -473,7 +473,6 @@ public class SpecFilter {
     }
 
     protected OpenAPI removeBrokenReferenceDefinitions(OpenAPI openApi) {
-
         if (openApi == null || openApi.getComponents() == null || openApi.getComponents().getSchemas() == null) {
             return openApi;
         }

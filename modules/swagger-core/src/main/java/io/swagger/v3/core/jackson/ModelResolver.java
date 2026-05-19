@@ -1780,6 +1780,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 return modified;
             }
         }
+        annotations = ValidationAnnotationsUtils.expandValidationMetaAnnotations(annotations);
         Map<String, Annotation> annos = new HashMap<>();
         if (annotations != null) {
             for (Annotation anno : annotations) {
@@ -1950,6 +1951,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
     }
 
     protected boolean applyBeanValidatorAnnotationsNoGroups(Schema property, Annotation[] annotations, Schema parent, boolean applyNotNullAnnotations) {
+        annotations = ValidationAnnotationsUtils.expandValidationMetaAnnotations(annotations);
         Map<String, Annotation> annos = new HashMap<>();
         boolean modified = false;
         if (annotations != null) {

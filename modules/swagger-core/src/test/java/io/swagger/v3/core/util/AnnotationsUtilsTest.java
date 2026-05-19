@@ -1,6 +1,7 @@
 package io.swagger.v3.core.util;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.BooleanNode;
 import com.fasterxml.jackson.databind.node.IntNode;
 import com.google.common.collect.ImmutableMap;
 import io.swagger.v3.oas.annotations.ExternalDocumentation;
@@ -138,6 +139,15 @@ public class AnnotationsUtilsTest {
 
         @io.swagger.v3.oas.annotations.media.Schema(examples = {"42"}, type = "string")
         String stringExamplesWith42;
+
+        @io.swagger.v3.oas.annotations.media.Schema(example = "true")
+        boolean aBoolean;
+
+        @io.swagger.v3.oas.annotations.media.Schema(example = "true", type = "boolean")
+        String stringWithBooleanType;
+
+        @io.swagger.v3.oas.annotations.media.Schema(example = "true", type = "string")
+        String stringWithBooleanExample;
     }
 
     @Test
@@ -204,6 +214,72 @@ public class AnnotationsUtilsTest {
 
         assertTrue(schema.isPresent());
         assertEquals(schema.get().getExample(), IntNode.valueOf(5));
+    }
+
+    @Test
+    public void testExampleBooleanShouldBeNode() throws Exception {
+        io.swagger.v3.oas.annotations.media.Schema schemaAnnotation =
+                ExampleHolder.class
+                        .getDeclaredField("aBoolean")
+                        .getAnnotation(io.swagger.v3.oas.annotations.media.Schema.class);
+
+        Optional<Schema> schema =
+                AnnotationsUtils.getSchemaFromAnnotation(
+                        schemaAnnotation,
+                        null,
+                        null,
+                        false,
+                        null,
+                        Schema.SchemaResolution.DEFAULT,
+                        null
+                );
+
+        assertTrue(schema.isPresent());
+        assertEquals(schema.get().getExample(), BooleanNode.getTrue());
+    }
+
+    @Test
+    public void testExampleStringWithBooleanTypeShouldBeNode() throws Exception {
+        io.swagger.v3.oas.annotations.media.Schema schemaAnnotation =
+                ExampleHolder.class
+                        .getDeclaredField("stringWithBooleanType")
+                        .getAnnotation(io.swagger.v3.oas.annotations.media.Schema.class);
+
+        Optional<Schema> schema =
+                AnnotationsUtils.getSchemaFromAnnotation(
+                        schemaAnnotation,
+                        null,
+                        null,
+                        false,
+                        null,
+                        Schema.SchemaResolution.DEFAULT,
+                        null
+                );
+
+        assertTrue(schema.isPresent());
+        assertEquals(schema.get().getExample(), BooleanNode.getTrue());
+    }
+
+    @Test
+    public void testExampleStringWithBooleanShouldBeString() throws Exception {
+        io.swagger.v3.oas.annotations.media.Schema schemaAnnotation =
+                ExampleHolder.class
+                        .getDeclaredField("stringWithBooleanExample")
+                        .getAnnotation(io.swagger.v3.oas.annotations.media.Schema.class);
+
+        Optional<Schema> schema =
+                AnnotationsUtils.getSchemaFromAnnotation(
+                        schemaAnnotation,
+                        null,
+                        null,
+                        false,
+                        null,
+                        Schema.SchemaResolution.DEFAULT,
+                        null
+                );
+
+        assertTrue(schema.isPresent());
+        assertEquals(schema.get().getExample(), "true");
     }
 
     static class DefaultHolder {
