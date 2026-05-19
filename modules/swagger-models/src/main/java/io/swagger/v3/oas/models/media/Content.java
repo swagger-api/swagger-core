@@ -6,7 +6,7 @@ import java.util.Objects;
 /**
  * Content
  *
- * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.0.4/versions/3.0.4.md#content-object"
+ * @see <a href="https://github.com/OAI/OpenAPI-Specification/blob/3.0.4/versions/3.0.4.md#content-object">Content (OpenAPI 3.0 specification)</a>
  */
 
 public class Content extends LinkedHashMap<String, MediaType> {

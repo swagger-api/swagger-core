@@ -6,7 +6,7 @@ import java.util.Objects;
 /**
  * ServerVariables
  *
- * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.0.4/versions/3.0.4.md#server-variables-object"
+ * @see <a href="https://github.com/OAI/OpenAPI-Specification/blob/3.0.4/versions/3.0.4.md#server-variable-object">ServerVariables (OpenAPI 3.0 specification)</a>
  */
 
 public class ServerVariables extends LinkedHashMap<String, ServerVariable> {
