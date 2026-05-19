@@ -7,8 +7,8 @@ import java.util.Objects;
 /**
  * OAuthFlow
  *
- * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.0.4/versions/3.0.4.md#oauth-flows-object"
- * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.1.1/versions/3.1.1.md#oauth-flows-object"
+ * @see <a href="https://github.com/OAI/OpenAPI-Specification/blob/3.0.4/versions/3.0.4.md#oauth-flows-object">OAuthFlow (OpenAPI 3.0 specification)</a>
+ * @see <a href="https://github.com/OAI/OpenAPI-Specification/blob/3.1.1/versions/3.1.1.md#oauth-flows-object">OAuthFlow (OpenAPI 3.1 specification)</a>
  */
 
 public class OAuthFlow {

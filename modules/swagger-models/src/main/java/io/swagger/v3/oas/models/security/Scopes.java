@@ -6,7 +6,7 @@ import java.util.Objects;
 /**
  * Scopes
  *
- * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.0.4/versions/3.0.4.md#scoped-object"
+ * @see <a href="https://github.com/OAI/OpenAPI-Specification/blob/3.0.4/versions/3.0.4.md#scoped-object">Scopes (OpenAPI 3.0 specification)</a>
  */
 
 public class Scopes extends LinkedHashMap<String, String> {

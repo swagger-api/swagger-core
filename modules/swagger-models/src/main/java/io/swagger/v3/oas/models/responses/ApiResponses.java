@@ -8,8 +8,8 @@ import java.util.Objects;
 /**
  * ApiResponses
  *
- * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.0.4/versions/3.0.4.md#responses-object"
- * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.1.1/versions/3.1.1.md#responses-object"
+ * @see <a href="https://github.com/OAI/OpenAPI-Specification/blob/3.0.4/versions/3.0.4.md#responses-object">ApiResponses (OpenAPI 3.0 specification)</a>
+ * @see <a href="https://github.com/OAI/OpenAPI-Specification/blob/3.1.1/versions/3.1.1.md#responses-object">ApiResponses (OpenAPI 3.1 specification)</a>
  */
 
 public class ApiResponses extends LinkedHashMap<String, ApiResponse> {
