@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.extensions.Extension;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.DependentRequired;
 import io.swagger.v3.oas.annotations.media.DiscriminatorMapping;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.media.Schema;
@@ -33,6 +34,7 @@ import java.util.UUID;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotEquals;
+import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 import static org.testng.AssertJUnit.assertNull;
 
@@ -952,6 +954,56 @@ public class AnnotationsUtilsTest {
         assertTrue(resolvedSchema.isPresent());
         assertNotEquals(resolvedSchema.get().getDefault(), "",
                 "Sentinel value must never appear in resolved schema default");
+    }
+
+    @Test
+    public void testGetExampleWithExternalClasspathFile() {
+        ExampleObject exampleObject = buildExampleObject("testExampleFile.json", "");
+        Optional<io.swagger.v3.oas.models.examples.Example> result = AnnotationsUtils.getExample(exampleObject, true);
+        assertTrue(result.isPresent());
+        assertNotNull(result.get().getValue());
+        assertTrue(result.get().getValue() instanceof JsonNode, "File content should be parsed as JsonNode");
+    }
+
+    @Test
+    public void testGetExampleExternalFilePrecedenceOverValue() {
+        ExampleObject exampleObject = buildExampleObject("testExampleFile.json", "{\"override\": true}");
+        Optional<io.swagger.v3.oas.models.examples.Example> result = AnnotationsUtils.getExample(exampleObject, true);
+        assertTrue(result.isPresent());
+        assertFalse(result.get().getValue().toString().contains("override"),
+                "externalFile should take precedence over value when file is found");
+    }
+
+    @Test
+    public void testGetExampleMissingExternalFileFallsBackToValue() {
+        ExampleObject exampleObject = buildExampleObject("nonexistent-file.json", "{\"fallback\": true}");
+        Optional<io.swagger.v3.oas.models.examples.Example> result = AnnotationsUtils.getExample(exampleObject, true);
+        assertTrue(result.isPresent());
+        assertTrue(result.get().getValue().toString().contains("fallback"),
+                "When externalFile is missing, value should be used as fallback");
+    }
+
+    @Test
+    public void testGetExampleWithClasspathPrefix() {
+        ExampleObject exampleObject = buildExampleObject("classpath:testExampleFile.json", "");
+        Optional<io.swagger.v3.oas.models.examples.Example> result = AnnotationsUtils.getExample(exampleObject, true);
+        assertTrue(result.isPresent());
+        assertNotNull(result.get().getValue());
+        assertTrue(result.get().getValue() instanceof JsonNode, "classpath: prefixed file should be parsed as JsonNode");
+    }
+
+    private ExampleObject buildExampleObject(String externalFile, String value) {
+        return new ExampleObject() {
+            @Override public Class<? extends Annotation> annotationType() { return ExampleObject.class; }
+            @Override public String name() { return "test"; }
+            @Override public String summary() { return ""; }
+            @Override public String value() { return value; }
+            @Override public String externalValue() { return ""; }
+            @Override public Extension[] extensions() { return new Extension[0]; }
+            @Override public String ref() { return ""; }
+            @Override public String description() { return ""; }
+            @Override public String externalFile() { return externalFile; }
+        };
     }
 
 }
