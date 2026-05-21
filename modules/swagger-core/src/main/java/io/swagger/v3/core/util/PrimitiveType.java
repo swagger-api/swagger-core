@@ -5,13 +5,17 @@ import io.swagger.v3.oas.models.media.BinarySchema;
 import io.swagger.v3.oas.models.media.BooleanSchema;
 import io.swagger.v3.oas.models.media.ByteArraySchema;
 import io.swagger.v3.oas.models.media.DateSchema;
+import io.swagger.v3.oas.models.media.DateTimeLocalSchema;
 import io.swagger.v3.oas.models.media.DateTimeSchema;
+import io.swagger.v3.oas.models.media.DurationSchema;
 import io.swagger.v3.oas.models.media.FileSchema;
 import io.swagger.v3.oas.models.media.IntegerSchema;
 import io.swagger.v3.oas.models.media.JsonSchema;
 import io.swagger.v3.oas.models.media.NumberSchema;
 import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.media.StringSchema;
+import io.swagger.v3.oas.models.media.TimeLocalSchema;
+import io.swagger.v3.oas.models.media.TimeSchema;
 import io.swagger.v3.oas.models.media.UUIDSchema;
 import org.apache.commons.lang3.StringUtils;
 
@@ -221,6 +225,46 @@ public enum PrimitiveType {
             return new JsonSchema().typesItem("string").format("partial-time");
         }
     },
+    DATE_TIME_LOCAL(java.time.LocalDateTime.class, "date-time-local") {
+        @Override
+        public Schema createProperty() {
+            return new DateTimeLocalSchema();
+        }
+        @Override
+        public Schema createProperty31() {
+            return new JsonSchema().typesItem("string").format("date-time-local");
+        }
+    },
+    TIME(java.time.OffsetTime.class, "time") {
+        @Override
+        public Schema createProperty() {
+            return new TimeSchema();
+        }
+        @Override
+        public Schema createProperty31() {
+            return new JsonSchema().typesItem("string").format("time");
+        }
+    },
+    TIME_LOCAL(java.time.LocalTime.class, "time-local") {
+        @Override
+        public Schema createProperty() {
+            return new TimeLocalSchema();
+        }
+        @Override
+        public Schema createProperty31() {
+            return new JsonSchema().typesItem("string").format("time-local");
+        }
+    },
+    DURATION(java.time.Duration.class, "duration") {
+        @Override
+        public Schema createProperty() {
+            return new DurationSchema();
+        }
+        @Override
+        public Schema createProperty31() {
+            return new JsonSchema().typesItem("string").format("duration");
+        }
+    },
     FILE(java.io.File.class, "file") {
         @Override
         public FileSchema createProperty() {
@@ -315,6 +359,10 @@ public enum PrimitiveType {
         dms.put("string_uuid", "uuid");
         dms.put("string_date", "date");
         dms.put("string_date-time", "date-time");
+        dms.put("string_date-time-local", "date-time-local");
+        dms.put("string_time", "time");
+        dms.put("string_time-local", "time-local");
+        dms.put("string_duration", "duration");
         dms.put("string_partial-time", "partial-time");
         dms.put("string_password", "password");
         dms.put("boolean_", "boolean");
@@ -361,6 +409,8 @@ public enum PrimitiveType {
                 "org.joda.time.ReadableDateTime",
                 "org.joda.time.DateTime",
                 "java.time.Instant");
+        addKeys(externalClasses, TIME,     "java.time.OffsetTime");
+        addKeys(externalClasses, DURATION, "java.time.Duration");
         EXTERNAL_CLASSES = Collections.unmodifiableMap(externalClasses);
 
         final Map<String, PrimitiveType> names = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
@@ -582,9 +632,33 @@ public enum PrimitiveType {
      * See https://xml2rfc.tools.ietf.org/public/rfc/html/rfc3339.html#anchor14
      *
      * @since 2.0.6
+     * @deprecated Use {@link #enableJava8Formats()} instead, which maps {@code java.time.LocalTime}
+     *             to the OpenAPI Formats Registry format {@code "time-local"}.
+     *             This method will be removed in the next major version.
      */
+    @Deprecated
     public static void enablePartialTime() {
         customClasses().put("org.joda.time.LocalTime", PrimitiveType.PARTIAL_TIME);
         customClasses().put("java.time.LocalTime", PrimitiveType.PARTIAL_TIME);
+    }
+
+    /**
+     * Opts in to the OpenAPI Formats Registry mappings for Java 8 date/time types:
+     * <ul>
+     *   <li>{@code java.time.LocalDateTime} → format {@code "date-time-local"}</li>
+     *   <li>{@code java.time.LocalTime}     → format {@code "time-local"}</li>
+     * </ul>
+     * {@code java.time.OffsetTime} and {@code java.time.Duration} are already mapped
+     * by default to {@code "time"} and {@code "duration"} respectively, since their
+     * previous expansion as complex objects was always incorrect.
+     *
+     * <p>Note: {@code java.time.LocalDateTime} defaults to {@code "date-time"} for
+     * backward compatibility. The default will change in the next major version.
+     *
+     * @since 2.2.51
+     */
+    public static void enableJava8Formats() {
+        customClasses().put("java.time.LocalDateTime", PrimitiveType.DATE_TIME_LOCAL);
+        customClasses().put("java.time.LocalTime",     PrimitiveType.TIME_LOCAL);
     }
 }
