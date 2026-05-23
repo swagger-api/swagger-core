@@ -4,7 +4,7 @@
 plugins {
     id 'java-gradle-plugin'
     // Publishing publicly
-    id 'com.gradle.plugin-publish' version '0.21.0'
+    id 'com.gradle.plugin-publish' version '2.1.1'
     // Publishing to maven
     id 'maven-publish'
 }
@@ -19,7 +19,7 @@ repositories {
 }
 
 compileJava {
-    options.release = 8
+    options.release = 17
 }
 
 dependencies {
@@ -87,16 +87,17 @@ gradlePlugin {
 // --------------------------------
 
 // Configuration for: com.gradle.plugin-publish
-pluginBundle {
+gradlePlugin {
     website = project.url
     vcsUrl = project.scm
-    tags = ['swagger', 'openapi', 'api']
 
     plugins {
         swagger {
-            displayName = 'Swagger Gradle Plugin '
+            id = project.pluginId
+            displayName = 'Swagger Gradle Plugin'
             description = project.description
-            id          = project.pluginId
+            implementationClass = 'io.swagger.v3.plugins.gradle.SwaggerPlugin'
+            tags = ['swagger', 'openapi', 'api']
         }
     }
 }
