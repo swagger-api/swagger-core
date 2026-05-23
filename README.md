@@ -8,7 +8,7 @@ Please see the [Wiki](https://github.com/swagger-api/swagger-core/wiki/Swagger-2
 **NOTE:** Since version 2.2.0 Swagger Core supports OpenAPI 3.1; see [this page](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---OpenAPI-3.1) for details
 
 ![Build Test Deploy](https://github.com/swagger-api/swagger-core/workflows/Build%20Test%20Deploy%20master/badge.svg?branch=master)
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.swagger.core.v3/swagger-project/badge.svg?style=plastic)](https://maven-badges.herokuapp.com/maven-central/io.swagger.core.v3/swagger-project)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.github.vpelikh/swagger-project/badge.svg?style=plastic)](https://maven-badges.herokuapp.com/maven-central/io.github.vpelikh/swagger-project)
 
 Swagger Core is a Java implementation of the OpenAPI Specification. Current version supports *JAX-RS2* (`javax` and `jakarta` namespaces).
 
@@ -145,7 +145,7 @@ You need the following installed and available in your $PATH:
 * Jackson 3.1.3 or greater
 
 
-### To build from source (currently 2.2.53-SNAPSHOT)
+### To build from source (currently 3.0.0-SNAPSHOT)
 ```
 # first time building locally
 mvn -N
@@ -179,7 +179,7 @@ Import it once and omit versions on all individual Swagger dependencies.
 <dependencyManagement>
   <dependencies>
     <dependency>
-      <groupId>io.swagger.core.v3</groupId>
+      <groupId>io.github.vpelikh</groupId>
       <artifactId>swagger-bom</artifactId>
       <version>${swagger-openapiv3.version}</version>
       <type>pom</type>
@@ -192,60 +192,60 @@ Import it once and omit versions on all individual Swagger dependencies.
 <dependencies>
   <!-- javax artifacts -->
   <dependency>
-    <groupId>io.swagger.core.v3</groupId>
+    <groupId>io.github.vpelikh</groupId>
     <artifactId>swagger-annotations</artifactId>
   </dependency>
   <dependency>
-    <groupId>io.swagger.core.v3</groupId>
+    <groupId>io.github.vpelikh</groupId>
     <artifactId>swagger-models</artifactId>
   </dependency>
   <dependency>
-    <groupId>io.swagger.core.v3</groupId>
+    <groupId>io.github.vpelikh</groupId>
     <artifactId>swagger-core</artifactId>
   </dependency>
   <dependency>
-    <groupId>io.swagger.core.v3</groupId>
+    <groupId>io.github.vpelikh</groupId>
     <artifactId>swagger-integration</artifactId>
   </dependency>
   <dependency>
-    <groupId>io.swagger.core.v3</groupId>
+    <groupId>io.github.vpelikh</groupId>
     <artifactId>swagger-jaxrs2</artifactId>
   </dependency>
   <dependency>
-    <groupId>io.swagger.core.v3</groupId>
+    <groupId>io.github.vpelikh</groupId>
     <artifactId>swagger-jaxrs2-servlet-initializer</artifactId>
   </dependency>
   <dependency>
-    <groupId>io.swagger.core.v3</groupId>
+    <groupId>io.github.vpelikh</groupId>
     <artifactId>swagger-jaxrs2-servlet-initializer-v2</artifactId>
   </dependency>
   <!-- Jakarta namespace artifacts (use instead of, or alongside, the javax ones above) -->
   <dependency>
-    <groupId>io.swagger.core.v3</groupId>
+    <groupId>io.github.vpelikh</groupId>
     <artifactId>swagger-annotations-jakarta</artifactId>
   </dependency>
   <dependency>
-    <groupId>io.swagger.core.v3</groupId>
+    <groupId>io.github.vpelikh</groupId>
     <artifactId>swagger-models-jakarta</artifactId>
   </dependency>
   <dependency>
-    <groupId>io.swagger.core.v3</groupId>
+    <groupId>io.github.vpelikh</groupId>
     <artifactId>swagger-core-jakarta</artifactId>
   </dependency>
   <dependency>
-    <groupId>io.swagger.core.v3</groupId>
+    <groupId>io.github.vpelikh</groupId>
     <artifactId>swagger-integration-jakarta</artifactId>
   </dependency>
   <dependency>
-    <groupId>io.swagger.core.v3</groupId>
+    <groupId>io.github.vpelikh</groupId>
     <artifactId>swagger-jaxrs2-jakarta</artifactId>
   </dependency>
   <dependency>
-    <groupId>io.swagger.core.v3</groupId>
+    <groupId>io.github.vpelikh</groupId>
     <artifactId>swagger-jaxrs2-servlet-initializer-jakarta</artifactId>
   </dependency>
   <dependency>
-    <groupId>io.swagger.core.v3</groupId>
+    <groupId>io.github.vpelikh</groupId>
     <artifactId>swagger-jaxrs2-servlet-initializer-v2-jakarta</artifactId>
   </dependency>
 </dependencies>
@@ -255,15 +255,15 @@ Import it once and omit versions on all individual Swagger dependencies.
 
 ```kotlin
 dependencies {
-    implementation(platform("io.swagger.core.v3:swagger-bom:${swaggerOpenapiv3Version}"))
+    implementation(platform("io.github.vpelikh:swagger-bom:${swaggerOpenapiv3Version}"))
 
     // javax artifacts — no version needed
-    implementation("io.swagger.core.v3:swagger-annotations")
-    implementation("io.swagger.core.v3:swagger-core")
+    implementation("io.github.vpelikh:swagger-annotations")
+    implementation("io.github.vpelikh:swagger-core")
 
     // Jakarta namespace artifacts — no version needed
-    implementation("io.swagger.core.v3:swagger-annotations-jakarta")
-    implementation("io.swagger.core.v3:swagger-core-jakarta")
+    implementation("io.github.vpelikh:swagger-annotations-jakarta")
+    implementation("io.github.vpelikh:swagger-core-jakarta")
 }
 ```
 

@@ -20,7 +20,7 @@ Both `javax` and `jakarta` examples are provided below
     <build>
         <plugins>
             <plugin>
-                <groupId>io.swagger.core.v3</groupId>
+                <groupId>io.github.vpelikh</groupId>
                 <artifactId>swagger-maven-plugin</artifactId>
                 <version>2.2.52</version>
                 <configuration>
@@ -45,7 +45,7 @@ Both `javax` and `jakarta` examples are provided below
     </build>
     <dependencies>
         <dependency>
-            <groupId>io.swagger.core.v3</groupId>
+            <groupId>io.github.vpelikh</groupId>
             <artifactId>swagger-jaxrs2</artifactId>
             <version>2.2.52</version>
         </dependency>
@@ -71,7 +71,7 @@ Both `javax` and `jakarta` examples are provided below
     <build>
         <plugins>
             <plugin>
-                <groupId>io.swagger.core.v3</groupId>
+                <groupId>io.github.vpelikh</groupId>
                 <artifactId>swagger-maven-plugin-jakarta</artifactId>
                 <version>2.2.52</version>
                 <configuration>
@@ -96,7 +96,7 @@ Both `javax` and `jakarta` examples are provided below
     </build>
     <dependencies>
         <dependency>
-            <groupId>io.swagger.core.v3</groupId>
+            <groupId>io.github.vpelikh</groupId>
             <artifactId>swagger-jaxrs2-jakarta</artifactId>
             <version>2.2.52</version>
         </dependency>
@@ -124,7 +124,7 @@ Both `javax` and `jakarta` examples are provided below
     <build>
         <plugins>
             <plugin>
-                <groupId>io.swagger.core.v3</groupId>
+                <groupId>io.github.vpelikh</groupId>
                 <artifactId>swagger-maven-plugin</artifactId>
                 <version>2.2.52</version>
                 <configuration>
@@ -153,7 +153,7 @@ Both `javax` and `jakarta` examples are provided below
     <build>
         <plugins>
             <plugin>
-                <groupId>io.swagger.core.v3</groupId>
+                <groupId>io.github.vpelikh</groupId>
                 <artifactId>swagger-maven-plugin-jakarta</artifactId>
                 <version>2.2.52</version>
                 <configuration>

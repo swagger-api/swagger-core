@@ -54,24 +54,24 @@ sc_add="$SC_VERSION (**current stable**)| $CURDATE   | 3.x           | [tag v$SC
 sc_replace="$sc_find\n$sc_add"
 sed -i -e "s/$sc_find/$sc_replace/g" $CUR/README.md
 
-sc_find="\"io.swagger.core.v3.swagger-gradle-plugin\" version \"$SC_LAST_RELEASE\""
-sc_replace="\"io.swagger.core.v3.swagger-gradle-plugin\" version \"$SC_VERSION\""
+sc_find="\"io.github.vpelikh.swagger-gradle-plugin\" version \"$SC_LAST_RELEASE\""
+sc_replace="\"io.github.vpelikh.swagger-gradle-plugin\" version \"$SC_VERSION\""
 sed -i -e "s/$sc_find/$sc_replace/g" $CUR/modules/swagger-gradle-plugin/README.md
 
-sc_find="classpath \"io.swagger.core.v3:swagger-gradle-plugin:$SC_LAST_RELEASE\""
-sc_replace="classpath \"io.swagger.core.v3:swagger-gradle-plugin:$SC_VERSION\""
+sc_find="classpath \"io.github.vpelikh:swagger-gradle-plugin:$SC_LAST_RELEASE\""
+sc_replace="classpath \"io.github.vpelikh:swagger-gradle-plugin:$SC_VERSION\""
 sed -i -e "s/$sc_find/$sc_replace/g" $CUR/modules/swagger-gradle-plugin/README.md
 
 sc_find="version=$SC_VERSION\-SNAPSHOT"
 sc_replace="version=$SC_VERSION"
 sed -i -e "s/$sc_find/$sc_replace/g" $CUR/modules/swagger-gradle-plugin/gradle.properties
 
-sc_find="io.swagger.core.v3:swagger-jaxrs2:$SC_VERSION-SNAPSHOT"
-sc_replace="io.swagger.core.v3:swagger-jaxrs2:$SC_VERSION"
+sc_find="io.github.vpelikh:swagger-jaxrs2:$SC_VERSION-SNAPSHOT"
+sc_replace="io.github.vpelikh:swagger-jaxrs2:$SC_VERSION"
 sed -i -e "s/$sc_find/$sc_replace/g" $CUR/modules/swagger-gradle-plugin/src/main/java/io/swagger/v3/plugins/gradle/SwaggerPlugin.java
 
-sc_find="io.swagger.core.v3:swagger-jaxrs2:$SC_VERSION-SNAPSHOT"
-sc_replace="io.swagger.core.v3:swagger-jaxrs2:$SC_VERSION"
+sc_find="io.github.vpelikh:swagger-jaxrs2:$SC_VERSION-SNAPSHOT"
+sc_replace="io.github.vpelikh:swagger-jaxrs2:$SC_VERSION"
 sed -i -e "s/$sc_find/$sc_replace/g" $CUR/modules/swagger-gradle-plugin/src/test/java/io/swagger/v3/plugins/gradle/SwaggerResolveTest.java
 
 sc_find="<version>$SC_LAST_RELEASE<\/version>"

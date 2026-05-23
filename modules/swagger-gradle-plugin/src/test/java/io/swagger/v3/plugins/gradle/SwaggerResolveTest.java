@@ -62,7 +62,7 @@ public class SwaggerResolveTest {
         String buildFileContent =
                 "plugins {\n" +
                 "    id 'java'\n" +
-                "    id 'io.swagger.core.v3.swagger-gradle-plugin'\n" +
+                "    id 'io.github.vpelikh.swagger-gradle-plugin'\n" +
                 "}\n" +
                 "sourceSets {\n" +
                 "    test {\n" +
@@ -77,7 +77,7 @@ public class SwaggerResolveTest {
                 "    mavenCentral()\n" +
                 "}\n" +
                 "dependencies {  \n" +
-                "    implementation 'io.swagger.core.v3:swagger-jaxrs2:2.2.53-SNAPSHOT'\n" +
+                "    implementation 'io.github.vpelikh:swagger-jaxrs2:3.0.0-SNAPSHOT'\n" +
                 "    implementation 'javax.ws.rs:javax.ws.rs-api:2.1'\n" +
                 "    implementation 'javax.servlet:javax.servlet-api:3.1.0'\n" +
                 "    testImplementation 'com.github.tomakehurst:wiremock:2.27.2'\n" +
@@ -135,7 +135,7 @@ public class SwaggerResolveTest {
         String buildFileContent =
                 "plugins {\n" +
                 "    id 'java'\n" +
-                "    id 'io.swagger.core.v3.swagger-gradle-plugin'\n" +
+                "    id 'io.github.vpelikh.swagger-gradle-plugin'\n" +
                 "}\n" +
                 "sourceSets {\n" +
                 "    test {\n" +
@@ -150,7 +150,7 @@ public class SwaggerResolveTest {
                 "    mavenCentral()\n" +
                 "}\n" +
                 "dependencies {  \n" +
-                "    implementation 'io.swagger.core.v3:swagger-jaxrs2:2.2.53-SNAPSHOT'\n" +
+                "    implementation 'io.github.vpelikh:swagger-jaxrs2:3.0.0-SNAPSHOT'\n" +
                 "    implementation 'javax.ws.rs:javax.ws.rs-api:2.1'\n" +
                 "    implementation 'javax.servlet:javax.servlet-api:3.1.0'\n" +
                 "    testImplementation 'com.github.tomakehurst:wiremock:2.27.2'\n" +
@@ -219,7 +219,7 @@ public class SwaggerResolveTest {
         String buildFileContent =
                 "plugins {\n" +
                 "    id 'java'\n" +
-                "    id 'io.swagger.core.v3.swagger-gradle-plugin'\n" +
+                "    id 'io.github.vpelikh.swagger-gradle-plugin'\n" +
                 "}\n" +
                 "sourceSets {\n" +
                 "    test {\n" +
@@ -234,7 +234,7 @@ public class SwaggerResolveTest {
                 "    mavenCentral()\n" +
                 "}\n" +
                 "dependencies {  \n" +
-                "    implementation 'io.swagger.core.v3:swagger-jaxrs2:2.2.51-SNAPSHOT'\n" +
+                "    implementation 'io.github.vpelikh:swagger-jaxrs2:3.0.0-SNAPSHOT'\n" +
                 "    implementation 'javax.ws.rs:javax.ws.rs-api:2.1'\n" +
                 "    implementation 'javax.servlet:javax.servlet-api:3.1.0'\n" +
                 "}\n" +
@@ -289,7 +289,7 @@ public class SwaggerResolveTest {
         String buildFileContent =
                 "plugins {\n" +
                 "    id 'java'\n" +
-                "    id 'io.swagger.core.v3.swagger-gradle-plugin'\n" +
+                "    id 'io.github.vpelikh.swagger-gradle-plugin'\n" +
                 "}\n" +
                 // resolve block appears BEFORE dependencies
                 "resolve {\n" +
@@ -303,7 +303,7 @@ public class SwaggerResolveTest {
                 "    mavenCentral()\n" +
                 "}\n" +
                 "dependencies {\n" +
-                "    implementation 'io.swagger.core.v3:swagger-jaxrs2:2.2.53-SNAPSHOT'\n" +
+                "    implementation 'io.github.vpelikh:swagger-jaxrs2:3.0.0-SNAPSHOT'\n" +
                 "    implementation 'javax.ws.rs:javax.ws.rs-api:2.1'\n" +
                 "    implementation 'javax.servlet:javax.servlet-api:3.1.0'\n" +
                 "    testImplementation 'org.testng:testng:7.10.2'\n" +
@@ -377,7 +377,7 @@ public class SwaggerResolveTest {
         writeFile(apiDir.resolve("build.gradle"),
                 "plugins {\n" +
                 "    id 'java'\n" +
-                "    id 'io.swagger.core.v3.swagger-gradle-plugin'\n" +
+                "    id 'io.github.vpelikh.swagger-gradle-plugin'\n" +
                 "}\n" +
                 "repositories {\n" +
                 "    maven { url mavenLocal().url }\n" +
