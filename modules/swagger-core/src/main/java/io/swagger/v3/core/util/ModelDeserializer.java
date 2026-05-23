@@ -1,12 +1,11 @@
 package io.swagger.v3.core.util;
 
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonDeserializer;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.fasterxml.jackson.databind.node.TextNode;
+import tools.jackson.core.JacksonException;
+import tools.jackson.core.JsonParser;
+import tools.jackson.databind.DeserializationContext;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.node.ArrayNode;
+import tools.jackson.databind.node.ObjectNode;
 import io.swagger.v3.oas.models.media.ArbitrarySchema;
 import io.swagger.v3.oas.models.media.ArraySchema;
 import io.swagger.v3.oas.models.media.BooleanSchema;
@@ -24,6 +23,8 @@ import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.media.StringSchema;
 import io.swagger.v3.oas.models.media.UUIDSchema;
 import org.apache.commons.lang3.StringUtils;
+import tools.jackson.databind.ValueDeserializer;
+import tools.jackson.databind.node.StringNode;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -31,7 +32,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-public class ModelDeserializer extends JsonDeserializer<Schema> {
+public class ModelDeserializer extends ValueDeserializer<Schema> {
 
     static Boolean useArbitrarySchema = false;
     static {
@@ -45,8 +46,8 @@ public class ModelDeserializer extends JsonDeserializer<Schema> {
     protected boolean openapi31 = false;
     @Override
     public Schema deserialize(JsonParser jp, DeserializationContext ctxt)
-            throws IOException {
-        JsonNode node = jp.getCodec().readTree(jp);
+            throws JacksonException {
+        JsonNode node = jp.objectReadContext().readTree(jp);
 
         Schema schema = null;
 
@@ -66,21 +67,21 @@ public class ModelDeserializer extends JsonDeserializer<Schema> {
         }
 
         JsonNode type = node.get("type");
-        String format = node.get("format") == null ? "" : node.get("format").textValue();
+        String format = node.get("format") == null ? "" : node.get("format").asString();
 
-        if (type != null && "array".equals(((TextNode) type).textValue())) {
+        if (type != null && "array".equals(((StringNode) type).textValue())) {
             schema = Json.mapper().convertValue(node, ArraySchema.class);
         } else if (type != null) {
-            if (type.textValue().equals("integer")) {
+            if (type.asString().equals("integer")) {
                 schema = Json.mapper().convertValue(node, IntegerSchema.class);
                 if (StringUtils.isBlank(format)) {
                     schema.setFormat(null);
                 }
-            } else if (type.textValue().equals("number")) {
+            } else if (type.asString().equals("number")) {
                 schema = Json.mapper().convertValue(node, NumberSchema.class);
-            } else if (type.textValue().equals("boolean")) {
+            } else if (type.asString().equals("boolean")) {
                 schema = Json.mapper().convertValue(node, BooleanSchema.class);
-            } else if (type.textValue().equals("string")) {
+            } else if (type.asString().equals("string")) {
                 if ("date".equals(format)) {
                     schema = Json.mapper().convertValue(node, DateSchema.class);
                 } else if ("date-time".equals(format)) {
@@ -94,11 +95,11 @@ public class ModelDeserializer extends JsonDeserializer<Schema> {
                 } else {
                     schema = Json.mapper().convertValue(node, StringSchema.class);
                 }
-            } else if (type.textValue().equals("object")) {
+            } else if (type.asString().equals("object")) {
                 schema = deserializeArbitraryOrObjectSchema(node, true);
             }
         } else if (node.get("$ref") != null) {
-            schema = new Schema().$ref(node.get("$ref").asText());
+            schema = new Schema().$ref(node.get("$ref").asString());
         } else {
             schema = deserializeArbitraryOrObjectSchema(node, false);
         }
@@ -155,12 +156,12 @@ public class ModelDeserializer extends JsonDeserializer<Schema> {
                 ((ObjectNode)node).remove("additionalProperties");
             }
             schema = Json31.mapper().convertValue(node, JsonSchema.class);
-            if (type instanceof TextNode) {
-                schema.types(new LinkedHashSet<>(Arrays.asList(type.textValue())));
-            } else if (type instanceof ArrayNode){
+            if (type instanceof StringNode) {
+                schema.types(new LinkedHashSet<>(Arrays.asList(type.asString())));
+            } else if (type instanceof ArrayNode arrayNode){
                 Set<String> types = new LinkedHashSet<>();
-                ((ArrayNode)type).elements().forEachRemaining( n -> {
-                    types.add(n.textValue());
+                arrayNode.values().iterator().forEachRemaining( n -> {
+                    types.add(n.asString());
                 });
                 schema.types(types);
             }

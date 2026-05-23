@@ -1,7 +1,7 @@
 package io.swagger.v3.core.util;
 
-import com.fasterxml.jackson.databind.JavaType;
 import io.swagger.v3.oas.models.media.Schema;
+import tools.jackson.databind.JavaType;
 
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;

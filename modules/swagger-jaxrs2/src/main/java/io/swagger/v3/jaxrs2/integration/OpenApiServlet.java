@@ -1,6 +1,6 @@
 package io.swagger.v3.jaxrs2.integration;
 
-import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
+import tools.jackson.core.util.DefaultPrettyPrinter;
 import io.swagger.v3.core.filter.OpenAPISpecFilter;
 import io.swagger.v3.core.filter.SpecFilter;
 import io.swagger.v3.jaxrs2.util.ServletUtils;
@@ -86,12 +86,12 @@ public class OpenApiServlet extends HttpServlet {
         if (type.equalsIgnoreCase("yaml")) {
             resp.setContentType(APPLICATION_YAML);
             try (PrintWriter pw = resp.getWriter()) {
-                pw.write(pretty ? ctx.getOutputYamlMapper().writer(new DefaultPrettyPrinter()).writeValueAsString(oas) : ctx.getOutputYamlMapper().writeValueAsString(oas));
+                pw.write(pretty ? ctx.getOutputYamlMapper().writerWithDefaultPrettyPrinter().writeValueAsString(oas) : ctx.getOutputYamlMapper().writeValueAsString(oas));
             }
         } else {
             resp.setContentType(APPLICATION_JSON);
             try (PrintWriter pw = resp.getWriter()) {
-                pw.write(pretty ? ctx.getOutputJsonMapper().writer(new DefaultPrettyPrinter()).writeValueAsString(oas) : ctx.getOutputJsonMapper().writeValueAsString(oas));
+                pw.write(pretty ? ctx.getOutputJsonMapper().writerWithDefaultPrettyPrinter().writeValueAsString(oas) : ctx.getOutputJsonMapper().writeValueAsString(oas));
             }
         }
 

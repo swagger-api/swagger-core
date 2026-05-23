@@ -4,7 +4,7 @@ import static org.testng.Assert.assertNotNull;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 import io.swagger.v3.core.converter.AnnotatedType;
 import io.swagger.v3.core.converter.ModelConverterContextImpl;
 import io.swagger.v3.core.jackson.ModelResolver;

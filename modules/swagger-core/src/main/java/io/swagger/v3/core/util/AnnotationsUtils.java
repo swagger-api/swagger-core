@@ -1,10 +1,11 @@
 package io.swagger.v3.core.util;
 
 import com.fasterxml.jackson.annotation.JsonView;
-import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.introspect.Annotated;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.JavaType;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.introspect.Annotated;
 import io.swagger.v3.core.converter.AnnotatedType;
 import io.swagger.v3.core.converter.ModelConverterContext;
 import io.swagger.v3.core.converter.ModelConverters;
@@ -454,7 +455,7 @@ public abstract class AnnotationsUtils {
             try {
                 ObjectMapper mapper = ObjectMapperFactory.buildStrictGenericObjectMapper();
                 exampleObject.setValue(mapper.readTree(example.value()));
-            } catch (IOException e) {
+            } catch (JacksonException e) {
                 exampleObject.setValue(example.value());
             }
         }
@@ -745,7 +746,7 @@ public abstract class AnnotationsUtils {
                     _const = Json.mapper().readTree(schema._const());
                 }
                 schemaObject.setConst(_const);
-            } catch (IOException e) {
+            } catch (JacksonException e) {
                 schemaObject.setConst(schema._const());
             }
         }
@@ -929,7 +930,7 @@ public abstract class AnnotationsUtils {
             } else {
                 schemaObject.setExample(exampleValue);
             }
-        } catch (IOException ignored) {
+        } catch (JacksonException ignored) {
             schemaObject.setExample(exampleValue);
         }
     }
@@ -966,7 +967,7 @@ public abstract class AnnotationsUtils {
             } else {
                 schemaObject.setDefault(defaultValue);
             }
-        } catch (IOException ignored) {
+        } catch (JacksonException ignored) {
             schemaObject.setDefault(defaultValue);
         }
     }
@@ -999,7 +1000,7 @@ public abstract class AnnotationsUtils {
                 } else {
                     parsedExamples.add(trimmed);
                 }
-            } catch (IOException ignored) {
+            } catch (JacksonException ignored) {
                 parsedExamples.add(trimmed);
             }
         }
@@ -1524,7 +1525,7 @@ public abstract class AnnotationsUtils {
         if (StringUtils.isNotBlank(header.example())) {
             try {
                 headerObject.setExample(Json.mapper().readTree(header.example()));
-            } catch (IOException e) {
+            } catch (JacksonException e) {
                 headerObject.setExample(header.example());
             }
         }
@@ -1725,7 +1726,7 @@ public abstract class AnnotationsUtils {
                 schema = Json.mapper().readValue(Json.pretty(schema), Schema.class);
             }
             schema.setName(cloneName);
-        } catch (IOException e) {
+        } catch (JacksonException e) {
             LOGGER.error("Could not clone schema", e);
         }
         return schema;

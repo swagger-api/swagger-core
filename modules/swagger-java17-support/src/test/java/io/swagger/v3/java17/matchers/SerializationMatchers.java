@@ -1,9 +1,10 @@
 package io.swagger.v3.java17.matchers;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.NumericNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.node.NumericNode;
+import tools.jackson.databind.node.ObjectNode;
 import io.swagger.v3.core.util.Json;
 import io.swagger.v3.core.util.Json31;
 import io.swagger.v3.core.util.Yaml;
@@ -44,7 +45,7 @@ public class SerializationMatchers {
         ObjectNode rhs = null;
         try {
             rhs = mapper.readValue(str, ObjectNode.class);
-        } catch (IOException e) {
+        } catch (JacksonException e) {
             LOGGER.error("Failed to read value", e);
         }
         if (exactMatch || !lhs.equals(new ObjectNodeComparator(), rhs)) {
@@ -58,7 +59,7 @@ public class SerializationMatchers {
         ObjectNode rhs = null;
         try {
             rhs = mapper.readValue(str, ObjectNode.class);
-        } catch (IOException e) {
+        } catch (JacksonException e) {
             LOGGER.error("Failed to read value", e);
         }
         if (!lhs.equals(new ObjectNodeComparator(), rhs)) {
@@ -77,7 +78,7 @@ public class SerializationMatchers {
                 double d2 = ((NumericNode) o2).asDouble();
                 return Double.compare(d1, d2);
             }
-            int comp = o1.asText().compareTo(o2.asText());
+            int comp = o1.asString().compareTo(o2.asString());
             if (comp == 0) {
                 return Integer.compare(o1.hashCode(), o2.hashCode());
             }

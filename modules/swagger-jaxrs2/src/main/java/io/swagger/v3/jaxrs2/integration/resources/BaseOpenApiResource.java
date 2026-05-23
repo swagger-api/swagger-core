@@ -1,6 +1,6 @@
 package io.swagger.v3.jaxrs2.integration.resources;
 
-import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
+import tools.jackson.core.util.DefaultPrettyPrinter;
 import io.swagger.v3.core.filter.OpenAPISpecFilter;
 import io.swagger.v3.core.filter.SpecFilter;
 import io.swagger.v3.jaxrs2.integration.JaxrsOpenApiContextBuilder;
@@ -71,14 +71,14 @@ public abstract class BaseOpenApiResource {
         if (StringUtils.isNotBlank(type) && type.trim().equalsIgnoreCase("yaml")) {
             return Response.status(Response.Status.OK)
                     .entity(pretty ?
-                            ctx.getOutputYamlMapper().writer(new DefaultPrettyPrinter()).writeValueAsString(oas) :
+                            ctx.getOutputYamlMapper().writerWithDefaultPrettyPrinter().writeValueAsString(oas) :
                             ctx.getOutputYamlMapper().writeValueAsString(oas))
                     .type("application/yaml")
                     .build();
         } else {
             return Response.status(Response.Status.OK)
                     .entity(pretty ?
-                            ctx.getOutputJsonMapper().writer(new DefaultPrettyPrinter()).writeValueAsString(oas) :
+                            ctx.getOutputJsonMapper().writerWithDefaultPrettyPrinter().writeValueAsString(oas) :
                             ctx.getOutputJsonMapper().writeValueAsString(oas))
                     .type(MediaType.APPLICATION_JSON_TYPE)
                     .build();

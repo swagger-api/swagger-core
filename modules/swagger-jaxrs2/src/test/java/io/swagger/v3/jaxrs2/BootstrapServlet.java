@@ -1,6 +1,6 @@
 package io.swagger.v3.jaxrs2;
 
-import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
+import tools.jackson.core.util.DefaultPrettyPrinter;
 import io.swagger.v3.jaxrs2.integration.JaxrsOpenApiContextBuilder;
 import io.swagger.v3.oas.integration.OpenApiConfigurationException;
 import io.swagger.v3.oas.integration.OpenApiContextLocator;
@@ -68,7 +68,7 @@ public class BootstrapServlet extends HttpServlet {
 
         resp.setContentType("application/yaml");
         try (PrintWriter pw = resp.getWriter()) {
-            pw.write(ctx.getOutputYamlMapper().writer(new DefaultPrettyPrinter()).writeValueAsString(oas));
+            pw.write(ctx.getOutputYamlMapper().writerWithDefaultPrettyPrinter().writeValueAsString(oas));
         }
     }
 }

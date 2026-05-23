@@ -1,6 +1,9 @@
 package io.swagger.v3.core.converter;
 
-import com.fasterxml.jackson.databind.type.TypeFactory;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.cfg.MapperBuilder;
+import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.databind.type.TypeFactory;
 import io.swagger.v3.core.jackson.ModelResolver;
 import io.swagger.v3.core.util.Configuration;
 import io.swagger.v3.core.util.Json;
@@ -20,6 +23,7 @@ import java.util.Map.Entry;
 import java.util.ServiceLoader;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Consumer;
 
 public class ModelConverters {
     private static ModelConverters SINGLETON = null;
@@ -30,8 +34,7 @@ public class ModelConverters {
     private final Set<String> skippedClasses = new HashSet<>();
 
     public ModelConverters() {
-        converters = new CopyOnWriteArrayList<>();
-        converters.add(new ModelResolver(Json.mapper()));
+        this(false);
     }
 
     public ModelConverters(boolean openapi31) {
@@ -52,6 +55,15 @@ public class ModelConverters {
         }
     }
 
+    public ModelConverters(boolean openapi31, Consumer<MapperBuilder<? extends ObjectMapper, ? extends MapperBuilder<?, ?>>> mapperBuilderCustomizer) {
+        converters = new CopyOnWriteArrayList<>();
+        if (openapi31) {
+            converters.add(new ModelResolver(Json31.mapper(mapperBuilderCustomizer)).openapi31(true));
+        } else {
+            converters.add(new ModelResolver(Json.mapper(mapperBuilderCustomizer)));
+        }
+    }
+
     public ModelConverters(Configuration configuration) {
         converters = new CopyOnWriteArrayList<>();
         boolean openapi31 =configuration != null && configuration.isOpenAPI31() != null && configuration.isOpenAPI31();
@@ -67,18 +79,30 @@ public class ModelConverters {
     }
 
     public static ModelConverters getInstance(boolean openapi31) {
+        return getInstance(openapi31, mapperBuilder -> {});
+    }
+
+    public static ModelConverters getInstance(boolean openapi31, Consumer<MapperBuilder<? extends ObjectMapper, ? extends MapperBuilder<?, ?>>> mapperBuilderCustomizer) {
         if (openapi31) {
             if (SINGLETON31 == null) {
-                SINGLETON31 = new ModelConverters(openapi31);
+                SINGLETON31 = new ModelConverters(openapi31, mapperBuilderCustomizer);
                 init(SINGLETON31);
             }
             return SINGLETON31;
         }
         if (SINGLETON == null) {
-            SINGLETON = new ModelConverters(openapi31);
+            SINGLETON = new ModelConverters(openapi31, mapperBuilderCustomizer);
             init(SINGLETON);
         }
         return SINGLETON;
+    }
+
+    public static ModelConverters getInstance() {
+        return getInstance(false);
+    }
+
+    public static ModelConverters getInstance(Consumer<MapperBuilder<? extends ObjectMapper, ? extends MapperBuilder<?, ?>>> mapperBuilderCustomizer) {
+        return getInstance(false, mapperBuilderCustomizer);
     }
 
     public static void reset() {
@@ -145,10 +169,6 @@ public class ModelConverters {
         }
 
     }
-    public static ModelConverters getInstance() {
-        return getInstance(false);
-    }
-
 
     public void addConverter(ModelConverter converter) {
         converters.add(0, converter);
@@ -233,7 +253,7 @@ public class ModelConverters {
     }
 
     private boolean shouldProcess(Type type) {
-        final Class<?> cls = TypeFactory.defaultInstance().constructType(type).getRawClass();
+        final Class<?> cls = TypeFactory.createDefaultInstance().constructType(type).getRawClass();
         if (cls.isPrimitive()) {
             return false;
         }
