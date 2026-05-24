@@ -25,11 +25,13 @@ cd ../..
 # Update gradle.properties
 sed -i "s/version=.*/version=${RELEASE_VERSION}/" modules/swagger-gradle-plugin/gradle.properties
 
-# Update Java files with version reference
-sed -i "s/io.github.vpelikh:swagger-jaxrs2:.*/io.github.vpelikh:swagger-jaxrs2:${RELEASE_VERSION}/" \
+# Update Java files with version reference (preserve rest of the line)
+# For double-quoted strings (SwaggerPlugin.java)
+sed -i "s/\(io.github.vpelikh:swagger-jaxrs2:\)[^\"]*\(.*\)/\1${RELEASE_VERSION}\2/" \
   modules/swagger-gradle-plugin/src/main/java/io/swagger/v3/plugins/gradle/SwaggerPlugin.java
 
-sed -i "s/io.github.vpelikh:swagger-jaxrs2:.*/io.github.vpelikh:swagger-jaxrs2:${RELEASE_VERSION}/" \
+# For single-quoted strings (SwaggerResolveTest.java)
+sed -i "s/\('io.github.vpelikh:swagger-jaxrs2:\)[^']*\(.*\)/\1${RELEASE_VERSION}\2/" \
   modules/swagger-gradle-plugin/src/test/java/io/swagger/v3/plugins/gradle/SwaggerResolveTest.java
 
 # Update swagger-maven-plugin README
