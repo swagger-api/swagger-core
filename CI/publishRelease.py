@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 import sys
+import json
 import ghApiClient
 
 def lastDraftReleaseId(tag):
