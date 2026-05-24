@@ -32,10 +32,8 @@ sed -i "s/io.github.vpelikh:swagger-jaxrs2:.*/io.github.vpelikh:swagger-jaxrs2:$
 sed -i "s/io.github.vpelikh:swagger-jaxrs2:.*/io.github.vpelikh:swagger-jaxrs2:${RELEASE_VERSION}/" \
   modules/swagger-gradle-plugin/src/test/java/io/swagger/v3/plugins/gradle/SwaggerResolveTest.java
 
-# Update swagger-maven-plugin README and java17-support pom
+# Update swagger-maven-plugin README
 sed -i "s/<version>.*<\/version>/<version>${RELEASE_VERSION}<\/version>/" modules/swagger-maven-plugin/README.md
-sed -i "s/<version>.*<\/version>/<version>${RELEASE_VERSION}<\/version>/" modules/swagger-java17-support/pom.xml
-rm -f modules/swagger-java17-support/pom.xml.versionsBackup
 
 # Generate release notes (draft)
 SC_LAST_RELEASE=$(python CI/lastRelease.py)
