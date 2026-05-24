@@ -72,7 +72,7 @@ and clicking `Run Workflow` (or `Release V1` and selecting `1.5` in the dropdown
 
 GitHub Actions make use of `Secrets` which can be configured either with Repo or Organization scope; the needed secrets are the following:
 
-* `APP_ID` and APP_PRIVATE_KEY`: these are the values provided by an account configured GitHub App, allowing to obtain a GitHub token
+* `APP_ID` and `APP_PRIVATE_KEY`: these are the values provided by an account configured GitHub App, allowing to obtain a GitHub token
 different from the default used in GitHub Actions (which does not allow to "chain" actions).Actions
 
 The GitHub App must be configured as detailed in [this doc](https://github.com/peter-evans/create-pull-request/blob/master/docs/concepts-guidelines.md#authenticating-with-github-app-generated-tokens).

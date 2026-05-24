@@ -3,25 +3,27 @@
 import sys
 import ghApiClient
 
-def lastReleaseId(tag):
-    content = ghApiClient.readUrl('repos/swagger-api/swagger-core/releases')
-    for l in content:
-        draft = l["draft"]
-        draft_tag = l["tag_name"]
-        if str(draft) == 'True' and tag == draft_tag:
-            return l["id"]
+def lastDraftReleaseId(tag):
+    content = ghApiClient.readUrl('repos/vpelikh/swagger-core/releases')
+    for release in content:
+        if release["draft"] and release["tag_name"] == tag:
+            return release["id"]
+    return None
 
 def publishRelease(tag):
-    id = lastReleaseId(tag)
-    payload = "{\"tag_name\":\"" + tag + "\", "
-    payload += "\"draft\":" + "false" + ", "
-    payload += "\"target_commitish\":\"" + "master" + "\"}"
-    content = ghApiClient.postUrl('repos/swagger-api/swagger-core/releases/' + str(id), payload)
-    return content
+    release_id = lastDraftReleaseId(tag)
+    if release_id is None:
+        print("No draft release found for tag " + tag)
+        sys.exit(1)
+    payload = {
+        "tag_name": tag,
+        "draft": False,
+        "target_commitish": "master"
+    }
+    ghApiClient.postUrl('repos/vpelikh/swagger-core/releases/' + str(release_id), json.dumps(payload))
 
-# main
 def main(tag):
-    publishRelease (tag)
+    publishRelease(tag)
 
-# here start main
-main(sys.argv[1])
+if __name__ == "__main__":
+    main(sys.argv[1])

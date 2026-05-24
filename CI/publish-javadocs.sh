@@ -3,7 +3,7 @@
 CUR=$(pwd)
 TMPDIR="$(dirname -- "${0}")"
 
-SC_RELEASE_TAG="v$SC_VERSION"
+SC_RELEASE_TAG="v${RELEASE_VERSION}"
 
 #####################
 ### publish javadocs

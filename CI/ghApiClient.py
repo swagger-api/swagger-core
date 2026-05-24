@@ -39,6 +39,7 @@ def postUrl(name, body):
         request = urllib.request.Request(GH_BASE_URL + name)
         request.add_header("Authorization", GH_AUTH)
         request.add_header("Accept", "application/vnd.github.v3+json")
+        request.add_header("Content-Type", "application/json")
         data = body.encode('utf-8')
         content = urllib.request.urlopen(request, data).read()
         jcont = json.loads(content)

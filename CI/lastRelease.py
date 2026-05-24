@@ -2,18 +2,17 @@
 
 import ghApiClient
 
-def getLastReleaseTag():
-    content = ghApiClient.readUrl('repos/swagger-api/swagger-core/releases')
-    for l in content:
-        draft = l["draft"]
-        tag = l["tag_name"]
-        if str(draft) != 'True' and tag.startswith("v2"):
-            return tag[1:]
+def getLastStableReleaseTag():
+    content = ghApiClient.readUrl('repos/vpelikh/swagger-core/releases')
+    for release in content:
+        if not release["draft"] and not release["prerelease"]:
+            tag = release["tag_name"]
+            return tag[1:]  # remove 'v'
+    return "0.0.0"
 
-# main
 def main():
-    result = getLastReleaseTag()
-    print (result)
+    result = getLastStableReleaseTag()
+    print(result)
 
-# here start main
-main()
+if __name__ == "__main__":
+    main()
