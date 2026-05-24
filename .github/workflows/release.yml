@@ -21,6 +21,7 @@ jobs:
       - uses: actions/checkout@v6
         with:
           token: ${{ secrets.GITHUB_TOKEN }}   # for pushing tag later
+          fetch-depth: 0                       # fetch all history and tags
 
       - uses: actions/create-github-app-token@v3
         id: generate-token

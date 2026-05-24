@@ -43,6 +43,12 @@ case "$RELEASE_TYPE" in
     ;;
 esac
 
+# Prevent re-releasing an already existing tag
+if git rev-parse "v${RELEASE_VERSION}" >/dev/null 2>&1; then
+  echo "ERROR: Tag v${RELEASE_VERSION} already exists. This version has already been released."
+  exit 1
+fi
+
 # Last stable release (for release notes and wiki update)
 LAST_STABLE_RELEASE=$(python CI/lastRelease.py)
 
