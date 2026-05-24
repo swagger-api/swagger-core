@@ -29,9 +29,11 @@ public abstract class AbstractAnnotationTest {
         OpenAPI openAPI = reader.read(cls);
 
         try {
-            ObjectMapper mapper = Yaml.mapper(mapperBuilder -> mapperBuilder.changeDefaultPropertyInclusion(incl -> incl
-                    .withContentInclusion(JsonInclude.Include.NON_NULL)
-                    .withValueInclusion(JsonInclude.Include.NON_NULL)));
+            ObjectMapper mapper = Yaml.mapper().rebuild()
+                    .changeDefaultPropertyInclusion(incl -> incl
+                            .withContentInclusion(JsonInclude.Include.NON_NULL)
+                            .withValueInclusion(JsonInclude.Include.NON_NULL))
+                    .build();
             // parse JSON
             JsonNode jsonNodeTree = mapper.readTree(mapper.writeValueAsString(openAPI));
             // return it as YAML

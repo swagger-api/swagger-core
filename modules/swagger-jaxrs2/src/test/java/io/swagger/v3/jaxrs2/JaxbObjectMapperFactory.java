@@ -7,7 +7,8 @@ import io.swagger.v3.core.util.ObjectMapperFactory;
 public class JaxbObjectMapperFactory extends ObjectMapperFactory {
 
     public static ObjectMapper getMapper() {
-        return ObjectMapperFactory.createJson(mapperBuilder ->
-                mapperBuilder.addModule(new JaxbAnnotationModule()));
+        return ObjectMapperFactory.createJson().rebuild()
+                .addModule(new JaxbAnnotationModule())
+                .build();
     }
 }

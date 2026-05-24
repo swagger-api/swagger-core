@@ -1,5 +1,6 @@
 package io.swagger.v3.jaxrs2.it;
 
+import tools.jackson.databind.DeserializationFeature;
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.SerializationFeature;
 
@@ -701,16 +702,18 @@ public class OpenApiResourceIT extends AbstractAnnotationTest {
     }
 
     private String formatYaml(String source) throws IOException {
-        ObjectMapper mapper = Yaml.mapper(mapperBuilder ->
-                mapperBuilder.configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, true));
+        ObjectMapper mapper = Yaml.mapper().rebuild()
+                .configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, true)
+                .build();
         return mapper
                 .writerWithDefaultPrettyPrinter()
                 .writeValueAsString(mapper.readValue(source, Object.class));
     }
 
     private String formatJson(String source) throws IOException {
-        ObjectMapper mapper = Json.mapper(mapperBuilder ->
-                mapperBuilder.configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, true));
+        ObjectMapper mapper = Json.mapper().rebuild()
+                .configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, true)
+                .build();
         return mapper
                 .writerWithDefaultPrettyPrinter()
                 .writeValueAsString(mapper.readValue(source, Object.class));

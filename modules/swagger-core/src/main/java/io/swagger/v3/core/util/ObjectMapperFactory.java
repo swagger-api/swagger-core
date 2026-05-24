@@ -82,9 +82,6 @@ public class ObjectMapperFactory {
         return create(null, false);
     }
 
-    public static ObjectMapper createJson(Consumer<MapperBuilder<? extends ObjectMapper, ? extends MapperBuilder<?, ?>>> mapperBuilderCustomizer) {
-        return create(null, false, mapperBuilderCustomizer);
-    }
 
     public static ObjectMapper createYaml(YAMLFactory yamlFactory) {
         return create(yamlFactory, false);
@@ -94,15 +91,7 @@ public class ObjectMapperFactory {
         return createYaml(false);
     }
 
-    public static ObjectMapper createYaml(Consumer<MapperBuilder<? extends ObjectMapper, ? extends MapperBuilder<?, ?>>> mapperBuilderCustomizer) {
-        return createYaml(false, mapperBuilderCustomizer);
-    }
-
     public static ObjectMapper createYaml(boolean openapi31) {
-        return createYaml(openapi31, mapperBuilder -> {});
-    }
-
-    public static ObjectMapper createYaml(boolean openapi31, Consumer<MapperBuilder<? extends ObjectMapper, ? extends MapperBuilder<?, ?>>> mapperBuilderCustomizer) {
         YAMLFactory factory = YAMLFactory.builder()
                 .disable(YAMLWriteFeature.WRITE_DOC_START_MARKER)
                 .enable(YAMLWriteFeature.MINIMIZE_QUOTES)
@@ -110,7 +99,7 @@ public class ObjectMapperFactory {
                 .enable(YAMLWriteFeature.ALWAYS_QUOTE_NUMBERS_AS_STRINGS)
                 .build();
 
-        return create(factory, openapi31, mapperBuilderCustomizer);
+        return create(factory, openapi31);
     }
 
     public static ObjectMapper createJson31(TokenStreamFactory jsonFactory) {
@@ -119,10 +108,6 @@ public class ObjectMapperFactory {
 
     public static ObjectMapper createJson31() {
         return create(null, true);
-    }
-
-    public static ObjectMapper createJson31(Consumer<MapperBuilder<? extends ObjectMapper, ? extends MapperBuilder<?, ?>>> mapperBuilderCustomizer) {
-        return create(null, true, mapperBuilderCustomizer);
     }
 
     public static ObjectMapper createYaml31(YAMLFactory yamlFactory) {
@@ -134,10 +119,6 @@ public class ObjectMapperFactory {
     }
 
     public static ObjectMapper create(TokenStreamFactory jsonFactory, boolean openapi31) {
-        return create(jsonFactory, openapi31, mapperBuilder -> {});
-    }
-
-    public static ObjectMapper create(TokenStreamFactory jsonFactory, boolean openapi31, Consumer<MapperBuilder<? extends ObjectMapper, ? extends MapperBuilder<?, ?>>> mapperBuilderCustomizer) {
         MapperBuilder<? extends ObjectMapper, ? extends MapperBuilder<?, ?>> mapperBuilder;
         if (jsonFactory instanceof JsonFactory factory) {
             mapperBuilder = JsonMapper.builder(factory);
@@ -254,8 +235,6 @@ public class ObjectMapperFactory {
                 .withValueInclusion(JsonInclude.Include.NON_NULL));
         mapperBuilder.accessorNaming(new DefaultAccessorNamingStrategy.Provider()
                 .withFirstCharAcceptance(true, true));
-
-        mapperBuilderCustomizer.accept(mapperBuilder);
 
         return mapperBuilder.build();
     }

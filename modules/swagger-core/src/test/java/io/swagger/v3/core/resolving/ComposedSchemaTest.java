@@ -1,6 +1,8 @@
 package io.swagger.v3.core.resolving;
 
+import io.swagger.v3.core.converter.ModelConverter;
 import io.swagger.v3.core.converter.ModelConverters;
+import io.swagger.v3.core.jackson.ModelResolver;
 import io.swagger.v3.core.resolving.resources.TestObject2616;
 import io.swagger.v3.core.resolving.resources.TestObjectTicket2620;
 import io.swagger.v3.core.resolving.resources.TestObjectTicket2620Subtypes;
@@ -14,6 +16,7 @@ import org.testng.annotations.Test;
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.cfg.MapperBuilder;
 
+import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
@@ -71,12 +74,17 @@ public class ComposedSchemaTest {
 
     @Test(description = "read composed schem refs #2900")
     public void readComposedSchema_ticket2900() {
-        ModelConverters.reset();
+        List<ModelConverter> converters = ModelConverters.getInstance().getConverters();
+        for (ModelConverter converter : converters) {
+            ModelConverters.getInstance().removeConverter(converter);
+        }
+        ObjectMapper mapper = Json.mapper()
+                .rebuild()
+                .addMixIn(TestObjectTicket2900.GsonJsonPrimitive.class, TestObjectTicket2900.GsonJsonPrimitiveMixIn.class)
+                .build();
+        ModelConverters.getInstance().addConverter(new ModelResolver(mapper));
 
-        Consumer<MapperBuilder<? extends ObjectMapper, ? extends MapperBuilder<?, ?>>> mapperBuilderCustomizer
-                = mapperBuilder -> mapperBuilder
-                .addMixIn(TestObjectTicket2900.GsonJsonPrimitive.class, TestObjectTicket2900.GsonJsonPrimitiveMixIn.class);
-        Map<String, Schema> schemas = ModelConverters.getInstance(mapperBuilderCustomizer).readAll(TestObjectTicket2900.class);
+        Map<String, Schema> schemas = ModelConverters.getInstance().readAll(TestObjectTicket2900.class);
         Schema model = schemas.get("SomeDTO");
         assertNotNull(model);
         Map<String, Schema> properties = model.getProperties();
@@ -96,8 +104,6 @@ public class ComposedSchemaTest {
         assertEquals(((ComposedSchema)model).getOneOf().get(0).getType(), "string");
         assertEquals(((ComposedSchema)model).getOneOf().get(1).getType(), "number");
         assertNull(model.getProperties());
-
-        ModelConverters.reset();
     }
 
     @Test(description = "read composed schem refs #2616")

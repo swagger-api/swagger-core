@@ -29,9 +29,6 @@ public class Json31 {
         return ObjectMapperHolder.MAPPER;
     }
 
-    public static ObjectMapper mapper(Consumer<MapperBuilder<? extends ObjectMapper, ? extends MapperBuilder<?, ?>>> mapperBuilderCustomizer) {
-        return ObjectMapperFactory.createJson31(mapperBuilderCustomizer);
-    }
 
     public static ObjectMapper converterMapper() {
         return ConverterMapperHolder.MAPPER;

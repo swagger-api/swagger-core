@@ -21,10 +21,6 @@ public class Json {
         return ObjectMapperHolder.MAPPER;
     }
 
-    public static ObjectMapper mapper(Consumer<MapperBuilder<? extends ObjectMapper, ? extends MapperBuilder<?, ?>>> mapperBuilderCustomizer) {
-        return ObjectMapperFactory.createJson(mapperBuilderCustomizer);
-    }
-
     public static ObjectWriter pretty() {
         return mapper().writerWithDefaultPrettyPrinter();
     }
