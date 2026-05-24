@@ -37,7 +37,13 @@ def addRelease(release_title, tag, content, prerelease):
 
 def main(last_release, release_title, tag, prerelease_str):
     prerelease = prerelease_str.lower() == 'true'
-    result = allPulls(lastReleaseDate('v' + last_release))
+    if last_release == "0.0.0":
+        # No previous stable release found, include all merged PRs
+        from datetime import datetime
+        release_date = datetime(1970, 1, 1)
+    else:
+        release_date = lastReleaseDate('v' + last_release)
+    result = allPulls(release_date)
     addRelease(release_title, tag, result, prerelease)
 
 if __name__ == "__main__":
