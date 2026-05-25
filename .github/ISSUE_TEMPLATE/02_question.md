@@ -39,5 +39,5 @@ or links to documentation you are referring to.
 
 ## Checklist
 
-- [ ] I have searched the [existing issues](https://github.com/swagger-api/swagger-core/issues) and documentation before asking.
+- [ ] I have searched the [existing issues](https://github.com/vpelikh/swagger-core/issues) and documentation before asking.
 - [ ] I have provided enough information for others to understand my question.

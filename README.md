@@ -3,20 +3,20 @@
 **NOTE:** If you're looking for Swagger Core 1.5.X and OpenAPI 2.0, please refer to [1.5 branch](https://github.com/swagger-api/swagger-core/tree/1.5).
 
 **NOTE:** Since version 2.1.7, Swagger Core also supports the Jakarta namespace. There are a parallel set of artifacts with the `-jakarta` suffix, providing the same functionality as the unsuffixed (i.e.: `javax`) artifacts.
-Please see the [Wiki](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Getting-started) for more details.
+Please see the [Wiki](https://github.com/vpelikh/swagger-core/wiki/Swagger-2.X---Getting-started) for more details.
 
-**NOTE:** Since version 2.2.0 Swagger Core supports OpenAPI 3.1; see [this page](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---OpenAPI-3.1) for details
+**NOTE:** Since version 2.2.0 Swagger Core supports OpenAPI 3.1; see [this page](https://github.com/vpelikh/swagger-core/wiki/Swagger-2.X---OpenAPI-3.1) for details
 
-![Build Test Deploy](https://github.com/swagger-api/swagger-core/workflows/Build%20Test%20Deploy%20master/badge.svg?branch=master)
+![Build Test Deploy](https://github.com/vpelikh/swagger-core/workflows/Build%20Test%20Deploy%20master/badge.svg?branch=master)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.github.vpelikh/swagger-project/badge.svg?style=plastic)](https://maven-badges.herokuapp.com/maven-central/io.github.vpelikh/swagger-project)
 
 Swagger Core is a Java implementation of the OpenAPI Specification. Current version supports *JAX-RS2* (`javax` and `jakarta` namespaces).
 
 ## Get started with Swagger Core!
-See the guide on [getting started with Swagger Core](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Getting-started) to get started with adding Swagger to your API.
+See the guide on [getting started with Swagger Core](https://github.com/vpelikh/swagger-core/wiki/Swagger-2.X---Getting-started) to get started with adding Swagger to your API.
 
 ## See the Wiki!
-The [github wiki](https://github.com/swagger-api/swagger-core/wiki) contains documentation, samples, contributions, etc. Start there.
+The [github wiki](https://github.com/vpelikh/swagger-core/wiki) contains documentation, samples, contributions, etc. Start there.
 
 ## Compatibility
 The OpenAPI Specification has undergone several revisions since initial creation in 2010.  The Swagger Core project has the following compatibilities with the OpenAPI Specification:
@@ -135,7 +135,7 @@ Swagger core Version      | Release Date | OpenAPI Spec compatibility | Notes | 
 
 
 ### Change History
-If you're interested in the change history of swagger and the Swagger Core framework, see [here](https://github.com/swagger-api/swagger-core/releases).
+If you're interested in the change history of swagger and the Swagger Core framework, see [here](https://github.com/vpelikh/swagger-core/releases).
 
 ### Prerequisites
 You need the following installed and available in your $PATH:

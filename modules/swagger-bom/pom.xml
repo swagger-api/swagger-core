@@ -9,12 +9,12 @@
 
     <name>swagger-bom</name>
     <description>Bill of Materials (BOM) for Swagger Core (OpenAPI 3)</description>
-    <url>https://github.com/swagger-api/swagger-core</url>
+    <url>https://github.com/vpelikh/swagger-core</url>
 
     <scm>
-        <connection>scm:git:git@github.com:swagger-api/swagger-core.git</connection>
-        <developerConnection>scm:git:git@github.com:swagger-api/swagger-core.git</developerConnection>
-        <url>https://github.com/swagger-api/swagger-core</url>
+        <connection>scm:git:git@github.com:vpelikh/swagger-core.git</connection>
+        <developerConnection>scm:git:git@github.com:vpelikh/swagger-core.git</developerConnection>
+        <url>https://github.com/vpelikh/swagger-core</url>
     </scm>
 
     <licenses>
@@ -42,7 +42,7 @@
 
     <issueManagement>
         <system>github</system>
-        <url>https://github.com/swagger-api/swagger-core/issues</url>
+        <url>https://github.com/vpelikh/swagger-core/issues</url>
     </issueManagement>
 
     <build>

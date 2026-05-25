@@ -45,6 +45,6 @@ Screenshots, links to OpenAPI specs, or code snippets can help too.
 
 ## Checklist
 
-- [ ] I have searched the [existing issues](https://github.com/swagger-api/swagger-core/issues) to ensure this is not a duplicate.
+- [ ] I have searched the [existing issues](https://github.com/vpelikh/swagger-core/issues) to ensure this is not a duplicate.
 - [ ] This feature would be useful to more than just my use case.
 - [ ] I have provided enough detail for the maintainers to understand the scope of the request.

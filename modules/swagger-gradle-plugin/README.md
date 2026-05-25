@@ -5,14 +5,14 @@
 ## Jakarta namespace support
 
 Since version 2.1.7 Swagger Core supports also Jakarta namespace, with a parallel set of artifacts with `-jakarta` suffix, providing the same functionality as the "standard" `javax` namespace ones.
-Please check [Wiki](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Getting-started) for more details
+Please check [Wiki](https://github.com/vpelikh/swagger-core/wiki/Swagger-2.X---Getting-started) for more details
 
 To have gradle plugin use the `jakarta` namespace artifacts, you need to provide a value to parameter `buildClasspath`
 In many cases it is sufficient to set it to the `classpath` value, like:
 
 `buildClasspath = classpath`
 
-Alternatively provide as value a classpath with the following dependencies (replacing the provided [`javax` ones](https://github.com/swagger-api/swagger-core/blob/master/modules/swagger-gradle-plugin/src/main/java/io/swagger/v3/plugins/gradle/SwaggerPlugin.java#L16-L25)):
+Alternatively provide as value a classpath with the following dependencies (replacing the provided [`javax` ones](https://github.com/vpelikh/swagger-core/blob/master/modules/swagger-gradle-plugin/src/main/java/io/swagger/v3/plugins/gradle/SwaggerPlugin.java#L16-L25)):
 
 * org.apache.commons:commons-lang3:3.20.0
 * io.github.vpelikh:swagger-jaxrs2-jakarta:2.2.9
@@ -55,7 +55,7 @@ apply plugin: "io.github.vpelikh.swagger-gradle-plugin"
 
 * Resolves project openAPI specification and saves the result in JSON, YAML or both formats.
 All parameters except `outputFileName`, `outputFormat`, `classpath`, `skip`, `encoding`, `outputDir` and `outputPath` correspond
-to `swagger` [configuration property](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties) with same name.
+to `swagger` [configuration property](https://github.com/vpelikh/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties) with same name.
 
 #### Example Usage
 
@@ -80,30 +80,30 @@ Parameter | Description | Required | Default
 `outputFormat`|file format (`JSON`, `YAML`, `JSONANDYAML`|false|`JSON`
 `skip`|if `TRUE` skip execution|false|`FALSE`
 `encoding`|encoding of output file(s)|false|
-`resourcePackages`|see [configuration property](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)|false|
-`resourceClasses`|see [configuration property](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)|false|
-`prettyPrint`|see [configuration property](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)|false|`TRUE`
-`sortOutput`|see [configuration property](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)|false|`FALSE`
-`alwaysResolveAppPath`|see [configuration property](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)|false|`FALSE`
-`skipResolveAppPath`|see [configuration property](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)|false|`FALSE`
-`openApiFile`|openapi file to be merged with resolved specification, equivalent to [config](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties) openAPI|false|
-`filterClass`|see [configuration property](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)|false|
-`readerClass`|see [configuration property](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)|false|
-`scannerClass`|see [configuration property](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)|false|
-`readAllResources`|see [configuration property](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)|false|
-`ignoredRoutes`|see [configuration property](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)|false|
-`objectMapperProcessorClass`|see [configuration property](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)|false|
-`modelConverterClasses`|see [configuration property](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)|false|
-`contextId`|see [Context](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#context)|false|
+`resourcePackages`|see [configuration property](https://github.com/vpelikh/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)|false|
+`resourceClasses`|see [configuration property](https://github.com/vpelikh/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)|false|
+`prettyPrint`|see [configuration property](https://github.com/vpelikh/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)|false|`TRUE`
+`sortOutput`|see [configuration property](https://github.com/vpelikh/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)|false|`FALSE`
+`alwaysResolveAppPath`|see [configuration property](https://github.com/vpelikh/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)|false|`FALSE`
+`skipResolveAppPath`|see [configuration property](https://github.com/vpelikh/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)|false|`FALSE`
+`openApiFile`|openapi file to be merged with resolved specification, equivalent to [config](https://github.com/vpelikh/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties) openAPI|false|
+`filterClass`|see [configuration property](https://github.com/vpelikh/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)|false|
+`readerClass`|see [configuration property](https://github.com/vpelikh/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)|false|
+`scannerClass`|see [configuration property](https://github.com/vpelikh/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)|false|
+`readAllResources`|see [configuration property](https://github.com/vpelikh/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)|false|
+`ignoredRoutes`|see [configuration property](https://github.com/vpelikh/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)|false|
+`objectMapperProcessorClass`|see [configuration property](https://github.com/vpelikh/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)|false|
+`modelConverterClasses`|see [configuration property](https://github.com/vpelikh/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)|false|
+`contextId`|see [Context](https://github.com/vpelikh/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#context)|false|
 `outputPath`|**DEPRECATED** output path where file(s) are saved|false|
-`defaultResponseCode`|see [configuration property](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)|false|
-`groupsValidationStrategy`|see [configuration property](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)|false|
-`validatorProcessorClass`|see [configuration property](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)|false|
-`openapi31`|see [configuration property](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)| false   |
-`schemaResolution`|see [configuration property](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)| DEFAULT |
-`openAPIVersion`|see [configuration property](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)| `3.0.1/3.1.0` |
+`defaultResponseCode`|see [configuration property](https://github.com/vpelikh/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)|false|
+`groupsValidationStrategy`|see [configuration property](https://github.com/vpelikh/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)|false|
+`validatorProcessorClass`|see [configuration property](https://github.com/vpelikh/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)|false|
+`openapi31`|see [configuration property](https://github.com/vpelikh/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)| false   |
+`schemaResolution`|see [configuration property](https://github.com/vpelikh/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)| DEFAULT |
+`openAPIVersion`|see [configuration property](https://github.com/vpelikh/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)| `3.0.1/3.1.0` |
 
-**Note** parameter `openApiFile` corresponds to [config](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties) openAPI. It points to a location of a file in YAML or JSON format representing the input spec that will be merged with the resolved spec. Typically used to add Info section, or any other meta data.
+**Note** parameter `openApiFile` corresponds to [config](https://github.com/vpelikh/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties) openAPI. It points to a location of a file in YAML or JSON format representing the input spec that will be merged with the resolved spec. Typically used to add Info section, or any other meta data.
 An example of such file:
 
 ```yaml

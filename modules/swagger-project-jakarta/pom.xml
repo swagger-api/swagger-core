@@ -7,11 +7,11 @@
     <name>swagger-project-jakarta</name>
     <description>swagger-project-jakarta</description>
     <version>3.0.0-SNAPSHOT</version>
-    <url>https://github.com/swagger-api/swagger-core</url>
+    <url>https://github.com/vpelikh/swagger-core</url>
     <scm>
-        <connection>scm:git:git@github.com:swagger-api/swagger-core.git</connection>
-        <developerConnection>scm:git:git@github.com:swagger-api/swagger-core.git</developerConnection>
-        <url>https://github.com/swagger-api/swagger-core</url>
+        <connection>scm:git:git@github.com:vpelikh/swagger-core.git</connection>
+        <developerConnection>scm:git:git@github.com:vpelikh/swagger-core.git</developerConnection>
+        <url>https://github.com/vpelikh/swagger-core</url>
     </scm>
     <prerequisites>
         <maven>2.2.0</maven>
@@ -25,7 +25,7 @@
     </developers>
     <issueManagement>
         <system>github</system>
-        <url>https://github.com/swagger-api/swagger-core/issues</url>
+        <url>https://github.com/vpelikh/swagger-core/issues</url>
     </issueManagement>
     <mailingLists>
         <mailingList>

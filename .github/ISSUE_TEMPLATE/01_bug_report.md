@@ -55,5 +55,5 @@ Include any relevant OpenAPI definitions, configuration, or code snippets. -->
 
 ## Checklist
 
-- [ ] I have searched the [existing issues](https://github.com/swagger-api/swagger-core/issues) and this is not a duplicate.
+- [ ] I have searched the [existing issues](https://github.com/vpelikh/swagger-core/issues) and this is not a duplicate.
 - [ ] I have provided sufficient information for maintainers to reproduce the issue.
