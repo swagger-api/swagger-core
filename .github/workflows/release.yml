@@ -20,14 +20,7 @@ jobs:
     steps:
       - uses: actions/checkout@v6
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}   # for pushing tag later
-          fetch-depth: 0                       # fetch all history and tags
-
-      - uses: actions/create-github-app-token@v3
-        id: generate-token
-        with:
-          client-id: ${{ secrets.APP_ID }}
-          private-key: ${{ secrets.APP_PRIVATE_KEY }}
+          fetch-depth: 0                        # fetch all history and tags
 
       - name: Set up Python 3.10
         uses: actions/setup-python@v6
@@ -66,7 +59,7 @@ jobs:
             exit 1
           fi
 
-      - name: Compute release version and next development version
+      - name: Compute release version
         id: version
         run: . ./CI/compute-release-version.sh ${{ github.event.inputs.release_type }}
         env:
@@ -101,6 +94,10 @@ jobs:
         if: success()
         run: python CI/publishRelease.py "v${RELEASE_VERSION}"
 
+      - name: Generate Javadocs for swagger-annotations
+        if: success()
+        run: ./mvnw -pl modules/swagger-annotations javadoc:javadoc -DskipTests
+
       - name: Prepare javadocs
         if: success()
         run: . ./CI/prepare-javadocs.sh
@@ -110,6 +107,7 @@ jobs:
         with:
           ref: "gh-pages"
           fetch-depth: 0
+
       - name: Publish javadocs
         if: success()
         run: |
@@ -121,14 +119,12 @@ jobs:
         with:
           ref: "master"
           fetch-depth: 0
-          token: ${{ steps.generate-token.outputs.token }}
 
       - name: Checkout Wiki
         if: success()
         uses: actions/checkout@v6
         with:
           repository: vpelikh/swagger-core.wiki
-          token: ${{ steps.generate-token.outputs.token }}
           path: wiki
           ref: "master"
           fetch-depth: 0

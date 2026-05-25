@@ -3,11 +3,8 @@
 CUR=$(pwd)
 TMPDIR="$(dirname -- "${0}")"
 
-SC_RELEASE_TAG="v${RELEASE_VERSION}"
+# Copy javadocs from swagger-annotations module
+cp -aR "$CUR/modules/swagger-annotations/target/apidocs" "$TMPDIR/apidocs"
 
-#####################
-### publish javadocs
-#####################
-
-cp -aR $CUR/modules/swagger-annotations/target/javadocprep/swagger-core/${RELEASE_VERSION}/apidocs $TMPDIR
-cp -a $CUR/CI/publish-javadocs.sh $TMPDIR/publish-javadocs.sh
+# Copy publish script for later checkout
+cp -a "$CUR/CI/publish-javadocs.sh" "$TMPDIR/publish-javadocs.sh"
