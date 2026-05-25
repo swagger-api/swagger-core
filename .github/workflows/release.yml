@@ -120,19 +120,6 @@ jobs:
           ref: "master"
           fetch-depth: 0
 
-      - name: Checkout Wiki
-        if: success()
-        uses: actions/checkout@v6
-        with:
-          repository: vpelikh/swagger-core.wiki
-          path: wiki
-          ref: "master"
-          fetch-depth: 0
-
-      - name: Update Wiki
-        if: success()
-        run: . ./CI/update-wiki.sh
-
     env:
       ACTIONS_ALLOW_UNSECURE_COMMANDS: true
       MAVEN_USERNAME: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
