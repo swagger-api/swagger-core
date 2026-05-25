@@ -131,9 +131,7 @@ jobs:
 
       - name: Update Wiki
         if: success()
-        run: |
-          TMPDIR="$(dirname -- "${0}")"
-          . $TMPDIR/update-wiki.sh
+        run: . ./CI/update-wiki.sh
 
     env:
       ACTIONS_ALLOW_UNSECURE_COMMANDS: true
