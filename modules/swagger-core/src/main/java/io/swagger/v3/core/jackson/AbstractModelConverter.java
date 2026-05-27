@@ -37,16 +37,25 @@ public abstract class AbstractModelConverter implements ModelConverter {
     }
 
     protected AbstractModelConverter(ObjectMapper mapper, TypeNameResolver typeNameResolver) {
-        _mapper = mapper.rebuild()
-                .addModule(new SimpleModule("swagger", Version.unknownVersion()) {
-                    @Override
-                    public void setupModule(SetupContext context) {
-                        context.insertAnnotationIntrospector(new SwaggerAnnotationIntrospector());
-                    }
-                })
-                .accessorNaming(new DefaultAccessorNamingStrategy.Provider()
-                        .withFirstCharAcceptance(true, true))
-                .build();
+        this(mapper, typeNameResolver, true);
+    }
+
+    protected AbstractModelConverter(ObjectMapper mapper, TypeNameResolver typeNameResolver,
+                                     boolean addSwaggerModule) {
+        if (addSwaggerModule) {
+            _mapper = mapper.rebuild()
+                    .addModule(new SimpleModule("swagger", Version.unknownVersion()) {
+                        @Override
+                        public void setupModule(SetupContext context) {
+                            context.insertAnnotationIntrospector(new SwaggerAnnotationIntrospector());
+                        }
+                    })
+                    .accessorNaming(new DefaultAccessorNamingStrategy.Provider()
+                            .withFirstCharAcceptance(true, true))
+                    .build();
+        } else {
+            _mapper = mapper;
+        }
         _typeNameResolver = typeNameResolver;
     }
 
