@@ -7,7 +7,7 @@ import java.util.Objects;
 /**
  * XML
  *
- * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.0.1/versions/3.0.1.md#xmlObject"
+ * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.0.4/versions/3.0.4.md#xml-object"
  */
 
 public class XML {

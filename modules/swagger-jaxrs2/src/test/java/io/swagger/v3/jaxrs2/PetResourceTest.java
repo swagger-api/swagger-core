@@ -39,13 +39,7 @@ import io.swagger.v3.jaxrs2.petstore.requestbody.RequestBody31Resource;
 import io.swagger.v3.jaxrs2.petstore.requestbody.RequestBodyMethodPriorityResource;
 import io.swagger.v3.jaxrs2.petstore.requestbody.RequestBodyParameterPriorityResource;
 import io.swagger.v3.jaxrs2.petstore.requestbody.RequestBodyResource;
-import io.swagger.v3.jaxrs2.petstore.responses.ComplexResponseResource;
-import io.swagger.v3.jaxrs2.petstore.responses.ImplementationResponseResource;
-import io.swagger.v3.jaxrs2.petstore.responses.MethodResponseResource;
-import io.swagger.v3.jaxrs2.petstore.responses.NoImplementationResponseResource;
-import io.swagger.v3.jaxrs2.petstore.responses.NoResponseResource;
-import io.swagger.v3.jaxrs2.petstore.responses.OperationResponseResource;
-import io.swagger.v3.jaxrs2.petstore.responses.PriorityResponseResource;
+import io.swagger.v3.jaxrs2.petstore.responses.*;
 import io.swagger.v3.jaxrs2.petstore.security.SecurityResource;
 import io.swagger.v3.jaxrs2.petstore.tags.CompleteTagResource;
 import io.swagger.v3.jaxrs2.petstore.tags.TagClassResource;
@@ -54,6 +48,8 @@ import io.swagger.v3.jaxrs2.petstore.tags.TagOpenAPIDefinitionResource;
 import io.swagger.v3.jaxrs2.petstore.tags.TagOperationResource;
 import io.swagger.v3.oas.integration.SwaggerConfiguration;
 import io.swagger.v3.oas.models.OpenAPI;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testng.annotations.Test;
 
 import java.io.File;
@@ -73,6 +69,7 @@ import static org.testng.Assert.fail;
  * Adding a lot of tests of different pet resource examples
  */
 public class PetResourceTest extends AbstractAnnotationTest {
+    private static final Logger LOGGER = LoggerFactory.getLogger(PetResourceTest.class);
     private static final String PETSTORE_SOURCE = "petstore/";
     private static final String TAGS_SOURCE = "petstore/tags/";
     private static final String OPERATIONS_SOURCE = "petstore/operation/";
@@ -295,6 +292,11 @@ public class PetResourceTest extends AbstractAnnotationTest {
         compare(WebHookResource.class, PETSTORE_SOURCE, true);
     }
 
+    @Test(description = "Test method resources with array annotations")
+    public void testMethodArrayResponseResource() {
+        compare(MethodArrayResponseResource.class, RESPONSES_SOURCE, true);
+    }
+
     /**
      * Compare a class that were read and parsed to a yaml against a yaml file.
      *
@@ -314,7 +316,7 @@ public class PetResourceTest extends AbstractAnnotationTest {
                 compareAsYaml(clazz, getOpenAPIAsString(file));
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.error("Failed to compare class {} with YAML resource {}", clazz.getName(), file, e);
             fail();
         }
     }

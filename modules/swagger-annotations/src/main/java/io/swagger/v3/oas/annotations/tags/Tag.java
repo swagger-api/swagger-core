@@ -21,7 +21,7 @@ import static java.lang.annotation.ElementType.METHOD;
  * if additional fields are also defined, like description or externalDocs, the Tag will also be added to openAPI.tags
  * field</p>
  *
- * @see <a target="_new" href="https://github.com/OAI/OpenAPI-Specification/blob/3.0.1/versions/3.0.1.md#tagObject">Tag (OpenAPI specification)</a>
+ * @see <a target="_new" href="https://github.com/OAI/OpenAPI-Specification/blob/3.0.4/versions/3.0.4.md#tag-object">Tag (OpenAPI specification)</a>
  * @see io.swagger.v3.oas.annotations.OpenAPIDefinition
  **/
 @Target({METHOD, TYPE, ANNOTATION_TYPE})

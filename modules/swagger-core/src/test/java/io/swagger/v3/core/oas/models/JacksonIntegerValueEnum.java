@@ -6,7 +6,7 @@ import io.swagger.v3.oas.annotations.Hidden;
 /**
  * Enum holds values different from names.  Schema model will derive Integer value from jackson annotation JsonValue on public method.
  */
-public enum JacksonNumberValueEnum {
+public enum JacksonIntegerValueEnum {
     FIRST(2),
     SECOND(4),
     THIRD(6),
@@ -14,12 +14,12 @@ public enum JacksonNumberValueEnum {
 
     private final int value;
 
-    JacksonNumberValueEnum(int value) {
+    JacksonIntegerValueEnum(int value) {
         this.value = value;
     }
 
     @JsonValue
-    public Number getValue() {
+    public Integer getValue() {
         return value;
     }
 }

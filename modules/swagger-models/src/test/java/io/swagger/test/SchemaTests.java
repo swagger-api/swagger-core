@@ -3,12 +3,13 @@ package io.swagger.test;
 import io.swagger.v3.oas.models.media.IntegerSchema;
 import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.media.StringSchema;
-import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
+
+import static org.testng.Assert.fail;
 
 public class SchemaTests {
 
@@ -48,9 +49,9 @@ public class SchemaTests {
                     .minimum(new BigDecimal(6))
                     .additionalProperties("ok")
             );
-            Assert.fail("Should have thrown an exception");
+            fail("Should have thrown an exception");
         }catch (Exception exception){
-            
+
         }
     }
 }

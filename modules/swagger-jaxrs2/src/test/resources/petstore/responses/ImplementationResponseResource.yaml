@@ -12,13 +12,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SecondSampleResponseSchema'
+                $ref: "#/components/schemas/SecondSampleResponseSchema"
         "400":
           description: boo
           content:
             '*/*':
               schema:
-                $ref: '#/components/schemas/GenericError'
+                $ref: "#/components/schemas/GenericError"
       deprecated: true
 components:
   schemas:

@@ -8,11 +8,11 @@ import io.swagger.v3.oas.models.media.MapSchema;
 import io.swagger.v3.oas.models.media.ObjectSchema;
 import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.responses.ApiResponse;
-import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import static io.swagger.v3.core.util.TestUtils.normalizeLineEnds;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
@@ -143,7 +143,7 @@ public class MapPropertyDeserializerTest {
         assertTrue(responseSchema instanceof ObjectSchema);
 
         assertTrue(responseSchema.getAdditionalProperties() instanceof Boolean);
-        Assert.assertFalse((Boolean)responseSchema.getAdditionalProperties());
+        assertFalse((Boolean)responseSchema.getAdditionalProperties());
 
         operation = Json.mapper().readValue(jsonAdditionalPropertiesBooleanTrue, Operation.class);
         response = operation.getResponses().get("200");
@@ -154,7 +154,7 @@ public class MapPropertyDeserializerTest {
         assertTrue(responseSchema instanceof MapSchema);
 
         assertTrue(responseSchema.getAdditionalProperties() instanceof Boolean);
-        Assert.assertTrue((Boolean)responseSchema.getAdditionalProperties());
+        assertTrue((Boolean)responseSchema.getAdditionalProperties());
     }
 
     @Test(description = "it should serialize a boolean additionalProperties")

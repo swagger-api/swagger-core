@@ -40,7 +40,7 @@ public class Ticket2189Test extends SwaggerTestBase {
                       "SubClass:\n" +
                       "  type: object\n" +
                       "  allOf:\n" +
-                      "  - $ref: '#/components/schemas/BaseClass'\n" +
+                      "  - $ref: \"#/components/schemas/BaseClass\"\n" +
                       "  - type: object\n" +
                       "    properties:\n" +
                       "      subClassProperty:\n" +

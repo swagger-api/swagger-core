@@ -1,0 +1,298 @@
+# User Schemas for OpenAPI 3.1 and JSON Schema 2020/12
+# This file contains user-related schemas referenced by the root file
+
+# Base User schema
+User:
+  $schema: "https://json-schema.org/draft/2020-12/schema"
+  $id: "https://example.com/schemas/User"
+  $anchor: "User"
+  $dynamicAnchor: "User"
+  title: "User"
+  description: "User object"
+  type: "object"
+  required:
+    - "id"
+    - "username"
+    - "email"
+  properties:
+    id:
+      type: "integer"
+      format: "int64"
+      description: "User ID"
+      minimum: 1
+    username:
+      type: "string"
+      description: "User name"
+      minLength: 3
+      maxLength: 50
+      pattern: "^[a-zA-Z0-9_]+$"
+    firstName:
+      type: "string"
+      description: "User first name"
+      minLength: 1
+      maxLength: 50
+    lastName:
+      type: "string"
+      description: "User last name"
+      minLength: 1
+      maxLength: 50
+    email:
+      type: "string"
+      format: "email"
+      description: "User email"
+      pattern: "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"
+    password:
+      type: "string"
+      description: "User password"
+      minLength: 8
+      maxLength: 100
+      writeOnly: true
+    phone:
+      type: "string"
+      description: "User phone number"
+      pattern: "^\\+?[0-9]{10,15}$"
+    userStatus:
+      type: "integer"
+      format: "int32"
+      description: "User status"
+      enum: [0, 1, 2]
+      default: 0
+    address:
+      $ref: "#/Address"
+    createdAt:
+      type: "string"
+      format: "date-time"
+      description: "User creation date"
+      readOnly: true
+    updatedAt:
+      type: "string"
+      format: "date-time"
+      description: "User last update date"
+      readOnly: true
+  additionalProperties: false
+  x-extension-example: "Example of an extension"
+
+# Address schema
+Address:
+  $schema: "https://json-schema.org/draft/2020-12/schema"
+  $id: "https://example.com/schemas/Address"
+  $anchor: "Address"
+  title: "Address"
+  description: "User address"
+  type: "object"
+  properties:
+    street:
+      type: "string"
+      description: "Street address"
+      minLength: 1
+      maxLength: 100
+    city:
+      type: "string"
+      description: "City"
+      minLength: 1
+      maxLength: 50
+    state:
+      type: "string"
+      description: "State or province"
+      minLength: 1
+      maxLength: 50
+    zipCode:
+      type: "string"
+      description: "Zip code"
+      pattern: "^[0-9]{5}(?:-[0-9]{4})?$"
+    country:
+      type: "string"
+      description: "Country"
+      minLength: 1
+      maxLength: 50
+  required:
+    - "street"
+    - "city"
+    - "zipCode"
+    - "country"
+
+# UserArray schema
+UserArray:
+  $schema: "https://json-schema.org/draft/2020-12/schema"
+  $id: "https://example.com/schemas/UserArray"
+  $anchor: "UserArray"
+  title: "User Array"
+  description: "Array of users"
+  type: "array"
+  items:
+    $ref: "#/User"
+  minItems: 0
+  maxItems: 100
+  uniqueItems: true
+
+# UserWithRoles schema
+UserWithRoles:
+  $schema: "https://json-schema.org/draft/2020-12/schema"
+  $id: "https://example.com/schemas/UserWithRoles"
+  $anchor: "UserWithRoles"
+  title: "User with Roles"
+  description: "User object with roles"
+  allOf:
+    - $ref: "#/User"
+    - type: "object"
+      properties:
+        roles:
+          type: "array"
+          description: "User roles"
+          items:
+            $ref: "#/Role"
+          minItems: 1
+          maxItems: 10
+          uniqueItems: true
+      required:
+        - "roles"
+
+# Role schema
+Role:
+  $schema: "https://json-schema.org/draft/2020-12/schema"
+  $id: "https://example.com/schemas/Role"
+  $anchor: "Role"
+  title: "Role"
+  description: "User role"
+  type: "object"
+  properties:
+    id:
+      type: "integer"
+      format: "int32"
+      description: "Role ID"
+      minimum: 1
+    name:
+      type: "string"
+      description: "Role name"
+      enum: ["admin", "user", "moderator", "guest"]
+    description:
+      type: "string"
+      description: "Role description"
+      minLength: 1
+      maxLength: 200
+    permissions:
+      type: "array"
+      description: "Role permissions"
+      items:
+        $ref: "#/Permission"
+      minItems: 0
+      maxItems: 50
+      uniqueItems: true
+  required:
+    - "id"
+    - "name"
+
+# Permission schema
+Permission:
+  $schema: "https://json-schema.org/draft/2020-12/schema"
+  $id: "https://example.com/schemas/Permission"
+  $anchor: "Permission"
+  title: "Permission"
+  description: "User permission"
+  type: "object"
+  properties:
+    id:
+      type: "integer"
+      format: "int32"
+      description: "Permission ID"
+      minimum: 1
+    name:
+      type: "string"
+      description: "Permission name"
+      minLength: 1
+      maxLength: 50
+    description:
+      type: "string"
+      description: "Permission description"
+      minLength: 1
+      maxLength: 200
+  required:
+    - "id"
+    - "name"
+
+# UserCredentials schema
+UserCredentials:
+  $schema: "https://json-schema.org/draft/2020-12/schema"
+  $id: "https://example.com/schemas/UserCredentials"
+  $anchor: "UserCredentials"
+  title: "User Credentials"
+  description: "User credentials for authentication"
+  type: "object"
+  properties:
+    username:
+      type: "string"
+      description: "User name"
+      minLength: 3
+      maxLength: 50
+      pattern: "^[a-zA-Z0-9_]+$"
+    password:
+      type: "string"
+      description: "User password"
+      minLength: 8
+      maxLength: 100
+      writeOnly: true
+  required:
+    - "username"
+    - "password"
+  additionalProperties: false
+
+# UserPreferences schema
+UserPreferences:
+  $schema: "https://json-schema.org/draft/2020-12/schema"
+  $id: "https://example.com/schemas/UserPreferences"
+  $anchor: "UserPreferences"
+  title: "User Preferences"
+  description: "User preferences"
+  type: "object"
+  properties:
+    theme:
+      type: "string"
+      description: "UI theme"
+      enum: ["light", "dark", "system"]
+      default: "system"
+    language:
+      type: "string"
+      description: "UI language"
+      enum: ["en", "fr", "es", "de", "it", "ja", "zh"]
+      default: "en"
+    notifications:
+      type: "object"
+      description: "Notification preferences"
+      properties:
+        email:
+          type: "boolean"
+          description: "Email notifications"
+          default: true
+        push:
+          type: "boolean"
+          description: "Push notifications"
+          default: true
+        sms:
+          type: "boolean"
+          description: "SMS notifications"
+          default: false
+      additionalProperties: false
+    timezone:
+      type: "string"
+      description: "User timezone"
+      default: "UTC"
+    currency:
+      type: "string"
+      description: "Preferred currency"
+      enum: ["USD", "EUR", "GBP", "JPY", "CAD", "AUD"]
+      default: "USD"
+  additionalProperties: false
+
+# UserWithPreferences schema
+UserWithPreferences:
+  $schema: "https://json-schema.org/draft/2020-12/schema"
+  $id: "https://example.com/schemas/UserWithPreferences"
+  $anchor: "UserWithPreferences"
+  title: "User with Preferences"
+  description: "User object with preferences"
+  allOf:
+    - $ref: "#/User"
+    - type: "object"
+      properties:
+        preferences:
+          $ref: "#/UserPreferences"

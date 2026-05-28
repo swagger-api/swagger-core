@@ -39,7 +39,7 @@ public class OperationsWithLinksTest extends AbstractAnnotationTest {
                 "          content:\n" +
                 "            '*/*':\n" +
                 "              schema:\n" +
-                "                $ref: '#/components/schemas/User'\n" +
+                "                $ref: \"#/components/schemas/User\"\n" +
                 "          links:\n" +
                 "            address:\n" +
                 "              operationId: getAddress\n" +
@@ -59,7 +59,7 @@ public class OperationsWithLinksTest extends AbstractAnnotationTest {
                 "          content:\n" +
                 "            '*/*':\n" +
                 "              schema:\n" +
-                "                $ref: '#/components/schemas/Address'\n" +
+                "                $ref: \"#/components/schemas/Address\"\n" +
                 "components:\n" +
                 "  schemas:\n" +
                 "    User:\n" +
@@ -99,7 +99,7 @@ public class OperationsWithLinksTest extends AbstractAnnotationTest {
                 "          content:\n" +
                 "            '*/*':\n" +
                 "              schema:\n" +
-                "                $ref: '#/components/schemas/User'\n" +
+                "                $ref: \"#/components/schemas/User\"\n" +
                 "          links:\n" +
                 "            address:\n" +
                 "              operationId: addAddress\n" +
@@ -120,7 +120,7 @@ public class OperationsWithLinksTest extends AbstractAnnotationTest {
                 "          content:\n" +
                 "            '*/*':\n" +
                 "              schema:\n" +
-                "                $ref: '#/components/schemas/Address'\n" +
+                "                $ref: \"#/components/schemas/Address\"\n" +
                 "components:\n" +
                 "  schemas:\n" +
                 "    User:\n" +
@@ -160,7 +160,7 @@ public class OperationsWithLinksTest extends AbstractAnnotationTest {
                 "          content:\n" +
                 "            '*/*':\n" +
                 "              schema:\n" +
-                "                $ref: '#/components/schemas/User'\n" +
+                "                $ref: \"#/components/schemas/User\"\n" +
                 "components:\n" +
                 "  schemas:\n" +
                 "    User:\n" +
@@ -311,7 +311,7 @@ public class OperationsWithLinksTest extends AbstractAnnotationTest {
                 "          content:\n" +
                 "            '*/*':\n" +
                 "              schema:\n" +
-                "                $ref: '#/components/schemas/User'\n" +
+                "                $ref: \"#/components/schemas/User\"\n" +
                 "          links:\n" +
                 "            user:\n" +
                 "              operationId: getUser\n" +

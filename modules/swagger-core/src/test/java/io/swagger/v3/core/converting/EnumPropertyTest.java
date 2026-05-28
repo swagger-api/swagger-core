@@ -7,11 +7,15 @@ import io.swagger.v3.core.converter.ModelConverters;
 import io.swagger.v3.core.jackson.ModelResolver;
 import io.swagger.v3.core.jackson.TypeNameResolver;
 import io.swagger.v3.core.matchers.SerializationMatchers;
+import io.swagger.v3.core.oas.models.JacksonValueBridgeMethodEnum;
+import io.swagger.v3.core.oas.models.JacksonValueDefaultMethodEnum;
+import io.swagger.v3.core.oas.models.JacksonValuePrivateEnum;
 import io.swagger.v3.core.oas.models.Model1979;
 import io.swagger.v3.core.oas.models.ModelWithEnumField;
 import io.swagger.v3.core.oas.models.ModelWithEnumProperty;
 import io.swagger.v3.core.oas.models.ModelWithEnumRefProperty;
 import io.swagger.v3.core.oas.models.ModelWithJacksonEnumField;
+import io.swagger.v3.oas.models.media.IntegerSchema;
 import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.media.StringSchema;
 import org.testng.annotations.AfterTest;
@@ -19,9 +23,11 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Map;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
 public class EnumPropertyTest {
@@ -94,11 +100,11 @@ public class EnumPropertyTest {
                 "  type: object\n" +
                 "  properties:\n" +
                 "    a:\n" +
-                "      $ref: '#/components/schemas/TestEnum'\n" +
+                "      $ref: \"#/components/schemas/TestEnum\"\n" +
                 "    b:\n" +
-                "      $ref: '#/components/schemas/TestEnum'\n" +
+                "      $ref: \"#/components/schemas/TestEnum\"\n" +
                 "    c:\n" +
-                "      $ref: '#/components/schemas/TestSecondEnum'\n" +
+                "      $ref: \"#/components/schemas/TestSecondEnum\"\n" +
                 "    d:\n" +
                 "      type: string\n" +
                 "      enum:\n" +
@@ -133,11 +139,11 @@ public class EnumPropertyTest {
                 "  type: object\n" +
                 "  properties:\n" +
                 "    a:\n" +
-                "      $ref: '#/components/schemas/io.swagger.v3.core.oas.models.TestEnum'\n" +
+                "      $ref: \"#/components/schemas/io.swagger.v3.core.oas.models.TestEnum\"\n" +
                 "    b:\n" +
-                "      $ref: '#/components/schemas/io.swagger.v3.core.oas.models.TestEnum'\n" +
+                "      $ref: \"#/components/schemas/io.swagger.v3.core.oas.models.TestEnum\"\n" +
                 "    c:\n" +
-                "      $ref: '#/components/schemas/io.swagger.v3.core.oas.models.TestSecondEnum'\n" +
+                "      $ref: \"#/components/schemas/io.swagger.v3.core.oas.models.TestSecondEnum\"\n" +
                 "    d:\n" +
                 "      type: string\n" +
                 "      enum:\n" +
@@ -173,7 +179,7 @@ public class EnumPropertyTest {
                 "  type: object\n" +
                 "  properties:\n" +
                 "    enumValue:\n" +
-                "      $ref: '#/components/schemas/TestEnum'\n" +
+                "      $ref: \"#/components/schemas/TestEnum\"\n" +
                 "TestEnum:\n" +
                 "  type: string\n" +
                 "  enum:\n" +
@@ -216,23 +222,57 @@ public class EnumPropertyTest {
         assertEquals(secondStringProperty.getEnum(), Arrays.asList("one", "two", "three"));
 
         final Schema thirdEnumProperty = (Schema) model.getProperties().get("thirdEnumValue");
-        assertTrue(thirdEnumProperty instanceof StringSchema);
-        final StringSchema thirdStringProperty = (StringSchema) thirdEnumProperty;
-        assertEquals(thirdStringProperty.getEnum(), Arrays.asList("2", "4", "6"));
+        assertTrue(thirdEnumProperty instanceof IntegerSchema);
+        final IntegerSchema thirdStringProperty = (IntegerSchema) thirdEnumProperty;
+        assertEquals(thirdStringProperty.getEnum(), Arrays.asList(2, 4, 6));
 
         final Schema fourthEnumProperty = (Schema) model.getProperties().get("fourthEnumValue");
         assertTrue(fourthEnumProperty instanceof StringSchema);
         final StringSchema fourthStringProperty = (StringSchema) fourthEnumProperty;
-        assertEquals(fourthEnumProperty.getEnum(), Arrays.asList("one", "two", "three"));
+        assertEquals(fourthStringProperty.getEnum(), Arrays.asList("one", "two", "three"));
 
         final Schema fifthEnumProperty = (Schema) model.getProperties().get("fifthEnumValue");
-        assertTrue(fifthEnumProperty instanceof StringSchema);
-        final StringSchema fifthStringProperty = (StringSchema) fifthEnumProperty;
-        assertEquals(fifthEnumProperty.getEnum(), Arrays.asList("2", "4", "6"));
+        assertTrue(fifthEnumProperty instanceof IntegerSchema);
+        final IntegerSchema fifthStringProperty = (IntegerSchema) fifthEnumProperty;
+        assertEquals(fifthStringProperty.getEnum(), Arrays.asList(2, 4, 6));
 
         final Schema sixthEnumProperty = (Schema) model.getProperties().get("sixthEnumValue");
         assertTrue(sixthEnumProperty instanceof StringSchema);
         final StringSchema sixthStringProperty = (StringSchema) sixthEnumProperty;
-        assertEquals(sixthEnumProperty.getEnum(), Arrays.asList("one", "two", "three"));
+        assertEquals(sixthStringProperty.getEnum(), Arrays.asList("one", "two", "three"));
+
+        final Schema seventhEnumProperty = (Schema) model.getProperties().get("seventhEnumValue");
+        assertTrue(seventhEnumProperty instanceof IntegerSchema);
+        final IntegerSchema seventhEnumStringProperty = (IntegerSchema) seventhEnumProperty;
+        assertEquals(seventhEnumStringProperty.getEnum(), Collections.singletonList(10));
+
+        final Schema eighthEnumProperty = (Schema) model.getProperties().get("eighthEnumValue");
+        assertTrue(eighthEnumProperty instanceof StringSchema);
+        final StringSchema eighthStringProperty = (StringSchema) eighthEnumProperty;
+        assertEquals(eighthStringProperty.getEnum(), Arrays.asList("alpha", "beta", "gamma"));
+    }
+
+    @Test(description = "it should extract enum values from a private @JsonValue method declared directly on the enum (issue #3998)")
+    public void testJsonValueOnPrivateMethodIsRecognized() {
+        final Schema schema = context.resolve(new AnnotatedType(JacksonValuePrivateEnum.class));
+        assertNotNull(schema);
+        assertEquals(schema.getType(), "string");
+        assertEquals(schema.getEnum(), Arrays.asList("one", "two", "three"));
+    }
+
+    @Test(description = "it should extract enum values from a @JsonValue default method declared on an implemented interface")
+    public void testJsonValueOnInterfaceDefaultMethodIsRecognized() {
+        final Schema schema = context.resolve(new AnnotatedType(JacksonValueDefaultMethodEnum.class));
+        assertNotNull(schema);
+        assertEquals(schema.getType(), "string");
+        assertEquals(schema.getEnum(), Arrays.asList("alpha", "beta", "gamma"));
+    }
+
+    @Test(description = "it should handle @JsonValue on enum implementing generic interface with bridge method (issue #5127)")
+    public void testJsonValueWithBridgeMethodFromGenericInterface() {
+        final Schema schema = context.resolve(new AnnotatedType(JacksonValueBridgeMethodEnum.class));
+        assertNotNull(schema);
+        assertEquals(schema.getType(), "string");
+        assertEquals(schema.getEnum(), Arrays.asList("created", "in_progress", "confirmed"));
     }
 }

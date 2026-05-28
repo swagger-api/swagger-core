@@ -25,6 +25,11 @@ python $CUR/CI/releaseNotes.py "$SC_LAST_RELEASE" "$SC_RELEASE_TITLE" "$SC_RELEA
 ./mvnw versions:set -DnewVersion=$SC_VERSION
 ./mvnw versions:commit
 
+cd modules/swagger-bom
+../../mvnw versions:set -DnewVersion=$SC_VERSION
+../../mvnw versions:commit
+cd ../..
+
 cd modules/swagger-project-jakarta
 ../../mvnw versions:set -DnewVersion=$SC_VERSION
 ../../mvnw versions:commit
@@ -72,6 +77,11 @@ sed -i -e "s/$sc_find/$sc_replace/g" $CUR/modules/swagger-gradle-plugin/src/test
 sc_find="<version>$SC_LAST_RELEASE<\/version>"
 sc_replace="<version>$SC_VERSION<\/version>"
 sed -i -e "s/$sc_find/$sc_replace/g" $CUR/modules/swagger-maven-plugin/README.md
+
+sc_find="<version>$SC_LAST_RELEASE<\/version>"
+sc_replace="<version>$SC_VERSION<\/version>"
+sed -i -e "s/$sc_find/$sc_replace/g" $CUR/modules/swagger-java17-support/pom.xml
+rm -f $CUR/modules/swagger-java17-support/pom.xml.versionsBackup
 
 #####################
 ### build and test maven ###

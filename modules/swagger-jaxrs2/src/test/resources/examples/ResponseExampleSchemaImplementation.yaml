@@ -12,7 +12,7 @@ paths:
           content:
             '*/*':
               schema:
-                $ref: '#/components/schemas/Subscription'
+                $ref: "#/components/schemas/Subscription"
               examples:
                 Default Response:
                   summary: Subscription Response Example
@@ -39,4 +39,4 @@ components:
         subscriptionId:
           type: string
         subscriptionItem:
-          $ref: '#/components/schemas/SubscriptionItem'
+          $ref: "#/components/schemas/SubscriptionItem"

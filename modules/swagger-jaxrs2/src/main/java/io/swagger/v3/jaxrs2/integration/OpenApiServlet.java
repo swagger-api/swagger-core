@@ -41,7 +41,7 @@ public class OpenApiServlet extends HttpServlet {
                     .ctxId(ctxId)
                     .buildContext(true);
         } catch (OpenApiConfigurationException e) {
-            e.printStackTrace();
+            LOGGER.error("Failed to initialize OpenAPI servlet context", e);
         }
     }
 

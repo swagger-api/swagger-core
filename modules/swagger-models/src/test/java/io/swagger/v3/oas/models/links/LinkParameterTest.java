@@ -2,8 +2,11 @@ package io.swagger.v3.oas.models.links;
 
 import java.util.HashMap;
 
-import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotEquals;
+import static org.testng.Assert.assertNull;
 
 public class LinkParameterTest {
 
@@ -14,18 +17,18 @@ public class LinkParameterTest {
         linkParameter.setValue("bar");
         linkParameter.setValue("baz");
 
-        Assert.assertEquals(linkParameter.value("bar"), linkParameter);
-        Assert.assertEquals(linkParameter.getValue(), "bar");
+        assertEquals(linkParameter.value("bar"), linkParameter);
+        assertEquals(linkParameter.getValue(), "bar");
     }
 
     @Test
     public void testEquals() {
         LinkParameter linkParameter = new LinkParameter();
-        Assert.assertFalse(linkParameter.equals(null));
-        Assert.assertFalse(linkParameter.equals(new String()));
+        assertNotEquals(linkParameter, null);
+        assertNotEquals(linkParameter, new String());
 
-        Assert.assertTrue(linkParameter.equals(linkParameter));
-        Assert.assertTrue(linkParameter.equals(new LinkParameter()));
+        assertEquals(linkParameter, linkParameter);
+        assertEquals(linkParameter, new LinkParameter());
     }
 
     @Test
@@ -35,7 +38,7 @@ public class LinkParameterTest {
         linkParameter.addExtension("y-", null);
         linkParameter.addExtension(null, null);
 
-        Assert.assertNull(linkParameter.getExtensions());
+        assertNull(linkParameter.getExtensions());
     }
 
     @Test
@@ -45,7 +48,7 @@ public class LinkParameterTest {
         linkParameter.addExtension("x-", "bar");
         linkParameter.addExtension("x-", "baz");
 
-        Assert.assertEquals(linkParameter.getExtensions(),
+        assertEquals(linkParameter.getExtensions(),
                 new HashMap<String, Object>() {{
                     put("x-", "baz");
                 }});
@@ -60,7 +63,7 @@ public class LinkParameterTest {
         hashMap.put("x-", "baz");
         linkParameter.setExtensions(hashMap);
 
-        Assert.assertEquals(linkParameter.getExtensions(),
+        assertEquals(linkParameter.getExtensions(),
                 new HashMap<String, Object>() {{
                     put("x-", "baz");
                 }});
@@ -74,14 +77,14 @@ public class LinkParameterTest {
         hashMap.put("x-", "bar");
         hashMap.put("x-", "baz");
 
-        Assert.assertEquals(linkParameter.extensions(hashMap), linkParameter);
+        assertEquals(linkParameter.extensions(hashMap), linkParameter);
     }
 
     @Test
     public void testToString() {
         LinkParameter linkParameter = new LinkParameter();
         linkParameter.setValue("foo");
-        Assert.assertEquals(linkParameter.toString(),
+        assertEquals(linkParameter.toString(),
                 "class LinkParameter {\n}");
     }
 }

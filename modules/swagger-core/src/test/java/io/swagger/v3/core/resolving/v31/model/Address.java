@@ -70,7 +70,8 @@ public class Address {
         private Object country;
 
         @Schema(
-                _const = "United States"
+                _const = "United States",
+                type = "string"
 
         )
         public Object getCountry() {

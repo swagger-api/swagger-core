@@ -33,10 +33,19 @@ public class Schema31Serializer extends JsonSerializer<Schema> implements Resolv
             jgen.writeBoolean(value.getBooleanSchemaValue());
             return;
         }
-        if (value.getExampleSetFlag() && value.getExample() == null) {
+        
+        boolean hasNullExample = value.getExampleSetFlag() && value.getExample() == null;
+        boolean hasNullDefault = value.getDefaultSetFlag() && value.getDefault() == null;
+        
+        if (hasNullExample || hasNullDefault) {
             jgen.writeStartObject();
             defaultSerializer.unwrappingSerializer(null).serialize(value, jgen, provider);
-            jgen.writeNullField("example");
+            if (hasNullExample) {
+                jgen.writeNullField("example");
+            }
+            if (hasNullDefault) {
+                jgen.writeNullField("default");
+            }
             jgen.writeEndObject();
         } else {
             defaultSerializer.serialize(value, jgen, provider);

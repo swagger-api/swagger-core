@@ -17,8 +17,8 @@ import static java.lang.annotation.ElementType.TYPE;
  * The annotation may be used at class level (also on multiple classes) to add securitySchemes to spec
  * components section.
  *
- * @see <a target="_new" href="https://github.com/OAI/OpenAPI-Specification/blob/3.0.1/versions/3.0.1.md#securitySchemeObject">Security Scheme (OpenAPI specification)</a>
- * @see <a target="_new" href="https://github.com/OAI/OpenAPI-Specification/blob/3.0.1/versions/3.0.1.md#componentsObject">Components (OpenAPI specification)</a>
+ * @see <a target="_new" href="https://github.com/OAI/OpenAPI-Specification/blob/3.0.4/versions/3.0.4.md#security-scheme-object">Security Scheme (OpenAPI specification)</a>
+ * @see <a target="_new" href="https://github.com/OAI/OpenAPI-Specification/blob/3.0.4/versions/3.0.4.md#components-object">Components (OpenAPI specification)</a>
  **/
 @Target({TYPE, ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)
@@ -48,7 +48,7 @@ public @interface SecurityScheme {
 
     /**
      * The name of the header or query parameter to be used. Applies to apiKey type.
-     * Maps to "name" property of <a target="_new" href="https://github.com/OAI/OpenAPI-Specification/blob/3.0.1/versions/3.0.1.md#securitySchemeObject">Security Scheme (OpenAPI specification)</a>
+     * Maps to "name" property of <a target="_new" href="https://github.com/OAI/OpenAPI-Specification/blob/3.0.4/versions/3.0.4.md#security-scheme-object">Security Scheme (OpenAPI specification)</a>
      *
      * @return String paramName
      **/

@@ -12,8 +12,8 @@ import java.util.Objects;
 /**
  * Parameter
  *
- * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.0.1/versions/3.0.1.md#parameterObject"
- * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.1.0/versions/3.1.0.md#parameterObject"
+ * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.0.4/versions/3.0.4.md#parameter-object"
+ * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.1.1/versions/3.1.1.md#parameter-object"
  */
 
 public class Parameter {
@@ -321,7 +321,10 @@ public class Parameter {
     }
 
     public void set$ref(String $ref) {
-        if ($ref != null && ($ref.indexOf('.') == -1 && $ref.indexOf('/') == -1)) {
+        if ($ref != null &&
+                !$ref.startsWith("#/components/parameters/")
+                && $ref.indexOf('.') == -1
+                && $ref.indexOf('/') == -1) {
             $ref = "#/components/parameters/" + $ref;
         }
         this.$ref = $ref;

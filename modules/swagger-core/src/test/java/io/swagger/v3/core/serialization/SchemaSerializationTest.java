@@ -54,7 +54,7 @@ public class SchemaSerializationTest {
                 "        tag:\n" +
                 "          type: string\n" +
                 "    AnotherPet:\n" +
-                "      $ref: '#/components/schemas/Pet'\n" +
+                "      $ref: \"#/components/schemas/Pet\"\n" +
                 "      description: Another Pet for petstore referencing Pet schema\n" +
                 "      properties:\n" +
                 "        category:\n" +
@@ -76,6 +76,6 @@ public class SchemaSerializationTest {
                 "          type: string\n" +
                 "      format: whatever\n" +
                 "    AnotherPet:\n" +
-                "      $ref: '#/components/schemas/Pet'\n");
+                "      $ref: \"#/components/schemas/Pet\"\n");
     }
 }

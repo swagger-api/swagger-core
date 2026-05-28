@@ -67,7 +67,7 @@ paths:
   "/pathItemRef":
     "$ref": 'http://localhost:${dynamicPort}/remote/path'
   "/pathItemRef2":
-      "$ref": '#/paths/~1pet'
+      "$ref": "#/paths/~1pet"
   "/pet":
     summary: summary
     description: description
@@ -107,14 +107,14 @@ paths:
         content:
           'application/json':
             schema:
-              $ref: '#/components/schemas/User'
+              $ref: "#/components/schemas/User"
             examples:
               user:
                 summary: User Example
                 externalValue: 'http://foo.bar/examples/user-example.json'
           'application/xml':
             schema:
-              $ref: '#/components/schemas/User'
+              $ref: "#/components/schemas/User"
             examples:
               user:
                 summary: User Example in XML
@@ -161,7 +161,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/VeryComplexType'
+                  $ref: "#/components/schemas/VeryComplexType"
         '404':
           description: Pet not found
         '405':
@@ -191,7 +191,7 @@ paths:
           minimum: 1
           maximum: 10
           allOf:
-          - $ref: '#/components/schemas/Pet'
+          - $ref: "#/components/schemas/Pet"
           - type: object
             properties:
               huntingSkill:
@@ -988,7 +988,7 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/ExtendedErrorModel'
+            $ref: "#/components/schemas/ExtendedErrorModel"
   parameters:
     refParam:
       "$ref": "#/components/parameters/limitParam/"
@@ -1105,7 +1105,7 @@ components:
       '$request.query.heartbeat-url':
         post:
           requestBody:
-            $ref: '#/components/requestBodies/requestBody3'
+            $ref: "#/components/requestBodies/requestBody3"
           responses:
             '200':
               description: Consumer acknowledged the callback
@@ -1113,7 +1113,7 @@ components:
       '$response.body#/failedUrl':
         post:
           requestBody:
-            $ref: '#/components/requestBodies/requestBody3'
+            $ref: "#/components/requestBodies/requestBody3"
           responses:
             '200':
               description: Consumer acknowledged the callback failed
@@ -1121,7 +1121,7 @@ components:
       '$response.body#/successUrl':
         post:
           requestBody:
-            $ref: '#/components/requestBodies/requestBody1'
+            $ref: "#/components/requestBodies/requestBody1"
           responses:
             '200':
               description: Consumer acknowledged the callback

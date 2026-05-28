@@ -2,6 +2,7 @@ package io.swagger.v3.core.converter;
 
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import io.swagger.v3.core.jackson.ModelResolver;
+import io.swagger.v3.core.util.Configuration;
 import io.swagger.v3.core.util.Json;
 import io.swagger.v3.core.util.Json31;
 import io.swagger.v3.oas.models.media.Schema;
@@ -42,6 +43,25 @@ public class ModelConverters {
         }
     }
 
+    public ModelConverters(boolean openapi31, Schema.SchemaResolution schemaResolution) {
+        converters = new CopyOnWriteArrayList<>();
+        if (openapi31) {
+            converters.add(new ModelResolver(Json31.mapper()).openapi31(true).schemaResolution(schemaResolution));
+        } else {
+            converters.add(new ModelResolver(Json.mapper()).schemaResolution(schemaResolution));
+        }
+    }
+
+    public ModelConverters(Configuration configuration) {
+        converters = new CopyOnWriteArrayList<>();
+        boolean openapi31 =configuration != null && configuration.isOpenAPI31() != null && configuration.isOpenAPI31();
+        if (openapi31) {
+            converters.add(new ModelResolver(Json31.mapper()).configuration(configuration));
+        } else {
+            converters.add(new ModelResolver(Json.mapper()).configuration(configuration));
+        }
+    }
+
     public Set<String> getSkippedPackages() {
         return skippedPackages;
     }
@@ -59,6 +79,53 @@ public class ModelConverters {
             init(SINGLETON);
         }
         return SINGLETON;
+    }
+
+    public static void reset() {
+        synchronized (ModelConverters.class) {
+            SINGLETON = null;
+            SINGLETON31 = null;
+        }
+    }
+
+    public static ModelConverters getInstance(boolean openapi31, Schema.SchemaResolution schemaResolution) {
+        synchronized (ModelConverters.class) {
+            if (openapi31) {
+                if (SINGLETON31 == null) {
+                    boolean applySchemaResolution = Boolean.parseBoolean(System.getProperty(Schema.APPLY_SCHEMA_RESOLUTION_PROPERTY, "false")) || Boolean.parseBoolean(System.getenv(Schema.APPLY_SCHEMA_RESOLUTION_PROPERTY));
+                    SINGLETON31 = new ModelConverters(openapi31, applySchemaResolution ? schemaResolution : Schema.SchemaResolution.DEFAULT);
+                    init(SINGLETON31);
+                }
+                return SINGLETON31;
+            }
+            if (SINGLETON == null) {
+                SINGLETON = new ModelConverters(openapi31, schemaResolution);
+                init(SINGLETON);
+            }
+            return SINGLETON;
+        }
+    }
+
+    public static ModelConverters getInstance(Configuration configuration) {
+        synchronized (ModelConverters.class) {
+            boolean openapi31 = configuration != null && configuration.isOpenAPI31() != null && configuration.isOpenAPI31();
+            if (openapi31) {
+                if (SINGLETON31 == null) {
+                    boolean applySchemaResolution = Boolean.parseBoolean(System.getProperty(Schema.APPLY_SCHEMA_RESOLUTION_PROPERTY, "false")) || Boolean.parseBoolean(System.getenv(Schema.APPLY_SCHEMA_RESOLUTION_PROPERTY));
+                    if (!applySchemaResolution) {
+                        configuration.schemaResolution(Schema.SchemaResolution.DEFAULT);
+                    }
+                    SINGLETON31 = new ModelConverters(configuration);
+                    init(SINGLETON31);
+                }
+                return SINGLETON31;
+            }
+            if (SINGLETON == null) {
+                SINGLETON = new ModelConverters(configuration);
+                init(SINGLETON);
+            }
+            return SINGLETON;
+        }
     }
 
     private static void init(ModelConverters converter) {

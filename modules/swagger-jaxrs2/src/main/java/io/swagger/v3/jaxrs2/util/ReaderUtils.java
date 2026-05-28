@@ -7,6 +7,7 @@ import io.swagger.v3.jaxrs2.ext.OpenAPIExtension;
 import io.swagger.v3.jaxrs2.ext.OpenAPIExtensions;
 import io.swagger.v3.oas.integration.api.OpenAPIConfiguration;
 import io.swagger.v3.oas.models.Components;
+import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.parameters.Parameter;
 import org.apache.commons.lang3.StringUtils;
 
@@ -35,6 +36,13 @@ public class ReaderUtils {
     private static final String OPTIONS_METHOD = "options";
     private static final String PATH_DELIMITER = "/";
 
+    public static List<Parameter> collectConstructorParameters(Class<?> cls, Components components, javax.ws.rs.Consumes classConsumes, JsonView jsonViewAnnotation) {
+        return collectConstructorParameters(cls, components, classConsumes, jsonViewAnnotation, null);
+    }
+
+    public static List<Parameter> collectConstructorParameters(Class<?> cls, Components components, javax.ws.rs.Consumes classConsumes, JsonView jsonViewAnnotation, Schema.SchemaResolution schemaResolution) {
+        return collectConstructorParameters(cls, components, classConsumes, jsonViewAnnotation, schemaResolution, false);
+    }
     /**
      * Collects constructor-level parameters from class.
      *
@@ -42,7 +50,7 @@ public class ReaderUtils {
      * @param components
      * @return the collection of supported parameters
      */
-    public static List<Parameter> collectConstructorParameters(Class<?> cls, Components components, javax.ws.rs.Consumes classConsumes, JsonView jsonViewAnnotation) {
+    public static List<Parameter> collectConstructorParameters(Class<?> cls, Components components, javax.ws.rs.Consumes classConsumes, JsonView jsonViewAnnotation, Schema.SchemaResolution schemaResolution, boolean openapi31) {
         if (cls.isLocalClass() || (cls.isMemberClass() && !Modifier.isStatic(cls.getModifiers()))) {
             return Collections.emptyList();
         }
@@ -77,7 +85,9 @@ public class ReaderUtils {
                                     components,
                                     classConsumes == null ? new String[0] : classConsumes.value(),
                                     null,
-                                    jsonViewAnnotation);
+                                    jsonViewAnnotation,
+                                    openapi31,
+                                    schemaResolution);
                             if (processedParameter != null) {
                                 parameters.add(processedParameter);
                             }

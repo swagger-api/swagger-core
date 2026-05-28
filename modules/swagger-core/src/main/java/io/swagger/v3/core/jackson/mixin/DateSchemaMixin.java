@@ -10,6 +10,12 @@ public abstract class DateSchemaMixin {
     @JsonFormat (shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     public abstract Object getExample();
 
+    @JsonFormat (shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    public abstract Object getDefault();
+
+    @JsonFormat (shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    public abstract Object getEnum();
+
     @JsonIgnore
     public abstract Object getJsonSchemaImpl();
 

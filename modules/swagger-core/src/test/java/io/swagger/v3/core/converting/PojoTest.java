@@ -428,7 +428,7 @@ public class PojoTest {
                 "  type: object\n" +
                 "  properties:\n" +
                 "    exampleJson:\n" +
-                "      $ref: '#/components/schemas/ExampleJson'\n" +
+                "      $ref: \"#/components/schemas/ExampleJson\"\n" +
                 "  example:\n" +
                 "    id: 19877734";
         SerializationMatchers.assertEqualsToYaml(readAll(modelWithPropertyExampleOverrideJson.class), yaml);
@@ -464,7 +464,7 @@ public class PojoTest {
                 "  type: object\n" +
                 "  properties:\n" +
                 "    exampleJson:\n" +
-                "      $ref: '#/components/schemas/ExampleJson'\n";
+                "      $ref: \"#/components/schemas/ExampleJson\"\n";
         SerializationMatchers.assertEqualsToYaml(readAll(modelWithPropertyImplExampleOverrideJson.class), yaml);
     }
 

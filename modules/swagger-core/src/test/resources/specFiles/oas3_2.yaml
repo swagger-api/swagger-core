@@ -108,7 +108,7 @@ paths:
         content:
           'application/json':
             schema:
-              $ref: '#/components/schemas/Dog'
+              $ref: "#/components/schemas/Dog"
     servers:
     - url: http://petstore.swagger.io/v2
     put:
@@ -126,7 +126,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/VeryComplexType'
+                  $ref: "#/components/schemas/VeryComplexType"
         '404':
           description: Pet not found
         '405':
@@ -548,7 +548,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/User'
+                  $ref: "#/components/schemas/User"
   "/issue-125":
       get:
         parameters: []
@@ -691,7 +691,7 @@ paths:
             schema:
               type: array
               items:
-                $ref: '#/components/schemas/Address'
+                $ref: "#/components/schemas/Address"
         required: true
       responses:
         '200':
@@ -779,7 +779,7 @@ paths:
             schema:
               type: array
               items:
-                $ref: '#/components/schemas/ExtendedAddress'
+                $ref: "#/components/schemas/ExtendedAddress"
         required: false
       responses:
         '200':
@@ -1002,7 +1002,7 @@ components:
       type: object
       x-swagger-router-model: io.swagger.oas.test.models.ExtendedAddress
       allOf:
-        - $ref: '#/components/schemas/Address'
+        - $ref: "#/components/schemas/Address"
         - type: object
           required:
           - gps
@@ -1195,7 +1195,7 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/ExtendedErrorModel'
+            $ref: "#/components/schemas/ExtendedErrorModel"
   parameters:
     contentParameter:
       in: query
@@ -1203,7 +1203,7 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/ExtendedErrorModel'
+            $ref: "#/components/schemas/ExtendedErrorModel"
       examples:
         cat:
           summary: An example of a cat
@@ -1313,7 +1313,7 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/ExtendedErrorModel'
+            $ref: "#/components/schemas/ExtendedErrorModel"
       examples:
         dog:
           $ref: "#/components/examples/dog"
@@ -1333,7 +1333,7 @@ components:
       '$request.query.heartbeat-url':
         post:
           requestBody:
-            $ref: '#/components/requestBodies/requestBody3'
+            $ref: "#/components/requestBodies/requestBody3"
           responses:
             '200':
               description: Consumer acknowledged the callback
@@ -1341,7 +1341,7 @@ components:
       '$response.body#/failedUrl':
         post:
           requestBody:
-            $ref: '#/components/requestBodies/requestBody3'
+            $ref: "#/components/requestBodies/requestBody3"
           responses:
             '200':
               description: Consumer acknowledged the callback failed
@@ -1349,7 +1349,7 @@ components:
       '$response.body#/successUrl':
         post:
           requestBody:
-            $ref: '#/components/requestBodies/requestBody1'
+            $ref: "#/components/requestBodies/requestBody1"
           responses:
             '200':
               description: Consumer acknowledged the callback

@@ -14,7 +14,7 @@ In many cases it is sufficient to set it to the `classpath` value, like:
 
 Alternatively provide as value a classpath with the following dependencies (replacing the provided [`javax` ones](https://github.com/swagger-api/swagger-core/blob/master/modules/swagger-gradle-plugin/src/main/java/io/swagger/v3/plugins/gradle/SwaggerPlugin.java#L16-L25)):
 
-* org.apache.commons:commons-lang3:3.12.0
+* org.apache.commons:commons-lang3:3.20.0
 * io.swagger.core.v3:swagger-jaxrs2-jakarta:2.2.9
 * jakarta.ws.rs:jakarta.ws.rs-api:3.0.0
 * jakarta.servlet:jakarta.servlet-api:5.0.0
@@ -26,7 +26,7 @@ Alternatively provide as value a classpath with the following dependencies (repl
 
 ```
 plugins {
-  id "io.swagger.core.v3.swagger-gradle-plugin" version "2.2.21"
+  id "io.swagger.core.v3.swagger-gradle-plugin" version "2.2.50"
 }
 ```
 ### Gradle 1.x and 2.0
@@ -43,7 +43,7 @@ buildscript {
     }
   }
   dependencies {
-    classpath "io.swagger.core.v3:swagger-gradle-plugin:2.2.21"
+    classpath "io.swagger.core.v3:swagger-gradle-plugin:2.2.50"
   }
 }
 
@@ -97,12 +97,17 @@ Parameter | Description | Required | Default
 `contextId`|see [Context](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#context)|false|
 `outputPath`|**DEPRECATED** output path where file(s) are saved|false|
 `defaultResponseCode`|see [configuration property](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)|false|
+`groupsValidationStrategy`|see [configuration property](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)|false|
+`validatorProcessorClass`|see [configuration property](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)|false|
+`openapi31`|see [configuration property](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)| false   |
+`schemaResolution`|see [configuration property](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)| DEFAULT |
+`openAPIVersion`|see [configuration property](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)| `3.0.1/3.1.0` |
 
 **Note** parameter `openApiFile` corresponds to [config](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties) openAPI. It points to a location of a file in YAML or JSON format representing the input spec that will be merged with the resolved spec. Typically used to add Info section, or any other meta data.
 An example of such file:
 
 ```yaml
-openapi: 3.0.1
+openapi: 3.0.4
 info:
   version: '1.0'
   title: Swagger Pet Sample App Config File
@@ -118,8 +123,13 @@ info:
     url: http://www.apache.org/licenses/LICENSE-2.0.html
 ```
 
-Since version 2.1.6, `sortOutput` parameter is available, allowing to sort object properties and map keys alphabetically.
-Since version 2.1.6, `objectMapperProcessorClass` allows to configure also the ObjectMapper instance used to serialize the resolved OpenAPI
-Since version 2.1.9, `alwaysResolveAppPath` parameter is available, allowing to trigger resolving of Application Path from annotation also not in runtime (e.g. using servlet in separate application, or in maven plugin at build time, etc)
-Since version 2.1.15, `skipResolveAppPath` parameter is available, allowing to skip resolving of Application Path from annotation
-Since version 2.2.17, `defaultResponseCode` parameter is available, allowing to set the code used when resolving responses with no http status code annotation
+- Since version 2.1.6, `sortOutput` parameter is available, allowing to sort object properties and map keys alphabetically.
+- Since version 2.1.6, `objectMapperProcessorClass` allows to configure also the ObjectMapper instance used to serialize the resolved OpenAPI
+- Since version 2.1.9, `alwaysResolveAppPath` parameter is available, allowing to trigger resolving of Application Path from annotation also not in runtime (e.g. using servlet in separate application, or in maven plugin at build time, etc)
+- Since version 2.2.12, `openapi31` parameter is available, if set to true the resolved spec will be processed into a 3.1.0 specification by resolving according to OAS 3.1 rules
+- Since version 2.1.15, `skipResolveAppPath` parameter is available, allowing to skip resolving of Application Path from annotation
+- Since version 2.2.17, `defaultResponseCode` parameter is available, allowing to set the code used when resolving responses with no http status code annotation
+- Since version 2.2.24, `schemaResolution` parameter is available, allowing to specify how object schemas and object properties within schemas are resolved for OAS 3.0 specification
+- Since version 2.2.28, `openAPIVersion` parameter is available, allowing to specify the version of the OpenAPI specification to be used for the resolved spec.
+- Since version 2.2.29, `groupsValidationStrategy` parameter is available, allowing to specify the strategy for resolving Validation annotations (`never`, `always`, `neverIfNoContext`).
+- Since version 2.2.29, `validatorProcessorClass` parameter is available, allowing to specify a custom validator processor class, implementation of `io.swagger.v3.core.util.ValidatorProcessor`.

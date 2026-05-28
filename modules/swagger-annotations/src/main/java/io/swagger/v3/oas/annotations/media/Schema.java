@@ -30,14 +30,15 @@ import static java.lang.annotation.ElementType.PARAMETER;
  * <p>The annotation {@link ArraySchema} shall be used for array elements; {@link ArraySchema} and {@link Schema} cannot
  * coexist</p>
  *
- * @see <a target="_new" href="https://github.com/OAI/OpenAPI-Specification/blob/3.0.1/versions/3.0.1.md#schemaObject">Schema (OpenAPI specification)</a>
- * @see <a target="_new" href="https://github.com/OAI/OpenAPI-Specification/blob/3.1.0/versions/3.1.0.md#schemaObject">Schema (OpenAPI specification)</a>
+ * @see <a target="_new" href="https://github.com/OAI/OpenAPI-Specification/blob/3.0.4/versions/3.0.4.md#schema-object">Schema (OpenAPI specification)</a>
+ * @see <a target="_new" href="https://github.com/OAI/OpenAPI-Specification/blob/3.1.1/versions/3.1.1.md#schema-object">Schema (OpenAPI specification)</a>
  * @see ArraySchema
  **/
 @Target({FIELD, METHOD, PARAMETER, TYPE, ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
 public @interface Schema {
+
     /**
      * Provides a java class as implementation for this schema.  When provided, additional information in the Schema annotation (except for type information) will augment the java class after introspection.
      *
@@ -176,8 +177,11 @@ public @interface Schema {
 
     /**
      * Allows to specify the required mode (RequiredMode.AUTO, REQUIRED, NOT_REQUIRED)
-     *
-     * RequiredMode.AUTO: will let the library decide based on its heuristics.
+     * RequiredMode.AUTO: the library decides using heuristics:
+     *   - Bean Validation / nullability annotations (@NotNull, @NonNull, @NotBlank, @NotEmpty) - required
+     *   - Optional - not required
+     *   - Primitive types (int, boolean, etc.) - not required unless annotated
+     *   - Other object fields without any constraints - not required
      * RequiredMode.REQUIRED: will force the item to be considered as required regardless of heuristics.
      * RequiredMode.NOT_REQUIRED: will force the item to be considered as not required regardless of heuristics.
      *
@@ -237,7 +241,7 @@ public @interface Schema {
     boolean writeOnly() default false;
 
     /**
-     * Allows to specify the access mode (AccessMode.READ_ONLY, READ_WRITE)
+     * Allows to specify the access mode (AccessMode.READ_ONLY, WRITE_ONLY, READ_WRITE)
      *
      * AccessMode.READ_ONLY: value will not be written to during a request but may be returned during a response.
      * AccessMode.WRITE_ONLY: value will only be written to during a request but not returned during a response.
@@ -246,7 +250,7 @@ public @interface Schema {
      * @return the accessMode for this schema (property)
      *
      */
-     AccessMode accessMode() default AccessMode.AUTO;
+    AccessMode accessMode() default AccessMode.AUTO;
 
     /**
      * Provides an example of the schema.  When associated with a specific media type, the example string shall be parsed by the consumer to be treated as an object or an array.
@@ -418,6 +422,15 @@ public @interface Schema {
     String $dynamicAnchor() default "";
 
     /**
+     * Provides the $dynamicRef related to schema
+     *
+     * @since 2.2.32 / OpenAPI 3.1
+     * @return $dynamicRef schema
+     */
+    @OpenAPI31
+    String $dynamicRef() default "";
+
+    /**
      * Provides the content encoding related to this schema
      *
      * @since 2.2.12 / OpenAPI 3.1
@@ -554,6 +567,14 @@ public @interface Schema {
         NOT_REQUIRED;
     }
 
+    enum SchemaResolution {
+        AUTO,
+        DEFAULT,
+        INLINE,
+        ALL_OF,
+        ALL_OF_REF;
+    }
+
     /**
      * Allows to specify the dependentRequired value
      **
@@ -616,4 +637,17 @@ public @interface Schema {
      */
     @OpenAPI31
     String _const() default "";
+
+    /**
+     * Allows to specify the schema resolution mode for object schemas
+     *
+     * SchemaResolution.DEFAULT: bundled into components/schemas, $ref with no siblings
+     * SchemaResolution.INLINE: inline schema, no $ref
+     * SchemaResolution.ALL_OF: bundled into components/schemas, $ref and any context annotation resolution into allOf
+     * SchemaResolution.ALL_OF_REF: bundled into components/schemas, $ref into allOf, context annotation resolution into root
+     *
+     * @return the schema resolution mode for this schema
+     *
+     */
+    SchemaResolution schemaResolution() default SchemaResolution.AUTO;
 }

@@ -13,7 +13,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ObjectWithNullExample'
+                $ref: "#/components/schemas/ObjectWithNullExample"
 
   /object-with-null-in-schema-example:
     get:
@@ -24,7 +24,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ObjectWithNullInSchemaExample'
+                $ref: "#/components/schemas/ObjectWithNullInSchemaExample"
 
   /object-with-null-property-example:
     get:
@@ -35,7 +35,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ObjectWithNullPropertyExample'
+                $ref: "#/components/schemas/ObjectWithNullPropertyExample"
 
   /string-with-null-example:
     get:
@@ -46,7 +46,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/StringWithNullExample'
+                $ref: "#/components/schemas/StringWithNullExample"
 
   /array-with-null-array-example:
     get:
@@ -57,7 +57,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ArrayWithNullArrayExample'
+                $ref: "#/components/schemas/ArrayWithNullArrayExample"
 
   /array-with-null-item-example:
     get:
@@ -68,7 +68,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ArrayWithNullItemExample'
+                $ref: "#/components/schemas/ArrayWithNullItemExample"
 
   /arrey-with-null-in-array-example:
     get:
@@ -79,7 +79,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ArrayWithNullInArrayExample'
+                $ref: "#/components/schemas/ArrayWithNullInArrayExample"
 
   /object-without-null-example:
     get:
@@ -90,7 +90,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ObjectWithoutNullExample'
+                $ref: "#/components/schemas/ObjectWithoutNullExample"
 
   /object-without-null-in-schema-example:
     get:
@@ -101,7 +101,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ObjectWithoutNullInSchemaExample'
+                $ref: "#/components/schemas/ObjectWithoutNullInSchemaExample"
 
   /object-without-null-property-example:
     get:
@@ -112,7 +112,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ObjectWithoutNullPropertyExample'
+                $ref: "#/components/schemas/ObjectWithoutNullPropertyExample"
 
   /string-without-null-example:
     get:
@@ -123,7 +123,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/StringWithoutNullExample'
+                $ref: "#/components/schemas/StringWithoutNullExample"
 
   /array-without-null-array-example:
     get:
@@ -134,7 +134,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ArrayWithoutNullArrayExample'
+                $ref: "#/components/schemas/ArrayWithoutNullArrayExample"
 
   /array-without-null-item-example:
     get:
@@ -145,7 +145,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ArrayWithoutNullItemExample'
+                $ref: "#/components/schemas/ArrayWithoutNullItemExample"
 
   /arrey-without-null-in-array-example:
     get:
@@ -156,7 +156,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ArrayWithoutNullInArrayExample'
+                $ref: "#/components/schemas/ArrayWithoutNullInArrayExample"
 components:
   schemas:
     ObjectWithNullExample:

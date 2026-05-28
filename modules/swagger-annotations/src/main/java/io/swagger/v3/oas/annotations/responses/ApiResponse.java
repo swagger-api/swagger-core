@@ -22,7 +22,7 @@ import static java.lang.annotation.ElementType.TYPE;
  * <p>swagger-jaxrs2 reader engine considers this annotation along with method return type and context as input to
  * resolve the OpenAPI Operation responses.</p>
  *
- * @see <a target="_new" href="https://github.com/OAI/OpenAPI-Specification/blob/3.0.1/versions/3.0.1.md#responseObject">Response (OpenAPI specification)</a>
+ * @see <a target="_new" href="https://github.com/OAI/OpenAPI-Specification/blob/3.0.4/versions/3.0.4.md#response-object">Response (OpenAPI specification)</a>
  * @see io.swagger.v3.oas.annotations.Operation
  **/
 @Target({METHOD, TYPE, ANNOTATION_TYPE})

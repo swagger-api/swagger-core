@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.security.OAuthFlow;
 import io.swagger.v3.oas.annotations.security.OAuthFlows;
 import io.swagger.v3.oas.annotations.security.OAuthScope;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.security.SecurityRequirementEntry;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import org.testng.annotations.Test;
 
@@ -19,7 +20,7 @@ import static org.testng.Assert.assertEquals;
 
 public class SecurityTest extends AbstractAnnotationTest {
     @Test
-    public void testSecuritySheme() {
+    public void testSecurityScheme() {
         String openApiYAML = readIntoYaml(SecurityTest.OAuth2SchemeOnClass.class);
         int start = openApiYAML.indexOf("components:");
         String extractedYAML = openApiYAML.substring(start, openApiYAML.length() - 1);
@@ -90,7 +91,7 @@ public class SecurityTest extends AbstractAnnotationTest {
     }
 
     @Test
-    public void testMultipleSecurityShemes() {
+    public void testMultipleSecuritySchemes() {
         String openApiYAML = readIntoYaml(SecurityTest.MultipleSchemesOnClass.class);
         int start = openApiYAML.indexOf("components:");
         String extractedYAML = openApiYAML.substring(start, openApiYAML.length() - 1);
@@ -110,6 +111,30 @@ public class SecurityTest extends AbstractAnnotationTest {
                 "            write:pets: modify pets in your account";
         assertEquals(extractedYAML, expectedYAML);
 
+    }
+
+    @Test
+    public void testCombinedSecurityRequirements() {
+        String openApiYAML = readIntoYaml(SecurityTest.CombinedSecurityRequirementsOnClass.class);
+        int start = openApiYAML.indexOf("security:");
+        int end = openApiYAML.indexOf("components:");
+        String extractedYAML = openApiYAML.substring(start, end);
+        String expectedYAML = "security:\n" +
+            "- api_key: []\n" +
+            "  myOauth2Security: []\n";
+        assertEquals(extractedYAML, expectedYAML);
+    }
+
+    @Test
+    public void testSecurityRequirementAlternatives() {
+        String openApiYAML = readIntoYaml(SecurityRequirementAlternativesOnClass.class);
+        int start = openApiYAML.indexOf("security:");
+        int end = openApiYAML.indexOf("components:");
+        String extractedYAML = openApiYAML.substring(start, end);
+        String expectedYAML = "security:\n" +
+            "- api_key: []\n" +
+            "- myOauth2Security: []\n";
+        assertEquals(extractedYAML, expectedYAML);
     }
 
     @Test
@@ -166,6 +191,34 @@ public class SecurityTest extends AbstractAnnotationTest {
                             scopes = @OAuthScope(name = "write:pets", description = "modify pets in your account"))))
     @SecurityScheme(name = "apiKey", type = SecuritySchemeType.APIKEY, in = SecuritySchemeIn.HEADER, paramName = "API_KEY")
     static class MultipleSchemesOnClass {
+
+    }
+
+    @OpenAPIDefinition(
+        security = {@SecurityRequirement(combine = { @SecurityRequirementEntry(name = "api_key"), @SecurityRequirementEntry(name = "myOauth2Security") })}
+    )
+    @SecurityScheme(name = "api_key", type = SecuritySchemeType.APIKEY, paramName = "API_KEY")
+    @SecurityScheme(name = "myOauth2Security",
+        type = SecuritySchemeType.OAUTH2,
+        in = SecuritySchemeIn.HEADER,
+        flows = @OAuthFlows(
+            implicit = @OAuthFlow(authorizationUrl = "http://url.com/auth",
+                scopes = @OAuthScope(name = "write:pets", description = "modify pets in your account"))))
+    static class CombinedSecurityRequirementsOnClass {
+
+    }
+
+    @OpenAPIDefinition(
+        security = {@SecurityRequirement(name = "api_key"), @SecurityRequirement(name = "myOauth2Security")}
+    )
+    @SecurityScheme(name = "api_key", type = SecuritySchemeType.APIKEY, paramName = "API_KEY")
+    @SecurityScheme(name = "myOauth2Security",
+        type = SecuritySchemeType.OAUTH2,
+        in = SecuritySchemeIn.HEADER,
+        flows = @OAuthFlows(
+            implicit = @OAuthFlow(authorizationUrl = "http://url.com/auth",
+                scopes = @OAuthScope(name = "write:pets", description = "modify pets in your account"))))
+    static class SecurityRequirementAlternativesOnClass {
 
     }
 

@@ -17,6 +17,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.validation.constraints.Size;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
@@ -26,7 +27,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import static io.swagger.v3.core.util.ValidationAnnotationsUtils.JAVAX_SIZE;
+import static io.swagger.v3.core.util.ValidationAnnotationsUtils.applySizeConstraint;
+
 public class ParameterProcessor {
+
+    private static final String VALUE_METHOD = "value";
+    private static final String FORM_PARAMETER = "form";
+
     static Logger LOGGER = LoggerFactory.getLogger(ParameterProcessor.class);
 
     public static Parameter applyAnnotations(Parameter parameter, Type type, List<Annotation> annotations, Components components, String[] classTypes, String[] methodTypes, JsonView jsonViewAnnotation) {
@@ -42,7 +50,36 @@ public class ParameterProcessor {
             String[] methodTypes,
             JsonView jsonViewAnnotation,
             boolean openapi31) {
+        return applyAnnotations(parameter, type, annotations, components, classTypes, methodTypes, jsonViewAnnotation, openapi31, null);
+    }
 
+    public static Parameter applyAnnotations(
+            Parameter parameter,
+            Type type,
+            List<Annotation> annotations,
+            Components components,
+            String[] classTypes,
+            String[] methodTypes,
+            JsonView jsonViewAnnotation,
+            boolean openapi31,
+            Schema.SchemaResolution schemaResolution) {
+        Configuration configuration = new Configuration();
+        configuration.setOpenAPI31(openapi31);
+        configuration.setSchemaResolution(schemaResolution);
+        return applyAnnotations(parameter, type, annotations, components, classTypes, methodTypes, jsonViewAnnotation, configuration);
+    }
+    public static Parameter applyAnnotations(
+            Parameter parameter,
+            Type type,
+            List<Annotation> annotations,
+            Components components,
+            String[] classTypes,
+            String[] methodTypes,
+            JsonView jsonViewAnnotation,
+            Configuration configuration) {
+
+        boolean openapi31 = configuration != null && configuration.isOpenAPI31() != null && configuration.isOpenAPI31();
+        Schema.SchemaResolution schemaResolution = configuration.getSchemaResolution();;
         final AnnotationsHelper helper = new AnnotationsHelper(annotations, type);
         if (helper.isContext()) {
             return null;
@@ -59,17 +96,60 @@ public class ParameterProcessor {
         if (paramSchemaOrArrayAnnotation != null) {
             reworkedAnnotations.add(paramSchemaOrArrayAnnotation);
         }
+        io.swagger.v3.oas.annotations.media.Schema ctxSchema = AnnotationsUtils.getSchemaAnnotation(annotations.toArray(new Annotation[0]));
+        io.swagger.v3.oas.annotations.media.ArraySchema ctxArraySchema = AnnotationsUtils.getArraySchemaAnnotation(annotations.toArray(new Annotation[0]));
+        Annotation[] ctxAnnotation31 = null;
+
+        if (Schema.SchemaResolution.ALL_OF.equals(schemaResolution) || Schema.SchemaResolution.ALL_OF_REF.equals(schemaResolution)) {
+            List<Annotation> ctxAnnotations31List = new ArrayList<>();
+            if (annotations != null) {
+                for (Annotation a : annotations) {
+                    if (
+                            !(a instanceof io.swagger.v3.oas.annotations.media.Schema) &&
+                                    !(a instanceof io.swagger.v3.oas.annotations.media.ArraySchema)) {
+                        ctxAnnotations31List.add(a);
+                    }
+                }
+                ctxAnnotation31 = ctxAnnotations31List.toArray(new Annotation[ctxAnnotations31List.size()]);
+            }
+        }
         AnnotatedType annotatedType = new AnnotatedType()
                 .type(type)
                 .resolveAsRef(true)
                 .skipOverride(true)
-                .jsonViewAnnotation(jsonViewAnnotation)
-                .ctxAnnotations(reworkedAnnotations.toArray(new Annotation[reworkedAnnotations.size()]));
+                .jsonViewAnnotation(jsonViewAnnotation);
 
-        final ResolvedSchema resolvedSchema = ModelConverters.getInstance(openapi31).resolveAsResolvedSchema(annotatedType);
+        if (Schema.SchemaResolution.ALL_OF.equals(schemaResolution) || Schema.SchemaResolution.ALL_OF_REF.equals(schemaResolution)) {
+            annotatedType.ctxAnnotations(ctxAnnotation31);
+        } else {
+            annotatedType.ctxAnnotations(reworkedAnnotations.toArray(new Annotation[reworkedAnnotations.size()]));
+        }
+
+        final ResolvedSchema resolvedSchema = ModelConverters.getInstance(configuration).resolveAsResolvedSchema(annotatedType);
 
         if (resolvedSchema.schema != null) {
-            parameter.setSchema(resolvedSchema.schema);
+            Schema resSchema = AnnotationsUtils.clone(resolvedSchema.schema, openapi31);
+            Schema ctxSchemaObject = null;
+            if (Schema.SchemaResolution.ALL_OF.equals(schemaResolution) || Schema.SchemaResolution.ALL_OF_REF.equals(schemaResolution)) {
+                Optional<Schema> reResolvedSchema = AnnotationsUtils.getSchemaFromAnnotation(ctxSchema, annotatedType.getComponents(), null, openapi31, null, schemaResolution, null);
+                if (reResolvedSchema.isPresent()) {
+                    ctxSchemaObject = reResolvedSchema.get();
+                }
+                reResolvedSchema = AnnotationsUtils.getArraySchema(ctxArraySchema, annotatedType.getComponents(), null, openapi31, ctxSchemaObject);
+                if (reResolvedSchema.isPresent()) {
+                    ctxSchemaObject = reResolvedSchema.get();
+                }
+
+            }
+            if (Schema.SchemaResolution.ALL_OF.equals(schemaResolution) && ctxSchemaObject != null) {
+                resSchema = new Schema()
+                        .addAllOfItem(ctxSchemaObject)
+                        .addAllOfItem(resolvedSchema.schema);
+            } else if (Schema.SchemaResolution.ALL_OF_REF.equals(schemaResolution) && ctxSchemaObject != null) {
+                resSchema = ctxSchemaObject
+                        .addAllOfItem(resolvedSchema.schema);
+            }
+            parameter.setSchema(resSchema);
         }
         resolvedSchema.referencedSchemas.forEach(components::addSchemas);
 
@@ -77,24 +157,24 @@ public class ParameterProcessor {
         for (Annotation annotation : annotations) {
             if (annotation.annotationType().getName().equals("javax.ws.rs.FormParam")) {
                 try {
-                    String name = (String) annotation.annotationType().getMethod("value").invoke(annotation);
+                    String name = (String) annotation.annotationType().getMethod(VALUE_METHOD).invoke(annotation);
                     if (StringUtils.isNotBlank(name)) {
                         parameter.setName(name);
                     }
                 } catch (Exception e) {
                 }
                 // set temporarily to "form" to inform caller that we need to further process along other form parameters
-                parameter.setIn("form");
+                parameter.setIn(FORM_PARAMETER);
             } else if (annotation.annotationType().getName().endsWith("FormDataParam")) {
                 try {
-                    String name = (String) annotation.annotationType().getMethod("value").invoke(annotation);
+                    String name = (String) annotation.annotationType().getMethod(VALUE_METHOD).invoke(annotation);
                     if (StringUtils.isNotBlank(name)) {
                         parameter.setName(name);
                     }
                 } catch (Exception e) {
                 }
                 // set temporarily to "form" to inform caller that we need to further process along other form parameters
-                parameter.setIn("form");
+                parameter.setIn(FORM_PARAMETER);
             }
         }
 
@@ -170,27 +250,21 @@ public class ParameterProcessor {
 
             } else if (annotation.annotationType().getName().equals("javax.ws.rs.PathParam")) {
                 try {
-                    String name = (String) annotation.annotationType().getMethod("value").invoke(annotation);
+                    String name = (String) annotation.annotationType().getMethod(VALUE_METHOD).invoke(annotation);
                     if (StringUtils.isNotBlank(name)) {
                         parameter.setName(name);
                     }
-                } catch (Exception e) {
+                } catch (Exception ignored) {
                 }
-            } else if (annotation.annotationType().getName().equals("javax.validation.constraints.Size")) {
+            } else if (annotation.annotationType().getName().equals(JAVAX_SIZE)) {
                 try {
                     if (parameter.getSchema() == null) {
                         parameter.setSchema(new ArraySchema());
                     }
-                    if (parameter.getSchema() instanceof ArraySchema) {
-                        ArraySchema as = (ArraySchema) parameter.getSchema();
-                        Integer min = (Integer) annotation.annotationType().getMethod("min").invoke(annotation);
-                        if (min != null) {
-                            as.setMinItems(min);
-                        }
-                        Integer max = (Integer) annotation.annotationType().getMethod("max").invoke(annotation);
-                        if (max != null) {
-                            as.setMaxItems(max);
-                        }
+                    if (isArraySchema(parameter.getSchema())) {
+                        Schema as = parameter.getSchema();
+                        Size size = (Size) annotation;
+                        applySizeConstraint(as, size);
                     }
 
                 } catch (Exception e) {
@@ -209,10 +283,9 @@ public class ParameterProcessor {
             }
         }
         if (paramSchema != null) {
-            if (paramSchema instanceof ArraySchema) {
-                ArraySchema as = (ArraySchema) paramSchema;
+            if (isArraySchema(paramSchema)) {
                 if (defaultValue != null) {
-                    as.getItems().setDefault(defaultValue);
+                    paramSchema.getItems().setDefault(defaultValue);
                 }
             } else {
                 if (defaultValue != null) {
@@ -221,6 +294,10 @@ public class ParameterProcessor {
             }
         }
         return parameter;
+    }
+
+    public static boolean isArraySchema(Schema schema) {
+        return SchemaTypeUtils.isArraySchema(schema);
     }
 
     public static void setParameterExplode(Parameter parameter, io.swagger.v3.oas.annotations.Parameter p) {
@@ -236,13 +313,13 @@ public class ParameterProcessor {
     private static boolean isExplodable(io.swagger.v3.oas.annotations.Parameter p, Parameter parameter) {
         io.swagger.v3.oas.annotations.media.Schema schema = AnnotationsUtils.hasArrayAnnotation(p.array()) ? p.array().schema() : p.schema();
         boolean explode = true;
-        if ("form".equals(parameter.getIn())){
-            return true;
-        }
         if (schema != null) {
             Class implementation = schema.implementation();
             if (implementation == Void.class) {
-                if (!schema.type().equals("object") && !schema.type().equals("array")) {
+                if (!AnnotationsUtils.isExplodableOAS30(schema) && !schema.type().isEmpty()) {
+                    explode = false;
+                }
+                if (schema.types().length != 0 && !AnnotationsUtils.isExplodableOAS31(schema)) {
                     explode = false;
                 }
             }
@@ -360,7 +437,7 @@ public class ParameterProcessor {
                         context = true;
                     } else if ("javax.ws.rs.DefaultValue".equals(item.annotationType().getName())) {
                         try {
-                            rsDefault = (String) item.annotationType().getMethod("value").invoke(item);
+                            rsDefault = (String) item.annotationType().getMethod(VALUE_METHOD).invoke(item);
                         } catch (Exception ex) {
                             LOGGER.error("Invocation of value method failed", ex);
                         }

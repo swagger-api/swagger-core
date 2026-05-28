@@ -1,6 +1,7 @@
 package io.swagger.v3.oas.models.media;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.models.annotations.OpenAPI30;
 import io.swagger.v3.oas.models.annotations.OpenAPI31;
 import io.swagger.v3.oas.models.Components;
@@ -20,8 +21,8 @@ import java.util.Set;
 /**
  * Schema
  *
- * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.0.1/versions/3.0.1.md#schemaObject"
- * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.1.0/versions/3.1.0.md#schemaObject"
+ * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.0.4/versions/3.0.4.md#schema-object"
+ * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.1.1/versions/3.1.1.md#schema-object"
  */
 
 public class Schema<T> {
@@ -35,6 +36,33 @@ public class Schema<T> {
         private String value;
 
         BynaryStringConversion(String value) {
+            this.value = value;
+        }
+
+        @Override
+        public String toString() {
+            return String.valueOf(value);
+        }
+    }
+
+    public static final String SCHEMA_RESOLUTION_PROPERTY = "schema-resolution";
+    public static final String APPLY_SCHEMA_RESOLUTION_PROPERTY = "apply-schema-resolution";
+    public static final String EXPLICIT_OBJECT_SCHEMA_PROPERTY = "explicit-object-schema";
+    public static final String USE_ARBITRARY_SCHEMA_PROPERTY = "use-arbitrary-schema";
+
+    public enum SchemaResolution {
+        @JsonProperty("default")
+        DEFAULT("default"),
+        @JsonProperty("inline")
+        INLINE("inline"),
+        @JsonProperty("all-of")
+        ALL_OF("all-of"),
+        @JsonProperty("all-of-ref")
+        ALL_OF_REF("all-of-ref");
+
+        private String value;
+
+        SchemaResolution(String value) {
             this.value = value;
         }
 
@@ -84,7 +112,10 @@ public class Schema<T> {
     protected List<T> _enum = null;
     private Discriminator discriminator = null;
 
+    @JsonIgnore
     private boolean exampleSetFlag;
+    @JsonIgnore
+    private boolean defaultSetFlag;
 
     /**
      * @since 2.2.0 (OpenAPI 3.1.0)
@@ -180,6 +211,11 @@ public class Schema<T> {
     @OpenAPI31
     private String $dynamicAnchor;
 
+    /**
+     * @since 2.2.32 (OpenAPI 3.1.0)
+     */
+    @OpenAPI31
+    private String $dynamicRef;
 
     /**
      * @since 2.2.0 (OpenAPI 3.1.0)
@@ -514,6 +550,16 @@ public class Schema<T> {
 
     /**
      *
+     * @since 2.2.30 (OpenAPI 3.1.0)
+     */
+    @OpenAPI31
+    public Schema typesItem(String type) {
+        addType(type);
+        return this;
+    }
+
+    /**
+     *
      * @since 2.2.0 (OpenAPI 3.1.0)
      */
     @OpenAPI31
@@ -575,6 +621,34 @@ public class Schema<T> {
     @OpenAPI31
     public Schema $dynamicAnchor(String $dynamicAnchor) {
         this.$dynamicAnchor = $dynamicAnchor;
+        return this;
+    }
+
+    /**
+     *
+     * @since 2.2.32 (OpenAPI 3.1.0)
+     */
+    @OpenAPI31
+    public String get$dynamicRef() {
+        return $dynamicRef;
+    }
+
+    /**
+     *
+     * @since 2.2.32 (OpenAPI 3.1.0)
+     */
+    @OpenAPI31
+    public void set$dynamicRef(String $dynamicRef) {
+        this.$dynamicRef = $dynamicRef;
+    }
+
+    /**
+     *
+     * @since 2.2.32 (OpenAPI 3.1.0)
+     */
+    @OpenAPI31
+    public Schema $dynamicRef(String $dynamicRef) {
+        this.$dynamicRef = $dynamicRef;
         return this;
     }
 
@@ -796,7 +870,7 @@ public class Schema<T> {
 
 
     /**
-     * returns the name property from a from a Schema instance. Ignored in serialization.
+     * returns the name property from a Schema instance. Ignored in serialization.
      *
      * @return String name
      **/
@@ -864,6 +938,9 @@ public class Schema<T> {
 
     public void setDefault(Object _default) {
         this._default = cast(_default);
+        if (!(_default != null && this._default == null)) {
+            defaultSetFlag = true;
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -1165,7 +1242,7 @@ public class Schema<T> {
         List<String> list = new ArrayList<>();
         if (required != null) {
             for (String req : required) {
-                if (this.properties == null || this.properties.containsKey(req)) {
+                if ((this.properties == null || this.properties.containsKey(req)) && !list.contains(req)) {
                     list.add(req);
                 }
             }
@@ -1178,7 +1255,12 @@ public class Schema<T> {
     }
 
     public Schema required(List<String> required) {
-        this.required = required;
+        if (required == null) {
+            this.required = null;
+        } else {
+            this.required = new ArrayList<>(new LinkedHashSet<>(required));
+            Collections.sort(this.required);
+        }
         return this;
     }
 
@@ -1186,8 +1268,10 @@ public class Schema<T> {
         if (this.required == null) {
             this.required = new ArrayList<>();
         }
-        this.required.add(requiredItem);
-        Collections.sort(required);
+        if (!this.required.contains(requiredItem)) {
+            this.required.add(requiredItem);
+            Collections.sort(this.required);
+        }
         return this;
     }
 
@@ -1507,6 +1591,21 @@ public class Schema<T> {
 
     public void setExampleSetFlag(boolean exampleSetFlag) {
         this.exampleSetFlag = exampleSetFlag;
+    }
+
+    /**
+     * returns true if default setter has been invoked
+     * Used to flag explicit setting to null of default (vs missing field) while deserializing from json/yaml string
+     *
+     * @return boolean defaultSetFlag
+     **/
+
+    public boolean getDefaultSetFlag() {
+        return defaultSetFlag;
+    }
+
+    public void setDefaultSetFlag(boolean defaultSetFlag) {
+        this.defaultSetFlag = defaultSetFlag;
     }
 
     /**
@@ -2060,6 +2159,7 @@ public class Schema<T> {
                 Objects.equals(this.$schema, schema.$schema) &&
                 Objects.equals(this.$vocabulary, schema.$vocabulary) &&
                 Objects.equals(this.$dynamicAnchor, schema.$dynamicAnchor) &&
+                Objects.equals(this.$dynamicRef, schema.$dynamicRef) &&
                 Objects.equals(this.types, schema.types) &&
                 Objects.equals(this.allOf, schema.allOf) &&
                 Objects.equals(this.anyOf, schema.anyOf) &&
@@ -2083,8 +2183,8 @@ public class Schema<T> {
                 Objects.equals(this.$comment, schema.$comment) &&
                 Objects.equals(this.examples, schema.examples) &&
                 Objects.equals(this.prefixItems, schema.prefixItems) &&
-                Objects.equals(this.items, schema.items)
-
+                Objects.equals(this.items, schema.items) &&
+                Objects.equals(this.booleanSchemaValue, schema.booleanSchemaValue)
                 ;
     }
 
@@ -2094,10 +2194,10 @@ public class Schema<T> {
                 exclusiveMinimum, exclusiveMinimumValue, maxLength, minLength, pattern, maxItems, minItems, uniqueItems,
                 maxProperties, minProperties, required, type, not, properties, additionalProperties, description,
                 format, $ref, nullable, readOnly, writeOnly, example, externalDocs, deprecated, xml, extensions,
-                discriminator, _enum, _default, patternProperties, $id, $anchor, $schema, $vocabulary, $dynamicAnchor, types, allOf, anyOf, oneOf, _const,
-                contentEncoding, contentMediaType, contentSchema, propertyNames, unevaluatedProperties, maxContains,
-                minContains, additionalItems, unevaluatedItems, _if, _else, then, dependentRequired, dependentSchemas,
-                $comment, examples, prefixItems, items);
+                discriminator, _enum, _default, patternProperties, $id, $anchor, $schema, $vocabulary, $dynamicAnchor,
+                $dynamicRef, types, allOf, anyOf, oneOf, _const, contentEncoding, contentMediaType, contentSchema,
+                propertyNames, unevaluatedProperties, maxContains, minContains, additionalItems, unevaluatedItems,
+                _if, _else, then, dependentRequired, dependentSchemas, $comment, examples, prefixItems, items, booleanSchemaValue);
     }
 
     public java.util.Map<String, Object> getExtensions() {
@@ -2168,6 +2268,7 @@ public class Schema<T> {
             sb.append("    $schema: ").append(toIndentedString($schema)).append("\n");
             sb.append("    $vocabulary: ").append(toIndentedString($vocabulary)).append("\n");
             sb.append("    $dynamicAnchor: ").append(toIndentedString($dynamicAnchor)).append("\n");
+            sb.append("    $dynamicRef: ").append(toIndentedString($dynamicRef)).append("\n");
             sb.append("    const: ").append(toIndentedString(_const)).append("\n");
             sb.append("    contentEncoding: ").append(toIndentedString(contentEncoding)).append("\n");
             sb.append("    contentMediaType: ").append(toIndentedString(contentMediaType)).append("\n");
@@ -2185,6 +2286,7 @@ public class Schema<T> {
             sb.append("    dependentSchemas: ").append(toIndentedString(dependentSchemas)).append("\n");
             sb.append("    $comment: ").append(toIndentedString($comment)).append("\n");
             sb.append("    prefixItems: ").append(toIndentedString(prefixItems)).append("\n");
+            sb.append("    booleanSchemaValue: ").append(toIndentedString(booleanSchemaValue)).append("\n");
         }
         sb.append("}");
         return sb.toString();
@@ -2213,6 +2315,11 @@ public class Schema<T> {
 
     public Schema exampleSetFlag(boolean exampleSetFlag) {
         this.exampleSetFlag = exampleSetFlag;
+        return this;
+    }
+
+    public Schema defaultSetFlag(boolean defaultSetFlag) {
+        this.defaultSetFlag = defaultSetFlag;
         return this;
     }
 
@@ -2272,4 +2379,3 @@ public class Schema<T> {
         return this;
     }
 }
-

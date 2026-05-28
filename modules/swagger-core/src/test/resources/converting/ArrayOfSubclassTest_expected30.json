@@ -1,0 +1,87 @@
+{
+  "schema" : {
+    "type" : "object",
+    "properties" : {
+      "name" : {
+        "type" : "string"
+      },
+      "friend" : {
+        "type" : "string"
+      },
+      "baseArray" : {
+        "minItems" : 0,
+        "uniqueItems" : true,
+        "type" : "array",
+        "description" : "Thingy",
+        "items" : {
+          "$ref" : "#/components/schemas/Base"
+        }
+      }
+    },
+    "description" : "The holder"
+  },
+  "referencedSchemas" : {
+    "Base" : {
+      "type" : "object",
+      "properties" : {
+        "name" : {
+          "type" : "string"
+        }
+      },
+      "description" : "Stuff",
+      "discriminator" : {
+        "propertyName" : "name",
+        "mapping" : {
+          "a" : "#/components/schemas/SubA",
+          "b" : "#/components/schemas/SubB"
+        }
+      }
+    },
+    "Holder" : {
+      "type" : "object",
+      "properties" : {
+        "name" : {
+          "type" : "string"
+        },
+        "friend" : {
+          "type" : "string"
+        },
+        "baseArray" : {
+          "minItems" : 0,
+          "uniqueItems" : true,
+          "type" : "array",
+          "description" : "Thingy",
+          "items" : {
+            "$ref" : "#/components/schemas/Base"
+          }
+        }
+      },
+      "description" : "The holder"
+    },
+    "SubA" : {
+      "type" : "object",
+      "properties" : {
+        "name" : {
+          "type" : "string"
+        },
+        "count" : {
+          "type" : "integer",
+          "format" : "int64"
+        }
+      },
+      "description" : "The SubA class"
+    },
+    "SubB" : {
+      "type" : "object",
+      "properties" : {
+        "name" : {
+          "type" : "string"
+        },
+        "friend" : {
+          "type" : "string"
+        }
+      },
+      "description" : "The SubB class"
+    }
+  }
+}

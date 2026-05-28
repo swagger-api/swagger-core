@@ -25,12 +25,12 @@ public class Ticket3703Test extends SwaggerTestBase {
                 "  type: object\n" +
                 "  properties:\n" +
                 "    model:\n" +
-                "      $ref: '#/components/schemas/Model'\n" +
+                "      $ref: \"#/components/schemas/Model\"\n" +
                 "ModelContainer:\n" +
                 "  type: object\n" +
                 "  properties:\n" +
                 "    model:\n" +
-                "      $ref: '#/components/schemas/Model'\n" +
+                "      $ref: \"#/components/schemas/Model\"\n" +
                 "    bytes:\n" +
                 "      type: string\n" +
                 "      format: byte");

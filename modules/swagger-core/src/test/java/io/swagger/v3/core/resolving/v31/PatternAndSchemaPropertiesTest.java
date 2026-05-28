@@ -39,7 +39,7 @@ public class PatternAndSchemaPropertiesTest extends SwaggerTestBase {
                 "      type: integer\n" +
                 "      format: int64\n" +
                 "    category:\n" +
-                "      $ref: '#/components/schemas/Category'\n" +
+                "      $ref: \"#/components/schemas/Category\"\n" +
                 "    name:\n" +
                 "      type: string\n" +
                 "    photoUrls:\n" +
@@ -55,7 +55,7 @@ public class PatternAndSchemaPropertiesTest extends SwaggerTestBase {
                 "      xml:\n" +
                 "        wrapped: true\n" +
                 "      items:\n" +
-                "        $ref: '#/components/schemas/Tag'\n" +
+                "        $ref: \"#/components/schemas/Tag\"\n" +
                 "    status:\n" +
                 "      type: string\n" +
                 "      description: pet status in the store\n" +
@@ -64,7 +64,7 @@ public class PatternAndSchemaPropertiesTest extends SwaggerTestBase {
                 "      - pending\n" +
                 "      - sold\n" +
                 "    anotherCategory:\n" +
-                "      $ref: '#/components/schemas/Category'\n" +
+                "      $ref: \"#/components/schemas/Category\"\n" +
                 "    anotherInteger:\n" +
                 "      maximum: 10\n" +
                 "      type: integer\n" +
@@ -104,7 +104,7 @@ public class PatternAndSchemaPropertiesTest extends SwaggerTestBase {
                 "      type: integer\n" +
                 "      format: int64\n" +
                 "    category:\n" +
-                "      $ref: '#/components/schemas/Category'\n" +
+                "      $ref: \"#/components/schemas/Category\"\n" +
                 "    name:\n" +
                 "      type: string\n" +
                 "    photoUrls:\n" +
@@ -120,7 +120,7 @@ public class PatternAndSchemaPropertiesTest extends SwaggerTestBase {
                 "      xml:\n" +
                 "        wrapped: true\n" +
                 "      items:\n" +
-                "        $ref: '#/components/schemas/Tag'\n" +
+                "        $ref: \"#/components/schemas/Tag\"\n" +
                 "    status:\n" +
                 "      type: string\n" +
                 "      description: pet status in the store\n" +
@@ -129,7 +129,7 @@ public class PatternAndSchemaPropertiesTest extends SwaggerTestBase {
                 "      - pending\n" +
                 "      - sold\n" +
                 "    anotherCategory:\n" +
-                "      $ref: '#/components/schemas/Category'\n" +
+                "      $ref: \"#/components/schemas/Category\"\n" +
                 "    anotherInteger:\n" +
                 "      maximum: 10\n" +
                 "      type: integer\n" +
@@ -142,7 +142,7 @@ public class PatternAndSchemaPropertiesTest extends SwaggerTestBase {
                 "      description: prop schema 1\n" +
                 "      format: int32\n" +
                 "    it.*takes:\n" +
-                "      $ref: '#/components/schemas/Category'\n" +
+                "      $ref: \"#/components/schemas/Category\"\n" +
                 "  description: Annotated Pet\n" +
                 "Category:\n" +
                 "  type: object\n" +

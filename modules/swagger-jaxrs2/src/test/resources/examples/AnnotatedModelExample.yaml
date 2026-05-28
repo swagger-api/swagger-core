@@ -8,7 +8,7 @@ paths:
         content:
           '*/*':
             schema:
-              $ref: '#/components/schemas/AnnotatedSubscription'
+              $ref: "#/components/schemas/AnnotatedSubscription"
         required: true
       responses:
         default:
@@ -16,7 +16,7 @@ paths:
           content:
             '*/*':
               schema:
-                $ref: '#/components/schemas/AnnotatedSubscription'
+                $ref: "#/components/schemas/AnnotatedSubscription"
 components:
   schemas:
     AnnotatedSubscriptionItem:
@@ -32,7 +32,7 @@ components:
         subscriptionId:
           type: string
         subscriptionItem:
-          $ref: '#/components/schemas/AnnotatedSubscriptionItem'
+          $ref: "#/components/schemas/AnnotatedSubscriptionItem"
       example:
         subscriptionId: "1"
         subscriptionItem:

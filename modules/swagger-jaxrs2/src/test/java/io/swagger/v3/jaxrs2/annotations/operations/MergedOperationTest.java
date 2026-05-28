@@ -61,7 +61,7 @@ public class MergedOperationTest extends AbstractAnnotationTest {
                         "          content:\n" +
                         "            '*/*':\n" +
                         "              schema:\n" +
-                        "                $ref: '#/components/schemas/SimpleResponse'\n" +
+                        "                $ref: \"#/components/schemas/SimpleResponse\"\n" +
                         "components:\n" +
                         "  schemas:\n" +
                         "    SimpleResponse:\n" +
@@ -108,7 +108,7 @@ public class MergedOperationTest extends AbstractAnnotationTest {
                 "          content:\n" +
                 "            '*/*':\n" +
                 "              schema:\n" +
-                "                $ref: '#/components/schemas/SimpleResponse'\n" +
+                "                $ref: \"#/components/schemas/SimpleResponse\"\n" +
                 "components:\n" +
                 "  schemas:\n" +
                 "    SimpleResponse:\n" +
@@ -146,7 +146,7 @@ public class MergedOperationTest extends AbstractAnnotationTest {
                 "        content:\n" +
                 "          '*/*':\n" +
                 "            schema:\n" +
-                "              $ref: '#/components/schemas/InputValue'\n" +
+                "              $ref: \"#/components/schemas/InputValue\"\n" +
                 "      responses:\n" +
                 "        \"201\":\n" +
                 "          description: value successfully processed\n" +

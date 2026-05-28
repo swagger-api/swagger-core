@@ -23,6 +23,11 @@ python $CUR/CI/publishRelease.py "$SC_RELEASE_TAG"
 ./mvnw versions:set -DnewVersion="${SC_NEXT_VERSION}-SNAPSHOT"
 ./mvnw versions:commit
 
+cd modules/swagger-bom
+../../mvnw versions:set -DnewVersion="${SC_NEXT_VERSION}-SNAPSHOT"
+../../mvnw versions:commit
+cd ../..
+
 cd modules/swagger-project-jakarta
 ../../mvnw versions:set -DnewVersion="${SC_NEXT_VERSION}-SNAPSHOT"
 ../../mvnw versions:commit
@@ -44,6 +49,10 @@ sc_find="io.swagger.core.v3:swagger-jaxrs2:$SC_VERSION"
 sc_replace="io.swagger.core.v3:swagger-jaxrs2:$SC_NEXT_VERSION-SNAPSHOT"
 sed -i -e "s/$sc_find/$sc_replace/g" $CUR/modules/swagger-gradle-plugin/src/test/java/io/swagger/v3/plugins/gradle/SwaggerResolveTest.java
 
+sc_find="<version>$SC_VERSION<\/version>"
+sc_replace="<version>$SC_NEXT_VERSION-SNAPSHOT<\/version>"
+sed -i -e "s/$sc_find/$sc_replace/g" $CUR/modules/swagger-java17-support/pom.xml
+rm -f $CUR/modules/swagger-java17-support/pom.xml.versionsBackup
 
 #####################
 ### Copy scripts to temp folder, as they are not available when checking out different branch or repo

@@ -19,7 +19,7 @@ paths:
         content:
           '*/*':
             schema:
-              $ref: '#/components/schemas/User'
+              $ref: "#/components/schemas/User"
         required: true
       responses:
         default:
@@ -59,6 +59,7 @@ paths:
 components:
   schemas:
     User:
+      type: object
       properties:
         id:
           type: integer

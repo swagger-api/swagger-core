@@ -8,7 +8,8 @@ public class PostalCodeNumberPattern {
     private Object postalCode;
 
     @Schema(
-            pattern = "[0-9]{5}(-[0-9]{4})?"
+            pattern = "[0-9]{5}(-[0-9]{4})?",
+            type = "string"
     )
     public Object getPostalCode() {
         return postalCode;

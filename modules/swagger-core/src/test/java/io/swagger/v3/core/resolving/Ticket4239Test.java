@@ -60,7 +60,7 @@ public class Ticket4239Test extends SwaggerTestBase {
         SerializationMatchers.assertEqualsToYaml(context.getDefinedModels(), "A1_Output:\n" +
             "  type: object\n" +
             "  allOf:\n" +
-            "  - $ref: '#/components/schemas/A_Output'\n" +
+            "  - $ref: \"#/components/schemas/A_Output\"\n" +
             "  - type: object\n" +
             "    properties:\n" +
             "      a1_out:\n" +

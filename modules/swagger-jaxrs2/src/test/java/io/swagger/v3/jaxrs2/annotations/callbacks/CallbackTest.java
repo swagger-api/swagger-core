@@ -52,7 +52,7 @@ public class CallbackTest extends AbstractAnnotationTest {
                 "          content:\n" +
                 "            '*/*':\n" +
                 "              schema:\n" +
-                "                $ref: '#/components/schemas/SubscriptionResponse'\n" +
+                "                $ref: \"#/components/schemas/SubscriptionResponse\"\n" +
                 "      callbacks:\n" +
                 "        subscription:\n" +
                 "          http://$request.query.url:\n" +

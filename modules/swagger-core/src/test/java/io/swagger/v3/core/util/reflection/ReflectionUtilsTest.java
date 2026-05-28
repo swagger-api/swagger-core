@@ -1,5 +1,6 @@
 package io.swagger.v3.core.util.reflection;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import io.swagger.v3.core.util.ReflectionUtils;
 import io.swagger.v3.core.util.reflection.resources.Child;
 import io.swagger.v3.core.util.reflection.resources.IParent;
@@ -8,7 +9,6 @@ import io.swagger.v3.core.util.reflection.resources.Parent;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import javax.ws.rs.Path;
@@ -25,18 +25,23 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;
 
 import static java.lang.annotation.ElementType.PARAMETER;
+import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.fail;
 
 public class ReflectionUtilsTest {
 
     @Test
     public void typeFromStringTest() {
-        Assert.assertEquals(ReflectionUtils.typeFromString("int"), (Type) Integer.class);
-        Assert.assertEquals(ReflectionUtils.typeFromString("java.lang.String"), (Type) String.class);
-        Assert.assertNull(ReflectionUtils.typeFromString("FakeType"));
-        Assert.assertNull(ReflectionUtils.typeFromString(null));
+        assertEquals(ReflectionUtils.typeFromString("int"), (Type) Integer.class);
+        assertEquals(ReflectionUtils.typeFromString("java.lang.String"), (Type) String.class);
+        assertNull(ReflectionUtils.typeFromString("FakeType"));
+        assertNull(ReflectionUtils.typeFromString(null));
     }
 
     @Test
@@ -46,28 +51,28 @@ public class ReflectionUtilsTest {
                 final boolean result = ReflectionUtils.isOverriddenMethod(method, Child.class);
                 final Class<?> first = method.getParameterTypes()[0];
                 if (Number.class.equals(first)) {
-                    Assert.assertTrue(result);
+                    assertTrue(result);
                 } else if (Integer.class.equals(first)) {
-                    Assert.assertFalse(result);
+                    assertFalse(result);
                 }
             } else if ("parametrizedMethod3".equals(method.getName())) {
-                Assert.assertFalse(ReflectionUtils.isOverriddenMethod(method, Child.class));
+                assertFalse(ReflectionUtils.isOverriddenMethod(method, Child.class));
             }
         }
 
         for (Method method : Object.class.getMethods()) {
             if ("equals".equals(method.getName())) {
-                Assert.assertFalse(ReflectionUtils.isOverriddenMethod(method, Object.class));
+                assertFalse(ReflectionUtils.isOverriddenMethod(method, Object.class));
             }
         }
 
         for (Method method : IParent.class.getMethods()) {
             if ("parametrizedMethod5".equals(method.getName())) {
-                Assert.assertFalse(ReflectionUtils.isOverriddenMethod(method, IParent.class));
+                assertFalse(ReflectionUtils.isOverriddenMethod(method, IParent.class));
             } else if ("parametrizedMethod2".equals(method.getName())) {
-                Assert.assertFalse(ReflectionUtils.isOverriddenMethod(method, IParent.class));
+                assertFalse(ReflectionUtils.isOverriddenMethod(method, IParent.class));
             } else {
-                Assert.fail("Method not expected");
+                fail("Method not expected");
             }
         }
     }
@@ -76,81 +81,81 @@ public class ReflectionUtilsTest {
     public void getOverriddenMethodTest() throws NoSuchMethodException {
         final Method method1 = ReflectionUtils.getOverriddenMethod(
                 Child.class.getMethod("parametrizedMethod1", Integer.class));
-        Assert.assertNotNull(method1);
-        Assert.assertEquals(method1.getParameterTypes()[0], Number.class);
+        assertNotNull(method1);
+        assertEquals(method1.getParameterTypes()[0], Number.class);
 
         final Method method2 = ReflectionUtils.getOverriddenMethod(
                 Child.class.getMethod("parametrizedMethod2", Long.class));
-        Assert.assertNotNull(method2);
-        Assert.assertEquals(method2.getParameterTypes()[0], Number.class);
+        assertNotNull(method2);
+        assertEquals(method2.getParameterTypes()[0], Number.class);
 
         final Method method3 = ReflectionUtils.getOverriddenMethod(
                 Child.class.getMethod("parametrizedMethod3", Long.class));
-        Assert.assertNull(method3);
+        assertNull(method3);
 
-        Assert.assertNull(ReflectionUtils.getOverriddenMethod(Object.class.getMethod("equals", Object.class)));
+        assertNull(ReflectionUtils.getOverriddenMethod(Object.class.getMethod("equals", Object.class)));
     }
 
     @Test
     public void findMethodTest() throws NoSuchMethodException {
         final Method methodToFind1 = Child.class.getMethod("parametrizedMethod1", Integer.class);
         final Method method1 = ReflectionUtils.findMethod(methodToFind1, Parent.class);
-        Assert.assertNotNull(method1);
-        Assert.assertEquals(method1.getParameterTypes()[0], Number.class);
+        assertNotNull(method1);
+        assertEquals(method1.getParameterTypes()[0], Number.class);
 
         final Method methodToFind2 = Child.class.getMethod("parametrizedMethod4", Long.class);
         final Method method2 = ReflectionUtils.findMethod(methodToFind2, Parent.class);
-        Assert.assertNull(method2);
+        assertNull(method2);
     }
 
     @Test
     public void isInjectTest() throws NoSuchMethodException {
         final Method injectableMethod = Child.class.getMethod("injectableMethod");
-        Assert.assertTrue(ReflectionUtils.isInject(Arrays.asList(injectableMethod.getDeclaredAnnotations())));
+        assertTrue(ReflectionUtils.isInject(Arrays.asList(injectableMethod.getDeclaredAnnotations())));
 
         final Method methodToFind = Child.class.getMethod("parametrizedMethod1", Integer.class);
-        Assert.assertFalse(ReflectionUtils.isInject(Arrays.asList(methodToFind.getDeclaredAnnotations())));
+        assertFalse(ReflectionUtils.isInject(Arrays.asList(methodToFind.getDeclaredAnnotations())));
     }
 
     @Test
     public void isConstructorCompatibleTest() throws NoSuchMethodException {
-        Assert.assertFalse(ReflectionUtils.isConstructorCompatible(Child.class.getDeclaredConstructor()));
-        Assert.assertTrue(ReflectionUtils.isConstructorCompatible(Child.class.getDeclaredConstructor(String.class)));
+        assertFalse(ReflectionUtils.isConstructorCompatible(Child.class.getDeclaredConstructor()));
+        assertTrue(ReflectionUtils.isConstructorCompatible(Child.class.getDeclaredConstructor(String.class)));
     }
 
     @Test
     public void getAnnotationTest() throws NoSuchMethodException {
         final Method method = Child.class.getMethod("annotationHolder");
-        Assert.assertNotNull(ReflectionUtils.getAnnotation(method, Schema.class));
-        Assert.assertNull(ReflectionUtils.getAnnotation(method, ApiResponse.class));
+        assertNotNull(ReflectionUtils.getAnnotation(method, Schema.class));
+        assertNull(ReflectionUtils.getAnnotation(method, ApiResponse.class));
     }
 
     @Test
     public void isVoidTest() {
-        Assert.assertTrue(ReflectionUtils.isVoid(Void.class));
-        Assert.assertTrue(ReflectionUtils.isVoid(Void.TYPE));
-        Assert.assertFalse(ReflectionUtils.isVoid(String.class));
+        assertTrue(ReflectionUtils.isVoid(Void.class));
+        assertTrue(ReflectionUtils.isVoid(Void.TYPE));
+        assertFalse(ReflectionUtils.isVoid(String.class));
     }
 
     @Test
     public void testDerivedAnnotation() {
         final Path annotation = ReflectionUtils.getAnnotation(Child.class, javax.ws.rs.Path.class);
-        Assert.assertNotNull(annotation);
-        Assert.assertEquals(annotation.value(), "parentInterfacePath");
+        assertNotNull(annotation);
+        assertEquals(annotation.value(), "parentInterfacePath");
     }
 
     @Test
     public void getDeclaredFieldsFromInterfaceTest() throws NoSuchMethodException {
         final Class cls = IParent.class;
-        Assert.assertEquals(Collections.emptyList(), ReflectionUtils.getDeclaredFields(cls));
+        assertEquals(Collections.emptyList(), ReflectionUtils.getDeclaredFields(cls));
     }
 
     @Test
     public void declaredFieldsShouldBeSorted() {
         final Class cls = ObjectWithManyFields.class;
         final List<Field> declaredFields = ReflectionUtils.getDeclaredFields(cls);
-        Assert.assertEquals(4, declaredFields.size());
-        Assert.assertEquals(Arrays.asList("a", "b", "c", "d"), declaredFields.stream().map(Field::getName).collect(Collectors.toList()));
+        assertEquals(declaredFields.size(), 4);
+        assertEquals(Arrays.asList("a", "b", "c", "d"), declaredFields.stream().map(Field::getName).collect(Collectors.toList()));
     }
 
     @Test
@@ -162,31 +167,108 @@ public class ReflectionUtilsTest {
     @Test
     public void getRepeatableAnnotationsArrayTest() {
         Tag[] annotations = ReflectionUtils.getRepeatableAnnotationsArray(InheritingClass.class, Tag.class);
-        Assert.assertNotNull(annotations);
-        Assert.assertTrue(annotations.length == 1);
-        Assert.assertNotNull(annotations[0]);
-        Assert.assertEquals("inherited tag", annotations[0].name());
+        assertNotNull(annotations);
+        assertEquals(annotations.length, 1);
+        assertNotNull(annotations[0]);
+        assertEquals(annotations[0].name(), "inherited tag");
     }
 
     @Test
     public void getParameterAnnotationsTest() throws NoSuchMethodException {
         Method method = SecondLevelSubClass.class.getMethod("method", String.class);
         Annotation[][] parameterAnnotations = ReflectionUtils.getParameterAnnotations(method);
-        Assert.assertEquals(1, parameterAnnotations.length);
-        Assert.assertEquals(1, parameterAnnotations[0].length);
-        Assert.assertTrue(parameterAnnotations[0][0] instanceof AnnotationInterface);
-        Assert.assertEquals("level1", ((AnnotationInterface)parameterAnnotations[0][0]).value());
+        assertEquals(parameterAnnotations.length, 1);
+        assertEquals(parameterAnnotations[0].length, 1);
+        assertTrue(parameterAnnotations[0][0] instanceof AnnotationInterface);
+        assertEquals(((AnnotationInterface)parameterAnnotations[0][0]).value(), "level1");
     }
 
     @Test
     public void getParameterAnnotationsForOverriddenAnnotationTest() throws NoSuchMethodException {
         Method method = ThirdLevelSubClass.class.getMethod("method", String.class);
         Annotation[][] parameterAnnotations = ReflectionUtils.getParameterAnnotations(method);
-        Assert.assertEquals(1, parameterAnnotations.length);
-        Assert.assertEquals(1, parameterAnnotations[0].length);
-        Assert.assertTrue(parameterAnnotations[0][0] instanceof AnnotationInterface);
-        Assert.assertEquals("level4", ((AnnotationInterface)parameterAnnotations[0][0]).value());
+        assertEquals(parameterAnnotations.length, 1);
+        assertEquals(parameterAnnotations[0].length, 1);
+        assertTrue(parameterAnnotations[0][0] instanceof AnnotationInterface);
+        assertEquals(((AnnotationInterface)parameterAnnotations[0][0]).value(), "level4");
     }
+
+    @Test
+    public void getAnnotatedMethods_returnsEmptyWhenNoMethodHasAnnotation() {
+        List<Method> methods = ReflectionUtils.getAnnotatedMethods(String.class, JsonValue.class);
+        assertTrue(methods.isEmpty());
+    }
+
+    @Test
+    public void getAnnotatedMethods_findsAnnotationInSuperclass() {
+        List<Method> methods = ReflectionUtils.getAnnotatedMethods(SubclassWithoutJsonValue.class, JsonValue.class);
+        assertEquals(methods.size(), 1);
+        assertEquals(methods.get(0).getName(), "getJsonValue");
+    }
+
+    @Test
+    public void getAnnotatedMethods_findsMultipleMatchesAcrossClassHierarchy() {
+        List<Method> methods = ReflectionUtils.getAnnotatedMethods(SubclassWithOwnJsonValue.class, JsonValue.class);
+        assertEquals(methods.size(), 2);
+        List<String> names = methods.stream().map(Method::getName).collect(Collectors.toList());
+        assertTrue(names.contains("getJsonValue"));
+        assertTrue(names.contains("getSubJsonValue"));
+    }
+
+    @Test
+    public void getAnnotatedMethods_findsDefaultMethodAnnotationFromInterface() {
+        List<Method> methods = ReflectionUtils.getAnnotatedMethods(ImplementorWithoutOverride.class, JsonValue.class);
+        assertEquals(methods.size(), 1);
+        assertEquals(methods.get(0).getName(), "toValue");
+    }
+
+    @Test
+    public void getAnnotatedMethods_excludesBridgeMethodsFromGenericInterface() {
+        // GenericValueEnum implements PersistableEnum<String> which causes the compiler
+        // to generate a bridge method Object getValue() alongside String getValue().
+        // Both may carry @JsonValue, but only the non-bridge method should be returned.
+        List<Method> methods = ReflectionUtils.getAnnotatedMethods(GenericValueEnum.class, JsonValue.class);
+        assertEquals(methods.size(), 1, "should find exactly one @JsonValue method (excluding bridge)");
+        assertEquals(methods.get(0).getReturnType(), String.class, "should find the String-returning method, not the Object bridge");
+    }
+
+    // --- Support classes for getAnnotatedMethods tests ---
+
+    private interface GenericPersistableEnum<T> {
+        T getValue();
+    }
+
+    private enum GenericValueEnum implements GenericPersistableEnum<String> {
+        A("alpha"), B("beta");
+        private final String value;
+        GenericValueEnum(String value) { this.value = value; }
+        @JsonValue
+        @Override
+        public String getValue() { return value; }
+    }
+
+    private static class SuperclassWithJsonValue {
+        @JsonValue
+        public String getJsonValue() { return "super"; }
+    }
+
+    private static class SubclassWithoutJsonValue extends SuperclassWithJsonValue {
+        public String getOtherMethod() { return "other"; }
+    }
+
+    private static class SubclassWithOwnJsonValue extends SuperclassWithJsonValue {
+        @JsonValue
+        public String getSubJsonValue() { return "sub"; }
+    }
+
+    private interface InterfaceWithDefaultJsonValue {
+        @JsonValue
+        default String toValue() { return "from-interface"; }
+    }
+
+    private static class ImplementorWithoutOverride implements InterfaceWithDefaultJsonValue {}
+
+    // ---
 
     @Tag(name = "inherited tag")
     private interface AnnotatedInterface {}

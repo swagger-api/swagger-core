@@ -26,7 +26,7 @@ public class Ticket2862SubtypeTest extends SwaggerTestBase {
                 "Ticket2862ModelImpl:\n" +
                 "  type: string\n" +
                 "  allOf:\n" +
-                "  - $ref: '#/components/schemas/Ticket2862Model'\n" +
+                "  - $ref: \"#/components/schemas/Ticket2862Model\"\n" +
                 "  enum:\n" +
                 "  - VALUE1\n" +
                 "  - VALUE2\n");

@@ -1,0 +1,402 @@
+# Order Schemas for OpenAPI 3.1 and JSON Schema 2020/12
+# This file contains order-related schemas referenced by the root file
+
+# Base Order schema
+Order:
+  $schema: "https://json-schema.org/draft/2020-12/schema"
+  $id: "https://example.com/schemas/Order"
+  $anchor: "Order"
+  $dynamicAnchor: "Order"
+  title: "Order"
+  description: "Order object"
+  type: "object"
+  required:
+    - "id"
+    - "petId"
+    - "quantity"
+    - "shipDate"
+    - "status"
+  properties:
+    id:
+      type: "integer"
+      format: "int64"
+      description: "Order ID"
+      minimum: 1
+    petId:
+      type: "integer"
+      format: "int64"
+      description: "Pet ID"
+      minimum: 1
+    userId:
+      type: "integer"
+      format: "int64"
+      description: "User ID"
+      minimum: 1
+    quantity:
+      type: "integer"
+      format: "int32"
+      description: "Order quantity"
+      minimum: 1
+      maximum: 100
+    shipDate:
+      type: "string"
+      format: "date-time"
+      description: "Shipping date"
+    status:
+      type: "string"
+      description: "Order status"
+      enum: ["placed", "approved", "delivered", "cancelled"]
+    complete:
+      type: "boolean"
+      description: "Whether the order is complete"
+      default: false
+    createdAt:
+      type: "string"
+      format: "date-time"
+      description: "Order creation date"
+      readOnly: true
+    updatedAt:
+      type: "string"
+      format: "date-time"
+      description: "Order last update date"
+      readOnly: true
+  additionalProperties: false
+  x-extension-example: "Example of an extension"
+
+# OrderItem schema
+OrderItem:
+  $schema: "https://json-schema.org/draft/2020-12/schema"
+  $id: "https://example.com/schemas/OrderItem"
+  $anchor: "OrderItem"
+  title: "Order Item"
+  description: "Order item object"
+  type: "object"
+  required:
+    - "id"
+    - "petId"
+    - "quantity"
+    - "price"
+  properties:
+    id:
+      type: "integer"
+      format: "int64"
+      description: "Order item ID"
+      minimum: 1
+    petId:
+      type: "integer"
+      format: "int64"
+      description: "Pet ID"
+      minimum: 1
+    quantity:
+      type: "integer"
+      format: "int32"
+      description: "Item quantity"
+      minimum: 1
+      maximum: 100
+    price:
+      type: "number"
+      format: "double"
+      description: "Item price"
+      minimum: 0
+      exclusiveMinimum: true
+    discount:
+      type: "number"
+      format: "double"
+      description: "Item discount"
+      minimum: 0
+      maximum: 100
+      default: 0
+    notes:
+      type: "string"
+      description: "Additional notes"
+      maxLength: 500
+
+# OrderWithItems schema
+OrderWithItems:
+  $schema: "https://json-schema.org/draft/2020-12/schema"
+  $id: "https://example.com/schemas/OrderWithItems"
+  $anchor: "OrderWithItems"
+  title: "Order with Items"
+  description: "Order object with items"
+  allOf:
+    - $ref: "#/Order"
+    - type: "object"
+      properties:
+        items:
+          type: "array"
+          description: "Order items"
+          items:
+            $ref: "#/OrderItem"
+          minItems: 1
+          maxItems: 100
+          uniqueItems: true
+      required:
+        - "items"
+
+# OrderStatus schema
+OrderStatus:
+  $schema: "https://json-schema.org/draft/2020-12/schema"
+  $id: "https://example.com/schemas/OrderStatus"
+  $anchor: "OrderStatus"
+  title: "Order Status"
+  description: "Order status object"
+  type: "object"
+  required:
+    - "id"
+    - "status"
+  properties:
+    id:
+      type: "integer"
+      format: "int64"
+      description: "Order ID"
+      minimum: 1
+    status:
+      type: "string"
+      description: "Order status"
+      enum: ["placed", "approved", "delivered", "cancelled"]
+    timestamp:
+      type: "string"
+      format: "date-time"
+      description: "Status update timestamp"
+      readOnly: true
+    notes:
+      type: "string"
+      description: "Status notes"
+      maxLength: 500
+
+# OrderArray schema
+OrderArray:
+  $schema: "https://json-schema.org/draft/2020-12/schema"
+  $id: "https://example.com/schemas/OrderArray"
+  $anchor: "OrderArray"
+  title: "Order Array"
+  description: "Array of orders"
+  type: "array"
+  items:
+    $ref: "#/Order"
+  minItems: 0
+  maxItems: 100
+  uniqueItems: true
+
+# OrderSummary schema
+OrderSummary:
+  $schema: "https://json-schema.org/draft/2020-12/schema"
+  $id: "https://example.com/schemas/OrderSummary"
+  $anchor: "OrderSummary"
+  title: "Order Summary"
+  description: "Order summary object"
+  type: "object"
+  required:
+    - "id"
+    - "petId"
+    - "status"
+    - "createdAt"
+  properties:
+    id:
+      type: "integer"
+      format: "int64"
+      description: "Order ID"
+      minimum: 1
+    petId:
+      type: "integer"
+      format: "int64"
+      description: "Pet ID"
+      minimum: 1
+    status:
+      type: "string"
+      description: "Order status"
+      enum: ["placed", "approved", "delivered", "cancelled"]
+    createdAt:
+      type: "string"
+      format: "date-time"
+      description: "Order creation date"
+      readOnly: true
+  additionalProperties: false
+
+# Invoice schema
+Invoice:
+  $schema: "https://json-schema.org/draft/2020-12/schema"
+  $id: "https://example.com/schemas/Invoice"
+  $anchor: "Invoice"
+  title: "Invoice"
+  description: "Invoice object"
+  type: "object"
+  required:
+    - "id"
+    - "orderId"
+    - "amount"
+    - "status"
+    - "createdAt"
+  properties:
+    id:
+      type: "integer"
+      format: "int64"
+      description: "Invoice ID"
+      minimum: 1
+    orderId:
+      type: "integer"
+      format: "int64"
+      description: "Order ID"
+      minimum: 1
+    amount:
+      type: "number"
+      format: "double"
+      description: "Invoice amount"
+      minimum: 0
+      exclusiveMinimum: true
+    tax:
+      type: "number"
+      format: "double"
+      description: "Tax amount"
+      minimum: 0
+      default: 0
+    shipping:
+      type: "number"
+      format: "double"
+      description: "Shipping amount"
+      minimum: 0
+      default: 0
+    total:
+      type: "number"
+      format: "double"
+      description: "Total amount"
+      minimum: 0
+      exclusiveMinimum: true
+    status:
+      type: "string"
+      description: "Invoice status"
+      enum: ["pending", "paid", "cancelled"]
+    paymentMethod:
+      type: "string"
+      description: "Payment method"
+      enum: ["credit_card", "debit_card", "paypal", "bank_transfer", "cash"]
+    createdAt:
+      type: "string"
+      format: "date-time"
+      description: "Invoice creation date"
+      readOnly: true
+    paidAt:
+      type: "string"
+      format: "date-time"
+      description: "Invoice payment date"
+      readOnly: true
+  additionalProperties: false
+
+# Payment schema
+Payment:
+  $schema: "https://json-schema.org/draft/2020-12/schema"
+  $id: "https://example.com/schemas/Payment"
+  $anchor: "Payment"
+  title: "Payment"
+  description: "Payment object"
+  type: "object"
+  required:
+    - "id"
+    - "invoiceId"
+    - "amount"
+    - "method"
+    - "status"
+    - "createdAt"
+  properties:
+    id:
+      type: "integer"
+      format: "int64"
+      description: "Payment ID"
+      minimum: 1
+    invoiceId:
+      type: "integer"
+      format: "int64"
+      description: "Invoice ID"
+      minimum: 1
+    amount:
+      type: "number"
+      format: "double"
+      description: "Payment amount"
+      minimum: 0
+      exclusiveMinimum: true
+    method:
+      type: "string"
+      description: "Payment method"
+      enum: ["credit_card", "debit_card", "paypal", "bank_transfer", "cash"]
+    status:
+      type: "string"
+      description: "Payment status"
+      enum: ["pending", "completed", "failed", "refunded"]
+    transactionId:
+      type: "string"
+      description: "Payment transaction ID"
+      minLength: 1
+      maxLength: 100
+    createdAt:
+      type: "string"
+      format: "date-time"
+      description: "Payment creation date"
+      readOnly: true
+    completedAt:
+      type: "string"
+      format: "date-time"
+      description: "Payment completion date"
+      readOnly: true
+  additionalProperties: false
+
+# Shipment schema
+Shipment:
+  $schema: "https://json-schema.org/draft/2020-12/schema"
+  $id: "https://example.com/schemas/Shipment"
+  $anchor: "Shipment"
+  title: "Shipment"
+  description: "Shipment object"
+  type: "object"
+  required:
+    - "id"
+    - "orderId"
+    - "status"
+    - "createdAt"
+  properties:
+    id:
+      type: "integer"
+      format: "int64"
+      description: "Shipment ID"
+      minimum: 1
+    orderId:
+      type: "integer"
+      format: "int64"
+      description: "Order ID"
+      minimum: 1
+    status:
+      type: "string"
+      description: "Shipment status"
+      enum: ["pending", "shipped", "delivered", "returned"]
+    trackingNumber:
+      type: "string"
+      description: "Shipment tracking number"
+      minLength: 1
+      maxLength: 100
+    carrier:
+      type: "string"
+      description: "Shipping carrier"
+      enum: ["ups", "fedex", "dhl", "usps"]
+    estimatedDelivery:
+      type: "string"
+      format: "date"
+      description: "Estimated delivery date"
+    actualDelivery:
+      type: "string"
+      format: "date"
+      description: "Actual delivery date"
+    createdAt:
+      type: "string"
+      format: "date-time"
+      description: "Shipment creation date"
+      readOnly: true
+    shippedAt:
+      type: "string"
+      format: "date-time"
+      description: "Shipment shipping date"
+      readOnly: true
+    deliveredAt:
+      type: "string"
+      format: "date-time"
+      description: "Shipment delivery date"
+      readOnly: true
+  additionalProperties: false

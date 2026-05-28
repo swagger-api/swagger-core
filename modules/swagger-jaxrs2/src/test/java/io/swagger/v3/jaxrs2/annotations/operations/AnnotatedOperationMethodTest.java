@@ -114,13 +114,13 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
                 "          content:\n" +
                 "            application/json:\n" +
                 "              schema:\n" +
-                "                $ref: '#/components/schemas/SampleResponseSchema'\n" +
+                "                $ref: \"#/components/schemas/SampleResponseSchema\"\n" +
                 "        default:\n" +
                 "          description: boo\n" +
                 "          content:\n" +
                 "            '*/*':\n" +
                 "              schema:\n" +
-                "                $ref: '#/components/schemas/GenericError'\n" +
+                "                $ref: \"#/components/schemas/GenericError\"\n" +
                 "              examples:\n" +
                 "                boo:\n" +
                 "                  summary: example of boo\n" +
@@ -197,7 +197,7 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
                 "          content:\n" +
                 "            application/json:\n" +
                 "              schema:\n" +
-                "                $ref: '#/components/schemas/SampleResponseSchema'\n" +
+                "                $ref: \"#/components/schemas/SampleResponseSchema\"\n" +
                 "              examples:\n" +
                 "                basic:\n" +
                 "                  summary: shows a basic example\n" +
@@ -229,7 +229,7 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
                 "          content:\n" +
                 "            application/json:\n" +
                 "              schema:\n" +
-                "                $ref: '#/components/schemas/SampleResponseSchema'\n" +
+                "                $ref: \"#/components/schemas/SampleResponseSchema\"\n" +
                 "              examples:\n" +
                 "                basic:\n" +
                 "                  summary: shows a basic example\n" +
@@ -578,7 +578,7 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
                 "              style: simple\n" +
                 "              explode: true\n" +
                 "              schema:\n" +
-                "                $ref: '#/components/schemas/SampleHeaderSchema'\n" +
+                "                $ref: \"#/components/schemas/SampleHeaderSchema\"\n" +
                 "            Rate-Limit-Limit:\n" +
                 "              description: The number of allowed requests in the current period\n" +
                 "              style: simple\n" +
@@ -588,7 +588,7 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
                 "                minItems: 1\n" +
                 "                type: array\n" +
                 "                items:\n" +
-                "                  $ref: '#/components/schemas/SampleHeaderSchema'\n" +
+                "                  $ref: \"#/components/schemas/SampleHeaderSchema\"\n" +
                 "      deprecated: true\n" +
                 "components:\n" +
                 "  schemas:\n" +
@@ -706,7 +706,7 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
                 "          content:\n" +
                 "            application/json:\n" +
                 "              schema:\n" +
-                "                $ref: '#/components/schemas/Pet'\n" +
+                "                $ref: \"#/components/schemas/Pet\"\n" +
                 "        \"400\":\n" +
                 "          description: Invalid tag value\n" +
                 "      deprecated: true\n" +
@@ -721,7 +721,7 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
                 "        required: true\n" +
                 "        style: matrix\n" +
                 "        schema:\n" +
-                "          $ref: '#/components/schemas/Category'\n" +
+                "          $ref: \"#/components/schemas/Category\"\n" +
                 "      - name: skip\n" +
                 "        in: query\n" +
                 "        schema:\n" +
@@ -737,7 +737,7 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
                 "          content:\n" +
                 "            application/json:\n" +
                 "              schema:\n" +
-                "                $ref: '#/components/schemas/Pet'\n" +
+                "                $ref: \"#/components/schemas/Pet\"\n" +
                 "        \"400\":\n" +
                 "          description: Invalid category value\n" +
                 "  /pet/{petId}:\n" +
@@ -759,10 +759,10 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
                 "          content:\n" +
                 "            application/json:\n" +
                 "              schema:\n" +
-                "                $ref: '#/components/schemas/Pet'\n" +
+                "                $ref: \"#/components/schemas/Pet\"\n" +
                 "            application/xml:\n" +
                 "              schema:\n" +
-                "                $ref: '#/components/schemas/Pet'\n" +
+                "                $ref: \"#/components/schemas/Pet\"\n" +
                 "        \"400\":\n" +
                 "          description: Invalid ID supplied\n" +
                 "        \"404\":\n" +
@@ -775,10 +775,10 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
                 "        content:\n" +
                 "          application/json:\n" +
                 "            schema:\n" +
-                "              $ref: '#/components/schemas/Pet'\n" +
+                "              $ref: \"#/components/schemas/Pet\"\n" +
                 "          application/xml:\n" +
                 "            schema:\n" +
-                "              $ref: '#/components/schemas/Pet'\n" +
+                "              $ref: \"#/components/schemas/Pet\"\n" +
                 "      responses:\n" +
                 "        \"405\":\n" +
                 "          description: Invalid input\n" +
@@ -827,7 +827,7 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
                 "        content:\n" +
                 "          application/json:\n" +
                 "            schema:\n" +
-                "              $ref: '#/components/schemas/Pet'\n" +
+                "              $ref: \"#/components/schemas/Pet\"\n" +
                 "        required: true\n" +
                 "      responses:\n" +
                 "        \"400\":\n" +
@@ -844,10 +844,10 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
                 "        content:\n" +
                 "          application/json:\n" +
                 "            schema:\n" +
-                "              $ref: '#/components/schemas/Pet'\n" +
+                "              $ref: \"#/components/schemas/Pet\"\n" +
                 "          application/xml:\n" +
                 "            schema:\n" +
-                "              $ref: '#/components/schemas/Pet'\n" +
+                "              $ref: \"#/components/schemas/Pet\"\n" +
                 "        required: true\n" +
                 "      responses:\n" +
                 "        \"405\":\n" +
@@ -879,7 +879,7 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
                 "          content:\n" +
                 "            application/json:\n" +
                 "              schema:\n" +
-                "                $ref: '#/components/schemas/Pet'\n" +
+                "                $ref: \"#/components/schemas/Pet\"\n" +
                 "        \"400\":\n" +
                 "          description: Invalid status value\n" +
                 "components:\n" +
@@ -911,7 +911,7 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
                 "          type: integer\n" +
                 "          format: int64\n" +
                 "        category:\n" +
-                "          $ref: '#/components/schemas/Category'\n" +
+                "          $ref: \"#/components/schemas/Category\"\n" +
                 "        name:\n" +
                 "          type: string\n" +
                 "        photoUrls:\n" +
@@ -927,7 +927,7 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
                 "          xml:\n" +
                 "            wrapped: true\n" +
                 "          items:\n" +
-                "            $ref: '#/components/schemas/Tag'\n" +
+                "            $ref: \"#/components/schemas/Tag\"\n" +
                 "        status:\n" +
                 "          type: string\n" +
                 "          description: pet status in the store\n" +
@@ -954,7 +954,7 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
                 "          content:\n" +
                 "            '*/*':\n" +
                 "              schema:\n" +
-                "                $ref: '#/components/schemas/SomethingResponse'\n" +
+                "                $ref: \"#/components/schemas/SomethingResponse\"\n" +
                 "  /overridden:\n" +
                 "    get:\n" +
                 "      summary: Returns a list of somethings\n" +
@@ -964,21 +964,21 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
                 "          content:\n" +
                 "            '*/*':\n" +
                 "              schema:\n" +
-                "                $ref: '#/components/schemas/Something'\n" +
+                "                $ref: \"#/components/schemas/Something\"\n" +
                 "components:\n" +
                 "  schemas:\n" +
                 "    SomethingResponse:\n" +
                 "      type: object\n" +
                 "      properties:\n" +
                 "        data:\n" +
-                "          $ref: '#/components/schemas/DataSomething'\n" +
+                "          $ref: \"#/components/schemas/DataSomething\"\n" +
                 "    DataSomething:\n" +
                 "      type: object\n" +
                 "      properties:\n" +
                 "        items:\n" +
                 "          type: array\n" +
                 "          items:\n" +
-                "            $ref: '#/components/schemas/Something'\n" +
+                "            $ref: \"#/components/schemas/Something\"\n" +
                 "    Something:\n" +
                 "      type: object\n" +
                 "      properties:\n" +
@@ -1001,7 +1001,7 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
                 "        content:\n" +
                 "          '*/*':\n" +
                 "            schema:\n" +
-                "              $ref: '#/components/schemas/User'\n" +
+                "              $ref: \"#/components/schemas/User\"\n" +
                 "        required: true\n" +
                 "      responses:\n" +
                 "        default:\n" +
@@ -1020,7 +1020,7 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
                 "            schema:\n" +
                 "              type: array\n" +
                 "              items:\n" +
-                "                $ref: '#/components/schemas/User'\n" +
+                "                $ref: \"#/components/schemas/User\"\n" +
                 "        required: true\n" +
                 "      responses:\n" +
                 "        default:\n" +
@@ -1039,7 +1039,7 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
                 "            schema:\n" +
                 "              type: array\n" +
                 "              items:\n" +
-                "                $ref: '#/components/schemas/User'\n" +
+                "                $ref: \"#/components/schemas/User\"\n" +
                 "        required: true\n" +
                 "      responses:\n" +
                 "        default:\n" +
@@ -1064,7 +1064,7 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
                 "          content:\n" +
                 "            application/json:\n" +
                 "              schema:\n" +
-                "                $ref: '#/components/schemas/User'\n" +
+                "                $ref: \"#/components/schemas/User\"\n" +
                 "        \"400\":\n" +
                 "          description: User not found\n" +
                 "    put:\n" +
@@ -1094,7 +1094,7 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
                 "        content:\n" +
                 "          '*/*':\n" +
                 "            schema:\n" +
-                "              $ref: '#/components/schemas/User'\n" +
+                "              $ref: \"#/components/schemas/User\"\n" +
                 "        required: true\n" +
                 "      responses:\n" +
                 "        \"200\":\n" +
@@ -1204,10 +1204,10 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
                 "        content:\n" +
                 "          application/json:\n" +
                 "            schema:\n" +
-                "              $ref: '#/components/schemas/User'\n" +
+                "              $ref: \"#/components/schemas/User\"\n" +
                 "          application/xml:\n" +
                 "            schema:\n" +
-                "              $ref: '#/components/schemas/User'\n" +
+                "              $ref: \"#/components/schemas/User\"\n" +
                 "        required: true\n" +
                 "      responses:\n" +
                 "        default:\n" +
@@ -1225,10 +1225,10 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
                 "        content:\n" +
                 "          application/json:\n" +
                 "            schema:\n" +
-                "              $ref: '#/components/schemas/User'\n" +
+                "              $ref: \"#/components/schemas/User\"\n" +
                 "          application/xml:\n" +
                 "            schema:\n" +
-                "              $ref: '#/components/schemas/User'\n" +
+                "              $ref: \"#/components/schemas/User\"\n" +
                 "        required: true\n" +
                 "      responses:\n" +
                 "        default:\n" +
@@ -1236,10 +1236,10 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
                 "          content:\n" +
                 "            application/json:\n" +
                 "              schema:\n" +
-                "                $ref: '#/components/schemas/User'\n" +
+                "                $ref: \"#/components/schemas/User\"\n" +
                 "            application/xml:\n" +
                 "              schema:\n" +
-                "                $ref: '#/components/schemas/User'\n" +
+                "                $ref: \"#/components/schemas/User\"\n" +
                 "  /user/createUserWithResponseAnnotation:\n" +
                 "    post:\n" +
                 "      summary: Create user with response annotation\n" +
@@ -1250,10 +1250,10 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
                 "        content:\n" +
                 "          application/json:\n" +
                 "            schema:\n" +
-                "              $ref: '#/components/schemas/User'\n" +
+                "              $ref: \"#/components/schemas/User\"\n" +
                 "          application/xml:\n" +
                 "            schema:\n" +
-                "              $ref: '#/components/schemas/User'\n" +
+                "              $ref: \"#/components/schemas/User\"\n" +
                 "        required: true\n" +
                 "      responses:\n" +
                 "        \"200\":\n" +
@@ -1261,10 +1261,10 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
                 "          content:\n" +
                 "            application/json:\n" +
                 "              schema:\n" +
-                "                $ref: '#/components/schemas/User'\n" +
+                "                $ref: \"#/components/schemas/User\"\n" +
                 "            application/xml:\n" +
                 "              schema:\n" +
-                "                $ref: '#/components/schemas/User'\n" +
+                "                $ref: \"#/components/schemas/User\"\n" +
                 "  /user/createUserWithReturnTypeAndResponseAnnotation:\n" +
                 "    post:\n" +
                 "      summary: Create user with return type and response annotation\n" +
@@ -1275,10 +1275,10 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
                 "        content:\n" +
                 "          application/json:\n" +
                 "            schema:\n" +
-                "              $ref: '#/components/schemas/User'\n" +
+                "              $ref: \"#/components/schemas/User\"\n" +
                 "          application/xml:\n" +
                 "            schema:\n" +
-                "              $ref: '#/components/schemas/User'\n" +
+                "              $ref: \"#/components/schemas/User\"\n" +
                 "        required: true\n" +
                 "      responses:\n" +
                 "        \"200\":\n" +
@@ -1334,7 +1334,7 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
                 "        content:\n" +
                 "          '*/*':\n" +
                 "            schema:\n" +
-                "              $ref: '#/components/schemas/UserResourceBean'\n" +
+                "              $ref: \"#/components/schemas/UserResourceBean\"\n" +
                 "        required: true\n" +
                 "      responses:\n" +
                 "        default:\n" +

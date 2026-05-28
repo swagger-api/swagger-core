@@ -5,13 +5,14 @@ import io.swagger.v3.core.util.AnnotationsUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.extensions.Extension;
 import io.swagger.v3.oas.annotations.extensions.ExtensionProperty;
-import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.Map;
+
+import static org.testng.Assert.assertEquals;
 
 public class AnnotationsUtilsExtensionsTest {
 
@@ -41,7 +42,7 @@ public class AnnotationsUtilsExtensionsTest {
         final Extension[] extensions = method.getAnnotation(Operation.class).extensions();
         final Map<String, Object> map = AnnotationsUtils.getExtensions(extensions);
 
-        Assert.assertEquals(map, expected);
+        assertEquals(map, expected);
     }
 
     @Operation(description = "method")
