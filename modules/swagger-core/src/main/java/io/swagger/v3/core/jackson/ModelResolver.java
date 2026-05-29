@@ -3305,11 +3305,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             }
             if (schemaAnnotation.examples().length > 0) {
                 List<Object> parsedExamples = io.swagger.v3.core.util.AnnotationsUtils.parseExamplesArray(schemaAnnotation, schema);
-                if (schema.getExamples() == null || schema.getExamples().isEmpty()) {
-                    schema.setExamples(parsedExamples);
-                } else {
-                    schema.getExamples().addAll(parsedExamples);
-                }
+                schema.setExamples(parsedExamples);
             }
             String _const = resolveConst(a, annotations, schemaAnnotation);
             if (_const != null) {
