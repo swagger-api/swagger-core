@@ -3181,7 +3181,9 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             schema.title(title);
         }
         String format = resolveFormat(a, annotations, schemaAnnotation);
-        if (StringUtils.isNotBlank(format) && StringUtils.isBlank(schema.getFormat())) {
+        if (StringUtils.isNotBlank(format)) {
+            // An explicit format on @Schema is the user's intent and must take precedence
+            // over a format derived from the property type (e.g. java.net.URI -> "uri").
             schema.format(format);
         }
         Object defaultValue = resolveDefaultValue(a, annotations, schemaAnnotation);
