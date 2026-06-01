@@ -160,11 +160,6 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         super(mapper, typeNameResolver);
     }
 
-    public ModelResolver(ObjectMapper mapper, TypeNameResolver typeNameResolver,
-                         boolean addSwaggerModule) {
-        super(mapper, typeNameResolver, addSwaggerModule);
-    }
-
     public ObjectMapper objectMapper() {
         return _mapper;
     }
