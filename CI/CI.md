@@ -1,97 +1,69 @@
 ## Continuous integration
 
 ### Build, test and deploy
-Swagger Core uses Github actions to run jobs/checks building, testing and deploying snapshots on push and PR events.
+Swagger Core uses GitHub Actions to build, test and deploy snapshots on push and PR events.
 
-These github actions are configured in `.github/workflows`:
+Workflows in `.github/workflows`:
 
-* maven.yml : Build Test Deploy master
-* maven-pulls.yml Build Test PR
-* maven-v1.yml : Build Test Deploy 1.5 (must exist in in `1.5` branch)
-* maven-v1-pulls.yml Build Test PR 1.5 (must exist in in `1.5` branch)
-
-
-These actions use available actions in combination with short bash scripts.
+* `maven.yml` – Build, test and deploy `SNAPSHOT` artifacts from `master`.
+* `maven-pulls.yml` – Build and test pull requests against `master`.
 
 ### Release
 
-Releases are semi-automated and consist in 2 actions using available public actions in combination with bash and python scripts.
-**TODO**: Python code is used for historical reasons to execute GitHub APIs calls, in general a more consistent environment would
-be more maintainable e.g. implementing a custom JavaScript or Docker Container GitHub Action and/or a bash only script(s).
+Releases are fully automated through a single manually triggered workflow.
+The workflow supports three release types, chosen at launch time:
+
+- **milestone** – pre‑release for early testing (e.g. `3.0.0-M1`)
+- **rc** – release candidate (e.g. `3.0.0-RC1`)
+- **release** – final stable release (e.g. `3.0.0`)
+
+All releases start from a `-SNAPSHOT` version in the `master` branch.
+The release commit is created in a detached HEAD and is never pushed to `master`;
+the branch always remains on the current `-SNAPSHOT` version.
 
 #### Workflow summary
 
-1. execute `prepare-release.yml` / `Prepare Release` for `master` branch
-1. check and merge the Prepare Release PR pushed by previous step. Delete the branch
-1. execute `release.yml` / `Release` for `master` branch
-1. check and merge the `1.5` branch Readme update PR pushed by previous step. Delete the branch
-1. check and merge the next snaphot PR pushed by previous step. Delete the branch
+1. Go to **Actions → Release → Run workflow**.
+2. Select the release type (`milestone`, `rc`, `release`).
+3. The workflow automatically:
+    - Computes the next release version and whether it is a pre‑release.
+    - Creates a temporary commit with the release version.
+    - Builds, tests, and deploys artifacts to Maven Central and the Gradle Plugin Portal.
+    - Pushes a Git tag and publishes a GitHub release with auto‑generated release notes.
+    - Generates and publishes Javadocs to the `gh-pages` branch (versioned and `latest`).
+4. After a **final release**, the `-SNAPSHOT` version in `master` must be bumped manually
+   (e.g. `3.0.0` → `3.0.1-SNAPSHOT`).
 
-#### Prepare Release
+#### Release notes logic
 
-The first action to execute is `prepare-release.yml` / `Prepare Release` for master, and
-`prepare-release-v1.yml` / `Prepare Release V1` for `1.5` branch.
+- For **milestone** and **rc** releases, the notes contain pull requests merged since the
+  previous release of any type.
+- For a **final release**, the notes contain all pull requests merged since the last stable
+  release, providing a complete changelog.
 
-This is triggered by manually executing the action, selecting `Actions` in project GitHub UI, then `Prepare Release` workflow
-and clicking `Run Workflow` (or `Prepare Release V1` and selecting `1.5` in the dropdown)
+#### Key scripts
 
-`Prepare Release` takes care of:
-
-* create release notes out of merged PRs
-* Draft a release with related tag
-* bump versions to release, and update all affected files
-* build and test maven
-* build and test gradle plugin
-* push a Pull Request with the changes for human check.
-
-After the PR checks complete, the PR can me merged, and the second phase `Release` started.
-
-#### Release
-
-Once prepare release PR has been merged, the second phase is provided by `release.yml` / `Release` actions for master, and
-`release-v1.yml` / `Release V1` for `1.5` branch.
-
-This is triggered by manually executing the action, selecting `Actions` in project GitHub UI, then `Release` workflow
-and clicking `Run Workflow` (or `Release V1` and selecting `1.5` in the dropdown)
-
-`Release` takes care of:
-
-* build and test maven
-* build and test gradle plugin
-* deploy/publish to maven central
-* publish javadocs to gh-pages
-* deploy/publish gradle plugin
-* publish the previously prepared GitHub release / tag
-* push PR for next snapshot
-* push PR for 1.5 Readme update with new v2 version
-* update Wiki with javadocs links to new version
-
-
+| Script | Purpose |
+|--------|---------|
+| `CI/compute-release-version.sh` | Determines the release version, whether it is a pre‑release, and exports the last stable release tag. |
+| `CI/prepare-release-commit.sh` | Creates the release commit: updates version references, generates release notes, commits. |
+| `CI/releaseNotes.py` | Collects pull requests merged after a given release date and creates a draft GitHub release. |
+| `CI/lastRelease.py` | Returns the latest release tag (excluding drafts). Use argument `stable` to ignore pre‑releases. |
+| `CI/publishRelease.py` | Publishes the draft release. |
+| `CI/prepare-javadocs.sh` | Copies generated Javadocs to a temporary location for later publication. |
+| `CI/publish-javadocs.sh` | Publishes Javadocs to `gh-pages` (versioned folder and a `latest` redirect). |
 
 ### Secrets
 
-GitHub Actions make use of `Secrets` which can be configured either with Repo or Organization scope; the needed secrets are the following:
+The following secrets must be configured in the repository or organization:
 
-* `APP_ID` and `APP_PRIVATE_KEY`: these are the values provided by an account configured GitHub App, allowing to obtain a GitHub token
-different from the default used in GitHub Actions (which does not allow to "chain" actions).Actions
+| Secret | Description |
+|--------|-------------|
+| `MAVEN_CENTRAL_USERNAME` | Sonatype username / token |
+| `MAVEN_CENTRAL_PASSWORD` | Sonatype password / token |
+| `OSSRH_GPG_PRIVATE_KEY` | GPG private key for artifact signing |
+| `OSSRH_GPG_PRIVATE_PASSPHRASE` | Passphrase for the GPG key |
+| `GRADLE_PUBLISH_KEY` | Gradle Plugin Portal publish key |
+| `GRADLE_PUBLISH_SECRET` | Gradle Plugin Portal publish secret |
 
-The GitHub App must be configured as detailed in [this doc](https://github.com/peter-evans/create-pull-request/blob/master/docs/concepts-guidelines.md#authenticating-with-github-app-generated-tokens).
-
-See also [here](https://github.com/peter-evans/create-pull-request/blob/master/docs/concepts-guidelines.md#triggering-further-workflow-runs)
-
-* `OSSRH_GPG_PRIVATE_KEY` and `OSSRH_GPG_PRIVATE_PASSPHRASE` : gpg key and passphrase to be used for sonatype releases
-GPG private key and passphrase defined to be used for sonatype deployments, as detailed in
-https://central.sonatype.org/pages/working-with-pgp-signatures.html (I'd say with email matching the one  of the sonatype account of point 1
-
-* `MAVEN_CENTRAL_USERNAME` and `MAVEN_CENTRAL_PASSWORD`: sonatype user/token
-
-* `GRADLE_PUBLISH_KEY` and `GRADLE_PUBLISH_SECRET`: credentials for https://plugins.gradle.org/
-
-
-
-
-
-
-
-
-
+The workflow also uses the automatically provided `GITHUB_TOKEN` – no manual configuration is required.
