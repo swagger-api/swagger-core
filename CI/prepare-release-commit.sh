@@ -45,10 +45,10 @@ if [ "${IS_PRERELEASE}" = "true" ]; then
   elif [[ "${RELEASE_VERSION}" =~ -RC ]]; then
     RELEASE_TITLE="Swagger-core ${RELEASE_VERSION} (Release Candidate) released!"
   fi
-  # For milestones and RCs, base is the last release of any kind (without leading 'v')
+  # For milestones and RCs, base is the last release of any kind
   BASE_TAG=$(python CI/lastRelease.py)
 else
-  # For final release, base is the last stable release (without leading 'v')
+  # For final release, base is the last stable release
   BASE_TAG="${LAST_STABLE_RELEASE}"
 fi
 python CI/releaseNotes.py "$BASE_TAG" "$RELEASE_TITLE" "v${RELEASE_VERSION}" "${IS_PRERELEASE}"

@@ -1,17 +1,24 @@
 #!/usr/bin/python
 
+import sys
 import ghApiClient
 
-def getLastStableReleaseTag():
+def getLastReleaseTag(include_prereleases=True):
     content = ghApiClient.readUrl('repos/vpelikh/swagger-core/releases')
     for release in content:
-        if not release["draft"] and not release["prerelease"]:
-            tag = release["tag_name"]
-            return tag[1:]  # remove 'v'
+        if release["draft"]:
+            continue
+        if not include_prereleases and release["prerelease"]:
+            continue
+        tag = release["tag_name"]
+        return tag[1:]  # remove leading 'v'
     return "0.0.0"
 
 def main():
-    result = getLastStableReleaseTag()
+    include_all = True
+    if len(sys.argv) > 1 and sys.argv[1] == 'stable':
+        include_all = False
+    result = getLastReleaseTag(include_all)
     print(result)
 
 if __name__ == "__main__":
