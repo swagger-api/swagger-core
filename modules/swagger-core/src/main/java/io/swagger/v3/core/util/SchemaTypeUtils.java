@@ -9,6 +9,7 @@ public class SchemaTypeUtils {
     private static final String STRING_TYPE = "string";
     private static final String NUMBER_TYPE = "number";
     private static final String INTEGER_TYPE = "integer";
+    private static final String BOOLEAN_TYPE = "boolean";
 
     public static boolean isObjectSchema(Schema schema) {
         return isSchemaType(schema, OBJECT_TYPE) || (schema.getType() == null && (hasProperties(schema) || hasPatternProperties(schema)));
@@ -24,6 +25,10 @@ public class SchemaTypeUtils {
 
     public static boolean isNumberSchema(Schema schema) {
         return isSchemaType(schema, NUMBER_TYPE) || isSchemaType(schema, INTEGER_TYPE);
+    }
+
+    public static boolean isBooleanSchema(Schema schema) {
+        return isSchemaType(schema, BOOLEAN_TYPE);
     }
 
     private static boolean isSchemaType(Schema schema, String type) {

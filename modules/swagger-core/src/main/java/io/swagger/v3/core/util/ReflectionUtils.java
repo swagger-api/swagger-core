@@ -506,7 +506,7 @@ public class ReflectionUtils {
 
     private static void collectAnnotatedDeclaredMethods(Class<?> cls, Class<? extends Annotation> annotation, List<Method> methods) {
         for (Method method : cls.getDeclaredMethods()) {
-            if (method.isAnnotationPresent(annotation)) {
+            if (!method.isBridge() && method.isAnnotationPresent(annotation)) {
                 methods.add(method);
             }
         }

@@ -1242,7 +1242,7 @@ public class Schema<T> {
         List<String> list = new ArrayList<>();
         if (required != null) {
             for (String req : required) {
-                if (this.properties == null || this.properties.containsKey(req)) {
+                if ((this.properties == null || this.properties.containsKey(req)) && !list.contains(req)) {
                     list.add(req);
                 }
             }
@@ -1255,7 +1255,12 @@ public class Schema<T> {
     }
 
     public Schema required(List<String> required) {
-        this.required = required;
+        if (required == null) {
+            this.required = null;
+        } else {
+            this.required = new ArrayList<>(new LinkedHashSet<>(required));
+            Collections.sort(this.required);
+        }
         return this;
     }
 
@@ -1263,8 +1268,10 @@ public class Schema<T> {
         if (this.required == null) {
             this.required = new ArrayList<>();
         }
-        this.required.add(requiredItem);
-        Collections.sort(required);
+        if (!this.required.contains(requiredItem)) {
+            this.required.add(requiredItem);
+            Collections.sort(this.required);
+        }
         return this;
     }
 

@@ -222,7 +222,30 @@ public class ReflectionUtilsTest {
         assertEquals(methods.get(0).getName(), "toValue");
     }
 
+    @Test
+    public void getAnnotatedMethods_excludesBridgeMethodsFromGenericInterface() {
+        // GenericValueEnum implements PersistableEnum<String> which causes the compiler
+        // to generate a bridge method Object getValue() alongside String getValue().
+        // Both may carry @JsonValue, but only the non-bridge method should be returned.
+        List<Method> methods = ReflectionUtils.getAnnotatedMethods(GenericValueEnum.class, JsonValue.class);
+        assertEquals(methods.size(), 1, "should find exactly one @JsonValue method (excluding bridge)");
+        assertEquals(methods.get(0).getReturnType(), String.class, "should find the String-returning method, not the Object bridge");
+    }
+
     // --- Support classes for getAnnotatedMethods tests ---
+
+    private interface GenericPersistableEnum<T> {
+        T getValue();
+    }
+
+    private enum GenericValueEnum implements GenericPersistableEnum<String> {
+        A("alpha"), B("beta");
+        private final String value;
+        GenericValueEnum(String value) { this.value = value; }
+        @JsonValue
+        @Override
+        public String getValue() { return value; }
+    }
 
     private static class SuperclassWithJsonValue {
         @JsonValue
