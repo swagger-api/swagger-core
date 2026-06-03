@@ -1,6 +1,7 @@
 package io.swagger.v3.core.jackson;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
 import tools.jackson.core.Version;
 import tools.jackson.databind.AnnotationIntrospector;
 import tools.jackson.databind.cfg.MapperConfig;
@@ -86,6 +87,17 @@ public class SwaggerAnnotationIntrospector extends AnnotationIntrospector {
             if (!names.isEmpty()) {
                 return names;
             }
+        }
+
+        // Check for Jackson's @JsonSubTypes
+        JsonSubTypes jsonSubTypes = a.getAnnotation(JsonSubTypes.class);
+        if (jsonSubTypes != null) {
+            JsonSubTypes.Type[] types = jsonSubTypes.value();
+            List<NamedType> result = new ArrayList<>(types.length);
+            for (JsonSubTypes.Type type : types) {
+                result.add(new NamedType(type.value(), type.name()));
+            }
+            return result;
         }
 
         return Collections.emptyList();
