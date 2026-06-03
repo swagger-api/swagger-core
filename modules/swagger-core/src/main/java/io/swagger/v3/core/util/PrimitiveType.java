@@ -63,7 +63,7 @@ public enum PrimitiveType {
         }
         @Override
         public Schema createProperty31() {
-            return new JsonSchema().typesItem("string").format("byte");
+            return new JsonSchema().typesItem("integer");
         }
     },
     BINARY(Byte.class, "binary") {
