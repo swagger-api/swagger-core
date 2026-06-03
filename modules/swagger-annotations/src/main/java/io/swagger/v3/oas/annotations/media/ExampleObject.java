@@ -69,4 +69,22 @@ public @interface ExampleObject {
      **/
     String description() default "";
 
+    /**
+     * A classpath or file-system path from which to load the example value at annotation
+     * processing time. The loaded content is used as if specified inline via the {@link #value()} field.
+     * When both {@code externalFile} and {@code value} are set, {@code externalFile} takes
+     * precedence if the file is found; otherwise falls back to {@code value}.
+     *
+     * <p>Supported path formats:</p>
+     * <ul>
+     *   <li>{@code classpath:openapi/examples/user.json} — loads from classpath (default when no prefix)</li>
+     *   <li>{@code file:/absolute/path/to/example.json} — loads from filesystem</li>
+     *   <li>{@code openapi/examples/user.json} — no prefix, treated as classpath</li>
+     * </ul>
+     *
+     * @since 2.2.51
+     * @return path to a file containing the example value
+     **/
+    String externalFile() default "";
+
 }
