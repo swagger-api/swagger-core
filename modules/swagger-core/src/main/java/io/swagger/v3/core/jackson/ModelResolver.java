@@ -669,7 +669,15 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
             // hack to avoid clobbering properties with get/is names
             // it's ugly but gets around https://github.com/swagger-api/swagger-core/issues/415
-            if (propDef.getPrimaryMember() != null) {
+            //
+            // This restores the raw member name for members that merely start with a get/is prefix
+            // (e.g. a Scala accessor "is_persistent", or a JAXB-renamed field, see #415 and #2635).
+            // It must NOT run when a custom PropertyNamingStrategy (e.g. SNAKE_CASE) is configured:
+            // in that case the strategy legitimately translates names such as "issuanceDate" ->
+            // "issuance_date" and the raw member name must not clobber the translated one
+            // (see springdoc/springdoc-openapi#3293).
+            if (propDef.getPrimaryMember() != null
+                    && _mapper.getSerializationConfig().getPropertyNamingStrategy() == null) {
                 final JsonProperty jsonPropertyAnn = propDef.getPrimaryMember().getAnnotation(JsonProperty.class);
                 if (jsonPropertyAnn == null || !jsonPropertyAnn.value().equals(propName)) {
                     if (member != null) {
