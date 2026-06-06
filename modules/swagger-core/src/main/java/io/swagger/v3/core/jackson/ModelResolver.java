@@ -10,6 +10,7 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.annotation.JsonView;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.ObjectIdGenerator;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import tools.jackson.core.JacksonException;
@@ -968,6 +969,14 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             model.setDiscriminator(null);
         }
 
+        // Get the updated model from context after resolveSubtypes (which may have replaced it with oneOf)
+        if (!type.isContainerType() && StringUtils.isNotBlank(name)) {
+            Schema updatedModel = context.getDefinedModels().get(name);
+            if (updatedModel != null) {
+                model = updatedModel;
+            }
+        }
+
         Discriminator discriminator = resolveDiscriminator(type, context);
         if (discriminator != null) {
             model.setDiscriminator(discriminator);
@@ -1071,27 +1080,40 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
             });
 
-            List<Class<?>> oneOfFiltered = Stream.of(oneOf)
-                    .distinct()
-                    .filter(c -> !this.shouldIgnoreClass(c))
-                    .filter(c -> !(c.equals(Void.class)))
-                    .collect(Collectors.toList());
-            oneOfFiltered.forEach(c -> {
-                Schema oneOfRef = context.resolve(new AnnotatedType().components(annotatedType.getComponents()).type(c).jsonViewAnnotation(annotatedType.getJsonViewAnnotation()));
-                if (oneOfRef != null) {
-                    if (StringUtils.isBlank(oneOfRef.getName())) {
-                        schemaWithCompositionKeys.addOneOfItem(oneOfRef);
-                    } else {
-                        schemaWithCompositionKeys.addOneOfItem(new Schema().$ref(Components.COMPONENTS_SCHEMAS_REF + oneOfRef.getName()));
-                    }
-                    // remove shared properties defined in the parent
-                    if (isSubtype(beanDesc.getClassInfo(), c)) {
-                        removeParentProperties(schemaWithCompositionKeys, oneOfRef);
-                    }
+            // Check if class has @JsonSubTypes annotation (handled by resolveSubtypes)
+            Annotation[] annotations = beanDesc.getClassInfo().getAnnotated().getDeclaredAnnotations();
+            boolean hasJsonSubTypes = false;
+            for (Annotation ann : annotations) {
+                if (ann.annotationType().equals(com.fasterxml.jackson.annotation.JsonSubTypes.class)) {
+                    hasJsonSubTypes = true;
+                    break;
                 }
+            }
 
-                dropRootRefIfComposed(schemaWithCompositionKeys);
-            });
+            // Skip oneOf processing if class has @JsonSubTypes annotation (handled by resolveSubtypes)
+            if (!hasJsonSubTypes) {
+                List<Class<?>> oneOfFiltered = Stream.of(oneOf)
+                        .distinct()
+                        .filter(c -> !this.shouldIgnoreClass(c))
+                        .filter(c -> !(c.equals(Void.class)))
+                        .collect(Collectors.toList());
+                oneOfFiltered.forEach(c -> {
+                    Schema oneOfRef = context.resolve(new AnnotatedType().components(annotatedType.getComponents()).type(c).jsonViewAnnotation(annotatedType.getJsonViewAnnotation()));
+                    if (oneOfRef != null) {
+                        if (StringUtils.isBlank(oneOfRef.getName())) {
+                            schemaWithCompositionKeys.addOneOfItem(oneOfRef);
+                        } else {
+                            schemaWithCompositionKeys.addOneOfItem(new Schema().$ref(Components.COMPONENTS_SCHEMAS_REF + oneOfRef.getName()));
+                        }
+                        // remove shared properties defined in the parent
+                        if (isSubtype(beanDesc.getClassInfo(), c)) {
+                            removeParentProperties(schemaWithCompositionKeys, oneOfRef);
+                        }
+                    }
+
+                    dropRootRefIfComposed(schemaWithCompositionKeys);
+                });
+            }
 
             if (!composedModelPropertiesAsSibling) {
                 if (schemaWithCompositionKeys.getAllOf() != null && !schemaWithCompositionKeys.getAllOf().isEmpty()) {
@@ -1993,7 +2015,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
     private boolean resolveSubtypes(Schema model, BeanDescription bean, ModelConverterContext context, JsonView jsonViewAnnotation) {
         final List<NamedType> types = _intr().findSubtypes(_mapper.serializationConfig(), bean.getClassInfo());
-        if (types == null) {
+        if (types == null || types.isEmpty()) {
             return false;
         }
 
@@ -2011,6 +2033,13 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
          */
         removeSuperClassAndInterfaceSubTypes(types, bean);
 
+        // Deduplicate subtypes (Jackson 3 AnnotationIntrospectorPair may return duplicates)
+        Set<NamedType> dedupedTypes = new LinkedHashSet<>();
+        dedupedTypes.addAll(types);
+        types.clear();
+        types.addAll(dedupedTypes);
+
+        Map<Class<?>, String> subtypeNames = new HashMap<>();
         int count = 0;
         final Class<?> beanClass = bean.getClassInfo().getAnnotated();
         for (NamedType subtype : types) {
@@ -2062,8 +2091,25 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             Class<?> currentType = subtype.getType();
             if (StringUtils.isNotBlank(composedSchema.getName())) {
                 context.defineModel(composedSchema.getName(), composedSchema, new AnnotatedType().type(currentType), null);
+                subtypeNames.put(subtypeType, composedSchema.getName());
             }
 
+            count++;
+        }
+        
+        // Convert parent model to oneOf if subtypes were found
+        if (count != 0) {
+            ComposedSchema oneOfSchema = ComposedSchema.from(model);
+            oneOfSchema.setOneOf(new ArrayList<>());
+            
+            for (NamedType subtype : types) {
+                Schema refSchema = openapi31 ? new JsonSchema() : new Schema();
+                refSchema.$ref(Components.COMPONENTS_SCHEMAS_REF + subtypeNames.getOrDefault(subtype.getType(), subtype.getType().getSimpleName()));
+                oneOfSchema.addOneOfItem(refSchema);
+            }
+            
+            // Replace parent model in context with oneOf schema
+            context.defineModel(model.getName(), oneOfSchema, new AnnotatedType().type(beanClass), null);
         }
         return count != 0;
     }
@@ -2693,6 +2739,13 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 }
                 if (JsonTypeInfo.Id.NAME.equals(id) && name == null) {
                     name = type.getRawClass().getSimpleName();
+                }
+                // If model already has oneOf (from @JsonSubTypes), add wrapper property directly
+                // instead of nesting the entire model inside a wrapper schema
+                if (model.getOneOf() != null && !model.getOneOf().isEmpty()) {
+                    Schema idSchema = openapi31 ? new JsonSchema().typesItem("object") : new ObjectSchema();
+                    model.addProperties(name, idSchema);
+                    return model;
                 }
                 Schema wrapperSchema = openapi31 ? new JsonSchema().typesItem("object") : new ObjectSchema();
                 wrapperSchema.name(model.getName());

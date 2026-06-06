@@ -137,7 +137,6 @@ public class Ticket4904Test {
         assertEquals((jsonSchema.getOneOf().get(0)).get$ref(), "#/components/schemas/RefSubtypeA");
         assertEquals((jsonSchema.getOneOf().get(1)).get$ref(), "#/components/schemas/RefSubtypeB");
     }
-
     @Test
     public void testJacksonPolymorphismWithTypeInfo() {
         final ModelResolver modelResolver = new ModelResolver(mapper());
@@ -147,20 +146,14 @@ public class Ticket4904Test {
         io.swagger.v3.oas.models.media.Schema schema = context.resolve(new AnnotatedType(JacksonPolymorphicParent.class));
 
         assertNotNull(schema);
-        assertTrue(schema instanceof JsonSchema, "Expected JsonSchema in OpenAPI 3.1 mode, but got: " + schema.getClass());
-        JsonSchema jsonSchema = (JsonSchema) schema;
-        if (jsonSchema.getOneOf() != null) {
-            assertEquals(jsonSchema.getOneOf().size(), 2);
-            assertEquals((jsonSchema.getOneOf().get(0)).get$ref(), "#/components/schemas/JacksonChildA");
-            assertEquals((jsonSchema.getOneOf().get(1)).get$ref(), "#/components/schemas/JacksonChildB");
-            assertNotNull(jsonSchema.getDiscriminator());
-            assertEquals(jsonSchema.getDiscriminator().getPropertyName(), "type");
-        } else {
-            assertNotNull(jsonSchema.getProperties());
-            assertTrue(jsonSchema.getProperties().containsKey("commonProperty") ||
-                      jsonSchema.getProperties().containsKey("type"),
-                      "Expected to find either commonProperty or type discriminator property");
-        }
+        assertTrue(schema instanceof ComposedSchema, "Expected ComposedSchema for @JsonSubTypes class in OpenAPI 3.1 mode, but got: " + schema.getClass());
+        ComposedSchema composedSchema = (ComposedSchema) schema;
+        assertNotNull(composedSchema.getOneOf());
+        assertEquals(composedSchema.getOneOf().size(), 2);
+        assertEquals((composedSchema.getOneOf().get(0)).get$ref(), "#/components/schemas/JacksonChildA");
+        assertEquals((composedSchema.getOneOf().get(1)).get$ref(), "#/components/schemas/JacksonChildB");
+        assertNotNull(composedSchema.getDiscriminator());
+        assertEquals(composedSchema.getDiscriminator().getPropertyName(), "type");
     }
 
     @Test

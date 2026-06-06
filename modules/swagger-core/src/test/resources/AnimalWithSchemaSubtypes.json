@@ -9,9 +9,13 @@
                 "type": "string"
             }
         },
-        "discriminator" : {
-            "propertyName" : "type"
-        }
+        "discriminator": {
+            "propertyName": "type"
+        },
+        "oneOf": [
+            {"$ref": "#/components/schemas/HumanWithSchemaSubtypes"},
+            {"$ref": "#/components/schemas/PetWithSchemaSubtypes"}
+        ]
     },
     "HumanWithSchemaSubtypes": {
         "type": "object",
@@ -34,6 +38,11 @@
     },
     "PetWithSchemaSubtypes": {
         "type": "object",
+        "required": [
+            "isDomestic",
+            "name",
+            "type"
+        ],
         "allOf": [
             {
                 "$ref": "#/components/schemas/AnimalWithSchemaSubtypes"
@@ -53,13 +62,7 @@
                         "type": "boolean"
                     }
                 }
-
             }
-        ],
-        "required": [
-            "isDomestic",
-            "name",
-            "type"
         ]
     }
 }

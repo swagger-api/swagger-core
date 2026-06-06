@@ -1,9 +1,6 @@
 {
     "AbstractBaseModelWithSubTypes": {
         "type": "object",
-        "discriminator" : {
-            "propertyName" : "_type"
-        },
         "properties": {
             "_type": {
                 "type": "string",
@@ -18,7 +15,14 @@
                 "description": "An arbitrary field"
             }
         },
-        "description": "I am an Abstract Base Model with Sub-Types"
+        "description": "I am an Abstract Base Model with Sub-Types",
+        "discriminator": {
+            "propertyName": "_type"
+        },
+        "oneOf": [
+            {"$ref": "#/components/schemas/Thing1"},
+            {"$ref": "#/components/schemas/Thing2"}
+        ]
     },
     "ModelWithFieldWithSubTypes": {
         "type": "object",

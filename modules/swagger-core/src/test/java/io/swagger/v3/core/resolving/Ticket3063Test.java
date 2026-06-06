@@ -25,7 +25,6 @@ public class Ticket3063Test extends SwaggerTestBase {
     }
 
 
-
     @Test
     public void testTicket3063() throws Exception {
         final Schema model = context.resolve(new AnnotatedType(BaseClass.class));
@@ -39,6 +38,8 @@ public class Ticket3063Test extends SwaggerTestBase {
                 "      type: string\n" +
                 "      description: Type\n" +
                 "      example: AndroidDeviceRequirements\n" +
+                "  oneOf:\n" +
+                "  - $ref: \"#/components/schemas/SubClass\"\n" +
                 "  description: test\n" +
                 "  discriminator:\n" +
                 "    propertyName: type\n" +

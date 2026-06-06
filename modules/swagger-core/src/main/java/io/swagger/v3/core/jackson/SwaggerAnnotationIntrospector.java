@@ -16,7 +16,9 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import javax.xml.bind.annotation.XmlElement;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 public class SwaggerAnnotationIntrospector extends AnnotationIntrospector {
     private static final long serialVersionUID = 1L;
@@ -93,11 +95,12 @@ public class SwaggerAnnotationIntrospector extends AnnotationIntrospector {
         JsonSubTypes jsonSubTypes = a.getAnnotation(JsonSubTypes.class);
         if (jsonSubTypes != null) {
             JsonSubTypes.Type[] types = jsonSubTypes.value();
-            List<NamedType> result = new ArrayList<>(types.length);
+            // Use LinkedHashSet to deduplicate subtypes (Jackson 3 AnnotationIntrospectorPair may return duplicates)
+            Set<NamedType> result = new LinkedHashSet<>();
             for (JsonSubTypes.Type type : types) {
                 result.add(new NamedType(type.value(), type.name()));
             }
-            return result;
+            return new ArrayList<>(result);
         }
 
         return Collections.emptyList();

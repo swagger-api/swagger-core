@@ -40,7 +40,9 @@ public class Ticket3030Test extends SwaggerTestBase {
                 "  type: object\n" +
                 "  properties:\n" +
                 "    sharedProperty:\n" +
-                "      type: string";
+                "      type: string\n" +
+                "  oneOf:\n" +
+                "  - $ref: \"#/components/schemas/Child\"\n";
 
         SerializationMatchers.assertEqualsToYaml(context.getDefinedModels(), yaml);
     }

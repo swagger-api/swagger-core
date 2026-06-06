@@ -67,9 +67,10 @@ public class Ticket4239Test extends SwaggerTestBase {
             "        type: string\n" +
             "A_Output:\n" +
             "  type: object\n" +
+            "  oneOf:\n" +
+            "  - $ref: \"#/components/schemas/A1_Output\"\n" +
             "  properties:\n" +
             "    a_out:\n" +
             "      type: string\n");
-
     }
 }

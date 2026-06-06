@@ -244,6 +244,9 @@ public class ModelResolverOAS31Test extends SwaggerTestBase {
                 "MultipleBaseBean:\n" +
                 "  type: object\n" +
                 "  description: MultipleBaseBean\n" +
+                "  oneOf:\n" +
+                "  - $ref: \"#/components/schemas/MultipleSub1Bean\"\n" +
+                "  - $ref: \"#/components/schemas/MultipleSub2Bean\"\n" +
                 "  properties:\n" +
                 "    beanType:\n" +
                 "      type: string\n" +

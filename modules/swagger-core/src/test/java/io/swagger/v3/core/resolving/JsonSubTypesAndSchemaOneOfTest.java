@@ -203,4 +203,68 @@ public class JsonSubTypesAndSchemaOneOfTest extends SwaggerTestBase {
         }
     }
 
+    @Test
+    public void interfaceWithJsonSubTypesOnlyIsConvertedToOneOfComposedSchema() {
+        final Schema<?> interfaceModel = context.resolve(new AnnotatedType(PolymorphicInterface.class));
+        assertNotNull(interfaceModel);
+        
+        // The parent interface should be converted to oneOf
+        assertTrue(interfaceModel instanceof ComposedSchema);
+        ComposedSchema composedSchema = (ComposedSchema) interfaceModel;
+        assertNotNull(composedSchema.getOneOf());
+        assertEquals(composedSchema.getOneOf().size(), 2);
+        
+        // Verify oneOf contains $ref to subtypes
+        assertEquals(composedSchema.getOneOf().get(0).get$ref(), "#/components/schemas/PolymorphicSubtype1");
+        assertEquals(composedSchema.getOneOf().get(1).get$ref(), "#/components/schemas/PolymorphicSubtype2");
+        
+        // Verify subtypes are properly defined
+        final Schema<?> subModel1 = context.getDefinedModels().get("PolymorphicSubtype1");
+        assertNotNull(subModel1);
+        assertTrue(subModel1 instanceof ComposedSchema);
+        ComposedSchema cm1 = (ComposedSchema) subModel1;
+        assertEquals(cm1.getAllOf().get(0).get$ref(), "#/components/schemas/PolymorphicInterface");
+        
+        final Schema<?> subModel2 = context.getDefinedModels().get("PolymorphicSubtype2");
+        assertNotNull(subModel2);
+        assertTrue(subModel2 instanceof ComposedSchema);
+        ComposedSchema cm2 = (ComposedSchema) subModel2;
+        assertEquals(cm2.getAllOf().get(0).get$ref(), "#/components/schemas/PolymorphicInterface");
+    }
+    
+    // Interface with @JsonSubTypes only (no @Schema(oneOf=...))
+    @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type", visible = true)
+    @JsonSubTypes({
+            @JsonSubTypes.Type(value = PolymorphicSubtype1.class, name = "subtype1"),
+            @JsonSubTypes.Type(value = PolymorphicSubtype2.class, name = "subtype2")
+    })
+    interface PolymorphicInterface {
+        String getType();
+        String getName();
+    }
+    
+    static class PolymorphicSubtype1 implements PolymorphicInterface {
+        public String type = "subtype1";
+        public String name = "subtype1";
+        public String uniqueField1 = "field1";
+        
+        @Override
+        public String getType() { return type; }
+        
+        @Override
+        public String getName() { return name; }
+    }
+    
+    static class PolymorphicSubtype2 implements PolymorphicInterface {
+        public String type = "subtype2";
+        public String name = "subtype2";
+        public String uniqueField2 = "field2";
+        
+        @Override
+        public String getType() { return type; }
+        
+        @Override
+        public String getName() { return name; }
+    }
+
 }

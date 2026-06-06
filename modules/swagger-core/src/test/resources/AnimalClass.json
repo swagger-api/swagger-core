@@ -9,9 +9,13 @@
                 "type": "string"
             }
         },
-        "discriminator" : {
-            "propertyName" : "type"
-        }
+        "discriminator": {
+            "propertyName": "type"
+        },
+        "oneOf": [
+            {"$ref": "#/components/schemas/HumanClass"},
+            {"$ref": "#/components/schemas/PetClass"}
+        ]
     },
     "HumanClass": {
         "type": "object",
@@ -34,6 +38,11 @@
     },
     "PetClass": {
         "type": "object",
+        "required": [
+            "isDomestic",
+            "name",
+            "type"
+        ],
         "allOf": [
             {
                 "$ref": "#/components/schemas/AnimalClass"
@@ -54,11 +63,6 @@
                     }
                 }
             }
-        ],
-        "required": [
-            "isDomestic",
-            "name",
-            "type"
         ]
     }
 }
