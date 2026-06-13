@@ -478,6 +478,11 @@ public class AnnotationsUtilsTest {
             }
 
             @Override
+            public NullableMode nullableMode() {
+                return schemaAnnotation.nullableMode();
+            }
+
+            @Override
             public String description() {
                 return schemaAnnotation.description();
             }
