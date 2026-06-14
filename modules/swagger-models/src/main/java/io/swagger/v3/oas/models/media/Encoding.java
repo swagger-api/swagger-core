@@ -10,7 +10,7 @@ import java.util.Objects;
 /**
  * Encoding
  *
- * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.0.4/versions/3.0.4.md#encoding-object"
+ * @see <a href="https://github.com/OAI/OpenAPI-Specification/blob/3.0.4/versions/3.0.4.md#encoding-object">Encoding (OpenAPI 3.0 specification)</a>
  */
 
 public class Encoding {
