@@ -116,7 +116,7 @@
         <dependency>
             <groupId>org.apache.maven.plugin-testing</groupId>
             <artifactId>maven-plugin-testing-harness</artifactId>
-            <version>3.3.0</version>
+            <version>3.5.1</version>
             <scope>test</scope>
             <exclusions>
                 <exclusion>
