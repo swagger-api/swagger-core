@@ -483,7 +483,7 @@
         <commons-codec-version>1.17.2</commons-codec-version>
 
         <surefire-version>2.22.2</surefire-version>
-        <enforcer-plugin-version>3.2.1</enforcer-plugin-version>
+        <enforcer-plugin-version>3.6.3</enforcer-plugin-version>
         <failsafe-plugin-version>2.22.2</failsafe-plugin-version>
         <maven-javadoc-plugin-version>3.12.0</maven-javadoc-plugin-version>
 
