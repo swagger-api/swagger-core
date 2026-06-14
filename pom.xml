@@ -629,7 +629,7 @@
         <jakarta.activation-api-version>1.2.2</jakarta.activation-api-version>
         <bnd-version>6.4.0</bnd-version>
         <servlet-api-version>4.0.4</servlet-api-version>
-        <jersey2-version>2.46</jersey2-version>
+        <jersey2-version>2.48</jersey2-version>
         <jackson-annotations-version>2.21</jackson-annotations-version>
         <jackson-version>3.1.4</jackson-version>
         <logback-version>1.5.34</logback-version>
