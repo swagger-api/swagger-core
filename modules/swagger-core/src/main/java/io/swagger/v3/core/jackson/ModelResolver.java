@@ -673,20 +673,20 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             // it's ugly but gets around https://github.com/swagger-api/swagger-core/issues/415
             if (propDef.getPrimaryMember() != null) {
                 final JsonProperty jsonPropertyAnn = propDef.getPrimaryMember().getAnnotation(JsonProperty.class);
-                if (jsonPropertyAnn == null || !jsonPropertyAnn.value().equals(propName)) {
-                    if (member != null) {
-                        java.lang.reflect.Member innerMember = member.getMember();
-                        if (innerMember != null) {
-                            String altName = innerMember.getName();
-                            if (altName != null) {
-                                final int length = altName.length();
-                                for (String prefix : Arrays.asList("get", "is")) {
-                                    final int offset = prefix.length();
-                                    if (altName.startsWith(prefix) && length > offset
-                                        && !Character.isUpperCase(altName.charAt(offset))) {
-                                        propName = altName;
-                                        break;
-                                    }
+                if (jsonPropertyAnn != null && !jsonPropertyAnn.value().isEmpty() && !jsonPropertyAnn.value().equals(propName)) {
+                    propName = jsonPropertyAnn.value();
+                } else if ((jsonPropertyAnn == null || jsonPropertyAnn.value().isEmpty()) && member != null) {
+                    java.lang.reflect.Member innerMember = member.getMember();
+                    if (innerMember != null) {
+                        String altName = innerMember.getName();
+                        if (altName != null) {
+                            final int length = altName.length();
+                            for (String prefix : Arrays.asList("get", "is")) {
+                                final int offset = prefix.length();
+                                if (altName.startsWith(prefix) && length > offset
+                                    && !Character.isUpperCase(altName.charAt(offset))) {
+                                    propName = altName;
+                                    break;
                                 }
                             }
                         }
