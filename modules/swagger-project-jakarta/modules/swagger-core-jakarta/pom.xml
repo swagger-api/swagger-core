@@ -133,7 +133,7 @@
         <dependency>
             <groupId>tools.jackson.dataformat</groupId>
             <artifactId>jackson-dataformat-yaml</artifactId>
-            <version>3.0.3</version>
+            <version>3.1.4</version>
         </dependency>
     </dependencies>
 
