@@ -191,6 +191,45 @@ public class EnumTest extends SwaggerTestBase {
         assertEnumComponentExists(context, ClassWithEnumAsRefProperty.EnumWithSchemaProperty.values(), "Enum description");
     }
 
+    @Test
+    public void testAllowableValuesReplaceEnumValuesOpenApi30() {
+        final ModelResolver modelResolver = new ModelResolver(mapper());
+        final ModelConverterContextImpl context = new ModelConverterContextImpl(modelResolver);
+
+        final Schema model = context.resolve(new AnnotatedType().type(Dog.class));
+        assertBasicModelStructure(model, "Dog");
+        assertPropertyExists(model, "kind");
+
+        final Schema kindPropertySchema = (Schema) model.getProperties().get("kind");
+        assertEquals(kindPropertySchema.getEnum(), Collections.singletonList("DOG"));
+    }
+
+    @Test
+    public void testAllowableValuesReplaceEnumValuesOpenApi31() {
+        final ModelResolver modelResolver = new ModelResolver(mapper()).openapi31(true);
+        final ModelConverterContextImpl context = new ModelConverterContextImpl(modelResolver);
+
+        final Schema model = context.resolve(new AnnotatedType().type(Dog.class));
+        assertBasicModelStructure(model, "Dog");
+        assertPropertyExists(model, "kind");
+
+        final Schema kindPropertySchema = (Schema) model.getProperties().get("kind");
+        assertEquals(kindPropertySchema.getEnum(), Collections.singletonList("DOG"));
+    }
+
+    @Test
+    public void testAllowableValuesOnSingleConstantEnumAreNotDuplicated() {
+        final ModelResolver modelResolver = new ModelResolver(mapper());
+        final ModelConverterContextImpl context = new ModelConverterContextImpl(modelResolver);
+
+        final Schema model = context.resolve(new AnnotatedType().type(Circle.class));
+        assertBasicModelStructure(model, "Circle");
+        assertPropertyExists(model, "type");
+
+        final Schema typePropertySchema = (Schema) model.getProperties().get("type");
+        assertEquals(typePropertySchema.getEnum(), Collections.singletonList("CIRCLE"));
+    }
+
     private void assertBasicModelStructure(Schema model, String expectedName) {
         assertNotNull(model);
         assertEquals(model.getName(), expectedName);
@@ -302,6 +341,46 @@ public class EnumTest extends SwaggerTestBase {
             ONE,
             TWO,
             THREE
+        }
+    }
+
+    public abstract static class Animal {
+
+        @io.swagger.v3.oas.annotations.media.Schema(description = "Kind", requiredMode = io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED)
+        public abstract Kind getKind();
+
+        public enum Kind {
+            DOG,
+            CAT,
+            BIRD
+        }
+    }
+
+    public static class Dog extends Animal {
+
+        @io.swagger.v3.oas.annotations.media.Schema(requiredMode = io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED, allowableValues = "DOG")
+        @Override
+        public Kind getKind() {
+            return Kind.DOG;
+        }
+    }
+
+    public abstract static class Shape {
+
+        @io.swagger.v3.oas.annotations.media.Schema(requiredMode = io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED)
+        public abstract Type getType();
+
+        public enum Type {
+            CIRCLE
+        }
+    }
+
+    public static class Circle extends Shape {
+
+        @io.swagger.v3.oas.annotations.media.Schema(requiredMode = io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED, allowableValues = "CIRCLE")
+        @Override
+        public Type getType() {
+            return Type.CIRCLE;
         }
     }
 
