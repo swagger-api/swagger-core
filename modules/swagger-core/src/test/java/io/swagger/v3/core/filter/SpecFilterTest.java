@@ -307,6 +307,42 @@ public class SpecFilterTest {
         assertTrue(filtered.getComponents().getSchemas().containsKey("PatternPropertiesReferencedObject"), "Schemas should contains pattern properties referenced schema");
     }
 
+    @Test(description = "a schema referenced only via $defs should survive RemoveUnreferencedDefinitionsFilter")
+    public void shouldKeepSchemasReferencedFrom$defs() {
+        // OpenAPI 3.1 generic-template binding pattern: an operation references `Response`,
+        // whose $defs.dataType points to `Pet`. `Stray` is unreferenced and should be dropped.
+        Schema<?> template = new Schema<>()
+                .$ref("#/components/schemas/Response")
+                .add$defs("dataType", new Schema<>()
+                        .$dynamicAnchor("dataType")
+                        .$ref("#/components/schemas/Pet"));
+        Schema<?> pet = new Schema<>().type("object").addProperty("id", new Schema().type("integer"));
+        Schema<?> stray = new Schema<>().type("object").addProperty("unused", new Schema().type("string"));
+
+        OpenAPI openAPI = new OpenAPI()
+                .openapi("3.1.0")
+                .components(new Components()
+                        .addSchemas("Response", new Schema<>()
+                                .$dynamicAnchor("dataType")
+                                .addProperty("data", new Schema<>().$dynamicRef("#dataType"))
+                                .add$defs("dataType", new Schema<>().$dynamicAnchor("dataType").not(new Schema<>())))
+                        .addSchemas("Pet", pet)
+                        .addSchemas("Stray", stray))
+                .path("/pet", new PathItem()
+                        .get(new Operation()
+                                .responses(new io.swagger.v3.oas.models.responses.ApiResponses()
+                                        .addApiResponse("200", new io.swagger.v3.oas.models.responses.ApiResponse()
+                                                .content(new io.swagger.v3.oas.models.media.Content()
+                                                        .addMediaType("application/json", new io.swagger.v3.oas.models.media.MediaType()
+                                                                .schema(template)))))));
+
+        OpenAPI filtered = new SpecFilter().filter(openAPI, new RemoveUnreferencedDefinitionsFilter(), null, null, null);
+
+        assertNotNull(filtered.getComponents().getSchemas().get("Response"), "entry-point schema must survive");
+        assertNotNull(filtered.getComponents().getSchemas().get("Pet"), "schema referenced only via $defs must survive");
+        assertNull(filtered.getComponents().getSchemas().get("Stray"), "unreferenced schema must be dropped");
+    }
+
     @Test
     public void shouldNotRemoveGoodRefs() throws IOException {
         final OpenAPI openAPI = getOpenAPI(RESOURCE_PATH);

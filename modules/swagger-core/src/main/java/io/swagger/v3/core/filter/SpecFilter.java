@@ -302,6 +302,15 @@ public class SpecFilter {
         if (schema == null) {
             return;
         }
+        // $defs siblings of $ref must be traversed first: OAS 3.1 allows $ref siblings,
+        // and the dynamic-ref binding pattern ($ref + $defs) relies on $defs entries being
+        // tracked even when the enclosing schema is a $ref.
+        if (schema.get$defs() != null) {
+            for (Object defName : schema.get$defs().keySet()) {
+                Schema def = (Schema) schema.get$defs().get(defName);
+                addSchemaRef(def, referencedDefinitions);
+            }
+        }
         if (!StringUtils.isBlank(schema.get$ref())) {
             referencedDefinitions.add(schema.get$ref());
             return;
