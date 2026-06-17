@@ -23,19 +23,26 @@ import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Operation;
 import io.swagger.v3.oas.models.PathItem;
+import io.swagger.v3.oas.models.media.Content;
+import io.swagger.v3.oas.models.media.MediaType;
 import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.parameters.Parameter;
+import io.swagger.v3.oas.models.responses.ApiResponse;
+import io.swagger.v3.oas.models.responses.ApiResponses;
 import io.swagger.v3.oas.models.tags.Tag;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.BiConsumer;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
@@ -341,6 +348,104 @@ public class SpecFilterTest {
         assertNotNull(filtered.getComponents().getSchemas().get("Response"), "entry-point schema must survive");
         assertNotNull(filtered.getComponents().getSchemas().get("Pet"), "schema referenced only via $defs must survive");
         assertNull(filtered.getComponents().getSchemas().get("Stray"), "unreferenced schema must be dropped");
+    }
+
+    /**
+     * Enumerates every Schema keyword container that can hold a $ref-bearing subschema.
+     * Each case is {keywordName, setter} where setter attaches a child schema via that keyword.
+     */
+    @DataProvider(name = "schemaSiblingKeywords")
+    public Object[][] schemaSiblingKeywords() {
+        return new Object[][] {
+                {"properties", (BiConsumer<Schema, Schema>) (p, c) -> p.addProperty("k", c)},
+                {"patternProperties", (BiConsumer<Schema, Schema>) (p, c) -> p.addPatternProperty("^k$", c)},
+                {"$defs", (BiConsumer<Schema, Schema>) (p, c) -> p.add$defs("k", c)},
+                {"dependentSchemas", (BiConsumer<Schema, Schema>) (p, c) -> p.setDependentSchemas(Collections.singletonMap("k", c))},
+                {"additionalProperties", (BiConsumer<Schema, Schema>) (p, c) -> p.setAdditionalProperties(c)},
+                {"prefixItems", (BiConsumer<Schema, Schema>) (p, c) -> p.setPrefixItems(Collections.singletonList(c))},
+                {"allOf", (BiConsumer<Schema, Schema>) (p, c) -> p.addAllOfItem(c)},
+                {"anyOf", (BiConsumer<Schema, Schema>) (p, c) -> p.addAnyOfItem(c)},
+                {"oneOf", (BiConsumer<Schema, Schema>) (p, c) -> p.addOneOfItem(c)},
+                {"not", (BiConsumer<Schema, Schema>) Schema::setNot},
+                {"items", (BiConsumer<Schema, Schema>) Schema::setItems},
+                {"contains", (BiConsumer<Schema, Schema>) Schema::setContains},
+                {"contentSchema", (BiConsumer<Schema, Schema>) Schema::setContentSchema},
+                {"propertyNames", (BiConsumer<Schema, Schema>) Schema::setPropertyNames},
+                {"unevaluatedProperties", (BiConsumer<Schema, Schema>) Schema::setUnevaluatedProperties},
+                {"additionalItems", (BiConsumer<Schema, Schema>) Schema::setAdditionalItems},
+                {"unevaluatedItems", (BiConsumer<Schema, Schema>) Schema::setUnevaluatedItems},
+                {"if", (BiConsumer<Schema, Schema>) Schema::setIf},
+                {"else", (BiConsumer<Schema, Schema>) Schema::setElse},
+                {"then", (BiConsumer<Schema, Schema>) Schema::setThen},
+        };
+    }
+
+    @Test(dataProvider = "schemaSiblingKeywords",
+            description = "a schema referenced via any sibling keyword must survive RemoveUnreferencedDefinitionsFilter")
+    public void siblingKeywordReferenceSurvivesFilter(String keyword, BiConsumer<Schema, Schema> setter) {
+        Schema<?> target = new Schema<>().$ref("#/components/schemas/Target");
+        Schema<?> source = new Schema<>();
+        setter.accept(source, target);
+
+        OpenAPI openAPI = baseOpenAPIWithSchema("Source", source);
+
+        // V31 filter is required: filterComponentsSchema clones via Jackson round-trip, and the
+        // V30 mapper strips @OpenAPI31 keywords (@JsonIgnore in SchemaMixin) before addSchemaRef runs.
+        OpenAPI filtered = new SpecFilter().filter(openAPI, new RemoveUnreferencedDefinitionsFilter() {
+            @Override public boolean isOpenAPI31Filter() { return true; }
+        }, null, null, null);
+
+        assertNotNull(filtered.getComponents().getSchemas().get("Source"), "entry-point schema must survive");
+        assertNotNull(filtered.getComponents().getSchemas().get("Target"),
+                "Target must survive when referenced via " + keyword);
+        assertNull(filtered.getComponents().getSchemas().get("Stray"), "unreferenced schema must be dropped");
+    }
+
+    @Test(dataProvider = "schemaSiblingKeywords",
+            description = "siblings of $ref must also be traversed (OAS 3.1 $ref sibling support)")
+    public void refSiblingKeepsBoth(String keyword, BiConsumer<Schema, Schema> setter) {
+        Schema<?> target = new Schema<>().$ref("#/components/schemas/Target");
+        Schema<?> parent = new Schema<>().$ref("#/components/schemas/Parent");
+        setter.accept(parent, target);
+
+        OpenAPI openAPI = new OpenAPI()
+                .components(new Components()
+                        .addSchemas("Parent", new Schema<>().type("object"))
+                        .addSchemas("Target", new Schema<>().type("object"))
+                        .addSchemas("Stray", new Schema<>().type("string")))
+                .path("/x", new PathItem().get(new Operation()
+                        .responses(new ApiResponses()
+                                .addApiResponse("200", new ApiResponse()
+                                        .content(new Content()
+                                                .addMediaType("application/json", new MediaType()
+                                                        .schema(parent)))))));
+
+        OpenAPI filtered = new SpecFilter().filter(openAPI, new RemoveUnreferencedDefinitionsFilter() {
+            @Override public boolean isOpenAPI31Filter() { return true; }
+        }, null, null, null);
+
+        assertNotNull(filtered.getComponents().getSchemas().get("Parent"), "Parent must survive via $ref");
+        assertNotNull(filtered.getComponents().getSchemas().get("Target"),
+                "Target must survive via $ref sibling " + keyword);
+        assertNull(filtered.getComponents().getSchemas().get("Stray"), "unreferenced schema must be dropped");
+    }
+
+    /**
+     * Builds an OpenAPI where `sourceName` is referenced from a GET /x 200 response and
+     * `Target` is defined as an empty object, plus an unreferenced `Stray` schema.
+     */
+    private static OpenAPI baseOpenAPIWithSchema(String sourceName, Schema<?> sourceSchema) {
+        return new OpenAPI()
+                .components(new Components()
+                        .addSchemas(sourceName, sourceSchema)
+                        .addSchemas("Target", new Schema<>().type("object"))
+                        .addSchemas("Stray", new Schema<>().type("string")))
+                .path("/x", new PathItem().get(new Operation()
+                        .responses(new ApiResponses()
+                                .addApiResponse("200", new ApiResponse()
+                                        .content(new Content()
+                                                .addMediaType("application/json", new MediaType()
+                                                        .schema(new Schema<>().$ref("#/components/schemas/" + sourceName))))))));
     }
 
     @Test

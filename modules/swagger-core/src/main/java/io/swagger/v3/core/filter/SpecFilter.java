@@ -11,7 +11,6 @@ import io.swagger.v3.oas.models.PathItem;
 import io.swagger.v3.oas.models.Paths;
 import io.swagger.v3.oas.models.callbacks.Callback;
 import io.swagger.v3.oas.models.headers.Header;
-import io.swagger.v3.oas.models.media.ArraySchema;
 import io.swagger.v3.oas.models.media.Content;
 import io.swagger.v3.oas.models.media.MediaType;
 import io.swagger.v3.oas.models.media.Schema;
@@ -26,6 +25,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.IdentityHashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -298,22 +298,19 @@ public class SpecFilter {
     }
 
     private void addSchemaRef(Schema schema, Set<String> referencedDefinitions) {
+        addSchemaRef(schema, referencedDefinitions, Collections.newSetFromMap(new IdentityHashMap<>()));
+    }
 
-        if (schema == null) {
+    private void addSchemaRef(Schema schema, Set<String> referencedDefinitions, Set<Schema> visited) {
+        if (schema == null || !visited.add(schema)) {
             return;
         }
-        // $defs siblings of $ref must be traversed first: OAS 3.1 allows $ref siblings,
-        // and the dynamic-ref binding pattern ($ref + $defs) relies on $defs entries being
-        // tracked even when the enclosing schema is a $ref.
-        if (schema.get$defs() != null) {
-            for (Object defName : schema.get$defs().keySet()) {
-                Schema def = (Schema) schema.get$defs().get(defName);
-                addSchemaRef(def, referencedDefinitions);
-            }
-        }
+        // Record $ref but do NOT early-return: OAS 3.1 allows $ref siblings, so any keyword
+        // container on the same schema may hold additional refs that must be tracked. For
+        // OAS 3.0 docs the worst case is over-retention (a referenced schema survives the
+        // filter), which is the safe failure mode for a "remove unreferenced" filter.
         if (!StringUtils.isBlank(schema.get$ref())) {
             referencedDefinitions.add(schema.get$ref());
-            return;
         }
         if (schema.getDiscriminator() != null && schema.getDiscriminator().getMapping() != null) {
             for (Map.Entry<String, String> mapping: schema.getDiscriminator().getMapping().entrySet()) {
@@ -321,53 +318,48 @@ public class SpecFilter {
             }
         }
 
-        if (schema.getProperties() != null) {
-            for (Object propName : schema.getProperties().keySet()) {
-                Schema property = (Schema) schema.getProperties().get(propName);
-                addSchemaRef(property, referencedDefinitions);
-            }
-        }
+        traverseSchemaMap(schema.getProperties(), referencedDefinitions, visited);
+        traverseSchemaMap(schema.getPatternProperties(), referencedDefinitions, visited);
+        traverseSchemaMap(schema.get$defs(), referencedDefinitions, visited);
+        traverseSchemaMap(schema.getDependentSchemas(), referencedDefinitions, visited);
+
+        traverseSchemaList(schema.getPrefixItems(), referencedDefinitions, visited);
+        traverseSchemaList(schema.getAllOf(), referencedDefinitions, visited);
+        traverseSchemaList(schema.getAnyOf(), referencedDefinitions, visited);
+        traverseSchemaList(schema.getOneOf(), referencedDefinitions, visited);
+
+        addSchemaRef(schema.getNot(), referencedDefinitions, visited);
+        addSchemaRef(schema.getItems(), referencedDefinitions, visited);
+        addSchemaRef(schema.getContains(), referencedDefinitions, visited);
+        addSchemaRef(schema.getContentSchema(), referencedDefinitions, visited);
+        addSchemaRef(schema.getPropertyNames(), referencedDefinitions, visited);
+        addSchemaRef(schema.getUnevaluatedProperties(), referencedDefinitions, visited);
+        addSchemaRef(schema.getAdditionalItems(), referencedDefinitions, visited);
+        addSchemaRef(schema.getUnevaluatedItems(), referencedDefinitions, visited);
+        addSchemaRef(schema.getIf(), referencedDefinitions, visited);
+        addSchemaRef(schema.getElse(), referencedDefinitions, visited);
+        addSchemaRef(schema.getThen(), referencedDefinitions, visited);
 
         if (schema.getAdditionalProperties() instanceof Schema) {
-            addSchemaRef((Schema)schema.getAdditionalProperties(), referencedDefinitions);
+            addSchemaRef((Schema) schema.getAdditionalProperties(), referencedDefinitions, visited);
         }
+    }
 
-        if (schema.getPatternProperties() != null) {
-            for (Object propName : schema.getPatternProperties().keySet()) {
-                Schema property = (Schema) schema.getPatternProperties().get(propName);
-                addSchemaRef(property, referencedDefinitions);
-            }
+    private void traverseSchemaMap(Map<String, Schema> map, Set<String> referencedDefinitions, Set<Schema> visited) {
+        if (map == null) {
+            return;
         }
-
-        if (schema.getPropertyNames() != null) {
-            addSchemaRef(schema.getPropertyNames(), referencedDefinitions);
+        for (Schema child : map.values()) {
+            addSchemaRef(child, referencedDefinitions, visited);
         }
+    }
 
-        if (schema instanceof ArraySchema &&
-                ((ArraySchema) schema).getItems() != null) {
-            addSchemaRef(((ArraySchema) schema).getItems(), referencedDefinitions);
-        } else if (schema.getTypes() != null && schema.getTypes().contains("array") && schema.getItems() != null) {
-            addSchemaRef(schema.getItems(), referencedDefinitions);
-        } else {
-            List<Schema> allOf = schema.getAllOf();
-            List<Schema> anyOf = schema.getAnyOf();
-            List<Schema> oneOf = schema.getOneOf();
-
-            if (allOf != null) {
-                for (Schema ref : allOf) {
-                    addSchemaRef(ref, referencedDefinitions);
-                }
-            }
-            if (anyOf != null) {
-                for (Schema ref : anyOf) {
-                    addSchemaRef(ref, referencedDefinitions);
-                }
-            }
-            if (oneOf != null) {
-                for (Schema ref : oneOf) {
-                    addSchemaRef(ref, referencedDefinitions);
-                }
-            }
+    private void traverseSchemaList(List<Schema> list, Set<String> referencedDefinitions, Set<Schema> visited) {
+        if (list == null) {
+            return;
+        }
+        for (Schema child : list) {
+            addSchemaRef(child, referencedDefinitions, visited);
         }
     }
 
