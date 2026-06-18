@@ -10,7 +10,10 @@
         "type" : "string"
       },
       "nullableModel" : {
-        "$ref" : "#/components/schemas/Model"
+        "nullable" : true,
+        "allOf" : [ {
+          "$ref" : "#/components/schemas/Model"
+        } ]
       },
       "strings" : {
         "type" : "array",
@@ -48,7 +51,10 @@
           "type" : "string"
         },
         "nullableModel" : {
-          "$ref" : "#/components/schemas/Model"
+          "nullable" : true,
+          "allOf" : [ {
+            "$ref" : "#/components/schemas/Model"
+          } ]
         },
         "strings" : {
           "type" : "array",

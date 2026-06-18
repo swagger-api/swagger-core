@@ -19,10 +19,18 @@
           "$ref" : "#/components/schemas/NestedModel"
         },
         "nullableNestedModel" : {
-          "$ref" : "#/components/schemas/NestedModel"
+          "oneOf" : [ {
+            "$ref" : "#/components/schemas/NestedModel"
+          }, {
+            "type" : "null"
+          } ]
         },
         "nullableNestedModel2" : {
-          "$ref" : "#/components/schemas/NestedModel2"
+          "oneOf" : [ {
+            "$ref" : "#/components/schemas/NestedModel2"
+          }, {
+            "type" : "null"
+          } ]
         },
         "nestedModel2" : {
           "$ref" : "#/components/schemas/NestedModel2"

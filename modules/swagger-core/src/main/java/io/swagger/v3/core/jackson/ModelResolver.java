@@ -907,6 +907,13 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                             }
                         }
                     }
+                    // A @Nullable object property must not mark the shared component schema as nullable,
+                    // because that would corrupt every other reference to the same component.
+                    // Instead, keep the component as type:object and express nullable only at this
+                    // property's reference: oneOf[$ref, {type:null}] for OAS 3.1, nullable+allOf[$ref] for OAS 3.0.
+                    if (property != null && property.get$ref() != null && hasNullableAnnotation(annotations)) {
+                        property = wrapNullableRef(property);
+                    }
                     property.setName(propName);
                     JAXBAnnotationsHelper.apply(propBeanDesc.getClassInfo(), annotations, property);
                     if (property != null && io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED.equals(requiredMode)) {
@@ -3543,6 +3550,34 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             }
         }
         return isObjectSchema(schema) && schema.getAdditionalProperties() != null;
+    }
+
+    private boolean hasNullableAnnotation(Annotation[] annotations) {
+        if (annotations == null) {
+            return false;
+        }
+        for (Annotation annotation : annotations) {
+            if (NULLABLE_ANNOTATIONS.contains(annotation.annotationType().getSimpleName())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private Schema wrapNullableRef(Schema refSchema) {
+        if (openapi31) {
+            Schema nullTypeSchema = new JsonSchema();
+            nullTypeSchema.addType("null");
+            Schema composed = new JsonSchema();
+            composed.addOneOfItem(refSchema);
+            composed.addOneOfItem(nullTypeSchema);
+            return composed;
+        } else {
+            Schema composed = new Schema();
+            composed.setNullable(true);
+            composed.addAllOfItem(refSchema);
+            return composed;
+        }
     }
 
     protected boolean isObjectSchema(Schema schema) {
