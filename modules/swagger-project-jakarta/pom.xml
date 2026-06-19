@@ -234,7 +234,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.7.0</version>
+                <version>3.12.0</version>
                 <configuration>
                     <aggregate>true</aggregate>
                     <source>1.8</source>
@@ -471,7 +471,7 @@
         <bnd-version>6.4.0</bnd-version>
         <servlet-api-version>5.0.0</servlet-api-version>
         <jersey2-version>3.1.10</jersey2-version>
-        <jackson-version>2.21.1</jackson-version>
+        <jackson-version>2.22.0</jackson-version>
         <jackson-annotations-version>2.21</jackson-annotations-version>
         <jackson-databind-version>2.21.1</jackson-databind-version>
         <logback-version>1.5.32</logback-version>

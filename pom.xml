@@ -153,7 +153,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.7.0</version>
+                <version>3.12.0</version>
                 <configuration>
                     <aggregate>true</aggregate>
                     <source>1.8</source>
@@ -419,7 +419,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.7.0</version>
+                <version>3.12.0</version>
                 <configuration>
                     <aggregate>true</aggregate>
                     <source>1.8</source>
@@ -635,7 +635,7 @@
         <bnd-version>6.4.0</bnd-version>
         <servlet-api-version>4.0.4</servlet-api-version>
         <jersey2-version>2.46</jersey2-version>
-        <jackson-version>2.21.1</jackson-version>
+        <jackson-version>2.22.0</jackson-version>
         <jackson-annotations-version>2.21</jackson-annotations-version>
         <jackson-databind-version>2.21.1</jackson-databind-version>
         <logback-version>1.5.32</logback-version>
@@ -652,7 +652,7 @@
         <httpcomponents-version>4.5.14</httpcomponents-version>
         <commons-codec-version>1.17.2</commons-codec-version>
 
-        <surefire-version>3.5.0</surefire-version>
+        <surefire-version>3.5.6</surefire-version>
         <enforcer-plugin-version>3.2.1</enforcer-plugin-version>
         <failsafe-plugin-version>2.22.2</failsafe-plugin-version>
 
