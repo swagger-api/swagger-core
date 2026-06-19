@@ -9,11 +9,7 @@
         "type" : "string"
       },
       "nullableModel" : {
-        "oneOf" : [ {
-          "$ref" : "#/components/schemas/Model"
-        }, {
-          "type" : "null"
-        } ]
+        "$ref" : "#/components/schemas/Model"
       },
       "strings" : {
         "type" : [ "array", "null" ],
@@ -48,11 +44,7 @@
           "type" : "string"
         },
         "nullableModel" : {
-          "oneOf" : [ {
-            "$ref" : "#/components/schemas/Model"
-          }, {
-            "type" : "null"
-          } ]
+          "$ref" : "#/components/schemas/Model"
         },
         "strings" : {
           "type" : [ "array", "null" ],

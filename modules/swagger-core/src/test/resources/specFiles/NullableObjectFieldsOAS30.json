@@ -3,10 +3,7 @@
     "type" : "object",
     "properties" : {
       "nullableModel" : {
-        "nullable" : true,
-        "allOf" : [ {
-          "$ref" : "#/components/schemas/Model"
-        } ]
+        "$ref" : "#/components/schemas/Model"
       },
       "model" : {
         "$ref" : "#/components/schemas/Model"
@@ -21,16 +18,10 @@
           "$ref" : "#/components/schemas/NestedModel"
         },
         "nullableNestedModel" : {
-          "nullable" : true,
-          "allOf" : [ {
-            "$ref" : "#/components/schemas/NestedModel"
-          } ]
+          "$ref" : "#/components/schemas/NestedModel"
         },
         "nullableNestedModel2" : {
-          "nullable" : true,
-          "allOf" : [ {
-            "$ref" : "#/components/schemas/NestedModel2"
-          } ]
+          "$ref" : "#/components/schemas/NestedModel2"
         },
         "nestedModel2" : {
           "$ref" : "#/components/schemas/NestedModel2"
@@ -41,10 +32,7 @@
       "type" : "object",
       "properties" : {
         "nullableModel" : {
-          "nullable" : true,
-          "allOf" : [ {
-            "$ref" : "#/components/schemas/Model"
-          } ]
+          "$ref" : "#/components/schemas/Model"
         },
         "model" : {
           "$ref" : "#/components/schemas/Model"
