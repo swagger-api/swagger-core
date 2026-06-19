@@ -12,8 +12,13 @@ import org.testng.annotations.Test;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
+import java.util.Collections;
+import java.util.LinkedHashSet;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertNull;
 
 /**
  * Reproduces GitHub Issue #5115
@@ -208,6 +213,98 @@ public class Issue5115Test {
 
         public void setNestedModel2(NestedModel2 nestedModel2) {
             this.nestedModel2 = nestedModel2;
+        }
+    }
+
+    @Test
+    public void testComponentSchemaStableRegardlessOfNullableFieldOrderOAS31() {
+        ResolvedSchema nullableFirst = ModelConverters.getInstance(true)
+                .readAllAsResolvedSchema(ContainerNullableFirst.class);
+        ResolvedSchema nonNullableFirst = ModelConverters.getInstance(true)
+                .readAllAsResolvedSchema(ContainerNonNullableFirst.class);
+
+        io.swagger.v3.oas.models.media.Schema nestedFromNullableFirst = nullableFirst.referencedSchemas.get("NestedModel");
+        io.swagger.v3.oas.models.media.Schema nestedFromNonNullableFirst = nonNullableFirst.referencedSchemas.get("NestedModel");
+
+        assertNotNull(nestedFromNullableFirst);
+        assertNotNull(nestedFromNonNullableFirst);
+
+        LinkedHashSet<String> expectedTypes = new LinkedHashSet<>(Collections.singletonList("object"));
+        assertFalse(nestedFromNullableFirst.getTypes().contains("null"),
+                "NestedModel must not contain null type when nullable field is resolved first");
+        assertEquals(nestedFromNullableFirst.getTypes(), expectedTypes);
+        assertEquals(nestedFromNonNullableFirst.getTypes(), expectedTypes,
+                "NestedModel component schema must be identical regardless of field resolution order");
+    }
+
+    @Test
+    public void testComponentSchemaStableRegardlessOfNullableFieldOrderOAS30() {
+        ResolvedSchema nullableFirst = ModelConverters.getInstance()
+                .readAllAsResolvedSchema(ContainerNullableFirst.class);
+        ResolvedSchema nonNullableFirst = ModelConverters.getInstance()
+                .readAllAsResolvedSchema(ContainerNonNullableFirst.class);
+
+        io.swagger.v3.oas.models.media.Schema nestedFromNullableFirst = nullableFirst.referencedSchemas.get("NestedModel");
+        io.swagger.v3.oas.models.media.Schema nestedFromNonNullableFirst = nonNullableFirst.referencedSchemas.get("NestedModel");
+
+        assertNotNull(nestedFromNullableFirst);
+        assertNotNull(nestedFromNonNullableFirst);
+
+        assertEquals(nestedFromNullableFirst.getType(), "object");
+        assertNull(nestedFromNullableFirst.getNullable(),
+                "NestedModel must not be nullable when nullable field is resolved first");
+        assertEquals(nestedFromNonNullableFirst.getType(), "object");
+        assertNull(nestedFromNonNullableFirst.getNullable(),
+                "NestedModel component schema must be identical regardless of field resolution order");
+    }
+
+    public static class ContainerNullableFirst {
+
+        @Nullable
+        private NestedModel nullableModel;
+
+        private NestedModel model;
+
+        @Nullable
+        public NestedModel getNullableModel() {
+            return nullableModel;
+        }
+
+        public void setNullableModel(@Nullable NestedModel nullableModel) {
+            this.nullableModel = nullableModel;
+        }
+
+        public NestedModel getModel() {
+            return model;
+        }
+
+        public void setModel(NestedModel model) {
+            this.model = model;
+        }
+    }
+
+    public static class ContainerNonNullableFirst {
+
+        private NestedModel model;
+
+        @Nullable
+        private NestedModel nullableModel;
+
+        public NestedModel getModel() {
+            return model;
+        }
+
+        public void setModel(NestedModel model) {
+            this.model = model;
+        }
+
+        @Nullable
+        public NestedModel getNullableModel() {
+            return nullableModel;
+        }
+
+        public void setNullableModel(@Nullable NestedModel nullableModel) {
+            this.nullableModel = nullableModel;
         }
     }
 
