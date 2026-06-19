@@ -8,8 +8,9 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * A single encoding definition applied to a single schema property.
- * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.0.4/versions/3.0.4.md#encoding-object"
+ * EncodingProperty
+ *
+ * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.0.4/versions/3.0.4.md#encoding-property-object"
  */
 
 public class EncodingProperty {

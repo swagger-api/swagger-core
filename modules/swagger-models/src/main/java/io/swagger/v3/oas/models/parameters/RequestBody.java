@@ -4,8 +4,9 @@ import io.swagger.v3.oas.models.annotations.OpenAPI31;
 import io.swagger.v3.oas.models.media.Content;
 
 /**
- * Describes a single request body.
- * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.0.4/versions/3.0.4.md#request-body-object"
+ * RequestBody
+ *
+ * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.0.4/versions/3.0.4.md#requestBody-object"
  * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.1.1/versions/3.1.1.md#request-body-object"
  */
 
