@@ -1,5 +1,7 @@
 package io.swagger.v3.core.issues;
 
+import com.fasterxml.jackson.databind.node.IntNode;
+import com.fasterxml.jackson.databind.node.NullNode;
 import io.swagger.v3.core.converter.AnnotatedType;
 import io.swagger.v3.core.converter.ModelConverterContextImpl;
 import io.swagger.v3.core.jackson.ModelResolver;
@@ -514,8 +516,8 @@ public class Issue4339Test {
                 (io.swagger.v3.oas.models.media.Schema) model.getProperties().get("integerField");
         assertNotNull(integerField, "integerField property should exist");
 
-        assertEquals(integerField.getExample(), "null",
-                "Example should be the string \"null\", not null value");
+        assertEquals(integerField.getExample(), NullNode.getInstance(),
+                "Example should be the NullNode \"null\", not null value");
         assertEquals(integerField.getDefault(), "null",
                 "Default should be the string \"null\", not null value");
     }
@@ -610,9 +612,9 @@ public class Issue4339Test {
         assertNotNull(integerField.getExamples(), "examples array should exist");
         assertEquals(integerField.getExamples().size(), 3, "examples array should have 3 elements");
 
-        assertTrue(integerField.getExamples().contains("1"), "examples should contain '1' as string");
+        assertTrue(integerField.getExamples().contains(IntNode.valueOf(1)), "examples should contain 1 as number");
         assertTrue(integerField.getExamples().contains(null), "examples should contain null value");
-        assertTrue(integerField.getExamples().contains("100"), "examples should contain '100' as string");
+        assertTrue(integerField.getExamples().contains(IntNode.valueOf(100)), "examples should contain 100 as number");
     }
 
     /**

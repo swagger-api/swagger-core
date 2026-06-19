@@ -25,6 +25,11 @@ python $CUR/CI/releaseNotes.py "$SC_LAST_RELEASE" "$SC_RELEASE_TITLE" "$SC_RELEA
 ./mvnw versions:set -DnewVersion=$SC_VERSION
 ./mvnw versions:commit
 
+cd modules/swagger-bom
+../../mvnw versions:set -DnewVersion=$SC_VERSION
+../../mvnw versions:commit
+cd ../..
+
 cd modules/swagger-project-jakarta
 ../../mvnw versions:set -DnewVersion=$SC_VERSION
 ../../mvnw versions:commit

@@ -1,6 +1,5 @@
 package io.swagger.v3.oas.models.media;
 
-import java.text.NumberFormat;
 import java.util.Objects;
 
 /**
@@ -34,13 +33,14 @@ public class IntegerSchema extends Schema<Number> {
     protected Number cast(Object value) {
         if (value != null) {
             try {
-                Number casted = NumberFormat.getInstance().parse(value.toString());
-                if (Integer.MIN_VALUE <= casted.longValue() && casted.longValue() <= Integer.MAX_VALUE) {
-                    return Integer.parseInt(value.toString());
+                String stringValue = value.toString();
+                long casted = Long.parseLong(stringValue);
+                if (withinIntegerBounds(casted)) {
+                    return Integer.parseInt(stringValue);
                 } else {
-                    return Long.parseLong(value.toString());
+                    return casted;
                 }
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
         }
         return null;
@@ -74,5 +74,9 @@ public class IntegerSchema extends Schema<Number> {
         sb.append("    ").append(toIndentedString(super.toString())).append("\n");
         sb.append("}");
         return sb.toString();
+    }
+
+    private boolean withinIntegerBounds(long value) {
+        return Integer.MIN_VALUE <= value && value <= Integer.MAX_VALUE;
     }
 }
