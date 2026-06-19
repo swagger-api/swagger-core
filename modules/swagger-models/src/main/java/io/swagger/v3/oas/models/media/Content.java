@@ -4,9 +4,8 @@ import java.util.LinkedHashMap;
 import java.util.Objects;
 
 /**
- * Content
- *
- * @see <a href="https://github.com/OAI/OpenAPI-Specification/blob/3.0.4/versions/3.0.4.md#content-object">Content (OpenAPI 3.0 specification)</a>
+ * Content is a map of Media Type Objects
+ * @see <a href="https://github.com/OAI/OpenAPI-Specification/blob/3.0.4/versions/3.0.4.md#media-type-object">Content (OpenAPI 3.0 specification)</a>
  */
 
 public class Content extends LinkedHashMap<String, MediaType> {
