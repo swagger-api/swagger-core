@@ -678,7 +678,11 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
             // hack to avoid clobbering properties with get/is names
             // it's ugly but gets around https://github.com/swagger-api/swagger-core/issues/415
-            if (propDef.getPrimaryMember() != null) {
+            // Skip it when a PropertyNamingStrategy is configured: propName already reflects the
+            // strategy-translated name, and falling back to the raw member name (e.g. a record
+            // accessor such as "issuanceDate") would wrongly leave "is"-prefixed names untranslated.
+            if (propDef.getPrimaryMember() != null
+                    && _mapper.getSerializationConfig().getPropertyNamingStrategy() == null) {
                 final JsonProperty jsonPropertyAnn = propDef.getPrimaryMember().getAnnotation(JsonProperty.class);
                 if (jsonPropertyAnn == null || !jsonPropertyAnn.value().equals(propName)) {
                     if (member != null) {
