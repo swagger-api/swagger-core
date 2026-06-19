@@ -4,9 +4,8 @@ import java.util.LinkedHashMap;
 import java.util.Objects;
 
 /**
- * Scopes
- *
- * @see <a href="https://github.com/OAI/OpenAPI-Specification/blob/3.0.4/versions/3.0.4.md#scoped-object">Scopes (OpenAPI 3.0 specification)</a>
+ * The available scopes for an OAuth Flow, as a map of scope name to short description.
+ * @see <a href="https://github.com/OAI/OpenAPI-Specification/blob/3.0.4/versions/3.0.4.md#oauth-flow-object">Scopes (OpenAPI 3.0 specification)</a>
  */
 
 public class Scopes extends LinkedHashMap<String, String> {
