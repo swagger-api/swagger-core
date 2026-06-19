@@ -114,10 +114,14 @@ public class BeanValidatorTest {
         assertEquals(email.getFormat(), "email");
 
         final JsonSchema minBalance = (JsonSchema) properties.get("minBalance");
-        assertTrue(minBalance.getExclusiveMinimum());
+        assertEquals(minBalance.getExclusiveMinimumValue(), new BigDecimal("0.1"));
+        assertNull(minBalance.getMinimum());
+        assertNull(minBalance.getExclusiveMinimum());
 
         final JsonSchema maxBalance = (JsonSchema) properties.get("maxBalance");
-        assertTrue(maxBalance.getExclusiveMaximum());
+        assertEquals(maxBalance.getExclusiveMaximumValue(), new BigDecimal("1000000"));
+        assertNull(maxBalance.getMaximum());
+        assertNull(maxBalance.getExclusiveMaximum());
 
         final JsonSchema items = (JsonSchema) properties.get("items");
         assertEquals((int) items.getMinItems(), 2);
@@ -131,6 +135,8 @@ public class BeanValidatorTest {
 
         final JsonSchema positiveAmount = (JsonSchema) properties.get("positiveAmount");
         assertEquals(positiveAmount.getExclusiveMinimumValue(), BigDecimal.ZERO);
+        assertNull(positiveAmount.getMinimum());
+        assertNull(positiveAmount.getExclusiveMinimum());
 
         final JsonSchema positiveOrZeroAmount = (JsonSchema) properties.get("positiveOrZeroAmount");
         assertEquals(positiveOrZeroAmount.getMinimum(), BigDecimal.ZERO);
@@ -138,6 +144,8 @@ public class BeanValidatorTest {
 
         final JsonSchema negativeAmount = (JsonSchema) properties.get("negativeAmount");
         assertEquals(negativeAmount.getExclusiveMaximumValue(), BigDecimal.ZERO);
+        assertNull(negativeAmount.getMaximum());
+        assertNull(negativeAmount.getExclusiveMaximum());
 
         final JsonSchema negativeOrZeroAmount = (JsonSchema) properties.get("negativeOrZeroAmount");
         assertEquals(negativeOrZeroAmount.getMaximum(), BigDecimal.ZERO);
@@ -149,23 +157,23 @@ public class BeanValidatorTest {
         assertNull(positiveWithMin.getExclusiveMinimumValue());
 
         final JsonSchema positiveWithDecimalMin = (JsonSchema) properties.get("positiveWithDecimalMin");
-        assertEquals(positiveWithDecimalMin.getMinimum(), new BigDecimal("5.5"));
-        assertNull(positiveWithMin.getExclusiveMinimum());
-        assertNull(positiveWithMin.getExclusiveMinimumValue());
+        assertEquals(positiveWithDecimalMin.getExclusiveMinimumValue(), new BigDecimal("5.5"));
+        assertNull(positiveWithDecimalMin.getMinimum());
+        assertNull(positiveWithDecimalMin.getExclusiveMinimum());
 
         final JsonSchema positiveOrZeroWithMin = (JsonSchema) properties.get("positiveOrZeroWithMin");
         assertEquals(positiveOrZeroWithMin.getMinimum(), new BigDecimal("3"));
-        assertNull(positiveWithMin.getExclusiveMinimum());
-        assertNull(positiveWithMin.getExclusiveMinimumValue());
+        assertNull(positiveOrZeroWithMin.getExclusiveMinimum());
+        assertNull(positiveOrZeroWithMin.getExclusiveMinimumValue());
 
         final JsonSchema negativeWithMax = (JsonSchema) properties.get("negativeWithMax");
         assertEquals(negativeWithMax.getMaximum(), new BigDecimal("-3"));
-        assertNull(positiveWithMin.getExclusiveMaximum());
-        assertNull(positiveWithMin.getExclusiveMaximumValue());
+        assertNull(negativeWithMax.getExclusiveMaximum());
+        assertNull(negativeWithMax.getExclusiveMaximumValue());
 
         final JsonSchema negativeOrZeroWithMax = (JsonSchema) properties.get("negativeOrZeroWithMax");
         assertEquals(negativeOrZeroWithMax.getMaximum(), new BigDecimal("-2"));
-        assertNull(positiveWithMin.getExclusiveMaximum());
-        assertNull(positiveWithMin.getExclusiveMaximumValue());
+        assertNull(negativeOrZeroWithMax.getExclusiveMaximum());
+        assertNull(negativeOrZeroWithMax.getExclusiveMaximumValue());
     }
 }

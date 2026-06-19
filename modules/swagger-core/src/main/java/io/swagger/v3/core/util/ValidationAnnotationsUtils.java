@@ -133,12 +133,25 @@ public class ValidationAnnotationsUtils {
      * @return whether the schema has been modified or not
      */
     public static boolean applyDecimalMinConstraint(Schema schema, DecimalMin annotation) {
-        if (isNumberSchema(schema)) {
-            schema.setMinimum(new BigDecimal(annotation.value()));
-            schema.setExclusiveMinimum(!annotation.inclusive());
-            return true;
+        if (!isNumberSchema(schema)) {
+            return false;
         }
-        return false;
+        BigDecimal value = new BigDecimal(annotation.value());
+        if (schema.getSpecVersion().equals(SpecVersion.V31)) {
+            if (!annotation.inclusive()) {
+                schema.setExclusiveMinimumValue(value);
+                BigDecimal minimum = schema.getMinimum();
+                if (minimum != null && minimum.compareTo(value) <= 0) {
+                    schema.setMinimum(null);
+                }
+            } else {
+                schema.setMinimum(value);
+            }
+        } else {
+            schema.setMinimum(value);
+            schema.setExclusiveMinimum(!annotation.inclusive());
+        }
+        return true;
     }
 
     /**
@@ -147,12 +160,25 @@ public class ValidationAnnotationsUtils {
      * @return whether the schema has been modified or not
      */
     public static boolean applyDecimalMaxConstraint(Schema schema, DecimalMax annotation) {
-        if (isNumberSchema(schema)) {
-            schema.setMaximum(new BigDecimal(annotation.value()));
-            schema.setExclusiveMaximum(!annotation.inclusive());
-            return true;
+        if (!isNumberSchema(schema)) {
+            return false;
         }
-        return false;
+        BigDecimal value = new BigDecimal(annotation.value());
+        if (schema.getSpecVersion().equals(SpecVersion.V31)) {
+            if (!annotation.inclusive()) {
+                schema.setExclusiveMaximumValue(value);
+                BigDecimal maximum = schema.getMaximum();
+                if (maximum != null && maximum.compareTo(value) >= 0) {
+                    schema.setMaximum(null);
+                }
+            } else {
+                schema.setMaximum(value);
+            }
+        } else {
+            schema.setMaximum(value);
+            schema.setExclusiveMaximum(!annotation.inclusive());
+        }
+        return true;
     }
 
     /**
@@ -190,27 +216,48 @@ public class ValidationAnnotationsUtils {
     }
 
     public static boolean applyPositiveConstraint(Schema schema) {
-        if (isNumberSchema(schema)) {
-            BigDecimal current = schema.getMinimum();
-            if (schema.getSpecVersion().equals(SpecVersion.V30)) {
-                if (currentMinimumOutsidePositiveRange(current)) {
-                    schema.setMinimum(BigDecimal.ZERO);
-                    schema.setExclusiveMinimum(true);
-                } else if (current.compareTo(BigDecimal.ZERO) == 0 && !Boolean.TRUE.equals(schema.getExclusiveMinimum())) {
-                    schema.setExclusiveMinimum(true);
-                }
-            } else {
-                // OpenAPI 3.1: use exclusiveMinimumValue as a numeric value
-                if (schema.getExclusiveMinimumValue() == null && currentMinimumOutsidePositiveRange(current)) {
-                    schema.setExclusiveMinimumValue(BigDecimal.ZERO);
-                    return true;
-                }
-                // If currentExclusive is already 0 or positive, keep the stricter bound
-                return false;
-            }
-            return true;
+        if (!isNumberSchema(schema)) {
+            return false;
         }
-        return false;
+        if (schema.getSpecVersion().equals(SpecVersion.V30)) {
+            return applyPositiveConstraintV30(schema);
+        }
+        return applyPositiveConstraintV31(schema);
+    }
+
+    private static boolean applyPositiveConstraintV30(Schema schema) {
+        BigDecimal minimum = schema.getMinimum();
+        if (currentMinimumOutsidePositiveRange(minimum)) {
+            schema.setMinimum(BigDecimal.ZERO);
+            schema.setExclusiveMinimum(true);
+        } else if (minimum.compareTo(BigDecimal.ZERO) == 0 && !Boolean.TRUE.equals(schema.getExclusiveMinimum())) {
+            schema.setExclusiveMinimum(true);
+        }
+        return true;
+    }
+
+    private static boolean applyPositiveConstraintV31(Schema schema) {
+        BigDecimal exclusiveMinimum = schema.getExclusiveMinimumValue();
+        if (exclusiveMinimum != null) {
+            if (exclusiveMinimum.compareTo(BigDecimal.ZERO) < 0) {
+                BigDecimal minimum = schema.getMinimum();
+                if (minimum != null && minimum.compareTo(BigDecimal.ZERO) > 0) {
+                    schema.setExclusiveMinimumValue(null);
+                } else {
+                    schema.setMinimum(null);
+                    schema.setExclusiveMinimumValue(BigDecimal.ZERO);
+                }
+                return true;
+            }
+            return false;
+        }
+        BigDecimal minimum = schema.getMinimum();
+        if (minimum != null && minimum.compareTo(BigDecimal.ZERO) > 0) {
+            return false;
+        }
+        schema.setMinimum(null);
+        schema.setExclusiveMinimumValue(BigDecimal.ZERO);
+        return true;
     }
 
     public static boolean applyPositiveOrZeroConstraint(Schema schema) {
@@ -225,27 +272,48 @@ public class ValidationAnnotationsUtils {
     }
 
     public static boolean applyNegativeConstraint(Schema schema) {
-        if (isNumberSchema(schema)) {
-            BigDecimal current = schema.getMaximum();
-            if (schema.getSpecVersion().equals(SpecVersion.V30)) {
-                if (currentMaximumOutsideNegativeRange(current)) {
-                    schema.setMaximum(BigDecimal.ZERO);
-                    schema.setExclusiveMaximum(true);
-                } else if (current.compareTo(BigDecimal.ZERO) == 0 && !Boolean.TRUE.equals(schema.getExclusiveMaximum())) {
-                    schema.setExclusiveMaximum(true);
-                }
-            } else {
-                // OpenAPI 3.1: use exclusiveMaximumValue as a numeric value
-                if (schema.getExclusiveMaximumValue() == null && currentMaximumOutsideNegativeRange(current)) {
-                    schema.setExclusiveMaximumValue(BigDecimal.ZERO);
-                    return true;
-                }
-                // If currentExclusive is already 0 or negative, keep the stricter bound
-                return false;
-            }
-            return true;
+        if (!isNumberSchema(schema)) {
+            return false;
         }
-        return false;
+        if (schema.getSpecVersion().equals(SpecVersion.V30)) {
+            return applyNegativeConstraintV30(schema);
+        }
+        return applyNegativeConstraintV31(schema);
+    }
+
+    private static boolean applyNegativeConstraintV30(Schema schema) {
+        BigDecimal maximum = schema.getMaximum();
+        if (currentMaximumOutsideNegativeRange(maximum)) {
+            schema.setMaximum(BigDecimal.ZERO);
+            schema.setExclusiveMaximum(true);
+        } else if (maximum.compareTo(BigDecimal.ZERO) == 0 && !Boolean.TRUE.equals(schema.getExclusiveMaximum())) {
+            schema.setExclusiveMaximum(true);
+        }
+        return true;
+    }
+
+    private static boolean applyNegativeConstraintV31(Schema schema) {
+        BigDecimal exclusiveMaximum = schema.getExclusiveMaximumValue();
+        if (exclusiveMaximum != null) {
+            if (exclusiveMaximum.compareTo(BigDecimal.ZERO) > 0) {
+                BigDecimal maximum = schema.getMaximum();
+                if (maximum != null && maximum.compareTo(BigDecimal.ZERO) < 0) {
+                    schema.setExclusiveMaximumValue(null);
+                } else {
+                    schema.setMaximum(null);
+                    schema.setExclusiveMaximumValue(BigDecimal.ZERO);
+                }
+                return true;
+            }
+            return false;
+        }
+        BigDecimal maximum = schema.getMaximum();
+        if (maximum != null && maximum.compareTo(BigDecimal.ZERO) < 0) {
+            return false;
+        }
+        schema.setMaximum(null);
+        schema.setExclusiveMaximumValue(BigDecimal.ZERO);
+        return true;
     }
 
     /**
