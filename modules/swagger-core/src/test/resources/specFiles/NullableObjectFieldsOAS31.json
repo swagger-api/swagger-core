@@ -1,0 +1,59 @@
+{
+  "schema" : {
+    "type" : "object",
+    "properties" : {
+      "nullableModel" : {
+        "$ref" : "#/components/schemas/Model"
+      },
+      "model" : {
+        "$ref" : "#/components/schemas/Model"
+      }
+    }
+  },
+  "referencedSchemas" : {
+    "Model" : {
+      "type" : "object",
+      "properties" : {
+        "nestedModel" : {
+          "$ref" : "#/components/schemas/NestedModel"
+        },
+        "nullableNestedModel" : {
+          "$ref" : "#/components/schemas/NestedModel"
+        },
+        "nullableNestedModel2" : {
+          "$ref" : "#/components/schemas/NestedModel2"
+        },
+        "nestedModel2" : {
+          "$ref" : "#/components/schemas/NestedModel2"
+        }
+      }
+    },
+    "ModelWithObject" : {
+      "type" : "object",
+      "properties" : {
+        "nullableModel" : {
+          "$ref" : "#/components/schemas/Model"
+        },
+        "model" : {
+          "$ref" : "#/components/schemas/Model"
+        }
+      }
+    },
+    "NestedModel" : {
+      "type" : "object",
+      "properties" : {
+        "field" : {
+          "type" : "string"
+        }
+      }
+    },
+    "NestedModel2" : {
+      "type" : "object",
+      "properties" : {
+        "field2" : {
+          "type" : "string"
+        }
+      }
+    }
+  }
+}
