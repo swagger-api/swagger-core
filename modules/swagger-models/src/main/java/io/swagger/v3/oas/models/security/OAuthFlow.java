@@ -5,10 +5,9 @@ import io.swagger.v3.oas.models.annotations.OpenAPI31;
 import java.util.Objects;
 
 /**
- * OAuthFlow
- *
- * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.0.4/versions/3.0.4.md#oauth-flows-object"
- * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.1.1/versions/3.1.1.md#oauth-flows-object"
+ * Configuration details for a supported OAuth Flow.
+ * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.0.4/versions/3.0.4.md#oauth-flow-object"
+ * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.1.1/versions/3.1.1.md#oauth-flow-object"
  */
 
 public class OAuthFlow {
