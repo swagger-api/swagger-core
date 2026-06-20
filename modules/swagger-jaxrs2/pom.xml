@@ -96,9 +96,7 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${surefire-version}</version>
                 <configuration>
-                    <argLine>-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5005 --add-opens java.base/java.lang=ALL-UNNAMED</argLine>
-                    <forkCount>0</forkCount>
-                    <skipTests>true</skipTests>
+                    <argLine>--add-opens java.base/java.lang=ALL-UNNAMED</argLine>
                 </configuration>
             </plugin>
             <plugin>
