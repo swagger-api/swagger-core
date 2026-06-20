@@ -383,15 +383,6 @@
             </build>
         </profile>
         <profile>
-            <id>java-17-modules</id>
-            <activation>
-                <jdk>[17,)</jdk>
-            </activation>
-            <modules>
-                <module>modules/swagger-java17-support</module>
-            </modules>
-        </profile>
-        <profile>
             <id>bom-it</id>
             <modules>
                 <module>modules/swagger-bom-integration-test</module>
