@@ -120,7 +120,7 @@
         <dependency>
             <groupId>jakarta.annotation</groupId>
             <artifactId>jakarta.annotation-api</artifactId>
-            <version>1.3.5</version>
+            <version>3.0.0</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
