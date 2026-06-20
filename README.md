@@ -145,7 +145,7 @@ You need the following installed and available in your $PATH:
 * Jackson 3.1.3 or greater
 
 
-### To build from source (currently 3.0.0-SNAPSHOT)
+### To build from source
 ```
 # first time building locally
 mvn -N
