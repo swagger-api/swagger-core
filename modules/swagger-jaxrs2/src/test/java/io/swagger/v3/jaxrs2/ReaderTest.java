@@ -546,6 +546,9 @@ public class ReaderTest {
                 "            format: int32\n" +
                 "    MultipleBaseBean:\n" +
                 "      type: object\n" +
+                "      oneOf:\n" +
+                "      - $ref: \"#/components/schemas/MultipleSub1Bean\"\n" +
+                "      - $ref: \"#/components/schemas/MultipleSub2Bean\"\n" +
                 "      properties:\n" +
                 "        beanType:\n" +
                 "          type: string\n" +
@@ -1134,6 +1137,9 @@ public class ReaderTest {
                 "          type: string\n" +
                 "      discriminator:\n" +
                 "        propertyName: type\n" +
+                "      oneOf:\n" +
+                "      - $ref: \"#/components/schemas/Dog\"\n" +
+                "      - $ref: \"#/components/schemas/Cat\"\n" +
                 "    Cat:\n" +
                 "      type: object\n" +
                 "      allOf:\n" +
@@ -3022,6 +3028,9 @@ public class ReaderTest {
                 "  schemas:\n" +
                 "    MultipleBaseBean:\n" +
                 "      type: object\n" +
+                "      oneOf:\n" +
+                "      - $ref: \"#/components/schemas/MultipleSub1Bean\"\n" +
+                "      - $ref: \"#/components/schemas/MultipleSub2Bean\"\n" +
                 "      properties:\n" +
                 "        beanType:\n" +
                 "          type: string\n" +
@@ -4060,6 +4069,9 @@ public class ReaderTest {
                 "    MultipleBaseBean:\n" +
                 "      type: object\n" +
                 "      description: MultipleBaseBean\n" +
+                "      oneOf:\n" +
+                "      - $ref: \"#/components/schemas/MultipleSub1Bean\"\n" +
+                "      - $ref: \"#/components/schemas/MultipleSub2Bean\"\n" +
                 "      properties:\n" +
                 "        beanType:\n" +
                 "          type: string\n" +
