@@ -167,8 +167,8 @@ Of course if you don't want to build locally you can grab artifacts from maven c
 The `swagger-bom` artifact is a Bill of Materials that manages **both** the `javax` and Jakarta (`-jakarta` suffix) artifact families.
 Import it once and omit versions on all individual Swagger dependencies.
 
-> **Note:** Maven and Gradle build plugins (`swagger-maven-plugin`, `swagger-gradle-plugin`,
-> `swagger-eclipse-transformer-maven-plugin`) are intentionally **excluded** from the BOM.
+> **Note:** Maven and Gradle build plugins (`swagger-maven-plugin`, `swagger-gradle-plugin`)
+> are intentionally **excluded** from the BOM.
 > Plugins are applied via `<build><plugins>` or `plugins {}`, not via `<dependencyManagement>`,
 > so including them in the BOM would be misleading and could conflict with the plugin
 > management section of a consumer's build.
