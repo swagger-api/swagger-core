@@ -456,7 +456,7 @@
     </dependencyManagement>
     <properties>
         <maven.compiler.release>17</maven.compiler.release>
-        <joda-version>2.2.4</joda-version>
+        <joda-version>3.0.1</joda-version>
         <joda-time-version>2.14.2</joda-time-version>
         <snakeyaml-version>2.6</snakeyaml-version>
         <jakarta.ws-version>3.1.0</jakarta.ws-version>
