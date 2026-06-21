@@ -4,8 +4,8 @@ runs:
   using: "composite"
   steps:
     - run: |
-        ROOT_VERSION=$(./mvnw -q -Dexec.executable="echo" -Dexec.args='${project.version}' --non-recursive org.codehaus.mojo:exec-maven-plugin:1.3.1:exec)
-        BOM_VERSION=$(./mvnw -q -Dexec.executable="echo" -Dexec.args='${project.version}' --non-recursive org.codehaus.mojo:exec-maven-plugin:1.3.1:exec --file modules/swagger-bom/pom.xml)
+        ROOT_VERSION=$(./mvnw -q -DforceStdout help:evaluate -Dexpression=project.version --non-recursive)
+        BOM_VERSION=$(./mvnw -q -DforceStdout help:evaluate -Dexpression=project.version --non-recursive --file modules/swagger-bom/pom.xml)
         if [ "${ROOT_VERSION}" != "${BOM_VERSION}" ]; then
           echo "ERROR: swagger-bom version mismatch"
           exit 1

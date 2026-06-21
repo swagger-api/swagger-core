@@ -6,9 +6,7 @@ RELEASE_TYPE="${1:-release}"
 CUR=$(pwd)
 
 # Verify we are on a SNAPSHOT
-CURRENT_VERSION=$(./mvnw -q -Dexec.executable="echo" \
-  -Dexec.args='${project.version}' --non-recursive \
-  org.codehaus.mojo:exec-maven-plugin:1.3.1:exec)
+CURRENT_VERSION=$(./mvnw -q -DforceStdout help:evaluate -Dexpression=project.version --non-recursive)
 
 if [[ ! "$CURRENT_VERSION" =~ ^.*-SNAPSHOT$ ]]; then
   echo "ERROR: Current version is not a SNAPSHOT ($CURRENT_VERSION). Release can only start from a SNAPSHOT."
