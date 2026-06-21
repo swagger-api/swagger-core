@@ -13,6 +13,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.util.Properties;
 import org.gradle.testkit.runner.BuildResult;
 import org.gradle.testkit.runner.GradleRunner;
 import org.testng.annotations.Test;
@@ -26,6 +29,29 @@ public class SwaggerResolveTest {
     private Path openapiInputFile;
     private String outputFile;
     private String outputDir;
+
+    private static final String SWAGGER_VERSION;
+
+    static {
+        try {
+            SWAGGER_VERSION = loadSwaggerVersion();
+        } catch (Exception e) {
+            throw new ExceptionInInitializerError(e);
+        }
+    }
+
+    private static String loadSwaggerVersion() throws Exception {
+        Properties props = new Properties();
+        try (InputStream is = new FileInputStream("gradle.properties")) {
+            props.load(is);
+        }
+        String version = props.getProperty("version");
+        if (version == null) {
+            throw new Exception("version property not found in gradle.properties");
+        }
+        return version;
+    }
+
 
     @BeforeMethod
     public void setup() throws IOException {
@@ -77,10 +103,10 @@ public class SwaggerResolveTest {
                 "    mavenCentral()\n" +
                 "}\n" +
                 "dependencies {  \n" +
-                "    implementation 'io.github.vpelikh:swagger-jaxrs2:4.0.0-SNAPSHOT'\n" +
-                "    implementation 'javax.ws.rs:javax.ws.rs-api:2.1'\n" +
-                "    implementation 'javax.servlet:javax.servlet-api:3.1.0'\n" +
-                "    testImplementation 'com.github.tomakehurst:wiremock:2.27.2'\n" +
+                "    implementation 'io.github.vpelikh:swagger-jakarta-rest:" + SWAGGER_VERSION + "'\n" +
+                "    implementation 'jakarta.ws.rs:jakarta.ws.rs-api:4.0.0'\n" +
+                "    implementation 'jakarta.servlet:jakarta.servlet-api:6.1.0'\n" +
+                "    testImplementation 'org.wiremock:wiremock:4.0.0-beta.36'\n" +
                 "    testImplementation 'org.testng:testng:7.10.2'\n" +
                 "\n" +
                 "\n" +
@@ -150,10 +176,10 @@ public class SwaggerResolveTest {
                 "    mavenCentral()\n" +
                 "}\n" +
                 "dependencies {  \n" +
-                "    implementation 'io.github.vpelikh:swagger-jaxrs2:4.0.0-SNAPSHOT'\n" +
-                "    implementation 'javax.ws.rs:javax.ws.rs-api:2.1'\n" +
-                "    implementation 'javax.servlet:javax.servlet-api:3.1.0'\n" +
-                "    testImplementation 'com.github.tomakehurst:wiremock:2.27.2'\n" +
+                "    implementation 'io.github.vpelikh:swagger-jakarta-rest:" + SWAGGER_VERSION + "'\n" +
+                "    implementation 'jakarta.ws.rs:jakarta.ws.rs-api:4.0.0'\n" +
+                "    implementation 'jakarta.servlet:jakarta.servlet-api:6.1.0'\n" +
+                "    testImplementation 'org.wiremock:wiremock:4.0.0-beta.36'\n" +
                 "    testImplementation 'org.testng:testng:7.10.2'\n" +
                 "\n" +
                 "\n" +
@@ -234,9 +260,9 @@ public class SwaggerResolveTest {
                 "    mavenCentral()\n" +
                 "}\n" +
                 "dependencies {  \n" +
-                "    implementation 'io.github.vpelikh:swagger-jaxrs2:4.0.0-SNAPSHOT'\n" +
-                "    implementation 'javax.ws.rs:javax.ws.rs-api:2.1'\n" +
-                "    implementation 'javax.servlet:javax.servlet-api:3.1.0'\n" +
+                "    implementation 'io.github.vpelikh:swagger-jakarta-rest:" + SWAGGER_VERSION + "'\n" +
+                "    implementation 'jakarta.ws.rs:jakarta.ws.rs-api:4.0.0'\n" +
+                "    implementation 'jakarta.servlet:jakarta.servlet-api:6.1.0'\n" +
                 "}\n" +
                 resolveTask + " {\n" +
                 "    outputFileName = 'PetStoreAPIDefaults'\n" +
@@ -303,9 +329,9 @@ public class SwaggerResolveTest {
                 "    mavenCentral()\n" +
                 "}\n" +
                 "dependencies {\n" +
-                "    implementation 'io.github.vpelikh:swagger-jaxrs2:4.0.0-SNAPSHOT'\n" +
-                "    implementation 'javax.ws.rs:javax.ws.rs-api:2.1'\n" +
-                "    implementation 'javax.servlet:javax.servlet-api:3.1.0'\n" +
+                "    implementation 'io.github.vpelikh:swagger-jakarta-rest:" + SWAGGER_VERSION + "'\n" +
+                "    implementation 'jakarta.ws.rs:jakarta.ws.rs-api:4.0.0'\n" +
+                "    implementation 'jakarta.servlet:jakarta.servlet-api:6.1.0'\n" +
                 "    testImplementation 'org.testng:testng:7.10.2'\n" +
                 "}\n" +
                 "sourceSets {\n" +
@@ -385,7 +411,7 @@ public class SwaggerResolveTest {
                 "}\n" +
                 "dependencies {\n" +
                 "    implementation project(':app')\n" +
-                "    implementation 'javax.ws.rs:javax.ws.rs-api:2.1'\n" +
+                "    implementation 'jakarta.ws.rs:jakarta.ws.rs-api:4.0.0'\n" +
                 "}\n" +
                 "resolve {\n" +
                 "    resourcePackages = ['com.example.api']\n" +
@@ -393,8 +419,8 @@ public class SwaggerResolveTest {
                 "}\n");
         writeFile(apiDir.resolve("src/main/java/com/example/api/HelloResource.java"),
                 "package com.example.api;\n" +
-                "import javax.ws.rs.GET;\n" +
-                "import javax.ws.rs.Path;\n" +
+                "import jakarta.ws.rs.GET;\n" +
+                "import jakarta.ws.rs.Path;\n" +
                 "@Path(\"/hello\")\n" +
                 "public class HelloResource {\n" +
                 "    @GET\n" +

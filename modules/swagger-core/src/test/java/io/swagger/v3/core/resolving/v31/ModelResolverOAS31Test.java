@@ -17,10 +17,10 @@ import io.swagger.v3.core.resolving.v31.model.ModelWithOAS31Stuff;
 import io.swagger.v3.oas.models.media.Schema;
 import org.testng.annotations.Test;
 
-import javax.validation.constraints.DecimalMax;
-import javax.validation.constraints.DecimalMin;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
+import jakarta.validation.constraints.DecimalMax;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import java.util.List;
 import java.util.Map;
 

@@ -8,7 +8,7 @@ import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.testng.annotations.Test;
 
-import javax.validation.constraints.Pattern;
+import jakarta.validation.constraints.Pattern;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.Date;

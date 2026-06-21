@@ -2,7 +2,7 @@ package io.swagger.v3.core.util;
 
 import io.swagger.v3.oas.models.media.Schema;
 
-import javax.validation.constraints.*;
+import jakarta.validation.constraints.*;
 import java.lang.annotation.Annotation;
 import java.math.BigDecimal;
 import java.util.ArrayDeque;
@@ -16,20 +16,20 @@ import static io.swagger.v3.core.util.SchemaTypeUtils.*;
 
 public class ValidationAnnotationsUtils {
 
-    public static final String JAVAX_NOT_NULL = "javax.validation.constraints.NotNull";
-    public static final String JAVAX_NOT_EMPTY = "javax.validation.constraints.NotEmpty";
-    public static final String JAVAX_NOT_BLANK = "javax.validation.constraints.NotBlank";
-    public static final String JAVAX_MIN = "javax.validation.constraints.Min";
-    public static final String JAVAX_MAX = "javax.validation.constraints.Max";
-    public static final String JAVAX_SIZE = "javax.validation.constraints.Size";
-    public static final String JAVAX_DECIMAL_MIN = "javax.validation.constraints.DecimalMin";
-    public static final String JAVAX_DECIMAL_MAX = "javax.validation.constraints.DecimalMax";
-    public static final String JAVAX_PATTERN = "javax.validation.constraints.Pattern";
-    public static final String JAVAX_EMAIL = "javax.validation.constraints.Email";
-    public static final String JAVAX_POSITIVE = "javax.validation.constraints.Positive";
-    public static final String JAVAX_POSITIVE_OR_ZERO = "javax.validation.constraints.PositiveOrZero";
-    public static final String JAVAX_NEGATIVE = "javax.validation.constraints.Negative";
-    public static final String JAVAX_NEGATIVE_OR_ZERO = "javax.validation.constraints.NegativeOrZero";
+    public static final String JAVAX_NOT_NULL = "jakarta.validation.constraints.NotNull";
+    public static final String JAVAX_NOT_EMPTY = "jakarta.validation.constraints.NotEmpty";
+    public static final String JAVAX_NOT_BLANK = "jakarta.validation.constraints.NotBlank";
+    public static final String JAVAX_MIN = "jakarta.validation.constraints.Min";
+    public static final String JAVAX_MAX = "jakarta.validation.constraints.Max";
+    public static final String JAVAX_SIZE = "jakarta.validation.constraints.Size";
+    public static final String JAVAX_DECIMAL_MIN = "jakarta.validation.constraints.DecimalMin";
+    public static final String JAVAX_DECIMAL_MAX = "jakarta.validation.constraints.DecimalMax";
+    public static final String JAVAX_PATTERN = "jakarta.validation.constraints.Pattern";
+    public static final String JAVAX_EMAIL = "jakarta.validation.constraints.Email";
+    public static final String JAVAX_POSITIVE = "jakarta.validation.constraints.Positive";
+    public static final String JAVAX_POSITIVE_OR_ZERO = "jakarta.validation.constraints.PositiveOrZero";
+    public static final String JAVAX_NEGATIVE = "jakarta.validation.constraints.Negative";
+    public static final String JAVAX_NEGATIVE_OR_ZERO = "jakarta.validation.constraints.NegativeOrZero";
 
     private static final String SCHEMA_EMAIL_FORMAT_NAME = "email";
 
@@ -254,7 +254,7 @@ public class ValidationAnnotationsUtils {
                 for (Annotation meta : a.annotationType().getAnnotations()) {
                     if (meta == null) continue;
                     String name = meta.annotationType().getName();
-                    if (name.startsWith("javax.validation.constraints")) {
+                    if (name.startsWith("jakarta.validation.constraints")) {
                         merged.putIfAbsent(name, meta);
                     } else {
                         queue.add(meta);

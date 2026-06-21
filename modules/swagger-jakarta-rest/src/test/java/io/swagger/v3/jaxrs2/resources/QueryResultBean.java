@@ -1,0 +1,27 @@
+package io.swagger.v3.jaxrs2.resources;
+
+import jakarta.ws.rs.QueryParam;
+
+public class QueryResultBean {
+    @QueryParam("skip")
+    private Integer skip;
+
+    @QueryParam("limit")
+    private Integer limit;
+
+    public Integer getSkip() {
+        return skip;
+    }
+
+    public void setSkip(Integer skip) {
+        this.skip = skip;
+    }
+
+    public Integer getLimit() {
+        return limit;
+    }
+
+    public void setLimit(Integer limit) {
+        this.limit = limit;
+    }
+}

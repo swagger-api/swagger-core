@@ -2,7 +2,7 @@ package io.swagger.v3.core.resolving.resources;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 import java.io.Serializable;
 
 @Schema(name = "TestObject2616", description = "Nutritional value specification")

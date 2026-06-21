@@ -1,6 +1,6 @@
 package io.swagger.v3.core.oas.models;
 
-import javax.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlElement;
 
 public class Address {
     private Integer streetNumber;

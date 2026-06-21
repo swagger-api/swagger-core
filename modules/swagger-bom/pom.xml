@@ -94,7 +94,7 @@
 
     <dependencyManagement>
         <dependencies>
-            <!-- Core Swagger (OpenAPI 3) libraries -->
+            <!-- Base artifacts (now use jakarta namespace in source) -->
             <dependency>
                 <groupId>io.github.vpelikh</groupId>
                 <artifactId>swagger-annotations</artifactId>
@@ -115,59 +115,22 @@
                 <artifactId>swagger-integration</artifactId>
                 <version>${project.version}</version>
             </dependency>
+            <!-- Jakarta REST 4.0 artifacts -->
             <dependency>
                 <groupId>io.github.vpelikh</groupId>
-                <artifactId>swagger-jaxrs2</artifactId>
+                <artifactId>swagger-jakarta-rest</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.github.vpelikh</groupId>
-                <artifactId>swagger-jaxrs2-servlet-initializer</artifactId>
+                <artifactId>swagger-jakarta-rest-servlet-initializer</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.github.vpelikh</groupId>
-                <artifactId>swagger-jaxrs2-servlet-initializer-v2</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <!-- Jakarta namespace artifacts -->
-            <dependency>
-                <groupId>io.github.vpelikh</groupId>
-                <artifactId>swagger-annotations-jakarta</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.github.vpelikh</groupId>
-                <artifactId>swagger-models-jakarta</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.github.vpelikh</groupId>
-                <artifactId>swagger-core-jakarta</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.github.vpelikh</groupId>
-                <artifactId>swagger-integration-jakarta</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.github.vpelikh</groupId>
-                <artifactId>swagger-jaxrs2-jakarta</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.github.vpelikh</groupId>
-                <artifactId>swagger-jaxrs2-servlet-initializer-jakarta</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.github.vpelikh</groupId>
-                <artifactId>swagger-jaxrs2-servlet-initializer-v2-jakarta</artifactId>
+                <artifactId>swagger-jakarta-rest-servlet-initializer-v2</artifactId>
                 <version>${project.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
-
 </project>
-

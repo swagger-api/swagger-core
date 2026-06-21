@@ -3,7 +3,7 @@ package io.swagger.v3.plugin.maven.petstore.petstore.operation;
 import io.swagger.v3.plugin.maven.resources.model.Pet;
 import io.swagger.v3.oas.annotations.Operation;
 
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.core.Response;
 
 /**
  * SubResource

@@ -8,7 +8,7 @@ import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.media.StringSchema;
 import org.testng.annotations.Test;
 
-import javax.validation.constraints.*;
+import jakarta.validation.constraints.*;
 import java.math.BigDecimal;
 
 import static org.testng.Assert.*;
@@ -28,7 +28,7 @@ public class ValidationAnnotationsUtilsTest {
             }
 
             @Override
-            public Class<? extends javax.validation.Payload>[] payload() {
+            public Class<? extends jakarta.validation.Payload>[] payload() {
                 return new Class[0];
             }
 
@@ -62,7 +62,7 @@ public class ValidationAnnotationsUtilsTest {
             }
 
             @Override
-            public Class<? extends javax.validation.Payload>[] payload() {
+            public Class<? extends jakarta.validation.Payload>[] payload() {
                 return new Class[0];
             }
 
@@ -91,7 +91,7 @@ public class ValidationAnnotationsUtilsTest {
             }
 
             @Override
-            public Class<? extends javax.validation.Payload>[] payload() {
+            public Class<? extends jakarta.validation.Payload>[] payload() {
                 return new Class[0];
             }
 
@@ -120,7 +120,7 @@ public class ValidationAnnotationsUtilsTest {
             }
 
             @Override
-            public Class<? extends javax.validation.Payload>[] payload() {
+            public Class<? extends jakarta.validation.Payload>[] payload() {
                 return new Class[0];
             }
 
@@ -154,7 +154,7 @@ public class ValidationAnnotationsUtilsTest {
             }
 
             @Override
-            public Class<? extends javax.validation.Payload>[] payload() {
+            public Class<? extends jakarta.validation.Payload>[] payload() {
                 return new Class[0];
             }
 
@@ -188,7 +188,7 @@ public class ValidationAnnotationsUtilsTest {
             }
 
             @Override
-            public Class<? extends javax.validation.Payload>[] payload() {
+            public Class<? extends jakarta.validation.Payload>[] payload() {
                 return new Class[0];
             }
 
@@ -222,7 +222,7 @@ public class ValidationAnnotationsUtilsTest {
             }
 
             @Override
-            public Class<? extends javax.validation.Payload>[] payload() {
+            public Class<? extends jakarta.validation.Payload>[] payload() {
                 return new Class[0];
             }
 

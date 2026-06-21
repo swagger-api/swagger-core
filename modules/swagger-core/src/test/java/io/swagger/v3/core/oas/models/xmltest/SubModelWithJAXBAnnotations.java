@@ -1,6 +1,6 @@
 package io.swagger.v3.core.oas.models.xmltest;
 
-import javax.xml.bind.annotation.*;
+import jakarta.xml.bind.annotation.*;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "SubType", propOrder = {

@@ -227,24 +227,9 @@
                                 JavaJAXRS;resolution:=optional,\
                                 JavaServlet;resolution:=optional
                             -define-contract: \
-                                osgi.contract;\
-                                    osgi.contract=JavaJAXRS;\
-                                    version:List<Version>="2.0";\
-                                    uses:="\
-                                        javax.ws.rs,\
-                                        javax.ws.rs.core,\
-                                        javax.ws.rs.ext,\
-                                        javax.ws.rs.client,\
-                                        javax.ws.rs.container",\
-                                osgi.contract;\
-                                    osgi.contract=JavaServlet;\
-                                    version:List<Version>="4.0";\
-                                    uses:="\
-                                        javax.servlet,\
-                                        javax.servlet.annotation,\
-                                        javax.servlet.descriptor,\
-                                        javax.servlet.http"
-                            -cdiannotations:
+                                osgi.contract;osgi.contract=JavaJAXRS;version:List<Version>="4.0";uses:="jakarta.ws.rs,jakarta.ws.rs.core,jakarta.ws.rs.ext,jakarta.ws.rs.client,jakarta.ws.rs.container",\
+                                osgi.contract;osgi.contract=JavaServlet;version:List<Version>="6.0";uses:="jakarta.servlet,jakarta.servlet.annotation,jakarta.servlet.descriptor,jakarta.servlet.http"
+                            -cdiannotations: *
                         ]]></bnd>
                     </configuration>
                     <executions>
@@ -268,14 +253,14 @@
                     </configuration>
                 </plugin>
                 <plugin>
-                    <groupId>org.eclipse.jetty</groupId>
-                    <artifactId>jetty-maven-plugin</artifactId>
+                    <groupId>org.eclipse.jetty.ee11</groupId>
+                    <artifactId>jetty-ee11-maven-plugin</artifactId>
                     <version>${jetty-version}</version>
                     <dependencies>
                         <dependency>
                             <groupId>org.glassfish.jersey.core</groupId>
                             <artifactId>jersey-server</artifactId>
-                            <version>${jersey2-version}</version>
+                            <version>${jersey-version}</version>
                             <exclusions>
                                 <exclusion>
                                     <groupId>org.javassist</groupId>
@@ -286,7 +271,7 @@
                         <dependency>
                             <groupId>org.glassfish.jersey.containers</groupId>
                             <artifactId>jersey-container-servlet</artifactId>
-                            <version>${jersey2-version}</version>
+                            <version>${jersey-version}</version>
                             <exclusions>
                                 <exclusion>
                                     <groupId>org.javassist</groupId>
@@ -297,7 +282,7 @@
                         <dependency>
                             <groupId>org.glassfish.jersey.media</groupId>
                             <artifactId>jersey-media-multipart</artifactId>
-                            <version>${jersey2-version}</version>
+                            <version>${jersey-version}</version>
                             <exclusions>
                                 <exclusion>
                                     <groupId>org.javassist</groupId>
@@ -308,7 +293,7 @@
                         <dependency>
                             <groupId>org.glassfish.jersey.inject</groupId>
                             <artifactId>jersey-hk2</artifactId>
-                            <version>${jersey2-version}</version>
+                            <version>${jersey-version}</version>
                             <exclusions>
                                 <exclusion>
                                     <groupId>org.javassist</groupId>
@@ -395,12 +380,11 @@
         <module>modules/swagger-models</module>
         <module>modules/swagger-core</module>
         <module>modules/swagger-integration</module>
-        <module>modules/swagger-jaxrs2</module>
-        <module>modules/swagger-jaxrs2-servlet-initializer</module>
-        <module>modules/swagger-jaxrs2-servlet-initializer-v2</module>
         <module>modules/swagger-bom</module>
         <module>modules/swagger-maven-plugin</module>
-        <module>modules/swagger-project-jakarta</module>
+        <module>modules/swagger-jakarta-rest</module>
+        <module>modules/swagger-jakarta-rest-servlet-initializer</module>
+        <module>modules/swagger-jakarta-rest-servlet-initializer-v2</module>
 
     </modules>
     <reporting>
@@ -584,6 +568,16 @@
                 <version>${jakarta.ws-version}</version>
             </dependency>
             <dependency>
+                <groupId>tools.jackson.jakarta.rs</groupId>
+                <artifactId>jackson-jakarta-rs-json-provider</artifactId>
+                <version>${jackson-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>tools.jackson.jakarta.rs</groupId>
+                <artifactId>jackson-jakarta-rs-base</artifactId>
+                <version>${jackson-version}</version>
+            </dependency>
+            <dependency>
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
                 <version>${guava-version}</version>
@@ -607,6 +601,17 @@
                 <version>3.0.25</version>
                 <scope>test</scope>
             </dependency>
+            <dependency>
+                <groupId>tools.jackson.module</groupId>
+                <artifactId>jackson-module-jakarta-xmlbind-annotations</artifactId>
+                <version>${jackson-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>jakarta.annotation</groupId>
+                <artifactId>jakarta.annotation-api</artifactId>
+                <version>${jakarta.annotation-api-version}</version>
+                <scope>compile</scope>
+            </dependency>
         </dependencies>
     </dependencyManagement>
     <properties>
@@ -614,12 +619,14 @@
         <joda-version>3.0.1</joda-version>
         <joda-time-version>2.14.2</joda-time-version>
         <snakeyaml-version>2.6</snakeyaml-version>
-        <jakarta.ws-version>2.1.6</jakarta.ws-version>
-        <jakarta.xml.bind-api-version>2.3.3</jakarta.xml.bind-api-version>
+        <jakarta.ws-version>4.0.0</jakarta.ws-version>
+        <jakarta.xml.bind-api-version>4.0.5</jakarta.xml.bind-api-version>
         <jakarta.activation-api-version>2.1.4</jakarta.activation-api-version>
         <bnd-version>7.3.0</bnd-version>
-        <servlet-api-version>4.0.4</servlet-api-version>
-        <jersey2-version>2.48</jersey2-version>
+        <servlet-api-version>6.1.0</servlet-api-version>
+        <jersey-version>4.0.2</jersey-version>
+        <jakarta.annotation-api-version>3.0.0</jakarta.annotation-api-version>
+        <validation-api-version>3.1.1</validation-api-version>
         <jackson-annotations-version>2.22</jackson-annotations-version>
         <jackson-version>3.1.4</jackson-version>
         <logback-version>1.5.34</logback-version>
@@ -629,7 +636,7 @@
         <commons-lang-version>3.20.0</commons-lang-version>
         <commons-io-version>2.22.0</commons-io-version>
         <slf4j-version>2.0.18</slf4j-version>
-        <jetty-version>9.4.56.v20240826</jetty-version>
+        <jetty-version>12.1.10</jetty-version>
         <testng-version>7.12.0</testng-version>
         <mockito-version>5.23.0</mockito-version>
         <rest-assured-version>6.0.0</rest-assured-version>
@@ -644,7 +651,6 @@
         <coverage.complexity.minimum>0.90</coverage.complexity.minimum>
         <coverage.line.minimum>0.90</coverage.line.minimum>
         <coverage.missed.classes>0</coverage.missed.classes>
-        <transformer-maven-plugin-version>0.5.0</transformer-maven-plugin-version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.build.outputTimestamp>2026-06-23T08:53:45Z</project.build.outputTimestamp>
     </properties>

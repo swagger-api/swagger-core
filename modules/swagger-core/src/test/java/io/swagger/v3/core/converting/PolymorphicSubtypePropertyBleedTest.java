@@ -8,7 +8,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.models.media.ComposedSchema;
 import org.testng.annotations.Test;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;

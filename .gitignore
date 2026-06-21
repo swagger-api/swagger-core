@@ -14,3 +14,9 @@ atlassian-ide-plugin.xml
 sonar-project.properties
 test-output/
 *.pyc
+
+## tool-infrastructure
+.serena/
+.codegraph/
+.sisyphus/
+.DS_Store

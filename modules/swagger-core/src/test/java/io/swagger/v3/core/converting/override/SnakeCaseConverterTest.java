@@ -12,7 +12,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.testng.annotations.Test;
 
-import javax.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;

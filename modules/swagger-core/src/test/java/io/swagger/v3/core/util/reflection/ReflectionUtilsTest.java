@@ -11,7 +11,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.testng.annotations.Test;
 
-import javax.ws.rs.Path;
+import jakarta.ws.rs.Path;
 
 import java.lang.annotation.Annotation;
 import java.lang.annotation.Retention;
@@ -139,7 +139,7 @@ public class ReflectionUtilsTest {
 
     @Test
     public void testDerivedAnnotation() {
-        final Path annotation = ReflectionUtils.getAnnotation(Child.class, javax.ws.rs.Path.class);
+        final Path annotation = ReflectionUtils.getAnnotation(Child.class, jakarta.ws.rs.Path.class);
         assertNotNull(annotation);
         assertEquals(annotation.value(), "parentInterfacePath");
     }

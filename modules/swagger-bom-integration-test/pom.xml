@@ -55,46 +55,18 @@
             <groupId>io.github.vpelikh</groupId>
             <artifactId>swagger-integration</artifactId>
         </dependency>
-        <dependency>
-            <groupId>io.github.vpelikh</groupId>
-            <artifactId>swagger-jaxrs2</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.github.vpelikh</groupId>
-            <artifactId>swagger-jaxrs2-servlet-initializer</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.github.vpelikh</groupId>
-            <artifactId>swagger-jaxrs2-servlet-initializer-v2</artifactId>
-        </dependency>
         <!-- Jakarta namespace artifact family -->
         <dependency>
             <groupId>io.github.vpelikh</groupId>
-            <artifactId>swagger-annotations-jakarta</artifactId>
+            <artifactId>swagger-jakarta-rest</artifactId>
         </dependency>
         <dependency>
             <groupId>io.github.vpelikh</groupId>
-            <artifactId>swagger-models-jakarta</artifactId>
+            <artifactId>swagger-jakarta-rest-servlet-initializer</artifactId>
         </dependency>
         <dependency>
             <groupId>io.github.vpelikh</groupId>
-            <artifactId>swagger-core-jakarta</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.github.vpelikh</groupId>
-            <artifactId>swagger-integration-jakarta</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.github.vpelikh</groupId>
-            <artifactId>swagger-jaxrs2-jakarta</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.github.vpelikh</groupId>
-            <artifactId>swagger-jaxrs2-servlet-initializer-jakarta</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.github.vpelikh</groupId>
-            <artifactId>swagger-jaxrs2-servlet-initializer-v2-jakarta</artifactId>
+            <artifactId>swagger-jakarta-rest-servlet-initializer-v2</artifactId>
         </dependency>
     </dependencies>
 

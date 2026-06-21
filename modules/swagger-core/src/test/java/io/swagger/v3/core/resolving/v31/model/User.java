@@ -2,8 +2,8 @@ package io.swagger.v3.core.resolving.v31.model;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(name = "User")
 public class User {

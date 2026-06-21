@@ -297,6 +297,7 @@ public enum PrimitiveType {
     static {
         systemPrefixes.add("java.");
         systemPrefixes.add("javax.");
+        systemPrefixes.add("jakarta.");
         nonSystemTypes.add("java.time.LocalTime");
 
         final Map<String, String> dms = new HashMap<>();
