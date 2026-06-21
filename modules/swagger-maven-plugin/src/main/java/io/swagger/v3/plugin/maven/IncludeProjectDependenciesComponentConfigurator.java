@@ -1,7 +1,6 @@
 package io.swagger.v3.plugin.maven;
 
 import org.codehaus.plexus.classworlds.realm.ClassRealm;
-import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.component.configurator.AbstractComponentConfigurator;
 import org.codehaus.plexus.component.configurator.ComponentConfigurationException;
 import org.codehaus.plexus.component.configurator.ComponentConfigurator;
@@ -10,6 +9,8 @@ import org.codehaus.plexus.component.configurator.converters.composite.ObjectWit
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluationException;
 import org.codehaus.plexus.component.configurator.expression.ExpressionEvaluator;
 import org.codehaus.plexus.configuration.PlexusConfiguration;
+import javax.inject.Named;
+import javax.inject.Singleton;
 
 import java.io.File;
 import java.net.MalformedURLException;
@@ -20,7 +21,8 @@ import java.util.List;
 /*
  * Thanks to original post by Brian Jackson (http://jaxzin.github.io/) http://maven.40175.n5.nabble.com/Adding-project-dependencies-and-generated-classes-to-classpath-of-my-plugin-tp110119p110121.html
  */
-@Component(role = ComponentConfigurator.class, hint = "include-project-dependencies")
+@Named("include-project-dependencies")
+@Singleton
 public class IncludeProjectDependenciesComponentConfigurator extends AbstractComponentConfigurator {
 
     @Override
