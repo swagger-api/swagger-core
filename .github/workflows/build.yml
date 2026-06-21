@@ -3,8 +3,16 @@ name: Build
 on:
   push:
     branches: [ "master" ]
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
+      - '**.adoc'
   pull_request:
     branches: [ "master" ]
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
+      - '**.adoc'
 
 jobs:
   build:
@@ -21,36 +29,24 @@ jobs:
         with:
           java-version: ${{ matrix.java }}
           distribution: temurin
+          cache: 'maven'
           server-id: central
           server-username: MAVEN_USERNAME
           server-password: MAVEN_PASSWORD
 
-      - name: Cache local Maven repository
-        uses: actions/cache@v5
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v6
         with:
-          path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-
-
-      - name: Cache Gradle packages
-        uses: actions/cache@v5
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
+          cache-read-only: ${{ github.event_name == 'pull_request' }}
 
       - name: Check swagger-bom version matches root version
         uses: ./.github/actions/check-bom-version
 
       - name: Build with Maven and Gradle
         run: |
-          ./mvnw --no-transfer-progress -B install --file pom.xml
+          ./mvnw --no-transfer-progress -B -T 1C install --file pom.xml
           cd ./modules/swagger-gradle-plugin
-          ./gradlew build --info
+          ./gradlew build --info --build-cache --parallel
           cd ../..
 
       - name: Deploy SNAPSHOT to Maven Central (only on push to master with Java 17)
@@ -59,7 +55,7 @@ jobs:
           MY_POM_VERSION=$(./mvnw -q -DforceStdout help:evaluate -Dexpression=project.version --non-recursive)
           echo "POM VERSION: $MY_POM_VERSION"
           if [[ $MY_POM_VERSION =~ ^.*SNAPSHOT$ ]]; then
-            ./mvnw --no-transfer-progress -B clean deploy -e
+            ./mvnw --no-transfer-progress -B -T 1C clean deploy -e
           else
             echo "Not a SNAPSHOT version, skipping deployment."
           fi
@@ -68,4 +64,4 @@ jobs:
           MAVEN_PASSWORD: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
 
       - name: Verify BOM integration test
-        run: ./mvnw --no-transfer-progress -B validate -Pbom-it
+        run: ./mvnw --no-transfer-progress -B -T 1C validate -Pbom-it

@@ -27,33 +27,19 @@ jobs:
         with:
           java-version: 17
           distribution: temurin
+          cache: 'maven'
           server-id: central
           server-username: MAVEN_USERNAME
           server-password: MAVEN_PASSWORD
           gpg-private-key: ${{ secrets.OSSRH_GPG_PRIVATE_KEY }}
 
-      - name: Cache local Maven repository
-        uses: actions/cache@v5
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v6
+        env:
+          GRADLE_PUBLISH_KEY: ${{ secrets.GRADLE_PUBLISH_KEY }}
+          GRADLE_PUBLISH_SECRET: ${{ secrets.GRADLE_PUBLISH_SECRET }}
         with:
-          path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-
-
-      - name: Cache Gradle packages
-        uses: actions/cache@v5
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-
-      - name: Set up Gradle credentials
-        run: |
-          mkdir -p ~/.gradle
-          echo "gradle.publish.key=${GRADLE_PUBLISH_KEY}\ngradle.publish.secret=${GRADLE_PUBLISH_SECRET}" > ~/.gradle/gradle.properties
+          cache-read-only: false
 
       - name: Check swagger-bom version matches root version
         uses: ./.github/actions/check-bom-version
@@ -69,18 +55,18 @@ jobs:
 
       - name: Build and test
         run: |
-          ./mvnw --no-transfer-progress -B install --file pom.xml
-          cd modules/swagger-gradle-plugin && ./gradlew build --info && cd ../..
+          ./mvnw --no-transfer-progress -B -T 1C install --file pom.xml
+          cd modules/swagger-gradle-plugin && ./gradlew build --info --build-cache --parallel && cd ../..
 
       - name: Deploy to Maven Central
         if: success()
-        run: ./mvnw --no-transfer-progress -B -Prelease deploy
+        run: ./mvnw --no-transfer-progress -B -T 1C -Prelease deploy
 
       - name: Publish Gradle plugin
         if: success()
         run: |
           cd modules/swagger-gradle-plugin
-          ./gradlew publishPlugins -Pgradle.publish.key="${GRADLE_PUBLISH_KEY}" -Pgradle.publish.secret="${GRADLE_PUBLISH_SECRET}" --info
+          ./gradlew publishPlugins -Pgradle.publish.key="${GRADLE_PUBLISH_KEY}" -Pgradle.publish.secret="${GRADLE_PUBLISH_SECRET}" --info --build-cache --parallel
           cd ../..
 
       - name: Tag and push release tag

@@ -24,27 +24,25 @@ jobs:
           fetch-depth: 2
       - run: git checkout HEAD^2
         if: ${{ github.event_name == 'pull_request' }}
+
       - name: Set up Java
         uses: actions/setup-java@v5
         with:
           java-version: 17
           distribution: temurin
+          cache: 'maven'
+
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v4
         with:
           languages: java
-      - name: Cache local Maven repository
-        uses: actions/cache@v5
-        with:
-          path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-
+
       - name: Build with Maven and Gradle
         run: |
-          ./mvnw --no-transfer-progress -B install --file pom.xml
+          ./mvnw --no-transfer-progress -B -T 1C install --file pom.xml
           cd ./modules/swagger-gradle-plugin
-          ./gradlew build --info
+          ./gradlew build --info --build-cache --parallel
           cd ../..
+
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v4
