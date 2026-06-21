@@ -1,0 +1,18 @@
+package io.swagger.v3.jakartarest.resources.model;
+
+import java.util.List;
+
+import jakarta.ws.rs.QueryParam;
+
+public class ListOfStringsBeanParam {
+    @QueryParam(value = "listOfStrings")
+    private List<String> list;
+
+    public List<String> getList() {
+        return list;
+    }
+
+    public void setList(List<String> list) {
+        this.list = list;
+    }
+}

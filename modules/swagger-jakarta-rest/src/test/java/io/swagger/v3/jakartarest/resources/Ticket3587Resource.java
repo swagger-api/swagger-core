@@ -1,0 +1,46 @@
+package io.swagger.v3.jakartarest.resources;
+
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
+
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
+
+@Path("test")
+public class Ticket3587Resource {
+
+    @GET
+    @Path("/test")
+    public void parameterExamplesOrderingTest(
+        @Parameter(
+            in = ParameterIn.QUERY,
+            examples = {
+                @ExampleObject(
+                    name = "Example One"
+                ),
+                @ExampleObject(
+                    name = "Example Two"
+                ),
+                @ExampleObject(
+                    name = "Example Three"
+                )
+            }
+        )
+            String parameterWithOrderedExamples,
+        @Parameter(
+            in = ParameterIn.QUERY,
+            examples = {
+                @ExampleObject(
+                    name = "Example Three"
+                ),
+                @ExampleObject(
+                    name = "Example Two"
+                ),
+                @ExampleObject(
+                    name = "Example One"
+                )
+            }
+        )
+            String parameterWithExamplesInDifferentOrder) { }
+}

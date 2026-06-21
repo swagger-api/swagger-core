@@ -1,0 +1,20 @@
+package io.swagger.v3.jakartarest.petstore.operation;
+
+import io.swagger.v3.jakartarest.resources.model.Pet;
+import io.swagger.v3.oas.annotations.Operation;
+
+import jakarta.ws.rs.core.Response;
+
+/**
+ * SubResource
+ */
+
+public class SubResource implements InterfaceResource {
+    @Override
+    @Operation(summary = "Find pet by ID Operation in SubResource",
+            description = "Returns a pet in SubResource"
+    )
+    public Response getPetById(final Long petId) {
+        return Response.ok().entity(new Pet()).build();
+    }
+}

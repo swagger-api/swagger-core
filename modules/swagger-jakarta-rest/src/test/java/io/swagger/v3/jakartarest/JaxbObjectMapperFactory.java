@@ -1,0 +1,14 @@
+package io.swagger.v3.jakartarest;
+
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.module.jakarta.xmlbind.JakartaXmlBindAnnotationModule;
+import io.swagger.v3.core.util.ObjectMapperFactory;
+
+public class JaxbObjectMapperFactory extends ObjectMapperFactory {
+
+    public static ObjectMapper getMapper() {
+        return ObjectMapperFactory.createJson().rebuild()
+                .addModule(new JakartaXmlBindAnnotationModule())
+                .build();
+    }
+}

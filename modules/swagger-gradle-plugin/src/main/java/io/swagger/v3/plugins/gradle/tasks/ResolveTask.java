@@ -485,7 +485,7 @@ public class ResolveTask extends DefaultTask {
         //ClassLoader classLoader = new URLClassLoader(urls.toArray(new URL[urls.size()]), Thread.currentThread().getContextClassLoader());
 
         try (URLClassLoader classLoader = new URLClassLoader(urls)) {
-            Class<?> swaggerLoaderClass = classLoader.loadClass("io.swagger.v3.jaxrs2.integration.SwaggerLoader");
+            Class<?> swaggerLoaderClass = classLoader.loadClass("io.swagger.v3.jakartarest.integration.SwaggerLoader");
             Object swaggerLoader = swaggerLoaderClass.newInstance();
 
             Method method = null;

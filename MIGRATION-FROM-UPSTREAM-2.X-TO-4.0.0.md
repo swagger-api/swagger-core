@@ -29,6 +29,7 @@ This guide covers migrating from `swagger-api/swagger-core` 2.2.x (javax namespa
 | Java minimum | 11 | 17 |
 | Jackson group | `com.fasterxml.jackson` | `tools.jackson` |
 | Eclipse Transformer | As-needed for `-jakarta` artifacts | Removed entirely |
+|| Java package | `io.swagger.v3.jaxrs2` | `io.swagger.v3.jakartarest` |
 
 ---
 
@@ -206,12 +207,39 @@ The base artifacts now use the jakarta namespace directly — no transformer nee
 | `${jersey2-version}` | Jersey 2.x (javax) | `${jersey-version}` → 4.0.2 |
 
 ---
+### 7. Update Java Package Imports
+
+The internal Java package for Jakarta REST modules has been renamed from `io.swagger.v3.jaxrs2` to `io.swagger.v3.jakartarest` to match the module artifact rename (`swagger-jaxrs2` → `swagger-jakarta-rest`).
+
+**Import changes required:**
+```java
+// Before (upstream 2.2.x)
+import io.swagger.v3.jaxrs2.Reader;
+import io.swagger.v3.jaxrs2.OpenApiServlet;
+import io.swagger.v3.jaxrs2.JaxrsOpenApiContextBuilder;
+import io.swagger.v3.jaxrs2.SwaggerSerializers;
+import io.swagger.v3.jaxrs2.SwaggerLoader;
+// ... and other classes from io.swagger.v3.jaxrs2 package
+
+// After (this fork 4.0.0)
+import io.swagger.v3.jakartarest.Reader;
+import io.swagger.v3.jakartarest.OpenApiServlet;
+import io.swagger.v3.jakartarest.JaxrsOpenApiContextBuilder;
+import io.swagger.v3.jakartarest.SwaggerSerializers;
+import io.swagger.v3.jakartarest.SwaggerLoader;
+// ... and other classes from io.swagger.v3.jakartarest package
+```
+
+This affects all classes in the Jakarta REST module packages. Update all import statements in your code and tests to use the new `io.swagger.v3.jakartarest` package.
+
 
 ## Dependency Breakpoints
 
 ### 4.0.0 — Initial fork release (Jakarta EE 11, Breaking)
 
 - **Group ID changed**: `io.swagger.core.v3` → `io.github.vpelikh`
+- **Java package rename**: `io.swagger.v3.jaxrs2` → `io.swagger.v3.jakartarest` (internal package for Jakarta REST modules)
+
 - **Jakarta namespace**: all `javax.ws.rs.*` → `jakarta.ws.rs.*`
 - **Jakarta EE versions**: upgraded all Jakarta dependencies to EE 11
 - **Module renames**: `swagger-jaxrs2` → `swagger-jakarta-rest`

@@ -4,7 +4,7 @@ import io.swagger.v3.java17.matchers.SerializationMatchers;
 import io.swagger.v3.java17.resources.JavaRecordWithPathResource;
 import io.swagger.v3.java17.resources.OtherJavaRecordWithPathsResource;
 import io.swagger.v3.java17.resources.TestControllerWithRecordResource;
-import io.swagger.v3.jaxrs2.Reader;
+import io.swagger.v3.jakartarest.Reader;
 import io.swagger.v3.oas.integration.SwaggerConfiguration;
 import io.swagger.v3.oas.models.OpenAPI;
 import org.testng.annotations.Test;

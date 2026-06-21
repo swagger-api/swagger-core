@@ -1,6 +1,6 @@
 package com.my.sorted.resources;
 
-import io.swagger.v3.jaxrs2.resources.model.Pet;
+import io.swagger.v3.jakartarest.resources.model.Pet;
 import io.swagger.v3.oas.annotations.Operation;
 
 import jakarta.ws.rs.GET;

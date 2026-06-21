@@ -1,0 +1,10 @@
+package io.swagger.v3.jakartarest.resources;
+
+import jakarta.ws.rs.core.Response;
+
+public class Ticket2644ConcreteImplementation implements Ticket2644AnnotatedInterface {
+    public Response getResource() {
+        // Get the resource
+        return null;
+    }
+}

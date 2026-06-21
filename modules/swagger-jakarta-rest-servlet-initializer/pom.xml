@@ -32,7 +32,7 @@
                     <archive>
                         <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
                         <manifestEntries>
-                            <Automatic-Module-Name>io.swagger.v3.jaxrs2.integration.servlet</Automatic-Module-Name>
+                            <Automatic-Module-Name>io.swagger.v3.jakartarest.integration.servlet</Automatic-Module-Name>
                         </manifestEntries>
                     </archive>
                 </configuration>

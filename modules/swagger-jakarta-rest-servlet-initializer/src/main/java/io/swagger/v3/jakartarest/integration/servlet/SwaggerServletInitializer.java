@@ -1,0 +1,60 @@
+package io.swagger.v3.jakartarest.integration.servlet;
+
+import io.swagger.v3.jakartarest.integration.JaxrsOpenApiContextBuilder;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.Webhooks;
+import io.swagger.v3.oas.integration.IgnoredPackages;
+import io.swagger.v3.oas.integration.OpenApiConfigurationException;
+import io.swagger.v3.oas.integration.SwaggerConfiguration;
+
+import jakarta.servlet.ServletContainerInitializer;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.HandlesTypes;
+import jakarta.ws.rs.ApplicationPath;
+import jakarta.ws.rs.Path;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+/**
+ *
+ * @since 2.1.2
+ */
+@HandlesTypes({Path.class, OpenAPIDefinition.class, ApplicationPath.class, Webhooks.class})
+public class SwaggerServletInitializer implements ServletContainerInitializer {
+
+    static final Set<String> ignored = new HashSet();
+
+    static {
+        ignored.addAll(IgnoredPackages.ignored);
+    }
+
+    public SwaggerServletInitializer() {
+    }
+
+    @Override
+    public void onStartup(Set<Class<?>> classes, ServletContext servletContext) throws ServletException {
+        if (classes != null && ! classes.isEmpty()) {
+            Set<Class<?>> resources = new LinkedHashSet();
+            classes.stream()
+                    .filter(c -> ignored.stream().noneMatch(i -> c.getName().startsWith(i)))
+                    .forEach(resources::add);
+            if (!resources.isEmpty()) {
+                // init context
+                try {
+                    SwaggerConfiguration oasConfig = new SwaggerConfiguration()
+                            .resourceClasses(resources.stream().map(Class::getName).collect(Collectors.toSet()));
+
+                    new JaxrsOpenApiContextBuilder()
+                            .openApiConfiguration(oasConfig)
+                            .buildContext(true);
+                } catch (OpenApiConfigurationException e) {
+                    throw new RuntimeException(e.getMessage(), e);
+                }
+            }
+        }
+    }
+
+}
