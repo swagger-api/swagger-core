@@ -32,7 +32,6 @@ compileJava {
 
 dependencies {
     implementation gradleApi()
-    implementation 'org.apache.commons:commons-lang3:3.20.0'
 
     testImplementation gradleTestKit()
     testImplementation 'org.wiremock:wiremock:4.0.0-beta.36'

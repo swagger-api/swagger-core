@@ -2,7 +2,7 @@ package io.swagger.v3.jakartarest.integration;
 
 import io.swagger.v3.oas.integration.StringOpenApiConfigurationLoader;
 import io.swagger.v3.oas.integration.api.OpenAPIConfiguration;
-import org.apache.commons.lang3.StringUtils;
+import io.swagger.v3.core.util.StringUtils;
 
 import jakarta.servlet.ServletConfig;
 import java.io.IOException;

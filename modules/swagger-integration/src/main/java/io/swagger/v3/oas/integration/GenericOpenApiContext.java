@@ -31,8 +31,8 @@ import io.swagger.v3.oas.integration.api.OpenApiScanner;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Paths;
 import io.swagger.v3.oas.models.media.Schema;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.ImmutablePair;
+import io.swagger.v3.core.util.StringUtils;
+import io.swagger.v3.core.util.ImmutablePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tools.jackson.databind.cfg.MapperBuilder;
@@ -491,9 +491,9 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
             // check known locations
             List<ImmutablePair<String, String>> knownLocations = getKnownLocations();
             for (ImmutablePair<String, String> location : knownLocations) {
-                if (loaders.get(location.left).exists(location.right)) {
+                if (loaders.get(location.getLeft()).exists(location.getRight())) {
                     try {
-                        return loaders.get(location.left).load(location.right);
+                        return loaders.get(location.getLeft()).load(location.getRight());
                     } catch (IOException ioe) {
                         // try next one
                     }

@@ -6,7 +6,6 @@ import io.swagger.v3.core.util.Yaml;
 import io.swagger.v3.core.util.Yaml31;
 import io.swagger.v3.oas.models.OpenAPI;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.codehaus.plexus.configuration.PlexusConfiguration;
 
 import java.io.File;
@@ -36,7 +35,7 @@ public abstract class ASwaggerMavenIntegrationTest extends BetterAbstractMojoTes
 
         SwaggerMojo swaggerMojo = (SwaggerMojo) lookupConfiguredMojo(pom, "resolve");
         // set random context id to not mix states with multiple tests
-        swaggerMojo.setContextId(RandomStringUtils.randomAscii(32));
+        swaggerMojo.setContextId(java.util.UUID.randomUUID().toString().replace("-", ""));
         assertNotNull(swaggerMojo);
 
         swaggerMojo.execute();

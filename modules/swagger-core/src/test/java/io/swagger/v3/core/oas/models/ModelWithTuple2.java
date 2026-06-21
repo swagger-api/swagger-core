@@ -9,9 +9,8 @@ import io.swagger.v3.core.converter.ModelConverterContext;
 import io.swagger.v3.core.jackson.AbstractModelConverter;
 import io.swagger.v3.oas.models.media.MapSchema;
 import io.swagger.v3.oas.models.media.Schema;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.text.WordUtils;
-import org.apache.commons.lang3.tuple.Pair;
+import io.swagger.v3.core.util.StringUtils;
+import io.swagger.v3.core.util.Pair;
 import tools.jackson.databind.cfg.MapperBuilder;
 
 import java.util.Iterator;
@@ -45,7 +44,7 @@ public class ModelWithTuple2 {
             final JavaType javaType = _mapper.constructType(type.getType());
             if (Pair.class.isAssignableFrom(javaType.getRawClass())) {
                 final JavaType left = javaType.containedType(0);
-                final String name = "MapOf" + WordUtils.capitalize(_typeName(left));
+                final String name = "MapOf" + StringUtils.capitalize(_typeName(left));
 
                 return new MapSchema()
                         .name(name)

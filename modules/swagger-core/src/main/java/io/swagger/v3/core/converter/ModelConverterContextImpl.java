@@ -2,7 +2,7 @@ package io.swagger.v3.core.converter;
 
 import io.swagger.v3.core.util.ReferenceTypeUtils;
 import io.swagger.v3.oas.models.media.Schema;
-import org.apache.commons.lang3.StringUtils;
+import io.swagger.v3.core.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

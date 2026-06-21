@@ -7,7 +7,7 @@ import io.swagger.v3.oas.models.links.Link;
 import io.swagger.v3.oas.models.parameters.RequestBody;
 import io.swagger.v3.oas.models.responses.ApiResponse;
 import io.swagger.v3.oas.models.responses.ApiResponses;
-import org.apache.commons.lang3.StringUtils;
+import io.swagger.v3.core.util.StringUtils;
 
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.Produces;

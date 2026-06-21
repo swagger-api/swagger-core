@@ -1,9 +1,7 @@
 package io.swagger.v3.core.util;
 
 import io.swagger.v3.oas.models.Components;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
+import io.swagger.v3.core.util.StringUtils;
 
 public class RefUtils {
 

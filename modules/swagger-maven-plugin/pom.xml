@@ -47,11 +47,6 @@
             </exclusions>
         </dependency>
         <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-            <version>${commons-lang-version}</version>
-        </dependency>
-        <dependency>
             <groupId>io.github.vpelikh</groupId>
             <artifactId>swagger-jakarta-rest</artifactId>
             <version>${project.version}</version>

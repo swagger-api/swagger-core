@@ -16,7 +16,7 @@ import io.swagger.v3.jakartarest.ext.OpenAPIExtensions;
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.parameters.Parameter;
-import org.apache.commons.lang3.StringUtils;
+import io.swagger.v3.core.util.StringUtils;
 
 import jakarta.ws.rs.BeanParam;
 import jakarta.ws.rs.CookieParam;

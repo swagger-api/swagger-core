@@ -3,7 +3,7 @@ package io.swagger.v3.core.jackson;
 import tools.jackson.core.JacksonException;
 import tools.jackson.core.JsonGenerator;
 import io.swagger.v3.oas.models.media.Schema;
-import org.apache.commons.lang3.StringUtils;
+import io.swagger.v3.core.util.StringUtils;
 import tools.jackson.databind.DatabindException;
 import tools.jackson.databind.SerializationContext;
 import tools.jackson.databind.ValueSerializer;

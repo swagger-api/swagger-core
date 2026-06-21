@@ -1,6 +1,5 @@
 package io.swagger.v3.plugins.gradle.tasks;
 
-import org.apache.commons.lang3.StringUtils;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.GradleException;
 import org.gradle.api.file.ConfigurableFileCollection;
@@ -496,7 +495,7 @@ public class ResolveTask extends DefaultTask {
                 final File openApiFileHandle = openApiFile.get().getAsFile();
                 if (openApiFileHandle.exists() && openApiFileHandle.isFile()) {
                     String openapiFileContent = new String(Files.readAllBytes(openApiFileHandle.toPath()), encoding.get());
-                    if (StringUtils.isNotBlank(openapiFileContent)) {
+                    if (isNotBlank(openapiFileContent)) {
                         method = swaggerLoaderClass.getDeclaredMethod("setOpenapiAsString", String.class);
                         method.invoke(swaggerLoader, openapiFileContent);
                     }
@@ -520,42 +519,42 @@ public class ResolveTask extends DefaultTask {
                 method.invoke(swaggerLoader, ignoredRoutes.get().stream().map(Object::toString).collect(Collectors.joining(",")));
             }
 
-            if (filterClass.isPresent() && StringUtils.isNotBlank(filterClass.get())) {
+            if (filterClass.isPresent() && isNotBlank(filterClass.get())) {
                 method = swaggerLoaderClass.getDeclaredMethod("setFilterClass", String.class);
                 method.invoke(swaggerLoader, filterClass.get());
             }
 
-            if (readerClass.isPresent() && StringUtils.isNotBlank(readerClass.get())) {
+            if (readerClass.isPresent() && isNotBlank(readerClass.get())) {
                 method = swaggerLoaderClass.getDeclaredMethod("setReaderClass", String.class);
                 method.invoke(swaggerLoader, readerClass.get());
             }
 
-            if (scannerClass.isPresent() && StringUtils.isNotBlank(scannerClass.get())) {
+            if (scannerClass.isPresent() && isNotBlank(scannerClass.get())) {
                 method = swaggerLoaderClass.getDeclaredMethod("setScannerClass", String.class);
                 method.invoke(swaggerLoader, scannerClass.get());
             }
 
-            if (contextId.isPresent() && StringUtils.isNotBlank(contextId.get())) {
+            if (contextId.isPresent() && isNotBlank(contextId.get())) {
                 method = swaggerLoaderClass.getDeclaredMethod("setContextId", String.class);
                 method.invoke(swaggerLoader, contextId.get());
             }
 
-            if (objectMapperProcessorClass.isPresent() && StringUtils.isNotBlank(objectMapperProcessorClass.get())) {
+            if (objectMapperProcessorClass.isPresent() && isNotBlank(objectMapperProcessorClass.get())) {
                 method = swaggerLoaderClass.getDeclaredMethod("setObjectMapperProcessorClass", String.class);
                 method.invoke(swaggerLoader, objectMapperProcessorClass.get());
             }
 
-            if (defaultResponseCode.isPresent() && StringUtils.isNotBlank(defaultResponseCode.get())) {
+            if (defaultResponseCode.isPresent() && isNotBlank(defaultResponseCode.get())) {
                 method = swaggerLoaderClass.getDeclaredMethod("setDefaultResponseCode", String.class);
                 method.invoke(swaggerLoader, defaultResponseCode.get());
             }
 
-            if (validatorProcessorClass.isPresent() && StringUtils.isNotBlank(validatorProcessorClass.get())) {
+            if (validatorProcessorClass.isPresent() && isNotBlank(validatorProcessorClass.get())) {
                 method = swaggerLoaderClass.getDeclaredMethod("setValidatorProcessorClass", String.class);
                 method.invoke(swaggerLoader, validatorProcessorClass.get());
             }
 
-            if (groupsValidationStrategy.isPresent() && StringUtils.isNotBlank(groupsValidationStrategy.get())) {
+            if (groupsValidationStrategy.isPresent() && isNotBlank(groupsValidationStrategy.get())) {
                 method = swaggerLoaderClass.getDeclaredMethod("setGroupsValidationStrategy", String.class);
                 method.invoke(swaggerLoader, groupsValidationStrategy.get());
             }
@@ -615,5 +614,9 @@ public class ResolveTask extends DefaultTask {
         } catch (Exception e) {
             throw new GradleException(e.getMessage(), e);
         }
+    }
+
+    private static boolean isNotBlank(String str) {
+        return str != null && !str.isBlank();
     }
 }

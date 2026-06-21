@@ -36,7 +36,6 @@ public class SwaggerPlugin implements Plugin<Project> {
 
         config.defaultDependencies(new Action<DependencySet>() {
             public void execute(DependencySet dependencies) {
-                dependencies.add(project.getDependencies().create("org.apache.commons:commons-lang3:3.20.0"));
                 dependencies.add(project.getDependencies().create("io.github.vpelikh:swagger-jakarta-rest:" + SWAGGER_JAKARTA_REST_VERSION));
                 dependencies.add(project.getDependencies().create("jakarta.ws.rs:jakarta.ws.rs-api:4.0.0"));
                 dependencies.add(project.getDependencies().create("jakarta.servlet:jakarta.servlet-api:6.1.0"));

@@ -8,8 +8,8 @@ import io.swagger.v3.core.converter.ModelConverters;
 import io.swagger.v3.core.matchers.SerializationMatchers;
 import io.swagger.v3.core.util.Json;
 import io.swagger.v3.oas.models.media.Schema;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.Pair;
+import io.swagger.v3.core.util.StringUtils;
+import io.swagger.v3.core.util.Pair;
 import org.testng.annotations.Test;
 
 import jakarta.xml.bind.annotation.XmlRootElement;

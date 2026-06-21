@@ -3,7 +3,7 @@ package io.swagger.v3.core.filter.resources;
 import io.swagger.v3.core.filter.AbstractSpecFilter;
 import io.swagger.v3.core.model.ApiDescription;
 import io.swagger.v3.oas.models.PathItem;
-import org.apache.commons.lang3.StringUtils;
+import io.swagger.v3.core.util.StringUtils;
 
 import java.util.List;
 import java.util.Map;
