@@ -19,7 +19,7 @@ import static java.lang.annotation.ElementType.TYPE;
  * The annotation may be used at method level or as field of {@link io.swagger.v3.oas.annotations.Operation} to define one or more responses of the
  * Operation.
  *
- * <p>swagger-jaxrs2 reader engine considers this annotation along with method return type and context as input to
+ * <p>swagger-jakarta-rest reader engine considers this annotation along with method return type and context as input to
  * resolve the OpenAPI Operation responses.</p>
  *
  * @see <a target="_new" href="https://github.com/OAI/OpenAPI-Specification/blob/3.0.4/versions/3.0.4.md#response-object">Response (OpenAPI specification)</a>

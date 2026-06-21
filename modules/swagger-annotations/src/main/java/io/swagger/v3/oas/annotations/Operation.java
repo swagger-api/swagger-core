@@ -18,7 +18,7 @@ import static java.lang.annotation.ElementType.METHOD;
  * The annotation may be used to define a resource method as an OpenAPI Operation, and/or to define additional
  * properties for the Operation.
  *
- * <p>Note: swagger-jaxrs2 reader engine includes by default also methods of scanned resources which are not annotated
+ * <p>Note: swagger-jakarta-rest reader engine includes by default also methods of scanned resources which are not annotated
  * with @Operation, as long as a jax-rs @Path is defined at class and/or method level, together with the http method
  * annotation (@GET, @POST, etc).</p>
  * <p>This behaviour is controlled by configuration property `scanAllResources` which defaults to true. By setting this

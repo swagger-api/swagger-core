@@ -27,7 +27,7 @@
     <dependencies>
         <dependency>
             <groupId>io.github.vpelikh</groupId>
-            <artifactId>swagger-jaxrs2</artifactId>
+            <artifactId>swagger-jakarta-rest</artifactId>
             <version>${project.version}</version>
         </dependency>
 

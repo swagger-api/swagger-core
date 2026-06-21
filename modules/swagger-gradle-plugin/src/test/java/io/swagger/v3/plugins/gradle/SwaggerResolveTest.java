@@ -52,7 +52,6 @@ public class SwaggerResolveTest {
         return version;
     }
 
-
     @BeforeMethod
     public void setup() throws IOException {
         testProjectDir = Files.createTempDirectory("test");

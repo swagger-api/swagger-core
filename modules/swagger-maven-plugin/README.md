@@ -46,7 +46,7 @@ Both `javax` and `jakarta` examples are provided below
     <dependencies>
         <dependency>
             <groupId>io.github.vpelikh</groupId>
-            <artifactId>swagger-jaxrs2</artifactId>
+            <artifactId>swagger-jakarta-rest</artifactId>
             <version>2.2.52</version>
         </dependency>
 
@@ -97,7 +97,7 @@ Both `javax` and `jakarta` examples are provided below
     <dependencies>
         <dependency>
             <groupId>io.github.vpelikh</groupId>
-            <artifactId>swagger-jaxrs2-jakarta</artifactId>
+            <artifactId>swagger-jakarta-rest</artifactId>
             <version>2.2.52</version>
         </dependency>
 

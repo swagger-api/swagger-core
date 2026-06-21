@@ -21,7 +21,7 @@ import static java.lang.annotation.ElementType.PARAMETER;
  * properties for the schema. It is applicable e.g. to parameters, schema classes (aka "models"), properties of such
  * models, request and response content, header.
  *
- * <p>swagger-core resolver and swagger-jaxrs2 reader engine consider this annotation along with JAX-RS annotations,
+ * <p>swagger-core resolver and swagger-jakarta-rest reader engine consider this annotation along with JAX-RS annotations,
  * element type and context as input to resolve the annotated element into an OpenAPI schema definition for such element.</p>
  * <p>The annotation may be used also to override partly (e.g. the name) or fully (e.g providing a completely different
  * representation) the schema of an element; for example if a specific class is provided as value of {@link Schema#implementation()},
