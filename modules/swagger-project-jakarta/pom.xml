@@ -6,7 +6,7 @@
     <packaging>pom</packaging>
     <name>swagger-project-jakarta</name>
     <description>swagger-project-jakarta</description>
-    <version>3.0.1-SNAPSHOT</version>
+    <version>4.0.0-SNAPSHOT</version>
     <url>https://github.com/vpelikh/swagger-core</url>
     <scm>
         <connection>scm:git:git@github.com:vpelikh/swagger-core.git</connection>
