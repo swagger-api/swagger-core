@@ -64,7 +64,7 @@ This guide covers migrating from `swagger-api/swagger-core` 2.2.x (javax namespa
 |------------------|---------------|
 | `swagger-jaxrs2` | `swagger-jakarta-rest` |
 | `swagger-jaxrs2-servlet-initializer` | `swagger-jakarta-rest-servlet-initializer` |
-| `swagger-jaxrs2-servlet-initializer-v2` | `swagger-jakarta-rest-servlet-initializer-v2` |
+| `swagger-jaxrs2-servlet-initializer-v2` | `swagger-jakarta-rest-servlet-initializer` |
 | `swagger-annotations` | `swagger-annotations` (same) |
 | `swagger-models` | `swagger-models` (same) |
 | `swagger-core` | `swagger-core` (same) |

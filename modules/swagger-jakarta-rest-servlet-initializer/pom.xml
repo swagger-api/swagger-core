@@ -24,11 +24,6 @@
             <plugin>
                 <groupId>biz.aQute.bnd</groupId>
                 <artifactId>bnd-maven-plugin</artifactId>
-                <configuration>
-                    <bnd>
-                        Export-Package: io.swagger.v3.jaxrs2.integration
-                    </bnd>
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -37,7 +32,7 @@
                     <archive>
                         <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
                         <manifestEntries>
-                            <Automatic-Module-Name>io.swagger.v3.jaxrs2.integration</Automatic-Module-Name>
+                            <Automatic-Module-Name>io.swagger.v3.jaxrs2.integration.servlet</Automatic-Module-Name>
                         </manifestEntries>
                     </archive>
                 </configuration>

@@ -373,7 +373,6 @@
                 <module>modules/swagger-bom-integration-test</module>
             </modules>
         </profile>
-
     </profiles>
     <modules>
         <module>modules/swagger-annotations</module>
@@ -384,8 +383,6 @@
         <module>modules/swagger-maven-plugin</module>
         <module>modules/swagger-jakarta-rest</module>
         <module>modules/swagger-jakarta-rest-servlet-initializer</module>
-        <module>modules/swagger-jakarta-rest-servlet-initializer-v2</module>
-
     </modules>
     <reporting>
         <outputDirectory>target/site</outputDirectory>

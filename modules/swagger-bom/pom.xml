@@ -126,11 +126,6 @@
                 <artifactId>swagger-jakarta-rest-servlet-initializer</artifactId>
                 <version>${project.version}</version>
             </dependency>
-            <dependency>
-                <groupId>io.github.vpelikh</groupId>
-                <artifactId>swagger-jakarta-rest-servlet-initializer-v2</artifactId>
-                <version>${project.version}</version>
-            </dependency>
         </dependencies>
     </dependencyManagement>
 </project>

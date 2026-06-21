@@ -64,10 +64,6 @@
             <groupId>io.github.vpelikh</groupId>
             <artifactId>swagger-jakarta-rest-servlet-initializer</artifactId>
         </dependency>
-        <dependency>
-            <groupId>io.github.vpelikh</groupId>
-            <artifactId>swagger-jakarta-rest-servlet-initializer-v2</artifactId>
-        </dependency>
     </dependencies>
 
     <build>
