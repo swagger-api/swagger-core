@@ -1,8 +1,7 @@
 # Swagger Core <img src="https://raw.githubusercontent.com/swagger-api/swagger.io/wordpress/images/assets/SW-logo-clr.png" height="50" align="right">
 
-**NOTE:** If you're looking for Swagger Core 1.5.X and OpenAPI 2.0, please refer to [1.5 branch](https://github.com/swagger-api/swagger-core/tree/1.5).
 
-**NOTE:** Since version 2.1.7, Swagger Core has been fully migrated to use the Jakarta namespace. The main modules now use jakarta namespace in their source code, and the BOM manages all Jakarta REST 4.0 artifacts.
+**NOTE:** This fork (`io.github.vpelikh`, version 4.0.x) migrated from Java EE 8 (javax namespace) to Jakarta EE 11 (jakarta namespace). All modules use the jakarta namespace directly in source code — no Eclipse Transformer required.
 Please see the [Wiki](https://github.com/vpelikh/swagger-core/wiki/Swagger-2.X---Getting-started) for more details.
 
 **NOTE:** Since version 2.2.0 Swagger Core supports OpenAPI 3.1; see [this page](https://github.com/vpelikh/swagger-core/wiki/Swagger-2.X---OpenAPI-3.1) for details
@@ -10,7 +9,9 @@ Please see the [Wiki](https://github.com/vpelikh/swagger-core/wiki/Swagger-2.X--
 ![Build Test Deploy](https://github.com/vpelikh/swagger-core/workflows/Build%20Test%20Deploy%20master/badge.svg?branch=master)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.github.vpelikh/swagger-project/badge.svg?style=plastic)](https://maven-badges.herokuapp.com/maven-central/io.github.vpelikh/swagger-project)
 
-Swagger Core is a Java implementation of the OpenAPI Specification. Current version supports *Jakarta REST 4.0* (equivalent to JAX-RS 2.0).
+Swagger Core is a Java implementation of the OpenAPI Specification. Current version supports *Jakarta REST 4.0* (successor to JAX-RS 2).
+
+> **Migrating from upstream 2.2.x?** See the [Migration Guide](MIGRATION-FROM-UPSTREAM-2.X-TO-4.0.0.md) for step-by-step instructions on updating coordinates, imports, and dependencies.
 
 ## Get started with Swagger Core!
 See the guide on [getting started with Swagger Core](https://github.com/vpelikh/swagger-core/wiki/Swagger-2.X---Getting-started) to get started with adding Swagger to your API.
@@ -23,7 +24,8 @@ The OpenAPI Specification has undergone several revisions since initial creation
 
 Swagger core Version      | Release Date | OpenAPI Spec compatibility | Notes | Status
 ------------------------- | ------------ | -------------------------- | ----- | ----
-2.2.52 (**current stable**)| 2026-06-22   | 3.x           | [tag v2.2.52](https://github.com/swagger-api/swagger-core/tree/v2.2.52) | Supported
+4.0.0-SNAPSHOT (**current**)| 2026-06-21   | 3.x           | [io.github.vpelikh fork](https://github.com/vpelikh/swagger-core) | Development
+2.2.52                     | 2026-06-22   | 3.x           | [tag v2.2.52](https://github.com/swagger-api/swagger-core/tree/v2.2.52) | Supported
 2.2.51                     | 2026-06-12   | 3.x           | [tag v2.2.51](https://github.com/swagger-api/swagger-core/tree/v2.2.51) | Supported
 2.2.50                     | 2026-05-12   | 3.x           | [tag v2.2.50](https://github.com/swagger-api/swagger-core/tree/v2.2.50) | Supported
 2.2.49                     | 2026-04-28   | 3.x           | [tag v2.2.49](https://github.com/swagger-api/swagger-core/tree/v2.2.49) | Supported
@@ -98,7 +100,7 @@ Swagger core Version      | Release Date | OpenAPI Spec compatibility | Notes | 
 2.0.5                     | 2018-09-19  | 3.0           | [tag v2.0.5](https://github.com/swagger-api/swagger-core/tree/v2.0.5)                                             | Supported
 2.0.4                     | 2018-09-05  | 3.0           | [tag v2.0.4](https://github.com/swagger-api/swagger-core/tree/v2.0.4)                                             | Supported
 2.0.3                     | 2018-08-09  | 3.0           | [tag v2.0.3](https://github.com/swagger-api/swagger-core/tree/v2.0.3)                                             | Supported
-1.6.14 (**current stable**)| 2024-03-19   | 2.0           | [tag v1.6.14](https://github.com/swagger-api/swagger-core/tree/v1.6.14)                                           | Supported
+1.6.14                    | 2024-03-19   | 2.0           | [tag v1.6.14](https://github.com/swagger-api/swagger-core/tree/v1.6.14)                                           | Supported
 1.6.13                    | 2024-01-26   | 2.0           | [tag v1.6.13](https://github.com/swagger-api/swagger-core/tree/v1.6.13)                                           | Supported
 1.6.12                    | 2023-10-14   | 2.0           | [tag v1.6.12](https://github.com/swagger-api/swagger-core/tree/v1.6.12)                                           | Supported
 1.6.11                    | 2023-05-15  | 2.0           | [tag v1.6.11](https://github.com/swagger-api/swagger-core/tree/v1.6.11)                                           | Supported
@@ -159,8 +161,7 @@ mvn install
 This will build the modules.
 
 Of course if you don't want to build locally you can grab artifacts from maven central:
-
-`https://repo1.maven.org/maven2/io/swagger/core/`
+`https://repo1.maven.org/maven2/io/github/vpelikh/`
 
 ### Maven BOM
 
