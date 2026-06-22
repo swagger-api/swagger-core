@@ -3,8 +3,6 @@ set -e
 
 RELEASE_TYPE="${1:-release}"
 
-CUR=$(pwd)
-
 # Verify we are on a SNAPSHOT
 CURRENT_VERSION=$(./mvnw -q -DforceStdout help:evaluate -Dexpression=project.version --non-recursive)
 
@@ -47,15 +45,10 @@ if git rev-parse "v${RELEASE_VERSION}" >/dev/null 2>&1; then
   exit 1
 fi
 
-# Last stable release (for release notes and wiki update)
-LAST_STABLE_RELEASE=$(python CI/lastRelease.py)
-
 # Export variables
 echo "RELEASE_VERSION=${RELEASE_VERSION}" >> $GITHUB_ENV
 echo "IS_PRERELEASE=${IS_PRERELEASE}" >> $GITHUB_ENV
-echo "LAST_STABLE_RELEASE=${LAST_STABLE_RELEASE}" >> $GITHUB_ENV
 
 echo "Current SNAPSHOT: $CURRENT_VERSION"
 echo "Release version:  $RELEASE_VERSION"
 echo "Pre-release:      $IS_PRERELEASE"
-echo "Last stable:      $LAST_STABLE_RELEASE"
