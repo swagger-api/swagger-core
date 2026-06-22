@@ -1,9 +1,5 @@
 package io.swagger.v3.core.serialization;
 
-import org.snakeyaml.engine.v2.api.LoadSettings;
-import tools.jackson.core.json.JsonFactory;
-import tools.jackson.dataformat.yaml.JacksonYAMLParseException;
-import tools.jackson.dataformat.yaml.YAMLFactory;
 import io.swagger.v3.core.matchers.SerializationMatchers;
 import io.swagger.v3.core.util.Json;
 import io.swagger.v3.core.util.ObjectMapperFactory;
@@ -16,9 +12,11 @@ import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.responses.ApiResponse;
 import io.swagger.v3.oas.models.responses.ApiResponses;
 import io.swagger.v3.oas.models.servers.Server;
+import org.snakeyaml.engine.v2.api.LoadSettings;
 import org.testng.annotations.Test;
-import org.yaml.snakeyaml.LoaderOptions;
-import tools.jackson.core.TokenStreamFactory;
+import tools.jackson.core.json.JsonFactory;
+import tools.jackson.dataformat.yaml.JacksonYAMLParseException;
+import tools.jackson.dataformat.yaml.YAMLFactory;
 
 import java.util.HashMap;
 import java.util.Map;

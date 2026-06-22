@@ -79,9 +79,9 @@
             <version>${project.parent.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.yaml</groupId>
-            <artifactId>snakeyaml</artifactId>
-            <version>${snakeyaml-version}</version>
+            <groupId>org.snakeyaml</groupId>
+            <artifactId>snakeyaml-engine</artifactId>
+            <version>${snakeyaml-engine-version}</version>
         </dependency>
         <dependency>
             <groupId>io.github.vpelikh</groupId>

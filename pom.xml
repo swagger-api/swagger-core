@@ -549,9 +549,9 @@
                 <version>${joda-version}</version>
             </dependency>
             <dependency>
-                <groupId>org.yaml</groupId>
-                <artifactId>snakeyaml</artifactId>
-                <version>${snakeyaml-version}</version>
+                <groupId>org.snakeyaml</groupId>
+                <artifactId>snakeyaml-engine</artifactId>
+                <version>${snakeyaml-engine-version}</version>
             </dependency>
             <dependency>
                 <groupId>jakarta.ws.rs</groupId>
@@ -609,7 +609,7 @@
         <maven.compiler.release>17</maven.compiler.release>
         <joda-version>3.0.1</joda-version>
         <joda-time-version>2.14.2</joda-time-version>
-        <snakeyaml-version>2.6</snakeyaml-version>
+        <snakeyaml-engine-version>3.0.1</snakeyaml-engine-version>
         <jakarta.ws-version>4.0.0</jakarta.ws-version>
         <jakarta.xml.bind-api-version>4.0.5</jakarta.xml.bind-api-version>
         <jakarta.activation-api-version>2.1.4</jakarta.activation-api-version>

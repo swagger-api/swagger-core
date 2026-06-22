@@ -1,13 +1,12 @@
 package io.swagger.v3.core.serialization;
 
-import org.snakeyaml.engine.v2.api.LoadSettings;
-import tools.jackson.core.json.JsonFactory;
-import tools.jackson.core.util.DefaultIndenter;
-import tools.jackson.databind.json.JsonMapper;
-import tools.jackson.dataformat.yaml.JacksonYAMLParseException;
-import tools.jackson.dataformat.yaml.YAMLFactory;
 import io.swagger.v3.core.matchers.SerializationMatchers;
-import io.swagger.v3.core.util.*;
+import io.swagger.v3.core.util.Json;
+import io.swagger.v3.core.util.Json31;
+import io.swagger.v3.core.util.ObjectMapperFactory;
+import io.swagger.v3.core.util.ResourceUtils;
+import io.swagger.v3.core.util.Yaml;
+import io.swagger.v3.core.util.Yaml31;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Operation;
@@ -32,9 +31,12 @@ import io.swagger.v3.oas.models.responses.ApiResponses;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.snakeyaml.engine.v2.api.LoadSettings;
 import org.testng.annotations.Test;
-import org.yaml.snakeyaml.LoaderOptions;
-import tools.jackson.core.TokenStreamFactory;
+import tools.jackson.core.json.JsonFactory;
+import tools.jackson.core.util.DefaultIndenter;
+import tools.jackson.dataformat.yaml.JacksonYAMLParseException;
+import tools.jackson.dataformat.yaml.YAMLFactory;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
