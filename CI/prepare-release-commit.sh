@@ -1,26 +1,14 @@
 #!/bin/bash
 set -e
 
-CUR=$(pwd)
 RELEASE_VERSION="${RELEASE_VERSION:?}"
 
 # Configure git
 git config user.email "action@github.com"
 git config user.name "GitHub Action"
 
-# Update Maven versions
-./mvnw versions:set -DnewVersion="${RELEASE_VERSION}"
-./mvnw versions:commit
-
-cd modules/swagger-bom
-../../mvnw versions:set -DnewVersion="${RELEASE_VERSION}"
-../../mvnw versions:commit
-cd ../..
-
-cd modules/swagger-project-jakarta
-../../mvnw versions:set -DnewVersion="${RELEASE_VERSION}"
-../../mvnw versions:commit
-cd ../..
+# Update all Maven POMs in one go
+./mvnw versions:set -DnewVersion="${RELEASE_VERSION}" -DgenerateBackupPoms=false
 
 # Update gradle.properties
 sed -i "s/version=.*/version=${RELEASE_VERSION}/" modules/swagger-gradle-plugin/gradle.properties

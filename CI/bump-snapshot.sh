@@ -25,19 +25,8 @@ fi
 
 echo "Bumping version on master to $NEXT_SNAPSHOT"
 
-# Update Maven versions
-./mvnw versions:set -DnewVersion="${NEXT_SNAPSHOT}"
-./mvnw versions:commit
-
-cd modules/swagger-bom
-../../mvnw versions:set -DnewVersion="${NEXT_SNAPSHOT}"
-../../mvnw versions:commit
-cd ../..
-
-cd modules/swagger-project-jakarta
-../../mvnw versions:set -DnewVersion="${NEXT_SNAPSHOT}"
-../../mvnw versions:commit
-cd ../..
+# Update all POMs in one go
+./mvnw versions:set -DnewVersion="${NEXT_SNAPSHOT}" -DgenerateBackupPoms=false
 
 # Update gradle.properties
 sed -i "s/version=.*/version=${NEXT_SNAPSHOT}/" modules/swagger-gradle-plugin/gradle.properties
