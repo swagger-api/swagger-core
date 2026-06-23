@@ -13,10 +13,12 @@ import io.swagger.v3.oas.models.media.Schema;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
+import java.util.LinkedHashMap;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertNotEquals;
 import static org.testng.Assert.assertNull;
 
 public class OpenAPI3_1DeserializationTest {
@@ -264,6 +266,83 @@ public class OpenAPI3_1DeserializationTest {
         assertNotNull(baseNodeSchema.getProperties().get("children"));
         JsonSchema childrenSchema = (JsonSchema) baseNodeSchema.getProperties().get("children");
         assertEquals(childrenSchema.getItems().get$dynamicRef(), "#node");
+    }
+
+    @Test
+    public void test$defsRoundTripOnOAS31() throws IOException {
+        Schema<?> dataTypeSlot = new Schema<>()
+                .$dynamicAnchor("dataType")
+                .not(new Schema<>());
+        Schema<?> template = new Schema<>()
+                .$dynamicAnchor("dataType")
+                .addProperty("data", new Schema<>().$dynamicRef("#dataType"))
+                .$defs(new LinkedHashMap<>());
+        template.get$defs().put("dataType", dataTypeSlot);
+
+        Schema<?> binding = new Schema<>()
+                .$ref("#/components/schemas/Response")
+                .add$defs("dataType", new Schema<>().$dynamicAnchor("dataType").$ref("#/components/schemas/Pet"));
+
+        Components components = new Components()
+                .addSchemas("Response", template)
+                .addSchemas("Pet", new Schema().type("object").addProperty("id", new Schema().type("integer")));
+        OpenAPI openAPI = new OpenAPI().openapi("3.1.0").components(components);
+        openAPI.path("/pet", new io.swagger.v3.oas.models.PathItem()
+                .get(new io.swagger.v3.oas.models.Operation()
+                        .responses(new io.swagger.v3.oas.models.responses.ApiResponses()
+                                .addApiResponse("200", new io.swagger.v3.oas.models.responses.ApiResponse()
+                                        .content(new io.swagger.v3.oas.models.media.Content()
+                                                .addMediaType("application/json", new io.swagger.v3.oas.models.media.MediaType()
+                                                        .schema(binding)))))));
+
+        String json = Json31.pretty(openAPI);
+        OpenAPI parsed = Json31.mapper().readValue(json, OpenAPI.class);
+        String jsonAgain = Json31.pretty(parsed);
+
+        Schema<?> parsedTemplate = parsed.getComponents().getSchemas().get("Response");
+        assertNotNull(parsedTemplate.get$defs(), "template $defs should round-trip");
+        assertNotNull(parsedTemplate.get$defs().get("dataType"), "template $defs dataType slot should survive");
+        assertEquals(parsedTemplate.get$defs().get("dataType").get$dynamicAnchor(), "dataType");
+
+        Schema<?> parsedBinding = parsed.getPaths().get("/pet").getGet().getResponses().get("200")
+                .getContent().get("application/json").getSchema();
+        assertNotNull(parsedBinding.get$defs(), "inline binding $defs should round-trip");
+        assertEquals(parsedBinding.get$defs().get("dataType").get$ref(), "#/components/schemas/Pet");
+        assertEquals(parsedBinding.get$ref(), "#/components/schemas/Response");
+
+        SerializationMatchers.assertEqualsToJson31(parsed, jsonAgain);
+    }
+
+    @Test
+    public void test$defsAccumulationAndEquality() {
+        Schema<?> a = new Schema<>();
+        assertNull(a.get$defs());
+        a.add$defs("k1", new Schema().type("string"));
+        a.add$defs("k2", new Schema().type("integer"));
+        assertEquals(a.get$defs().size(), 2);
+
+        Schema<?> b = new Schema<>();
+        b.add$defs("k1", new Schema().type("string"));
+        b.add$defs("k2", new Schema().type("integer"));
+        assertEquals(a, b);
+
+        Schema<?> c = new Schema<>();
+        c.add$defs("k1", new Schema().type("string"));
+        assertNotEquals(a, c);
+        assertEquals(a.hashCode(), b.hashCode());
+    }
+
+    @Test
+    public void test$defsRoutedToFieldNotExtensions() throws IOException {
+        // Behavioral change: $defs in input JSON is now routed to the first-class field,
+        // not the extensions map. Consumers reading $defs from extensions must migrate to get$defs().
+        String json = "{\"$defs\":{\"k\":{\"type\":\"string\"}}}";
+        Schema<?> parsed = Json31.mapper().readValue(json, Schema.class);
+
+        assertNotNull(parsed.get$defs(), "$defs should land in the dedicated field");
+        assertNotNull(parsed.get$defs().get("k"), "$defs entry should be parsed as a Schema");
+        assertNull(parsed.getExtensions(),
+                "$defs must NOT also appear in extensions (would cause duplicate emission on re-serialize)");
     }
 
 }
