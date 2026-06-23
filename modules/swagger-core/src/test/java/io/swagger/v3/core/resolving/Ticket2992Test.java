@@ -49,13 +49,13 @@ public class Ticket2992Test extends SwaggerTestBase {
                 "      $ref: \"#/components/schemas/LocalTime\"\n" +
                 "    d:\n" +
                 "      type: string\n" +
-                "      format: date-time\n" +
+                "      format: date-time-local\n" +
                 "    e:\n" +
                 "      type: string\n" +
-                "      format: date-time\n" +
+                "      format: date-time-local\n" +
                 "    f:\n" +
                 "      type: string\n" +
-                "      format: date-time");
+                "      format: date-time-local");
 
         PrimitiveType.enablePartialTime();
         context = new ModelConverterContextImpl(modelResolver);
@@ -79,13 +79,13 @@ public class Ticket2992Test extends SwaggerTestBase {
                 "      format: partial-time\n" +
                 "    d:\n" +
                 "      type: string\n" +
-                "      format: date-time\n" +
+                "      format: date-time-local\n" +
                 "    e:\n" +
                 "      type: string\n" +
-                "      format: date-time\n" +
+                "      format: date-time-local\n" +
                 "    f:\n" +
                 "      type: string\n" +
-                "      format: date-time");
+                "      format: date-time-local");
     }
 
 }
