@@ -3,6 +3,11 @@ name: Release
 on:
   workflow_dispatch:
     branches: ["master"]
+    inputs:
+      skip_deploy:
+        description: "Skip 'mvn -Prelease deploy' (use to recover when the current version is already on Maven Central). Runs 'mvn -Prelease verify' instead so javadocs are prepared for gh-pages."
+        type: boolean
+        default: false
 
 jobs:
   build:
@@ -73,9 +78,13 @@ jobs:
         git config --global hub.protocol https
         git remote set-url origin https://\${{ secrets.GITHUB_TOKEN }}:x-oauth-basic@github.com/''' + 'swagger-api/swagger-core' + '''.git
     - name:  Run maven deploy/release
-      if: env.RELEASE_OK == 'yes'
+      if: env.RELEASE_OK == 'yes' && inputs.skip_deploy != true
       run: |
         ./mvnw --no-transfer-progress -B -Prelease deploy
+    - name: Run maven verify (recovery — javadocs only, no Central publish)
+      if: env.RELEASE_OK == 'yes' && inputs.skip_deploy == true
+      run: |
+        ./mvnw --no-transfer-progress -B -Prelease verify
     - name: Run prepare javadocs script
       id: prepareJavadocs
       if: env.RELEASE_OK == 'yes'
