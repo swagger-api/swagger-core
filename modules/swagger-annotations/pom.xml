@@ -74,7 +74,7 @@
                                     <outputDirectory>${project.build.directory}/javadocprep/swagger-core/${project.version}/apidocs</outputDirectory>
                                     <resources>
                                         <resource>
-                                            <directory>${project.build.directory}/apidocs</directory>
+                                            <directory>${project.build.directory}/reports/apidocs</directory>
                                             <filtering>true</filtering>
                                         </resource>
                                     </resources>
