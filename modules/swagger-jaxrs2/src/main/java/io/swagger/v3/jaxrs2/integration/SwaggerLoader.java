@@ -59,6 +59,8 @@ public class SwaggerLoader {
 
     private String openAPIVersion;
 
+    private Boolean ignoreHidden = Boolean.FALSE;
+
     /**
      * @since 2.0.6
      */
@@ -318,6 +320,20 @@ public class SwaggerLoader {
         this.openAPIVersion = openAPIVersion;
     }
 
+    /**
+     *  @since 2.2.40
+     */
+    public Boolean getIgnoreHidden() {
+        return ignoreHidden;
+    }
+
+    /**
+     *  @since 2.2.40
+     */
+    public void setIgnoreHidden(Boolean ignoreHidden) {
+        this.ignoreHidden = ignoreHidden;
+    }
+
     public Map<String, String> resolve() throws Exception{
 
         Set<String> ignoredRoutesSet = null;
@@ -370,7 +386,8 @@ public class SwaggerLoader {
                 .alwaysResolveAppPath(alwaysResolveAppPath)
                 .skipResolveAppPath(skipResolveAppPath)
                 .openAPI31(openAPI31)
-                .convertToOpenAPI31(convertToOpenAPI31);
+                .convertToOpenAPI31(convertToOpenAPI31)
+                .ignoreHidden(ignoreHidden);
         if (schemaResolution != null) {
             config.schemaResolution(Schema.SchemaResolution.valueOf(schemaResolution));
         }
