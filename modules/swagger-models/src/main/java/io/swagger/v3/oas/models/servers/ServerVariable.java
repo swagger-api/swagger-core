@@ -9,8 +9,8 @@ import java.util.Objects;
 /**
  * ServerVariable
  *
- * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.0.4/versions/3.0.4.md#server-variable-object"
- * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.1.1/versions/3.1.1.md#server-variable-object"
+ * @see <a href="https://github.com/OAI/OpenAPI-Specification/blob/3.0.4/versions/3.0.4.md#server-variable-object">ServerVariable (OpenAPI 3.0 specification)</a>
+ * @see <a href="https://github.com/OAI/OpenAPI-Specification/blob/3.1.1/versions/3.1.1.md#server-variable-object">ServerVariable (OpenAPI 3.1 specification)</a>
  */
 
 public class ServerVariable {
