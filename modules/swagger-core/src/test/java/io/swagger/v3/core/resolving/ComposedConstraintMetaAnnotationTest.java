@@ -19,8 +19,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.util.Map;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.*;
 
 public class ComposedConstraintMetaAnnotationTest {
 
@@ -56,11 +55,11 @@ public class ComposedConstraintMetaAnnotationTest {
     }
 
     /**
-     * Mimics how Hibernate Validator's @Range works: meta-annotations @Min/@Max carry default
+     * Mimics how Hibernate Validator's {@code @Range} works: meta-annotations @Min/@Max carry default
      * values, while the actual per-use values are meant to be applied via @OverridesAttribute.
      * Our implementation reads meta-annotations from the annotation *type definition*, so it
      * always sees the defaults (min=0, max=Long.MAX_VALUE) — not whatever the caller passes
-     * as @ValidRange(min=5, max=50). This is a known limitation documented by the test below.
+     * as {@code @ValidRange(min=5, max=50)}. This is a known limitation documented by the test below.
      */
     @Min(0)
     @Max(Long.MAX_VALUE)
@@ -71,6 +70,20 @@ public class ComposedConstraintMetaAnnotationTest {
         @OverridesAttribute(constraint = Min.class, name = "value")
         long min() default 0;
 
+        @OverridesAttribute(constraint = Max.class, name = "value")
+        long max() default Long.MAX_VALUE;
+
+        String message() default "Out of range";
+        Class<?>[] groups() default {};
+        Class<? extends Payload>[] payload() default {};
+    }
+
+    @Min(4)
+    @Max(Long.MAX_VALUE)
+    @Target({ElementType.FIELD, ElementType.PARAMETER})
+    @Retention(RetentionPolicy.RUNTIME)
+    @Constraint(validatedBy = {})
+    public @interface FourOrMore {
         @OverridesAttribute(constraint = Max.class, name = "value")
         long max() default Long.MAX_VALUE;
 
@@ -105,9 +118,6 @@ public class ComposedConstraintMetaAnnotationTest {
         @ValidEmail
         private String email;
 
-        @ValidRange(min = 5, max = 50)
-        private Short rangeField;
-
         @ValidStoreIdNested
         private Short nestedStoreId;
 
@@ -123,12 +133,25 @@ public class ComposedConstraintMetaAnnotationTest {
         public void setName(String name) { this.name = name; }
         public String getEmail() { return email; }
         public void setEmail(String email) { this.email = email; }
-        public Short getRangeField() { return rangeField; }
-        public void setRangeField(Short rangeField) { this.rangeField = rangeField; }
         public Short getNestedStoreId() { return nestedStoreId; }
         public void setNestedStoreId(Short nestedStoreId) { this.nestedStoreId = nestedStoreId; }
         public Short getPriorityStoreId() { return priorityStoreId; }
         public void setPriorityStoreId(Short priorityStoreId) { this.priorityStoreId = priorityStoreId; }
+    }
+
+    static class ComposedAnnotationsDto {
+        @ValidRange(min = 5, max = 50)
+        private Short rangeField;
+
+        @FourOrMore(max = 10)
+        private Short partiallyOverriddenComposedField;
+
+        public Short getRangeField() { return rangeField; }
+        public void setRangeField(Short rangeField) { this.rangeField = rangeField; }
+        public Short getPartiallyOverriddenComposedField() { return partiallyOverriddenComposedField; }
+        public void setPartiallyOverriddenComposedField(Short partiallyOverriddenComposedField) {
+            this.partiallyOverriddenComposedField = partiallyOverriddenComposedField;
+        }
     }
 
     @Test
@@ -192,23 +215,32 @@ public class ComposedConstraintMetaAnnotationTest {
     }
 
     /**
-     * Documents a known limitation: for @Range-style constraints that rely on @OverridesAttribute
-     * to propagate per-use values (e.g. @ValidRange(min=5, max=50)) into their meta-annotations
-     * (@Min/@Max), our implementation reads constraints from the annotation *type definition*
-     * and therefore always sees the default values (min=0, max=Long.MAX_VALUE), not the
-     * caller-supplied ones. Handling @OverridesAttribute is not yet supported.
+     * Documents a known limitation: handling {@link OverridesAttribute} is not yet supported,
+     * and instead the annotation and its composing/meta annotations are ignored entirely.
      */
     @Test
-    public void rangeStyleConstraintUsesDefaultsNotOverriddenValues() {
-        Map<String, Schema> schemas = ModelConverters.getInstance().readAll(TestStoreDto.class);
-        Schema model = schemas.get("TestStoreDto");
+    public void rangeStyleConstraintDoesNotDefineConstraintsSinceItReliesOnOverriddenValues() {
+        Map<String, Schema> schemas = ModelConverters.getInstance().readAll(ComposedAnnotationsDto.class);
+        Schema model = schemas.get("ComposedAnnotationsDto");
         Schema range = (Schema) model.getProperties().get("rangeField");
         assertNotNull(range, "rangeField property should exist");
         // We pick up the *default* values from @Min(0) and @Max(Long.MAX_VALUE) on the type
-        // definition of @ValidRange, NOT the caller-supplied @ValidRange(min=5, max=50).
-        assertEquals(range.getMinimum().longValue(), 0L,
-                "expected default @Min(0) from type definition, not overridden min=5");
-        assertEquals(range.getMaximum().longValue(), Long.MAX_VALUE,
-                "expected default @Max(Long.MAX_VALUE) from type definition, not overridden max=50");
+        // definition of @ValidRange, But we then drop them since we see that they are modified with an OverridesAttribute.
+        assertNull(range.getMinimum(),
+                "expected null since we drop the @Min from the overridden composed @ValidRange annotation");
+        assertNull(range.getMaximum(),
+                "expected null since we drop the @Max from the overridden composed @ValidRange annotation");
+    }
+
+    @Test
+    public void composedStyleConstraintUsesOnlyNonOverrideableValues() {
+        Map<String, Schema> schemas = ModelConverters.getInstance().readAll(ComposedAnnotationsDto.class);
+        Schema model = schemas.get("ComposedAnnotationsDto");
+        Schema range = (Schema) model.getProperties().get("partiallyOverriddenComposedField");
+        assertNotNull(range, "partiallyOverriddenComposedField property should exist");
+        assertEquals(range.getMinimum().longValue(), 4L,
+                "expected 4 from type definition since it does not have an OverridesAttribute");
+        assertNull(range.getMaximum(),
+                "expected null since we drop the @Max from the overridden composed @FourOrMore annotation");
     }
 }
