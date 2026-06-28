@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.core.converter.ModelConverters;
 import io.swagger.v3.core.matchers.SerializationMatchers;
+import io.swagger.v3.core.oas.models.Cap;
 import io.swagger.v3.core.oas.models.Car;
 import io.swagger.v3.core.oas.models.Manufacturers;
 import io.swagger.v3.core.oas.models.ReadOnlyModel;
@@ -142,6 +143,24 @@ public class ModelSerializerTest {
                         "         \"wheelCount\":{\n" +
                         "            \"type\":\"integer\",\n" +
                         "            \"format\":\"int32\",\n" +
+                        "            \"readOnly\":true\n" +
+                        "         }\n" +
+                        "      }\n" +
+                        "   }\n" +
+                        "}";
+        SerializationMatchers.assertEqualsToJson(schemas, json);
+    }
+
+    @Test(description = "it should make a field readOnly, if there only getter")
+    public void makeGetterReadOnly() throws IOException {
+        final Map<String, Schema> schemas = ModelConverters.getInstance().read(Cap.class);
+        final String json =
+                "{\n" +
+                        "   \"Cap\":{\n" +
+                        "      \"type\":\"object\",\n" +
+                        "      \"properties\":{\n" +
+                        "         \"brand\":{\n" +
+                        "            \"type\":\"string\",\n" +
                         "            \"readOnly\":true\n" +
                         "         }\n" +
                         "      }\n" +
