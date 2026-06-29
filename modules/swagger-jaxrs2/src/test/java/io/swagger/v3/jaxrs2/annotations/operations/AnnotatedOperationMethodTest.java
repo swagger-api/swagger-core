@@ -1342,6 +1342,24 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
                 "          content:\n" +
                 "            'application/json': {}\n" +
                 "            'application/xml': {}\n" +
+                "  /user/3:\n" +
+                "    get:\n" +
+                "      summary: Select user\n" +
+                "      operationId: selectUser\n" +
+                "      parameters:\n" +
+                "      - name: id\n" +
+                "        in: query\n" +
+                "        description: User id\n" +
+                "        required: true\n" +
+                "        schema:\n" +
+                "          type: integer\n" +
+                "          format: int32\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            'application/json': {}\n" +
+                "            'application/xml': {}\n" +
                 "components:\n" +
                 "  schemas:\n" +
                 "    UserResourceBean:\n" +
