@@ -15,11 +15,13 @@ sonar-project.properties
 test-output/
 *.pyc
 
+.DS_Store
+
 ## tool-infrastructure
 .serena/
 .codegraph/
 .sisyphus/
-.DS_Store
+.omo/
 
 # MemPalace per-project files (issue #185)
 mempalace.yaml
