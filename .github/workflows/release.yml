@@ -102,6 +102,12 @@ jobs:
         if: success()
         run: . ./CI/prepare-javadocs.sh
 
+      - name: Bump SNAPSHOT version on master (final release only)
+        if: success() && github.event.inputs.release_type == 'release'
+        run: . ./CI/bump-snapshot.sh
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Checkout gh-pages
         uses: actions/checkout@v7
         with:
@@ -117,12 +123,6 @@ jobs:
       - name: Publish draft release
         if: success()
         run: gh release edit "v${RELEASE_VERSION}" --draft=false
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Bump SNAPSHOT version on master (final release only)
-        if: success() && github.event.inputs.release_type == 'release'
-        run: . ./CI/bump-snapshot.sh
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
