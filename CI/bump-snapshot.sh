@@ -28,6 +28,9 @@ echo "Bumping version on master to $NEXT_SNAPSHOT"
 # Update all POMs in one go
 ./mvnw versions:set -DnewVersion="${NEXT_SNAPSHOT}" -DgenerateBackupPoms=false
 
+# Also update swagger-bom (it has its own <version>, not inherited from parent)
+./mvnw versions:set -DnewVersion="${NEXT_SNAPSHOT}" -DgenerateBackupPoms=false --file modules/swagger-bom/pom.xml
+
 # Update gradle.properties
 sed -i "s/version=.*/version=${NEXT_SNAPSHOT}/" modules/swagger-gradle-plugin/gradle.properties
 
