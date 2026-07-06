@@ -84,18 +84,7 @@ jobs:
           else
             BASE_TAG=$(gh release list --limit 1 --exclude-drafts --exclude-pre-releases --json tagName -q '.[0].tagName')
           fi
-          # Build release title
-          if [ "$IS_PRERELEASE" = "true" ]; then
-            if [[ "$RELEASE_VERSION" =~ -M ]]; then
-              TITLE="Swagger-core ${RELEASE_VERSION} (Milestone) released!"
-            elif [[ "$RELEASE_VERSION" =~ -RC ]]; then
-              TITLE="Swagger-core ${RELEASE_VERSION} (Release Candidate) released!"
-            else
-              TITLE="Swagger-core ${RELEASE_VERSION} released!"
-            fi
-          else
-            TITLE="Swagger-core ${RELEASE_VERSION} released!"
-          fi
+          TITLE="v${RELEASE_VERSION}"
           gh release create "v${RELEASE_VERSION}" \
             --title "$TITLE" \
             --notes-start-tag "$BASE_TAG" \
@@ -105,13 +94,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Publish draft release
-        if: success()
-        run: gh release edit "v${RELEASE_VERSION}" --draft=false
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Generate Javadocs for swagger-annotations
+      - name: Generate Javadocs
         if: success()
         run: ./mvnw -pl modules/swagger-annotations javadoc:javadoc -DskipTests
 
@@ -119,7 +102,7 @@ jobs:
         if: success()
         run: . ./CI/prepare-javadocs.sh
 
-      - name: Checkout gh-pages and publish javadocs
+      - name: Checkout gh-pages
         uses: actions/checkout@v7
         with:
           ref: "gh-pages"
@@ -131,7 +114,12 @@ jobs:
           TMPDIR="$(dirname -- "${0}")"
           . $TMPDIR/publish-javadocs.sh
 
-      # Post-release: bump SNAPSHOT on master (only for final release)
+      - name: Publish draft release
+        if: success()
+        run: gh release edit "v${RELEASE_VERSION}" --draft=false
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Bump SNAPSHOT version on master (final release only)
         if: success() && github.event.inputs.release_type == 'release'
         run: . ./CI/bump-snapshot.sh

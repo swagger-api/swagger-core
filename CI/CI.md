@@ -34,8 +34,8 @@ the branch always remains on the current `-SNAPSHOT` version **except** after a 
     - Creates a temporary commit with the release version (updating all POMs, Gradle properties, README, and Java source references).
     - Builds, tests, and deploys artifacts to Maven Central and the Gradle Plugin Portal.
     - Pushes a Git tag (e.g., `v3.0.0`) and **creates a draft GitHub Release** with automatically generated release notes (using `gh release create --generate-notes`).
-    - Publishes the draft release.
     - Generates and publishes Javadocs to the `gh-pages` branch (versioned folder and `latest` redirect).
+    - Publishes the draft release.
 4. **For a final release only:** after all steps succeed, the workflow automatically bumps the version on `master` to the next SNAPSHOT and pushes that commit.
 
 #### Release notes logic
@@ -62,7 +62,7 @@ All release‑related GitHub API interactions use the pre‑installed `gh` CLI, 
 After a **final release** (type `release`), the workflow runs `CI/bump-snapshot.sh`. This script:
 - Checks out `master` (if currently in detached HEAD).
 - Computes the next patch version (e.g., `3.0.0` → `3.0.1-SNAPSHOT`).
-- Updates all POMs, the BOM, the Jakarta module, and `gradle.properties` to the new SNAPSHOT.
+- Updates all POMs and the BOM to the new SNAPSHOT.
 - Commits and pushes the change to `master`.
 
 This ensures that `master` always reflects the next development version and prevents accidental overwrites of the released tag.
