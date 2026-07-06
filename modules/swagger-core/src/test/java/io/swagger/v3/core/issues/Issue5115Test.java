@@ -1,7 +1,7 @@
 package io.swagger.v3.core.issues;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 import io.swagger.v3.core.converter.ModelConverters;
 import io.swagger.v3.core.converter.ResolvedSchema;
 import io.swagger.v3.core.util.Json;
@@ -10,7 +10,7 @@ import io.swagger.v3.core.util.ResourceUtils;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.testng.annotations.Test;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.LinkedHashSet;
