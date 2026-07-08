@@ -636,7 +636,7 @@
         <servlet-api-version>4.0.4</servlet-api-version>
         <jersey2-version>2.46</jersey2-version>
         <jackson-version>2.22.0</jackson-version>
-        <jackson-annotations-version>2.21</jackson-annotations-version>
+        <jackson-annotations-version>2.22</jackson-annotations-version>
         <jackson-databind-version>2.22.0</jackson-databind-version>
         <logback-version>1.5.37</logback-version>
         <classgraph-version>4.8.184</classgraph-version>
