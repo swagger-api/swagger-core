@@ -1,5 +1,6 @@
 package io.swagger.v3.core.util;
 
+import io.swagger.v3.oas.models.SpecVersion;
 import io.swagger.v3.oas.models.media.Schema;
 
 import javax.validation.constraints.*;
@@ -132,12 +133,25 @@ public class ValidationAnnotationsUtils {
      * @return whether the schema has been modified or not
      */
     public static boolean applyDecimalMinConstraint(Schema schema, DecimalMin annotation) {
-        if (isNumberSchema(schema)) {
-            schema.setMinimum(new BigDecimal(annotation.value()));
-            schema.setExclusiveMinimum(!annotation.inclusive());
-            return true;
+        if (!isNumberSchema(schema)) {
+            return false;
         }
-        return false;
+        BigDecimal value = new BigDecimal(annotation.value());
+        if (schema.getSpecVersion().equals(SpecVersion.V31)) {
+            if (!annotation.inclusive()) {
+                schema.setExclusiveMinimumValue(value);
+                BigDecimal minimum = schema.getMinimum();
+                if (minimum != null && minimum.compareTo(value) <= 0) {
+                    schema.setMinimum(null);
+                }
+            } else {
+                schema.setMinimum(value);
+            }
+        } else {
+            schema.setMinimum(value);
+            schema.setExclusiveMinimum(!annotation.inclusive());
+        }
+        return true;
     }
 
     /**
@@ -146,12 +160,25 @@ public class ValidationAnnotationsUtils {
      * @return whether the schema has been modified or not
      */
     public static boolean applyDecimalMaxConstraint(Schema schema, DecimalMax annotation) {
-        if (isNumberSchema(schema)) {
-            schema.setMaximum(new BigDecimal(annotation.value()));
-            schema.setExclusiveMaximum(!annotation.inclusive());
-            return true;
+        if (!isNumberSchema(schema)) {
+            return false;
         }
-        return false;
+        BigDecimal value = new BigDecimal(annotation.value());
+        if (schema.getSpecVersion().equals(SpecVersion.V31)) {
+            if (!annotation.inclusive()) {
+                schema.setExclusiveMaximumValue(value);
+                BigDecimal maximum = schema.getMaximum();
+                if (maximum != null && maximum.compareTo(value) >= 0) {
+                    schema.setMaximum(null);
+                }
+            } else {
+                schema.setMaximum(value);
+            }
+        } else {
+            schema.setMaximum(value);
+            schema.setExclusiveMaximum(!annotation.inclusive());
+        }
+        return true;
     }
 
     /**
@@ -189,17 +216,48 @@ public class ValidationAnnotationsUtils {
     }
 
     public static boolean applyPositiveConstraint(Schema schema) {
-        if (isNumberSchema(schema)) {
-            BigDecimal current = schema.getMinimum();
-            if (current == null || current.compareTo(BigDecimal.ZERO) < 0) {
-                schema.setMinimum(BigDecimal.ZERO);
-                schema.setExclusiveMinimum(true);
-            } else if (current.compareTo(BigDecimal.ZERO) == 0 && !Boolean.TRUE.equals(schema.getExclusiveMinimum())) {
-                schema.setExclusiveMinimum(true);
-            }
-            return true;
+        if (!isNumberSchema(schema)) {
+            return false;
         }
-        return false;
+        if (schema.getSpecVersion().equals(SpecVersion.V30)) {
+            return applyPositiveConstraintV30(schema);
+        }
+        return applyPositiveConstraintV31(schema);
+    }
+
+    private static boolean applyPositiveConstraintV30(Schema schema) {
+        BigDecimal minimum = schema.getMinimum();
+        if (currentMinimumOutsidePositiveRange(minimum)) {
+            schema.setMinimum(BigDecimal.ZERO);
+            schema.setExclusiveMinimum(true);
+        } else if (minimum.compareTo(BigDecimal.ZERO) == 0 && !Boolean.TRUE.equals(schema.getExclusiveMinimum())) {
+            schema.setExclusiveMinimum(true);
+        }
+        return true;
+    }
+
+    private static boolean applyPositiveConstraintV31(Schema schema) {
+        BigDecimal exclusiveMinimum = schema.getExclusiveMinimumValue();
+        if (exclusiveMinimum != null) {
+            if (exclusiveMinimum.compareTo(BigDecimal.ZERO) < 0) {
+                BigDecimal minimum = schema.getMinimum();
+                if (minimum != null && minimum.compareTo(BigDecimal.ZERO) > 0) {
+                    schema.setExclusiveMinimumValue(null);
+                } else {
+                    schema.setMinimum(null);
+                    schema.setExclusiveMinimumValue(BigDecimal.ZERO);
+                }
+                return true;
+            }
+            return false;
+        }
+        BigDecimal minimum = schema.getMinimum();
+        if (minimum != null && minimum.compareTo(BigDecimal.ZERO) > 0) {
+            return false;
+        }
+        schema.setMinimum(null);
+        schema.setExclusiveMinimumValue(BigDecimal.ZERO);
+        return true;
     }
 
     public static boolean applyPositiveOrZeroConstraint(Schema schema) {
@@ -214,17 +272,48 @@ public class ValidationAnnotationsUtils {
     }
 
     public static boolean applyNegativeConstraint(Schema schema) {
-        if (isNumberSchema(schema)) {
-            BigDecimal current = schema.getMaximum();
-            if (current == null || current.compareTo(BigDecimal.ZERO) > 0) {
-                schema.setMaximum(BigDecimal.ZERO);
-                schema.setExclusiveMaximum(true);
-            } else if (current.compareTo(BigDecimal.ZERO) == 0 && !Boolean.TRUE.equals(schema.getExclusiveMaximum())) {
-                schema.setExclusiveMaximum(true);
-            }
-            return true;
+        if (!isNumberSchema(schema)) {
+            return false;
         }
-        return false;
+        if (schema.getSpecVersion().equals(SpecVersion.V30)) {
+            return applyNegativeConstraintV30(schema);
+        }
+        return applyNegativeConstraintV31(schema);
+    }
+
+    private static boolean applyNegativeConstraintV30(Schema schema) {
+        BigDecimal maximum = schema.getMaximum();
+        if (currentMaximumOutsideNegativeRange(maximum)) {
+            schema.setMaximum(BigDecimal.ZERO);
+            schema.setExclusiveMaximum(true);
+        } else if (maximum.compareTo(BigDecimal.ZERO) == 0 && !Boolean.TRUE.equals(schema.getExclusiveMaximum())) {
+            schema.setExclusiveMaximum(true);
+        }
+        return true;
+    }
+
+    private static boolean applyNegativeConstraintV31(Schema schema) {
+        BigDecimal exclusiveMaximum = schema.getExclusiveMaximumValue();
+        if (exclusiveMaximum != null) {
+            if (exclusiveMaximum.compareTo(BigDecimal.ZERO) > 0) {
+                BigDecimal maximum = schema.getMaximum();
+                if (maximum != null && maximum.compareTo(BigDecimal.ZERO) < 0) {
+                    schema.setExclusiveMaximumValue(null);
+                } else {
+                    schema.setMaximum(null);
+                    schema.setExclusiveMaximumValue(BigDecimal.ZERO);
+                }
+                return true;
+            }
+            return false;
+        }
+        BigDecimal maximum = schema.getMaximum();
+        if (maximum != null && maximum.compareTo(BigDecimal.ZERO) < 0) {
+            return false;
+        }
+        schema.setMaximum(null);
+        schema.setExclusiveMaximumValue(BigDecimal.ZERO);
+        return true;
     }
 
     /**
@@ -276,6 +365,14 @@ public class ValidationAnnotationsUtils {
             return true;
         }
         return false;
+    }
+
+    private static boolean currentMinimumOutsidePositiveRange(BigDecimal currentMinimum) {
+        return currentMinimum == null || currentMinimum.compareTo(BigDecimal.ZERO) < 0;
+    }
+
+    private static boolean currentMaximumOutsideNegativeRange(BigDecimal currentMaximum) {
+        return currentMaximum == null || currentMaximum.compareTo(BigDecimal.ZERO) > 0;
     }
 
 }
