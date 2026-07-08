@@ -52,8 +52,8 @@ dependencies {
     testImplementation "commons-codec:commons-codec:1.16.0"
     testImplementation "commons-io:commons-io:2.15.1"
     testImplementation "org.apache.commons:commons-compress:1.25.0"
-    testImplementation "com.github.jknack:handlebars:4.3.1"
-    testImplementation "com.github.jknack:handlebars-helpers:4.3.1"
+    testImplementation "com.github.jknack:handlebars:4.5.3"
+    testImplementation "com.github.jknack:handlebars-helpers:4.5.3"
 }
 
 // * * * * * * * * * * * *
