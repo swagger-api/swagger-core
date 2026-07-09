@@ -17,3 +17,7 @@ components:
           type: string
           format: date-time
           example: '2019-08-05T12:34:56Z'
+        dateTimeLocal:
+          type: string
+          format: date-time-local
+          example: '2019-08-05T12:34:56'
