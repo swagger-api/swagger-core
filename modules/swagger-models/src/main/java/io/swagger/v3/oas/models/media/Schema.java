@@ -21,8 +21,8 @@ import java.util.Set;
 /**
  * Schema
  *
- * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.0.4/versions/3.0.4.md#schema-object"
- * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.1.1/versions/3.1.1.md#schema-object"
+ * @see <a href="https://github.com/OAI/OpenAPI-Specification/blob/3.0.4/versions/3.0.4.md#schema-object">Schema (OpenAPI 3.0 specification)</a>
+ * @see <a href="https://github.com/OAI/OpenAPI-Specification/blob/3.1.1/versions/3.1.1.md#schema-object">Schema (OpenAPI 3.1 specification)</a>
  */
 
 public class Schema<T> {
