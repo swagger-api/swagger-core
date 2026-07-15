@@ -61,6 +61,7 @@ import java.util.Set;
 public abstract class AnnotationsUtils {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AnnotationsUtils.class);
+    private static final String TYPE_STRING = "string";
     public static final String COMPONENTS_REF = Components.COMPONENTS_SCHEMAS_REF;
 
     public static boolean hasSchemaAnnotation(io.swagger.v3.oas.annotations.media.Schema schema) {
@@ -992,7 +993,7 @@ public abstract class AnnotationsUtils {
                 // Only parse "null" as null value when nullable=true
                 if (node.isNull() && schema.nullable()) {
                     parsedExamples.add(null);
-                } else if (schemaObject == null && "string".equals(schema.type())) {
+                } else if (schemaObject == null && TYPE_STRING.equals(schema.type())) {
                     parsedExamples.add(trimmed);
                 } else if (shouldUseNodeAsExample(node, schemaObject)) {
                     parsedExamples.add(node);
@@ -1070,7 +1071,7 @@ public abstract class AnnotationsUtils {
         }
         if (StringUtils.isBlank(existingSchemaObject.get$ref()) && StringUtils.isBlank(existingSchemaObject.getType())) {
             // default to string
-            existingSchemaObject.setType("string");
+            existingSchemaObject.setType(TYPE_STRING);
         }
         return existingSchemaObject;
     }
@@ -1700,7 +1701,7 @@ public abstract class AnnotationsUtils {
                 }
             case "boolean":
                 return Boolean.class;
-            case "string":
+            case TYPE_STRING:
                 return String.class;
             default:
                 if (nullIfNotFound) {
@@ -1935,25 +1936,27 @@ public abstract class AnnotationsUtils {
         } else {
             Optional<Schema> schemaFromAnnotation = AnnotationsUtils.getSchemaFromAnnotation(schemaAnnotation, components, jsonViewAnnotation, openapi31, null, context);
             if (schemaFromAnnotation.isPresent()) {
-                if (StringUtils.isBlank(schemaFromAnnotation.get().get$ref()) && StringUtils.isBlank(schemaFromAnnotation.get().getType()) && !(schemaFromAnnotation.get() instanceof ComposedSchema)) {
+                Schema schema = schemaFromAnnotation.get();
+                if (StringUtils.isBlank(schema.get$ref()) && StringUtils.isBlank(schema.getType()) && !(schema instanceof ComposedSchema)) {
                     // default to string
-                    schemaFromAnnotation.get().setType("string");
+                    schema.setType(TYPE_STRING);
                 }
-                return Optional.of(schemaFromAnnotation.get());
+                return Optional.of(schema);
             } else {
                 Optional<Schema> arraySchemaFromAnnotation = AnnotationsUtils.getArraySchema(arrayAnnotation, components, jsonViewAnnotation, openapi31, null, false, context);
                 if (arraySchemaFromAnnotation.isPresent()) {
-                    if (arraySchemaFromAnnotation.get().getItems() != null && StringUtils.isBlank(arraySchemaFromAnnotation.get().getItems().get$ref()) && StringUtils.isBlank(arraySchemaFromAnnotation.get().getItems().getType())) {
+                    Schema schema = arraySchemaFromAnnotation.get();
+                    Schema schemaItems = schema.getItems();
+                    if (schemaItems != null && StringUtils.isBlank(schemaItems.get$ref()) && StringUtils.isBlank(schemaItems.getType())) {
                         // default to string
-                        arraySchemaFromAnnotation.get().getItems().setType("string");
+                        schemaItems.setType(TYPE_STRING);
                     }
-                    return Optional.of(arraySchemaFromAnnotation.get());
+                    return Optional.of(schema);
                 }
             }
         }
         return Optional.empty();
     }
-
 
     public static void applyTypes(String[] classTypes, String[] methodTypes, Content content, MediaType mediaType) {
         if (methodTypes != null && methodTypes.length > 0) {
@@ -3076,14 +3079,34 @@ public abstract class AnnotationsUtils {
         return Schema.SchemaResolution.ALL_OF.equals(resolvedSchemaResolution) || Schema.SchemaResolution.ALL_OF_REF.equals(resolvedSchemaResolution) || openapi31;
     }
 
-    public static AnnotatedType addTypeWhenSiblingsAllowed(AnnotatedType aType, io.swagger.v3.oas.annotations.media.Schema ctxSchema, boolean areSiblingsAllowed) {
+    public static AnnotatedType addTypeWhenSiblingsAllowed(AnnotatedType aType,
+                                                           io.swagger.v3.oas.annotations.media.Schema ctxSchema,
+                                                           boolean openapi31,
+                                                           boolean areSiblingsAllowed) {
         if (areSiblingsAllowed && ctxSchema != null) {
             if (!Void.class.equals(ctxSchema.implementation())) {
                 aType.setType(ctxSchema.implementation());
+            } else if (openapi31) {
+                if (ctxSchema.types().length == 1) {
+                    setType(aType, ctxSchema.types()[0]);
+                }
             } else if (StringUtils.isNotBlank(ctxSchema.type())) {
-                aType.setType(ctxSchema.type().getClass());
+                setType(aType, ctxSchema.type());
             }
         }
         return aType;
+    }
+
+    /**
+     * Does a best-effort approach of attempting to change the type of {@code annotatedType} to {@code type}.
+     * If {@code type} cannot be interpreted to a {@link PrimitiveType}, then no change is made.
+     * @param annotatedType The {@link AnnotatedType} to change the type of
+     * @param type The new type
+     */
+    private static void setType(AnnotatedType annotatedType, String type) {
+        PrimitiveType primitiveType = PrimitiveType.fromName(type);
+        if (primitiveType != null) {
+            annotatedType.setType(primitiveType.getKeyClass());
+        }
     }
 }
