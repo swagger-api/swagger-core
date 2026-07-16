@@ -41,14 +41,6 @@ sc_find="version=$SC_VERSION"
 sc_replace="version=$SC_NEXT_VERSION-SNAPSHOT"
 sed -i -e "s/$sc_find/$sc_replace/g" $CUR/modules/swagger-gradle-plugin/gradle.properties
 
-sc_find="io.swagger.core.v3:swagger-jaxrs2:$SC_VERSION"
-sc_replace="io.swagger.core.v3:swagger-jaxrs2:$SC_NEXT_VERSION-SNAPSHOT"
-sed -i -e "s/$sc_find/$sc_replace/g" $CUR/modules/swagger-gradle-plugin/src/main/java/io/swagger/v3/plugins/gradle/SwaggerPlugin.java
-
-sc_find="io.swagger.core.v3:swagger-jaxrs2:$SC_VERSION"
-sc_replace="io.swagger.core.v3:swagger-jaxrs2:$SC_NEXT_VERSION-SNAPSHOT"
-sed -i -e "s/$sc_find/$sc_replace/g" $CUR/modules/swagger-gradle-plugin/src/test/java/io/swagger/v3/plugins/gradle/SwaggerResolveTest.java
-
 sc_find="<version>$SC_VERSION<\/version>"
 sc_replace="<version>$SC_NEXT_VERSION-SNAPSHOT<\/version>"
 sed -i -e "s/$sc_find/$sc_replace/g" $CUR/modules/swagger-java17-support/pom.xml
