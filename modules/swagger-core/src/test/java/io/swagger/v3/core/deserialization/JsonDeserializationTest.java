@@ -108,6 +108,23 @@ public class JsonDeserializationTest {
         assertTrue(false, "Expected ClassCastException");
     }
 
+    @DataProvider(name = "nonTextSchemaRef")
+    public Object[][] nonTextSchemaRef() {
+        return new Object[][]{
+                {"{\"$ref\":1}", "#/components/schemas/1"},
+                {"{\"$ref\":true}", "#/components/schemas/true"},
+                {"{\"$ref\":{}}", "#/components/schemas/"},
+                {"{\"$ref\":[]}", "#/components/schemas/"}
+        };
+    }
+
+    @Test(dataProvider = "nonTextSchemaRef")
+    public void deserializeSchemaWithNonTextRef(String json, String expectedRef) throws IOException {
+        Schema schema = m.readValue(json, Schema.class);
+
+        assertEquals(schema.get$ref(), expectedRef);
+    }
+
     @Test(description = "it should deserialize nested ObjectProperty(s)")
     public void testNestedObjectProperty() throws IOException {
         final String json = "{\n" +
