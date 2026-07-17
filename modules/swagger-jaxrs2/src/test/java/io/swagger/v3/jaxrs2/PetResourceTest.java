@@ -56,8 +56,10 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Enumeration;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -191,7 +193,7 @@ public class PetResourceTest extends AbstractAnnotationTest {
      * @return Set<Class>
      */
     private Set<Class<?>> getSetOfClassesFromPackage(final String packageName) {
-        final Set<Class<?>> classSet = new HashSet<>();
+        final Set<Class<?>> classSet = new LinkedHashSet<>();
         try {
             final Class[] classes = getClasses(packageName);
             for (final Class aClass : classes) {
@@ -220,6 +222,7 @@ public class PetResourceTest extends AbstractAnnotationTest {
             final URL resource = resources.nextElement();
             dirs.add(new File(resource.getFile()));
         }
+        dirs.sort(Comparator.comparing(File::getAbsolutePath));
         final ArrayList<Class> classes = new ArrayList<>();
         for (final File directory : dirs) {
             classes.addAll(findClasses(directory, packageName));
@@ -241,6 +244,7 @@ public class PetResourceTest extends AbstractAnnotationTest {
         }
         final File[] files = directory.listFiles();
         if (files != null) {
+            Arrays.sort(files, Comparator.comparing(File::getName));
             for (final File file : files) {
                 if (file.isDirectory()) {
                     assert !file.getName().contains(".");
