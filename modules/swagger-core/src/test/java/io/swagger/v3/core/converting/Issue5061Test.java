@@ -142,16 +142,16 @@ public class Issue5061Test {
         @io.swagger.v3.oas.annotations.media.Schema(example = "5 lacs per annum")
         String stringFieldType;
 
-        @io.swagger.v3.oas.annotations.media.Schema(type = "string", example = "5 lacs per annum")
+        @io.swagger.v3.oas.annotations.media.Schema(types = {"string"}, example = "5 lacs per annum")
         String stringFieldTypeWithExplicitStringSchemaType;
 
-        @io.swagger.v3.oas.annotations.media.Schema(type = "number", example = "10")
+        @io.swagger.v3.oas.annotations.media.Schema(types = {"number"}, example = "10")
         String stringFieldTypeWithExplicitNumberSchemaType;
 
-        @io.swagger.v3.oas.annotations.media.Schema(type = "integer", example = "5")
+        @io.swagger.v3.oas.annotations.media.Schema(types = {"integer"}, example = "5")
         String stringFieldTypeWithExplicitIntegerSchemaType;
 
-        @io.swagger.v3.oas.annotations.media.Schema(type = "string", example = "13.37")
+        @io.swagger.v3.oas.annotations.media.Schema(types = {"string"}, example = "13.37")
         BigDecimal bigDecimalFieldTypeWithExplicitStringSchemaType;
 
         @io.swagger.v3.oas.annotations.media.Schema(example = "13.37")
