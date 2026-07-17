@@ -650,7 +650,7 @@
         <mockito-version>2.28.2</mockito-version>
         <rest-assured-version>4.5.1</rest-assured-version>
         <httpcomponents-version>4.5.14</httpcomponents-version>
-        <commons-codec-version>1.17.2</commons-codec-version>
+        <commons-codec-version>1.22.0</commons-codec-version>
 
         <surefire-version>3.5.6</surefire-version>
         <enforcer-plugin-version>3.2.1</enforcer-plugin-version>
