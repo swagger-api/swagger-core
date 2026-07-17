@@ -87,9 +87,9 @@ public class ModelDeserializer extends JsonDeserializer<Schema> {
         JsonNode typeNode = node.get(TYPE);
 
         if (typeNode != null) {
-            schema = deserializeSchemaWithType(node);
+            schema = deserializeSchemaWithType(node, typeNode);
         } else if (node.get(REF) != null) {
-            schema = new Schema().$ref(getNodeAsString(node, REF));
+            schema = new Schema().$ref(getRefAsString(node));
         } else {
             schema = deserializeArbitraryOrObjectSchema(node, false);
         }
@@ -175,9 +175,9 @@ public class ModelDeserializer extends JsonDeserializer<Schema> {
         return schema;
     }
 
-    private Schema deserializeSchemaWithType(JsonNode node) {
+    private Schema deserializeSchemaWithType(JsonNode node, JsonNode typeNode) {
         Schema schema = null;
-        String type = getNodeAsString(node, TYPE);
+        String type = ((TextNode) typeNode).textValue();
         String format = node.get(FORMAT) == null ? "" : getNodeAsString(node, FORMAT);
 
         if (type.equals(ARRAY_TYPE)) {
@@ -213,5 +213,9 @@ public class ModelDeserializer extends JsonDeserializer<Schema> {
 
     private String getNodeAsString(JsonNode jsonNode, String field) {
         return jsonNode.get(field).textValue();
+    }
+
+    private String getRefAsString(JsonNode jsonNode) {
+        return jsonNode.get(REF).asText();
     }
 }
