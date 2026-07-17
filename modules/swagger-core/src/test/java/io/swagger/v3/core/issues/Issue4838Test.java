@@ -62,7 +62,6 @@ public class Issue4838Test {
         io.swagger.v3.oas.models.media.Schema nullableBigDecimalField =
                 (io.swagger.v3.oas.models.media.Schema) model.getProperties().get("nullableBigDecimalField");
 
-        System.out.println(nullableBigDecimalField);
         assertNotNull(nullableBigDecimalField);
         assertTrue(nullableBigDecimalField.getNullable());
         assertNull(nullableBigDecimalField.getExample());
