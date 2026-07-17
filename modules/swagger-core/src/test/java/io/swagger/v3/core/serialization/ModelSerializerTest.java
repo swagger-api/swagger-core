@@ -13,6 +13,7 @@ import io.swagger.v3.oas.models.ExternalDocumentation;
 import io.swagger.v3.oas.models.media.ArraySchema;
 import io.swagger.v3.oas.models.media.DateSchema;
 import io.swagger.v3.oas.models.media.DateTimeSchema;
+import io.swagger.v3.oas.models.media.DurationSchema;
 import io.swagger.v3.oas.models.media.IntegerSchema;
 import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.media.StringSchema;
@@ -41,6 +42,7 @@ public class ModelSerializerTest {
         props.put("longValue", new IntegerSchema().format("int64"));
         props.put("dateValue", new DateSchema());
         props.put("dateTimeValue", new DateTimeSchema());
+        props.put("durationValue", new DurationSchema());
         pet.setProperties(props);
         pet.setRequired(Arrays.asList("intValue", "name"));
         final String json = "{\n" +
@@ -63,6 +65,10 @@ public class ModelSerializerTest {
                 "      \"dateTimeValue\":{\n" +
                 "         \"type\":\"string\",\n" +
                 "         \"format\":\"date-time\"\n" +
+                "      },\n" +
+                "      \"durationValue\":{\n" +
+                "         \"type\":\"string\",\n" +
+                "         \"format\":\"duration\"\n" +
                 "      }\n" +
                 "   }\n" +
                 "}";
@@ -90,6 +96,10 @@ public class ModelSerializerTest {
                         "      \"dateTimeValue\":{\n" +
                         "         \"type\":\"string\",\n" +
                         "         \"format\":\"date-time\"\n" +
+                        "      },\n" +
+                        "      \"durationValue\":{\n" +
+                        "         \"type\":\"string\",\n" +
+                        "         \"format\":\"duration\"\n" +
                         "      },\n" +
                         "      \"intValue\":{\n" +
                         "         \"type\":\"integer\",\n" +
