@@ -607,7 +607,7 @@
 
         <testng-version>7.12.0</testng-version>
         <mockito-version>2.28.2</mockito-version>
-        <rest-assured-version>5.5.2</rest-assured-version>
+        <rest-assured-version>5.5.7</rest-assured-version>
         <surefire-version>2.22.2</surefire-version>
         <maven-plugin-version>1.0.0</maven-plugin-version>
         <commons-lang-version>3.20.0</commons-lang-version>
