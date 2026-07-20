@@ -1,9 +1,10 @@
-package io.swagger.v3.core.util;
+package io.swagger.v3.core.jackson;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.JavaType;
 import io.swagger.v3.core.converter.AnnotatedType;
 import io.swagger.v3.core.converter.ModelConverterContext;
+import io.swagger.v3.core.util.AnnotationsUtils;
 import io.swagger.v3.oas.annotations.media.DiscriminatorMapping;
 import io.swagger.v3.oas.models.media.Discriminator;
 import io.swagger.v3.oas.models.media.JsonSchema;
@@ -13,7 +14,10 @@ import org.apache.commons.lang3.StringUtils;
 
 import static io.swagger.v3.core.util.RefUtils.constructRef;
 
-public class DiscriminatorUtils {
+class DiscriminatorUtils {
+
+    private DiscriminatorUtils() {
+    }
 
     private static final int SCHEMA_COMPONENT_PREFIX = "#/components/schemas/".length();
     private static final String TYPE_STRING = "string";
