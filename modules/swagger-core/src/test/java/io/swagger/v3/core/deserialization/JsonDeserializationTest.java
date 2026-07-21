@@ -19,6 +19,7 @@ import io.swagger.v3.oas.models.responses.ApiResponses;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import org.apache.commons.io.FileUtils;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import java.io.File;
@@ -83,6 +84,45 @@ public class JsonDeserializationTest {
         final Schema result = m.readValue(json, Schema.class);
         assertEquals(3, result.getProperties().size());
         assertEquals("objectProperty", result.getTitle());
+    }
+
+    @DataProvider(name = "nonTextSchemaTypes")
+    public Object[][] nonTextSchemaTypes() {
+        return new Object[][]{
+                {"{\"type\":1}"},
+                {"{\"type\":true}"},
+                {"{\"type\":{}}"},
+                {"{\"type\":[]}"}
+        };
+    }
+
+    @Test(dataProvider = "nonTextSchemaTypes")
+    public void deserializeSchemaWithNonTextTypeFailsWithLegacyCastException(String json) throws IOException {
+        try {
+            m.readValue(json, Schema.class);
+        } catch (RuntimeException e) {
+            assertTrue(e instanceof ClassCastException);
+            return;
+        }
+
+        assertTrue(false, "Expected ClassCastException");
+    }
+
+    @DataProvider(name = "nonTextSchemaRef")
+    public Object[][] nonTextSchemaRef() {
+        return new Object[][]{
+                {"{\"$ref\":1}", "#/components/schemas/1"},
+                {"{\"$ref\":true}", "#/components/schemas/true"},
+                {"{\"$ref\":{}}", "#/components/schemas/"},
+                {"{\"$ref\":[]}", "#/components/schemas/"}
+        };
+    }
+
+    @Test(dataProvider = "nonTextSchemaRef")
+    public void deserializeSchemaWithNonTextRef(String json, String expectedRef) throws IOException {
+        Schema schema = m.readValue(json, Schema.class);
+
+        assertEquals(schema.get$ref(), expectedRef);
     }
 
     @Test(description = "it should deserialize nested ObjectProperty(s)")
