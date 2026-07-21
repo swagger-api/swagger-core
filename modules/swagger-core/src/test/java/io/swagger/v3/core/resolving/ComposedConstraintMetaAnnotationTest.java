@@ -88,6 +88,51 @@ public class ComposedConstraintMetaAnnotationTest {
         Class<? extends Payload>[] payload() default {};
     }
 
+    @Min(0)
+    @Max(Long.MAX_VALUE)
+    @Target({ElementType.FIELD, ElementType.PARAMETER})
+    @Retention(RetentionPolicy.RUNTIME)
+    @Constraint(validatedBy = {})
+    public @interface RangeWithOverridesAttributeList {
+        @OverridesAttribute.List({
+                @OverridesAttribute(constraint = Min.class, name = "value"),
+                @OverridesAttribute(constraint = Max.class, name = "value")
+        })
+        long value() default 0;
+
+        String message() default "Out of range";
+        Class<?>[] groups() default {};
+        Class<? extends Payload>[] payload() default {};
+    }
+
+    @Min(0)
+    @Max(Long.MAX_VALUE)
+    @Target({ElementType.FIELD, ElementType.PARAMETER})
+    @Retention(RetentionPolicy.RUNTIME)
+    @Constraint(validatedBy = {})
+    public @interface RangeWithRepeatedOverridesAttribute {
+        @OverridesAttribute(constraint = Min.class, name = "value")
+        @OverridesAttribute(constraint = Max.class, name = "value")
+        long value() default 0;
+
+        String message() default "Out of range";
+        Class<?>[] groups() default {};
+        Class<? extends Payload>[] payload() default {};
+    }
+
+    @Size(min = 2, max = 100)
+    @Target({ElementType.FIELD, ElementType.PARAMETER})
+    @Retention(RetentionPolicy.RUNTIME)
+    @Constraint(validatedBy = {})
+    public @interface LimitedText {
+        @OverridesAttribute(constraint = Size.class, name = "max")
+        int max() default 100;
+
+        String message() default "Invalid text";
+        Class<?>[] groups() default {};
+        Class<? extends Payload>[] payload() default {};
+    }
+
     @FourOrMore(max = 10)
     @Max(value = 10)
     @Target({ElementType.FIELD, ElementType.PARAMETER})
@@ -157,6 +202,15 @@ public class ComposedConstraintMetaAnnotationTest {
         @ComposedFourOrMoreWithFixedMax
         private Short composedFourOrMoreWithFixedMax;
 
+        @RangeWithOverridesAttributeList(5)
+        private Short rangeWithOverridesAttributeList;
+
+        @RangeWithRepeatedOverridesAttribute(5)
+        private Short rangeWithRepeatedOverridesAttribute;
+
+        @LimitedText(max = 20)
+        private String limitedText;
+
         public Short getRangeField() { return rangeField; }
         public void setRangeField(Short rangeField) { this.rangeField = rangeField; }
         public Short getPartiallyOverriddenComposedField() { return partiallyOverriddenComposedField; }
@@ -170,6 +224,30 @@ public class ComposedConstraintMetaAnnotationTest {
 
         public void setComposedFourOrMoreWithFixedMax(Short composedFourOrMoreWithFixedMax) {
             this.composedFourOrMoreWithFixedMax = composedFourOrMoreWithFixedMax;
+        }
+
+        public Short getRangeWithOverridesAttributeList() {
+            return rangeWithOverridesAttributeList;
+        }
+
+        public void setRangeWithOverridesAttributeList(Short rangeWithOverridesAttributeList) {
+            this.rangeWithOverridesAttributeList = rangeWithOverridesAttributeList;
+        }
+
+        public Short getRangeWithRepeatedOverridesAttribute() {
+            return rangeWithRepeatedOverridesAttribute;
+        }
+
+        public void setRangeWithRepeatedOverridesAttribute(Short rangeWithRepeatedOverridesAttribute) {
+            this.rangeWithRepeatedOverridesAttribute = rangeWithRepeatedOverridesAttribute;
+        }
+
+        public String getLimitedText() {
+            return limitedText;
+        }
+
+        public void setLimitedText(String limitedText) {
+            this.limitedText = limitedText;
         }
     }
 
@@ -273,5 +351,46 @@ public class ComposedConstraintMetaAnnotationTest {
                 "expected 4 from type definition since it does not have an OverridesAttribute");
         assertEquals(range.getMaximum().longValue(), 10L,
                 "expected 10 from type definition since we have an explicit non-overridden @Max annotation next to @FourOrMore");
+    }
+
+    @Test
+    public void detectsOverridesAttributeListContainer() {
+        Map<String, Schema> schemas = ModelConverters.getInstance().readAll(ComposedAnnotationsDto.class);
+        Schema model = schemas.get("ComposedAnnotationsDto");
+        Schema range = (Schema) model.getProperties().get("rangeWithOverridesAttributeList");
+        assertNotNull(range, "rangeWithOverridesAttributeList property should exist");
+        assertNull(range.getMinimum(),
+                "expected null since container-declared @OverridesAttribute makes @Min override-dependent");
+        assertNull(range.getMaximum(),
+                "expected null since container-declared @OverridesAttribute makes @Max override-dependent");
+    }
+
+    @Test
+    public void detectsRepeatedOverridesAttributeDeclarations() {
+        Map<String, Schema> schemas = ModelConverters.getInstance().readAll(ComposedAnnotationsDto.class);
+        Schema model = schemas.get("ComposedAnnotationsDto");
+        Schema range = (Schema) model.getProperties().get("rangeWithRepeatedOverridesAttribute");
+        assertNotNull(range, "rangeWithRepeatedOverridesAttribute property should exist");
+        assertNull(range.getMinimum(),
+                "expected null since repeated @OverridesAttribute makes @Min override-dependent");
+        assertNull(range.getMaximum(),
+                "expected null since repeated @OverridesAttribute makes @Max override-dependent");
+    }
+
+    /**
+     * Future override resolution should keep the fixed {@code min=2} and apply the use-site
+     * {@code max=20}. The current conservative behavior omits the whole {@code @Size}
+     * composing annotation once any of its attributes are override-dependent.
+     */
+    @Test
+    public void partialMultiAttributeOverrideSuppressesWholeComposingAnnotation() {
+        Map<String, Schema> schemas = ModelConverters.getInstance().readAll(ComposedAnnotationsDto.class);
+        Schema model = schemas.get("ComposedAnnotationsDto");
+        Schema limitedText = (Schema) model.getProperties().get("limitedText");
+        assertNotNull(limitedText, "limitedText property should exist");
+        assertNull(limitedText.getMinLength(),
+                "expected null because the whole @Size composing annotation is currently suppressed");
+        assertNull(limitedText.getMaxLength(),
+                "expected null because swagger-core does not yet resolve use-site @OverridesAttribute values");
     }
 }

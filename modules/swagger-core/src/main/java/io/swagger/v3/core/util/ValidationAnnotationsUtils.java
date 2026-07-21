@@ -14,8 +14,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
-import java.util.List;
-import java.util.ArrayList;
 
 import static io.swagger.v3.core.util.SchemaTypeUtils.*;
 
@@ -345,7 +343,7 @@ public class ValidationAnnotationsUtils {
             while (!queue.isEmpty()) {
                 Annotation annotation = queue.poll();
                 if (!visited.add(annotation.annotationType())) continue;
-                List<Class<? extends Annotation>> annotationsThatRelyOnOverride = findOverrides(annotation);
+                Set<Class<? extends Annotation>> annotationsThatRelyOnOverride = findOverrides(annotation);
                 for (Annotation meta : annotation.annotationType().getAnnotations()) {
                     if (meta == null) continue;
                     String name = meta.annotationType().getName();
@@ -388,16 +386,16 @@ public class ValidationAnnotationsUtils {
      * @param annotation the composed constraint annotation
      * @return the composing annotations that are overridden with {@link OverridesAttribute}
      */
-    private static List<Class<? extends Annotation>> findOverrides(Annotation annotation) {
-        List<Class<? extends Annotation>> overriddenConstraintAnnotations = new ArrayList<>();
+    private static Set<Class<? extends Annotation>> findOverrides(Annotation annotation) {
+        Set<Class<? extends Annotation>> overriddenConstraintAnnotations = new HashSet<>();
 
         Class<? extends Annotation> type = annotation.annotationType();
 
         for (Method method : type.getDeclaredMethods()) {
-            OverridesAttribute oa = method.getAnnotation(OverridesAttribute.class);
-
-            if (oa != null) {
-                overriddenConstraintAnnotations.add(oa.constraint());
+            for (OverridesAttribute oa : method.getAnnotationsByType(OverridesAttribute.class)) {
+                if (oa != null) {
+                    overriddenConstraintAnnotations.add(oa.constraint());
+                }
             }
         }
 
