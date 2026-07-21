@@ -19,6 +19,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyMetadata;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.introspect.Annotated;
 import com.fasterxml.jackson.databind.introspect.AnnotatedClass;
@@ -640,6 +641,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         }
 
         final XmlAccessorType xmlAccessorTypeAnnotation = beanDesc.getClassAnnotations().get(XmlAccessorType.class);
+        final JsonNaming jsonNamingAnnotation = beanDesc.getClassAnnotations().get(JsonNaming.class);
 
         // see if @JsonIgnoreProperties exist
         Set<String> propertiesToIgnore = resolveIgnoredProperties(beanDesc.getClassAnnotations(), annotatedType.getCtxAnnotations());
@@ -677,7 +679,8 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             // "issuance_date" and the raw member name must not clobber the translated one
             // (see springdoc/springdoc-openapi#3293).
             if (propDef.getPrimaryMember() != null
-                    && _mapper.getSerializationConfig().getPropertyNamingStrategy() == null) {
+                    && _mapper.getSerializationConfig().getPropertyNamingStrategy() == null
+                    && jsonNamingAnnotation == null) {
                 final JsonProperty jsonPropertyAnn = propDef.getPrimaryMember().getAnnotation(JsonProperty.class);
                 if (jsonPropertyAnn == null || !jsonPropertyAnn.value().equals(propName)) {
                     if (member != null) {
