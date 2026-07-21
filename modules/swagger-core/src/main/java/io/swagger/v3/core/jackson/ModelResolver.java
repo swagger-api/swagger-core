@@ -96,7 +96,6 @@ import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -1472,7 +1471,18 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
     private void handleUnwrapped(List<Schema> props, Schema innerModel, String prefix, String suffix, List<String> requiredProps) {
         if (StringUtils.isBlank(suffix) && StringUtils.isBlank(prefix)) {
             if (innerModel.getProperties() != null) {
-                props.addAll(innerModel.getProperties().values());
+                // Schema.getName() is @JsonIgnore, so any prior JSON-based clone of innerModel
+                // (e.g. AnnotationsUtils.clone) leaves nested property schemas with a null name
+                // while the properties-map key still carries the correct name. Restore from the
+                // map key so the eventual `modelProps.put(prop.getName(), prop)` does not insert
+                // a null key (see swagger-api/swagger-core#5126).
+                for (Map.Entry<String, Schema> entry : ((Map<String, Schema>) innerModel.getProperties()).entrySet()) {
+                    Schema prop = entry.getValue();
+                    if (prop.getName() == null) {
+                        prop.setName(entry.getKey());
+                    }
+                    props.add(prop);
+                }
                 if (innerModel.getRequired() != null) {
                     requiredProps.addAll(innerModel.getRequired());
                 }
@@ -1486,10 +1496,14 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 suffix = "";
             }
             if (innerModel.getProperties() != null) {
-                for (Schema prop : (Collection<Schema>) innerModel.getProperties().values()) {
+                for (Map.Entry<String, Schema> entry : ((Map<String, Schema>) innerModel.getProperties()).entrySet()) {
+                    Schema prop = entry.getValue();
                     try {
                         Schema clonedProp = Json.mapper().readValue(Json.pretty(prop), Schema.class);
-                        clonedProp.setName(prefix + prop.getName() + suffix);
+                        // Fall back to the map key when the prop's transient name has been lost
+                        // by a prior clone (Schema.getName() is @JsonIgnore).
+                        String baseName = prop.getName() != null ? prop.getName() : entry.getKey();
+                        clonedProp.setName(prefix + baseName + suffix);
                         props.add(clonedProp);
                     } catch (IOException e) {
                         LOGGER.error("Exception cloning property", e);
