@@ -39,7 +39,6 @@ import io.swagger.v3.oas.annotations.StringToClassMapItem;
 import io.swagger.v3.oas.annotations.media.DependentRequired;
 import io.swagger.v3.oas.annotations.media.DependentSchema;
 import io.swagger.v3.oas.annotations.media.DependentSchemas;
-import io.swagger.v3.oas.annotations.media.DiscriminatorMapping;
 import io.swagger.v3.oas.annotations.media.PatternProperties;
 import io.swagger.v3.oas.annotations.media.PatternProperty;
 import io.swagger.v3.oas.annotations.media.SchemaProperties;
@@ -2683,24 +2682,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
     }
 
     protected void resolveDiscriminatorProperty(JavaType type, ModelConverterContext context, Schema model) {
-        // add JsonTypeInfo.property if not member of bean
-        JsonTypeInfo typeInfo = type.getRawClass().getDeclaredAnnotation(JsonTypeInfo.class);
-        if (typeInfo != null) {
-            String typeInfoProp = typeInfo.property();
-            if (StringUtils.isNotBlank(typeInfoProp)) {
-                Schema modelToUpdate = model;
-                if (StringUtils.isNotBlank(model.get$ref())) {
-                    modelToUpdate = context.getDefinedModels().get(model.get$ref().substring(SCHEMA_COMPONENT_PREFIX));
-                }
-                if (modelToUpdate.getProperties() == null || !modelToUpdate.getProperties().keySet().contains(typeInfoProp)) {
-                    Schema discriminatorSchema = openapi31 ? new JsonSchema().typesItem("string").name(typeInfoProp) : new StringSchema().name(typeInfoProp);
-                    modelToUpdate.addProperties(typeInfoProp, discriminatorSchema);
-                    if (modelToUpdate.getRequired() == null || !modelToUpdate.getRequired().contains(typeInfoProp)) {
-                        modelToUpdate.addRequiredItem(typeInfoProp);
-                    }
-                }
-            }
-        }
+        DiscriminatorUtils.resolveDiscriminatorProperty(type, context, model, openapi31);
     }
 
     /*
@@ -2737,35 +2719,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
     }
 
     protected Discriminator resolveDiscriminator(JavaType type, ModelConverterContext context) {
-
-        io.swagger.v3.oas.annotations.media.Schema declaredSchemaAnnotation = AnnotationsUtils.getSchemaDeclaredAnnotation(type.getRawClass());
-
-        String disc = (declaredSchemaAnnotation == null) ? "" : declaredSchemaAnnotation.discriminatorProperty();
-
-        if (disc.isEmpty()) {
-            // longer method would involve AnnotationIntrospector.findTypeResolver(...) but:
-            JsonTypeInfo typeInfo = type.getRawClass().getDeclaredAnnotation(JsonTypeInfo.class);
-            if (typeInfo != null) {
-                disc = typeInfo.property();
-            }
-        }
-        if (!disc.isEmpty()) {
-            Discriminator discriminator = new Discriminator()
-                    .propertyName(disc);
-            if (declaredSchemaAnnotation != null) {
-                DiscriminatorMapping[] mappings = declaredSchemaAnnotation.discriminatorMapping();
-                if (mappings != null && mappings.length > 0) {
-                    for (DiscriminatorMapping mapping : mappings) {
-                        if (!mapping.value().isEmpty() && !mapping.schema().equals(Void.class)) {
-                            discriminator.mapping(mapping.value(), constructRef(context.resolve(new AnnotatedType().type(mapping.schema())).getName()));
-                        }
-                    }
-                }
-            }
-
-            return discriminator;
-        }
-        return null;
+        return DiscriminatorUtils.resolveDiscriminator(type, context);
     }
 
     protected XML resolveXml(Annotated a, Annotation[] annotations, io.swagger.v3.oas.annotations.media.Schema schema) {
