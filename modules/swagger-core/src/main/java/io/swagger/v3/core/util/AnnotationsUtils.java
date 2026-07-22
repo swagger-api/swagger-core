@@ -559,6 +559,17 @@ public abstract class AnnotationsUtils {
             } else if (processSchemaImplementation) {
                 getSchema(arraySchema.schema(), arraySchema, false, arraySchema.schema().implementation(), components, jsonViewAnnotation, openapi31, context)
                         .ifPresent(arraySchemaObject::setItems);
+            } else if (arraySchemaObject.getItems() == null && context != null) {
+                // Cycle guard active: the implementation type is currently being
+                // resolved up the call stack, so we cannot recurse into it.
+                // The type has already been registered as a component, so emit a
+                // $ref instead of leaving the array's items unset (gh-5187).
+                String implName = findRegisteredSchemaName(arraySchema.schema().implementation(), context);
+                if (implName != null) {
+                    Schema itemsRef = openapi31 ? new JsonSchema() : new Schema();
+                    itemsRef.set$ref(COMPONENTS_REF + implName);
+                    arraySchemaObject.setItems(itemsRef);
+                }
             }
         }
 
@@ -2100,6 +2111,37 @@ public abstract class AnnotationsUtils {
             if (annotation instanceof io.swagger.v3.oas.annotations.media.Schema) {
                 return (io.swagger.v3.oas.annotations.media.Schema) annotation;
             }
+        }
+        return null;
+    }
+
+    /**
+     * Looks up the registered schema name for an implementation class in the
+     * given {@link ModelConverterContext}.
+     * <p>
+     * Prefers an explicit {@code @Schema(name = "...")} declaration on the
+     * class, then the type-name resolved by the underlying {@code ObjectMapper}
+     * (when available), and finally the simple class name. Returns {@code null}
+     * if no matching schema is registered.
+     * <p>
+     * Used to recover a usable {@code $ref} when array-schema processing is
+     * suppressed by a cycle guard (gh-5187).
+     */
+    static String findRegisteredSchemaName(Class<?> impl, ModelConverterContext context) {
+        if (impl == null || impl.equals(Void.class) || context == null) {
+            return null;
+        }
+        Map<String, Schema> defined = context.getDefinedModels();
+        if (defined == null || defined.isEmpty()) {
+            return null;
+        }
+        io.swagger.v3.oas.annotations.media.Schema annotated = impl.getAnnotation(io.swagger.v3.oas.annotations.media.Schema.class);
+        if (annotated != null && StringUtils.isNotBlank(annotated.name()) && defined.containsKey(annotated.name())) {
+            return annotated.name();
+        }
+        String simpleName = impl.getSimpleName();
+        if (StringUtils.isNotBlank(simpleName) && defined.containsKey(simpleName)) {
+            return simpleName;
         }
         return null;
     }
