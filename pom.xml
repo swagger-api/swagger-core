@@ -94,7 +94,7 @@
         <plugins>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.11.0</version>
+                <version>${maven-compiler-plugin-version}</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -153,7 +153,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.12.0</version>
+                <version>${maven-javadoc-plugin-version}</version>
                 <configuration>
                     <aggregate>true</aggregate>
                     <source>1.8</source>
@@ -326,7 +326,7 @@
                 <plugin>
                     <groupId>org.jacoco</groupId>
                     <artifactId>jacoco-maven-plugin</artifactId>
-                    <version>0.8.6</version>
+                    <version>${jacoco-maven-plugin-version}</version>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -419,7 +419,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.12.0</version>
+                <version>${maven-javadoc-plugin-version}</version>
                 <configuration>
                     <aggregate>true</aggregate>
                     <source>1.8</source>
@@ -655,6 +655,9 @@
         <surefire-version>3.5.6</surefire-version>
         <enforcer-plugin-version>3.2.1</enforcer-plugin-version>
         <failsafe-plugin-version>2.22.2</failsafe-plugin-version>
+        <maven-javadoc-plugin-version>3.12.0</maven-javadoc-plugin-version>
+        <maven-compiler-plugin-version>3.14.1</maven-compiler-plugin-version>
+        <jacoco-maven-plugin-version>0.8.14</jacoco-maven-plugin-version>
 
         <coverage.complexity.minimum>0.90</coverage.complexity.minimum>
         <coverage.line.minimum>0.90</coverage.line.minimum>
