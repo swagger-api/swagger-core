@@ -3,6 +3,7 @@ package io.swagger.test;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import io.swagger.v3.oas.models.Components;
@@ -22,13 +23,17 @@ import io.swagger.v3.oas.models.media.StringSchema;
 import io.swagger.v3.oas.models.parameters.QueryParameter;
 import io.swagger.v3.oas.models.responses.ApiResponse;
 import io.swagger.v3.oas.models.responses.ApiResponses;
+import io.swagger.v3.oas.models.security.SecurityRequirement;
+import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.tags.Tag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -124,6 +129,38 @@ public class SimpleBuilderTest {
         );
 
         LOGGER.debug(writeJson(oai));
+    }
+
+    @Test
+    public void serializesOperationSecurityWithAnonymousAlternative() throws Exception {
+        OpenAPI oai = new OpenAPI()
+                .info(new Info()
+                        .title("Security alternatives")
+                        .version("1.0.0"))
+                .components(new Components()
+                        .addSecuritySchemes("ApiKeyAuth", new SecurityScheme()
+                                .type(SecurityScheme.Type.APIKEY)
+                                .in(SecurityScheme.In.HEADER)
+                                .name("X-API-Key")))
+                .paths(new Paths()
+                        .addPathItem("/search", new PathItem()
+                                .get(new Operation()
+                                        .security(Arrays.asList(
+                                                new SecurityRequirement(),
+                                                new SecurityRequirement().addList("ApiKeyAuth")))
+                                        .responses(new ApiResponses()
+                                                .addApiResponse("200", new ApiResponse()
+                                                        .description("ok"))))));
+
+        JsonNode security = new ObjectMapper()
+                .readTree(writeJson(oai))
+                .at("/paths/~1search/get/security");
+
+        Assert.assertEquals(security.size(), 2);
+        Assert.assertTrue(security.get(0).isObject());
+        Assert.assertEquals(security.get(0).size(), 0);
+        Assert.assertTrue(security.get(1).has("ApiKeyAuth"));
+        Assert.assertEquals(security.get(1).get("ApiKeyAuth").size(), 0);
     }
 
     public static String writeJson(Object value) throws Exception {
