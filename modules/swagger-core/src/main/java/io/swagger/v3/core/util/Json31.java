@@ -1,7 +1,6 @@
 package io.swagger.v3.core.util;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
@@ -32,7 +31,7 @@ public class Json31 {
     }
 
     public static ObjectWriter pretty() {
-        return mapper().writer(new DefaultPrettyPrinter());
+        return mapper().writerWithDefaultPrettyPrinter();
     }
 
     public static String pretty(Object o) {
