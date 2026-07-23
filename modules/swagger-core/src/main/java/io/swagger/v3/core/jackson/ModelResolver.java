@@ -16,8 +16,10 @@ import com.fasterxml.jackson.databind.AnnotationIntrospector;
 import com.fasterxml.jackson.databind.BeanDescription;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyMetadata;
+import com.fasterxml.jackson.databind.SerializationConfig;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.introspect.Annotated;
@@ -28,6 +30,8 @@ import com.fasterxml.jackson.databind.introspect.AnnotatedMethod;
 import com.fasterxml.jackson.databind.introspect.BeanPropertyDefinition;
 import com.fasterxml.jackson.databind.introspect.POJOPropertyBuilder;
 import com.fasterxml.jackson.databind.jsontype.NamedType;
+import com.fasterxml.jackson.databind.jsontype.TypeIdResolver;
+import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
 import com.fasterxml.jackson.databind.util.Annotations;
 import io.swagger.v3.core.converter.AnnotatedType;
 import io.swagger.v3.core.converter.ModelConverter;
@@ -966,7 +970,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             model.setDiscriminator(null);
         }
 
-        Discriminator discriminator = resolveDiscriminator(type, context);
+        Discriminator discriminator = resolveDiscriminator(model, beanDesc, context, annotatedType.getJsonViewAnnotation());
         if (discriminator != null) {
             model.setDiscriminator(discriminator);
         }
@@ -2682,22 +2686,63 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         return null;
     }
 
+    protected TypeSerializer getTypeSerializer(JavaType type) {
+        SerializationConfig config = _mapper.getSerializationConfig();
+
+        try {
+            return _mapper.getSerializerFactory().createTypeSerializer(
+                    config, type
+            );
+        } catch (JsonMappingException e) {
+            LOGGER.error("Unable to create type serializer", e);
+        }
+
+        return null;
+    }
+
+    protected TypeSerializer getTypeSerializerForDiscriminatorInference(JavaType type) {
+        // longer method would involve AnnotationIntrospector.findTypeResolver(...) but:
+        JsonTypeInfo typeInfo = type.getRawClass().getDeclaredAnnotation(JsonTypeInfo.class);
+        if (typeInfo == null || typeInfo.use() == JsonTypeInfo.Id.NONE) {
+            return null;
+        }
+
+        TypeSerializer serializer = getTypeSerializer(type);
+        if (serializer == null) {
+            return null;
+        }
+
+        JsonTypeInfo.As include = serializer.getTypeInclusion();
+        if (
+                !(
+                        include == JsonTypeInfo.As.PROPERTY
+                                || include == JsonTypeInfo.As.EXISTING_PROPERTY
+                                || include == JsonTypeInfo.As.WRAPPER_OBJECT
+                )
+        ) {
+            return null;
+        }
+
+        return serializer;
+    }
+
     protected void resolveDiscriminatorProperty(JavaType type, ModelConverterContext context, Schema model) {
         // add JsonTypeInfo.property if not member of bean
-        JsonTypeInfo typeInfo = type.getRawClass().getDeclaredAnnotation(JsonTypeInfo.class);
-        if (typeInfo != null) {
-            String typeInfoProp = typeInfo.property();
-            if (StringUtils.isNotBlank(typeInfoProp)) {
-                Schema modelToUpdate = model;
-                if (StringUtils.isNotBlank(model.get$ref())) {
-                    modelToUpdate = context.getDefinedModels().get(model.get$ref().substring(SCHEMA_COMPONENT_PREFIX));
-                }
-                if (modelToUpdate.getProperties() == null || !modelToUpdate.getProperties().keySet().contains(typeInfoProp)) {
-                    Schema discriminatorSchema = openapi31 ? new JsonSchema().typesItem("string").name(typeInfoProp) : new StringSchema().name(typeInfoProp);
-                    modelToUpdate.addProperties(typeInfoProp, discriminatorSchema);
-                    if (modelToUpdate.getRequired() == null || !modelToUpdate.getRequired().contains(typeInfoProp)) {
-                        modelToUpdate.addRequiredItem(typeInfoProp);
-                    }
+        TypeSerializer serializer = getTypeSerializerForDiscriminatorInference(type);
+        if (serializer == null) {
+            return;
+        }
+        String propertyName = serializer.getPropertyName();
+        if (StringUtils.isNotBlank(propertyName)) {
+            Schema modelToUpdate = model;
+            if (StringUtils.isNotBlank(model.get$ref())) {
+                modelToUpdate = context.getDefinedModels().get(model.get$ref().substring(SCHEMA_COMPONENT_PREFIX));
+            }
+            if (modelToUpdate.getProperties() == null || !modelToUpdate.getProperties().keySet().contains(propertyName)) {
+                Schema discriminatorSchema = openapi31 ? new JsonSchema().typesItem("string").name(propertyName) : new StringSchema().name(propertyName);
+                modelToUpdate.addProperties(propertyName, discriminatorSchema);
+                if (modelToUpdate.getRequired() == null || !modelToUpdate.getRequired().contains(propertyName)) {
+                    modelToUpdate.addRequiredItem(propertyName);
                 }
             }
         }
@@ -2736,23 +2781,23 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         return model;
     }
 
-    protected Discriminator resolveDiscriminator(JavaType type, ModelConverterContext context) {
+    protected Discriminator resolveDiscriminator(Schema model, BeanDescription bean, ModelConverterContext context, JsonView jsonViewAnnotation) {
+        io.swagger.v3.oas.annotations.media.Schema declaredSchemaAnnotation = AnnotationsUtils.getSchemaDeclaredAnnotation(bean.getType().getRawClass());
 
-        io.swagger.v3.oas.annotations.media.Schema declaredSchemaAnnotation = AnnotationsUtils.getSchemaDeclaredAnnotation(type.getRawClass());
+        if (declaredSchemaAnnotation != null) {
+            String propertyName = declaredSchemaAnnotation.discriminatorProperty();
 
-        String disc = (declaredSchemaAnnotation == null) ? "" : declaredSchemaAnnotation.discriminatorProperty();
-
-        if (disc.isEmpty()) {
-            // longer method would involve AnnotationIntrospector.findTypeResolver(...) but:
-            JsonTypeInfo typeInfo = type.getRawClass().getDeclaredAnnotation(JsonTypeInfo.class);
-            if (typeInfo != null) {
-                disc = typeInfo.property();
+            if (StringUtils.isBlank(propertyName)) {
+                TypeSerializer serializer = getTypeSerializerForDiscriminatorInference(bean.getType());
+                if (serializer == null) {
+                    return null;
+                }
+                propertyName = serializer.getPropertyName();
             }
-        }
-        if (!disc.isEmpty()) {
-            Discriminator discriminator = new Discriminator()
-                    .propertyName(disc);
-            if (declaredSchemaAnnotation != null) {
+
+            if (StringUtils.isNotBlank(propertyName)) {
+                Discriminator discriminator = new Discriminator().propertyName(propertyName);
+
                 DiscriminatorMapping[] mappings = declaredSchemaAnnotation.discriminatorMapping();
                 if (mappings != null && mappings.length > 0) {
                     for (DiscriminatorMapping mapping : mappings) {
@@ -2761,11 +2806,62 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                         }
                     }
                 }
-            }
 
-            return discriminator;
+                return discriminator;
+            }
         }
-        return null;
+
+        TypeSerializer serializer = getTypeSerializerForDiscriminatorInference(bean.getType());
+        if (serializer == null) {
+            return null;
+        }
+        String propertyName = serializer.getPropertyName();
+        if (StringUtils.isBlank(propertyName)) {
+            return null;
+        }
+
+        Discriminator discriminator = new Discriminator().propertyName(propertyName);
+
+        // Use same approach to finding subtypes as resolveSubtypes, mimicking
+        final List<NamedType> subTypes = _intr().findSubtypes(bean.getClassInfo());
+        if (subTypes == null) {
+            return null;
+        }
+
+        removeSuperClassAndInterfaceSubTypes(subTypes, bean);
+
+        final Class<?> beanClass = bean.getClassInfo().getAnnotated();
+        if (!subTypes.isEmpty()) {
+            TypeIdResolver resolver = serializer.getTypeIdResolver();
+
+            for (NamedType subType : subTypes) {
+                final Class<?> subtypeType = subType.getType();
+                if (!beanClass.isAssignableFrom(subtypeType)) {
+                    continue;
+                }
+
+                String subTypeName = resolver.idFromValueAndType(null, subType.getType());
+
+                final Schema subtypeModel = context.resolve(new AnnotatedType()
+                        .type(subtypeType)
+                        .jsonViewAnnotation(jsonViewAnnotation)
+                        .subtype(true));
+
+                if (StringUtils.isBlank(subtypeModel.getName()) ||
+                        subtypeModel.getName().equals(model.getName())) {
+                    subtypeModel.setName(_typeNameResolver.nameForType(_mapper.constructType(subtypeType),
+                            TypeNameResolver.Options.SKIP_API_MODEL));
+                }
+
+                // Per the specification, there is an implicit map to schemas with the same name
+                // We skip writing the mappings that are implied to keep the schema minimal
+                if (!subTypeName.equals(subtypeModel.getName())) {
+                    discriminator.mapping(subTypeName, RefUtils.constructRef(subtypeModel.getName()));
+                }
+            }
+        }
+
+        return discriminator;
     }
 
     protected XML resolveXml(Annotated a, Annotation[] annotations, io.swagger.v3.oas.annotations.media.Schema schema) {
