@@ -1,6 +1,5 @@
 package io.swagger.v3.plugin.maven;
 
-import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import io.swagger.v3.core.filter.OpenAPISpecFilter;
 import io.swagger.v3.core.filter.SpecFilter;
 import io.swagger.v3.core.util.Configuration;
@@ -101,14 +100,14 @@ public class SwaggerMojo extends AbstractMojo {
             String openapiYaml = null;
             if (Format.JSON.equals(outputFormat) || Format.JSONANDYAML.equals(outputFormat)) {
                 if (config.isPrettyPrint() != null && config.isPrettyPrint()) {
-                    openapiJson = context.getOutputJsonMapper().writer(new DefaultPrettyPrinter()).writeValueAsString(openAPI);
+                    openapiJson = context.getOutputJsonMapper().writerWithDefaultPrettyPrinter().writeValueAsString(openAPI);
                 } else {
                     openapiJson = context.getOutputJsonMapper().writeValueAsString(openAPI);
                 }
             }
             if (Format.YAML.equals(outputFormat) || Format.JSONANDYAML.equals(outputFormat)) {
                 if (config.isPrettyPrint() != null && config.isPrettyPrint()) {
-                    openapiYaml = context.getOutputYamlMapper().writer(new DefaultPrettyPrinter()).writeValueAsString(openAPI);
+                    openapiYaml = context.getOutputYamlMapper().writerWithDefaultPrettyPrinter().writeValueAsString(openAPI);
                 } else {
                     openapiYaml = context.getOutputYamlMapper().writeValueAsString(openAPI);
                 }

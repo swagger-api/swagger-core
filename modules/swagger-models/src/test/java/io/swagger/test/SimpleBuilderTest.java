@@ -1,7 +1,6 @@
 package io.swagger.test;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -134,6 +133,6 @@ public class SimpleBuilderTest {
         mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
-        return mapper.writer(new DefaultPrettyPrinter()).writeValueAsString(value);
+        return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(value);
     }
 }
