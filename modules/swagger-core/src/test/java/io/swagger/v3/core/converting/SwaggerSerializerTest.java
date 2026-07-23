@@ -6,6 +6,7 @@ import io.swagger.v3.core.matchers.SerializationMatchers;
 import io.swagger.v3.core.oas.models.Person;
 import io.swagger.v3.core.util.Json;
 import io.swagger.v3.core.util.JsonAssert;
+import io.swagger.v3.core.util.Json31;
 import io.swagger.v3.core.util.OutputReplacer;
 import io.swagger.v3.core.util.ResourceUtils;
 import io.swagger.v3.oas.models.Components;
@@ -34,6 +35,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
@@ -231,6 +233,64 @@ public class SwaggerSerializerTest {
         String json = Json.mapper().writeValueAsString(openAPI);
 
         assertTrue(json.contains("\"$dynamicRef\":\"#node\""));
+    }
+
+    @Test
+    public void test$defsSerializationV31Only() throws IOException {
+        Schema<?> schema = new Schema<>().add$defs("dataType",
+                new Schema<>().$dynamicAnchor("dataType").$ref("#/components/schemas/Pet"));
+
+        Components components = new Components().addSchemas("Response", schema);
+        OpenAPI openAPI = new OpenAPI().components(components);
+
+        String json31 = Json31.mapper().writeValueAsString(openAPI);
+        assertTrue(json31.contains("\"$defs\""));
+        assertTrue(json31.contains("\"dataType\""));
+
+        String json30 = Json.mapper().writeValueAsString(openAPI);
+        assertFalse(json30.contains("\"$defs\""));
+    }
+
+    @Test
+    public void test$defsExtensionsCoexistence() throws IOException {
+        // Legacy producer workaround: $defs injected into extensions map, $defs field is null.
+        // Expected: still emits $defs once, sourced from extensions. No regression for producers
+        // that haven't migrated to set$defs().
+        Schema<?> legacyOnly = new Schema<>();
+        Map<String, Object> legacyExt = new HashMap<>();
+        legacyExt.put("$defs", java.util.Collections.singletonMap("legacy", "value"));
+        legacyOnly.setExtensions(legacyExt);
+        String legacyJson = Json31.mapper().writeValueAsString(legacyOnly);
+        assertEquals(countOccurrences(legacyJson, "\"$defs\""), 1,
+                "legacy workaround (extensions only) should emit $defs exactly once");
+        assertTrue(legacyJson.contains("\"legacy\""));
+
+        // New path: $defs field only. Expected: clean single emission.
+        Schema<?> fieldOnly = new Schema<>();
+        fieldOnly.add$defs("k", new Schema<>());
+        String fieldJson = Json31.mapper().writeValueAsString(fieldOnly);
+        assertEquals(countOccurrences(fieldJson, "\"$defs\""), 1);
+
+        // Mixed (both field and extensions populated): documented edge case.
+        // Jackson emits both — duplicate $defs keys. This is not a regression (impossible before
+        // the field existed) but producers MUST NOT mix the two paths.
+        Schema<?> mixed = new Schema<>();
+        mixed.add$defs("fromField", new Schema<>());
+        Map<String, Object> mixedExt = new HashMap<>();
+        mixedExt.put("$defs", java.util.Collections.singletonMap("fromExt", "v"));
+        mixed.setExtensions(mixedExt);
+        String mixedJson = Json31.mapper().writeValueAsString(mixed);
+        assertEquals(countOccurrences(mixedJson, "\"$defs\""), 2,
+                "mixing field and extensions produces duplicate $defs keys (documented, not a bug)");
+    }
+
+    private static int countOccurrences(String haystack, String needle) {
+        int count = 0, idx = 0;
+        while ((idx = haystack.indexOf(needle, idx)) != -1) {
+            count++;
+            idx += needle.length();
+        }
+        return count;
     }
 
 }
