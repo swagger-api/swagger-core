@@ -1,7 +1,6 @@
 package io.swagger.v3.core.serialization;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 import io.swagger.v3.core.converter.ModelConverters;
 import io.swagger.v3.core.matchers.SerializationMatchers;
 import io.swagger.v3.core.oas.models.Car;
@@ -17,6 +16,7 @@ import io.swagger.v3.oas.models.media.IntegerSchema;
 import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.media.StringSchema;
 import org.testng.annotations.Test;
+import tools.jackson.core.JacksonException;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -34,7 +34,7 @@ public class ModelSerializerTest {
     private final ObjectMapper m = Json.mapper();
 
     @Test(description = "it should convert a model")
-    public void convertModel() throws JsonProcessingException {
+    public void convertModel() throws JacksonException {
         final Schema pet = new Schema();
         final Map<String, Schema> props = new LinkedHashMap<String, Schema>();
         props.put("intValue", new IntegerSchema());

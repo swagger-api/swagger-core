@@ -1,7 +1,7 @@
 package io.swagger.v3.core.issues;
 
-import com.fasterxml.jackson.databind.node.IntNode;
-import com.fasterxml.jackson.databind.node.NullNode;
+import tools.jackson.databind.node.IntNode;
+import tools.jackson.databind.node.NullNode;
 import io.swagger.v3.core.converter.AnnotatedType;
 import io.swagger.v3.core.converter.ModelConverterContextImpl;
 import io.swagger.v3.core.jackson.ModelResolver;

@@ -1,10 +1,10 @@
 package io.swagger.v3.core.serialization;
 
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.util.DefaultIndenter;
-import com.fasterxml.jackson.databind.json.JsonMapper;
-import com.fasterxml.jackson.dataformat.yaml.JacksonYAMLParseException;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import org.snakeyaml.engine.v2.api.LoadSettings;
+import tools.jackson.core.json.JsonFactory;
+import tools.jackson.core.util.DefaultIndenter;
+import tools.jackson.dataformat.yaml.JacksonYAMLParseException;
+import tools.jackson.dataformat.yaml.YAMLFactory;
 import io.swagger.v3.core.matchers.SerializationMatchers;
 import io.swagger.v3.core.util.*;
 import io.swagger.v3.oas.models.Components;
@@ -1519,10 +1519,11 @@ public class OpenAPI3_1SerializationTest {
     @Test(expectedExceptions = JacksonYAMLParseException.class)
     public void testSerializeYAML31WithCustomFactoryAndCodePointLimitReached() throws Exception {
         // given
-        LoaderOptions loaderOptions = new LoaderOptions();
-        loaderOptions.setCodePointLimit(1);
+        LoadSettings loadSettings = LoadSettings.builder()
+                .setCodePointLimit(1)
+                .build();
         YAMLFactory yamlFactory = YAMLFactory.builder()
-                .loaderOptions(loaderOptions)
+                .loadSettings(loadSettings)
                 .build();
         final String yaml = ResourceUtils.loadClassResource(getClass(), "specFiles/petstore-3.0.yaml");
 

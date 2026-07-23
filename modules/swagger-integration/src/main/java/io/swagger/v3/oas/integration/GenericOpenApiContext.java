@@ -6,10 +6,10 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.databind.MapperFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import tools.jackson.databind.MapperFeature;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.SerializationFeature;
+import tools.jackson.databind.annotation.JsonSerialize;
 import io.swagger.v3.core.converter.ModelConverter;
 import io.swagger.v3.core.converter.ModelConverters;
 import io.swagger.v3.core.filter.OpenAPI31SpecFilter;
@@ -35,6 +35,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.databind.cfg.MapperBuilder;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -542,34 +543,38 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
             }
             if (outputJsonMapper == null) {
                 if (Boolean.TRUE.equals(openApiConfiguration.isOpenAPI31())) {
-                    outputJsonMapper = Json31.mapper().copy();
+                    outputJsonMapper = Json31.mapper();
                 } else {
-                    outputJsonMapper = Json.mapper().copy();
+                    outputJsonMapper = Json.mapper();
                 }
             }
             if (outputYamlMapper == null) {
                 if (Boolean.TRUE.equals(openApiConfiguration.isOpenAPI31())) {
-                    outputYamlMapper = Yaml31.mapper().copy();
+                    outputYamlMapper = Yaml31.mapper();
                 } else {
-                    outputYamlMapper = Yaml.mapper().copy();
+                    outputYamlMapper = Yaml.mapper();
                 }
             }
             if (openApiConfiguration.isSortOutput() != null && openApiConfiguration.isSortOutput()) {
-                outputJsonMapper.configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, true);
-                outputJsonMapper.configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY, true);
-                outputYamlMapper.configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, true);
-                outputYamlMapper.configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY, true);
+                MapperBuilder<? extends ObjectMapper, ? extends MapperBuilder<?, ?>> jsonMapperBuilder = outputJsonMapper.rebuild();
+                MapperBuilder<? extends ObjectMapper, ? extends MapperBuilder<?, ?>> yamlMapperBuilder = outputYamlMapper.rebuild();
+                jsonMapperBuilder.configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY, true);
+                yamlMapperBuilder.configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY, true);
+                jsonMapperBuilder.configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, true);
+                yamlMapperBuilder.configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, true);
                 if (Boolean.TRUE.equals(openApiConfiguration.isOpenAPI31())) {
-                    outputJsonMapper.addMixIn(OpenAPI.class, SortedOpenAPIMixin31.class);
-                    outputJsonMapper.addMixIn(Schema.class, SortedSchemaMixin31.class);
-                    outputYamlMapper.addMixIn(OpenAPI.class, SortedOpenAPIMixin31.class);
-                    outputYamlMapper.addMixIn(Schema.class, SortedSchemaMixin31.class);
+                    jsonMapperBuilder.addMixIn(OpenAPI.class, SortedOpenAPIMixin31.class);
+                    jsonMapperBuilder.addMixIn(Schema.class, SortedSchemaMixin31.class);
+                    yamlMapperBuilder.addMixIn(OpenAPI.class, SortedOpenAPIMixin31.class);
+                    yamlMapperBuilder.addMixIn(Schema.class, SortedSchemaMixin31.class);
                 } else {
-                    outputJsonMapper.addMixIn(OpenAPI.class, SortedOpenAPIMixin.class);
-                    outputJsonMapper.addMixIn(Schema.class, SortedSchemaMixin.class);
-                    outputYamlMapper.addMixIn(OpenAPI.class, SortedOpenAPIMixin.class);
-                    outputYamlMapper.addMixIn(Schema.class, SortedSchemaMixin.class);
+                    jsonMapperBuilder.addMixIn(OpenAPI.class, SortedOpenAPIMixin.class);
+                    jsonMapperBuilder.addMixIn(Schema.class, SortedSchemaMixin.class);
+                    yamlMapperBuilder.addMixIn(OpenAPI.class, SortedOpenAPIMixin.class);
+                    yamlMapperBuilder.addMixIn(Schema.class, SortedSchemaMixin.class);
                 }
+                outputJsonMapper = jsonMapperBuilder.build();
+                outputYamlMapper = yamlMapperBuilder.build();
             }
         } catch (Exception e) {
             LOGGER.error("error initializing context: " + e.getMessage(), e);
@@ -583,8 +588,8 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
                 objectMapperProcessor.processJsonObjectMapper(mapper);
                 ModelConverters.getInstance(Boolean.TRUE.equals(openApiConfiguration.isOpenAPI31()), openApiConfiguration.getSchemaResolution()).addConverter(new ModelResolver(mapper));
 
-                objectMapperProcessor.processOutputJsonObjectMapper(outputJsonMapper);
-                objectMapperProcessor.processOutputYamlObjectMapper(outputYamlMapper);
+                outputJsonMapper = objectMapperProcessor.processOutputJsonObjectMapper(outputJsonMapper);
+                outputYamlMapper = objectMapperProcessor.processOutputYamlObjectMapper(outputYamlMapper);
             }
         } catch (Exception e) {
             LOGGER.error("error configuring objectMapper: " + e.getMessage(), e);

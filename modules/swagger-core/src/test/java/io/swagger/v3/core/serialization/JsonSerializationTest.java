@@ -1,8 +1,9 @@
 package io.swagger.v3.core.serialization;
 
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.dataformat.yaml.JacksonYAMLParseException;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import org.snakeyaml.engine.v2.api.LoadSettings;
+import tools.jackson.core.json.JsonFactory;
+import tools.jackson.dataformat.yaml.JacksonYAMLParseException;
+import tools.jackson.dataformat.yaml.YAMLFactory;
 import io.swagger.v3.core.matchers.SerializationMatchers;
 import io.swagger.v3.core.util.Json;
 import io.swagger.v3.core.util.ObjectMapperFactory;
@@ -125,10 +126,11 @@ public class JsonSerializationTest {
     @Test
     public void testSerializeYAMLWithCustomFactory() throws Exception {
         // given
-        LoaderOptions loaderOptions = new LoaderOptions();
-        loaderOptions.setCodePointLimit(5 * 1024 * 1024);
+        LoadSettings loadSettings = LoadSettings.builder()
+                .setCodePointLimit(5 * 1024 * 1024)
+                .build();
         YAMLFactory yamlFactory = YAMLFactory.builder()
-                .loaderOptions(loaderOptions)
+                .loadSettings(loadSettings)
                 .build();
         final String yaml = ResourceUtils.loadClassResource(getClass(), "specFiles/null-example.yaml");
 
@@ -142,10 +144,11 @@ public class JsonSerializationTest {
     @Test(expectedExceptions = JacksonYAMLParseException.class)
     public void testSerializeYAMLWithCustomFactoryAndCodePointLimitReached() throws Exception {
         // given
-        LoaderOptions loaderOptions = new LoaderOptions();
-        loaderOptions.setCodePointLimit(1);
+        LoadSettings loadSettings = LoadSettings.builder()
+                .setCodePointLimit(1)
+                .build();
         YAMLFactory yamlFactory = YAMLFactory.builder()
-                .loaderOptions(loaderOptions)
+                .loadSettings(loadSettings)
                 .build();
         final String yaml = ResourceUtils.loadClassResource(getClass(), "specFiles/null-example.yaml");
 

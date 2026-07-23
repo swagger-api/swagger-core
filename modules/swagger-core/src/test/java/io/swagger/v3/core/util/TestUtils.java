@@ -1,6 +1,7 @@
 package io.swagger.v3.core.util;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
 import org.apache.commons.io.IOUtils;
 
 import java.io.IOException;
@@ -29,7 +30,7 @@ public class TestUtils {
         try {
             T result = objectMapper.readValue(contents, type);
             return result;
-        } catch (IOException e) {
+        } catch (JacksonException e) {
             throw new RuntimeException("Could not deserialize contents into type: " + type, e);
         }
     }

@@ -6,10 +6,11 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.JsonSerializer;
-import com.fasterxml.jackson.databind.SerializerProvider;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import tools.jackson.core.JacksonException;
+import tools.jackson.core.JsonGenerator;
+import tools.jackson.databind.annotation.JsonSerialize;
+import tools.jackson.databind.SerializationContext;
+import tools.jackson.databind.ValueSerializer;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -62,10 +63,10 @@ public abstract class Schema31Mixin {
     @JsonIgnore
     public abstract Boolean getBooleanSchemaValue();
 
-    public static class TypeSerializer extends JsonSerializer<Set<String>> {
+    public static class TypeSerializer extends ValueSerializer<Set<String>> {
 
         @Override
-        public void serialize(Set<String> types, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException {
+        public void serialize(Set<String> types, JsonGenerator jsonGenerator, SerializationContext serializerProvider) throws JacksonException {
             if (types != null && types.size() == 1) {
                 jsonGenerator.writeString((String)types.toArray()[0]);
             } else if (types != null && types.size() > 1){

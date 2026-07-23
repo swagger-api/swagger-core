@@ -1,12 +1,11 @@
 package io.swagger.v3.core.util;
 
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonDeserializer;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.fasterxml.jackson.databind.node.TextNode;
+import tools.jackson.core.JacksonException;
+import tools.jackson.core.JsonParser;
+import tools.jackson.databind.DeserializationContext;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.node.ArrayNode;
+import tools.jackson.databind.node.ObjectNode;
 import io.swagger.v3.oas.models.media.ArbitrarySchema;
 import io.swagger.v3.oas.models.media.ArraySchema;
 import io.swagger.v3.oas.models.media.BooleanSchema;
@@ -24,6 +23,8 @@ import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.media.StringSchema;
 import io.swagger.v3.oas.models.media.UUIDSchema;
 import org.apache.commons.lang3.StringUtils;
+import tools.jackson.databind.ValueDeserializer;
+import tools.jackson.databind.node.StringNode;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -31,7 +32,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-public class ModelDeserializer extends JsonDeserializer<Schema> {
+public class ModelDeserializer extends ValueDeserializer<Schema> {
 
     private static final String TYPE = "type";
     private static final String OBJECT_TYPE = "object";
@@ -64,8 +65,8 @@ public class ModelDeserializer extends JsonDeserializer<Schema> {
     protected boolean openapi31 = false;
     @Override
     public Schema deserialize(JsonParser jp, DeserializationContext ctxt)
-            throws IOException {
-        JsonNode node = jp.getCodec().readTree(jp);
+            throws JacksonException {
+        JsonNode node = jp.objectReadContext().readTree(jp);
 
         Schema schema;
 
@@ -146,11 +147,11 @@ public class ModelDeserializer extends JsonDeserializer<Schema> {
                 ((ObjectNode)node).remove(ADDITIONAL_PROPERTIES);
             }
             schema = Json31.mapper().convertValue(node, JsonSchema.class);
-            if (type instanceof TextNode) {
+            if (type instanceof StringNode) {
                 schema.types(new LinkedHashSet<>(Arrays.asList(type.textValue())));
-            } else if (type instanceof ArrayNode){
+            } else if (type instanceof ArrayNode arrayNode){
                 Set<String> types = new LinkedHashSet<>();
-                ((ArrayNode)type).elements().forEachRemaining( n -> {
+                arrayNode.values().iterator().forEachRemaining( n -> {
                     types.add(n.textValue());
                 });
                 schema.types(types);
@@ -177,7 +178,7 @@ public class ModelDeserializer extends JsonDeserializer<Schema> {
 
     private Schema deserializeSchemaWithType(JsonNode node, JsonNode typeNode) {
         Schema schema = null;
-        String type = ((TextNode) typeNode).textValue();
+        String type = typeNode.textValue();
         String format = node.get(FORMAT) == null ? "" : getNodeAsString(node, FORMAT);
 
         if (type.equals(ARRAY_TYPE)) {
