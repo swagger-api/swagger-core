@@ -32,17 +32,31 @@ jobs:
           distribution: temurin
           cache: 'maven'
 
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v6
+        with:
+          cache-provider: basic
+
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v4
         with:
           languages: java
 
-      - name: Build with Maven and Gradle
-        run: |
-          ./mvnw --no-transfer-progress -B -T 1C install --file pom.xml
-          cd ./modules/swagger-gradle-plugin
-          ./gradlew build --info --build-cache --parallel
-          cd ../..
+      - name: Build with Maven
+        run: ./mvnw --no-transfer-progress -B -e -T 1C install --file pom.xml
+
+      - name: Build Gradle plugin
+        working-directory: modules/swagger-gradle-plugin
+        run: ./gradlew build --info --build-cache --parallel --no-daemon
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v4
+
+      - name: Upload Maven test reports
+        if: failure()
+        uses: actions/upload-artifact@v6
+        with:
+          name: surefire-reports-codeql
+          path: |
+            **/target/surefire-reports/**
+            **/target/failsafe-reports/**

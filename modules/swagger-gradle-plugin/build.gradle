@@ -30,6 +30,14 @@ compileJava {
     options.release = 17
 }
 
+processResources {
+    inputs.property 'pluginVersion', project.version
+    filteringCharset = 'UTF-8'
+    filesMatching('swagger-gradle-plugin.properties') {
+        expand(pluginVersion: project.version)
+    }
+}
+
 dependencies {
     implementation gradleApi()
 
@@ -95,6 +103,7 @@ gradlePlugin {
 
 test {
     useTestNG()
+    systemProperty 'swagger.plugin.version', project.version
 }
 
 publishing {

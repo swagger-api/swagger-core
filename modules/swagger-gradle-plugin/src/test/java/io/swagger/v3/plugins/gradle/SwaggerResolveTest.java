@@ -2,16 +2,21 @@ package io.swagger.v3.plugins.gradle;
 
 import static java.lang.String.format;
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Objects;
+import java.util.Properties;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -22,6 +27,13 @@ import org.testng.annotations.Test;
 import org.testng.annotations.BeforeMethod;
 
 public class SwaggerResolveTest {
+
+    private static final String PROJECT_VERSION = Objects.requireNonNull(
+            System.getProperty("swagger.plugin.version"),
+            "Missing swagger.plugin.version test system property"
+    );
+    private static final String SWAGGER_JAXRS2_DEPENDENCY = "io.swagger.core.v3:swagger-jaxrs2:" +
+            PROJECT_VERSION;
 
     private Path testProjectDir;
     private Path buildFile;
@@ -78,6 +90,27 @@ public class SwaggerResolveTest {
     }
 
     @Test
+    public void pluginVersionResourceMatchesProjectVersion() throws IOException {
+        Properties properties = new Properties();
+        try (InputStream stream = SwaggerPlugin.class.getResourceAsStream("/swagger-gradle-plugin.properties")) {
+            assertNotNull(stream, "Missing swagger-gradle-plugin.properties");
+            properties.load(stream);
+        }
+        assertEquals(properties.getProperty("plugin.version"), PROJECT_VERSION);
+    }
+
+    @Test
+    public void pluginVersionRejectsUnresolvedPlaceholder() {
+        try {
+            SwaggerPlugin.validatePluginVersion("${pluginVersion}");
+        } catch (IllegalStateException e) {
+            assertTrue(e.getMessage().contains("Unresolved plugin.version"));
+            return;
+        }
+        throw new AssertionError("Expected unresolved plugin.version to fail fast");
+    }
+
+    @Test
     public void testSwaggerResolveTask() throws IOException {
         outputDir = testProjectDir.toString() + "/target";
         outputFile = testProjectDir.toString() + "/testAPI.json";
@@ -102,7 +135,7 @@ public class SwaggerResolveTest {
                 "    mavenCentral()\n" +
                 "}\n" +
                 "dependencies {  \n" +
-                "    implementation 'io.github.vpelikh:swagger-jakarta-rest:" + SWAGGER_VERSION + "'\n" +
+                "    implementation 'io.github.vpelikh:swagger-jakarta-rest:" + SWAGGER_JAXRS2_DEPENDENCY + "'\n" +
                 "    implementation 'jakarta.ws.rs:jakarta.ws.rs-api:4.0.0'\n" +
                 "    implementation 'jakarta.servlet:jakarta.servlet-api:6.1.0'\n" +
                 "    testImplementation 'org.wiremock:wiremock:4.0.0-beta.36'\n" +
@@ -175,7 +208,7 @@ public class SwaggerResolveTest {
                 "    mavenCentral()\n" +
                 "}\n" +
                 "dependencies {  \n" +
-                "    implementation 'io.github.vpelikh:swagger-jakarta-rest:" + SWAGGER_VERSION + "'\n" +
+                "    implementation 'io.github.vpelikh:swagger-jakarta-rest:" + SWAGGER_JAXRS2_DEPENDENCY + "'\n" +
                 "    implementation 'jakarta.ws.rs:jakarta.ws.rs-api:4.0.0'\n" +
                 "    implementation 'jakarta.servlet:jakarta.servlet-api:6.1.0'\n" +
                 "    testImplementation 'org.wiremock:wiremock:4.0.0-beta.36'\n" +
@@ -259,7 +292,7 @@ public class SwaggerResolveTest {
                 "    mavenCentral()\n" +
                 "}\n" +
                 "dependencies {  \n" +
-                "    implementation 'io.github.vpelikh:swagger-jakarta-rest:" + SWAGGER_VERSION + "'\n" +
+                "    implementation 'io.github.vpelikh:swagger-jakarta-rest:" + SWAGGER_JAXRS2_DEPENDENCY + "'\n" +
                 "    implementation 'jakarta.ws.rs:jakarta.ws.rs-api:4.0.0'\n" +
                 "    implementation 'jakarta.servlet:jakarta.servlet-api:6.1.0'\n" +
                 "}\n" +
@@ -328,7 +361,7 @@ public class SwaggerResolveTest {
                 "    mavenCentral()\n" +
                 "}\n" +
                 "dependencies {\n" +
-                "    implementation 'io.github.vpelikh:swagger-jakarta-rest:" + SWAGGER_VERSION + "'\n" +
+                "    implementation 'io.github.vpelikh:swagger-jakarta-rest:" + SWAGGER_JAXRS2_DEPENDENCY + "'\n" +
                 "    implementation 'jakarta.ws.rs:jakarta.ws.rs-api:4.0.0'\n" +
                 "    implementation 'jakarta.servlet:jakarta.servlet-api:6.1.0'\n" +
                 "    testImplementation 'org.testng:testng:7.10.2'\n" +

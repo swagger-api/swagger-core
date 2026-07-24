@@ -9,8 +9,8 @@ import java.util.Objects;
 /**
  * Callback
  *
- * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.0.4/versions/3.0.4.md#callback-object"
- * @see "https://github.com/OAI/OpenAPI-Specification/blob/3.1.1/versions/3.1.1.md#callback-object"
+ * @see <a href="https://github.com/OAI/OpenAPI-Specification/blob/3.0.4/versions/3.0.4.md#callback-object">Callback (OpenAPI 3.0 specification)</a>
+ * @see <a href="https://github.com/OAI/OpenAPI-Specification/blob/3.1.1/versions/3.1.1.md#callback-object">Callback (OpenAPI 3.1 specification)</a>
  */
 
 public class Callback extends LinkedHashMap<String, PathItem> {
