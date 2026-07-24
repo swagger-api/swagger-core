@@ -22,7 +22,7 @@ Both `javax` and `jakarta` examples are provided below
             <plugin>
                 <groupId>io.github.vpelikh</groupId>
                 <artifactId>swagger-maven-plugin</artifactId>
-                <version>2.2.52</version>
+                <version>4.0.1</version>
                 <configuration>
                     <outputFileName>openapi</outputFileName>
                     <outputPath>${project.build.directory}/generatedtest</outputPath>
@@ -47,18 +47,18 @@ Both `javax` and `jakarta` examples are provided below
         <dependency>
             <groupId>io.github.vpelikh</groupId>
             <artifactId>swagger-jakarta-rest</artifactId>
-            <version>2.2.52</version>
+            <version>4.0.1</version>
         </dependency>
 
         <dependency>
             <groupId>javax.ws.rs</groupId>
             <artifactId>javax.ws.rs-api</artifactId>
-            <version>2.1</version>
+            <version>4.0.1</version>
         </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
-            <version>3.1.0</version>
+            <version>4.0.1</version>
         </dependency>
     </dependencies>
 </project>
@@ -73,7 +73,7 @@ Both `javax` and `jakarta` examples are provided below
             <plugin>
                 <groupId>io.github.vpelikh</groupId>
                 <artifactId>swagger-maven-plugin-jakarta</artifactId>
-                <version>2.2.52</version>
+                <version>4.0.1</version>
                 <configuration>
                     <outputFileName>openapi</outputFileName>
                     <outputPath>${project.build.directory}/generatedtest</outputPath>
@@ -98,18 +98,18 @@ Both `javax` and `jakarta` examples are provided below
         <dependency>
             <groupId>io.github.vpelikh</groupId>
             <artifactId>swagger-jakarta-rest</artifactId>
-            <version>2.2.52</version>
+            <version>4.0.1</version>
         </dependency>
 
         <dependency>
             <groupId>jakarta.ws.rs</groupId>
             <artifactId>jakarta.ws.rs-api</artifactId>
-            <version>3.0.0</version>
+            <version>4.0.1</version>
         </dependency>
         <dependency>
             <groupId>jakarta.servlet</groupId>
             <artifactId>jakarta.servlet-api</artifactId>
-            <version>5.0.0</version>
+            <version>4.0.1</version>
         </dependency>
     </dependencies>
 </project>
@@ -126,7 +126,7 @@ Both `javax` and `jakarta` examples are provided below
             <plugin>
                 <groupId>io.github.vpelikh</groupId>
                 <artifactId>swagger-maven-plugin</artifactId>
-                <version>2.2.52</version>
+                <version>4.0.1</version>
                 <configuration>
                     <outputFileName>openapi</outputFileName>
                     <outputPath>${project.build.directory}/generatedtest</outputPath>
@@ -155,7 +155,7 @@ Both `javax` and `jakarta` examples are provided below
             <plugin>
                 <groupId>io.github.vpelikh</groupId>
                 <artifactId>swagger-maven-plugin-jakarta</artifactId>
-                <version>2.2.52</version>
+                <version>4.0.1</version>
                 <configuration>
                     <outputFileName>openapi</outputFileName>
                     <outputPath>${project.build.directory}/generatedtest</outputPath>

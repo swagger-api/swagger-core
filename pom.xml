@@ -6,7 +6,7 @@
     <packaging>pom</packaging>
     <name>swagger-project</name>
     <description>swagger-project</description>
-    <version>4.0.1-SNAPSHOT</version>
+    <version>4.0.1</version>
     <url>https://github.com/vpelikh/swagger-core</url>
     <scm>
         <connection>scm:git:git@github.com:vpelikh/swagger-core.git</connection>
@@ -642,6 +642,6 @@
         <coverage.line.minimum>0.90</coverage.line.minimum>
         <coverage.missed.classes>0</coverage.missed.classes>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.build.outputTimestamp>2026-07-06T13:03:04Z</project.build.outputTimestamp>
+        <project.build.outputTimestamp>2026-07-24T07:27:26Z</project.build.outputTimestamp>
     </properties>
 </project>
