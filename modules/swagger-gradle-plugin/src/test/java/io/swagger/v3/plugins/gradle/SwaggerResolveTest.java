@@ -32,8 +32,7 @@ public class SwaggerResolveTest {
             System.getProperty("swagger.plugin.version"),
             "Missing swagger.plugin.version test system property"
     );
-    private static final String SWAGGER_JAXRS2_DEPENDENCY = "io.swagger.core.v3:swagger-jaxrs2:" +
-            PROJECT_VERSION;
+    private static final String SWAGGER_JAXRS2_DEPENDENCY = "io.github.vpelikh:swagger-jakarta-rest:" + PROJECT_VERSION;
 
     private Path testProjectDir;
     private Path buildFile;
@@ -135,7 +134,7 @@ public class SwaggerResolveTest {
                 "    mavenCentral()\n" +
                 "}\n" +
                 "dependencies {  \n" +
-                "    implementation 'io.github.vpelikh:swagger-jakarta-rest:" + SWAGGER_JAXRS2_DEPENDENCY + "'\n" +
+                "    implementation '" + SWAGGER_JAXRS2_DEPENDENCY + "'\n" +
                 "    implementation 'jakarta.ws.rs:jakarta.ws.rs-api:4.0.0'\n" +
                 "    implementation 'jakarta.servlet:jakarta.servlet-api:6.1.0'\n" +
                 "    testImplementation 'org.wiremock:wiremock:4.0.0-beta.36'\n" +
@@ -208,7 +207,7 @@ public class SwaggerResolveTest {
                 "    mavenCentral()\n" +
                 "}\n" +
                 "dependencies {  \n" +
-                "    implementation 'io.github.vpelikh:swagger-jakarta-rest:" + SWAGGER_JAXRS2_DEPENDENCY + "'\n" +
+                "    implementation '" + SWAGGER_JAXRS2_DEPENDENCY + "'\n" +
                 "    implementation 'jakarta.ws.rs:jakarta.ws.rs-api:4.0.0'\n" +
                 "    implementation 'jakarta.servlet:jakarta.servlet-api:6.1.0'\n" +
                 "    testImplementation 'org.wiremock:wiremock:4.0.0-beta.36'\n" +
@@ -292,7 +291,7 @@ public class SwaggerResolveTest {
                 "    mavenCentral()\n" +
                 "}\n" +
                 "dependencies {  \n" +
-                "    implementation 'io.github.vpelikh:swagger-jakarta-rest:" + SWAGGER_JAXRS2_DEPENDENCY + "'\n" +
+                "    implementation '" + SWAGGER_JAXRS2_DEPENDENCY + "'\n" +
                 "    implementation 'jakarta.ws.rs:jakarta.ws.rs-api:4.0.0'\n" +
                 "    implementation 'jakarta.servlet:jakarta.servlet-api:6.1.0'\n" +
                 "}\n" +
@@ -361,7 +360,7 @@ public class SwaggerResolveTest {
                 "    mavenCentral()\n" +
                 "}\n" +
                 "dependencies {\n" +
-                "    implementation 'io.github.vpelikh:swagger-jakarta-rest:" + SWAGGER_JAXRS2_DEPENDENCY + "'\n" +
+                "    implementation '" + SWAGGER_JAXRS2_DEPENDENCY + "'\n" +
                 "    implementation 'jakarta.ws.rs:jakarta.ws.rs-api:4.0.0'\n" +
                 "    implementation 'jakarta.servlet:jakarta.servlet-api:6.1.0'\n" +
                 "    testImplementation 'org.testng:testng:7.10.2'\n" +
