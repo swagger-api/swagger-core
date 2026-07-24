@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -71,7 +70,7 @@ public class SortedOutputTest {
                 .init();
 
         OpenAPI openApi = ctx.read();
-        String sorted = ctx.getOutputYamlMapper().writer(new DefaultPrettyPrinter()).writeValueAsString(openApi);
+        String sorted = ctx.getOutputYamlMapper().writerWithDefaultPrettyPrinter().writeValueAsString(openApi);
 
         openApiConfiguration = new SwaggerConfiguration()
                 .resourcePackages(Collections.singleton("com.my.sorted.resources"));
@@ -80,7 +79,7 @@ public class SortedOutputTest {
                 .openApiConfiguration(openApiConfiguration)
                 .init();
 
-        String notSorted = ctx.getOutputYamlMapper().writer(new DefaultPrettyPrinter()).writeValueAsString(openApi);
+        String notSorted = ctx.getOutputYamlMapper().writerWithDefaultPrettyPrinter().writeValueAsString(openApi);
 
         assertEquals(sorted, expectedSorted);
         assertEquals(notSorted, expectedNotSorted);
@@ -176,7 +175,7 @@ public class SortedOutputTest {
                 .init();
 
         OpenAPI openApi = ctx.read();
-        String sorted = ctx.getOutputYamlMapper().writer(new DefaultPrettyPrinter()).writeValueAsString(openApi);
+        String sorted = ctx.getOutputYamlMapper().writerWithDefaultPrettyPrinter().writeValueAsString(openApi);
 
         openApiConfiguration = new SwaggerConfiguration()
                 .resourcePackages(Collections.singleton("com.my.sorted.resources"));
@@ -185,7 +184,7 @@ public class SortedOutputTest {
                 .openApiConfiguration(openApiConfiguration)
                 .init();
 
-        String notSorted = ctx.getOutputYamlMapper().writer(new DefaultPrettyPrinter()).writeValueAsString(openApi);
+        String notSorted = ctx.getOutputYamlMapper().writerWithDefaultPrettyPrinter().writeValueAsString(openApi);
 
         assertEquals(sorted, expectedSorted);
         assertEquals(notSorted, expectedNotSorted);
