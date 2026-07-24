@@ -178,7 +178,7 @@ public class ModelDeserializer extends ValueDeserializer<Schema> {
 
     private Schema deserializeSchemaWithType(JsonNode node, JsonNode typeNode) {
         Schema schema = null;
-        String type = ((StringNode) typeNode).textValue();
+        String type = ((StringNode) typeNode).stringValue();
         String format = node.get(FORMAT) == null ? "" : getNodeAsString(node, FORMAT);
 
         if (type.equals(ARRAY_TYPE)) {
@@ -213,10 +213,17 @@ public class ModelDeserializer extends ValueDeserializer<Schema> {
     }
 
     private String getNodeAsString(JsonNode jsonNode, String field) {
-        return jsonNode.get(field).textValue();
+        return ((StringNode) jsonNode.get(field)).stringValue();
     }
 
     private String getRefAsString(JsonNode jsonNode) {
-        return jsonNode.get(REF).asText();
+        JsonNode refNode = jsonNode.get(REF);
+        if (refNode instanceof StringNode) {
+            return ((StringNode) refNode).stringValue();
+        }
+        if (refNode.isValueNode()) {
+            return refNode.asString();
+        }
+        return "";
     }
 }
