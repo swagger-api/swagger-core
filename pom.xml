@@ -620,7 +620,7 @@
         <validation-api-version>3.1.1</validation-api-version>
         <jackson-annotations-version>2.22</jackson-annotations-version>
         <jackson-version>3.2.1</jackson-version>
-        <logback-version>1.5.38</logback-version>
+        <logback-version>1.6.0</logback-version>
         <classgraph-version>4.8.184</classgraph-version>
         <guava-version>33.6.0-jre</guava-version>
         <ant-version>1.10.17</ant-version>
