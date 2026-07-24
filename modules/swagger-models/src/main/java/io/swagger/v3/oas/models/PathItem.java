@@ -227,7 +227,9 @@ public class PathItem {
     /**
      * returns the query property from a PathItem instance.
      *
-     * <p>The {@code query} HTTP method was introduced in OpenAPI 3.2.
+     * <p>The {@code query} HTTP method was introduced in OpenAPI 3.2. It is therefore not
+     * serialized by OpenAPI 3.0 and 3.1 mappers, which would otherwise emit a Path Item
+     * field that is not valid for those versions.
      *
      * @return Operation query
      * @since OpenAPI 3.2
