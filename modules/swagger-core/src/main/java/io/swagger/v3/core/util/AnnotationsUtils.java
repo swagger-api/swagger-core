@@ -43,11 +43,16 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -432,6 +437,42 @@ public abstract class AnnotationsUtils {
         return Optional.empty();
     }
 
+    private static String loadExternalFile(String path) {
+        if (StringUtils.isBlank(path)) {
+            return null;
+        }
+        try {
+            if (path.startsWith("file:")) {
+                return new String(Files.readAllBytes(Paths.get(path.substring("file:".length()))), StandardCharsets.UTF_8);
+            } else {
+                String resourcePath = path.startsWith("classpath:") ? path.substring("classpath:".length()) : path;
+                if (resourcePath.startsWith("/")) {
+                    resourcePath = resourcePath.substring(1);
+                }
+                ClassLoader cl = Thread.currentThread().getContextClassLoader();
+                if (cl == null) {
+                    cl = AnnotationsUtils.class.getClassLoader();
+                }
+                try (InputStream is = cl.getResourceAsStream(resourcePath)) {
+                    if (is == null) {
+                        LOGGER.warn("Could not find classpath resource for @ExampleObject externalFile: {}", path);
+                        return null;
+                    }
+                    ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+                    byte[] chunk = new byte[8192];
+                    int bytesRead;
+                    while ((bytesRead = is.read(chunk)) != -1) {
+                        buffer.write(chunk, 0, bytesRead);
+                    }
+                    return buffer.toString(StandardCharsets.UTF_8.name());
+                }
+            }
+        } catch (Exception e) {
+            LOGGER.warn("Failed to load @ExampleObject externalFile '{}': {}", path, e.getMessage());
+            return null;
+        }
+    }
+
     private static boolean resolveExample(Example exampleObject, ExampleObject example) {
 
         boolean isEmpty = true;
@@ -449,13 +490,24 @@ public abstract class AnnotationsUtils {
             isEmpty = false;
             exampleObject.setExternalValue(example.externalValue());
         }
-        if (StringUtils.isNotBlank(example.value())) {
+        // externalFile takes precedence over value; falls back to value if file not found
+        String effectiveValue = null;
+        if (StringUtils.isNotBlank(example.externalFile())) {
+            effectiveValue = loadExternalFile(example.externalFile());
+            if (effectiveValue != null) {
+                isEmpty = false;
+            }
+        }
+        if (effectiveValue == null && StringUtils.isNotBlank(example.value())) {
+            effectiveValue = example.value();
             isEmpty = false;
+        }
+        if (effectiveValue != null) {
             try {
                 ObjectMapper mapper = ObjectMapperFactory.buildStrictGenericObjectMapper();
-                exampleObject.setValue(mapper.readTree(example.value()));
+                exampleObject.setValue(mapper.readTree(effectiveValue));
             } catch (IOException e) {
-                exampleObject.setValue(example.value());
+                exampleObject.setValue(effectiveValue);
             }
         }
         if (StringUtils.isNotBlank(example.ref())) {
