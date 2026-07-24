@@ -21,6 +21,7 @@ import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.PropertyMetadata;
 import tools.jackson.databind.SerializationFeature;
+import tools.jackson.databind.annotation.JsonNaming;
 import tools.jackson.databind.annotation.JsonSerialize;
 import tools.jackson.databind.cfg.EnumFeature;
 import tools.jackson.databind.introspect.Annotated;
@@ -641,6 +642,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         }
 
         final XmlAccessorType xmlAccessorTypeAnnotation = beanDesc.getClassAnnotations().get(XmlAccessorType.class);
+        final JsonNaming jsonNamingAnnotation = beanDesc.getClassAnnotations().get(JsonNaming.class);
 
         // see if @JsonIgnoreProperties exist
         Set<String> propertiesToIgnore = resolveIgnoredProperties(beanDesc.getClassAnnotations(), annotatedType.getCtxAnnotations());
@@ -670,7 +672,16 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
             // hack to avoid clobbering properties with get/is names
             // it's ugly but gets around https://github.com/swagger-api/swagger-core/issues/415
-            if (propDef.getPrimaryMember() != null) {
+            //
+            // This restores the raw member name for members that merely start with a get/is prefix
+            // (e.g. a Scala accessor "is_persistent", or a JAXB-renamed field, see #415 and #2635).
+            // It must NOT run when a custom PropertyNamingStrategy (e.g. SNAKE_CASE) is configured:
+            // in that case the strategy legitimately translates names such as "issuanceDate" ->
+            // "issuance_date" and the raw member name must not clobber the translated one
+            // (see springdoc/springdoc-openapi#3293).
+            if (propDef.getPrimaryMember() != null
+                    && _mapper.serializationConfig().getPropertyNamingStrategy() == null
+                    && jsonNamingAnnotation == null) {
                 final JsonProperty jsonPropertyAnn = propDef.getPrimaryMember().getAnnotation(JsonProperty.class);
                 if (jsonPropertyAnn != null && !jsonPropertyAnn.value().isEmpty() && !jsonPropertyAnn.value().equals(propName)) {
                     propName = jsonPropertyAnn.value();
