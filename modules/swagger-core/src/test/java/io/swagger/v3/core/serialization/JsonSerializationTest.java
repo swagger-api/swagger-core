@@ -5,6 +5,7 @@ import com.fasterxml.jackson.dataformat.yaml.JacksonYAMLParseException;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import io.swagger.v3.core.matchers.SerializationMatchers;
 import io.swagger.v3.core.util.Json;
+import io.swagger.v3.core.util.Json31;
 import io.swagger.v3.core.util.ObjectMapperFactory;
 import io.swagger.v3.core.util.ResourceUtils;
 import io.swagger.v3.core.util.Yaml;
@@ -23,6 +24,9 @@ import java.util.Map;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertTrue;
 
 public class JsonSerializationTest {
 
@@ -40,6 +44,46 @@ public class JsonSerializationTest {
 
         final PathItem path = rebuilt.getPaths().get("/health");
         assertEquals(path, expectedPath);
+    }
+
+    @Test
+    public void testQueryHttpMethodIsNotSerializedBeforeOpenAPI32() throws Exception {
+
+        Operation queryOperation = new Operation()
+                .operationId("searchPets")
+                .responses(new ApiResponses()
+                        .addApiResponse("200", new ApiResponse().description("ok")));
+
+        PathItem pathItem = new PathItem()
+                .get(new Operation().operationId("listPets"))
+                .query(queryOperation);
+        OpenAPI openAPI = new OpenAPI().path("/pets", pathItem);
+
+        // the model holds the operation ...
+        assertNotNull(openAPI.getPaths().get("/pets").getQuery());
+
+        // ... but "query" is a Path Item fixed field only as of OpenAPI 3.2, so neither the
+        // 3.0 nor the 3.1 mapper may emit it, while the other methods serialize as usual
+        for (String json : new String[]{
+                Json.mapper().writeValueAsString(openAPI),
+                Json31.mapper().writeValueAsString(openAPI)}) {
+            assertFalse(json.contains("\"query\""));
+            assertTrue(json.contains("\"listPets\""));
+            assertFalse(json.contains("\"searchPets\""));
+        }
+    }
+
+    @Test
+    public void testQueryHttpMethodIsNotDeserializedBeforeOpenAPI32() throws Exception {
+
+        String json = "{\"openapi\":\"3.0.1\",\"paths\":{\"/pets\":{"
+                + "\"get\":{\"operationId\":\"listPets\"},"
+                + "\"query\":{\"operationId\":\"searchPets\"}}}}";
+
+        PathItem pathItem = Json.mapper().readValue(json, OpenAPI.class).getPaths().get("/pets");
+
+        assertNotNull(pathItem.getGet());
+        assertNull(pathItem.getQuery());
     }
 
     @Test
