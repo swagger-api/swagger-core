@@ -53,8 +53,7 @@ public class SpecFilter {
         clone.setServers(filteredOpenAPI.getServers());
         clone.tags(filteredOpenAPI.getTags() == null ? null : new ArrayList<>(openAPI.getTags()));
 
-        final Set<String> allowedTags = new HashSet<>();
-        final Set<String> filteredTags = new HashSet<>();
+        final TagFilter tagFilter = new TagFilter();
 
         Paths clonedPaths = new Paths();
         if (filteredOpenAPI.getPaths() != null) {
@@ -62,7 +61,7 @@ public class SpecFilter {
                 PathItem pathItem = filteredOpenAPI.getPaths().get(resourcePath);
 
                 PathItem filteredPathItem = filterPathItem(filter, pathItem, resourcePath, params, cookies, headers);
-                PathItem clonedPathItem = cloneFilteredPathItem(filter,filteredPathItem, resourcePath, params, cookies, headers, allowedTags, filteredTags);
+                PathItem clonedPathItem = cloneFilteredPathItem(filter, filteredPathItem, resourcePath, params, cookies, headers, tagFilter);
 
                 if (clonedPathItem != null) {
                     if (!clonedPathItem.readOperations().isEmpty()) {
@@ -73,22 +72,14 @@ public class SpecFilter {
             clone.paths(clonedPaths);
         }
 
-        filteredTags.removeAll(allowedTags);
-
-        final List<Tag> tags = clone.getTags();
-        if (tags != null && !filteredTags.isEmpty()) {
-            tags.removeIf(tag -> filteredTags.contains(tag.getName()));
-            if (clone.getTags().isEmpty()) {
-                clone.setTags(null);
-            }
-        }
+        filterTopLevelTags(clone, tagFilter);
 
         if (filteredOpenAPI.getWebhooks() != null) {
             for (String resourcePath : filteredOpenAPI.getWebhooks().keySet()) {
                 PathItem pathItem = filteredOpenAPI.getWebhooks().get(resourcePath);
 
                 PathItem filteredPathItem = filterPathItem(filter, pathItem, resourcePath, params, cookies, headers);
-                PathItem clonedPathItem = cloneFilteredPathItem(filter,filteredPathItem, resourcePath, params, cookies, headers, allowedTags, filteredTags);
+                PathItem clonedPathItem = cloneFilteredPathItem(filter, filteredPathItem, resourcePath, params, cookies, headers, tagFilter);
 
                 if (clonedPathItem != null) {
                     if (!clonedPathItem.readOperations().isEmpty()) {
@@ -530,7 +521,13 @@ public class SpecFilter {
         }
     }
 
-    private PathItem cloneFilteredPathItem(OpenAPISpecFilter filter, PathItem filteredPathItem, String resourcePath, Map<String, List<String>> params, Map<String, String> cookies, Map<String, List<String>> headers, Set<String> allowedTags, Set<String> filteredTags) {
+    private PathItem cloneFilteredPathItem(OpenAPISpecFilter filter,
+                                           PathItem filteredPathItem,
+                                           String resourcePath,
+                                           Map<String, List<String>> params,
+                                           Map<String, String> cookies,
+                                           Map<String, List<String>> headers,
+                                           TagFilter tagFilter) {
         if (filteredPathItem == null) {
             return null;
         }
@@ -556,15 +553,48 @@ public class SpecFilter {
             op = filterOperation(filter, op, resourcePath, key.toString(), params, cookies, headers);
             clonedPathItem.operation(key, op);
             if (op == null) {
-                filteredTags.addAll(opTagsBeforeFilter);
+                tagFilter.getFilteredTags().addAll(opTagsBeforeFilter);
             } else {
                 if (op.getTags() != null) {
                     opTagsBeforeFilter.removeAll(op.getTags());
-                    allowedTags.addAll(op.getTags());
+                    tagFilter.getAllowedTags().addAll(op.getTags());
                 }
-                filteredTags.addAll(opTagsBeforeFilter);
+                tagFilter.getFilteredTags().addAll(opTagsBeforeFilter);
             }
         }
         return clonedPathItem;
+    }
+
+    /**
+     * Removes top level tags that are not used in any operation.
+     *
+     * @param openAPI   the OpenAPI object to filter
+     * @param tagFilter the TagFilter object containing allowed and filtered tags
+     */
+    private void filterTopLevelTags(OpenAPI openAPI, TagFilter tagFilter) {
+        tagFilter.getFilteredTags().removeAll(tagFilter.getAllowedTags());
+
+        final List<Tag> tags = openAPI.getTags();
+        if (tags != null && !tagFilter.getFilteredTags().isEmpty()) {
+            tags.removeIf(tag -> tagFilter.getFilteredTags().contains(tag.getName()));
+            if (openAPI.getTags().isEmpty()) {
+                openAPI.setTags(null);
+            }
+        }
+    }
+
+    private static class TagFilter {
+
+        public Set<String> getAllowedTags() {
+            return allowedTags;
+        }
+
+        public Set<String> getFilteredTags() {
+            return filteredTags;
+        }
+
+        private final Set<String> allowedTags = new HashSet<>();
+        private final Set<String> filteredTags = new HashSet<>();
+
     }
 }
