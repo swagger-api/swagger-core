@@ -5,7 +5,7 @@
     <parent>
         <artifactId>swagger-project</artifactId>
         <groupId>io.github.vpelikh</groupId>
-        <version>4.0.2-SNAPSHOT</version>
+        <version>4.0.2</version>
         <relativePath>../../</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
