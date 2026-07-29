@@ -632,6 +632,7 @@
         <rest-assured-version>6.0.1</rest-assured-version>
         <httpcomponents-version>4.5.14</httpcomponents-version>
         <commons-codec-version>1.22.0</commons-codec-version>
+        <kotlin.version>2.4.0</kotlin.version>
 
         <surefire-version>3.5.6</surefire-version>
         <enforcer-plugin-version>3.6.3</enforcer-plugin-version>

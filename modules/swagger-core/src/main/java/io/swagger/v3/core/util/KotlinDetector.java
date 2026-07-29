@@ -3,11 +3,11 @@ package io.swagger.v3.core.util;
 import java.lang.annotation.Annotation;
 
 public class KotlinDetector {
-    private static final Boolean kotlinAvailable;
+    private static final Class<? extends Annotation> kotlinMetadata;
     private static final Class<? extends Annotation> kotlinDeprecated;
 
     static {
-        kotlinAvailable = loadByClassOrNull("kotlin.Metadata") != null;
+        kotlinMetadata = loadByClassOrNull("kotlin.Metadata");
         kotlinDeprecated = loadByClassOrNull("kotlin.Deprecated");
     }
 
@@ -20,10 +20,17 @@ public class KotlinDetector {
     }
 
     public static boolean isKotlinPresent() {
-        return kotlinAvailable;
+        return kotlinMetadata != null;
     }
 
     public static Class<? extends Annotation> getKotlinDeprecated() {
         return kotlinDeprecated;
+    }
+
+    public static boolean isKotlinClass(Class<?> cls) {
+        if (cls == null) {
+            return false;
+        }
+        return kotlinMetadata != null && cls.getAnnotation(kotlinMetadata) != null;
     }
 }
