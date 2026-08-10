@@ -26,9 +26,13 @@ jobs:
       uses: actions/cache@v5
       with:
         path: ~/.m2/repository
-        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+        key: ${{ runner.os }}-jdk${{ matrix.java }}-maven-v2-${{ hashFiles('**/pom.xml') }}
         restore-keys: |
-          ${{ runner.os }}-maven-
+          ${{ runner.os }}-jdk${{ matrix.java }}-maven-v2-
+    - name: Set up Gradle
+      uses: gradle/actions/setup-gradle@v6
+      with:
+        cache-provider: basic
     - name: Check swagger-bom version matches root version
       run: |
         ROOT_VERSION=$(./mvnw -q -Dexec.executable="echo" -Dexec.args='${project.version}' --non-recursive org.codehaus.mojo:exec-maven-plugin:1.3.1:exec)
@@ -39,11 +43,18 @@ jobs:
           echo "ERROR: swagger-bom version (${BOM_VERSION}) does not match root version (${ROOT_VERSION}). Update modules/swagger-bom/pom.xml."
           exit 1
         fi
-    - name: Build with Maven and Gradle
-      run: |
-        ./mvnw --no-transfer-progress -B install --file pom.xml
-        cd ./modules/swagger-gradle-plugin
-        ./gradlew build --info
-        cd ../..
+    - name: Build with Maven
+      run: ./mvnw --no-transfer-progress -B -e install --file pom.xml
+    - name: Upload Maven test reports
+      if: failure()
+      uses: actions/upload-artifact@v6
+      with:
+        name: surefire-reports-java-${{ matrix.java }}
+        path: |
+          **/target/surefire-reports/**
+          **/target/failsafe-reports/**
+    - name: Build Gradle plugin
+      working-directory: modules/swagger-gradle-plugin
+      run: ./gradlew build --info --stacktrace --no-daemon
     - name: Verify BOM integration test
       run: ./mvnw --no-transfer-progress -B validate -Pbom-it

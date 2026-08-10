@@ -19,6 +19,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyMetadata;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.introspect.Annotated;
 import com.fasterxml.jackson.databind.introspect.AnnotatedClass;
@@ -95,7 +96,6 @@ import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -640,6 +640,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         }
 
         final XmlAccessorType xmlAccessorTypeAnnotation = beanDesc.getClassAnnotations().get(XmlAccessorType.class);
+        final JsonNaming jsonNamingAnnotation = beanDesc.getClassAnnotations().get(JsonNaming.class);
 
         // see if @JsonIgnoreProperties exist
         Set<String> propertiesToIgnore = resolveIgnoredProperties(beanDesc.getClassAnnotations(), annotatedType.getCtxAnnotations());
@@ -669,7 +670,16 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
             // hack to avoid clobbering properties with get/is names
             // it's ugly but gets around https://github.com/swagger-api/swagger-core/issues/415
-            if (propDef.getPrimaryMember() != null) {
+            //
+            // This restores the raw member name for members that merely start with a get/is prefix
+            // (e.g. a Scala accessor "is_persistent", or a JAXB-renamed field, see #415 and #2635).
+            // It must NOT run when a custom PropertyNamingStrategy (e.g. SNAKE_CASE) is configured:
+            // in that case the strategy legitimately translates names such as "issuanceDate" ->
+            // "issuance_date" and the raw member name must not clobber the translated one
+            // (see springdoc/springdoc-openapi#3293).
+            if (propDef.getPrimaryMember() != null
+                    && _mapper.getSerializationConfig().getPropertyNamingStrategy() == null
+                    && jsonNamingAnnotation == null) {
                 final JsonProperty jsonPropertyAnn = propDef.getPrimaryMember().getAnnotation(JsonProperty.class);
                 if (jsonPropertyAnn == null || !jsonPropertyAnn.value().equals(propName)) {
                     if (member != null) {
@@ -1461,7 +1471,18 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
     private void handleUnwrapped(List<Schema> props, Schema innerModel, String prefix, String suffix, List<String> requiredProps) {
         if (StringUtils.isBlank(suffix) && StringUtils.isBlank(prefix)) {
             if (innerModel.getProperties() != null) {
-                props.addAll(innerModel.getProperties().values());
+                // Schema.getName() is @JsonIgnore, so any prior JSON-based clone of innerModel
+                // (e.g. AnnotationsUtils.clone) leaves nested property schemas with a null name
+                // while the properties-map key still carries the correct name. Restore from the
+                // map key so the eventual `modelProps.put(prop.getName(), prop)` does not insert
+                // a null key (see swagger-api/swagger-core#5126).
+                for (Map.Entry<String, Schema> entry : ((Map<String, Schema>) innerModel.getProperties()).entrySet()) {
+                    Schema prop = entry.getValue();
+                    if (prop.getName() == null) {
+                        prop.setName(entry.getKey());
+                    }
+                    props.add(prop);
+                }
                 if (innerModel.getRequired() != null) {
                     requiredProps.addAll(innerModel.getRequired());
                 }
@@ -1475,10 +1496,14 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 suffix = "";
             }
             if (innerModel.getProperties() != null) {
-                for (Schema prop : (Collection<Schema>) innerModel.getProperties().values()) {
+                for (Map.Entry<String, Schema> entry : ((Map<String, Schema>) innerModel.getProperties()).entrySet()) {
+                    Schema prop = entry.getValue();
                     try {
                         Schema clonedProp = Json.mapper().readValue(Json.pretty(prop), Schema.class);
-                        clonedProp.setName(prefix + prop.getName() + suffix);
+                        // Fall back to the map key when the prop's transient name has been lost
+                        // by a prior clone (Schema.getName() is @JsonIgnore).
+                        String baseName = prop.getName() != null ? prop.getName() : entry.getKey();
+                        clonedProp.setName(prefix + baseName + suffix);
                         props.add(clonedProp);
                     } catch (IOException e) {
                         LOGGER.error("Exception cloning property", e);
@@ -3176,7 +3201,9 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             schema.title(title);
         }
         String format = resolveFormat(a, annotations, schemaAnnotation);
-        if (StringUtils.isNotBlank(format) && StringUtils.isBlank(schema.getFormat())) {
+        if (StringUtils.isNotBlank(format)) {
+            // An explicit format on @Schema is the user's intent and must take precedence
+            // over a format derived from the property type (e.g. java.net.URI -> "uri").
             schema.format(format);
         }
         Object defaultValue = resolveDefaultValue(a, annotations, schemaAnnotation);
