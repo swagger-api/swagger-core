@@ -7,27 +7,31 @@ import org.testng.annotations.Test;
 
 import java.util.Map;
 
-public class Ticket4800Test extends SwaggerTestBase{
+public class Ticket4800Test extends SwaggerTestBase {
 
     @Test(description = "Custom schema implementation in property and enum as ref type value")
-    public void testCustomSchemaImplementation() {
-
+    public void testCustomSchemaImplementationOAS31() {
         String expectedYaml = "ModelWithCustomSchemaImplementationInProperty:\n" +
-                "  type: object\n" +
-                "  properties:\n" +
-                "    enumExampleFieldWithImplementationProp:\n" +
-                "      $ref: \"#/components/schemas/MyEnum\"\n" +
-                "      default: \"yes\"\n" +
-                "      description: Prop description\n" +
-                "    secondExampleFieldWithTypeProp:\n" +
-                "      type: string\n" +
-                "MyEnum:\n" +
-                "  type: string\n" +
-                "  enum:\n" +
-                "  - \"yes\"\n" +
-                "  - \"no\"";
+                              "  type: object\n" +
+                              "  properties:\n" +
+                              "    enumExampleFieldWithImplementationProp:\n" +
+                              "      $ref: \"#/components/schemas/MyEnum\"\n" +
+                              "      default: \"yes\"\n" +
+                              "      description: Prop description\n" +
+                              "    secondExampleFieldWithTypeProp:\n" +
+                              "      type: string\n" +
+                              "    thirdExampleFieldWithTypeProp:\n" +
+                              "      type:\n" +
+                              "      - string\n" +
+                              "      - \"null\"\n" +
+                              "MyEnum:\n" +
+                              "  type: string\n" +
+                              "  enum:\n" +
+                              "  - \"yes\"\n" +
+                              "  - \"no\"";
 
-        Map<String, Schema> stringSchemaMap = ModelConverters.getInstance(true).readAll(Ticket4800Test.ModelWithCustomSchemaImplementationInProperty.class);
+        Map<String, Schema> stringSchemaMap = ModelConverters.getInstance(true)
+                .readAll(ModelWithCustomSchemaImplementationInProperty.class);
         SerializationMatchers.assertEqualsToYaml31(stringSchemaMap, expectedYaml);
     }
 
@@ -36,8 +40,11 @@ public class Ticket4800Test extends SwaggerTestBase{
         @io.swagger.v3.oas.annotations.media.Schema(implementation = MyEnum.class, description = "Prop description", defaultValue = "yes", enumAsRef = true)
         private MyEnum enumExampleFieldWithImplementationProp;
 
-        @io.swagger.v3.oas.annotations.media.Schema(type = "string", enumAsRef = true)
+        @io.swagger.v3.oas.annotations.media.Schema(types = {"string"}, enumAsRef = true)
         private MyEnum2 secondExampleFieldWithTypeProp;
+
+        @io.swagger.v3.oas.annotations.media.Schema(types = {"string", "null"}, enumAsRef = true)
+        private MyEnum2 thirdExampleFieldWithTypeProp;
 
         public MyEnum getEnumExampleFieldWithImplementationProp() {
             return enumExampleFieldWithImplementationProp;
@@ -53,6 +60,14 @@ public class Ticket4800Test extends SwaggerTestBase{
 
         public void setSecondExampleFieldWithTypeProp(MyEnum2 secondExampleFieldWithTypeProp) {
             this.secondExampleFieldWithTypeProp = secondExampleFieldWithTypeProp;
+        }
+
+        public MyEnum2 getThirdExampleFieldWithTypeProp() {
+            return thirdExampleFieldWithTypeProp;
+        }
+
+        public void setThirdExampleFieldWithTypeProp(MyEnum2 thirdExampleFieldWithTypeProp) {
+            this.thirdExampleFieldWithTypeProp = thirdExampleFieldWithTypeProp;
         }
 
         enum MyEnum {
