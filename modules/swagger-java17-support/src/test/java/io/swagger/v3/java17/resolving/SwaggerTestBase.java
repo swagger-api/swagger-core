@@ -1,7 +1,6 @@
 package io.swagger.v3.java17.resolving;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -29,7 +28,7 @@ public abstract class SwaggerTestBase {
 
     protected void prettyPrint(Object o) {
         try {
-            LOGGER.debug(mapper().writer(new DefaultPrettyPrinter()).writeValueAsString(o));
+            LOGGER.debug(mapper().writerWithDefaultPrettyPrinter().writeValueAsString(o));
         } catch (Exception e) {
             LOGGER.error("Failed to pretty print object", e);
         }

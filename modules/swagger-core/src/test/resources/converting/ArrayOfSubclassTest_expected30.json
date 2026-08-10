@@ -79,6 +79,15 @@
         },
         "friend" : {
           "type" : "string"
+        },
+        "baseArray" : {
+          "minItems" : 0,
+          "uniqueItems" : true,
+          "type" : "array",
+          "description" : "Thingy",
+          "items" : {
+            "$ref" : "#/components/schemas/Base"
+          }
         }
       },
       "description" : "The SubB class"
