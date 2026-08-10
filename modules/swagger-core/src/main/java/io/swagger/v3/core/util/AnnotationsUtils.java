@@ -3125,14 +3125,32 @@ public abstract class AnnotationsUtils {
         return Schema.SchemaResolution.ALL_OF.equals(resolvedSchemaResolution) || Schema.SchemaResolution.ALL_OF_REF.equals(resolvedSchemaResolution) || openapi31;
     }
 
-    public static AnnotatedType addTypeWhenSiblingsAllowed(AnnotatedType aType, io.swagger.v3.oas.annotations.media.Schema ctxSchema, boolean areSiblingsAllowed) {
+    public static AnnotatedType addTypeWhenSiblingsAllowed(AnnotatedType aType,
+                                                           io.swagger.v3.oas.annotations.media.Schema ctxSchema,
+                                                           boolean openapi31,
+                                                           boolean areSiblingsAllowed) {
         if (areSiblingsAllowed && ctxSchema != null) {
             if (!Void.class.equals(ctxSchema.implementation())) {
                 aType.setType(ctxSchema.implementation());
-            } else if (StringUtils.isNotBlank(ctxSchema.type())) {
-                aType.setType(ctxSchema.type().getClass());
+            } else if (openapi31) {
+                if (isOas31SingleTypeIncludingNull(ctxSchema) && Arrays.asList(ctxSchema.types()).contains(STRING_TYPE)) {
+                    aType.setType(String.class);
+                }
+            } else if(StringUtils.isNotBlank(ctxSchema.type()) && STRING_TYPE.equals(ctxSchema.type())) {
+                aType.setType(String.class);
             }
         }
         return aType;
+    }
+
+    /**
+     * Returns whether the schema annotation defines a single type in {@code types}.
+     * Two types where one of them is {@code null} is counted as one type to support defining nullability
+     * @param schema the schema annotation
+     * @return whether the annotation defines a single type
+     */
+    public static boolean isOas31SingleTypeIncludingNull(io.swagger.v3.oas.annotations.media.Schema schema) {
+        String[] types = schema.types();
+        return types.length == 1 || types.length == 2 && Arrays.asList(types).contains(NULL_TYPE);
     }
 }
