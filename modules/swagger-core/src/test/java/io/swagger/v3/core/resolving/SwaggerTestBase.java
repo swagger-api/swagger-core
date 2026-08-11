@@ -1,7 +1,6 @@
 package io.swagger.v3.core.resolving;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import tools.jackson.core.util.DefaultPrettyPrinter;
 import tools.jackson.databind.MapperFeature;
 import tools.jackson.databind.ObjectMapper;
 import io.swagger.v3.core.jackson.ModelResolver;

@@ -1,6 +1,5 @@
 package io.swagger.v3.jakartarest;
 
-import tools.jackson.core.util.DefaultPrettyPrinter;
 import io.swagger.v3.jakartarest.integration.JaxrsOpenApiContextBuilder;
 import io.swagger.v3.oas.integration.OpenApiConfigurationException;
 import io.swagger.v3.oas.integration.OpenApiContextLocator;

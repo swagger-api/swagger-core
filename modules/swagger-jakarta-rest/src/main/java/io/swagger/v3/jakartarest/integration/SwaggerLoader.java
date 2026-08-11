@@ -1,6 +1,5 @@
 package io.swagger.v3.jakartarest.integration;
 
-import tools.jackson.core.util.DefaultPrettyPrinter;
 import io.swagger.v3.core.filter.OpenAPISpecFilter;
 import io.swagger.v3.core.filter.SpecFilter;
 import io.swagger.v3.core.util.Configuration;

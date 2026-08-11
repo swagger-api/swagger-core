@@ -15,6 +15,8 @@ import io.swagger.v3.oas.models.servers.Server;
 import org.snakeyaml.engine.v2.api.LoadSettings;
 import org.testng.annotations.Test;
 import tools.jackson.core.json.JsonFactory;
+import tools.jackson.core.util.DefaultIndenter;
+import tools.jackson.core.util.DefaultPrettyPrinter;
 import tools.jackson.dataformat.yaml.JacksonYAMLParseException;
 import tools.jackson.dataformat.yaml.YAMLFactory;
 
@@ -23,6 +25,7 @@ import java.util.Map;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertTrue;
 
 public class JsonSerializationTest {
 
@@ -155,5 +158,26 @@ public class JsonSerializationTest {
         OpenAPI deser = ObjectMapperFactory.createYaml(yamlFactory).readValue(yaml, OpenAPI.class);
 
         // then - Throw JacksonYAMLParseException
+    }
+
+    @Test
+    public void testCustomPrettyPrinterIsHonored() {
+        //given
+        DefaultPrettyPrinter printer = new DefaultPrettyPrinter();
+        printer.indentObjectsWith(new DefaultIndenter("    ", "\n"));
+
+        //when
+        OpenAPI openAPI = new OpenAPI()
+                .info(new Info().title("Pet Store"));
+
+        String json = Json.mapper().writer().with(printer).writeValueAsString(openAPI);
+
+        //then
+        assertTrue(json.contains("{\n    \"openapi\""),
+                "Custom four-space indentation should be honored");
+        assertTrue(json.contains("    \"info\" : {"),
+                "Nested objects should use four-space indentation");
+        assertTrue(json.contains("        \"title\" : \"Pet Store\""),
+                "Doubly-nested properties should use eight-space indentation");
     }
 }
