@@ -50,6 +50,11 @@ public class ExamplesTest extends AbstractAnnotationTest {
         compareToYamlFile(ExamplesTest.AnnotatedModelAndContentExample.class, "examples/");
     }
 
+    @Test
+    public void testExternalFileExample() {
+        compareToYamlFile(ExamplesTest.ExternalFileRequestBodyExample.class, "examples/");
+    }
+
     static class ResponseExampleSchema {
         @Path("/test")
         @POST
@@ -488,6 +493,26 @@ public class ExamplesTest extends AbstractAnnotationTest {
                                 @ExampleObject(name = "Default Response", value = "SubscriptionResponse",
                                         summary = "Subscription Response Example", externalValue = "Subscription Response value 1")
                         })) User user) {
+            return null;
+        }
+    }
+
+    static class ExternalFileRequestBodyExample {
+        @Path("/test")
+        @POST
+        public Subscription testRequestBody(
+                @RequestBody(
+                        description = "Created user object",
+                        required = true,
+                        content = @Content(
+                                examples = {
+                                        @ExampleObject(
+                                                name = "Default Request",
+                                                externalFile = "examples/external/user-request.json",
+                                                summary = "Subscription Example from file")
+                                }
+                        )
+                ) Subscription sub) {
             return null;
         }
     }
