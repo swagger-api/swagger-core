@@ -108,11 +108,7 @@ public class Issue5055Test {
         
         assertNotNull(schema);
         String json = Json31.pretty(schema);
-        
-        System.out.println("\n=== testTypeInferenceWithNoImplementation - Generated Spec ===");
-        System.out.println(json);
-        System.out.println("=== End Spec ===\n");
-        
+
         ObjectMapper mapper = new ObjectMapper();
         JsonNode root = mapper.readTree(json);
         

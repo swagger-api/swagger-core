@@ -19,6 +19,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyMetadata;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.introspect.Annotated;
 import com.fasterxml.jackson.databind.introspect.AnnotatedClass;
@@ -95,7 +96,6 @@ import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -128,6 +128,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
     public static boolean composedModelPropertiesAsSibling = System.getProperty(SET_PROPERTY_OF_COMPOSED_MODEL_AS_SIBLING) != null;
 
     private static final int SCHEMA_COMPONENT_PREFIX = "#/components/schemas/".length();
+    private static final String OBJECT_TYPE = "object";
 
     private static final Predicate<Annotation> ANNOTATIONS_THAT_SHOULD_BE_STRIPPED_FOR_CONTAINER_ITEMS = annotation ->
             annotation.annotationType().getName().startsWith("io.swagger") ||
@@ -183,19 +184,9 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         }
 
         final Annotation resolvedSchemaOrArrayAnnotation = AnnotationsUtils.mergeSchemaAnnotations(annotatedType.getCtxAnnotations(), type);
-        final io.swagger.v3.oas.annotations.media.Schema resolvedSchemaAnnotation =
-                resolvedSchemaOrArrayAnnotation == null ?
-                        null :
-                        resolvedSchemaOrArrayAnnotation instanceof io.swagger.v3.oas.annotations.media.ArraySchema ?
-                                ((io.swagger.v3.oas.annotations.media.ArraySchema) resolvedSchemaOrArrayAnnotation).schema() :
-                                (io.swagger.v3.oas.annotations.media.Schema) resolvedSchemaOrArrayAnnotation;
+        final io.swagger.v3.oas.annotations.media.Schema resolvedSchemaAnnotation = getSchemaAnnotation(resolvedSchemaOrArrayAnnotation);
 
-        final io.swagger.v3.oas.annotations.media.ArraySchema resolvedArrayAnnotation =
-                resolvedSchemaOrArrayAnnotation == null ?
-                        null :
-                        resolvedSchemaOrArrayAnnotation instanceof io.swagger.v3.oas.annotations.media.ArraySchema ?
-                                (io.swagger.v3.oas.annotations.media.ArraySchema) resolvedSchemaOrArrayAnnotation :
-                                null;
+        final io.swagger.v3.oas.annotations.media.ArraySchema resolvedArrayAnnotation = getArraySchemaAnnotation(resolvedSchemaOrArrayAnnotation);
 
         final BeanDescription beanDesc;
         {
@@ -649,6 +640,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         }
 
         final XmlAccessorType xmlAccessorTypeAnnotation = beanDesc.getClassAnnotations().get(XmlAccessorType.class);
+        final JsonNaming jsonNamingAnnotation = beanDesc.getClassAnnotations().get(JsonNaming.class);
 
         // see if @JsonIgnoreProperties exist
         Set<String> propertiesToIgnore = resolveIgnoredProperties(beanDesc.getClassAnnotations(), annotatedType.getCtxAnnotations());
@@ -678,7 +670,16 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
             // hack to avoid clobbering properties with get/is names
             // it's ugly but gets around https://github.com/swagger-api/swagger-core/issues/415
-            if (propDef.getPrimaryMember() != null) {
+            //
+            // This restores the raw member name for members that merely start with a get/is prefix
+            // (e.g. a Scala accessor "is_persistent", or a JAXB-renamed field, see #415 and #2635).
+            // It must NOT run when a custom PropertyNamingStrategy (e.g. SNAKE_CASE) is configured:
+            // in that case the strategy legitimately translates names such as "issuanceDate" ->
+            // "issuance_date" and the raw member name must not clobber the translated one
+            // (see springdoc/springdoc-openapi#3293).
+            if (propDef.getPrimaryMember() != null
+                    && _mapper.getSerializationConfig().getPropertyNamingStrategy() == null
+                    && jsonNamingAnnotation == null) {
                 final JsonProperty jsonPropertyAnn = propDef.getPrimaryMember().getAnnotation(JsonProperty.class);
                 if (jsonPropertyAnn == null || !jsonPropertyAnn.value().equals(propName)) {
                     if (member != null) {
@@ -745,12 +746,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                     propName = propSchemaName;
                 }
                 Annotation propSchemaOrArray = AnnotationsUtils.mergeSchemaAnnotations(annotations, propType);
-                final io.swagger.v3.oas.annotations.media.Schema propResolvedSchemaAnnotation =
-                        propSchemaOrArray == null ?
-                                null :
-                                propSchemaOrArray instanceof io.swagger.v3.oas.annotations.media.ArraySchema ?
-                                        ((io.swagger.v3.oas.annotations.media.ArraySchema) propSchemaOrArray).arraySchema() :
-                                        (io.swagger.v3.oas.annotations.media.Schema) propSchemaOrArray;
+                final io.swagger.v3.oas.annotations.media.Schema propResolvedSchemaAnnotation = getSchemaAnnotationForArray(propSchemaOrArray);
 
                 io.swagger.v3.oas.annotations.media.Schema.AccessMode accessMode = resolveAccessMode(propDef, type, propResolvedSchemaAnnotation);
                 io.swagger.v3.oas.annotations.media.Schema.RequiredMode requiredMode = resolveRequiredMode(propResolvedSchemaAnnotation, propType);
@@ -1124,11 +1120,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         }
         // check if it has "object" related keywords
         if (isInferredObjectSchema(model) && model.get$ref() == null) {
-            if (openapi31 && model.getTypes() == null) {
-                model.addType("object");
-            } else if (!openapi31 && model.getType() == null) {
-                model.type("object");
-            }
+            setSchemaTypeForObjectSchema(model, resolvedSchemaAnnotation);
         }
         Schema.SchemaResolution resolvedSchemaResolution = AnnotationsUtils.resolveSchemaResolution(this.schemaResolution, resolvedSchemaAnnotation);
 
@@ -1164,6 +1156,24 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         model = resolveWrapping(type, context, model);
 
         return model;
+    }
+
+    private void setSchemaTypeForObjectSchema(Schema model, io.swagger.v3.oas.annotations.media.Schema schemaAnnotation) {
+        if (openapi31) {
+            if (model.getTypes() == null) {
+                model.addType(OBJECT_TYPE);
+            }
+            if (!isNullableSchema(model, schemaAnnotation)) {
+                model.setTypes(new LinkedHashSet<>(Collections.singletonList(OBJECT_TYPE)));
+            }
+        } else {
+            if (model.getType() == null) {
+                model.type(OBJECT_TYPE);
+            }
+            if (!isNullableSchema(model, schemaAnnotation)) {
+                model.setNullable(null);
+            }
+        }
     }
 
     private Annotation[] addGenericTypeArgumentAnnotationsForOptionalField(BeanPropertyDefinition propDef, Annotation[] annotations) {
@@ -1461,7 +1471,18 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
     private void handleUnwrapped(List<Schema> props, Schema innerModel, String prefix, String suffix, List<String> requiredProps) {
         if (StringUtils.isBlank(suffix) && StringUtils.isBlank(prefix)) {
             if (innerModel.getProperties() != null) {
-                props.addAll(innerModel.getProperties().values());
+                // Schema.getName() is @JsonIgnore, so any prior JSON-based clone of innerModel
+                // (e.g. AnnotationsUtils.clone) leaves nested property schemas with a null name
+                // while the properties-map key still carries the correct name. Restore from the
+                // map key so the eventual `modelProps.put(prop.getName(), prop)` does not insert
+                // a null key (see swagger-api/swagger-core#5126).
+                for (Map.Entry<String, Schema> entry : ((Map<String, Schema>) innerModel.getProperties()).entrySet()) {
+                    Schema prop = entry.getValue();
+                    if (prop.getName() == null) {
+                        prop.setName(entry.getKey());
+                    }
+                    props.add(prop);
+                }
                 if (innerModel.getRequired() != null) {
                     requiredProps.addAll(innerModel.getRequired());
                 }
@@ -1475,10 +1496,14 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 suffix = "";
             }
             if (innerModel.getProperties() != null) {
-                for (Schema prop : (Collection<Schema>) innerModel.getProperties().values()) {
+                for (Map.Entry<String, Schema> entry : ((Map<String, Schema>) innerModel.getProperties()).entrySet()) {
+                    Schema prop = entry.getValue();
                     try {
                         Schema clonedProp = Json.mapper().readValue(Json.pretty(prop), Schema.class);
-                        clonedProp.setName(prefix + prop.getName() + suffix);
+                        // Fall back to the map key when the prop's transient name has been lost
+                        // by a prior clone (Schema.getName() is @JsonIgnore).
+                        String baseName = prop.getName() != null ? prop.getName() : entry.getKey();
+                        clonedProp.setName(prefix + baseName + suffix);
                         props.add(clonedProp);
                     } catch (IOException e) {
                         LOGGER.error("Exception cloning property", e);
@@ -3083,12 +3108,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         }
 
         final Annotation resolvedSchemaOrArrayAnnotation = AnnotationsUtils.mergeSchemaAnnotations(annotatedType.getCtxAnnotations(), type);
-        final io.swagger.v3.oas.annotations.media.Schema schemaAnnotation =
-                resolvedSchemaOrArrayAnnotation == null ?
-                        null :
-                        resolvedSchemaOrArrayAnnotation instanceof io.swagger.v3.oas.annotations.media.ArraySchema ?
-                                ((io.swagger.v3.oas.annotations.media.ArraySchema) resolvedSchemaOrArrayAnnotation).schema() :
-                                (io.swagger.v3.oas.annotations.media.Schema) resolvedSchemaOrArrayAnnotation;
+        final io.swagger.v3.oas.annotations.media.Schema schemaAnnotation = getSchemaAnnotation(resolvedSchemaOrArrayAnnotation);
 
         final BeanDescription beanDesc = _mapper.getSerializationConfig().introspect(type);
         Annotated a = beanDesc.getClassInfo();
@@ -3181,7 +3201,9 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             schema.title(title);
         }
         String format = resolveFormat(a, annotations, schemaAnnotation);
-        if (StringUtils.isNotBlank(format) && StringUtils.isBlank(schema.getFormat())) {
+        if (StringUtils.isNotBlank(format)) {
+            // An explicit format on @Schema is the user's intent and must take precedence
+            // over a format derived from the property type (e.g. java.net.URI -> "uri").
             schema.format(format);
         }
         Object defaultValue = resolveDefaultValue(a, annotations, schemaAnnotation);
@@ -3532,6 +3554,24 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         }
     }
 
+    /**
+     * Currently {@code null} is not a valid type for any {@code object} other than {@code AdditionalProperties}.
+     * This since the resolver currently does not produce proper nullable ref:s with allOf (OAS3.0) or oneOf (OAS3.1)
+     *
+     * @param schema The schema that should be classified
+     * @param schemaAnnotation The schema annotation
+     * @return Whether the schema is considered valid for having the {@code null} type
+     */
+    private boolean isNullableSchema(Schema schema, io.swagger.v3.oas.annotations.media.Schema schemaAnnotation) {
+        if (!openapi31) {
+            // If the schema annotation has explicitly set nullable to true, then keep that setting
+            if (schemaAnnotation != null && schemaAnnotation.nullable()) {
+                return true;
+            }
+        }
+        return isObjectSchema(schema) && schema.getAdditionalProperties() != null;
+    }
+
     protected boolean isObjectSchema(Schema schema) {
         return SchemaTypeUtils.isObjectSchema(schema);
     }
@@ -3605,6 +3645,36 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             }
         }
         return reResolvedProperty;
+    }
+
+    private io.swagger.v3.oas.annotations.media.Schema getSchemaAnnotationForArray(Annotation annotation) {
+        if (annotation == null) {
+            return null;
+        } else {
+            return annotation instanceof io.swagger.v3.oas.annotations.media.ArraySchema ?
+                    ((io.swagger.v3.oas.annotations.media.ArraySchema) annotation).arraySchema() :
+                    (io.swagger.v3.oas.annotations.media.Schema) annotation;
+        }
+    }
+
+    private io.swagger.v3.oas.annotations.media.Schema getSchemaAnnotation(Annotation annotation) {
+        if (annotation == null) {
+            return null;
+        } else {
+            return annotation instanceof io.swagger.v3.oas.annotations.media.ArraySchema ?
+                    ((io.swagger.v3.oas.annotations.media.ArraySchema) annotation).schema() :
+                    (io.swagger.v3.oas.annotations.media.Schema) annotation;
+        }
+    }
+
+    private io.swagger.v3.oas.annotations.media.ArraySchema getArraySchemaAnnotation(Annotation annotation) {
+        if (annotation == null) {
+            return null;
+        } else {
+            return annotation instanceof io.swagger.v3.oas.annotations.media.ArraySchema ?
+                    (io.swagger.v3.oas.annotations.media.ArraySchema) annotation :
+                    null;
+        }
     }
 
     /**

@@ -65,7 +65,6 @@ public class Issue5077Test {
     @Test
     public void nullableSetOas31_onlyContainerIsNullable() {
         ResolvedSchema resolved = ModelConverters.getInstance(true).readAllAsResolvedSchema(NullableSetContainer.class);
-        System.out.println("nullableSetOas31_onlyContainerIsNullable:\n" + Json31.pretty(resolved));
         Map<String, Schema> schemas = resolved.referencedSchemas;
         Schema<?> container = schemas.get("NullableSetContainer");
         Schema<?> tags = (Schema<?>) container.getProperties().get("tags");
@@ -84,7 +83,6 @@ public class Issue5077Test {
     @Test
     public void nullableArrayOas31_onlyContainerIsNullable() {
         ResolvedSchema resolved = ModelConverters.getInstance(true).readAllAsResolvedSchema(NullableArrayContainer.class);
-        System.out.println("nullableArrayOas31_onlyContainerIsNullable:\n" + Json31.pretty(resolved));
         Map<String, Schema> schemas = resolved.referencedSchemas;
         Schema<?> container = schemas.get("NullableArrayContainer");
         Schema<?> names = (Schema<?>) container.getProperties().get("names");
@@ -103,7 +101,6 @@ public class Issue5077Test {
     @Test
     public void nullableMapOas31_onlyContainerIsNullable() {
         ResolvedSchema resolved = ModelConverters.getInstance(true).readAllAsResolvedSchema(NullableMapContainer.class);
-        System.out.println("nullableMapOas31_onlyContainerIsNullable:\n" + Json31.pretty(resolved));
         Map<String, Schema> schemas = resolved.referencedSchemas;
         Schema<?> container = schemas.get("NullableMapContainer");
         Schema<?> labels = (Schema<?>) container.getProperties().get("labels");
@@ -122,7 +119,6 @@ public class Issue5077Test {
     @Test
     public void nullableNestedListOas31_onlyOuterContainerIsNullable() {
         ResolvedSchema resolved = ModelConverters.getInstance(true).readAllAsResolvedSchema(NullableNestedListContainer.class);
-        System.out.println("nullableNestedListOas31_onlyOuterContainerIsNullable:\n" + Json31.pretty(resolved));
         Map<String, Schema> schemas = resolved.referencedSchemas;
         Schema<?> container = schemas.get("NullableNestedListContainer");
         Schema<?> matrix = (Schema<?>) container.getProperties().get("matrix");
@@ -147,7 +143,6 @@ public class Issue5077Test {
     @Test
     public void explicitItemNullabilityOas31_stillWorks() {
         ResolvedSchema resolved = ModelConverters.getInstance(true).readAllAsResolvedSchema(ExplicitNullableItemsContainer.class);
-        System.out.println("explicitItemNullabilityOas31_stillWorks:\n" + Json31.pretty(resolved));
         Map<String, Schema> schemas = resolved.referencedSchemas;
         Schema<?> container = schemas.get("ExplicitNullableItemsContainer");
         Schema<?> values = (Schema<?>) container.getProperties().get("values");
@@ -185,7 +180,6 @@ public class Issue5077Test {
     @Test
     public void nullableSetOas30_onlyContainerIsNullable() {
         ResolvedSchema resolved = ModelConverters.getInstance(false).readAllAsResolvedSchema(NullableSetContainer.class);
-        System.out.println("nullableSetOas30_onlyContainerIsNullable:\n" + Json.pretty(resolved));
         Map<String, Schema> schemas = resolved.referencedSchemas;
         Schema<?> container = schemas.get("NullableSetContainer");
         ArraySchema tags = (ArraySchema) container.getProperties().get("tags");
@@ -203,7 +197,6 @@ public class Issue5077Test {
     @Test
     public void nullableMapOas30_onlyContainerIsNullable() {
         ResolvedSchema resolved = ModelConverters.getInstance(false).readAllAsResolvedSchema(NullableMapContainer.class);
-        System.out.println("nullableMapOas30_onlyContainerIsNullable:\n" + Json.pretty(resolved));
         Map<String, Schema> schemas = resolved.referencedSchemas;
         Schema<?> container = schemas.get("NullableMapContainer");
         Schema<?> labels = (Schema<?>) container.getProperties().get("labels");
