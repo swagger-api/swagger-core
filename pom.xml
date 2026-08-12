@@ -621,7 +621,7 @@
         <jackson-annotations-version>2.22</jackson-annotations-version>
         <jackson-version>3.2.1</jackson-version>
         <logback-version>1.6.1</logback-version>
-        <classgraph-version>4.8.187</classgraph-version>
+        <classgraph-version>4.8.189</classgraph-version>
         <guava-version>33.6.0-jre</guava-version>
         <ant-version>1.10.17</ant-version>
         <commons-io-version>2.22.0</commons-io-version>
