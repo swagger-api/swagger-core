@@ -37,17 +37,36 @@ public abstract class AbstractModelConverter implements ModelConverter {
     }
 
     protected AbstractModelConverter(ObjectMapper mapper, TypeNameResolver typeNameResolver) {
-        _mapper = mapper.rebuild()
+        MapperBuilder<ObjectMapper, ?> builder = mapper.rebuild()
                 .addModule(new SimpleModule("swagger", Version.unknownVersion()) {
                     @Override
                     public void setupModule(SetupContext context) {
                         context.insertAnnotationIntrospector(new SwaggerAnnotationIntrospector());
                     }
-                })
-                .accessorNaming(new DefaultAccessorNamingStrategy.Provider()
-                        .withFirstCharAcceptance(true, true))
-                .build();
+                });
+        // Only impose Swagger's own accessor naming when the caller has not configured one.
+        // Overwriting it unconditionally discards the caller's strategy, so schema property names
+        // diverge from the JSON the caller's mapper actually produces -- e.g. properties read via
+        // non-bean-convention accessors go missing from the schema.
+        if (usesDefaultAccessorNaming(mapper)) {
+            builder.accessorNaming(new DefaultAccessorNamingStrategy.Provider()
+                    .withFirstCharAcceptance(true, true));
+        }
+        _mapper = builder.build();
         _typeNameResolver = typeNameResolver;
+    }
+
+    /**
+     * Whether the mapper still carries Jackson's stock accessor naming provider, meaning the caller
+     * expressed no preference of their own. A custom provider -- including a subclass of
+     * {@link DefaultAccessorNamingStrategy.Provider} -- is left alone.
+     *
+     * @param mapper the mapper handed to this converter
+     * @return true when Swagger's accessor naming may safely be applied
+     */
+    private static boolean usesDefaultAccessorNaming(ObjectMapper mapper) {
+        AccessorNamingStrategy.Provider provider = mapper.serializationConfig().getAccessorNaming();
+        return provider == null || provider.getClass() == DefaultAccessorNamingStrategy.Provider.class;
     }
 
     @Override
