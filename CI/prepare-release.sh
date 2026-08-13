@@ -55,11 +55,10 @@ sc_replace="$sc_find\n$sc_add"
 sed -i -e "s/$sc_find/$sc_replace/g" $CUR/README.md
 
 #####################
-### close the Unreleased changelog section under the new version heading ###
+### close the Unreleased changelog section under the new version heading, ###
+### unless it has no entries (avoids an empty release section) ###
 #####################
-sc_find="## \[Unreleased\]"
-sc_replace="## [Unreleased]\n\n## [$SC_VERSION] - $CURDATE"
-sed -i -e "s/$sc_find/$sc_replace/g" $CUR/CHANGELOG.md
+python $CUR/CI/updateChangelog.py $CUR/CHANGELOG.md "$SC_VERSION" "$CURDATE"
 
 sc_find="\"io.swagger.core.v3.swagger-gradle-plugin\" version \"$SC_LAST_RELEASE\""
 sc_replace="\"io.swagger.core.v3.swagger-gradle-plugin\" version \"$SC_VERSION\""
