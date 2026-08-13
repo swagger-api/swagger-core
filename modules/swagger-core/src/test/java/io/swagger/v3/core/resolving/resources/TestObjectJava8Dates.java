@@ -8,9 +8,10 @@ import java.time.OffsetDateTime;
 import java.time.OffsetTime;
 import java.time.ZonedDateTime;
 
-// LocalTime is intentionally excluded: its default behaviour depends on whether
-// enablePartialTime() has been called by a preceding test (shared static state).
-// LocalTime opt-in behaviour is covered in Java8DateFormatsTest#testEnableJava8Formats.
+// LocalTime default is verified separately in Java8DateFormatsTest#testDefaultLocalTime,
+// as an isolated PrimitiveType-level check that clears any prior enablePartialTime()/
+// enableJava8Formats() state before asserting — not here, to avoid coupling this
+// integration fixture to shared mutable state in PrimitiveType.customClasses().
 public class TestObjectJava8Dates {
 
     private LocalDateTime localDateTime;

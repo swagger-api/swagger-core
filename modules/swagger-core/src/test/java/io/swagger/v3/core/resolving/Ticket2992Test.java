@@ -21,32 +21,20 @@ public class Ticket2992Test extends SwaggerTestBase {
         Schema model = context
                 .resolve(new AnnotatedType(TestObject2992.class));
 
-        SerializationMatchers.assertEqualsToYaml(context.getDefinedModels(), "LocalTime:\n" +
-                "  type: object\n" +
-                "  properties:\n" +
-                "    hour:\n" +
-                "      type: integer\n" +
-                "      format: int32\n" +
-                "    minute:\n" +
-                "      type: integer\n" +
-                "      format: int32\n" +
-                "    second:\n" +
-                "      type: integer\n" +
-                "      format: int32\n" +
-                "    nano:\n" +
-                "      type: integer\n" +
-                "      format: int32\n" +
-                "TestObject2992:\n" +
+        SerializationMatchers.assertEqualsToYaml(context.getDefinedModels(), "TestObject2992:\n" +
                 "  type: object\n" +
                 "  properties:\n" +
                 "    name:\n" +
                 "      type: string\n" +
                 "    a:\n" +
-                "      $ref: \"#/components/schemas/LocalTime\"\n" +
+                "      type: string\n" +
+                "      format: time-local\n" +
                 "    b:\n" +
-                "      $ref: \"#/components/schemas/LocalTime\"\n" +
+                "      type: string\n" +
+                "      format: time-local\n" +
                 "    c:\n" +
-                "      $ref: \"#/components/schemas/LocalTime\"\n" +
+                "      type: string\n" +
+                "      format: time-local\n" +
                 "    d:\n" +
                 "      type: string\n" +
                 "      format: date-time\n" +

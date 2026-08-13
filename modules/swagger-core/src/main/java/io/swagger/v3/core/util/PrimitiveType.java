@@ -409,8 +409,9 @@ public enum PrimitiveType {
                 "org.joda.time.ReadableDateTime",
                 "org.joda.time.DateTime",
                 "java.time.Instant");
-        addKeys(externalClasses, TIME,     "java.time.OffsetTime");
-        addKeys(externalClasses, DURATION, "java.time.Duration");
+        addKeys(externalClasses, TIME,       "java.time.OffsetTime");
+        addKeys(externalClasses, DURATION,   "java.time.Duration");
+        addKeys(externalClasses, TIME_LOCAL, "java.time.LocalTime");
         EXTERNAL_CLASSES = Collections.unmodifiableMap(externalClasses);
 
         final Map<String, PrimitiveType> names = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
@@ -631,10 +632,14 @@ public enum PrimitiveType {
      * Convenience method to map LocalTime to string primitive with rfc3339 format partial-time.
      * See https://xml2rfc.tools.ietf.org/public/rfc/html/rfc3339.html#anchor14
      *
+     * <p>{@code "partial-time"} is not itself a registered OpenAPI Formats Registry value
+     * (it is borrowed from RFC 3339 grammar). {@code java.time.LocalTime} already defaults to
+     * the registry-compliant {@code "time-local"}; this method overrides that default for
+     * callers who specifically need the {@code "partial-time"} format instead, since it is a
+     * different mapping, not a strict replacement for it.
+     *
      * @since 2.0.6
-     * @deprecated Use {@link #enableJava8Formats()} instead, which maps {@code java.time.LocalTime}
-     *             to the OpenAPI Formats Registry format {@code "time-local"}.
-     *             This method will be removed in the next major version.
+     * @deprecated Prefer the default {@code "time-local"} mapping for {@code java.time.LocalTime}.
      */
     @Deprecated
     public static void enablePartialTime() {
@@ -643,22 +648,12 @@ public enum PrimitiveType {
     }
 
     /**
-     * Opts in to the OpenAPI Formats Registry mappings for Java 8 date/time types:
-     * <ul>
-     *   <li>{@code java.time.LocalDateTime} → format {@code "date-time-local"}</li>
-     *   <li>{@code java.time.LocalTime}     → format {@code "time-local"}</li>
-     * </ul>
-     * {@code java.time.OffsetTime} and {@code java.time.Duration} are already mapped
-     * by default to {@code "time"} and {@code "duration"} respectively, since their
-     * previous expansion as complex objects was always incorrect.
-     *
-     * <p>Note: {@code java.time.LocalDateTime} defaults to {@code "date-time"} for
-     * backward compatibility. The default will change in the next major version.
+     * Opts in to the OpenAPI Formats Registry mapping for {@code java.time.LocalDateTime}:
+     * maps it to format {@code "date-time-local"} instead of the default {@code "date-time"}.
      *
      * @since 2.2.51
      */
     public static void enableJava8Formats() {
         customClasses().put("java.time.LocalDateTime", PrimitiveType.DATE_TIME_LOCAL);
-        customClasses().put("java.time.LocalTime",     PrimitiveType.TIME_LOCAL);
     }
 }

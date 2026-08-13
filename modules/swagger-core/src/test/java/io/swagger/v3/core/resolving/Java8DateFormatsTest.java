@@ -7,22 +7,29 @@ import io.swagger.v3.core.matchers.SerializationMatchers;
 import io.swagger.v3.core.resolving.resources.TestObjectJava8Dates;
 import io.swagger.v3.core.resolving.resources.TestObject2992;
 import io.swagger.v3.core.util.PrimitiveType;
+import io.swagger.v3.oas.models.media.Schema;
+import io.swagger.v3.oas.models.media.TimeLocalSchema;
 import org.testng.annotations.Test;
 
+import java.time.LocalTime;
 import java.util.Map;
+
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
 
 /**
  * Verifies Java 8 date/time type → OpenAPI format mappings (issue #5172).
  *
- * Default behaviour (backward-compatible):
- *   OffsetTime  → "time"     (fixed; was incorrectly a complex object)
- *   Duration    → "duration" (fixed; was incorrectly a complex object)
- *   LocalDateTime → "date-time"    (unchanged for compatibility)
- *   LocalTime     → complex object (unchanged; call enableJava8Formats() to opt in)
+ * Default behaviour (fixed; previous complex-object expansion was always incorrect):
+ *   OffsetTime  → "time"
+ *   Duration    → "duration"
+ *   LocalTime   → "time-local"
+ *
+ * Default behaviour (unchanged for compatibility):
+ *   LocalDateTime → "date-time"
  *
  * Opt-in via PrimitiveType.enableJava8Formats():
  *   LocalDateTime → "date-time-local"
- *   LocalTime     → "time-local"
  */
 public class Java8DateFormatsTest extends SwaggerTestBase {
 
@@ -103,6 +110,25 @@ public class Java8DateFormatsTest extends SwaggerTestBase {
             else custom.put("java.time.LocalDateTime", prevLocalDateTime);
             if (prevLocalTime == null) custom.remove("java.time.LocalTime");
             else custom.put("java.time.LocalTime", prevLocalTime);
+        }
+    }
+
+    @Test
+    public void testDefaultLocalTime() {
+        // Isolate from any prior enablePartialTime()/enableJava8Formats() call left in the
+        // shared static customClasses map by other tests (e.g. Ticket2992Test), so this checks
+        // the true PrimitiveType default, regardless of test execution order.
+        final String key = "java.time.LocalTime";
+        final Map<String, PrimitiveType> custom = PrimitiveType.customClasses();
+        final PrimitiveType previous = custom.remove(key);
+        try {
+            final Schema<?> schema = PrimitiveType.createProperty(LocalTime.class);
+            assertNotNull(schema);
+            assertEquals(schema.getClass(), TimeLocalSchema.class);
+            assertEquals(schema.getFormat(), "time-local");
+        } finally {
+            if (previous == null) custom.remove(key);
+            else custom.put(key, previous);
         }
     }
 }
