@@ -651,7 +651,7 @@ public enum PrimitiveType {
      * Opts in to the OpenAPI Formats Registry mapping for {@code java.time.LocalDateTime}:
      * maps it to format {@code "date-time-local"} instead of the default {@code "date-time"}.
      *
-     * @since 2.2.51
+     * @since 2.3.0
      */
     public static void enableJava8Formats() {
         customClasses().put("java.time.LocalDateTime", PrimitiveType.DATE_TIME_LOCAL);
