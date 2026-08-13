@@ -54,6 +54,13 @@ sc_add="$SC_VERSION (**current stable**)| $CURDATE   | 3.x           | [tag v$SC
 sc_replace="$sc_find\n$sc_add"
 sed -i -e "s/$sc_find/$sc_replace/g" $CUR/README.md
 
+#####################
+### close the Unreleased changelog section under the new version heading ###
+#####################
+sc_find="## \[Unreleased\]"
+sc_replace="## [Unreleased]\n\n## [$SC_VERSION] - $CURDATE"
+sed -i -e "s/$sc_find/$sc_replace/g" $CUR/CHANGELOG.md
+
 sc_find="\"io.swagger.core.v3.swagger-gradle-plugin\" version \"$SC_LAST_RELEASE\""
 sc_replace="\"io.swagger.core.v3.swagger-gradle-plugin\" version \"$SC_VERSION\""
 sed -i -e "s/$sc_find/$sc_replace/g" $CUR/modules/swagger-gradle-plugin/README.md
