@@ -296,6 +296,12 @@ public class Schema<T> {
     private Map<String, Schema> dependentSchemas;
 
     /**
+     * @since 2.2.52 (OpenAPI 3.1.0)
+     */
+    @OpenAPI31
+    private Map<String, Schema> $defs;
+
+    /**
      * @since 2.2.0 (OpenAPI 3.1.0)
      */
     @OpenAPI31
@@ -2015,6 +2021,47 @@ public class Schema<T> {
 
     /**
      *
+     * @since 2.2.52 (OpenAPI 3.1.0)
+     */
+    @OpenAPI31
+    public Map<String, Schema> get$defs() {
+        return $defs;
+    }
+
+    /**
+     *
+     * @since 2.2.52 (OpenAPI 3.1.0)
+     */
+    @OpenAPI31
+    public void set$defs(Map<String, Schema> $defs) {
+        this.$defs = $defs;
+    }
+
+    /**
+     *
+     * @since 2.2.52 (OpenAPI 3.1.0)
+     */
+    @OpenAPI31
+    public Schema $defs(Map<String, Schema> $defs) {
+        this.$defs = $defs;
+        return this;
+    }
+
+    /**
+     *
+     * @since 2.2.52 (OpenAPI 3.1.0)
+     */
+    @OpenAPI31
+    public Schema add$defs(String key, Schema $defsItem) {
+        if (this.$defs == null) {
+            this.$defs = new LinkedHashMap<>();
+        }
+        this.$defs.put(key, $defsItem);
+        return this;
+    }
+
+    /**
+     *
      * @since 2.2.0 (OpenAPI 3.1.0)
      */
     @OpenAPI31
@@ -2180,6 +2227,7 @@ public class Schema<T> {
                 Objects.equals(this.then, schema.then) &&
                 Objects.equals(this.dependentRequired, schema.dependentRequired) &&
                 Objects.equals(this.dependentSchemas, schema.dependentSchemas) &&
+                Objects.equals(this.$defs, schema.$defs) &&
                 Objects.equals(this.$comment, schema.$comment) &&
                 Objects.equals(this.examples, schema.examples) &&
                 Objects.equals(this.prefixItems, schema.prefixItems) &&
@@ -2197,7 +2245,7 @@ public class Schema<T> {
                 discriminator, _enum, _default, patternProperties, $id, $anchor, $schema, $vocabulary, $dynamicAnchor,
                 $dynamicRef, types, allOf, anyOf, oneOf, _const, contentEncoding, contentMediaType, contentSchema,
                 propertyNames, unevaluatedProperties, maxContains, minContains, additionalItems, unevaluatedItems,
-                _if, _else, then, dependentRequired, dependentSchemas, $comment, examples, prefixItems, items, booleanSchemaValue);
+                _if, _else, then, dependentRequired, dependentSchemas, $defs, $comment, examples, prefixItems, items, booleanSchemaValue);
     }
 
     public java.util.Map<String, Object> getExtensions() {
@@ -2284,6 +2332,7 @@ public class Schema<T> {
             sb.append("    then: ").append(toIndentedString(then)).append("\n");
             sb.append("    dependentRequired: ").append(toIndentedString(dependentRequired)).append("\n");
             sb.append("    dependentSchemas: ").append(toIndentedString(dependentSchemas)).append("\n");
+            sb.append("    $defs: ").append(toIndentedString($defs)).append("\n");
             sb.append("    $comment: ").append(toIndentedString($comment)).append("\n");
             sb.append("    prefixItems: ").append(toIndentedString(prefixItems)).append("\n");
             sb.append("    booleanSchemaValue: ").append(toIndentedString(booleanSchemaValue)).append("\n");

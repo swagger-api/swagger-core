@@ -98,6 +98,9 @@ public abstract class SchemaMixin {
     public abstract Map<String, Schema> getDependentSchemas();
 
     @JsonIgnore
+    public abstract Map<String, Schema> get$defs();
+
+    @JsonIgnore
     public abstract Map<String, List<String>> getDependentRequired();
 
     @JsonIgnore
