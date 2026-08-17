@@ -965,7 +965,7 @@ public class AnnotationsUtilsTest {
 	}
 
     @Test(dataProvider = "expectedEnumSchema")
-    public void getEnumSchema(String methodName, Map<String, Object> expected) throws NoSuchMethodException {
+    public void testEnumSchemaFromAllowableValues(String methodName, Map<String, Object> expected) throws NoSuchMethodException {
         final Method method = getClass().getDeclaredMethod(methodName);
         Content annotationContent = method.getAnnotation(ApiResponse.class).content()[0];
         Optional<? extends Schema> schema = AnnotationsUtils.getSchema(annotationContent, new Components(), null, false);
