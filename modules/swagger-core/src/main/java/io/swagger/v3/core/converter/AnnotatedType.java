@@ -277,9 +277,13 @@ public class AnnotatedType {
         AnnotatedType that = (AnnotatedType) o;
         List<Annotation> thisAnnotations = getProcessedAnnotations(this.ctxAnnotations);
         List<Annotation> thatAnnotations = getProcessedAnnotations(that.ctxAnnotations);
+        String thisParentName = this.parent != null ? this.parent.getName() : null;
+        String thatParentName = that.parent != null ? that.parent.getName() : null;
+
         return  includePropertiesWithoutJSONView == that.includePropertiesWithoutJSONView &&
                 schemaProperty == that.schemaProperty &&
                 isSubtype == that.isSubtype &&
+                (!schemaProperty || Objects.equals(thisParentName, thatParentName)) &&
                 Objects.equals(type, that.type) &&
                 Objects.equals(thisAnnotations, thatAnnotations) &&
                 Objects.equals(jsonViewAnnotation, that.jsonViewAnnotation) &&
@@ -289,7 +293,8 @@ public class AnnotatedType {
     @Override
     public int hashCode() {
         List<Annotation> processedAnnotations = getProcessedAnnotations(this.ctxAnnotations);
-        return Objects.hash(type, jsonViewAnnotation, includePropertiesWithoutJSONView, processedAnnotations, schemaProperty, isSubtype, schemaProperty ? propertyName : null);
+        String parentName = (schemaProperty && this.parent != null) ? this.parent.getName() : null;
+        return Objects.hash(type, jsonViewAnnotation, includePropertiesWithoutJSONView, processedAnnotations, schemaProperty, isSubtype, schemaProperty ? propertyName : null, parentName);
     }
 
     private boolean processableAnnotationPackage(Package pkg) {
