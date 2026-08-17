@@ -1,6 +1,5 @@
 package io.swagger.v3.core.issues;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.core.converter.AnnotatedType;
 import io.swagger.v3.core.converter.ModelConverterContextImpl;
 import io.swagger.v3.core.jackson.ModelResolver;
@@ -8,6 +7,7 @@ import io.swagger.v3.core.util.Configuration;
 import io.swagger.v3.core.util.Json;
 import io.swagger.v3.core.util.Json31;
 import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.models.SpecVersion;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.testng.annotations.Test;
 
@@ -22,7 +22,7 @@ public class Issue4838Test {
 
     @Test
     public void defaultValueShouldBeNullForEmptyStringFieldInOas30() {
-        final ModelConverterContextImpl context = getModelConverterContext(Json.mapper(), false);
+        final ModelConverterContextImpl context = getModelConverterContext(SpecVersion.V30);
 
         final io.swagger.v3.oas.models.media.Schema model = context
                 .resolve(new AnnotatedType(NullableStringModel.class));
@@ -37,7 +37,7 @@ public class Issue4838Test {
 
     @Test
     public void defaultValueShouldBeNullForIntegerFieldInOas30() {
-        final ModelConverterContextImpl context = getModelConverterContext(Json.mapper(), false);
+        final ModelConverterContextImpl context = getModelConverterContext(SpecVersion.V30);
 
         final io.swagger.v3.oas.models.media.Schema model = context
                 .resolve(new AnnotatedType(NullableIntegerModel.class));
@@ -54,7 +54,7 @@ public class Issue4838Test {
 
     @Test
     public void defaultValueShouldBeProvidedFromBigDecimalSchemaForOas30() {
-        final ModelConverterContextImpl context = getModelConverterContext(Json.mapper(), false);
+        final ModelConverterContextImpl context = getModelConverterContext(SpecVersion.V30);
 
         final io.swagger.v3.oas.models.media.Schema model = context
                 .resolve(new AnnotatedType(NullableBigDecimalModel.class));
@@ -70,7 +70,7 @@ public class Issue4838Test {
 
     @Test
     public void defaultValueShouldBeNullProvidedFromBooleanSchemaForOas30() {
-        final ModelConverterContextImpl context = getModelConverterContext(Json.mapper(), false);
+        final ModelConverterContextImpl context = getModelConverterContext(SpecVersion.V30);
 
         final io.swagger.v3.oas.models.media.Schema model = context
                 .resolve(new AnnotatedType(NullableBooleanModel.class));
@@ -86,7 +86,7 @@ public class Issue4838Test {
 
     @Test
     public void defaultValueShouldBeNullForEmptyStringFieldInOas31() {
-        final ModelConverterContextImpl context = getModelConverterContext(Json31.mapper(), true);
+        final ModelConverterContextImpl context = getModelConverterContext(SpecVersion.V31);
 
         final io.swagger.v3.oas.models.media.Schema model = context
                 .resolve(new AnnotatedType(NullableStringModel.class));
@@ -101,7 +101,7 @@ public class Issue4838Test {
 
     @Test
     public void defaultValueShouldBeNullForIntegerFieldInOas31() {
-        final ModelConverterContextImpl context = getModelConverterContext(Json31.mapper(), true);
+        final ModelConverterContextImpl context = getModelConverterContext(SpecVersion.V31);
 
         final io.swagger.v3.oas.models.media.Schema model = context
                 .resolve(new AnnotatedType(NullableIntegerModel.class));
@@ -117,7 +117,7 @@ public class Issue4838Test {
 
     @Test
     public void defaultValueShouldBeProvidedFromBigDecimalSchemaForOas31() {
-        final ModelConverterContextImpl context = getModelConverterContext(Json31.mapper(), true);
+        final ModelConverterContextImpl context = getModelConverterContext(SpecVersion.V31);
 
         final io.swagger.v3.oas.models.media.Schema model = context
                 .resolve(new AnnotatedType(NullableBigDecimalModel.class));
@@ -134,7 +134,7 @@ public class Issue4838Test {
 
     @Test
     public void defaultValueShouldBeNullProvidedFromBooleanSchemaForOas31() {
-        final ModelConverterContextImpl context = getModelConverterContext(Json31.mapper(), true);
+        final ModelConverterContextImpl context = getModelConverterContext(SpecVersion.V31);
 
         final io.swagger.v3.oas.models.media.Schema model = context
                 .resolve(new AnnotatedType(NullableBooleanModel.class));
@@ -148,10 +148,10 @@ public class Issue4838Test {
         assertNull(nullableBooleanField.getDefault());
     }
 
-    private static @NonNull ModelConverterContextImpl getModelConverterContext(ObjectMapper mapper, boolean openAPI31) {
-        final ModelResolver modelResolver = new ModelResolver(mapper);
+    private static @NonNull ModelConverterContextImpl getModelConverterContext(SpecVersion specVersion) {
+        final ModelResolver modelResolver = new ModelResolver(specVersion.equals(SpecVersion.V31) ? Json31.mapper() : Json.mapper());
         Configuration configuration = new Configuration();
-        configuration.setOpenAPI31(openAPI31);
+        configuration.setOpenAPI31(specVersion.equals(SpecVersion.V31));
         modelResolver.setConfiguration(configuration);
         return new ModelConverterContextImpl(modelResolver);
     }
