@@ -138,6 +138,8 @@ Swagger core Version      | Release Date | OpenAPI Spec compatibility | Notes | 
 ### Change History
 If you're interested in the change history of swagger and the Swagger Core framework, see [here](https://github.com/swagger-api/swagger-core/releases).
 
+Starting with version 2.3.0, notable changes and fixes are also documented in [CHANGELOG.md](CHANGELOG.md).
+
 ### Prerequisites
 You need the following installed and available in your $PATH:
 
