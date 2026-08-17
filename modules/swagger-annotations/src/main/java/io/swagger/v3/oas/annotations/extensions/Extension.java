@@ -14,7 +14,7 @@ import static java.lang.annotation.ElementType.PARAMETER;
 /**
  * An optionally named list of extension properties.
  *
- * @see <a target="_new" href="https://github.com/OAI/OpenAPI-Specification/blob/3.0.1/versions/3.0.1.md#specificationExtensions">Specification extensions (OpenAPI specification)</a>
+ * @see <a target="_new" href="https://github.com/OAI/OpenAPI-Specification/blob/3.0.4/versions/3.0.4.md#specification-extensions">Specification extensions (OpenAPI specification)</a>
  */
 @Target({FIELD, METHOD, PARAMETER, TYPE, ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)

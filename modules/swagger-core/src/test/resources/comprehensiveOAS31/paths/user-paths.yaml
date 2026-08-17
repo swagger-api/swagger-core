@@ -1,0 +1,511 @@
+# User Paths for OpenAPI 3.1
+# This file contains user-related paths referenced by the root file
+
+# Path for /users
+/users:
+  get:
+    summary: List all users
+    description: Returns all users from the system that the requester has access to
+    operationId: listUsers
+    tags:
+      - users
+    parameters:
+      - name: limit
+        in: query
+        description: Maximum number of users to return
+        required: false
+        schema:
+          type: integer
+          format: int32
+          minimum: 1
+          maximum: 100
+          default: 20
+      - name: offset
+        in: query
+        description: Offset for pagination
+        required: false
+        schema:
+          type: integer
+          format: int32
+          minimum: 0
+          default: 0
+      - name: status
+        in: query
+        description: Status values that need to be considered for filter
+        required: false
+        schema:
+          type: integer
+          format: int32
+          enum: [0, 1, 2]
+      - name: sort
+        in: query
+        description: Sort order
+        required: false
+        schema:
+          type: string
+          enum: [username, id, status]
+          default: username
+    responses:
+      '200':
+        description: A paged array of users
+        headers:
+          x-next:
+            description: A link to the next page of responses
+            schema:
+              type: string
+              format: uri
+          x-total-count:
+            description: Total number of users
+            schema:
+              type: integer
+              format: int32
+              minimum: 0
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/user-schemas.yaml#/UserArray"
+            examples:
+              users:
+                summary: Example of users
+                value:
+                  - id: 1
+                    username: john_doe
+                    email: john@example.com
+                  - id: 2
+                    username: jane_doe
+                    email: jane@example.com
+      '400':
+        description: Bad request
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/common-schemas.yaml#/Error"
+      '401':
+        description: Unauthorized
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/common-schemas.yaml#/Error"
+      '403':
+        description: Forbidden
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/common-schemas.yaml#/Error"
+      '500':
+        description: Internal server error
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/common-schemas.yaml#/Error"
+    security:
+      - user_auth:
+          - read:users
+  post:
+    summary: Create a user
+    description: Creates a new user in the system
+    operationId: createUser
+    tags:
+      - users
+    requestBody:
+      description: User to add to the system
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "../schemas/user-schemas.yaml#/User"
+          examples:
+            user:
+              summary: Example of a user
+              value:
+                id: 0
+                username: john_doe
+                firstName: John
+                lastName: Doe
+                email: john@example.com
+                password: password123
+                phone: "+1234567890"
+                userStatus: 0
+    responses:
+      '201':
+        description: User created
+        headers:
+          Location:
+            description: URL of the newly created user
+            schema:
+              type: string
+              format: uri
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/user-schemas.yaml#/User"
+      '400':
+        description: Bad request
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/common-schemas.yaml#/Error"
+      '401':
+        description: Unauthorized
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/common-schemas.yaml#/Error"
+      '403':
+        description: Forbidden
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/common-schemas.yaml#/Error"
+      '500':
+        description: Internal server error
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/common-schemas.yaml#/Error"
+    security:
+      - user_auth:
+          - write:users
+
+# Path for /users/{userId}
+/users/{userId}:
+  parameters:
+    - name: userId
+      in: path
+      description: ID of user to return
+      required: true
+      schema:
+        type: integer
+        format: int64
+        minimum: 1
+  get:
+    summary: Find user by ID
+    description: Returns a single user
+    operationId: getUserById
+    tags:
+      - users
+    responses:
+      '200':
+        description: Successful operation
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/user-schemas.yaml#/User"
+            examples:
+              user:
+                summary: Example of a user
+                value:
+                  id: 1
+                  username: john_doe
+                  firstName: John
+                  lastName: Doe
+                  email: john@example.com
+                  phone: "+1234567890"
+                  userStatus: 0
+      '400':
+        description: Invalid ID supplied
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/common-schemas.yaml#/Error"
+      '404':
+        description: User not found
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/common-schemas.yaml#/Error"
+      '500':
+        description: Internal server error
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/common-schemas.yaml#/Error"
+    security:
+      - user_auth:
+          - read:users
+      - api_key: []
+  put:
+    summary: Update an existing user
+    description: Updates a user in the system
+    operationId: updateUser
+    tags:
+      - users
+    requestBody:
+      description: User to update
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "../schemas/user-schemas.yaml#/User"
+          examples:
+            user:
+              summary: Example of a user
+              value:
+                id: 1
+                username: john_doe
+                firstName: John
+                lastName: Doe
+                email: john@example.com
+                phone: "+1234567890"
+                userStatus: 0
+    responses:
+      '200':
+        description: Successful operation
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/user-schemas.yaml#/User"
+      '400':
+        description: Invalid ID supplied
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/common-schemas.yaml#/Error"
+      '404':
+        description: User not found
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/common-schemas.yaml#/Error"
+      '405':
+        description: Validation exception
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/common-schemas.yaml#/Error"
+      '500':
+        description: Internal server error
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/common-schemas.yaml#/Error"
+    security:
+      - user_auth:
+          - write:users
+  delete:
+    summary: Deletes a user
+    description: Deletes a user from the system
+    operationId: deleteUser
+    tags:
+      - users
+    responses:
+      '204':
+        description: User deleted
+      '400':
+        description: Invalid ID supplied
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/common-schemas.yaml#/Error"
+      '404':
+        description: User not found
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/common-schemas.yaml#/Error"
+      '500':
+        description: Internal server error
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/common-schemas.yaml#/Error"
+    security:
+      - user_auth:
+          - write:users
+
+# Path for /users/login
+/users/login:
+  post:
+    summary: User login
+    description: Logs user into the system
+    operationId: loginUser
+    tags:
+      - users
+    requestBody:
+      description: User credentials
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "../schemas/user-schemas.yaml#/UserCredentials"
+          examples:
+            credentials:
+              summary: Example of user credentials
+              value:
+                username: john_doe
+                password: password123
+    responses:
+      '200':
+        description: Successful operation
+        headers:
+          X-Rate-Limit:
+            description: Calls per hour allowed by the user
+            schema:
+              type: integer
+              format: int32
+          X-Expires-After:
+            description: Date in UTC when token expires
+            schema:
+              type: string
+              format: date-time
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                token:
+                  type: string
+                  description: Authentication token
+                expiresAt:
+                  type: string
+                  format: date-time
+                  description: Token expiration time
+      '400':
+        description: Invalid username/password supplied
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/common-schemas.yaml#/Error"
+      '500':
+        description: Internal server error
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/common-schemas.yaml#/Error"
+
+# Path for /users/logout
+/users/logout:
+  post:
+    summary: User logout
+    description: Logs out current logged in user session
+    operationId: logoutUser
+    tags:
+      - users
+    responses:
+      '200':
+        description: Successful operation
+      '401':
+        description: Unauthorized
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/common-schemas.yaml#/Error"
+      '500':
+        description: Internal server error
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/common-schemas.yaml#/Error"
+    security:
+      - user_auth: []
+
+# Path for /users/{userId}/preferences
+/users/{userId}/preferences:
+  parameters:
+    - name: userId
+      in: path
+      description: ID of user to return preferences for
+      required: true
+      schema:
+        type: integer
+        format: int64
+        minimum: 1
+  get:
+    summary: Get user preferences
+    description: Returns user preferences
+    operationId: getUserPreferences
+    tags:
+      - users
+    responses:
+      '200':
+        description: Successful operation
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/user-schemas.yaml#/UserPreferences"
+            examples:
+              preferences:
+                summary: Example of user preferences
+                value:
+                  theme: dark
+                  language: en
+                  notifications:
+                    email: true
+                    push: true
+                    sms: false
+                  timezone: UTC
+                  currency: USD
+      '400':
+        description: Invalid ID supplied
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/common-schemas.yaml#/Error"
+      '404':
+        description: User not found
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/common-schemas.yaml#/Error"
+      '500':
+        description: Internal server error
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/common-schemas.yaml#/Error"
+    security:
+      - user_auth:
+          - read:users
+  put:
+    summary: Update user preferences
+    description: Updates user preferences
+    operationId: updateUserPreferences
+    tags:
+      - users
+    requestBody:
+      description: User preferences to update
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "../schemas/user-schemas.yaml#/UserPreferences"
+          examples:
+            preferences:
+              summary: Example of user preferences
+              value:
+                theme: dark
+                language: en
+                notifications:
+                  email: true
+                  push: true
+                  sms: false
+                timezone: UTC
+                currency: USD
+    responses:
+      '200':
+        description: Successful operation
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/user-schemas.yaml#/UserPreferences"
+      '400':
+        description: Invalid ID supplied
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/common-schemas.yaml#/Error"
+      '404':
+        description: User not found
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/common-schemas.yaml#/Error"
+      '500':
+        description: Internal server error
+        content:
+          application/json:
+            schema:
+              $ref: "../schemas/common-schemas.yaml#/Error"
+    security:
+      - user_auth:
+          - write:users

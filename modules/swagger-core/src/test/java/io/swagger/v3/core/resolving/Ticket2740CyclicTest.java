@@ -25,7 +25,7 @@ public class Ticket2740CyclicTest extends SwaggerTestBase {
                 "    type: array\n" +
                 "    description: Other related things\n" +
                 "    items:\n" +
-                "      $ref: '#/components/schemas/MyThing'\n" +
+                "      $ref: \"#/components/schemas/MyThing\"\n" +
                 "description: Thing");
     }
 

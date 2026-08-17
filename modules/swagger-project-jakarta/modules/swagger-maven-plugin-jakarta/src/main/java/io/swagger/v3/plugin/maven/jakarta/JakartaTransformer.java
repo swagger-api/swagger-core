@@ -1,5 +1,8 @@
 package io.swagger.v3.plugin.maven.jakarta;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -41,6 +44,8 @@ import java.util.zip.ZipOutputStream;
  *
  */
 public class JakartaTransformer {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(JakartaTransformer.class);
 
 
     /*
@@ -212,7 +217,7 @@ public class JakartaTransformer {
                     Files.copy(file, pathInZipfile, options);
 
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    LOGGER.error("Error copying file '{}' into ZIP filesystem", file, e);
                 }
 
                 return FileVisitResult.CONTINUE;

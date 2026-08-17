@@ -49,12 +49,18 @@ public enum OutputReplacer {
     public String run(Function function) {
         final PrintStream out = getOutputStream();
         final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-
+        final PrintStream capture = new PrintStream(outputStream);
         try {
-            setOutputStream(new PrintStream(outputStream));
+            setOutputStream(capture);
+            PrettyPrintHelper.setOverride(message -> {
+                capture.println(message);
+                capture.flush();
+            });
             function.run();
         } finally {
+            PrettyPrintHelper.clearOverride();
             setOutputStream(out);
+            capture.close();
         }
 
         try {

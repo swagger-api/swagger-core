@@ -383,6 +383,23 @@ public class ModelConverterTest {
         assertEquals(model.getProperties().size(), 1);
     }
 
+    @Test
+    public void checkDefaultSkippedPackages(){
+        ModelConverters modelConverters = ModelConverters.getInstance();
+
+        assertTrue(modelConverters.getSkippedPackages().contains("java.lang"));
+        assertTrue(modelConverters.getSkippedPackages().contains("groovy.lang"));
+    }
+
+    @Test(description = "It should not process skipped package")
+    public void ignoreSkippedPackage() throws ClassNotFoundException {
+        ModelConverters modelConverters = ModelConverters.getInstance();
+        final Type type = Class.forName("java.lang.String");
+        assertNull(modelConverters.readAllAsResolvedSchema(type));
+
+
+    }
+
     @JsonSerialize(as = AnnotatedImplementationClass.class)
     abstract class BaseClass {
         public abstract String field();
@@ -405,6 +422,7 @@ public class ModelConverterTest {
         assertNotNull(model.getProperties());
         assertEquals(model.getProperties().size(), 1);
     }
+
 
     abstract class AnnotatedBaseClass {
         @JsonProperty

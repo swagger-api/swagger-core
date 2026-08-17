@@ -39,8 +39,9 @@ public class IncludeProjectDependenciesComponentConfigurator extends AbstractCom
     private void addProjectDependenciesToClassRealm(ExpressionEvaluator expressionEvaluator, ClassRealm containerRealm) throws ComponentConfigurationException {
         List<String> compileClasspathElements;
         try {
-            //noinspection unchecked
-            compileClasspathElements = (List<String>) expressionEvaluator.evaluate("${project.compileClasspathElements}");
+            @SuppressWarnings("unchecked")
+            List<String> evaluated = (List<String>) expressionEvaluator.evaluate("${project.compileClasspathElements}");
+            compileClasspathElements = evaluated;
         } catch (ExpressionEvaluationException e) {
             throw new ComponentConfigurationException("There was a problem evaluating: ${project.compileClasspathElements}", e);
         }

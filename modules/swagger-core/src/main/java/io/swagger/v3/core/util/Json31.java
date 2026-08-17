@@ -1,7 +1,6 @@
 package io.swagger.v3.core.util;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
@@ -13,43 +12,43 @@ import java.util.Map;
 
 public class Json31 {
 
-    private static ObjectMapper mapper;
-    private static ObjectMapper converterMapper;
+    private static final class ObjectMapperHolder {
+        private static final ObjectMapper MAPPER = ObjectMapperFactory.createJson31();
+    }
 
-    static Logger LOGGER = LoggerFactory.getLogger(Json31.class);
+    private static final class ConverterMapperHolder {
+        private static final ObjectMapper MAPPER = ObjectMapperFactory.createJsonConverter();
+    }
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(Json31.class);
 
     public static ObjectMapper mapper() {
-        if (mapper == null) {
-            mapper = ObjectMapperFactory.createJson31();
-        }
-        return mapper;
+        return ObjectMapperHolder.MAPPER;
     }
 
     public static ObjectMapper converterMapper() {
-        if (converterMapper == null) {
-            converterMapper = ObjectMapperFactory.createJsonConverter();
-        }
-        return converterMapper;
+        return ConverterMapperHolder.MAPPER;
     }
 
     public static ObjectWriter pretty() {
-        return mapper().writer(new DefaultPrettyPrinter());
+        return mapper().writerWithDefaultPrettyPrinter();
     }
 
     public static String pretty(Object o) {
         try {
             return pretty().writeValueAsString(o);
         } catch (Exception e) {
-            e.printStackTrace();
+            PrettyPrintHelper.emitError(LOGGER, "Error serializing object to JSON (3.1)", e);
             return null;
         }
     }
 
     public static void prettyPrint(Object o) {
         try {
-            System.out.println(pretty().writeValueAsString(o).replace("\r", ""));
+            String prettyString = pretty().writeValueAsString(o).replace("\r", "");
+            PrettyPrintHelper.emit(LOGGER, prettyString);
         } catch (Exception e) {
-            e.printStackTrace();
+            PrettyPrintHelper.emitError(LOGGER, "Error pretty-printing JSON (3.1)", e);
         }
     }
 

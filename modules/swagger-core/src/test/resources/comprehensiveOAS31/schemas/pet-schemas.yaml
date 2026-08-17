@@ -1,0 +1,301 @@
+# Pet Schemas for OpenAPI 3.1 and JSON Schema 2020/12
+# This file contains pet-related schemas referenced by the root file
+
+# Base Pet schema
+Pet:
+  $schema: "https://json-schema.org/draft/2020-12/schema"
+  $id: "https://example.com/schemas/Pet"
+  $anchor: "Pet"
+  $dynamicAnchor: "Pet"
+  title: "Pet"
+  description: "Pet object"
+  type: "object"
+  required:
+    - "id"
+    - "name"
+    - "status"
+  properties:
+    id:
+      type: "integer"
+      format: "int64"
+      description: "Pet ID"
+      minimum: 1
+    name:
+      type: "string"
+      description: "Pet name"
+      minLength: 1
+      maxLength: 100
+    category:
+      $ref: "#/Category"
+    photoUrls:
+      type: "array"
+      description: "Pet photo URLs"
+      items:
+        type: "string"
+        format: "uri"
+      minItems: 0
+      maxItems: 10
+      uniqueItems: true
+    tags:
+      type: "array"
+      description: "Pet tags"
+      items:
+        $ref: "#/Tag"
+      minItems: 0
+      maxItems: 10
+      uniqueItems: true
+    status:
+      type: "string"
+      description: "Pet status in the store"
+      enum: ["available", "pending", "sold"]
+    metadata:
+      type: "object"
+      description: "Additional metadata"
+      additionalProperties:
+        type: "string"
+      propertyNames:
+        pattern: "^[a-zA-Z0-9_]+$"
+      minProperties: 0
+      maxProperties: 10
+  discriminator:
+    propertyName: "petType"
+    mapping:
+      "dog": "#/Dog"
+      "cat": "#/Cat"
+      "bird": "#/Bird"
+  x-extension-example: "Example of an extension"
+
+# Category schema
+Category:
+  $schema: "https://json-schema.org/draft/2020-12/schema"
+  $id: "https://example.com/schemas/Category"
+  $anchor: "Category"
+  title: "Category"
+  description: "Pet category"
+  type: "object"
+  required:
+    - "id"
+    - "name"
+  properties:
+    id:
+      type: "integer"
+      format: "int64"
+      description: "Category ID"
+      minimum: 1
+    name:
+      type: "string"
+      description: "Category name"
+      minLength: 1
+      maxLength: 50
+
+# Tag schema
+Tag:
+  $schema: "https://json-schema.org/draft/2020-12/schema"
+  $id: "https://example.com/schemas/Tag"
+  $anchor: "Tag"
+  title: "Tag"
+  description: "Pet tag"
+  type: "object"
+  required:
+    - "id"
+    - "name"
+  properties:
+    id:
+      type: "integer"
+      format: "int64"
+      description: "Tag ID"
+      minimum: 1
+    name:
+      type: "string"
+      description: "Tag name"
+      minLength: 1
+      maxLength: 50
+
+# Dog schema
+Dog:
+  $schema: "https://json-schema.org/draft/2020-12/schema"
+  $id: "https://example.com/schemas/Dog"
+  $anchor: "Dog"
+  title: "Dog"
+  description: "Dog object"
+  allOf:
+    - $ref: "#/Pet"
+    - type: "object"
+      required:
+        - "petType"
+        - "breed"
+      properties:
+        petType:
+          type: "string"
+          const: "dog"
+        breed:
+          type: "string"
+          description: "Dog breed"
+          minLength: 1
+          maxLength: 50
+        bark:
+          type: "boolean"
+          description: "Whether the dog can bark"
+          default: true
+        vaccinated:
+          type: "boolean"
+          description: "Whether the dog is vaccinated"
+          default: false
+
+# Cat schema
+Cat:
+  $schema: "https://json-schema.org/draft/2020-12/schema"
+  $id: "https://example.com/schemas/Cat"
+  $anchor: "Cat"
+  title: "Cat"
+  description: "Cat object"
+  allOf:
+    - $ref: "#/Pet"
+    - type: "object"
+      required:
+        - "petType"
+        - "breed"
+      properties:
+        petType:
+          type: "string"
+          const: "cat"
+        breed:
+          type: "string"
+          description: "Cat breed"
+          minLength: 1
+          maxLength: 50
+        declawed:
+          type: "boolean"
+          description: "Whether the cat is declawed"
+          default: false
+        indoor:
+          type: "boolean"
+          description: "Whether the cat is an indoor cat"
+          default: true
+
+# Bird schema
+Bird:
+  $schema: "https://json-schema.org/draft/2020-12/schema"
+  $id: "https://example.com/schemas/Bird"
+  $anchor: "Bird"
+  title: "Bird"
+  description: "Bird object"
+  allOf:
+    - $ref: "#/Pet"
+    - type: "object"
+      required:
+        - "petType"
+        - "species"
+      properties:
+        petType:
+          type: "string"
+          const: "bird"
+        species:
+          type: "string"
+          description: "Bird species"
+          minLength: 1
+          maxLength: 50
+        canFly:
+          type: "boolean"
+          description: "Whether the bird can fly"
+          default: true
+        canTalk:
+          type: "boolean"
+          description: "Whether the bird can talk"
+          default: false
+
+# Pets array schema
+Pets:
+  $schema: "https://json-schema.org/draft/2020-12/schema"
+  $id: "https://example.com/schemas/Pets"
+  $anchor: "Pets"
+  title: "Pets"
+  description: "Array of pets"
+  type: "array"
+  items:
+    $ref: "#/Pet"
+  minItems: 0
+  maxItems: 100
+  uniqueItems: true
+
+# Pet with validation
+PetWithValidation:
+  $schema: "https://json-schema.org/draft/2020-12/schema"
+  $id: "https://example.com/schemas/PetWithValidation"
+  $anchor: "PetWithValidation"
+  title: "Pet with Validation"
+  description: "Pet object with additional validation"
+  allOf:
+    - $ref: "#/Pet"
+    - type: "object"
+      properties:
+        age:
+          type: "integer"
+          description: "Pet age in years"
+          minimum: 0
+          maximum: 30
+        weight:
+          type: "number"
+          description: "Pet weight in kilograms"
+          minimum: 0.1
+          maximum: 100
+          multipleOf: 0.1
+        height:
+          type: "number"
+          description: "Pet height in centimeters"
+          minimum: 1
+          maximum: 200
+          multipleOf: 0.1
+        birthDate:
+          type: "string"
+          format: "date"
+          description: "Pet birth date"
+        microchipped:
+          type: "boolean"
+          description: "Whether the pet is microchipped"
+          default: false
+      dependentRequired:
+        microchipped: ["microchipNumber"]
+      dependentSchemas:
+        microchipped:
+          properties:
+            microchipNumber:
+              type: "string"
+              description: "Microchip number"
+              pattern: "^[0-9]{15}$"
+          required:
+            - "microchipNumber"
+
+# Pet with conditional schema
+PetWithConditional:
+  $schema: "https://json-schema.org/draft/2020-12/schema"
+  $id: "https://example.com/schemas/PetWithConditional"
+  $anchor: "PetWithConditional"
+  title: "Pet with Conditional Schema"
+  description: "Pet object with conditional schema"
+  allOf:
+    - $ref: "#/Pet"
+    - type: "object"
+      properties:
+        type:
+          type: "string"
+          enum: ["domestic", "wild"]
+        dangerous:
+          type: "boolean"
+          description: "Whether the pet is dangerous"
+      if:
+        properties:
+          type:
+            const: "wild"
+        required:
+          - "type"
+      then:
+        properties:
+          dangerous:
+            const: true
+        required:
+          - "dangerous"
+      else:
+        properties:
+          dangerous:
+            default: false

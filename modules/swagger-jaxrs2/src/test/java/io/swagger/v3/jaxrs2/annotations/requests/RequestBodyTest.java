@@ -52,7 +52,7 @@ public class RequestBodyTest extends AbstractAnnotationTest {
                 "        content:\n" +
                 "          '*/*':\n" +
                 "            schema:\n" +
-                "              $ref: '#/components/schemas/User'\n" +
+                "              $ref: \"#/components/schemas/User\"\n" +
                 "      responses:\n" +
                 "        default:\n" +
                 "          description: default response\n" +
@@ -76,7 +76,7 @@ public class RequestBodyTest extends AbstractAnnotationTest {
                 "        content:\n" +
                 "          '*/*':\n" +
                 "            schema:\n" +
-                "              $ref: '#/components/schemas/User'\n" +
+                "              $ref: \"#/components/schemas/User\"\n" +
                 "        required: true\n" +
                 "      responses:\n" +
                 "        default:\n" +
@@ -110,10 +110,10 @@ public class RequestBodyTest extends AbstractAnnotationTest {
                 "        content:\n" +
                 "          application/json:\n" +
                 "            schema:\n" +
-                "              $ref: '#/components/schemas/User'\n" +
+                "              $ref: \"#/components/schemas/User\"\n" +
                 "          application/xml:\n" +
                 "            schema:\n" +
-                "              $ref: '#/components/schemas/User'\n" +
+                "              $ref: \"#/components/schemas/User\"\n" +
                 "      responses:\n" +
                 "        default:\n" +
                 "          description: default response\n" +
@@ -127,10 +127,10 @@ public class RequestBodyTest extends AbstractAnnotationTest {
                 "        content:\n" +
                 "          application/json:\n" +
                 "            schema:\n" +
-                "              $ref: '#/components/schemas/Pet'\n" +
+                "              $ref: \"#/components/schemas/Pet\"\n" +
                 "          application/xml:\n" +
                 "            schema:\n" +
-                "              $ref: '#/components/schemas/Pet'\n" +
+                "              $ref: \"#/components/schemas/Pet\"\n" +
                 "      responses:\n" +
                 "        default:\n" +
                 "          description: default response\n" +
@@ -208,7 +208,7 @@ public class RequestBodyTest extends AbstractAnnotationTest {
                 "          type: integer\n" +
                 "          format: int64\n" +
                 "        category:\n" +
-                "          $ref: '#/components/schemas/Category'\n" +
+                "          $ref: \"#/components/schemas/Category\"\n" +
                 "        name:\n" +
                 "          type: string\n" +
                 "        photoUrls:\n" +
@@ -224,7 +224,7 @@ public class RequestBodyTest extends AbstractAnnotationTest {
                 "          xml:\n" +
                 "            wrapped: true\n" +
                 "          items:\n" +
-                "            $ref: '#/components/schemas/Tag'\n" +
+                "            $ref: \"#/components/schemas/Tag\"\n" +
                 "        status:\n" +
                 "          type: string\n" +
                 "          description: pet status in the store\n" +

@@ -15,6 +15,9 @@ import io.swagger.v3.core.filter.resources.RemoveUnreferencedDefinitionsFilter;
 import io.swagger.v3.core.filter.resources.ReplaceGetOperationsFilter;
 import io.swagger.v3.core.matchers.SerializationMatchers;
 import io.swagger.v3.core.util.Json;
+import io.swagger.v3.core.util.Json31;
+import io.swagger.v3.core.util.Yaml;
+import io.swagger.v3.core.util.Yaml31;
 import io.swagger.v3.core.util.ResourceUtils;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
@@ -24,6 +27,8 @@ import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.parameters.Parameter;
 import io.swagger.v3.oas.models.tags.Tag;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
@@ -37,13 +42,19 @@ import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
 
 public class SpecFilterTest {
+    private static final Logger LOGGER = LoggerFactory.getLogger(SpecFilterTest.class);
 
     private static final String RESOURCE_RECURSIVE_MODELS = "specFiles/recursivemodels.json";
     private static final String RESOURCE_PATH = "specFiles/petstore-3.0-v2.json";
     private static final String RESOURCE_PATH_3303 = "specFiles/petstore-3.0-v2-ticket-3303.json";
+    private static final String RESOURCE_WITH_REF_DEFINITION_4737 = "specFiles/3.1.0/issue-4737-3.1.yaml";
+    private static final String RESOURCE_WITH_REFERRED_DEFINITIONS= "specFiles/3.1.0/specWithReferredSchemas-3.1.yaml";
+    private static final String RESOURCE_PATH_LIST = "specFiles/3.1.0/list-3.1.json";
+    private static final String RESOURCE_PATH_COMPOSED_SCHEMA = "specFiles/3.1.0/composed-schema-3.1.json";
     private static final String RESOURCE_REFERRED_SCHEMAS = "specFiles/petstore-3.0-referred-schemas.json";
     private static final String RESOURCE_PATH_WITHOUT_MODELS = "specFiles/petstore-3.0-v2_withoutModels.json";
     private static final String RESOURCE_DEPRECATED_OPERATIONS = "specFiles/deprecatedoperationmodel.json";
@@ -181,7 +192,7 @@ public class SpecFilterTest {
                     try {
                         filteredMap.put("filtered " + id, new SpecFilter().filter(openAPI, new NoOpOperationsFilter(), null, null, null));
                     } catch (Exception e) {
-                        e.printStackTrace();
+                        LOGGER.error("Failed to filter OpenAPI concurrently", e);
                     }
                 }
             }.start();
@@ -212,7 +223,7 @@ public class SpecFilterTest {
                     }
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                LOGGER.error("Interrupted while waiting for filtering threads to complete", e);
             }
             for (OpenAPI filtered : filteredMap.values()) {
                 assertEquals(Json.pretty(openAPI), Json.pretty(filtered));
@@ -271,6 +282,29 @@ public class SpecFilterTest {
         assertNotNull(filtered.getComponents().getSchemas().get("discriminatorRefProperty"));
         assertNotNull(filtered.getComponents().getSchemas().get("discriminatorParentRefProperty"));
         assertNotNull(filtered.getComponents().getSchemas().get("discriminatorMatchedChildB"));
+    }
+
+    @Test
+    public void shouldRemoveBrokenNestedRefsKeepArray() throws IOException {
+        final OpenAPI openAPI = getOpenAPI31(RESOURCE_PATH_LIST);
+        final RemoveUnreferencedDefinitionsFilter remover = new RemoveUnreferencedDefinitionsFilter();
+        final OpenAPI filtered = new SpecFilter().filter(openAPI, remover, null, null, null);
+
+        assertEquals(filtered.getComponents().getSchemas().size(), 2, "Expected to have parent and child list schemas");
+        assertTrue(filtered.getComponents().getSchemas().containsKey("SomeChildObject"), "Schemas should contains child list");
+    }
+
+    @Test
+    public void shouldRemoveBrokenNestedRefsKeepComposedSchemas() throws IOException {
+        final OpenAPI openAPI = getOpenAPI31(RESOURCE_PATH_COMPOSED_SCHEMA);
+        final RemoveUnreferencedDefinitionsFilter remover = new RemoveUnreferencedDefinitionsFilter();
+        final OpenAPI filtered = new SpecFilter().filter(openAPI, remover, null, null, null);
+
+        assertEquals(filtered.getComponents().getSchemas().size(), 5, "Expected to have parent and abstract child with both implementations schemas");
+        assertTrue(filtered.getComponents().getSchemas().containsKey("SomeChild1ImplObject"), "Schemas should contains child 1 implementation");
+        assertTrue(filtered.getComponents().getSchemas().containsKey("SomeChild2ImplObject"), "Schemas should contains child 2 implementation");
+        assertTrue(filtered.getComponents().getSchemas().containsKey("SomeChildObject"), "Schemas should contains child abstract parent");
+        assertTrue(filtered.getComponents().getSchemas().containsKey("PatternPropertiesReferencedObject"), "Schemas should contains pattern properties referenced schema");
     }
 
     @Test
@@ -424,6 +458,30 @@ public class SpecFilterTest {
         assertNotNull(filtered);
     }
 
+    @Test(description = "RemoveUnreferencedDefinitionsFilter should not remove schema definition if ref used in Webhook")
+    public void testTicket4737() throws IOException {
+        final OpenAPI openAPI = getOpenAPIYaml31(RESOURCE_WITH_REF_DEFINITION_4737);
+        final RemoveUnreferencedDefinitionsFilter remover = new RemoveUnreferencedDefinitionsFilter();
+        final OpenAPI filtered = new SpecFilter().filter(openAPI, remover, null, null, null);
+        assertNotNull(filtered.getComponents().getSchemas().get("RequestDto"));
+    }
+
+    @Test
+    public void shouldNotRemoveUsedDefinitions() throws IOException {
+        final OpenAPI openAPI = getOpenAPIYaml31(RESOURCE_WITH_REFERRED_DEFINITIONS);
+        final RemoveUnreferencedDefinitionsFilter remover = new RemoveUnreferencedDefinitionsFilter();
+        final OpenAPI filtered = new SpecFilter().filter(openAPI, remover, null, null, null);
+        assertNotNull(filtered.getComponents().getSchemas().get("ResponseDefinition"));
+        assertNotNull(filtered.getComponents().getSchemas().get("WebhookResponseDefinition"));
+        assertNotNull(filtered.getComponents().getSchemas().get("WebhookOperationDefinition"));
+        assertNotNull(filtered.getComponents().getSchemas().get("RequestBodyDefinition"));
+        assertNotNull(filtered.getComponents().getSchemas().get("ParameterDefinition"));
+        assertNotNull(filtered.getComponents().getSchemas().get("HeaderDefinition"));
+        assertNotNull(filtered.getComponents().getSchemas().get("CallbackDefinition"));
+        assertNotNull(filtered.getComponents().getSchemas().get("PathItemDefinition"));
+        assertNull(filtered.getComponents().getSchemas().get("UnusedDefinition"));
+    }
+
     private Set getTagNames(OpenAPI openAPI) {
         Set<String> result = new HashSet<>();
         if (openAPI.getTags() != null) {
@@ -437,5 +495,20 @@ public class SpecFilterTest {
     private OpenAPI getOpenAPI(String path) throws IOException {
         final String json = ResourceUtils.loadClassResource(getClass(), path);
         return Json.mapper().readValue(json, OpenAPI.class);
+    }
+
+    private OpenAPI getOpenAPI31(String path) throws IOException {
+        final String json = ResourceUtils.loadClassResource(getClass(), path);
+        return Json31.mapper().readValue(json, OpenAPI.class);
+    }
+
+    private OpenAPI getOpenAPIYaml(String path) throws IOException {
+        final String yaml = ResourceUtils.loadClassResource(getClass(), path);
+        return Yaml.mapper().readValue(yaml, OpenAPI.class);
+    }
+
+    private OpenAPI getOpenAPIYaml31(String path) throws IOException {
+        final String yaml = ResourceUtils.loadClassResource(getClass(), path);
+        return Yaml31.mapper().readValue(yaml, OpenAPI.class);
     }
 }

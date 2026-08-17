@@ -58,7 +58,7 @@ public class ParametersTest extends AbstractAnnotationTest {
                 "        required: true\n" +
                 "        style: simple\n" +
                 "        schema:\n" +
-                "          $ref: '#/components/schemas/SubscriptionResponse'\n" +
+                "          $ref: \"#/components/schemas/SubscriptionResponse\"\n" +
                 "      - name: formId\n" +
                 "        in: query\n" +
                 "        required: true\n" +
@@ -70,13 +70,13 @@ public class ParametersTest extends AbstractAnnotationTest {
                 "        required: true\n" +
                 "        explode: false\n" +
                 "        schema:\n" +
-                "          $ref: '#/components/schemas/SubscriptionResponse'\n" +
+                "          $ref: \"#/components/schemas/SubscriptionResponse\"\n" +
                 "      - name: explodeTrue\n" +
                 "        in: query\n" +
                 "        required: true\n" +
                 "        explode: true\n" +
                 "        schema:\n" +
-                "          $ref: '#/components/schemas/SubscriptionResponse'\n" +
+                "          $ref: \"#/components/schemas/SubscriptionResponse\"\n" +
                 "      - name: explodeAvoiding\n" +
                 "        in: query\n" +
                 "        required: true\n" +
@@ -88,6 +88,7 @@ public class ParametersTest extends AbstractAnnotationTest {
                 "      - name: arrayParameter\n" +
                 "        in: query\n" +
                 "        required: true\n" +
+                "        explode: true\n" +
                 "        content:\n" +
                 "          application/json:\n" +
                 "            schema:\n" +
@@ -102,26 +103,27 @@ public class ParametersTest extends AbstractAnnotationTest {
                 "      - name: arrayParameterImplementation\n" +
                 "        in: query\n" +
                 "        required: true\n" +
+                "        explode: true\n" +
                 "        schema:\n" +
                 "          maxItems: 10\n" +
                 "          minItems: 1\n" +
                 "          uniqueItems: true\n" +
                 "          type: array\n" +
                 "          items:\n" +
-                "            $ref: '#/components/schemas/SubscriptionResponse'\n" +
+                "            $ref: \"#/components/schemas/SubscriptionResponse\"\n" +
                 "      - name: arrayParameterImplementation2\n" +
                 "        in: query\n" +
                 "        required: true\n" +
                 "        explode: true\n" +
                 "        schema:\n" +
-                "          $ref: '#/components/schemas/SubscriptionResponse'\n" +
+                "          $ref: \"#/components/schemas/SubscriptionResponse\"\n" +
                 "      responses:\n" +
                 "        default:\n" +
                 "          description: test description\n" +
                 "          content:\n" +
                 "            '*/*':\n" +
                 "              schema:\n" +
-                "                $ref: '#/components/schemas/SubscriptionResponse'\n" +
+                "                $ref: \"#/components/schemas/SubscriptionResponse\"\n" +
                 "components:\n" +
                 "  schemas:\n" +
                 "    SubscriptionResponse:\n" +
@@ -148,20 +150,21 @@ public class ParametersTest extends AbstractAnnotationTest {
                 "      - name: arrayParameter\n" +
                 "        in: query\n" +
                 "        required: true\n" +
+                "        explode: true\n" +
                 "        schema:\n" +
                 "          maxItems: 10\n" +
                 "          minItems: 1\n" +
                 "          uniqueItems: true\n" +
                 "          type: array\n" +
                 "          items:\n" +
-                "            $ref: '#/components/schemas/SubscriptionResponse'\n" +
+                "            $ref: \"#/components/schemas/SubscriptionResponse\"\n" +
                 "      responses:\n" +
                 "        default:\n" +
                 "          description: test description\n" +
                 "          content:\n" +
                 "            '*/*':\n" +
                 "              schema:\n" +
-                "                $ref: '#/components/schemas/SubscriptionResponse'\n" +
+                "                $ref: \"#/components/schemas/SubscriptionResponse\"\n" +
                 "components:\n" +
                 "  schemas:\n" +
                 "    SubscriptionResponse:\n" +
@@ -190,7 +193,7 @@ public class ParametersTest extends AbstractAnnotationTest {
                 "        required: true\n" +
                 "        style: simple\n" +
                 "        schema:\n" +
-                "          $ref: '#/components/schemas/SubscriptionResponse'\n" +
+                "          $ref: \"#/components/schemas/SubscriptionResponse\"\n" +
                 "      - name: formId\n" +
                 "        in: query\n" +
                 "        required: true\n" +
@@ -202,13 +205,13 @@ public class ParametersTest extends AbstractAnnotationTest {
                 "        required: true\n" +
                 "        explode: false\n" +
                 "        schema:\n" +
-                "          $ref: '#/components/schemas/SubscriptionResponse'\n" +
+                "          $ref: \"#/components/schemas/SubscriptionResponse\"\n" +
                 "      - name: explodeTrue\n" +
                 "        in: query\n" +
                 "        required: true\n" +
                 "        explode: true\n" +
                 "        schema:\n" +
-                "          $ref: '#/components/schemas/SubscriptionResponse'\n" +
+                "          $ref: \"#/components/schemas/SubscriptionResponse\"\n" +
                 "      - name: explodeAvoiding\n" +
                 "        in: query\n" +
                 "        required: true\n" +
@@ -220,6 +223,7 @@ public class ParametersTest extends AbstractAnnotationTest {
                 "      - name: arrayParameter\n" +
                 "        in: query\n" +
                 "        required: true\n" +
+                "        explode: true\n" +
                 "        content:\n" +
                 "          application/json:\n" +
                 "            schema:\n" +
@@ -234,26 +238,27 @@ public class ParametersTest extends AbstractAnnotationTest {
                 "      - name: arrayParameterImplementation\n" +
                 "        in: query\n" +
                 "        required: true\n" +
+                "        explode: true\n" +
                 "        schema:\n" +
                 "          maxItems: 10\n" +
                 "          minItems: 1\n" +
                 "          uniqueItems: true\n" +
                 "          type: array\n" +
                 "          items:\n" +
-                "            $ref: '#/components/schemas/SubscriptionResponse'\n" +
+                "            $ref: \"#/components/schemas/SubscriptionResponse\"\n" +
                 "      - name: arrayParameterImplementation2\n" +
                 "        in: query\n" +
                 "        required: true\n" +
                 "        explode: true\n" +
                 "        schema:\n" +
-                "          $ref: '#/components/schemas/SubscriptionResponse'\n" +
+                "          $ref: \"#/components/schemas/SubscriptionResponse\"\n" +
                 "      responses:\n" +
                 "        default:\n" +
                 "          description: test description\n" +
                 "          content:\n" +
                 "            '*/*':\n" +
                 "              schema:\n" +
-                "                $ref: '#/components/schemas/SubscriptionResponse'\n" +
+                "                $ref: \"#/components/schemas/SubscriptionResponse\"\n" +
                 "components:\n" +
                 "  schemas:\n" +
                 "    SubscriptionResponse:\n" +

@@ -42,7 +42,7 @@ paths:
           content:
             '*/*':
               schema:
-                $ref: '#/components/schemas/Subscription'
+                $ref: "#/components/schemas/Subscription"
 components:
   schemas:
     SubscriptionItem:
@@ -56,4 +56,4 @@ components:
         subscriptionId:
           type: string
         subscriptionItem:
-          $ref: '#/components/schemas/SubscriptionItem'
+          $ref: "#/components/schemas/SubscriptionItem"

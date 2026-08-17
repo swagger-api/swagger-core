@@ -42,7 +42,7 @@ public class EnumTest {
             "              schema:\n" +
             "                type: array\n" +
             "                items:\n" +
-            "                  $ref: '#/components/schemas/TaskDTO'\n" +
+            "                  $ref: \"#/components/schemas/TaskDTO\"\n" +
             "        \"404\":\n" +
             "          description: User not found\n" +
             "components:\n" +

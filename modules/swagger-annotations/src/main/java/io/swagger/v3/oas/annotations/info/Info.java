@@ -12,8 +12,8 @@ import java.lang.annotation.Target;
 /**
  * The annotation may be used in {@link io.swagger.v3.oas.annotations.OpenAPIDefinition#info()} to populate the Info section of the OpenAPI document.
  *
- * @see <a target="_new" href="https://github.com/OAI/OpenAPI-Specification/blob/3.0.1/versions/3.0.1.md#infoObject">Info (OpenAPI specification)</a>
- * @see <a target="_new" href="https://github.com/OAI/OpenAPI-Specification/blob/3.1.0/versions/3.1.0.md#infoObject">Info (OpenAPI specification)</a>
+ * @see <a target="_new" href="https://github.com/OAI/OpenAPI-Specification/blob/3.0.4/versions/3.0.4.md#info-object">Info (OpenAPI specification)</a>
+ * @see <a target="_new" href="https://github.com/OAI/OpenAPI-Specification/blob/3.1.1/versions/3.1.1.md#info-object">Info (OpenAPI specification)</a>
  * @see io.swagger.v3.oas.annotations.OpenAPIDefinition
  **/
 @Target({ElementType.ANNOTATION_TYPE})

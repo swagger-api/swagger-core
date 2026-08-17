@@ -50,18 +50,18 @@ public class Ticket3197Test extends SwaggerTestBase {
                 "  discriminator:\n" +
                 "    propertyName: type\n" +
                 "    mapping:\n" +
-                "      RaceCar: '#/components/schemas/RaceCar'\n" +
-                "      SportCar: '#/components/schemas/SportCar'\n" +
+                "      RaceCar: \"#/components/schemas/RaceCar\"\n" +
+                "      SportCar: \"#/components/schemas/SportCar\"\n" +
                 "  oneOf:\n" +
-                "  - $ref: '#/components/schemas/RaceCar'\n" +
-                "  - $ref: '#/components/schemas/SportCar'\n" +
+                "  - $ref: \"#/components/schemas/RaceCar\"\n" +
+                "  - $ref: \"#/components/schemas/SportCar\"\n" +
                 "RaceCar:\n" +
                 "  required:\n" +
                 "  - carMetaData\n" +
                 "  - id\n" +
                 "  type: object\n" +
                 "  allOf:\n" +
-                "  - $ref: '#/components/schemas/Car'\n" +
+                "  - $ref: \"#/components/schemas/Car\"\n" +
                 "  - type: object\n" +
                 "    properties:\n" +
                 "      id:\n" +
@@ -74,7 +74,7 @@ public class Ticket3197Test extends SwaggerTestBase {
                 "  - id\n" +
                 "  type: object\n" +
                 "  allOf:\n" +
-                "  - $ref: '#/components/schemas/Car'\n" +
+                "  - $ref: \"#/components/schemas/Car\"\n" +
                 "  - type: object\n" +
                 "    properties:\n" +
                 "      id:\n" +
@@ -108,11 +108,11 @@ public class Ticket3197Test extends SwaggerTestBase {
                 "  discriminator:\n" +
                 "    propertyName: type\n" +
                 "    mapping:\n" +
-                "      RaceCar: '#/components/schemas/RaceCar'\n" +
-                "      SportCar: '#/components/schemas/SportCar'\n" +
+                "      RaceCar: \"#/components/schemas/RaceCar\"\n" +
+                "      SportCar: \"#/components/schemas/SportCar\"\n" +
                 "  oneOf:\n" +
-                "  - $ref: '#/components/schemas/RaceCar'\n" +
-                "  - $ref: '#/components/schemas/SportCar'\n" +
+                "  - $ref: \"#/components/schemas/RaceCar\"\n" +
+                "  - $ref: \"#/components/schemas/SportCar\"\n" +
                 "RaceCar:\n" +
                 "  required:\n" +
                 "  - carMetaData\n" +
@@ -125,7 +125,7 @@ public class Ticket3197Test extends SwaggerTestBase {
                 "    model:\n" +
                 "      type: string\n" +
                 "  allOf:\n" +
-                "  - $ref: '#/components/schemas/Car'\n" +
+                "  - $ref: \"#/components/schemas/Car\"\n" +
                 "SportCar:\n" +
                 "  required:\n" +
                 "  - id\n" +
@@ -137,7 +137,7 @@ public class Ticket3197Test extends SwaggerTestBase {
                 "    model:\n" +
                 "      type: string\n" +
                 "  allOf:\n" +
-                "  - $ref: '#/components/schemas/Car'\n";
+                "  - $ref: \"#/components/schemas/Car\"\n";
 
         SerializationMatchers.assertEqualsToYaml(myContext.getDefinedModels(), yaml);
         ModelResolver.composedModelPropertiesAsSibling = false;

@@ -16,7 +16,7 @@ import static java.lang.annotation.ElementType.PARAMETER;
  * The annotation may be used on a method parameter to define it as the Request Body of the operation, and/or to define
  * additional properties for such request body.
  *
- * @see <a target="_new" href="https://github.com/OAI/OpenAPI-Specification/blob/3.0.1/versions/3.0.1.md#requestBodyObject">Request Body (OpenAPI specification)</a>
+ * @see <a target="_new" href="https://github.com/OAI/OpenAPI-Specification/blob/3.0.4/versions/3.0.4.md#request-body-object">Request Body (OpenAPI specification)</a>
  * @see io.swagger.v3.oas.annotations.Parameter
  * @see Content
  **/

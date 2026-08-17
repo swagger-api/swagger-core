@@ -7,13 +7,16 @@ import io.swagger.v3.jaxrs2.resources.SimpleResourceWithVendorAnnotation;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Operation;
 import io.swagger.v3.oas.models.responses.ApiResponse;
-import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import java.lang.reflect.Method;
 import java.util.Iterator;
+
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertNull;
 
 public class DecoratorExtensionTest {
 
@@ -65,15 +68,15 @@ public class DecoratorExtensionTest {
     public void scanSimpleResourceWithDecorator() {
         final OpenAPI openAPI = getOpenAPI(SimpleResourceWithVendorAnnotation.class);
 
-        Assert.assertEquals(openAPI.getPaths().size(), 2);
+        assertEquals(openAPI.getPaths().size(), 2);
 
         final Operation get = getGet(openAPI, "/{id}");
-        Assert.assertNotNull(get);
-        Assert.assertEquals(get.getParameters().size(), 2);
+        assertNotNull(get);
+        assertEquals(get.getParameters().size(), 2);
 
         final ApiResponse response = get.getResponses().get(RESPONSE_STATUS_401);
-        Assert.assertNotNull(response);
-        Assert.assertEquals(response.getDescription(), RESPONSE_DESCRIPTION);
+        assertNotNull(response);
+        assertEquals(response.getDescription(), RESPONSE_DESCRIPTION);
     }
 
     /**
@@ -83,12 +86,12 @@ public class DecoratorExtensionTest {
     public void scanSimpleResourceWithoutDecorator() {
         final OpenAPI openAPI = getOpenAPI(SimpleResourceWithVendorAnnotation.class);
 
-        Assert.assertEquals(openAPI.getPaths().size(), 2);
+        assertEquals(openAPI.getPaths().size(), 2);
 
         final Operation get = getGet(openAPI, "/{id}/value");
-        Assert.assertNotNull(get);
+        assertNotNull(get);
 
         final ApiResponse response = get.getResponses().get(RESPONSE_STATUS_401);
-        Assert.assertNull(response);
+        assertNull(response);
     }
 }

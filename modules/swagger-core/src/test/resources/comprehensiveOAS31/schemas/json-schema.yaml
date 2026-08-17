@@ -1,0 +1,455 @@
+# JSON Schema 2020/12 Example
+# This file demonstrates a comprehensive JSON Schema 2020/12 document
+# It includes all keywords defined in the JSON Schema 2020/12 specification
+
+$schema: https://json-schema.org/draft/2020-12/schema
+$id: https://example.com/schemas/json-schema
+$vocabulary:
+  https://json-schema.org/draft/2020-12/vocab/core: true
+  https://json-schema.org/draft/2020-12/vocab/applicator: true
+  https://json-schema.org/draft/2020-12/vocab/validation: true
+  https://json-schema.org/draft/2020-12/vocab/meta-data: true
+  https://json-schema.org/draft/2020-12/vocab/format-annotation: true
+  https://json-schema.org/draft/2020-12/vocab/content: true
+  https://json-schema.org/draft/2020-12/vocab/unevaluated: true
+$comment: This is a comprehensive JSON Schema 2020/12 document
+
+# Root schema
+title: Comprehensive JSON Schema
+description: A comprehensive JSON Schema 2020/12 document
+type: object
+properties:
+  id:
+    $anchor: id
+    title: ID
+    description: Unique identifier
+    type: string
+    format: uuid
+  name:
+    $anchor: name
+    title: Name
+    description: Name of the entity
+    type: string
+    minLength: 1
+    maxLength: 100
+  description:
+    $anchor: description
+    title: Description
+    description: Description of the entity
+    type: string
+    maxLength: 1000
+  createdAt:
+    $anchor: createdAt
+    title: Created At
+    description: Creation date
+    type: string
+    format: date-time
+  updatedAt:
+    $anchor: updatedAt
+    title: Updated At
+    description: Last update date
+    type: string
+    format: date-time
+  tags:
+    $anchor: tags
+    title: Tags
+    description: Tags for the entity
+    type: array
+    items:
+      type: string
+      minLength: 1
+      maxLength: 50
+    minItems: 0
+    maxItems: 10
+    uniqueItems: true
+  metadata:
+    $anchor: metadata
+    title: Metadata
+    description: Additional metadata
+    type: object
+    additionalProperties:
+      type: string
+    propertyNames:
+      pattern: "^[a-zA-Z0-9_]+$"
+    minProperties: 0
+    maxProperties: 10
+  status:
+    $anchor: status
+    title: Status
+    description: Status of the entity
+    type: string
+    enum: ["active", "inactive", "pending", "deleted"]
+  priority:
+    $anchor: priority
+    title: Priority
+    description: Priority of the entity
+    type: integer
+    minimum: 1
+    maximum: 5
+    default: 3
+  score:
+    $anchor: score
+    title: Score
+    description: Score of the entity
+    type: number
+    minimum: 0
+    maximum: 100
+    multipleOf: 0.1
+  isPublic:
+    $anchor: isPublic
+    title: Is Public
+    description: Whether the entity is public
+    type: boolean
+    default: false
+  nullableField:
+    $anchor: nullableField
+    title: Nullable Field
+    description: A field that can be null
+    type: ["string", "null"]
+  constField:
+    $anchor: constField
+    title: Const Field
+    description: A field with a constant value
+    const: "constant"
+  contentField:
+    $anchor: contentField
+    title: Content Field
+    description: A field with content encoding and media type
+    type: string
+    contentEncoding: base64
+    contentMediaType: image/png
+  dependentField1:
+    $anchor: dependentField1
+    title: Dependent Field 1
+    description: A field that depends on another field
+    type: string
+  dependentField2:
+    $anchor: dependentField2
+    title: Dependent Field 2
+    description: A field that depends on another field
+    type: string
+  conditionalField:
+    $anchor: conditionalField
+    title: Conditional Field
+    description: A field that is conditional
+    type: string
+  refField:
+    $anchor: refField
+    title: Ref Field
+    description: A field that references another schema
+    $ref: "#/$defs/RefSchema"
+  dynamicRefField:
+    $anchor: dynamicRefField
+    title: Dynamic Ref Field
+    description: A field that uses dynamic reference
+    $dynamicRef: "#Entity"
+  recursiveField:
+    $anchor: recursiveField
+    title: Recursive Field
+    description: A field that references itself
+    $ref: "#"
+  prefixItems:
+    $anchor: prefixItems
+    title: Prefix Items
+    description: An array with prefix items
+    type: array
+    prefixItems:
+      - type: string
+      - type: number
+      - type: boolean
+    items: false
+  containsField:
+    $anchor: containsField
+    title: Contains Field
+    description: An array that contains a specific item
+    type: array
+    contains:
+      type: string
+      const: "special"
+    minContains: 1
+    maxContains: 3
+  patternProperties:
+    $anchor: patternProperties
+    title: Pattern Properties
+    description: An object with pattern properties
+    type: object
+    patternProperties:
+      "^x-": 
+        type: string
+      "^y-":
+        type: number
+    additionalProperties: false
+  unevaluatedProperties:
+    $anchor: unevaluatedProperties
+    title: Unevaluated Properties
+    description: An object with unevaluated properties
+    type: object
+    properties:
+      prop1:
+        type: string
+    unevaluatedProperties: false
+  unevaluatedItems:
+    $anchor: unevaluatedItems
+    title: Unevaluated Items
+    description: An array with unevaluated items
+    type: array
+    prefixItems:
+      - type: string
+    unevaluatedItems: false
+required:
+  - id
+  - name
+  - createdAt
+dependentRequired:
+  dependentField1: ["dependentField2"]
+dependentSchemas:
+  isPublic:
+    properties:
+      publicationDate:
+        type: string
+        format: date
+    required:
+      - publicationDate
+
+# Conditional validation
+if:
+  properties:
+    status:
+      const: "active"
+  required:
+    - status
+then:
+  properties:
+    activatedAt:
+      type: string
+      format: date-time
+  required:
+    - activatedAt
+else:
+  properties:
+    deactivatedAt:
+      type: string
+      format: date-time
+
+# Applicator keywords
+allOf:
+  - properties:
+      allOfField:
+        type: string
+    required:
+      - allOfField
+anyOf:
+  - properties:
+      anyOfField1:
+        type: string
+    required:
+      - anyOfField1
+  - properties:
+      anyOfField2:
+        type: string
+    required:
+      - anyOfField2
+oneOf:
+  - properties:
+      oneOfField1:
+        type: string
+    required:
+      - oneOfField1
+  - properties:
+      oneOfField2:
+        type: string
+    required:
+      - oneOfField2
+not:
+  properties:
+    notField:
+      type: string
+  required:
+    - notField
+
+# Definitions
+$defs:
+  RefSchema:
+    $anchor: RefSchema
+    title: Ref Schema
+    description: A schema that is referenced
+    type: object
+    properties:
+      id:
+        type: string
+        format: uuid
+      name:
+        type: string
+        minLength: 1
+        maxLength: 100
+    required:
+      - id
+      - name
+  
+  Entity:
+    $dynamicAnchor: Entity
+    title: Entity
+    description: A base entity schema
+    type: object
+    properties:
+      id:
+        type: string
+        format: uuid
+      name:
+        type: string
+        minLength: 1
+        maxLength: 100
+      createdAt:
+        type: string
+        format: date-time
+      updatedAt:
+        type: string
+        format: date-time
+    required:
+      - id
+      - name
+      - createdAt
+  
+  Person:
+    $anchor: Person
+    title: Person
+    description: A person schema
+    allOf:
+      - $dynamicRef: "#Entity"
+      - type: object
+        properties:
+          firstName:
+            type: string
+            minLength: 1
+            maxLength: 50
+          lastName:
+            type: string
+            minLength: 1
+            maxLength: 50
+          email:
+            type: string
+            format: email
+          phone:
+            type: string
+            pattern: "^\\+?[0-9]{10,15}$"
+        required:
+          - firstName
+          - lastName
+          - email
+  
+  Organization:
+    $anchor: Organization
+    title: Organization
+    description: An organization schema
+    allOf:
+      - $dynamicRef: "#Entity"
+      - type: object
+        properties:
+          legalName:
+            type: string
+            minLength: 1
+            maxLength: 100
+          taxId:
+            type: string
+            minLength: 1
+            maxLength: 50
+          website:
+            type: string
+            format: uri
+          employees:
+            type: integer
+            minimum: 1
+        required:
+          - legalName
+  
+  Address:
+    $anchor: Address
+    title: Address
+    description: An address schema
+    type: object
+    properties:
+      street:
+        type: string
+        minLength: 1
+        maxLength: 100
+      city:
+        type: string
+        minLength: 1
+        maxLength: 50
+      state:
+        type: string
+        minLength: 1
+        maxLength: 50
+      zipCode:
+        type: string
+        pattern: "^[0-9]{5}(?:-[0-9]{4})?$"
+      country:
+        type: string
+        minLength: 1
+        maxLength: 50
+    required:
+      - street
+      - city
+      - zipCode
+      - country
+  
+  Contact:
+    $anchor: Contact
+    title: Contact
+    description: A contact schema
+    type: object
+    properties:
+      name:
+        type: string
+        minLength: 1
+        maxLength: 100
+      email:
+        type: string
+        format: email
+      phone:
+        type: string
+        pattern: "^\\+?[0-9]{10,15}$"
+      address:
+        $ref: "#/$defs/Address"
+    required:
+      - name
+      - email
+  
+  Event:
+    $anchor: Event
+    title: Event
+    description: An event schema
+    type: object
+    properties:
+      id:
+        type: string
+        format: uuid
+      name:
+        type: string
+        minLength: 1
+        maxLength: 100
+      description:
+        type: string
+        maxLength: 1000
+      startDate:
+        type: string
+        format: date-time
+      endDate:
+        type: string
+        format: date-time
+      location:
+        $ref: "#/$defs/Address"
+      organizer:
+        $ref: "#/$defs/Contact"
+      attendees:
+        type: array
+        items:
+          $ref: "#/$defs/Contact"
+        minItems: 0
+        maxItems: 1000
+        uniqueItems: true
+    required:
+      - id
+      - name
+      - startDate
+      - endDate

@@ -2,6 +2,7 @@ openapi: 3.1.0
 components:
   schemas:
     SubscriptionResponse:
+      type: object
       properties:
         subscriptionId:
           type: string
@@ -49,11 +50,11 @@ webhooks:
               - string
               - number
             if:
-              $ref: '#/components/schemas/SubscriptionResponse'
+              $ref: "#/components/schemas/SubscriptionResponse"
             then:
-              $ref: '#/components/schemas/SubscriptionResponse'
+              $ref: "#/components/schemas/SubscriptionResponse"
             else:
-              $ref: '#/components/schemas/SubscriptionResponse'
+              $ref: "#/components/schemas/SubscriptionResponse"
             $anchor: parameter $anchor
             $schema: parameter $schema
             exclusiveMaximum: 100

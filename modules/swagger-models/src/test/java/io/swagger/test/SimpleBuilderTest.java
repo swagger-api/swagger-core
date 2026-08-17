@@ -1,7 +1,6 @@
 package io.swagger.test;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -23,6 +22,8 @@ import io.swagger.v3.oas.models.parameters.QueryParameter;
 import io.swagger.v3.oas.models.responses.ApiResponse;
 import io.swagger.v3.oas.models.responses.ApiResponses;
 import io.swagger.v3.oas.models.tags.Tag;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testng.annotations.Test;
 
 import java.math.BigDecimal;
@@ -31,6 +32,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class SimpleBuilderTest {
+    private static final Logger LOGGER = LoggerFactory.getLogger(SimpleBuilderTest.class);
+
     @Test
     public void testBuilder() throws Exception {
         // basic metadata
@@ -119,7 +122,7 @@ public class SimpleBuilderTest {
                 )
         );
 
-        System.out.println(writeJson(oai));
+        LOGGER.debug(writeJson(oai));
     }
 
     public static String writeJson(Object value) throws Exception {
@@ -130,6 +133,6 @@ public class SimpleBuilderTest {
         mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
-        return mapper.writer(new DefaultPrettyPrinter()).writeValueAsString(value);
+        return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(value);
     }
 }

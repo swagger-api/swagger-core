@@ -19,6 +19,7 @@ import io.swagger.v3.oas.models.responses.ApiResponses;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import org.apache.commons.io.FileUtils;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import java.io.File;
@@ -83,6 +84,45 @@ public class JsonDeserializationTest {
         final Schema result = m.readValue(json, Schema.class);
         assertEquals(3, result.getProperties().size());
         assertEquals("objectProperty", result.getTitle());
+    }
+
+    @DataProvider(name = "nonTextSchemaTypes")
+    public Object[][] nonTextSchemaTypes() {
+        return new Object[][]{
+                {"{\"type\":1}"},
+                {"{\"type\":true}"},
+                {"{\"type\":{}}"},
+                {"{\"type\":[]}"}
+        };
+    }
+
+    @Test(dataProvider = "nonTextSchemaTypes")
+    public void deserializeSchemaWithNonTextTypeFailsWithLegacyCastException(String json) throws IOException {
+        try {
+            m.readValue(json, Schema.class);
+        } catch (RuntimeException e) {
+            assertTrue(e instanceof ClassCastException);
+            return;
+        }
+
+        assertTrue(false, "Expected ClassCastException");
+    }
+
+    @DataProvider(name = "nonTextSchemaRef")
+    public Object[][] nonTextSchemaRef() {
+        return new Object[][]{
+                {"{\"$ref\":1}", "#/components/schemas/1"},
+                {"{\"$ref\":true}", "#/components/schemas/true"},
+                {"{\"$ref\":{}}", "#/components/schemas/"},
+                {"{\"$ref\":[]}", "#/components/schemas/"}
+        };
+    }
+
+    @Test(dataProvider = "nonTextSchemaRef")
+    public void deserializeSchemaWithNonTextRef(String json, String expectedRef) throws IOException {
+        Schema schema = m.readValue(json, Schema.class);
+
+        assertEquals(schema.get$ref(), expectedRef);
     }
 
     @Test(description = "it should deserialize nested ObjectProperty(s)")
@@ -291,10 +331,10 @@ public class JsonDeserializationTest {
                 "          description: voila!\n" +
                 "      callbacks:\n" +
                 "        testCallback1:\n" +
-                "          $ref: '#/components/callbacks/Callback'\n" +
+                "          $ref: \"#/components/callbacks/Callback\"\n" +
                 "      callbacks:\n" +
                 "        testCallback1:\n" +
-                "          $ref: '#/components/callbacks/Callback'\n" +
+                "          $ref: \"#/components/callbacks/Callback\"\n" +
                 "components:\n" +
                 "  callbacks:\n" +
                 "    Callback:\n" +
@@ -540,6 +580,48 @@ public class JsonDeserializationTest {
         assertNotNull(openAPI.getPaths().get("/pet").getPost().getRequestBody().getContent().get("application/json").getExample());
 
         assertTrue(openAPI.getPaths().get("/pet").getPost().getRequestBody().getContent().get("application/json").getExampleSetFlag());
+    }
+
+    @Test
+    public void testDateSchemaSerialization() throws Exception {
+        String content = FileUtils.readFileToString(new File("src/test/resources/dateSchema.yaml"), "UTF-8");
+        OpenAPI openAPI = Yaml.mapper().readValue(content, OpenAPI.class);
+        Yaml.prettyPrint(openAPI);
+        SerializationMatchers.assertEqualsToYaml(openAPI, "openapi: 3.0.3\n" +
+                "info:\n" +
+                "  title: Simple Inventory API\n" +
+                "  version: 1.0.0\n" +
+                "paths:\n" +
+                "  /inventory:\n" +
+                "    get:\n" +
+                "      operationId: searchInventory\n" +
+                "      parameters:\n" +
+                "      - name: test\n" +
+                "        in: header\n" +
+                "        schema:\n" +
+                "          type: string\n" +
+                "          format: date\n" +
+                "          enum:\n" +
+                "          - 2023-12-12\n" +
+                "          default: 2023-12-12\n" +
+                "      responses:\n" +
+                "        \"200\":\n" +
+                "          description: search results matching criteria\n" +
+                "          content:\n" +
+                "            application/json:\n" +
+                "              schema:\n" +
+                "                type: array\n" +
+                "                items:\n" +
+                "                  $ref: \"#/components/schemas/InventoryItem\"\n" +
+                "components:\n" +
+                "  schemas:\n" +
+                "    InventoryItem:\n" +
+                "      type: object\n" +
+                "      properties:\n" +
+                "        releaseDate:\n" +
+                "          type: string\n" +
+                "          format: date-time\n" +
+                "          example: 2016-08-29T09:12:33.001Z");
     }
 
 }

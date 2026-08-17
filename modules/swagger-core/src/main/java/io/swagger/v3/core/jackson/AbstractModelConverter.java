@@ -21,7 +21,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class AbstractModelConverter implements ModelConverter {
     protected final ObjectMapper _mapper;
-    protected final AnnotationIntrospector _intr;
     protected final TypeNameResolver _typeNameResolver;
     /**
      * Minor optimization: no need to keep on resolving same types over and over
@@ -43,7 +42,6 @@ public abstract class AbstractModelConverter implements ModelConverter {
                 });
         _mapper = mapper;
         _typeNameResolver = typeNameResolver;
-        _intr = mapper.getSerializationConfig().getAnnotationIntrospector();
     }
 
     @Override
@@ -53,6 +51,17 @@ public abstract class AbstractModelConverter implements ModelConverter {
         } else {
             return null;
         }
+    }
+
+    /**
+     * Retrieves the current AnnotationIntrospector from the ObjectMapper's serialization configuration.
+     * We do not cache the value of _intr because users can load jackson modules later,
+     * and we want to use their annotation inspection.
+     * 
+     * @return the current AnnotationIntrospector
+     */
+    protected AnnotationIntrospector _intr() {
+        return _mapper.getSerializationConfig().getAnnotationIntrospector();
     }
 
     protected String _typeName(JavaType type) {
@@ -89,7 +98,7 @@ public abstract class AbstractModelConverter implements ModelConverter {
             beanDesc = _mapper.getSerializationConfig().introspectClassAnnotations(type);
         }
 
-        PropertyName rootName = _intr.findRootName(beanDesc.getClassInfo());
+        PropertyName rootName = _intr().findRootName(beanDesc.getClassInfo());
         if (rootName != null && rootName.hasSimpleName()) {
             return rootName.getSimpleName();
         }

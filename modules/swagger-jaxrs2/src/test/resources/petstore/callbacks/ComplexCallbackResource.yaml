@@ -9,7 +9,7 @@ paths:
         in: query
         description: idParam
         schema:
-          $ref: '#/components/schemas/User'
+          $ref: "#/components/schemas/User"
       responses:
         "200":
           description: voila!
@@ -38,7 +38,7 @@ paths:
                   content:
                     application/json:
                       schema:
-                        $ref: '#/components/schemas/User'
+                        $ref: "#/components/schemas/User"
 components:
   schemas:
     User:

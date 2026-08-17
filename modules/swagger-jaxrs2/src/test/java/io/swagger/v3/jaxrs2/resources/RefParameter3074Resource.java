@@ -23,12 +23,12 @@ public class RefParameter3074Resource {
             "            content:\n" +
             "              application/json:\n" +
             "                schema:\n" +
-            "                   $ref: '#/components/schemas/Employee'\n" +
+            "                   $ref: \"#/components/schemas/Employee\"\n" +
             "          \"500\":\n" +
             "            content:\n" +
             "              application/json:\n" +
             "                schema:\n" +
-            "                  $ref: '#/components/schemas/Error'\n" +
+            "                  $ref: \"#/components/schemas/Error\"\n" +
             "components:\n" +
             "  schemas:\n" +
             "    Employee:\n" +

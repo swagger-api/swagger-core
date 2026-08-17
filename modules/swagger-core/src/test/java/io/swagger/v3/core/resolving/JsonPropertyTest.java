@@ -109,7 +109,7 @@ public class JsonPropertyTest {
                 "      type: string\n" +
                 "      readOnly: true\n" +
                 "    data:\n" +
-                "      $ref: '#/components/schemas/Data'\n" +
+                "      $ref: \"#/components/schemas/Data\"\n" +
                 "    GetterJsonPropertyOnField:\n" +
                 "      type: string\n" +
                 "    GetterJsonPropertyOnFieldReadWrite:\n" +
@@ -141,7 +141,7 @@ public class JsonPropertyTest {
                 "  type: object\n" +
                 "  properties:\n" +
                 "    child:\n" +
-                "      $ref: '#/components/schemas/Ticket2845Child'");
+                "      $ref: \"#/components/schemas/Ticket2845Child\"");
 
         /*
             TODO: Test demonstrating annotation not being resolved when class is used/refernces elsewhere with different annotations
@@ -165,9 +165,9 @@ public class JsonPropertyTest {
                         "  type: object\n" +
                         "  properties:\n" +
                         "    child:\n" +
-                        "      $ref: '#/components/schemas/Ticket2845Child'\n" +
+                        "      $ref: \"#/components/schemas/Ticket2845Child\"\n" +
                         "    childNoAnnotation:\n" +
-                        "      $ref: '#/components/schemas/Ticket2845Child'");
+                        "      $ref: \"#/components/schemas/Ticket2845Child\"");
     }
 
     static class Ticket2845Parent {

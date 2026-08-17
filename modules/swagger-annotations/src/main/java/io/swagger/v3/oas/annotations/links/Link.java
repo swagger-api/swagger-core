@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
 /**
  * The annotation may be applied in {@link io.swagger.v3.oas.annotations.responses.ApiResponse#links()} to add OpenAPI links to a response.
  *
- * @see <a target="_new" href="https://github.com/OAI/OpenAPI-Specification/blob/3.0.1/versions/3.0.1.md#linkObject">Link (OpenAPI specification)</a>
+ * @see <a target="_new" href="https://github.com/OAI/OpenAPI-Specification/blob/3.0.4/versions/3.0.4.md#link-object">Link (OpenAPI specification)</a>
  * @see io.swagger.v3.oas.annotations.responses.ApiResponse
  **/
 @Target({ElementType.ANNOTATION_TYPE})

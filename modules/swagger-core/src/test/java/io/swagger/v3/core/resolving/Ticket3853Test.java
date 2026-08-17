@@ -40,7 +40,7 @@ public class Ticket3853Test extends SwaggerTestBase {
                 "io.swagger.v3.core.resolving.Ticket3853Test$SubClass:\n" +
                 "  type: object\n" +
                 "  allOf:\n" +
-                "  - $ref: '#/components/schemas/io.swagger.v3.core.resolving.Ticket3853Test$BaseClass'\n" +
+                "  - $ref: \"#/components/schemas/io.swagger.v3.core.resolving.Ticket3853Test$BaseClass\"\n" +
                 "  - type: object\n" +
                 "    properties:\n" +
                 "      subClassProperty:\n" +

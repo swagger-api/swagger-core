@@ -11,9 +11,9 @@ import io.swagger.v3.oas.models.media.Schema;
 import java.util.Iterator;
 import java.util.Map.Entry;
 
-public class GericModelConverter extends AbstractModelConverter {
+public class GenericModelConverter extends AbstractModelConverter {
 
-    protected GericModelConverter() {
+    protected GenericModelConverter() {
         super(Json.mapper());
     }
 

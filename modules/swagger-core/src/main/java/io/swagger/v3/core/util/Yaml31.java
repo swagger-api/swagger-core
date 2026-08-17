@@ -1,7 +1,6 @@
 package io.swagger.v3.core.util;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import io.swagger.v3.oas.models.media.Schema;
@@ -11,35 +10,37 @@ import org.slf4j.LoggerFactory;
 import java.util.Map;
 
 public class Yaml31 {
-    static ObjectMapper mapper;
 
-    static Logger LOGGER = LoggerFactory.getLogger(Yaml31.class);
+    private static final class ObjectMapperHolder {
+        private static final ObjectMapper MAPPER = ObjectMapperFactory.createYaml31();
+    }
+
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(Yaml31.class);
 
     public static ObjectMapper mapper() {
-        if (mapper == null) {
-            mapper = ObjectMapperFactory.createYaml31();
-        }
-        return mapper;
+        return ObjectMapperHolder.MAPPER;
     }
 
     public static ObjectWriter pretty() {
-        return mapper().writer(new DefaultPrettyPrinter());
+        return mapper().writerWithDefaultPrettyPrinter();
     }
 
     public static String pretty(Object o) {
         try {
             return pretty().writeValueAsString(o);
         } catch (Exception e) {
-            e.printStackTrace();
+            PrettyPrintHelper.emitError(LOGGER, "Error serializing object to YAML (3.1)", e);
             return null;
         }
     }
 
     public static void prettyPrint(Object o) {
         try {
-            System.out.println(pretty().writeValueAsString(o));
+            String prettyString = pretty().writeValueAsString(o);
+            PrettyPrintHelper.emit(LOGGER, prettyString);
         } catch (Exception e) {
-            e.printStackTrace();
+            PrettyPrintHelper.emitError(LOGGER, "Error pretty-printing YAML (3.1)", e);
         }
     }
 
@@ -59,4 +60,5 @@ public class Yaml31 {
             LOGGER.error("Exception converting jsonSchema to Map", e);
             return null;
         }
-    }}
+    }
+}

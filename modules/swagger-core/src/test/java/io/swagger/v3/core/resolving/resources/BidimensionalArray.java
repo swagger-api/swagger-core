@@ -19,7 +19,7 @@ public class BidimensionalArray {
 
 
     @ArraySchema(maxItems = 2)
-    @JsonIgnoreProperties({"empty"})
+    @JsonIgnoreProperties({"empty", "first", "last"})
     public static interface Foo<T> extends List<T> {
 
     }

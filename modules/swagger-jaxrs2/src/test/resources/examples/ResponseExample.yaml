@@ -12,7 +12,7 @@ paths:
           content:
             '*/*':
               schema:
-                $ref: '#/components/schemas/SubscriptionResponse'
+                $ref: "#/components/schemas/SubscriptionResponse"
               examples:
                 Default Response:
                   summary: Subscription Response Example

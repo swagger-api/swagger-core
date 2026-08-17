@@ -8,16 +8,16 @@ import io.swagger.v3.core.util.Yaml;
 import io.swagger.v3.core.util.Yaml31;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.media.JsonSchema;
 import io.swagger.v3.oas.models.media.Schema;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
 
-import static org.junit.Assert.assertNull;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.assertNull;
 
 public class OpenAPI3_1DeserializationTest {
 
@@ -46,7 +46,7 @@ public class OpenAPI3_1DeserializationTest {
         final String jsonString = ResourceUtils.loadClassResource(getClass(), "specFiles/petstore-3.0.yaml");
         final OpenAPI swagger = Yaml.mapper().readValue(jsonString, OpenAPI.class);
         assertNotNull(swagger);
-        assertEquals(swagger.getInfo().getLicense().getIdentifier(), null);
+        assertNull(swagger.getInfo().getLicense().getIdentifier());
     }
 
     @Test
@@ -237,13 +237,13 @@ public class OpenAPI3_1DeserializationTest {
         String json = Json31.pretty(openAPI);
         String yaml = Yaml31.pretty(openAPI);
         OpenAPI oas = Json31.mapper().readValue(json, OpenAPI.class);
-        assertTrue(Boolean.TRUE.equals(oas.getComponents().getSchemas().get("test").getBooleanSchemaValue()));
+        assertEquals(oas.getComponents().getSchemas().get("test").getBooleanSchemaValue(), Boolean.TRUE);
         Schema schema = Json31.mapper().readValue("true", Schema.class);
-        assertTrue(Boolean.TRUE.equals(schema.getBooleanSchemaValue()));
+        assertEquals(schema.getBooleanSchemaValue(), Boolean.TRUE);
         oas = Yaml31.mapper().readValue(yaml, OpenAPI.class);
-        assertTrue(Boolean.TRUE.equals(oas.getComponents().getSchemas().get("test").getBooleanSchemaValue()));
+        assertEquals(oas.getComponents().getSchemas().get("test").getBooleanSchemaValue(), Boolean.TRUE);
         schema = Yaml31.mapper().readValue("true", Schema.class);
-        assertTrue(Boolean.TRUE.equals(schema.getBooleanSchemaValue()));
+        assertEquals(schema.getBooleanSchemaValue(), Boolean.TRUE);
 
         json = Json.pretty(openAPI);
         yaml = Yaml.pretty(openAPI);
@@ -252,4 +252,18 @@ public class OpenAPI3_1DeserializationTest {
         oas = Yaml.mapper().readValue(yaml, OpenAPI.class);
         assertNull(oas.getComponents().getSchemas().get("test").getBooleanSchemaValue());
     }
+
+    @Test
+    public void testDynamicRefDeserializationOnOAS31() throws IOException {
+        final String jsonString = ResourceUtils.loadClassResource(getClass(), "specFiles/3.1.0/specWithDynamicRef.yaml");
+        OpenAPI openAPI = Yaml31.mapper().readValue(jsonString, OpenAPI.class);
+        assertNotNull(openAPI);
+
+        Schema baseNodeSchema = openAPI.getComponents().getSchemas().get("BaseNode");
+        assertNotNull(baseNodeSchema);
+        assertNotNull(baseNodeSchema.getProperties().get("children"));
+        JsonSchema childrenSchema = (JsonSchema) baseNodeSchema.getProperties().get("children");
+        assertEquals(childrenSchema.getItems().get$dynamicRef(), "#node");
+    }
+
 }

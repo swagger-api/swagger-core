@@ -1,6 +1,8 @@
 package io.swagger.v3.core.serialization;
 
 import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.util.DefaultIndenter;
+import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.dataformat.yaml.JacksonYAMLParseException;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import io.swagger.v3.core.matchers.SerializationMatchers;
@@ -23,6 +25,7 @@ import java.util.Map;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertTrue;
 
 public class JsonSerializationTest {
 
@@ -153,5 +156,34 @@ public class JsonSerializationTest {
         OpenAPI deser = ObjectMapperFactory.createYaml(yamlFactory).readValue(yaml, OpenAPI.class);
 
         // then - Throw JacksonYAMLParseException
+    }
+
+    @Test
+    public void testCustomPrettyPrinterIsHonored() {
+        //given
+        DefaultPrettyPrinter originalPrinter = (DefaultPrettyPrinter) Json.mapper().getSerializationConfig().getDefaultPrettyPrinter();
+        
+        try {
+            DefaultPrettyPrinter printer = new DefaultPrettyPrinter();
+            printer.indentObjectsWith(new DefaultIndenter("    ", "\n"));
+            Json.mapper().setDefaultPrettyPrinter(printer);
+
+            //when
+            OpenAPI openAPI = new OpenAPI()
+                    .info(new Info().title("Pet Store"));
+
+            String json = Json.pretty(openAPI);
+
+            //then
+            assertTrue(json.contains("{\n    \"openapi\""),
+                    "Custom four-space indentation should be honored");
+            assertTrue(json.contains("    \"info\" : {"), 
+                    "Nested objects should use four-space indentation");
+            assertTrue(json.contains("        \"title\" : \"Pet Store\""), 
+                    "Doubly-nested properties should use eight-space indentation");
+        } finally {
+            // Restore original pretty printer to avoid affecting other tests
+            Json.mapper().setDefaultPrettyPrinter(originalPrinter);
+        }
     }
 }

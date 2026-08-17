@@ -9,6 +9,8 @@ import io.swagger.v3.core.util.PrimitiveType;
 import io.swagger.v3.oas.models.media.Schema;
 import org.testng.annotations.Test;
 
+import java.util.Map;
+
 public class Ticket2992Test extends SwaggerTestBase {
 
     @Test
@@ -21,48 +23,6 @@ public class Ticket2992Test extends SwaggerTestBase {
         Schema model = context
                 .resolve(new AnnotatedType(TestObject2992.class));
 
-        SerializationMatchers.assertEqualsToYaml(context.getDefinedModels(), "LocalTime:\n" +
-                "  type: object\n" +
-                "  properties:\n" +
-                "    hour:\n" +
-                "      type: integer\n" +
-                "      format: int32\n" +
-                "    minute:\n" +
-                "      type: integer\n" +
-                "      format: int32\n" +
-                "    second:\n" +
-                "      type: integer\n" +
-                "      format: int32\n" +
-                "    nano:\n" +
-                "      type: integer\n" +
-                "      format: int32\n" +
-                "TestObject2992:\n" +
-                "  type: object\n" +
-                "  properties:\n" +
-                "    name:\n" +
-                "      type: string\n" +
-                "    a:\n" +
-                "      $ref: '#/components/schemas/LocalTime'\n" +
-                "    b:\n" +
-                "      $ref: '#/components/schemas/LocalTime'\n" +
-                "    c:\n" +
-                "      $ref: '#/components/schemas/LocalTime'\n" +
-                "    d:\n" +
-                "      type: string\n" +
-                "      format: date-time\n" +
-                "    e:\n" +
-                "      type: string\n" +
-                "      format: date-time\n" +
-                "    f:\n" +
-                "      type: string\n" +
-                "      format: date-time");
-
-        PrimitiveType.enablePartialTime();
-        context = new ModelConverterContextImpl(modelResolver);
-
-        context
-                .resolve(new AnnotatedType(TestObject2992.class));
-
         SerializationMatchers.assertEqualsToYaml(context.getDefinedModels(), "TestObject2992:\n" +
                 "  type: object\n" +
                 "  properties:\n" +
@@ -70,13 +30,13 @@ public class Ticket2992Test extends SwaggerTestBase {
                 "      type: string\n" +
                 "    a:\n" +
                 "      type: string\n" +
-                "      format: partial-time\n" +
+                "      format: time-local\n" +
                 "    b:\n" +
                 "      type: string\n" +
-                "      format: partial-time\n" +
+                "      format: time-local\n" +
                 "    c:\n" +
                 "      type: string\n" +
-                "      format: partial-time\n" +
+                "      format: time-local\n" +
                 "    d:\n" +
                 "      type: string\n" +
                 "      format: date-time\n" +
@@ -86,6 +46,46 @@ public class Ticket2992Test extends SwaggerTestBase {
                 "    f:\n" +
                 "      type: string\n" +
                 "      format: date-time");
+
+        // Save current state so other tests are not affected by the static customClasses map
+        final Map<String, PrimitiveType> custom = PrimitiveType.customClasses();
+        final PrimitiveType previous = custom.get("java.time.LocalTime");
+
+        PrimitiveType.enablePartialTime();
+        try {
+            context = new ModelConverterContextImpl(modelResolver);
+
+            context
+                    .resolve(new AnnotatedType(TestObject2992.class));
+
+            SerializationMatchers.assertEqualsToYaml(context.getDefinedModels(), "TestObject2992:\n" +
+                    "  type: object\n" +
+                    "  properties:\n" +
+                    "    name:\n" +
+                    "      type: string\n" +
+                    "    a:\n" +
+                    "      type: string\n" +
+                    "      format: partial-time\n" +
+                    "    b:\n" +
+                    "      type: string\n" +
+                    "      format: partial-time\n" +
+                    "    c:\n" +
+                    "      type: string\n" +
+                    "      format: partial-time\n" +
+                    "    d:\n" +
+                    "      type: string\n" +
+                    "      format: date-time\n" +
+                    "    e:\n" +
+                    "      type: string\n" +
+                    "      format: date-time\n" +
+                    "    f:\n" +
+                    "      type: string\n" +
+                    "      format: date-time");
+        } finally {
+            // Restore previous state so subsequent tests are not affected
+            if (previous == null) custom.remove("java.time.LocalTime");
+            else custom.put("java.time.LocalTime", previous);
+        }
     }
 
 }

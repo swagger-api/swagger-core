@@ -21,7 +21,7 @@ public class OverrideTest {
 
         // create new instead of use singleton
         final ModelConverters converters = new ModelConverters();
-        converters.addConverter(new GericModelConverter());
+        converters.addConverter(new GenericModelConverter());
         final Map<String, Schema> read = converters.read(GenericModel.class);
         assertTrue(read.containsKey(GenericModel.class.getSimpleName()));
 

@@ -6,7 +6,6 @@ import io.restassured.http.ContentType;
 import io.swagger.v3.core.util.Json;
 import io.swagger.v3.core.util.Yaml;
 import io.swagger.v3.jaxrs2.annotations.AbstractAnnotationTest;
-import org.testng.Assert;
 import org.testng.SkipException;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -14,6 +13,7 @@ import org.testng.annotations.Test;
 import java.io.IOException;
 
 import static io.restassured.RestAssured.given;
+import static org.testng.Assert.assertTrue;
 
 /**
  * <p>
@@ -375,7 +375,7 @@ public class OpenApiResourceIT extends AbstractAnnotationTest {
             "              schema:\n" +
             "                type: array\n" +
             "                items:\n" +
-            "                  $ref: '#/components/schemas/Car'\n" +
+            "                  $ref: \"#/components/schemas/Car\"\n" +
             "  /cars/detail:\n" +
             "    get:\n" +
             "      tags:\n" +
@@ -389,7 +389,7 @@ public class OpenApiResourceIT extends AbstractAnnotationTest {
             "              schema:\n" +
             "                type: array\n" +
             "                items:\n" +
-            "                  $ref: '#/components/schemas/Car_Detail'\n" +
+            "                  $ref: \"#/components/schemas/Car_Detail\"\n" +
             "  /cars/sale:\n" +
             "    get:\n" +
             "      tags:\n" +
@@ -403,7 +403,7 @@ public class OpenApiResourceIT extends AbstractAnnotationTest {
             "              schema:\n" +
             "                type: array\n" +
             "                items:\n" +
-            "                  $ref: '#/components/schemas/Car_Summary-or-Sale'\n" +
+            "                  $ref: \"#/components/schemas/Car_Summary-or-Sale\"\n" +
             "  /cars/summary:\n" +
             "    get:\n" +
             "      tags:\n" +
@@ -417,7 +417,7 @@ public class OpenApiResourceIT extends AbstractAnnotationTest {
             "              schema:\n" +
             "                type: array\n" +
             "                items:\n" +
-            "                  $ref: '#/components/schemas/Car_Summary'\n" +
+            "                  $ref: \"#/components/schemas/Car_Summary\"\n" +
             "  /files/attach:\n" +
             "    put:\n" +
             "      operationId: putFile\n" +
@@ -491,7 +491,7 @@ public class OpenApiResourceIT extends AbstractAnnotationTest {
             "          content:\n" +
             "            application/json:\n" +
             "              schema:\n" +
-            "                $ref: '#/components/schemas/Widget'\n" +
+            "                $ref: \"#/components/schemas/Widget\"\n" +
             "components:\n" +
             "  schemas:\n" +
             "    Car:\n" +
@@ -509,7 +509,7 @@ public class OpenApiResourceIT extends AbstractAnnotationTest {
             "        tires:\n" +
             "          type: array\n" +
             "          items:\n" +
-            "            $ref: '#/components/schemas/Tire'\n" +
+            "            $ref: \"#/components/schemas/Tire\"\n" +
             "    Car_Detail:\n" +
             "      type: object\n" +
             "      properties:\n" +
@@ -522,7 +522,7 @@ public class OpenApiResourceIT extends AbstractAnnotationTest {
             "        tires:\n" +
             "          type: array\n" +
             "          items:\n" +
-            "            $ref: '#/components/schemas/Tire_Detail'\n" +
+            "            $ref: \"#/components/schemas/Tire_Detail\"\n" +
             "    Car_Summary:\n" +
             "      type: object\n" +
             "      properties:\n" +
@@ -664,7 +664,7 @@ public class OpenApiResourceIT extends AbstractAnnotationTest {
                 .contentType("application/yaml")
                 .extract().response().body().asString();
 
-        Assert.assertTrue(actualBody.contains("openapi: 3.1.0"));
+        assertTrue(actualBody.contains("openapi: 3.1.0"));
     }
 
     @Test
@@ -681,7 +681,7 @@ public class OpenApiResourceIT extends AbstractAnnotationTest {
                 .contentType("application/yaml")
                 .extract().response().body().asString();
 
-        Assert.assertTrue(actualBody.contains("openapi: 3.1.0"));
+        assertTrue(actualBody.contains("openapi: 3.1.0"));
     }
 
     @Test
@@ -696,7 +696,7 @@ public class OpenApiResourceIT extends AbstractAnnotationTest {
                 .assertThat()
                 .statusCode(200)
                 .extract().response().body().asString();
-        Assert.assertTrue(actualBody.contains("openapi: 3.1.0"));
+        assertTrue(actualBody.contains("openapi: 3.1.0"));
     }
 
     private String formatYaml(String source) throws IOException {

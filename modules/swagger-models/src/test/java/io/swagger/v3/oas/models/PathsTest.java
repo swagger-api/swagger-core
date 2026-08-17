@@ -2,25 +2,28 @@ package io.swagger.v3.oas.models;
 
 import java.util.HashMap;
 
-import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotEquals;
+import static org.testng.Assert.assertNull;
 
 public class PathsTest {
 
     @Test
     public void testAddPathItem() {
         Paths paths = new Paths();
-        Assert.assertEquals(paths.addPathItem("foo", null), paths);
+        assertEquals(paths.addPathItem("foo", null), paths);
     }
 
     @Test
     public void testEquals() {
         Paths paths = new Paths();
-        Assert.assertTrue(paths.equals(paths));
-        Assert.assertTrue(paths.equals(new Paths()));
+        assertEquals(paths, paths);
+        assertEquals(paths, new Paths());
 
-        Assert.assertFalse(paths.equals(null));
-        Assert.assertFalse(paths.equals(new String()));
+        assertNotEquals(paths, null);
+        assertNotEquals(paths, new String());
     }
 
     @Test
@@ -30,7 +33,7 @@ public class PathsTest {
         paths.addExtension("y-", null);
         paths.addExtension(null, null);
 
-        Assert.assertNull(paths.getExtensions());
+        assertNull(paths.getExtensions());
     }
 
     @Test
@@ -40,7 +43,7 @@ public class PathsTest {
         paths.addExtension("x-", "bar");
         paths.addExtension("x-", "baz");
 
-        Assert.assertEquals(paths.getExtensions(),
+        assertEquals(paths.getExtensions(),
                 new HashMap<String, Object>() {{
                     put("x-", "baz");
                 }});
@@ -55,7 +58,7 @@ public class PathsTest {
         hashMap.put("x-", "baz");
         paths.setExtensions(hashMap);
 
-        Assert.assertEquals(paths.getExtensions(),
+        assertEquals(paths.getExtensions(),
                 new HashMap<String, Object>() {{
                     put("x-", "baz");
                 }});
@@ -69,14 +72,14 @@ public class PathsTest {
         hashMap.put("x-", "bar");
         hashMap.put("x-", "baz");
 
-        Assert.assertEquals(paths.extensions(hashMap), paths);
+        assertEquals(paths.extensions(hashMap), paths);
     }
 
     @Test
     public void testToString() {
         Paths paths = new Paths();
         paths.addPathItem("foo", null);
-        Assert.assertEquals(paths.toString(),
+        assertEquals(paths.toString(),
                 "class Paths {\n    {foo=null}\n}");
     }
 }

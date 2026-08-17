@@ -27,7 +27,7 @@ public class ContainerTypeSchemaTicket2636Test extends AbstractAnnotationTest {
                 "        content:\n" +
                 "          application/json:\n" +
                 "            schema:\n" +
-                "              $ref: '#/components/schemas/MyModel'\n" +
+                "              $ref: \"#/components/schemas/MyModel\"\n" +
                 "        required: true\n" +
                 "      responses:\n" +
                 "        \"200\":\n" +

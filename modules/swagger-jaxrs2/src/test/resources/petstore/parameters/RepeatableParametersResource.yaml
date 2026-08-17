@@ -12,7 +12,7 @@ paths:
         required: true
         style: simple
         schema:
-          $ref: '#/components/schemas/SubscriptionResponse'
+          $ref: "#/components/schemas/SubscriptionResponse"
       - name: formId
         in: query
         required: true
@@ -24,13 +24,13 @@ paths:
         required: true
         explode: false
         schema:
-          $ref: '#/components/schemas/SubscriptionResponse'
+          $ref: "#/components/schemas/SubscriptionResponse"
       - name: explodeTrue
         in: query
         required: true
         explode: true
         schema:
-          $ref: '#/components/schemas/SubscriptionResponse'
+          $ref: "#/components/schemas/SubscriptionResponse"
       - name: explodeAvoiding
         in: query
         required: true
@@ -42,6 +42,7 @@ paths:
       - name: arrayParameter
         in: query
         required: true
+        explode: true
         content:
           application/json:
             schema:
@@ -56,26 +57,27 @@ paths:
       - name: arrayParameterImplementation
         in: query
         required: true
+        explode: true
         schema:
           maxItems: 10
           minItems: 1
           uniqueItems: true
           type: array
           items:
-            $ref: '#/components/schemas/SubscriptionResponse'
+            $ref: "#/components/schemas/SubscriptionResponse"
       - name: arrayParameterImplementation2
         in: query
         required: true
         explode: true
         schema:
-          $ref: '#/components/schemas/SubscriptionResponse'
+          $ref: "#/components/schemas/SubscriptionResponse"
       responses:
         default:
           description: test description
           content:
             '*/*':
               schema:
-                $ref: '#/components/schemas/SubscriptionResponse'
+                $ref: "#/components/schemas/SubscriptionResponse"
 components:
   schemas:
     SubscriptionResponse:

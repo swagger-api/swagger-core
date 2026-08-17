@@ -1,0 +1,78 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "OpenAPI definition",
+    "version": "v0"
+  },
+  "paths": {
+    "/some/call": {
+      "get": {
+        "description": "Some operation description",
+        "operationId": "getSome",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SomeParentObject"
+                }
+              }
+            },
+            "description": "OK"
+          }
+        },
+        "summary": "Some summary",
+        "tags": [
+          "Some"
+        ]
+      }
+    }
+  },
+  "servers": [
+    {
+      "description": "Generated server url",
+      "url": "http://localhost:8080"
+    }
+  ],
+  "tags": [
+    {
+      "description": "some actions",
+      "name": "Some"
+    }
+  ],
+  "components": {
+    "schemas": {
+      "SomeChildObject": {
+        "description": "Some child object",
+        "properties": {
+          "id": {
+            "description": "id",
+            "format": "int64",
+            "type": "integer"
+          },
+          "name": {
+            "description": "name",
+            "type": "string"
+          }
+        }
+      },
+      "SomeParentObject": {
+        "description": "Some parent object",
+        "properties": {
+          "id": {
+            "description": "id",
+            "format": "int64",
+            "type": "integer"
+          },
+          "someList": {
+            "description": "list",
+            "items": {
+              "$ref": "#/components/schemas/SomeChildObject"
+            },
+            "type": "array"
+          }
+        }
+      }
+    }
+  }
+}

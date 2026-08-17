@@ -1,8 +1,8 @@
 package io.swagger.v3.jaxrs2.integration;
 
-import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import io.swagger.v3.core.filter.OpenAPISpecFilter;
 import io.swagger.v3.core.filter.SpecFilter;
+import io.swagger.v3.core.util.Configuration;
 import io.swagger.v3.core.util.Json;
 import io.swagger.v3.core.util.Yaml;
 import io.swagger.v3.oas.integration.GenericOpenApiContextBuilder;
@@ -10,6 +10,7 @@ import io.swagger.v3.oas.integration.OpenApiConfigurationException;
 import io.swagger.v3.oas.integration.SwaggerConfiguration;
 import io.swagger.v3.oas.integration.api.OpenApiContext;
 import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.media.Schema;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Arrays;
@@ -37,6 +38,10 @@ public class SwaggerLoader {
 
     private String objectMapperProcessorClass;
     private String defaultResponseCode;
+
+    private Configuration.GroupsValidationStrategy groupsValidationStrategy = Configuration.GroupsValidationStrategy.DEFAULT;
+    private String validatorProcessorClass;
+
     private String modelConverterClasses;
 
     private Boolean sortOutput = false;
@@ -48,6 +53,10 @@ public class SwaggerLoader {
     private Boolean openAPI31 = false;
 
     private Boolean convertToOpenAPI31 = false;
+
+    private String schemaResolution;
+
+    private String openAPIVersion;
 
     /**
      * @since 2.0.6
@@ -75,6 +84,36 @@ public class SwaggerLoader {
      */
     public void setDefaultResponseCode(String defaultResponseCode) {
         this.defaultResponseCode = defaultResponseCode;
+    }
+
+    /**
+     * @since 2.2.29
+     */
+    public String getGroupsValidationStrategy() {
+        return groupsValidationStrategy.toString();
+    }
+
+    /**
+     * @since 2.2.29
+     */
+    public void setGroupsValidationStrategy(String groupsValidationStrategy) {
+        if (StringUtils.isNotBlank(groupsValidationStrategy)) {
+            this.groupsValidationStrategy = Configuration.GroupsValidationStrategy.valueOf(groupsValidationStrategy);
+        }
+    }
+
+    /**
+     * @since 2.2.29
+     */
+    public String getValidatorProcessorClass() {
+        return validatorProcessorClass;
+    }
+
+    /**
+     * @since 2.2.29
+     */
+    public void setValidatorProcessorClass(String validatorProcessorClass) {
+        this.validatorProcessorClass = validatorProcessorClass;
     }
 
     /**
@@ -250,6 +289,34 @@ public class SwaggerLoader {
         this.convertToOpenAPI31 = convertToOpenAPI31;
     }
 
+    /**
+     *  @since 2.2.24
+     */
+    public String getSchemaResolution() {
+        return schemaResolution;
+    }
+
+    /**
+     *  @since 2.2.24
+     */
+    public void setSchemaResolution(String schemaResolution) {
+        this.schemaResolution = schemaResolution;
+    }
+
+    /**
+     *  @since 2.2.28
+     */
+    public String getOpenAPIVersion() {
+        return openAPIVersion;
+    }
+
+    /**
+     *  @since 2.2.28
+     */
+    public void setOpenAPIVersion(String openAPIVersion) {
+        this.openAPIVersion = openAPIVersion;
+    }
+
     public Map<String, String> resolve() throws Exception{
 
         Set<String> ignoredRoutesSet = null;
@@ -295,12 +362,20 @@ public class SwaggerLoader {
                 .resourcePackages(resourcePackagesSet)
                 .objectMapperProcessorClass(objectMapperProcessorClass)
                 .defaultResponseCode(defaultResponseCode)
+                .validatorProcessorClass(validatorProcessorClass)
+                .groupsValidationStrategy(groupsValidationStrategy)
                 .modelConverterClasses(modelConverterSet)
                 .sortOutput(sortOutput)
                 .alwaysResolveAppPath(alwaysResolveAppPath)
                 .skipResolveAppPath(skipResolveAppPath)
                 .openAPI31(openAPI31)
                 .convertToOpenAPI31(convertToOpenAPI31);
+        if (schemaResolution != null) {
+            config.schemaResolution(Schema.SchemaResolution.valueOf(schemaResolution));
+        }
+        if (openAPIVersion != null) {
+            config.openAPIVersion(openAPIVersion);
+        }
         try {
             GenericOpenApiContextBuilder builder = new JaxrsOpenApiContextBuilder()
                     .openApiConfiguration(config);
@@ -325,14 +400,14 @@ public class SwaggerLoader {
             String openapiYaml = null;
             if ("JSON".equals(outputFormat) || "JSONANDYAML".equals(outputFormat)) {
                 if (prettyPrint != null && prettyPrint) {
-                    openapiJson = context.getOutputJsonMapper().writer(new DefaultPrettyPrinter()).writeValueAsString(openAPI);
+                    openapiJson = context.getOutputJsonMapper().writerWithDefaultPrettyPrinter().writeValueAsString(openAPI);
                 } else {
                     openapiJson = context.getOutputJsonMapper().writeValueAsString(openAPI);
                 }
             }
             if ("YAML".equals(outputFormat) || "JSONANDYAML".equals(outputFormat)) {
                 if (prettyPrint != null && prettyPrint) {
-                    openapiYaml = context.getOutputYamlMapper().writer(new DefaultPrettyPrinter()).writeValueAsString(openAPI);
+                    openapiYaml = context.getOutputYamlMapper().writerWithDefaultPrettyPrinter().writeValueAsString(openAPI);
                 } else {
                     openapiYaml = context.getOutputYamlMapper().writeValueAsString(openAPI);
                 }

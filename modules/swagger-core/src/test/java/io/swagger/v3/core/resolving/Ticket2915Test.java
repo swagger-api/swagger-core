@@ -37,9 +37,9 @@ public class Ticket2915Test extends SwaggerTestBase {
                 "    name:\n" +
                 "      type: string\n" +
                 "    perServing:\n" +
-                "      $ref: '#/components/schemas/QuantitativeValue'\n" +
+                "      $ref: \"#/components/schemas/QuantitativeValue\"\n" +
                 "    per100Gram:\n" +
-                "      $ref: '#/components/schemas/QuantitativeValue'\n" +
+                "      $ref: \"#/components/schemas/QuantitativeValue\"\n" +
                 "  description: Nutritional value specification");
     }
 

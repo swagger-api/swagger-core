@@ -1,0 +1,124 @@
+openapi: 3.1.0
+info:
+  title: OpenAPI definition
+  version: v0
+servers:
+  - url: http://localhost
+    description: Generated server url
+paths:
+  /users:
+    get:
+      summary: Get list of all users
+      operationId: usersList
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+                maxLength: 100
+                minLength: 1
+components:
+  schemas:
+    ResponseDefinition:
+      properties:
+        personalNumber:
+          type: string
+    WebhookResponseDefinition:
+      properties:
+        personalNumber:
+          type: integer
+    WebhookOperationDefinition:
+      properties:
+        personalNumber:
+          type: number
+    RequestBodyDefinition:
+      properties:
+        personalNumber:
+          type: string
+    ParameterDefinition:
+      properties:
+        parameterName:
+          type: string
+    HeaderDefinition:
+      type: string
+      description: header ref
+    CallbackDefinition:
+      description: callback ref
+      type: string
+    PathItemDefinition:
+      description: pathItem ref
+      type: string
+    UnusedDefinition:
+      description: unused definition
+      type: string
+      minLength: 1
+      maxLength: 100
+  responses:
+    OK:
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ResponseDefinition"
+  requestBodies:
+    requestBody1:
+      description: request body
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/RequestBodyDefinition"
+  parameters:
+    parameter1:
+      description: request body
+      name: parameter
+      in: query
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ParameterDefinition"
+  headers:
+    header1:
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/HeaderDefinition"
+  callbacks:
+      myEvent: # Event name
+        "{$request.body#/callbackUrl}":
+          post:
+            requestBody:
+              required: true
+              content:
+                application/json:
+                  schema:
+                    $ref: "#/components/schemas/CallbackDefinition"
+  pathItems:
+    pathItem1:
+      get:
+        summary: Get list of all users
+        operationId: usersList
+        responses:
+          200:
+            description: OK
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/PathItemDefinition"
+webhooks:
+  newPet:
+    post:
+      requestBody:
+        description: Information about a new pet in the system
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/WebhookOperationDefinition"
+              description: Webhook Pet
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WebhookResponseDefinition"

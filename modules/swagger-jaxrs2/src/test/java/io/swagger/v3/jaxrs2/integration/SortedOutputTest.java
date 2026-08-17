@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -71,7 +70,7 @@ public class SortedOutputTest {
                 .init();
 
         OpenAPI openApi = ctx.read();
-        String sorted = ctx.getOutputYamlMapper().writer(new DefaultPrettyPrinter()).writeValueAsString(openApi);
+        String sorted = ctx.getOutputYamlMapper().writerWithDefaultPrettyPrinter().writeValueAsString(openApi);
 
         openApiConfiguration = new SwaggerConfiguration()
                 .resourcePackages(Collections.singleton("com.my.sorted.resources"));
@@ -80,7 +79,7 @@ public class SortedOutputTest {
                 .openApiConfiguration(openApiConfiguration)
                 .init();
 
-        String notSorted = ctx.getOutputYamlMapper().writer(new DefaultPrettyPrinter()).writeValueAsString(openApi);
+        String notSorted = ctx.getOutputYamlMapper().writerWithDefaultPrettyPrinter().writeValueAsString(openApi);
 
         assertEquals(sorted, expectedSorted);
         assertEquals(notSorted, expectedNotSorted);
@@ -176,7 +175,7 @@ public class SortedOutputTest {
                 .init();
 
         OpenAPI openApi = ctx.read();
-        String sorted = ctx.getOutputYamlMapper().writer(new DefaultPrettyPrinter()).writeValueAsString(openApi);
+        String sorted = ctx.getOutputYamlMapper().writerWithDefaultPrettyPrinter().writeValueAsString(openApi);
 
         openApiConfiguration = new SwaggerConfiguration()
                 .resourcePackages(Collections.singleton("com.my.sorted.resources"));
@@ -185,7 +184,7 @@ public class SortedOutputTest {
                 .openApiConfiguration(openApiConfiguration)
                 .init();
 
-        String notSorted = ctx.getOutputYamlMapper().writer(new DefaultPrettyPrinter()).writeValueAsString(openApi);
+        String notSorted = ctx.getOutputYamlMapper().writerWithDefaultPrettyPrinter().writeValueAsString(openApi);
 
         assertEquals(sorted, expectedSorted);
         assertEquals(notSorted, expectedNotSorted);
@@ -201,7 +200,7 @@ public class SortedOutputTest {
             "          content:\n" +
             "            '*/*':\n" +
             "              schema:\n" +
-            "                $ref: '#/components/schemas/Pet'\n" +
+            "                $ref: \"#/components/schemas/Pet\"\n" +
             "          description: default response\n" +
             "components:\n" +
             "  schemas:\n" +
@@ -219,7 +218,7 @@ public class SortedOutputTest {
             "      type: object\n" +
             "      properties:\n" +
             "        category:\n" +
-            "          $ref: '#/components/schemas/Category'\n" +
+            "          $ref: \"#/components/schemas/Category\"\n" +
             "        id:\n" +
             "          type: integer\n" +
             "          format: int64\n" +
@@ -241,7 +240,7 @@ public class SortedOutputTest {
             "        tags:\n" +
             "          type: array\n" +
             "          items:\n" +
-            "            $ref: '#/components/schemas/Tag'\n" +
+            "            $ref: \"#/components/schemas/Tag\"\n" +
             "          xml:\n" +
             "            wrapped: true\n" +
             "      xml:\n" +
@@ -268,7 +267,7 @@ public class SortedOutputTest {
             "          content:\n" +
             "            '*/*':\n" +
             "              schema:\n" +
-            "                $ref: '#/components/schemas/Pet'\n" +
+            "                $ref: \"#/components/schemas/Pet\"\n" +
             "components:\n" +
             "  schemas:\n" +
             "    Category:\n" +
@@ -288,7 +287,7 @@ public class SortedOutputTest {
             "          type: integer\n" +
             "          format: int64\n" +
             "        category:\n" +
-            "          $ref: '#/components/schemas/Category'\n" +
+            "          $ref: \"#/components/schemas/Category\"\n" +
             "        name:\n" +
             "          type: string\n" +
             "        photoUrls:\n" +
@@ -304,7 +303,7 @@ public class SortedOutputTest {
             "          xml:\n" +
             "            wrapped: true\n" +
             "          items:\n" +
-            "            $ref: '#/components/schemas/Tag'\n" +
+            "            $ref: \"#/components/schemas/Tag\"\n" +
             "        status:\n" +
             "          type: string\n" +
             "          description: pet status in the store\n" +
