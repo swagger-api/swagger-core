@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [2.2.54] - 2026-08-18
+
 ### Fixed
 - Java 8 date/time types (`OffsetTime`, `Duration`, `LocalTime`) now map by default
   to the correct OpenAPI Formats Registry strings (`"time"`, `"duration"`, `"time-local"`)
