@@ -148,4 +148,17 @@ public @interface Operation {
      * @return whether or not to ignore JsonView annotations
      */
     boolean ignoreJsonView() default false;
+
+    /**
+     * Specifies the Bean Validation group associated with this operation.
+     * Validation groups (as defined by JSR-380 Bean Validation) allow a single DTO
+     * to be reused across multiple operations by specifying which group is active
+     * for a given operation (e.g., Create.class for POST, Update.class for PUT).
+     * When specified, this information can be used to conditionally display only
+     * the schema fields relevant to the active group in the generated OpenAPI documentation.
+     *
+     * @since 2.2.54
+     * @return the validation group for this operation
+     */
+    Class<?> groups() default Void.class;
 }
