@@ -130,6 +130,7 @@ public abstract class AnnotationsUtils {
                 && schema.additionalProperties().equals(io.swagger.v3.oas.annotations.media.Schema.AdditionalPropertiesValue.USE_ADDITIONAL_PROPERTIES_ANNOTATION)
                 && schema.additionalPropertiesSchema().equals(Void.class)
                 && schema.examples().length == 0
+                && schema.groups().length == 0
         ) {
             return false;
         }
@@ -661,6 +662,14 @@ public abstract class AnnotationsUtils {
                 if (!Schema.SchemaResolution.DEFAULT.equals(schemaResolution)) {
                     schemaObject = existingSchema;
                 } else {
+                    // apply groups before early return so the property schema carries group info
+                    if (schema != null && schema.groups().length > 0) {
+                        List<String> groupNames = new java.util.ArrayList<>();
+                        for (Class<?> group : schema.groups()) {
+                            groupNames.add(group.getSimpleName());
+                        }
+                        existingSchema.setGroups(groupNames);
+                    }
                     return Optional.of(existingSchema);
                 }
             }
@@ -921,6 +930,14 @@ public abstract class AnnotationsUtils {
             if (!schema.additionalPropertiesSchema().equals(Void.class)) {
                 schemaObject.additionalProperties(resolveSchemaFromType(schema.additionalPropertiesSchema(), components, jsonViewAnnotation, openapi31, null, null, context));
             }
+        }
+
+        if (schema.groups().length > 0) {
+            List<String> groupNames = new java.util.ArrayList<>();
+            for (Class<?> group : schema.groups()) {
+                groupNames.add(group.getSimpleName());
+            }
+            schemaObject.setGroups(groupNames);
         }
 
         return Optional.of(schemaObject);
@@ -2883,6 +2900,14 @@ public abstract class AnnotationsUtils {
                     return patch.schemaResolution();
                 }
                 return master.schemaResolution();
+            }
+
+            @Override
+            public Class<?>[] groups() {
+                if (master.groups().length > 0 || patch.groups().length == 0) {
+                    return master.groups();
+                }
+                return patch.groups();
             }
 
         };
