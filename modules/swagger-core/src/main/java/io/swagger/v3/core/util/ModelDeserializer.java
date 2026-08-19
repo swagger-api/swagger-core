@@ -11,7 +11,9 @@ import io.swagger.v3.oas.models.media.ArraySchema;
 import io.swagger.v3.oas.models.media.BooleanSchema;
 import io.swagger.v3.oas.models.media.ComposedSchema;
 import io.swagger.v3.oas.models.media.DateSchema;
+import io.swagger.v3.oas.models.media.DateTimeLocalSchema;
 import io.swagger.v3.oas.models.media.DateTimeSchema;
+import io.swagger.v3.oas.models.media.DurationSchema;
 import io.swagger.v3.oas.models.media.EmailSchema;
 import io.swagger.v3.oas.models.media.IntegerSchema;
 import io.swagger.v3.oas.models.media.JsonSchema;
@@ -21,6 +23,8 @@ import io.swagger.v3.oas.models.media.ObjectSchema;
 import io.swagger.v3.oas.models.media.PasswordSchema;
 import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.media.StringSchema;
+import io.swagger.v3.oas.models.media.TimeLocalSchema;
+import io.swagger.v3.oas.models.media.TimeSchema;
 import io.swagger.v3.oas.models.media.UUIDSchema;
 import io.swagger.v3.core.util.StringUtils;
 import tools.jackson.databind.ValueDeserializer;
@@ -47,6 +51,10 @@ public class ModelDeserializer extends ValueDeserializer<Schema> {
     private static final String FORMAT = "format";
     private static final String DATE_FORMAT = "date";
     private static final String DATE_TIME_FORMAT = "date-time";
+    private static final String TIME_FORMAT = "time";
+    private static final String DURATION_FORMAT = "duration";
+    private static final String DATE_TIME_LOCAL_FORMAT = "date-time-local";
+    private static final String TIME_LOCAL_FORMAT = "time-local";
     private static final String EMAIL_FORMAT = "email";
     private static final String PASSWORD_FORMAT = "password";
     private static final String UUID_FORMAT = "uuid";
@@ -197,7 +205,15 @@ public class ModelDeserializer extends ValueDeserializer<Schema> {
                 schema = Json.mapper().convertValue(node, DateSchema.class);
             } else if (DATE_TIME_FORMAT.equals(format)) {
                 schema = Json.mapper().convertValue(node, DateTimeSchema.class);
-            } else if (EMAIL_FORMAT.equals(format)) {
+            } else if (TIME_FORMAT.equals(format)) {
+                schema = Json.mapper().convertValue(node, TimeSchema.class);
+            } else if (DURATION_FORMAT.equals(format)) {
+                schema = Json.mapper().convertValue(node, DurationSchema.class);
+            } else if (DATE_TIME_LOCAL_FORMAT.equals(format)) {
+                schema = Json.mapper().convertValue(node, DateTimeLocalSchema.class);
+            } else if (TIME_LOCAL_FORMAT.equals(format)) {
+                schema = Json.mapper().convertValue(node, TimeLocalSchema.class);
+            }else if (EMAIL_FORMAT.equals(format)) {
                 schema = Json.mapper().convertValue(node, EmailSchema.class);
             } else if (PASSWORD_FORMAT.equals(format)) {
                 schema = Json.mapper().convertValue(node, PasswordSchema.class);

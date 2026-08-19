@@ -15,6 +15,18 @@
     <build>
         <plugins>
             <plugin>
+                <groupId>org.codehaus.plexus</groupId>
+                <artifactId>plexus-component-metadata</artifactId>
+                <version>2.2.0</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>generate-metadata</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-plugin-plugin</artifactId>
                 <version>3.15.2</version>

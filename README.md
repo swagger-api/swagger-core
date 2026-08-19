@@ -25,6 +25,7 @@ The OpenAPI Specification has undergone several revisions since initial creation
 Swagger core Version      | Release Date | OpenAPI Spec compatibility | Notes | Status
 ------------------------- | ------------ | -------------------------- | ----- | ----
 4.0.0-SNAPSHOT (**current**)| 2026-06-21   | 3.x           | [io.github.vpelikh fork](https://github.com/vpelikh/swagger-core) | Development
+2.2.54                     | 2026-08-18   | 3.x           | [tag v2.2.54](https://github.com/swagger-api/swagger-core/tree/v2.2.54) | Supported
 2.2.53                     | 2026-08-03   | 3.x           | [tag v2.2.53](https://github.com/swagger-api/swagger-core/tree/v2.2.53) | Supported
 2.2.52                     | 2026-06-22   | 3.x           | [tag v2.2.52](https://github.com/swagger-api/swagger-core/tree/v2.2.52) | Supported
 2.2.51                     | 2026-06-12   | 3.x           | [tag v2.2.51](https://github.com/swagger-api/swagger-core/tree/v2.2.51) | Supported
@@ -140,6 +141,8 @@ Swagger core Version      | Release Date | OpenAPI Spec compatibility | Notes | 
 ### Change History
 If you're interested in the change history of swagger and the Swagger Core framework, see [here](https://github.com/vpelikh/swagger-core/releases).
 
+Starting with version 2.3.0, notable changes and fixes are also documented in [CHANGELOG.md](CHANGELOG.md).
+
 ### Prerequisites
 You need the following installed and available in your $PATH:
 
@@ -148,7 +151,7 @@ You need the following installed and available in your $PATH:
 * Jackson 3.1.3 or greater
 
 
-### To build from source
+### To build from source (currently 4.0.4-SNAPSHOT)
 ```
 # first time building locally
 mvn -N

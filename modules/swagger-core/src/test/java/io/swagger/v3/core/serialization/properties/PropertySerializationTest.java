@@ -6,13 +6,17 @@ import io.swagger.v3.core.util.JsonAssert;
 import io.swagger.v3.oas.models.media.ArraySchema;
 import io.swagger.v3.oas.models.media.BooleanSchema;
 import io.swagger.v3.oas.models.media.DateSchema;
+import io.swagger.v3.oas.models.media.DateTimeLocalSchema;
 import io.swagger.v3.oas.models.media.DateTimeSchema;
+import io.swagger.v3.oas.models.media.DurationSchema;
 import io.swagger.v3.oas.models.media.IntegerSchema;
 import io.swagger.v3.oas.models.media.MapSchema;
 import io.swagger.v3.oas.models.media.NumberSchema;
 import io.swagger.v3.oas.models.media.ObjectSchema;
 import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.media.StringSchema;
+import io.swagger.v3.oas.models.media.TimeLocalSchema;
+import io.swagger.v3.oas.models.media.TimeSchema;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
@@ -78,6 +82,74 @@ public class PropertySerializationTest {
         assertEquals(p.getType(), "string");
         assertEquals(p.getFormat(), "date-time");
         assertEquals(p.getClass(), DateTimeSchema.class);
+        JsonAssert.assertJsonEquals(m, m.writeValueAsString(p), json);
+    }
+
+    @Test(description = "it should serialize a TimeSchema")
+    public void serializeTimeSchema() throws IOException {
+        final TimeSchema p = new TimeSchema();
+        final String json = "{\"type\":\"string\",\"format\":\"time\"}";
+        JsonAssert.assertJsonEquals(m, m.writeValueAsString(p), json);
+    }
+
+    @Test(description = "it should deserialize a TimeSchema")
+    public void deserializeTimeSchema() throws IOException {
+        final String json = "{\"type\":\"string\",\"format\":\"time\"}";
+        final Schema p = m.readValue(json, Schema.class);
+        assertEquals(p.getType(), "string");
+        assertEquals(p.getFormat(), "time");
+        assertEquals(p.getClass(), TimeSchema.class);
+        JsonAssert.assertJsonEquals(m, m.writeValueAsString(p), json);
+    }
+
+    @Test(description = "it should serialize a DurationSchema")
+    public void serializeDurationSchema() throws IOException {
+        final DurationSchema p = new DurationSchema();
+        final String json = "{\"type\":\"string\",\"format\":\"duration\"}";
+        JsonAssert.assertJsonEquals(m, m.writeValueAsString(p), json);
+    }
+
+    @Test(description = "it should deserialize a DurationSchema")
+    public void deserializeDurationSchema() throws IOException {
+        final String json = "{\"type\":\"string\",\"format\":\"duration\"}";
+        final Schema p = m.readValue(json, Schema.class);
+        assertEquals(p.getType(), "string");
+        assertEquals(p.getFormat(), "duration");
+        assertEquals(p.getClass(), DurationSchema.class);
+        JsonAssert.assertJsonEquals(m, m.writeValueAsString(p), json);
+    }
+
+    @Test(description = "it should serialize a DateTimeLocalSchema")
+    public void serializeDateTimeLocalSchema() throws IOException {
+        final DateTimeLocalSchema p = new DateTimeLocalSchema();
+        final String json = "{\"type\":\"string\",\"format\":\"date-time-local\"}";
+        JsonAssert.assertJsonEquals(m, m.writeValueAsString(p), json);
+    }
+
+    @Test(description = "it should deserialize a DateTimeLocalSchema")
+    public void deserializeDateTimeLocalSchema() throws IOException {
+        final String json = "{\"type\":\"string\",\"format\":\"date-time-local\"}";
+        final Schema p = m.readValue(json, Schema.class);
+        assertEquals(p.getType(), "string");
+        assertEquals(p.getFormat(), "date-time-local");
+        assertEquals(p.getClass(), DateTimeLocalSchema.class);
+        JsonAssert.assertJsonEquals(m, m.writeValueAsString(p), json);
+    }
+
+    @Test(description = "it should serialize a TimeLocalSchema")
+    public void serializeTimeLocalSchema() throws IOException {
+        final TimeLocalSchema p = new TimeLocalSchema();
+        final String json = "{\"type\":\"string\",\"format\":\"time-local\"}";
+        JsonAssert.assertJsonEquals(m, m.writeValueAsString(p), json);
+    }
+
+    @Test(description = "it should deserialize a TimeLocalSchema")
+    public void deserializeTimeLocalSchema() throws IOException {
+        final String json = "{\"type\":\"string\",\"format\":\"time-local\"}";
+        final Schema p = m.readValue(json, Schema.class);
+        assertEquals(p.getType(), "string");
+        assertEquals(p.getFormat(), "time-local");
+        assertEquals(p.getClass(), TimeLocalSchema.class);
         JsonAssert.assertJsonEquals(m, m.writeValueAsString(p), json);
     }
 
