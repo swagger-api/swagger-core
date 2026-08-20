@@ -20,8 +20,8 @@
                 <configuration>
                     <bnd>
                         Import-Package: \
-                        jakarta.validation.constraints;version="[3,4)",
-                        jakarta.xml.bind.annotation;version="[3,5)",
+                        jakarta.validation.constraints;version="[3,4)", \
+                        jakarta.xml.bind.annotation;version="[3,5)", \
                         *
                     </bnd>
                 </configuration>
@@ -150,6 +150,13 @@
         <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <!-- OSGi manifest analysis for the OsgiManifestTest; same bnd toolchain that generates the bundle -->
+        <dependency>
+            <groupId>biz.aQute.bnd</groupId>
+            <artifactId>biz.aQute.bndlib</artifactId>
+            <version>${bnd-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
