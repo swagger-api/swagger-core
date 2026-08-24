@@ -611,6 +611,38 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             if (aType != null) {
                 model = context.resolve(aType);
                 return model;
+            } else if (openapi31
+                    && StringUtils.isNotBlank(name)
+                    && annotatedType.isSchemaProperty()
+                    && !annotatedType.isSubtype()
+                    && annotatedType.getJsonViewAnnotation() == null
+                    && (annotatedType.getCtxAnnotations() == null || annotatedType.getCtxAnnotations().length == 0)
+                    && context.getDefinedModels().containsKey(name)) {
+                // This class was already fully resolved into a named component schema via a
+                // different (type, propertyName) cache entry - see AnnotatedType.equals(), which
+                // intentionally differentiates by propertyName/subtype/jsonView (needed to keep
+                // "property" vs "subtype" resolutions separate, see #5003). Redoing the full
+                // resolveSchemaMembers() walk below only reproduces a schema we already built, at
+                // a cost that grows combinatorially with how many differently-named properties
+                // across the object graph happen to reference this same class (e.g. third-party
+                // interfaces like the JCR API, where dozens of unrelated getters return the same
+                // handful of core types). Short-circuit to a $ref - but only:
+                //  - in OAS 3.1 (openapi31), where $ref may carry sibling keywords, so a
+                //    per-property override applied after this method returns (see the
+                //    getSchemaFromAnnotation()/resolveArraySchemaWithCycleGuard() overlay at the
+                //    call site) layers cleanly onto a bare $ref exactly as it would onto a fully
+                //    inlined schema. OAS 3.0 has no such path: without sibling support, some
+                //    per-property overrides (e.g. @Schema(nullable=true) on one of several
+                //    properties sharing this type) are instead baked directly into the shared
+                //    named schema itself, which requires the full walk to reproduce - see
+                //    Issue5115Test.testObjectKeepsInvalidNullableSchemaIfSetInSchemaAnnotationOAS30
+                //    and JsonPropertyTest.testTicket2845 (also swagger-api/swagger-core#3366).
+                //  - when the referencing property carries no annotations of its own, since
+                //    sibling annotations can still affect composition wrapping (see
+                //    AllofResolvingTest) independent of the OAS version.
+                Schema ref = new JsonSchema();
+                ref.$ref(constructRef(name));
+                return ref;
             } else {
                 model = openapi31 ? new JsonSchema().name(name) : new Schema().name(name);
                 if (isExplicitObjectType()) {
