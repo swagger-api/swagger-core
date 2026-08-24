@@ -598,7 +598,7 @@
         <jersey2-version>2.48</jersey2-version>
         <jackson-version>2.22.2</jackson-version>
         <jackson-annotations-version>2.22</jackson-annotations-version>
-        <jackson-databind-version>2.22.1</jackson-databind-version>
+        <jackson-databind-version>2.22.2</jackson-databind-version>
         <snakeyaml-version>2.6</snakeyaml-version>
         <logback-version>1.6.3</logback-version>
         <reflections-version>0.10.2</reflections-version>
