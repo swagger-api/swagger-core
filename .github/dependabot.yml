@@ -5,14 +5,24 @@ updates:
     directory: "/"
     schedule:
       interval: "daily"
-    ignore:
+    allow:
       - dependency-name: "*"
+        update-types:
+          - "version-update:semver-minor"
+          - "version-update:semver-patch"
+      # Old Dependency-Check majors can lose compatibility with the NVD API.
+      - dependency-name: "org.owasp:dependency-check-maven"
         update-types: ["version-update:semver-major"]
   - package-ecosystem: "maven"
     target-branch: "1.5"
     directory: "/"
     schedule:
       interval: "daily"
-    ignore:
+    allow:
       - dependency-name: "*"
+        update-types:
+          - "version-update:semver-minor"
+          - "version-update:semver-patch"
+      # Old Dependency-Check majors can lose compatibility with the NVD API.
+      - dependency-name: "org.owasp:dependency-check-maven"
         update-types: ["version-update:semver-major"]
