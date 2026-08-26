@@ -3126,7 +3126,10 @@ public abstract class AnnotationsUtils {
             if (!Void.class.equals(ctxSchema.implementation())) {
                 aType.setType(ctxSchema.implementation());
             } else if (StringUtils.isNotBlank(ctxSchema.type())) {
-                aType.setType(ctxSchema.type().getClass());
+                Type schemaType = getSchemaType(ctxSchema, true);
+                if (schemaType != null) {
+                    aType.setType(schemaType);
+                }
             }
         }
         return aType;
