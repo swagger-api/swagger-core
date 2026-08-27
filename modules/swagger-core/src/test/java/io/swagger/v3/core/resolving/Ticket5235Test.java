@@ -13,6 +13,8 @@ import org.testng.annotations.Test;
 import java.util.Collections;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNull;
+import static org.testng.Assert.assertTrue;
 
 public class Ticket5235Test extends SwaggerTestBase {
 
@@ -24,6 +26,8 @@ public class Ticket5235Test extends SwaggerTestBase {
         assertEquals(property(schema, "booleanOverride").getTypes(), Collections.singleton("boolean"));
         assertEquals(property(schema, "numberOverride").getTypes(), Collections.singleton("number"));
         assertEquals(property(schema, "integerOverride").getTypes(), Collections.singleton("integer"));
+        assertNull(property(schema, "integerOverride").getFormat(), "format must not leak from mapped Java class");
+        assertEquals(property(schema, "integerWithFormatOverride").getFormat(), "int32");
     }
 
     @Test(dataProvider = "siblingSchemaResolutions")
@@ -35,6 +39,8 @@ public class Ticket5235Test extends SwaggerTestBase {
         assertEquals(property(schema, "booleanOverride").getType(), "boolean");
         assertEquals(property(schema, "numberOverride").getType(), "number");
         assertEquals(property(schema, "integerOverride").getType(), "integer");
+        assertNull(property(schema, "integerOverride").getFormat(), "format must not leak from mapped Java class");
+        assertEquals(property(schema, "integerWithFormatOverride").getFormat(), "int32");
     }
 
     @DataProvider
@@ -59,6 +65,8 @@ public class Ticket5235Test extends SwaggerTestBase {
         assertEquals(properties.path("booleanOverride").path("type").asText(), "boolean");
         assertEquals(properties.path("numberOverride").path("type").asText(), "number");
         assertEquals(properties.path("integerOverride").path("type").asText(), "integer");
+        assertTrue(properties.path("integerOverride").path("format").isMissingNode(), "spurious format must be absent");
+        assertEquals(properties.path("integerWithFormatOverride").path("format").asText(), "int32");
     }
 
     private io.swagger.v3.oas.models.media.Schema property(
@@ -76,5 +84,8 @@ public class Ticket5235Test extends SwaggerTestBase {
 
         @Schema(type = "integer")
         public Boolean integerOverride;
+
+        @Schema(type = "integer", format = "int32")
+        public Boolean integerWithFormatOverride;
     }
 }
