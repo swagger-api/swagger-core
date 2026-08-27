@@ -811,7 +811,6 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 aType = AnnotationsUtils.addTypeWhenSiblingsAllowed(aType, ctxSchema, areSiblingsAllowed);
                 property = context.resolve(aType);
                 property = clone(property);
-                clearDerivedFormatForExplicitType(property, ctxSchema, areSiblingsAllowed);
                 Schema ctxProperty = null;
                 if (!applySchemaResolution()) {
                     Optional<Schema> reResolvedProperty = AnnotationsUtils.getSchemaFromAnnotation(ctxSchema, annotatedType.getComponents(), null, openapi31, property, schemaResolution, context);
@@ -1307,23 +1306,6 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
     private Schema clone(Schema property) {
         return AnnotationsUtils.clone(property, openapi31);
-    }
-
-    private static void clearDerivedFormatForExplicitType(
-            Schema property,
-            io.swagger.v3.oas.annotations.media.Schema schemaAnnotation,
-            boolean siblingsAllowed) {
-        if (property == null || schemaAnnotation == null || !siblingsAllowed) {
-            return;
-        }
-
-        boolean hasExplicitImplementation = !Void.class.equals(schemaAnnotation.implementation());
-        boolean hasExplicitType = StringUtils.isNotBlank(schemaAnnotation.type());
-        boolean hasExplicitFormat = StringUtils.isNotBlank(schemaAnnotation.format());
-
-        if (!hasExplicitImplementation && hasExplicitType && !hasExplicitFormat) {
-            property.setFormat(null);
-        }
     }
 
     private boolean isSubtype(AnnotatedClass childClass, Class<?> parentClass) {
