@@ -17,17 +17,24 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.validation.constraints.Size;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import static io.swagger.v3.core.util.ValidationAnnotationsUtils.JAVAX_SIZE;
+import static io.swagger.v3.core.util.ValidationAnnotationsUtils.applySizeConstraint;
+
 public class ParameterProcessor {
+
+    private static final String VALUE_METHOD = "value";
+    private static final String FORM_PARAMETER = "form";
+
     static Logger LOGGER = LoggerFactory.getLogger(ParameterProcessor.class);
 
     public static Parameter applyAnnotations(Parameter parameter, Type type, List<Annotation> annotations, Components components, String[] classTypes, String[] methodTypes, JsonView jsonViewAnnotation) {
@@ -150,24 +157,24 @@ public class ParameterProcessor {
         for (Annotation annotation : annotations) {
             if (annotation.annotationType().getName().equals("javax.ws.rs.FormParam")) {
                 try {
-                    String name = (String) annotation.annotationType().getMethod("value").invoke(annotation);
+                    String name = (String) annotation.annotationType().getMethod(VALUE_METHOD).invoke(annotation);
                     if (StringUtils.isNotBlank(name)) {
                         parameter.setName(name);
                     }
                 } catch (Exception e) {
                 }
                 // set temporarily to "form" to inform caller that we need to further process along other form parameters
-                parameter.setIn("form");
+                parameter.setIn(FORM_PARAMETER);
             } else if (annotation.annotationType().getName().endsWith("FormDataParam")) {
                 try {
-                    String name = (String) annotation.annotationType().getMethod("value").invoke(annotation);
+                    String name = (String) annotation.annotationType().getMethod(VALUE_METHOD).invoke(annotation);
                     if (StringUtils.isNotBlank(name)) {
                         parameter.setName(name);
                     }
                 } catch (Exception e) {
                 }
                 // set temporarily to "form" to inform caller that we need to further process along other form parameters
-                parameter.setIn("form");
+                parameter.setIn(FORM_PARAMETER);
             }
         }
 
@@ -243,27 +250,21 @@ public class ParameterProcessor {
 
             } else if (annotation.annotationType().getName().equals("javax.ws.rs.PathParam")) {
                 try {
-                    String name = (String) annotation.annotationType().getMethod("value").invoke(annotation);
+                    String name = (String) annotation.annotationType().getMethod(VALUE_METHOD).invoke(annotation);
                     if (StringUtils.isNotBlank(name)) {
                         parameter.setName(name);
                     }
-                } catch (Exception e) {
+                } catch (Exception ignored) {
                 }
-            } else if (annotation.annotationType().getName().equals("javax.validation.constraints.Size")) {
+            } else if (annotation.annotationType().getName().equals(JAVAX_SIZE)) {
                 try {
                     if (parameter.getSchema() == null) {
                         parameter.setSchema(new ArraySchema());
                     }
                     if (isArraySchema(parameter.getSchema())) {
                         Schema as = parameter.getSchema();
-                        Integer min = (Integer) annotation.annotationType().getMethod("min").invoke(annotation);
-                        if (min != null) {
-                            as.setMinItems(min);
-                        }
-                        Integer max = (Integer) annotation.annotationType().getMethod("max").invoke(annotation);
-                        if (max != null) {
-                            as.setMaxItems(max);
-                        }
+                        Size size = (Size) annotation;
+                        applySizeConstraint(as, size);
                     }
 
                 } catch (Exception e) {
@@ -296,7 +297,7 @@ public class ParameterProcessor {
     }
 
     public static boolean isArraySchema(Schema schema) {
-        return "array".equals(schema.getType()) || (schema.getTypes() != null && schema.getTypes().contains("array"));
+        return SchemaTypeUtils.isArraySchema(schema);
     }
 
     public static void setParameterExplode(Parameter parameter, io.swagger.v3.oas.annotations.Parameter p) {
@@ -315,11 +316,10 @@ public class ParameterProcessor {
         if (schema != null) {
             Class implementation = schema.implementation();
             if (implementation == Void.class) {
-                if (!schema.type().equals("object") && !schema.type().equals("array") && !schema.type().isEmpty()) {
+                if (!AnnotationsUtils.isExplodableOAS30(schema) && !schema.type().isEmpty()) {
                     explode = false;
                 }
-                if (schema.types().length != 0 &&
-                        (!Arrays.asList(schema.types()).contains("array") && !Arrays.asList(schema.types()).contains("object"))) {
+                if (schema.types().length != 0 && !AnnotationsUtils.isExplodableOAS31(schema)) {
                     explode = false;
                 }
             }
@@ -437,7 +437,7 @@ public class ParameterProcessor {
                         context = true;
                     } else if ("javax.ws.rs.DefaultValue".equals(item.annotationType().getName())) {
                         try {
-                            rsDefault = (String) item.annotationType().getMethod("value").invoke(item);
+                            rsDefault = (String) item.annotationType().getMethod(VALUE_METHOD).invoke(item);
                         } catch (Exception ex) {
                             LOGGER.error("Invocation of value method failed", ex);
                         }

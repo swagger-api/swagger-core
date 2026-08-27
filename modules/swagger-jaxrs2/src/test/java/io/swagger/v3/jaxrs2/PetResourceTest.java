@@ -39,13 +39,7 @@ import io.swagger.v3.jaxrs2.petstore.requestbody.RequestBody31Resource;
 import io.swagger.v3.jaxrs2.petstore.requestbody.RequestBodyMethodPriorityResource;
 import io.swagger.v3.jaxrs2.petstore.requestbody.RequestBodyParameterPriorityResource;
 import io.swagger.v3.jaxrs2.petstore.requestbody.RequestBodyResource;
-import io.swagger.v3.jaxrs2.petstore.responses.ComplexResponseResource;
-import io.swagger.v3.jaxrs2.petstore.responses.ImplementationResponseResource;
-import io.swagger.v3.jaxrs2.petstore.responses.MethodResponseResource;
-import io.swagger.v3.jaxrs2.petstore.responses.NoImplementationResponseResource;
-import io.swagger.v3.jaxrs2.petstore.responses.NoResponseResource;
-import io.swagger.v3.jaxrs2.petstore.responses.OperationResponseResource;
-import io.swagger.v3.jaxrs2.petstore.responses.PriorityResponseResource;
+import io.swagger.v3.jaxrs2.petstore.responses.*;
 import io.swagger.v3.jaxrs2.petstore.security.SecurityResource;
 import io.swagger.v3.jaxrs2.petstore.tags.CompleteTagResource;
 import io.swagger.v3.jaxrs2.petstore.tags.TagClassResource;
@@ -62,8 +56,10 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Enumeration;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -197,7 +193,7 @@ public class PetResourceTest extends AbstractAnnotationTest {
      * @return Set<Class>
      */
     private Set<Class<?>> getSetOfClassesFromPackage(final String packageName) {
-        final Set<Class<?>> classSet = new HashSet<>();
+        final Set<Class<?>> classSet = new LinkedHashSet<>();
         try {
             final Class[] classes = getClasses(packageName);
             for (final Class aClass : classes) {
@@ -226,6 +222,7 @@ public class PetResourceTest extends AbstractAnnotationTest {
             final URL resource = resources.nextElement();
             dirs.add(new File(resource.getFile()));
         }
+        dirs.sort(Comparator.comparing(File::getAbsolutePath));
         final ArrayList<Class> classes = new ArrayList<>();
         for (final File directory : dirs) {
             classes.addAll(findClasses(directory, packageName));
@@ -247,6 +244,7 @@ public class PetResourceTest extends AbstractAnnotationTest {
         }
         final File[] files = directory.listFiles();
         if (files != null) {
+            Arrays.sort(files, Comparator.comparing(File::getName));
             for (final File file : files) {
                 if (file.isDirectory()) {
                     assert !file.getName().contains(".");
@@ -296,6 +294,11 @@ public class PetResourceTest extends AbstractAnnotationTest {
     @Test(description = "Test webhook resources")
     public void testWebhooksResource() {
         compare(WebHookResource.class, PETSTORE_SOURCE, true);
+    }
+
+    @Test(description = "Test method resources with array annotations")
+    public void testMethodArrayResponseResource() {
+        compare(MethodArrayResponseResource.class, RESPONSES_SOURCE, true);
     }
 
     /**

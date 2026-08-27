@@ -35,28 +35,40 @@ jobs:
       if: ${{ github.event_name == 'pull_request' }}
 
     - name: Set up Java
-      uses: actions/setup-java@v1
+      uses: actions/setup-java@v5
       with:
         java-version: 11
+        distribution: temurin
     # Initializes the CodeQL tools for scanning.
     - name: Initialize CodeQL
-      uses: github/codeql-action/init@v3
+      uses: github/codeql-action/init@v4
       # Override language selection by uncommenting this and choosing your languages
       with:
         languages: java
 
     - name: Cache local Maven repository
-      uses: actions/cache@v4
+      uses: actions/cache@v5
       with:
         path: ~/.m2/repository
-        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+        key: ${{ runner.os }}-jdk11-maven-v2-${{ hashFiles('**/pom.xml') }}
         restore-keys: |
-          ${{ runner.os }}-maven-
-    - name: Build with Maven and Gradle
-      run: |
-        ./mvnw --no-transfer-progress -B install --file pom.xml
-        cd ./modules/swagger-gradle-plugin
-        ./gradlew build --info
-        cd ../..
+          ${{ runner.os }}-jdk11-maven-v2-
+    - name: Set up Gradle
+      uses: gradle/actions/setup-gradle@v6
+      with:
+        cache-provider: basic
+    - name: Build with Maven
+      run: ./mvnw --no-transfer-progress -B -e install --file pom.xml
+    - name: Upload Maven test reports
+      if: failure()
+      uses: actions/upload-artifact@v6
+      with:
+        name: surefire-reports-codeql
+        path: |
+          **/target/surefire-reports/**
+          **/target/failsafe-reports/**
+    - name: Build Gradle plugin
+      working-directory: modules/swagger-gradle-plugin
+      run: ./gradlew build --info --stacktrace --no-daemon
     - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@v3
+      uses: github/codeql-action/analyze@v4

@@ -2,6 +2,7 @@ package io.swagger.v3.jaxrs2.annotations;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.JsonNode;
+import io.swagger.v3.core.converter.ModelConverters;
 import io.swagger.v3.core.util.Yaml;
 import io.swagger.v3.jaxrs2.Reader;
 import io.swagger.v3.jaxrs2.matchers.SerializationMatchers;
@@ -10,6 +11,8 @@ import io.swagger.v3.oas.models.OpenAPI;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -19,6 +22,12 @@ import static org.testng.Assert.fail;
 
 public abstract class AbstractAnnotationTest {
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractAnnotationTest.class);
+
+    @BeforeMethod(alwaysRun = true)
+    @AfterMethod(alwaysRun = true)
+    public void resetModelConverters() {
+        ModelConverters.reset();
+    }
 
     public String readIntoYaml(final Class<?> cls) {
         Reader reader = new Reader(new OpenAPI());

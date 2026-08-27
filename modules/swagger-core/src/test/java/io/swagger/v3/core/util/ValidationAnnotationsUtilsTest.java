@@ -1,0 +1,1185 @@
+package io.swagger.v3.core.util;
+
+import io.swagger.v3.oas.models.media.ArraySchema;
+import io.swagger.v3.oas.models.media.IntegerSchema;
+import io.swagger.v3.oas.models.media.NumberSchema;
+import io.swagger.v3.oas.models.media.ObjectSchema;
+import io.swagger.v3.oas.models.media.Schema;
+import io.swagger.v3.oas.models.media.StringSchema;
+import org.testng.annotations.Test;
+
+import javax.validation.constraints.*;
+import java.math.BigDecimal;
+
+import static org.testng.Assert.*;
+
+public class ValidationAnnotationsUtilsTest {
+
+    private Size createSizeAnnotation(final int min, final int max) {
+        return new Size() {
+            @Override
+            public Class<?>[] groups() {
+                return new Class[0];
+            }
+
+            @Override
+            public String message() {
+                return "";
+            }
+
+            @Override
+            public Class<? extends javax.validation.Payload>[] payload() {
+                return new Class[0];
+            }
+
+            @Override
+            public int min() {
+                return min;
+            }
+
+            @Override
+            public int max() {
+                return max;
+            }
+
+            @Override
+            public Class<? extends java.lang.annotation.Annotation> annotationType() {
+                return Size.class;
+            }
+        };
+    }
+
+    private Min createMinAnnotation(final long value) {
+        return new Min() {
+            @Override
+            public Class<?>[] groups() {
+                return new Class[0];
+            }
+
+            @Override
+            public String message() {
+                return "";
+            }
+
+            @Override
+            public Class<? extends javax.validation.Payload>[] payload() {
+                return new Class[0];
+            }
+
+            @Override
+            public long value() {
+                return value;
+            }
+
+            @Override
+            public Class<? extends java.lang.annotation.Annotation> annotationType() {
+                return Min.class;
+            }
+        };
+    }
+
+    private Max createMaxAnnotation(final long value) {
+        return new Max() {
+            @Override
+            public Class<?>[] groups() {
+                return new Class[0];
+            }
+
+            @Override
+            public String message() {
+                return "";
+            }
+
+            @Override
+            public Class<? extends javax.validation.Payload>[] payload() {
+                return new Class[0];
+            }
+
+            @Override
+            public long value() {
+                return value;
+            }
+
+            @Override
+            public Class<? extends java.lang.annotation.Annotation> annotationType() {
+                return Max.class;
+            }
+        };
+    }
+
+    private DecimalMin createDecimalMinAnnotation(final String value, final boolean inclusive) {
+        return new DecimalMin() {
+            @Override
+            public Class<?>[] groups() {
+                return new Class[0];
+            }
+
+            @Override
+            public String message() {
+                return "";
+            }
+
+            @Override
+            public Class<? extends javax.validation.Payload>[] payload() {
+                return new Class[0];
+            }
+
+            @Override
+            public String value() {
+                return value;
+            }
+
+            @Override
+            public boolean inclusive() {
+                return inclusive;
+            }
+
+            @Override
+            public Class<? extends java.lang.annotation.Annotation> annotationType() {
+                return DecimalMin.class;
+            }
+        };
+    }
+
+    private DecimalMax createDecimalMaxAnnotation(final String value, final boolean inclusive) {
+        return new DecimalMax() {
+            @Override
+            public Class<?>[] groups() {
+                return new Class[0];
+            }
+
+            @Override
+            public String message() {
+                return "";
+            }
+
+            @Override
+            public Class<? extends javax.validation.Payload>[] payload() {
+                return new Class[0];
+            }
+
+            @Override
+            public String value() {
+                return value;
+            }
+
+            @Override
+            public boolean inclusive() {
+                return inclusive;
+            }
+
+            @Override
+            public Class<? extends java.lang.annotation.Annotation> annotationType() {
+                return DecimalMax.class;
+            }
+        };
+    }
+
+    private Pattern createPatternAnnotation(final String regexp) {
+        return new Pattern() {
+            @Override
+            public Class<?>[] groups() {
+                return new Class[0];
+            }
+
+            @Override
+            public String message() {
+                return "";
+            }
+
+            @Override
+            public Class<? extends javax.validation.Payload>[] payload() {
+                return new Class[0];
+            }
+
+            @Override
+            public String regexp() {
+                return regexp;
+            }
+
+            @Override
+            public Pattern.Flag[] flags() {
+                return new Pattern.Flag[0];
+            }
+
+            @Override
+            public Class<? extends java.lang.annotation.Annotation> annotationType() {
+                return Pattern.class;
+            }
+        };
+    }
+
+    private Email createEmailAnnotation() {
+        return new Email() {
+            @Override
+            public Class<?>[] groups() {
+                return new Class[0];
+            }
+
+            @Override
+            public String message() {
+                return "";
+            }
+
+            @Override
+            public Class<? extends javax.validation.Payload>[] payload() {
+                return new Class[0];
+            }
+
+            @Override
+            public String regexp() {
+                return "";
+            }
+
+            @Override
+            public Pattern.Flag[] flags() {
+                return new Pattern.Flag[0];
+            }
+
+            @Override
+            public Class<? extends java.lang.annotation.Annotation> annotationType() {
+                return Email.class;
+            }
+        };
+    }
+
+
+    @Test
+    public void testApplyNotEmptyConstraintOnArraySchema() {
+        Schema schema = new ArraySchema();
+        boolean modified = ValidationAnnotationsUtils.applyNotEmptyConstraint(schema, null, null);
+        
+        assertTrue(modified);
+        assertEquals(schema.getMinItems(), Integer.valueOf(1));
+    }
+
+
+    @Test
+    public void testApplyNotEmptyConstraintOnStringSchema() {
+        Schema schema = new StringSchema();
+        boolean modified = ValidationAnnotationsUtils.applyNotEmptyConstraint(schema, null, null);
+        
+        assertTrue(modified);
+        assertEquals(schema.getMinLength(), Integer.valueOf(1));
+    }
+
+
+    @Test
+    public void testApplyNotEmptyConstraintOnObjectSchema() {
+        Schema schema = new ObjectSchema();
+        boolean modified = ValidationAnnotationsUtils.applyNotEmptyConstraint(schema, null, null);
+        
+        assertTrue(modified);
+        assertEquals(schema.getMinProperties(), Integer.valueOf(1));
+    }
+
+    @Test
+    public void testApplyNotEmptyConstraintOnNumberSchema() {
+        Schema schema = new NumberSchema();
+        boolean modified = ValidationAnnotationsUtils.applyNotEmptyConstraint(schema, null, null);
+        
+        assertFalse(modified);
+        assertNull(schema.getMinProperties());
+        assertNull(schema.getMinLength());
+        assertNull(schema.getMinItems());
+    }
+
+
+    @Test
+    public void testApplyNotBlankConstraintOnStringSchema() {
+        Schema schema = new StringSchema();
+        boolean modified = ValidationAnnotationsUtils.applyNotBlankConstraint(schema, null);
+        
+        assertTrue(modified);
+        assertEquals(schema.getMinLength(), Integer.valueOf(1));
+    }
+
+    @Test
+    public void testApplyNotBlankConstraintOnNonStringSchema() {
+        Schema schema = new NumberSchema();
+        boolean modified = ValidationAnnotationsUtils.applyNotBlankConstraint(schema, null);
+        
+        assertFalse(modified);
+        assertNull(schema.getMinLength());
+    }
+
+
+    @Test
+    public void testApplyMinConstraintOnNumberSchema() {
+        Schema schema = new NumberSchema();
+        Min minAnnotation = createMinAnnotation(10);
+        
+        boolean modified = ValidationAnnotationsUtils.applyMinConstraint(schema, minAnnotation);
+        
+        assertTrue(modified);
+        assertEquals(schema.getMinimum(), new BigDecimal(10));
+    }
+
+    @Test
+    public void testApplyMinConstraintOnIntegerSchema() {
+        Schema schema = new IntegerSchema();
+        Min minAnnotation = createMinAnnotation(5);
+        
+        boolean modified = ValidationAnnotationsUtils.applyMinConstraint(schema, minAnnotation);
+        
+        assertTrue(modified);
+        assertEquals(schema.getMinimum(), new BigDecimal(5));
+    }
+
+    @Test
+    public void testApplyMinConstraintOnStringSchema() {
+        Schema schema = new StringSchema();
+        Min minAnnotation = createMinAnnotation(10);
+        
+        boolean modified = ValidationAnnotationsUtils.applyMinConstraint(schema, minAnnotation);
+        
+        assertFalse(modified);
+        assertNull(schema.getMinimum());
+    }
+
+
+    @Test
+    public void testApplyMaxConstraintOnNumberSchema() {
+        Schema schema = new NumberSchema();
+        Max maxAnnotation = createMaxAnnotation(100);
+        
+        boolean modified = ValidationAnnotationsUtils.applyMaxConstraint(schema, maxAnnotation);
+        
+        assertTrue(modified);
+        assertEquals(schema.getMaximum(), new BigDecimal(100));
+    }
+
+    @Test
+    public void testApplyMaxConstraintOnIntegerSchema() {
+        Schema schema = new IntegerSchema();
+        Max maxAnnotation = createMaxAnnotation(50);
+        
+        boolean modified = ValidationAnnotationsUtils.applyMaxConstraint(schema, maxAnnotation);
+        
+        assertTrue(modified);
+        assertEquals(schema.getMaximum(), new BigDecimal(50));
+    }
+
+    @Test
+    public void testApplyMaxConstraintOnStringSchema() {
+        Schema schema = new StringSchema();
+        Max maxAnnotation = createMaxAnnotation(100);
+        
+        boolean modified = ValidationAnnotationsUtils.applyMaxConstraint(schema, maxAnnotation);
+        
+        assertFalse(modified);
+        assertNull(schema.getMaximum());
+    }
+
+    @Test
+    public void testApplySizeConstraintOnNumberSchemaWithCustomValues() {
+        Schema schema = new NumberSchema();
+        Size sizeAnnotation = createSizeAnnotation(10, 100);
+        
+        boolean modified = ValidationAnnotationsUtils.applySizeConstraint(schema, sizeAnnotation);
+        
+        assertTrue(modified);
+        assertEquals(schema.getMinimum(), new BigDecimal(10));
+        assertEquals(schema.getMaximum(), new BigDecimal(100));
+    }
+
+
+    @Test
+    public void testApplySizeConstraintOnStringSchemaWithCustomValues() {
+        Schema schema = new StringSchema();
+        Size sizeAnnotation = createSizeAnnotation(5, 50);
+        
+        boolean modified = ValidationAnnotationsUtils.applySizeConstraint(schema, sizeAnnotation);
+        
+        assertTrue(modified);
+        assertEquals(schema.getMinLength(), Integer.valueOf(5));
+        assertEquals(schema.getMaxLength(), Integer.valueOf(50));
+    }
+
+    @Test
+    public void testApplySizeConstraintOnArraySchemaWithCustomValues() {
+        Schema schema = new ArraySchema();
+        Size sizeAnnotation = createSizeAnnotation(1, 10);
+        
+        boolean modified = ValidationAnnotationsUtils.applySizeConstraint(schema, sizeAnnotation);
+        
+        assertTrue(modified);
+        assertEquals(schema.getMinItems(), Integer.valueOf(1));
+        assertEquals(schema.getMaxItems(), Integer.valueOf(10));
+    }
+
+    @Test
+    public void testApplySizeConstraintOnObjectSchema() {
+        Schema schema = new ObjectSchema();
+        Size sizeAnnotation = createSizeAnnotation(1, 10);
+        
+        boolean modified = ValidationAnnotationsUtils.applySizeConstraint(schema, sizeAnnotation);
+        
+        assertFalse(modified);
+    }
+
+
+    @Test
+    public void testApplyDecimalMinConstraintOnNumberSchemaInclusive() {
+        Schema schema = new NumberSchema();
+        DecimalMin minAnnotation = createDecimalMinAnnotation("10.5", true);
+        
+        boolean modified = ValidationAnnotationsUtils.applyDecimalMinConstraint(schema, minAnnotation);
+        
+        assertTrue(modified);
+        assertEquals(schema.getMinimum(), new BigDecimal("10.5"));
+        assertFalse(schema.getExclusiveMinimum());
+    }
+
+    @Test
+    public void testApplyDecimalMinConstraintOnNumberSchemaExclusive() {
+        Schema schema = new NumberSchema();
+        DecimalMin minAnnotation = createDecimalMinAnnotation("10.5", false);
+        
+        boolean modified = ValidationAnnotationsUtils.applyDecimalMinConstraint(schema, minAnnotation);
+        
+        assertTrue(modified);
+        assertEquals(schema.getMinimum(), new BigDecimal("10.5"));
+        assertTrue(schema.getExclusiveMinimum());
+    }
+
+    @Test
+    public void testApplyDecimalMinConstraintOnStringSchema() {
+        Schema schema = new StringSchema();
+        DecimalMin minAnnotation = createDecimalMinAnnotation("10.5", true);
+        
+        boolean modified = ValidationAnnotationsUtils.applyDecimalMinConstraint(schema, minAnnotation);
+        
+        assertFalse(modified);
+        assertNull(schema.getMinimum());
+    }
+
+
+    @Test
+    public void testApplyDecimalMaxConstraintOnNumberSchemaInclusive() {
+        Schema schema = new NumberSchema();
+        DecimalMax maxAnnotation = createDecimalMaxAnnotation("100.5", true);
+        
+        boolean modified = ValidationAnnotationsUtils.applyDecimalMaxConstraint(schema, maxAnnotation);
+        
+        assertTrue(modified);
+        assertEquals(schema.getMaximum(), new BigDecimal("100.5"));
+        assertFalse(schema.getExclusiveMaximum());
+    }
+
+    @Test
+    public void testApplyDecimalMaxConstraintOnNumberSchemaExclusive() {
+        Schema schema = new NumberSchema();
+        DecimalMax maxAnnotation = createDecimalMaxAnnotation("100.5", false);
+        
+        boolean modified = ValidationAnnotationsUtils.applyDecimalMaxConstraint(schema, maxAnnotation);
+        
+        assertTrue(modified);
+        assertEquals(schema.getMaximum(), new BigDecimal("100.5"));
+        assertTrue(schema.getExclusiveMaximum());
+    }
+
+    @Test
+    public void testApplyDecimalMaxConstraintOnStringSchema() {
+        Schema schema = new StringSchema();
+        DecimalMax maxAnnotation = createDecimalMaxAnnotation("100.5", true);
+
+        boolean modified = ValidationAnnotationsUtils.applyDecimalMaxConstraint(schema, maxAnnotation);
+
+        assertFalse(modified);
+        assertNull(schema.getMaximum());
+    }
+
+    // --- OpenAPI 3.1 tests for @DecimalMin ---
+
+    @Test
+    public void testApplyDecimalMinConstraintV31Exclusive() {
+        Schema schema = new NumberSchema();
+        schema.setSpecVersion(io.swagger.v3.oas.models.SpecVersion.V31);
+        DecimalMin minAnnotation = createDecimalMinAnnotation("10.5", false);
+
+        boolean modified = ValidationAnnotationsUtils.applyDecimalMinConstraint(schema, minAnnotation);
+
+        assertTrue(modified);
+        assertEquals(schema.getExclusiveMinimumValue(), new BigDecimal("10.5"));
+        assertNull(schema.getMinimum());
+        assertNull(schema.getExclusiveMinimum());
+    }
+
+    @Test
+    public void testApplyDecimalMinConstraintV31Inclusive() {
+        Schema schema = new NumberSchema();
+        schema.setSpecVersion(io.swagger.v3.oas.models.SpecVersion.V31);
+        DecimalMin minAnnotation = createDecimalMinAnnotation("10.5", true);
+
+        boolean modified = ValidationAnnotationsUtils.applyDecimalMinConstraint(schema, minAnnotation);
+
+        assertTrue(modified);
+        assertEquals(schema.getMinimum(), new BigDecimal("10.5"));
+        assertNull(schema.getExclusiveMinimumValue());
+        assertNull(schema.getExclusiveMinimum());
+    }
+
+    @Test
+    public void testApplyDecimalMinConstraintV31ExclusiveClearsWeakerMinimum() {
+        Schema schema = new NumberSchema();
+        schema.setSpecVersion(io.swagger.v3.oas.models.SpecVersion.V31);
+        schema.setMinimum(new BigDecimal("2"));
+        DecimalMin minAnnotation = createDecimalMinAnnotation("5.5", false);
+
+        boolean modified = ValidationAnnotationsUtils.applyDecimalMinConstraint(schema, minAnnotation);
+
+        assertTrue(modified);
+        assertEquals(schema.getExclusiveMinimumValue(), new BigDecimal("5.5"));
+        assertNull(schema.getMinimum());
+    }
+
+    @Test
+    public void testApplyDecimalMinConstraintV31ExclusiveKeepsStricterMinimum() {
+        Schema schema = new NumberSchema();
+        schema.setSpecVersion(io.swagger.v3.oas.models.SpecVersion.V31);
+        schema.setMinimum(new BigDecimal("10"));
+        DecimalMin minAnnotation = createDecimalMinAnnotation("5.5", false);
+
+        boolean modified = ValidationAnnotationsUtils.applyDecimalMinConstraint(schema, minAnnotation);
+
+        assertTrue(modified);
+        assertEquals(schema.getExclusiveMinimumValue(), new BigDecimal("5.5"));
+        assertEquals(schema.getMinimum(), new BigDecimal("10"));
+    }
+
+    // --- OpenAPI 3.1 tests for @DecimalMax ---
+
+    @Test
+    public void testApplyDecimalMaxConstraintV31Exclusive() {
+        Schema schema = new NumberSchema();
+        schema.setSpecVersion(io.swagger.v3.oas.models.SpecVersion.V31);
+        DecimalMax maxAnnotation = createDecimalMaxAnnotation("100.5", false);
+
+        boolean modified = ValidationAnnotationsUtils.applyDecimalMaxConstraint(schema, maxAnnotation);
+
+        assertTrue(modified);
+        assertEquals(schema.getExclusiveMaximumValue(), new BigDecimal("100.5"));
+        assertNull(schema.getMaximum());
+        assertNull(schema.getExclusiveMaximum());
+    }
+
+    @Test
+    public void testApplyDecimalMaxConstraintV31Inclusive() {
+        Schema schema = new NumberSchema();
+        schema.setSpecVersion(io.swagger.v3.oas.models.SpecVersion.V31);
+        DecimalMax maxAnnotation = createDecimalMaxAnnotation("100.5", true);
+
+        boolean modified = ValidationAnnotationsUtils.applyDecimalMaxConstraint(schema, maxAnnotation);
+
+        assertTrue(modified);
+        assertEquals(schema.getMaximum(), new BigDecimal("100.5"));
+        assertNull(schema.getExclusiveMaximumValue());
+        assertNull(schema.getExclusiveMaximum());
+    }
+
+    @Test
+    public void testApplyDecimalMaxConstraintV31ExclusiveClearsWeakerMaximum() {
+        Schema schema = new NumberSchema();
+        schema.setSpecVersion(io.swagger.v3.oas.models.SpecVersion.V31);
+        schema.setMaximum(new BigDecimal("200"));
+        DecimalMax maxAnnotation = createDecimalMaxAnnotation("100.5", false);
+
+        boolean modified = ValidationAnnotationsUtils.applyDecimalMaxConstraint(schema, maxAnnotation);
+
+        assertTrue(modified);
+        assertEquals(schema.getExclusiveMaximumValue(), new BigDecimal("100.5"));
+        assertNull(schema.getMaximum());
+    }
+
+    @Test
+    public void testApplyDecimalMaxConstraintV31ExclusiveKeepsStricterMaximum() {
+        Schema schema = new NumberSchema();
+        schema.setSpecVersion(io.swagger.v3.oas.models.SpecVersion.V31);
+        schema.setMaximum(new BigDecimal("50"));
+        DecimalMax maxAnnotation = createDecimalMaxAnnotation("100.5", false);
+
+        boolean modified = ValidationAnnotationsUtils.applyDecimalMaxConstraint(schema, maxAnnotation);
+
+        assertTrue(modified);
+        assertEquals(schema.getExclusiveMaximumValue(), new BigDecimal("100.5"));
+        assertEquals(schema.getMaximum(), new BigDecimal("50"));
+    }
+
+    @Test
+    public void testApplyPatternConstraintOnStringSchema() {
+        Schema schema = new StringSchema();
+        Pattern patternAnnotation = createPatternAnnotation("^[A-Z]+$");
+        
+        boolean modified = ValidationAnnotationsUtils.applyPatternConstraint(schema, patternAnnotation);
+        
+        assertTrue(modified);
+        assertEquals(schema.getPattern(), "^[A-Z]+$");
+    }
+
+    @Test
+    public void testApplyPatternConstraintOnArraySchemaWithStringItems() {
+        Schema schema = new ArraySchema();
+        schema.setItems(new StringSchema());
+        Pattern patternAnnotation = createPatternAnnotation("^[0-9]+$");
+        
+        boolean modified = ValidationAnnotationsUtils.applyPatternConstraint(schema, patternAnnotation);
+        
+        assertTrue(modified);
+        assertNull(schema.getPattern());
+        assertEquals(schema.getItems().getPattern(), "^[0-9]+$");
+    }
+
+    @Test
+    public void testApplyPatternConstraintOnArraySchemaWithNumberItems() {
+        Schema schema = new ArraySchema();
+        schema.setItems(new NumberSchema());
+        Pattern patternAnnotation = createPatternAnnotation("^[0-9]+$");
+        
+        boolean modified = ValidationAnnotationsUtils.applyPatternConstraint(schema, patternAnnotation);
+        
+        assertFalse(modified);
+        assertNull(schema.getItems().getPattern());
+    }
+
+    @Test
+    public void testApplyPatternConstraintOnNumberSchema() {
+        Schema schema = new NumberSchema();
+        Pattern patternAnnotation = createPatternAnnotation("^[0-9]+$");
+        
+        boolean modified = ValidationAnnotationsUtils.applyPatternConstraint(schema, patternAnnotation);
+        
+        assertFalse(modified);
+        assertNull(schema.getPattern());
+    }
+
+
+    @Test
+    public void testApplyEmailConstraintOnStringSchema() {
+        Schema schema = new StringSchema();
+        Email emailAnnotation = createEmailAnnotation();
+        
+        boolean modified = ValidationAnnotationsUtils.applyEmailConstraint(schema, emailAnnotation);
+        
+        assertTrue(modified);
+        assertEquals(schema.getFormat(), "email");
+    }
+
+    @Test
+    public void testApplyEmailConstraintOnArraySchemaWithStringItems() {
+        Schema schema = new ArraySchema();
+        schema.setItems(new StringSchema());
+        Email emailAnnotation = createEmailAnnotation();
+        
+        boolean modified = ValidationAnnotationsUtils.applyEmailConstraint(schema, emailAnnotation);
+        
+        assertTrue(modified);
+        assertNull(schema.getFormat());
+        assertEquals(schema.getItems().getFormat(), "email");
+    }
+
+    @Test
+    public void testApplyEmailConstraintOnArraySchemaWithNumberItems() {
+        Schema schema = new ArraySchema();
+        schema.setItems(new NumberSchema());
+        Email emailAnnotation = createEmailAnnotation();
+        
+        boolean modified = ValidationAnnotationsUtils.applyEmailConstraint(schema, emailAnnotation);
+        
+        assertFalse(modified);
+        assertNull(schema.getItems().getFormat());
+    }
+
+    @Test
+    public void testApplyEmailConstraintOnNumberSchema() {
+        Schema schema = new NumberSchema();
+        Email emailAnnotation = createEmailAnnotation();
+        
+        boolean modified = ValidationAnnotationsUtils.applyEmailConstraint(schema, emailAnnotation);
+        
+        assertFalse(modified);
+        assertNull(schema.getFormat());
+    }
+
+    // --- @Positive tests ---
+
+    @Test
+    public void testApplyPositiveConstraintOnNumberSchema() {
+        Schema schema = new NumberSchema();
+        boolean modified = ValidationAnnotationsUtils.applyPositiveConstraint(schema);
+
+        assertTrue(modified);
+        assertEquals(schema.getMinimum(), BigDecimal.ZERO);
+        assertTrue(schema.getExclusiveMinimum());
+    }
+
+    @Test
+    public void testApplyPositiveConstraintOnIntegerSchema() {
+        Schema schema = new IntegerSchema();
+        boolean modified = ValidationAnnotationsUtils.applyPositiveConstraint(schema);
+
+        assertTrue(modified);
+        assertEquals(schema.getMinimum(), BigDecimal.ZERO);
+        assertTrue(schema.getExclusiveMinimum());
+    }
+
+    @Test
+    public void testApplyPositiveConstraintOnStringSchema() {
+        Schema schema = new StringSchema();
+        boolean modified = ValidationAnnotationsUtils.applyPositiveConstraint(schema);
+
+        assertFalse(modified);
+        assertNull(schema.getMinimum());
+        assertNull(schema.getExclusiveMinimum());
+    }
+
+    // --- @PositiveOrZero tests ---
+
+    @Test
+    public void testApplyPositiveOrZeroConstraintOnNumberSchema() {
+        Schema schema = new NumberSchema();
+        boolean modified = ValidationAnnotationsUtils.applyPositiveOrZeroConstraint(schema);
+
+        assertTrue(modified);
+        assertEquals(schema.getMinimum(), BigDecimal.ZERO);
+        assertNull(schema.getExclusiveMinimum()); // inclusive — no exclusiveMinimum flag
+    }
+
+    @Test
+    public void testApplyPositiveOrZeroConstraintOnIntegerSchema() {
+        Schema schema = new IntegerSchema();
+        boolean modified = ValidationAnnotationsUtils.applyPositiveOrZeroConstraint(schema);
+
+        assertTrue(modified);
+        assertEquals(schema.getMinimum(), BigDecimal.ZERO);
+        assertNull(schema.getExclusiveMinimum());
+    }
+
+    @Test
+    public void testApplyPositiveOrZeroConstraintOnStringSchema() {
+        Schema schema = new StringSchema();
+        boolean modified = ValidationAnnotationsUtils.applyPositiveOrZeroConstraint(schema);
+
+        assertFalse(modified);
+        assertNull(schema.getMinimum());
+    }
+
+    // --- @Negative tests ---
+
+    @Test
+    public void testApplyNegativeConstraintOnNumberSchema() {
+        Schema schema = new NumberSchema();
+        boolean modified = ValidationAnnotationsUtils.applyNegativeConstraint(schema);
+
+        assertTrue(modified);
+        assertEquals(schema.getMaximum(), BigDecimal.ZERO);
+        assertTrue(schema.getExclusiveMaximum());
+    }
+
+    @Test
+    public void testApplyNegativeConstraintOnIntegerSchema() {
+        Schema schema = new IntegerSchema();
+        boolean modified = ValidationAnnotationsUtils.applyNegativeConstraint(schema);
+
+        assertTrue(modified);
+        assertEquals(schema.getMaximum(), BigDecimal.ZERO);
+        assertTrue(schema.getExclusiveMaximum());
+    }
+
+    @Test
+    public void testApplyNegativeConstraintOnStringSchema() {
+        Schema schema = new StringSchema();
+        boolean modified = ValidationAnnotationsUtils.applyNegativeConstraint(schema);
+
+        assertFalse(modified);
+        assertNull(schema.getMaximum());
+        assertNull(schema.getExclusiveMaximum());
+    }
+
+    // --- @NegativeOrZero tests ---
+
+    @Test
+    public void testApplyNegativeOrZeroConstraintOnNumberSchema() {
+        Schema schema = new NumberSchema();
+        boolean modified = ValidationAnnotationsUtils.applyNegativeOrZeroConstraint(schema);
+
+        assertTrue(modified);
+        assertEquals(schema.getMaximum(), BigDecimal.ZERO);
+        assertNull(schema.getExclusiveMaximum()); // inclusive — no exclusiveMaximum flag
+    }
+
+    @Test
+    public void testApplyNegativeOrZeroConstraintOnIntegerSchema() {
+        Schema schema = new IntegerSchema();
+        boolean modified = ValidationAnnotationsUtils.applyNegativeOrZeroConstraint(schema);
+
+        assertTrue(modified);
+        assertEquals(schema.getMaximum(), BigDecimal.ZERO);
+        assertNull(schema.getExclusiveMaximum());
+    }
+
+    @Test
+    public void testApplyNegativeOrZeroConstraintOnStringSchema() {
+        Schema schema = new StringSchema();
+        boolean modified = ValidationAnnotationsUtils.applyNegativeOrZeroConstraint(schema);
+
+        assertFalse(modified);
+        assertNull(schema.getMaximum());
+    }
+
+    // --- @Positive with existing minimum (stricter-bound logic) ---
+
+    @Test
+    public void testApplyPositiveConstraintKeepsStricterMinFromMin() {
+        Schema schema = new NumberSchema();
+        schema.setMinimum(new BigDecimal("10"));
+
+        ValidationAnnotationsUtils.applyPositiveConstraint(schema);
+
+        assertEquals(schema.getMinimum(), new BigDecimal("10"));
+        assertNull(schema.getExclusiveMinimum());
+    }
+
+    @Test
+    public void testApplyPositiveConstraintKeepsStricterMinFromDecimalMin() {
+        Schema schema = new NumberSchema();
+        schema.setMinimum(new BigDecimal("5.5"));
+        schema.setExclusiveMinimum(false);
+
+        ValidationAnnotationsUtils.applyPositiveConstraint(schema);
+
+        assertEquals(schema.getMinimum(), new BigDecimal("5.5"));
+        assertFalse(schema.getExclusiveMinimum());
+    }
+
+    @Test
+    public void testApplyPositiveConstraintOverridesNegativeMin() {
+        Schema schema = new NumberSchema();
+        schema.setMinimum(new BigDecimal("-5"));
+
+        ValidationAnnotationsUtils.applyPositiveConstraint(schema);
+
+        assertEquals(schema.getMinimum(), BigDecimal.ZERO);
+        assertTrue(schema.getExclusiveMinimum());
+    }
+
+    @Test
+    public void testApplyPositiveConstraintTightensZeroInclusiveToExclusive() {
+        Schema schema = new NumberSchema();
+        schema.setMinimum(BigDecimal.ZERO);
+
+        ValidationAnnotationsUtils.applyPositiveConstraint(schema);
+
+        assertEquals(schema.getMinimum(), BigDecimal.ZERO);
+        assertTrue(schema.getExclusiveMinimum());
+    }
+
+    // --- @PositiveOrZero with existing minimum ---
+
+    @Test
+    public void testApplyPositiveOrZeroConstraintKeepsStricterMinFromMin() {
+        Schema schema = new NumberSchema();
+        schema.setMinimum(new BigDecimal("5"));
+
+        ValidationAnnotationsUtils.applyPositiveOrZeroConstraint(schema);
+
+        assertEquals(schema.getMinimum(), new BigDecimal("5"));
+        assertNull(schema.getExclusiveMinimum());
+    }
+
+    @Test
+    public void testApplyPositiveOrZeroConstraintOverridesNegativeMin() {
+        Schema schema = new NumberSchema();
+        schema.setMinimum(new BigDecimal("-3"));
+
+        ValidationAnnotationsUtils.applyPositiveOrZeroConstraint(schema);
+
+        assertEquals(schema.getMinimum(), BigDecimal.ZERO);
+        assertNull(schema.getExclusiveMinimum());
+    }
+
+    // --- @Negative with existing maximum (stricter-bound logic) ---
+
+    @Test
+    public void testApplyNegativeConstraintKeepsStricterMaxFromMax() {
+        Schema schema = new NumberSchema();
+        schema.setMaximum(new BigDecimal("-5"));
+
+        ValidationAnnotationsUtils.applyNegativeConstraint(schema);
+
+        assertEquals(schema.getMaximum(), new BigDecimal("-5"));
+        assertNull(schema.getExclusiveMaximum());
+    }
+
+    @Test
+    public void testApplyNegativeConstraintOverridesPositiveMax() {
+        Schema schema = new NumberSchema();
+        schema.setMaximum(new BigDecimal("10"));
+
+        ValidationAnnotationsUtils.applyNegativeConstraint(schema);
+
+        assertEquals(schema.getMaximum(), BigDecimal.ZERO);
+        assertTrue(schema.getExclusiveMaximum());
+    }
+
+    @Test
+    public void testApplyNegativeConstraintTightensZeroInclusiveToExclusive() {
+        Schema schema = new NumberSchema();
+        schema.setMaximum(BigDecimal.ZERO);
+
+        ValidationAnnotationsUtils.applyNegativeConstraint(schema);
+
+        assertEquals(schema.getMaximum(), BigDecimal.ZERO);
+        assertTrue(schema.getExclusiveMaximum());
+    }
+
+    // --- @NegativeOrZero with existing maximum ---
+
+    @Test
+    public void testApplyNegativeOrZeroConstraintKeepsStricterMaxFromMax() {
+        Schema schema = new NumberSchema();
+        schema.setMaximum(new BigDecimal("-2"));
+
+        ValidationAnnotationsUtils.applyNegativeOrZeroConstraint(schema);
+
+        assertEquals(schema.getMaximum(), new BigDecimal("-2"));
+        assertNull(schema.getExclusiveMaximum());
+    }
+
+    @Test
+    public void testApplyNegativeOrZeroConstraintOverridesPositiveMax() {
+        Schema schema = new NumberSchema();
+        schema.setMaximum(new BigDecimal("5"));
+
+        ValidationAnnotationsUtils.applyNegativeOrZeroConstraint(schema);
+
+        assertEquals(schema.getMaximum(), BigDecimal.ZERO);
+        assertNull(schema.getExclusiveMaximum());
+    }
+
+    // --- OpenAPI 3.1 tests for @Positive ---
+
+    @Test
+    public void testApplyPositiveConstraintOnNumberSchemaV31() {
+        Schema schema = new NumberSchema();
+        schema.setSpecVersion(io.swagger.v3.oas.models.SpecVersion.V31);
+        boolean modified = ValidationAnnotationsUtils.applyPositiveConstraint(schema);
+
+        assertTrue(modified);
+        assertNull(schema.getMinimum());
+        assertNull(schema.getExclusiveMinimum());
+        assertEquals(schema.getExclusiveMinimumValue(), BigDecimal.ZERO);
+    }
+
+    @Test
+    public void testApplyPositiveConstraintV31KeepsStricterValue() {
+        Schema schema = new NumberSchema();
+        schema.setSpecVersion(io.swagger.v3.oas.models.SpecVersion.V31);
+        schema.setExclusiveMinimumValue(new BigDecimal("10"));
+        boolean modified = ValidationAnnotationsUtils.applyPositiveConstraint(schema);
+
+        assertFalse(modified);
+        assertEquals(schema.getExclusiveMinimumValue(), new BigDecimal("10"));
+    }
+
+    @Test
+    public void testApplyPositiveConstraintV31OverridesWeakerExclusiveValue() {
+        Schema schema = new NumberSchema();
+        schema.setSpecVersion(io.swagger.v3.oas.models.SpecVersion.V31);
+        schema.setExclusiveMinimumValue(new BigDecimal("-5"));
+        boolean modified = ValidationAnnotationsUtils.applyPositiveConstraint(schema);
+
+        assertTrue(modified);
+        assertEquals(schema.getExclusiveMinimumValue(), BigDecimal.ZERO);
+    }
+
+    @Test
+    public void testApplyPositiveConstraintV31NegativeMinimumOnly() {
+        Schema schema = new NumberSchema();
+        schema.setSpecVersion(io.swagger.v3.oas.models.SpecVersion.V31);
+        schema.setMinimum(new BigDecimal("-5"));
+        boolean modified = ValidationAnnotationsUtils.applyPositiveConstraint(schema);
+
+        assertTrue(modified);
+        assertNull(schema.getMinimum());
+        assertEquals(schema.getExclusiveMinimumValue(), BigDecimal.ZERO);
+    }
+
+    @Test
+    public void testApplyPositiveConstraintV31NegativeExclusiveAndZeroMinimum() {
+        Schema schema = new NumberSchema();
+        schema.setSpecVersion(io.swagger.v3.oas.models.SpecVersion.V31);
+        schema.setExclusiveMinimumValue(new BigDecimal("-3"));
+        schema.setMinimum(BigDecimal.ZERO);
+        boolean modified = ValidationAnnotationsUtils.applyPositiveConstraint(schema);
+
+        assertTrue(modified);
+        assertNull(schema.getMinimum());
+        assertEquals(schema.getExclusiveMinimumValue(), BigDecimal.ZERO);
+    }
+
+    @Test
+    public void testApplyPositiveConstraintV31BothNegative() {
+        Schema schema = new NumberSchema();
+        schema.setSpecVersion(io.swagger.v3.oas.models.SpecVersion.V31);
+        schema.setExclusiveMinimumValue(new BigDecimal("-5"));
+        schema.setMinimum(new BigDecimal("-2"));
+        boolean modified = ValidationAnnotationsUtils.applyPositiveConstraint(schema);
+
+        assertTrue(modified);
+        assertNull(schema.getMinimum());
+        assertEquals(schema.getExclusiveMinimumValue(), BigDecimal.ZERO);
+    }
+
+    @Test
+    public void testApplyPositiveConstraintV31DropsNegativeExclusiveWhenPositiveMinimumExists() {
+        Schema schema = new NumberSchema();
+        schema.setSpecVersion(io.swagger.v3.oas.models.SpecVersion.V31);
+        schema.setExclusiveMinimumValue(new BigDecimal("-5"));
+        schema.setMinimum(new BigDecimal("2"));
+        boolean modified = ValidationAnnotationsUtils.applyPositiveConstraint(schema);
+
+        assertTrue(modified);
+        assertNull(schema.getExclusiveMinimumValue());
+        assertEquals(schema.getMinimum(), new BigDecimal("2"));
+    }
+
+    @Test
+    public void testApplyPositiveConstraintV31TightensZeroInclusiveMinimum() {
+        Schema schema = new NumberSchema();
+        schema.setSpecVersion(io.swagger.v3.oas.models.SpecVersion.V31);
+        schema.setMinimum(BigDecimal.ZERO);
+        boolean modified = ValidationAnnotationsUtils.applyPositiveConstraint(schema);
+
+        assertTrue(modified);
+        assertNull(schema.getMinimum());
+        assertEquals(schema.getExclusiveMinimumValue(), BigDecimal.ZERO);
+    }
+
+    // --- OpenAPI 3.1 tests for @Negative ---
+
+    @Test
+    public void testApplyNegativeConstraintOnNumberSchemaV31() {
+        Schema schema = new NumberSchema();
+        schema.setSpecVersion(io.swagger.v3.oas.models.SpecVersion.V31);
+        boolean modified = ValidationAnnotationsUtils.applyNegativeConstraint(schema);
+
+        assertTrue(modified);
+        assertNull(schema.getMaximum());
+        assertNull(schema.getExclusiveMaximum());
+        assertEquals(schema.getExclusiveMaximumValue(), BigDecimal.ZERO);
+    }
+
+    @Test
+    public void testApplyNegativeConstraintV31KeepsStricterValue() {
+        Schema schema = new NumberSchema();
+        schema.setSpecVersion(io.swagger.v3.oas.models.SpecVersion.V31);
+        schema.setExclusiveMaximumValue(new BigDecimal("-5"));
+        boolean modified = ValidationAnnotationsUtils.applyNegativeConstraint(schema);
+
+        assertFalse(modified);
+        assertEquals(schema.getExclusiveMaximumValue(), BigDecimal.valueOf(-5));
+    }
+
+    @Test
+    public void testApplyNegativeConstraintV31OverridesWeakerExclusiveValue() {
+        Schema schema = new NumberSchema();
+        schema.setSpecVersion(io.swagger.v3.oas.models.SpecVersion.V31);
+        schema.setExclusiveMaximumValue(new BigDecimal("10"));
+        boolean modified = ValidationAnnotationsUtils.applyNegativeConstraint(schema);
+
+        assertTrue(modified);
+        assertEquals(schema.getExclusiveMaximumValue(), BigDecimal.ZERO);
+    }
+
+    @Test
+    public void testApplyNegativeConstraintV31PositiveMaximumOnly() {
+        Schema schema = new NumberSchema();
+        schema.setSpecVersion(io.swagger.v3.oas.models.SpecVersion.V31);
+        schema.setMaximum(new BigDecimal("5"));
+        boolean modified = ValidationAnnotationsUtils.applyNegativeConstraint(schema);
+
+        assertTrue(modified);
+        assertNull(schema.getMaximum());
+        assertEquals(schema.getExclusiveMaximumValue(), BigDecimal.ZERO);
+    }
+
+    @Test
+    public void testApplyNegativeConstraintV31PositiveExclusiveAndZeroMaximum() {
+        Schema schema = new NumberSchema();
+        schema.setSpecVersion(io.swagger.v3.oas.models.SpecVersion.V31);
+        schema.setExclusiveMaximumValue(new BigDecimal("3"));
+        schema.setMaximum(BigDecimal.ZERO);
+        boolean modified = ValidationAnnotationsUtils.applyNegativeConstraint(schema);
+
+        assertTrue(modified);
+        assertNull(schema.getMaximum());
+        assertEquals(schema.getExclusiveMaximumValue(), BigDecimal.ZERO);
+    }
+
+    @Test
+    public void testApplyNegativeConstraintV31BothPositive() {
+        Schema schema = new NumberSchema();
+        schema.setSpecVersion(io.swagger.v3.oas.models.SpecVersion.V31);
+        schema.setExclusiveMaximumValue(new BigDecimal("5"));
+        schema.setMaximum(new BigDecimal("2"));
+        boolean modified = ValidationAnnotationsUtils.applyNegativeConstraint(schema);
+
+        assertTrue(modified);
+        assertNull(schema.getMaximum());
+        assertEquals(schema.getExclusiveMaximumValue(), BigDecimal.ZERO);
+    }
+
+    @Test
+    public void testApplyNegativeConstraintV31DropsPositiveExclusiveWhenNegativeMaximumExists() {
+        Schema schema = new NumberSchema();
+        schema.setSpecVersion(io.swagger.v3.oas.models.SpecVersion.V31);
+        schema.setExclusiveMaximumValue(new BigDecimal("10"));
+        schema.setMaximum(new BigDecimal("-3"));
+        boolean modified = ValidationAnnotationsUtils.applyNegativeConstraint(schema);
+
+        assertTrue(modified);
+        assertNull(schema.getExclusiveMaximumValue());
+        assertEquals(schema.getMaximum(), new BigDecimal("-3"));
+    }
+
+    @Test
+    public void testApplyNegativeConstraintV31TightensZeroInclusiveMaximum() {
+        Schema schema = new NumberSchema();
+        schema.setSpecVersion(io.swagger.v3.oas.models.SpecVersion.V31);
+        schema.setMaximum(BigDecimal.ZERO);
+        boolean modified = ValidationAnnotationsUtils.applyNegativeConstraint(schema);
+
+        assertTrue(modified);
+        assertNull(schema.getMaximum());
+        assertEquals(schema.getExclusiveMaximumValue(), BigDecimal.ZERO);
+    }
+
+    // --- OpenAPI 3.1 tests for @PositiveOrZero ---
+
+    @Test
+    public void testApplyPositiveOrZeroConstraintV31() {
+        Schema schema = new NumberSchema();
+        schema.setSpecVersion(io.swagger.v3.oas.models.SpecVersion.V31);
+        boolean modified = ValidationAnnotationsUtils.applyPositiveOrZeroConstraint(schema);
+
+        assertTrue(modified);
+        assertEquals(schema.getMinimum(), BigDecimal.ZERO);
+        assertNull(schema.getExclusiveMinimumValue());
+        assertNull(schema.getExclusiveMinimum());
+    }
+
+    // --- OpenAPI 3.1 tests for @NegativeOrZero ---
+
+    @Test
+    public void testApplyNegativeOrZeroConstraintV31() {
+        Schema schema = new NumberSchema();
+        schema.setSpecVersion(io.swagger.v3.oas.models.SpecVersion.V31);
+        boolean modified = ValidationAnnotationsUtils.applyNegativeOrZeroConstraint(schema);
+
+        assertTrue(modified);
+        assertEquals(schema.getMaximum(), BigDecimal.ZERO);
+        assertNull(schema.getExclusiveMaximumValue());
+        assertNull(schema.getExclusiveMaximum());
+    }
+}

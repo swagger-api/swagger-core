@@ -2,16 +2,21 @@ package io.swagger.v3.plugins.gradle;
 
 import static java.lang.String.format;
 import static org.gradle.testkit.runner.TaskOutcome.SUCCESS;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Objects;
+import java.util.Properties;
 
 import org.gradle.testkit.runner.BuildResult;
 import org.gradle.testkit.runner.GradleRunner;
@@ -19,6 +24,13 @@ import org.testng.annotations.Test;
 import org.testng.annotations.BeforeMethod;
 
 public class SwaggerResolveTest {
+
+    private static final String PROJECT_VERSION = Objects.requireNonNull(
+            System.getProperty("swagger.plugin.version"),
+            "Missing swagger.plugin.version test system property"
+    );
+    private static final String SWAGGER_JAXRS2_DEPENDENCY = "io.swagger.core.v3:swagger-jaxrs2:" +
+            PROJECT_VERSION;
 
     private Path testProjectDir;
     private Path buildFile;
@@ -53,6 +65,27 @@ public class SwaggerResolveTest {
     }
 
     @Test
+    public void pluginVersionResourceMatchesProjectVersion() throws IOException {
+        Properties properties = new Properties();
+        try (InputStream stream = SwaggerPlugin.class.getResourceAsStream("/swagger-gradle-plugin.properties")) {
+            assertNotNull(stream, "Missing swagger-gradle-plugin.properties");
+            properties.load(stream);
+        }
+        assertEquals(properties.getProperty("plugin.version"), PROJECT_VERSION);
+    }
+
+    @Test
+    public void pluginVersionRejectsUnresolvedPlaceholder() {
+        try {
+            SwaggerPlugin.validatePluginVersion("${pluginVersion}");
+        } catch (IllegalStateException e) {
+            assertTrue(e.getMessage().contains("Unresolved plugin.version"));
+            return;
+        }
+        throw new AssertionError("Expected unresolved plugin.version to fail fast");
+    }
+
+    @Test
     public void testSwaggerResolveTask() throws IOException {
         outputDir = testProjectDir.toString() + "/target";
         outputFile = testProjectDir.toString() + "/testAPI.json";
@@ -77,7 +110,7 @@ public class SwaggerResolveTest {
                 "    mavenCentral()\n" +
                 "}\n" +
                 "dependencies {  \n" +
-                "    implementation 'io.swagger.core.v3:swagger-jaxrs2:2.2.41-SNAPSHOT'\n" +
+                "    implementation '" + SWAGGER_JAXRS2_DEPENDENCY + "'\n" +
                 "    implementation 'javax.ws.rs:javax.ws.rs-api:2.1'\n" +
                 "    implementation 'javax.servlet:javax.servlet-api:3.1.0'\n" +
                 "    testImplementation 'com.github.tomakehurst:wiremock:2.27.2'\n" +
@@ -150,7 +183,7 @@ public class SwaggerResolveTest {
                 "    mavenCentral()\n" +
                 "}\n" +
                 "dependencies {  \n" +
-                "    implementation 'io.swagger.core.v3:swagger-jaxrs2:2.2.41-SNAPSHOT'\n" +
+                "    implementation '" + SWAGGER_JAXRS2_DEPENDENCY + "'\n" +
                 "    implementation 'javax.ws.rs:javax.ws.rs-api:2.1'\n" +
                 "    implementation 'javax.servlet:javax.servlet-api:3.1.0'\n" +
                 "    testImplementation 'com.github.tomakehurst:wiremock:2.27.2'\n" +
@@ -201,6 +234,228 @@ public class SwaggerResolveTest {
 
         String strContent = new String(content, StandardCharsets.UTF_8);
         assertTrue(strContent.contains("\"openapi\" : \"3.0.1\""));
+    }
+
+    /**
+     * Tests that ResolveTask works with minimal configuration, relying on
+     * .convention() defaults for prettyPrint, sortOutput, encoding,
+     * readAllResources, alwaysResolveAppPath, skipResolveAppPath,
+     * openAPI31, convertToOpenAPI31, outputFormat, and skip.
+     * This validates Gradle 9 compatibility where Property.get() on an
+     * unset property without a convention throws an error.
+     */
+    @Test
+    public void testSwaggerResolveTaskWithConventionDefaults() throws IOException {
+        outputDir = testProjectDir.toString() + "/target";
+        String resolveTask = "resolve";
+
+        String buildFileContent =
+                "plugins {\n" +
+                "    id 'java'\n" +
+                "    id 'io.swagger.core.v3.swagger-gradle-plugin'\n" +
+                "}\n" +
+                "sourceSets {\n" +
+                "    test {\n" +
+                "        java {\n" +
+                "            srcDirs('" + toNormalizedPath(new File("src/test/java").getAbsolutePath()) + "')\n" +
+                "            exclude('**/*Test.java')\n" +
+                "        }\n" +
+                "    }\n" +
+                "}\n" +
+                "repositories {\n" +
+                "    mavenLocal()\n" +
+                "    mavenCentral()\n" +
+                "}\n" +
+                "dependencies {  \n" +
+                "    implementation '" + SWAGGER_JAXRS2_DEPENDENCY + "'\n" +
+                "    implementation 'javax.ws.rs:javax.ws.rs-api:2.1'\n" +
+                "    implementation 'javax.servlet:javax.servlet-api:3.1.0'\n" +
+                "}\n" +
+                resolveTask + " {\n" +
+                "    outputFileName = 'PetStoreAPIDefaults'\n" +
+                "    classpath = sourceSets.test.runtimeClasspath\n" +
+                "    resourcePackages = ['io.swagger.v3.plugins.gradle.petstore']\n" +
+                "    outputPath = \'" + toNormalizedPath(outputDir) + "\'\n" +
+                "}";
+
+        String settingsFileContent = "pluginManagement {\n" +
+                "    repositories {\n" +
+                "        maven {\n" +
+                "            url mavenLocal().url\n" +
+                "        }\n" +
+                "        mavenCentral()\n" +
+                "        gradlePluginPortal()\n" +
+                "    }\n" +
+                "}\n" +
+                "rootProject.name = 'gradle-test'\n" +
+                "\n";
+        writeFile(buildFile, buildFileContent);
+        writeFile(settingsFile, settingsFileContent);
+
+        BuildResult result = GradleRunner.create()
+                .withPluginClasspath()
+                .withProjectDir(testProjectDir.toFile())
+                .withDebug(true)
+                .withArguments(resolveTask, "--stacktrace", "--info")
+                .forwardOutput()
+                .build();
+
+        assertTrue(result.taskPaths(SUCCESS).contains(format(":%s", resolveTask)));
+        assertTrue(new File(outputDir + "/PetStoreAPIDefaults.json").exists());
+    }
+
+    /**
+     * Regression test for https://github.com/swagger-api/swagger-core/issues/4813
+     *
+     * When the resolve { } configuration block appears before the dependencies { } block
+     * in build.gradle, accessing the task by name triggers the registration lambda which
+     * used to call getRuntimeClasspath().getFiles(). That eagerly resolved the runtime
+     * classpath, locking the implementation configuration. Any subsequent attempt to add
+     * a dependency (e.g. in the dependencies { } block below) then failed with:
+     *   Cannot change dependencies of dependency configuration '<CONFIG>'
+     *   after it has been included in dependency resolution.
+     */
+    @Test
+    public void testSwaggerPluginAllowsDependenciesAfterResolveBlock() throws IOException {
+        outputDir = testProjectDir.toString() + "/target";
+
+        String buildFileContent =
+                "plugins {\n" +
+                "    id 'java'\n" +
+                "    id 'io.swagger.core.v3.swagger-gradle-plugin'\n" +
+                "}\n" +
+                // resolve block appears BEFORE dependencies
+                "resolve {\n" +
+                "    outputFileName = 'PetStoreAPI'\n" +
+                "    classpath = sourceSets.test.runtimeClasspath\n" +
+                "    resourcePackages = ['io.swagger.v3.plugins.gradle.petstore']\n" +
+                "    outputPath = '" + toNormalizedPath(outputDir) + "'\n" +
+                "}\n" +
+                "repositories {\n" +
+                "    maven { url mavenLocal().url }\n" +
+                "    mavenCentral()\n" +
+                "}\n" +
+                "dependencies {\n" +
+                "    implementation '" + SWAGGER_JAXRS2_DEPENDENCY + "'\n" +
+                "    implementation 'javax.ws.rs:javax.ws.rs-api:2.1'\n" +
+                "    implementation 'javax.servlet:javax.servlet-api:3.1.0'\n" +
+                "    testImplementation 'org.testng:testng:7.10.2'\n" +
+                "}\n" +
+                "sourceSets {\n" +
+                "    test {\n" +
+                "        java {\n" +
+                "            srcDirs('" + toNormalizedPath(new File("src/test/java").getAbsolutePath()) + "')\n" +
+                "            exclude('**/*Test.java')\n" +
+                "        }\n" +
+                "    }\n" +
+                "}\n";
+
+        String settingsFileContent =
+                "pluginManagement {\n" +
+                "    repositories {\n" +
+                "        maven { url mavenLocal().url }\n" +
+                "        mavenCentral()\n" +
+                "        gradlePluginPortal()\n" +
+                "    }\n" +
+                "}\n" +
+                "rootProject.name = 'gradle-test'\n";
+
+        writeFile(buildFile, buildFileContent);
+        writeFile(settingsFile, settingsFileContent);
+
+        BuildResult result = GradleRunner.create()
+                .withPluginClasspath()
+                .withProjectDir(testProjectDir.toFile())
+                .withArguments("resolve", "--stacktrace")
+                .forwardOutput()
+                .build();
+
+        assertTrue(result.taskPaths(SUCCESS).contains(":resolve"));
+        assertTrue(new File(outputDir + "/PetStoreAPI.json").exists());
+    }
+
+    /**
+     * Regression test for https://github.com/swagger-api/swagger-core/issues/4841
+     *
+     * In a multi-project build where a subproject depends on another subproject that
+     * applies the `application` plugin, the swagger plugin must not eagerly resolve
+     * the runtime classpath during task registration. Doing so forces Gradle to evaluate
+     * the dependency subproject, which in turn calls afterEvaluate() from DistributionPlugin
+     * in an illegal context, producing:
+     *   Project#afterEvaluate(Action) on project ':app' cannot be executed in the current context.
+     */
+    @Test
+    public void testSwaggerPluginWithMultiProjectAndApplicationPlugin() throws IOException {
+        // app subproject uses the `application` plugin (which calls afterEvaluate via DistributionPlugin)
+        Path appDir = testProjectDir.resolve("app");
+        Files.createDirectories(appDir.resolve("src/main/java/com/example"));
+        writeFile(appDir.resolve("build.gradle"),
+                "plugins {\n" +
+                "    id 'java'\n" +
+                "    id 'application'\n" +
+                "}\n" +
+                "application {\n" +
+                "    mainClass = 'com.example.App'\n" +
+                "}\n" +
+                "repositories { mavenCentral() }\n");
+        writeFile(appDir.resolve("src/main/java/com/example/App.java"),
+                "package com.example;\n" +
+                "public class App {\n" +
+                "    public static void main(String[] args) {}\n" +
+                "}\n");
+
+        // api subproject uses swagger plugin and depends on :app
+        Path apiDir = testProjectDir.resolve("api");
+        Files.createDirectories(apiDir.resolve("src/main/java/com/example/api"));
+        writeFile(apiDir.resolve("build.gradle"),
+                "plugins {\n" +
+                "    id 'java'\n" +
+                "    id 'io.swagger.core.v3.swagger-gradle-plugin'\n" +
+                "}\n" +
+                "repositories {\n" +
+                "    maven { url mavenLocal().url }\n" +
+                "    mavenCentral()\n" +
+                "}\n" +
+                "dependencies {\n" +
+                "    implementation project(':app')\n" +
+                "    implementation 'javax.ws.rs:javax.ws.rs-api:2.1'\n" +
+                "}\n" +
+                "resolve {\n" +
+                "    resourcePackages = ['com.example.api']\n" +
+                "    outputPath = '" + toNormalizedPath(testProjectDir.resolve("api/build/swagger").toString()) + "'\n" +
+                "}\n");
+        writeFile(apiDir.resolve("src/main/java/com/example/api/HelloResource.java"),
+                "package com.example.api;\n" +
+                "import javax.ws.rs.GET;\n" +
+                "import javax.ws.rs.Path;\n" +
+                "@Path(\"/hello\")\n" +
+                "public class HelloResource {\n" +
+                "    @GET\n" +
+                "    public String hello() { return \"hello\"; }\n" +
+                "}\n");
+
+        writeFile(settingsFile,
+                "pluginManagement {\n" +
+                "    repositories {\n" +
+                "        maven { url mavenLocal().url }\n" +
+                "        mavenCentral()\n" +
+                "        gradlePluginPortal()\n" +
+                "    }\n" +
+                "}\n" +
+                "rootProject.name = 'issue-4841-repro'\n" +
+                "include 'app', 'api'\n");
+
+        // build.gradle at root is not needed, subprojects configure themselves
+        Files.deleteIfExists(buildFile);
+
+        BuildResult result = GradleRunner.create()
+                .withPluginClasspath()
+                .withProjectDir(testProjectDir.toFile())
+                .withArguments(":api:resolve", "--stacktrace")
+                .forwardOutput()
+                .build();
+
+        assertTrue(result.taskPaths(SUCCESS).contains(":api:resolve"));
     }
 
     private static void writeFile(Path destination, String content) throws IOException {
