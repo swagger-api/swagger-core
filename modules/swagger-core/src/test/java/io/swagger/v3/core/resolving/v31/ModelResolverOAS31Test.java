@@ -131,7 +131,6 @@ public class ModelResolverOAS31Test extends SwaggerTestBase {
                 "        type: number\n" +
                 "    status:\n" +
                 "      type:\n" +
-                "      - object\n" +
                 "      - string\n" +
                 "      - number\n" +
                 "    intValue:\n" +
@@ -161,8 +160,7 @@ public class ModelResolverOAS31Test extends SwaggerTestBase {
                 "        creditCard:\n" +
                 "          $ref: \"#/components/schemas/CreditCard\"\n" +
                 "      properties:\n" +
-                "        extraObject: \n" +
-                "           type: object\n" +
+                "        extraObject: {}\n" +
                 "MultipleBaseBean:\n" +
                 "  type: object\n" +
                 "  description: MultipleBaseBean\n" +
