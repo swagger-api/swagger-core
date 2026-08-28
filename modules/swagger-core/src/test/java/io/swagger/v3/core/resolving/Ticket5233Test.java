@@ -2,8 +2,10 @@ package io.swagger.v3.core.resolving;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import io.swagger.v3.core.converter.AnnotatedType;
+import io.swagger.v3.core.converter.ModelConverterContextImpl;
 import io.swagger.v3.core.converter.ModelConverters;
 import io.swagger.v3.core.converter.ResolvedSchema;
+import io.swagger.v3.core.jackson.ModelResolver;
 import io.swagger.v3.core.util.AnnotationsUtils;
 import io.swagger.v3.core.util.Json31;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -16,6 +18,7 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashSet;
+import java.util.Map;
 
 import static io.swagger.v3.oas.models.media.Schema.BIND_TYPE_AND_TYPES;
 import static org.testng.Assert.assertEquals;
@@ -71,6 +74,23 @@ public class Ticket5233Test extends SwaggerTestBase {
 
         // control: enum
         assertEquals(typesOf(schema, "unit"), Collections.singleton("string"));
+    }
+
+    @Test(description = "OAS 3.1: explicit scalar types resolve correctly via ModelResolver")
+    public void testExplicitTypesInOas31ViaModelResolver() {
+        ModelResolver modelResolver = new ModelResolver(mapper()).openapi31(true);
+        ModelConverterContextImpl context = new ModelConverterContextImpl(modelResolver);
+        io.swagger.v3.oas.models.media.Schema schema = context.resolve(new AnnotatedType(Dto.class));
+
+        Map<String, io.swagger.v3.oas.models.media.Schema> properties = schema.getProperties();
+        assertEquals(properties.get("amount").getTypes(), Collections.singleton("number"));
+        assertEquals(properties.get("count").getTypes(), Collections.singleton("integer"));
+        assertEquals(properties.get("flag").getTypes(), Collections.singleton("boolean"));
+
+        // controls: inferred type and enum are unaffected
+        assertEquals(properties.get("inferred").getTypes(), Collections.singleton("number"));
+        assertEquals(properties.get("unit").getTypes(), Collections.singleton("string"));
+        assertEquals(properties.get("unit").getEnum(), Arrays.asList("DAY", "WEEK", "MONTH"));
     }
 
     @Test(description = "OAS 3.1: serialized JSON contains correct types")
