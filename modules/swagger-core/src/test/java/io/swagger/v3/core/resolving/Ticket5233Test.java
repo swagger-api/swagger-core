@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import io.swagger.v3.core.converter.AnnotatedType;
 import io.swagger.v3.core.converter.ModelConverters;
 import io.swagger.v3.core.converter.ResolvedSchema;
+import io.swagger.v3.core.util.AnnotationsUtils;
 import io.swagger.v3.core.util.Json31;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.models.media.Schema.SchemaResolution;
@@ -120,6 +121,9 @@ public class Ticket5233Test extends SwaggerTestBase {
         assertEquals(schemaOf(schema, "floatOverride").getFormat(), "float");
         assertEquals(typesOf(schema, "nullableBooleanOverride"),
                 new LinkedHashSet<>(Arrays.asList("boolean", "null")));
+        assertEquals(typesOf(schema, "objectOverride"), Collections.singleton("object"));
+        assertEquals(typesOf(schema, "arrayOverride"), Collections.singleton("array"));
+        assertEquals(typesOf(schema, "nullOverride"), Collections.singleton("null"));
 
         assertEquals(typesOf(schema, "typesOverride"), Collections.singleton("boolean"));
         assertEquals(typesOf(schema, "nullableTypesOverride"),
@@ -127,18 +131,20 @@ public class Ticket5233Test extends SwaggerTestBase {
 
         io.swagger.v3.oas.models.media.Schema conflictingTypeAndTypes =
                 schemaOf(schema, "conflictingTypeAndTypes");
-        assertEquals(conflictingTypeAndTypes.getType(), "number");
+        assertNull(conflictingTypeAndTypes.getType());
         assertEquals(conflictingTypeAndTypes.getTypes(), Collections.singleton("boolean"),
-                "OAS 3.1 serialization uses types(), independently of the legacy type()");
+                "OAS 3.1 serialization uses types(), without populating the legacy type()");
 
         assertEquals(typesOf(schema, "implementationOverride"), Collections.singleton("integer"));
         assertEquals(schemaOf(schema, "implementationOverride").getFormat(), "int64");
 
         io.swagger.v3.oas.models.media.Schema conflictingImplementationAndType =
                 schemaOf(schema, "conflictingImplementationAndType");
-        assertEquals(conflictingImplementationAndType.getType(), "boolean");
+        assertNull(conflictingImplementationAndType.getType());
         assertEquals(conflictingImplementationAndType.getTypes(), Collections.singleton("integer"),
                 "implementation() controls resolution when it conflicts with type()");
+        assertEquals(typesOf(schema, "nullableConflictingImplementationAndType"),
+                new LinkedHashSet<>(Arrays.asList("integer", "null")));
 
         JsonNode properties = Json31.mapper().valueToTree(schema).path("properties");
         assertEquals(properties.path("stringOverride").path("type").asText(), "string");
@@ -147,11 +153,61 @@ public class Ticket5233Test extends SwaggerTestBase {
         assertEquals(properties.path("floatOverride").path("type").asText(), "number");
         assertEquals(properties.path("floatOverride").path("format").asText(), "float");
         assertSerializedTypes(properties.path("nullableBooleanOverride").path("type"), "boolean", "null");
+        assertEquals(properties.path("objectOverride").path("type").asText(), "object");
+        assertEquals(properties.path("arrayOverride").path("type").asText(), "array");
+        assertEquals(properties.path("nullOverride").path("type").asText(), "null");
         assertEquals(properties.path("typesOverride").path("type").asText(), "boolean");
         assertSerializedTypes(properties.path("nullableTypesOverride").path("type"), "integer", "null");
         assertEquals(properties.path("conflictingTypeAndTypes").path("type").asText(), "boolean");
         assertEquals(properties.path("implementationOverride").path("type").asText(), "integer");
         assertEquals(properties.path("conflictingImplementationAndType").path("type").asText(), "integer");
+        assertSerializedTypes(properties.path("nullableConflictingImplementationAndType").path("type"), "integer", "null");
+    }
+
+    @Test(description = "OAS 3.1: type is copied to types without an inferred property schema")
+    public void testTypeIsCopiedToTypesForAnnotationOnlyResolution() throws NoSuchFieldException {
+        assertAnnotationOnlyType("objectType", "object");
+        assertAnnotationOnlyType("arrayType", "array");
+        assertAnnotationOnlyType("nullType", "null");
+    }
+
+    @Test(description = "OAS 3.1: a blank annotation type does not populate types")
+    public void testBlankTypeForAnnotationOnlyResolution() throws NoSuchFieldException {
+        io.swagger.v3.oas.models.media.Schema schema = annotationOnlySchema("blankType", true);
+
+        assertNull(schema.getType());
+        assertNull(schema.getTypes());
+        assertEquals(Json31.mapper().valueToTree(schema).has("type"), false);
+    }
+
+    @Test(description = "OAS 3.1: nullable is added to blank and explicit annotation types")
+    public void testNullableTypesForAnnotationOnlyResolution() throws NoSuchFieldException {
+        io.swagger.v3.oas.models.media.Schema nullableBlank = annotationOnlySchema("nullableBlankType", true);
+        assertNull(nullableBlank.getType());
+        assertEquals(nullableBlank.getTypes(), Collections.singleton("null"));
+        assertEquals(Json31.mapper().valueToTree(nullableBlank).path("type").asText(), "null");
+
+        io.swagger.v3.oas.models.media.Schema nullableNumber = annotationOnlySchema("nullableNumberType", true);
+        assertNull(nullableNumber.getType());
+        assertEquals(nullableNumber.getTypes(), new LinkedHashSet<>(Arrays.asList("number", "null")));
+        assertSerializedTypes(Json31.mapper().valueToTree(nullableNumber).path("type"), "number", "null");
+    }
+
+    @Test(description = "OAS 3.1: explicit types take precedence over type before nullable is added")
+    public void testExplicitTypesPrecedenceForAnnotationOnlyResolution() throws NoSuchFieldException {
+        io.swagger.v3.oas.models.media.Schema schema = annotationOnlySchema("nullableTypesOverride", true);
+
+        assertNull(schema.getType());
+        assertEquals(schema.getTypes(), new LinkedHashSet<>(Arrays.asList("boolean", "null")));
+        assertSerializedTypes(Json31.mapper().valueToTree(schema).path("type"), "boolean", "null");
+    }
+
+    @Test(description = "OAS 3.0: type is not copied to the OAS 3.1 types set")
+    public void testTypeIsNotCopiedToTypesForOas30() throws NoSuchFieldException {
+        io.swagger.v3.oas.models.media.Schema schema = annotationOnlySchema("objectType", false);
+
+        assertEquals(schema.getType(), "object");
+        assertNull(schema.getTypes());
     }
 
     @Test(description = "bind-type only exposes a singleton types value through the legacy getType accessor")
@@ -273,6 +329,15 @@ public class Ticket5233Test extends SwaggerTestBase {
         @Schema(title = "Nullable boolean override", type = "boolean", nullable = true)
         public String nullableBooleanOverride;
 
+        @Schema(title = "Object override", type = "object")
+        public String objectOverride;
+
+        @Schema(title = "Array override", type = "array")
+        public String arrayOverride;
+
+        @Schema(title = "Null override", type = "null")
+        public String nullOverride;
+
         @Schema(title = "Types override", types = {"boolean"})
         public String typesOverride;
 
@@ -288,10 +353,37 @@ public class Ticket5233Test extends SwaggerTestBase {
         @Schema(title = "Conflicting implementation and type", implementation = Long.class, type = "boolean")
         public String conflictingImplementationAndType;
 
+        @Schema(title = "Nullable conflicting implementation and type", implementation = Long.class,
+                type = "boolean", nullable = true)
+        public String nullableConflictingImplementationAndType;
+
         @Schema(title = "Unit")
         public Freq unit;
 
         enum Freq { DAY, WEEK, MONTH }
+    }
+
+    static class AnnotationOnlyTypes {
+        @Schema(type = "object")
+        public Object objectType;
+
+        @Schema(type = "array")
+        public Object arrayType;
+
+        @Schema(type = "null")
+        public Object nullType;
+
+        @Schema(title = "Blank type")
+        public Object blankType;
+
+        @Schema(title = "Nullable blank type", nullable = true)
+        public Object nullableBlankType;
+
+        @Schema(type = "number", nullable = true)
+        public Object nullableNumberType;
+
+        @Schema(type = "number", types = {"boolean"}, nullable = true)
+        public Object nullableTypesOverride;
     }
 
     @SuppressWarnings("unchecked")
@@ -308,5 +400,20 @@ public class Ticket5233Test extends SwaggerTestBase {
         assertEquals(types.size(), 2);
         assertEquals(types.path(0).asText(), first);
         assertEquals(types.path(1).asText(), second);
+    }
+
+    private void assertAnnotationOnlyType(String fieldName, String expectedType) throws NoSuchFieldException {
+        io.swagger.v3.oas.models.media.Schema schema = annotationOnlySchema(fieldName, true);
+
+        assertNull(schema.getType());
+        assertEquals(schema.getTypes(), Collections.singleton(expectedType));
+        assertEquals(Json31.mapper().valueToTree(schema).path("type").asText(), expectedType);
+    }
+
+    private io.swagger.v3.oas.models.media.Schema annotationOnlySchema(String fieldName, boolean openapi31)
+            throws NoSuchFieldException {
+        Schema annotation = AnnotationOnlyTypes.class.getField(fieldName).getAnnotation(Schema.class);
+        return AnnotationsUtils.getSchemaFromAnnotation(annotation, null, null, openapi31)
+                .orElseThrow(AssertionError::new);
     }
 }
