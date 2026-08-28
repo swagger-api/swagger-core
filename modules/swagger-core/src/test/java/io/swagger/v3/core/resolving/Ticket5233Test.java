@@ -107,6 +107,53 @@ public class Ticket5233Test extends SwaggerTestBase {
         assertSerializedTypes(properties.path("nullableInferred").path("type"), "number", "null");
     }
 
+    @Test(description = "OAS 3.1: supported type sources and precedence control serialized output")
+    public void testSupportedTypeSourcesAndPrecedenceInOas31() {
+        ResolvedSchema resolved = new ModelConverters(true)
+                .resolveAsResolvedSchema(new AnnotatedType(Dto.class));
+        io.swagger.v3.oas.models.media.Schema schema = resolved.schema;
+
+        assertEquals(typesOf(schema, "stringOverride"), Collections.singleton("string"));
+        assertEquals(typesOf(schema, "int32Override"), Collections.singleton("integer"));
+        assertEquals(schemaOf(schema, "int32Override").getFormat(), "int32");
+        assertEquals(typesOf(schema, "floatOverride"), Collections.singleton("number"));
+        assertEquals(schemaOf(schema, "floatOverride").getFormat(), "float");
+        assertEquals(typesOf(schema, "nullableBooleanOverride"),
+                new LinkedHashSet<>(Arrays.asList("boolean", "null")));
+
+        assertEquals(typesOf(schema, "typesOverride"), Collections.singleton("boolean"));
+        assertEquals(typesOf(schema, "nullableTypesOverride"),
+                new LinkedHashSet<>(Arrays.asList("integer", "null")));
+
+        io.swagger.v3.oas.models.media.Schema conflictingTypeAndTypes =
+                schemaOf(schema, "conflictingTypeAndTypes");
+        assertEquals(conflictingTypeAndTypes.getType(), "number");
+        assertEquals(conflictingTypeAndTypes.getTypes(), Collections.singleton("boolean"),
+                "OAS 3.1 serialization uses types(), independently of the legacy type()");
+
+        assertEquals(typesOf(schema, "implementationOverride"), Collections.singleton("integer"));
+        assertEquals(schemaOf(schema, "implementationOverride").getFormat(), "int64");
+
+        io.swagger.v3.oas.models.media.Schema conflictingImplementationAndType =
+                schemaOf(schema, "conflictingImplementationAndType");
+        assertEquals(conflictingImplementationAndType.getType(), "boolean");
+        assertEquals(conflictingImplementationAndType.getTypes(), Collections.singleton("integer"),
+                "implementation() controls resolution when it conflicts with type()");
+
+        JsonNode properties = Json31.mapper().valueToTree(schema).path("properties");
+        assertEquals(properties.path("stringOverride").path("type").asText(), "string");
+        assertEquals(properties.path("int32Override").path("type").asText(), "integer");
+        assertEquals(properties.path("int32Override").path("format").asText(), "int32");
+        assertEquals(properties.path("floatOverride").path("type").asText(), "number");
+        assertEquals(properties.path("floatOverride").path("format").asText(), "float");
+        assertSerializedTypes(properties.path("nullableBooleanOverride").path("type"), "boolean", "null");
+        assertEquals(properties.path("typesOverride").path("type").asText(), "boolean");
+        assertSerializedTypes(properties.path("nullableTypesOverride").path("type"), "integer", "null");
+        assertEquals(properties.path("conflictingTypeAndTypes").path("type").asText(), "boolean");
+        assertEquals(properties.path("implementationOverride").path("type").asText(), "integer");
+        assertEquals(properties.path("conflictingImplementationAndType").path("type").asText(), "integer");
+    }
+
     @Test(description = "bind-type only exposes a singleton types value through the legacy getType accessor")
     public void testBindTypeCompatibilityGetter() {
         io.swagger.v3.oas.models.media.Schema singleton = new io.swagger.v3.oas.models.media.Schema()
@@ -213,6 +260,33 @@ public class Ticket5233Test extends SwaggerTestBase {
 
         @Schema(title = "Flag", type = "boolean")
         public Boolean flag;
+
+        @Schema(title = "String override", type = "string")
+        public Integer stringOverride;
+
+        @Schema(title = "Int32 override", type = "integer", format = "int32")
+        public String int32Override;
+
+        @Schema(title = "Float override", type = "number", format = "float")
+        public String floatOverride;
+
+        @Schema(title = "Nullable boolean override", type = "boolean", nullable = true)
+        public String nullableBooleanOverride;
+
+        @Schema(title = "Types override", types = {"boolean"})
+        public String typesOverride;
+
+        @Schema(title = "Nullable types override", types = {"integer"}, nullable = true)
+        public String nullableTypesOverride;
+
+        @Schema(title = "Conflicting type and types", type = "number", types = {"boolean"})
+        public String conflictingTypeAndTypes;
+
+        @Schema(title = "Implementation override", implementation = Long.class)
+        public String implementationOverride;
+
+        @Schema(title = "Conflicting implementation and type", implementation = Long.class, type = "boolean")
+        public String conflictingImplementationAndType;
 
         @Schema(title = "Unit")
         public Freq unit;
