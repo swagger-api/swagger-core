@@ -276,7 +276,7 @@
                     <plugin>
                         <groupId>org.owasp</groupId>
                         <artifactId>dependency-check-maven</artifactId>
-                        <version>6.5.3</version>
+                        <version>13.0.0</version>
                         <configuration>
                             <skipSystemScope>true</skipSystemScope>
                         </configuration>
