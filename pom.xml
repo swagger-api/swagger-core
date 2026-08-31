@@ -6,7 +6,7 @@
     <packaging>pom</packaging>
     <name>swagger-project</name>
     <description>swagger-project</description>
-    <version>2.2.55-SNAPSHOT</version>
+    <version>2.2.55</version>
     <url>https://github.com/swagger-api/swagger-core</url>
     <scm>
         <connection>scm:git:git@github.com:swagger-api/swagger-core.git</connection>
@@ -661,6 +661,6 @@
         <coverage.missed.classes>0</coverage.missed.classes>
         <transformer-maven-plugin-version>0.5.0</transformer-maven-plugin-version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.build.outputTimestamp>2026-08-18T10:46:11Z</project.build.outputTimestamp>
+        <project.build.outputTimestamp>2026-08-31T08:40:45Z</project.build.outputTimestamp>
     </properties>
 </project>
