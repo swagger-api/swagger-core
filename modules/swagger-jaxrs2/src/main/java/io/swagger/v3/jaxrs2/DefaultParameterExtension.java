@@ -87,6 +87,8 @@ public class DefaultParameterExtension extends AbstractOpenAPIExtension {
                 pp.setIn(COOKIE_PARAM);
                 pp.setName(param.value());
                 parameter = pp;
+            } else if (annotation instanceof io.swagger.v3.oas.annotations.Hidden) {
+                return new ResolvedParameter();
             } else if (annotation instanceof io.swagger.v3.oas.annotations.Parameter) {
                 if (((io.swagger.v3.oas.annotations.Parameter) annotation).hidden()) {
                     return new ResolvedParameter();
