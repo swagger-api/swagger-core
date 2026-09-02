@@ -1,5 +1,6 @@
 package io.swagger.v3.core.jackson;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -336,8 +337,10 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         if (model == null && type.isEnumType()) {
             @SuppressWarnings("unchecked")
             Class<Enum<?>> rawEnumClass = (Class<Enum<?>>) type.getRawClass();
-            model = _createSchemaForEnum(rawEnumClass);
-            isPrimitive = true;
+            if (!isEnumSerializedAsObject(rawEnumClass)) {
+                model = _createSchemaForEnum(rawEnumClass);
+                isPrimitive = true;
+            }
         }
         if (model == null) {
             if (resolvedSchemaAnnotation != null && StringUtils.isEmpty(resolvedSchemaAnnotation.type())) {
@@ -1334,6 +1337,9 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
     protected void _addEnumProps(Class<?> propClass, Schema property) {
         if (propClass.isEnum()) {
             Class<Enum<?>> rawEnumClass = (Class<Enum<?>>) propClass;
+            if (isEnumSerializedAsObject(rawEnumClass)) {
+                return;
+            }
             Schema enumSchema = _createSchemaForEnum(rawEnumClass);
             if (enumSchema != null) {
                 property.setEnum(enumSchema.getEnum());
@@ -3690,5 +3696,22 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         return openapi31
                 ? Boolean.TRUE.equals(PrimitiveType.explicitObjectType)
                 : !Boolean.FALSE.equals(PrimitiveType.explicitObjectType);
+    }
+
+    /**
+     * Determines whether the given enum is serialized as a JSON object rather than as a scalar
+     * enum value.
+     * <p>
+     * This is the case when the enum is annotated with
+     * {@code @JsonFormat(shape = JsonFormat.Shape.OBJECT)}, which instructs Jackson to serialize
+     * each enum constant as a POJO using its bean properties (getters) instead of a single scalar
+     * value. Such an enum is resolved as a regular object/bean schema instead of an enum schema.
+     *
+     * @param enumClass the enum class to inspect
+     * @return {@code true} if the enum is configured to be serialized as a JSON object, {@code false} otherwise
+     */
+    private boolean isEnumSerializedAsObject(Class<Enum<?>> enumClass) {
+        JsonFormat jsonFormat = enumClass.getAnnotation(JsonFormat.class);
+        return jsonFormat != null && jsonFormat.shape() == JsonFormat.Shape.OBJECT;
     }
 }
