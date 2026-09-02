@@ -50,6 +50,7 @@ import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -696,7 +697,11 @@ public abstract class AnnotationsUtils {
             schemaObject.set$ref(schema.ref());
         }
         if (StringUtils.isNotBlank(schema.type())) {
-            schemaObject.setType(schema.type());
+            if (openapi31 && Void.class.equals(schema.implementation())) {
+                schemaObject.setTypes(new LinkedHashSet<>(Collections.singleton(schema.type())));
+            } else if (!openapi31) {
+                schemaObject.setType(schema.type());
+            }
         }
 
         if (schema.types().length > 0) {
@@ -3129,7 +3134,10 @@ public abstract class AnnotationsUtils {
             if (!Void.class.equals(ctxSchema.implementation())) {
                 aType.setType(ctxSchema.implementation());
             } else if (StringUtils.isNotBlank(ctxSchema.type())) {
-                aType.setType(ctxSchema.type().getClass());
+                Type schemaType = getSchemaType(ctxSchema, true);
+                if (schemaType != null) {
+                    aType.setType(schemaType);
+                }
             }
         }
         return aType;
