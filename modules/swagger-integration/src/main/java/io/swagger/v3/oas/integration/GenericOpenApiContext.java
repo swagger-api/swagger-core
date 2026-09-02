@@ -9,6 +9,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import io.swagger.v3.core.converter.ModelConverter;
 import io.swagger.v3.core.converter.ModelConverters;
@@ -914,6 +915,7 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
 
         @JsonProperty("type")
         @JsonSerialize(using = Schema31Mixin.TypeSerializer.class)
+        @JsonDeserialize(using = Schema31Mixin.TypeDeserializer.class)
         public abstract Set<String> getTypes();
 
         @JsonAnySetter
