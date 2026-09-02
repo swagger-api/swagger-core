@@ -211,7 +211,7 @@
             <groupId>com.github.jknack</groupId>
             <artifactId>handlebars</artifactId>
             <scope>test</scope>
-            <version>4.5.3</version>
+            <version>4.5.4</version>
         </dependency>
     </dependencies>
     <properties>
