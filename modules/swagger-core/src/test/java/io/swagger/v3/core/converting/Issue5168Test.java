@@ -55,10 +55,10 @@ public class Issue5168Test {
         @io.swagger.v3.oas.annotations.media.Schema(example = "true")
         String stringFieldType;
 
-        @io.swagger.v3.oas.annotations.media.Schema(type = "boolean", example = "true")
+        @io.swagger.v3.oas.annotations.media.Schema(types = {"boolean"}, example = "true")
         String stringFieldTypeWithExplicitBooleanSchemaType;
 
-        @io.swagger.v3.oas.annotations.media.Schema(type = "string", example = "true")
+        @io.swagger.v3.oas.annotations.media.Schema(types = {"string"}, example = "true")
         boolean booleanFieldTypeWithExplicitStringSchemaType;
 
         @io.swagger.v3.oas.annotations.media.Schema(example = "true")
