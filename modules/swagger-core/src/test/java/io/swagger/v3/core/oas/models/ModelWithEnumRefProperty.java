@@ -17,7 +17,7 @@ public class ModelWithEnumRefProperty {
     }
 
     public void setA(TestEnum e) {
-        this.a = a;
+        this.a = e;
     }
 
     @Schema(enumAsRef = true)

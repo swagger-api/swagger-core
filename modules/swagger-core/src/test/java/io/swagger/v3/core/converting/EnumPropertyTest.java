@@ -7,14 +7,7 @@ import io.swagger.v3.core.converter.ModelConverters;
 import io.swagger.v3.core.jackson.ModelResolver;
 import io.swagger.v3.core.jackson.TypeNameResolver;
 import io.swagger.v3.core.matchers.SerializationMatchers;
-import io.swagger.v3.core.oas.models.JacksonValueBridgeMethodEnum;
-import io.swagger.v3.core.oas.models.JacksonValueDefaultMethodEnum;
-import io.swagger.v3.core.oas.models.JacksonValuePrivateEnum;
-import io.swagger.v3.core.oas.models.Model1979;
-import io.swagger.v3.core.oas.models.ModelWithEnumField;
-import io.swagger.v3.core.oas.models.ModelWithEnumProperty;
-import io.swagger.v3.core.oas.models.ModelWithEnumRefProperty;
-import io.swagger.v3.core.oas.models.ModelWithJacksonEnumField;
+import io.swagger.v3.core.oas.models.*;
 import io.swagger.v3.oas.models.media.IntegerSchema;
 import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.media.StringSchema;
@@ -170,6 +163,52 @@ public class EnumPropertyTest {
 
     }
 
+    @Test(description = "it should read a model with an enum property as a reference")
+    public void testEnumNullableRefProperty() {
+        context.resolve(new AnnotatedType(ModelWithNullableEnumRefProperty.class));
+        final Map<String, Schema> models = context.getDefinedModels();
+        final String yaml = "ModelWithNullableEnumRefProperty:\n" +
+                            "  type: object\n" +
+                            "  properties:\n" +
+                            "    enumAsRef:\n" +
+                            "      $ref: \"#/components/schemas/TestSecondEnum\"\n" +
+                            "    nullableEnumAsRef:\n" +
+                            "      $ref: \"#/components/schemas/TestSecondEnum\"\n" +
+                            "TestSecondEnum:\n" +
+                            "  type: string\n" +
+                            "  enum:\n" +
+                            "  - A_PRIVATE\n" +
+                            "  - A_PUBLIC\n" +
+                            "  - A_SYSTEM\n" +
+                            "  - A_INVITE_ONLY\n";
+        SerializationMatchers.assertEqualsToYaml(models, yaml);
+
+    }
+
+    @Test(description = "it should read a model with an enum property as a reference with fqn TypeNameResolver")
+    public void testEnumNullableRefPropertyWithFQNTypeNameResolver() {
+        TypeNameResolver.std.setUseFqn(true);
+        context.resolve(new AnnotatedType(ModelWithNullableEnumRefProperty.class));
+        final Map<String, Schema> models = context.getDefinedModels();
+        final String yaml = "io.swagger.v3.core.oas.models.ModelWithNullableEnumRefProperty:\n" +
+                            "  type: object\n" +
+                            "  properties:\n" +
+                            "    enumAsRef:\n" +
+                            "      $ref: \"#/components/schemas/io.swagger.v3.core.oas.models.TestSecondEnum\"\n" +
+                            "    nullableEnumAsRef:\n" +
+                            "      $ref: \"#/components/schemas/io.swagger.v3.core.oas.models.TestSecondEnum\"\n" +
+                            "io.swagger.v3.core.oas.models.TestSecondEnum:\n" +
+                            "  type: string\n" +
+                            "  enum:\n" +
+                            "  - A_PRIVATE\n" +
+                            "  - A_PUBLIC\n" +
+                            "  - A_SYSTEM\n" +
+                            "  - A_INVITE_ONLY\n";
+        TypeNameResolver.std.setUseFqn(false);
+        SerializationMatchers.assertEqualsToYaml(models, yaml);
+
+    }
+
     @Test(description = "it should read a model with an enum property as a reference, set via static var or sys prop")
     public void testEnumRefPropertyGlobal() {
         ModelResolver.enumsAsRef = true;
@@ -187,6 +226,27 @@ public class EnumPropertyTest {
                 "  - PUBLIC\n" +
                 "  - SYSTEM\n" +
                 "  - INVITE_ONLY\n";
+        SerializationMatchers.assertEqualsToYaml(models, yaml);
+        ModelResolver.enumsAsRef = false;
+    }
+
+    @Test
+    public void testNullableEnumRefPropertyGlobal() {
+        ModelResolver.enumsAsRef = true;
+        context.resolve(new AnnotatedType(ModelWithNullableEnumProperty.class));
+        final Map<String, Schema> models = context.getDefinedModels();
+        final String yaml = "ModelWithNullableEnumProperty:\n" +
+                            "  type: object\n" +
+                            "  properties:\n" +
+                            "    enumValue:\n" +
+                            "      $ref: \"#/components/schemas/TestEnum\"\n" +
+                            "TestEnum:\n" +
+                            "  type: string\n" +
+                            "  enum:\n" +
+                            "  - PRIVATE\n" +
+                            "  - PUBLIC\n" +
+                            "  - SYSTEM\n" +
+                            "  - INVITE_ONLY\n";
         SerializationMatchers.assertEqualsToYaml(models, yaml);
         ModelResolver.enumsAsRef = false;
     }
