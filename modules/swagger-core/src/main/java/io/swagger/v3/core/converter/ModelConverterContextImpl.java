@@ -57,7 +57,7 @@ public class ModelConverterContextImpl implements ModelConverterContext {
         if (LOGGER.isTraceEnabled()) {
             LOGGER.trace(String.format("defineModel %s %s", name, model));
         }
-        modelByName.put(name, model);
+        putModelByName(name, model);
 
         if (StringUtils.isNotBlank(prevName) && !prevName.equals(name)) {
             modelByName.remove(prevName);
@@ -66,6 +66,27 @@ public class ModelConverterContextImpl implements ModelConverterContext {
         if (type != null && type.getType() != null) {
             modelByType.put(type, model);
         }
+    }
+
+    /**
+     * Registers {@code model} under {@code name}, but never lets a schema without composition keywords
+     * overwrite an already-registered composed schema of the same name. This preserves the {@code allOf}
+     * reference a polymorphic subtype gains from its parent's {@code resolveSubtypes} when the same subtype
+     * is later resolved standalone (e.g. while resolving a discriminator mapping), which otherwise clobbers
+     * it back to a plain object schema.
+     */
+    private void putModelByName(String name, Schema model) {
+        Schema existing = modelByName.get(name);
+        if (existing != null && hasComposition(existing) && !hasComposition(model)) {
+            return;
+        }
+        modelByName.put(name, model);
+    }
+
+    private static boolean hasComposition(Schema schema) {
+        return (schema.getAllOf() != null && !schema.getAllOf().isEmpty())
+                || (schema.getAnyOf() != null && !schema.getAnyOf().isEmpty())
+                || (schema.getOneOf() != null && !schema.getOneOf().isEmpty());
     }
 
     @Override
@@ -101,7 +122,7 @@ public class ModelConverterContextImpl implements ModelConverterContext {
 
             Schema resolvedImpl = resolved;
             if (resolvedImpl.getName() != null) {
-                modelByName.put(resolvedImpl.getName(), resolved);
+                putModelByName(resolvedImpl.getName(), resolved);
             }
         } else {
             processedTypes.remove(type);
