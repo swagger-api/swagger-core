@@ -1,10 +1,10 @@
 package io.swagger.v3.core.converting;
 
-import tools.jackson.databind.ObjectMapper;
 import io.swagger.v3.core.converter.ModelConverters;
 import io.swagger.v3.core.matchers.SerializationMatchers;
 import io.swagger.v3.core.oas.models.Person;
 import io.swagger.v3.core.util.Json;
+import io.swagger.v3.core.util.Json31;
 import io.swagger.v3.core.util.JsonAssert;
 import io.swagger.v3.core.util.OutputReplacer;
 import io.swagger.v3.core.util.ResourceUtils;
@@ -40,7 +40,7 @@ import static org.testng.Assert.assertTrue;
 public class SwaggerSerializerTest {
 
     @Test(description = "it should convert a spec")
-    public void convertSpec() throws IOException {
+    public void convertSpec() {
         final Schema personModel = ModelConverters.getInstance().read(Person.class).get("Person");
         final Schema errorModel = ModelConverters.getInstance().read(Error.class).get("Error");
         final Info info = new Info()
@@ -138,7 +138,7 @@ public class SwaggerSerializerTest {
     }
 
     @Test(description = "it should write a spec with parameter references")
-    public void writeSpecWithParameterReferences() throws IOException {
+    public void writeSpecWithParameterReferences() {
         final Schema personModel = ModelConverters.getInstance().read(Person.class).get("Person");
 
         final Info info = new Info()
@@ -180,31 +180,16 @@ public class SwaggerSerializerTest {
     public void prettyPrintTest() throws IOException {
         final String json = ResourceUtils.loadClassResource(getClass(), "uber.json");
         final OpenAPI swagger = Json.mapper().readValue(json, OpenAPI.class);
-        final String outputStream = OutputReplacer.OUT.run(new OutputReplacer.Function() {
-            @Override
-            public void run() {
-                Json.prettyPrint(swagger);
-            }
-        });
+        final String outputStream = OutputReplacer.OUT.run(() -> Json.prettyPrint(swagger));
         SerializationMatchers.assertEqualsToJson(swagger, outputStream);
     }
 
     @Test
-    public void exceptionsTest() throws IOException {
-        final String outputStream1 = OutputReplacer.ERROR.run(new OutputReplacer.Function() {
-            @Override
-            public void run() {
-                Json.pretty(new ThrowHelper());
-            }
-        });
+    public void exceptionsTest() {
+        final String outputStream1 = OutputReplacer.ERROR.run(() -> Json.pretty(new ThrowHelper()));
         assertTrue(outputStream1.contains(ThrowHelper.MESSAGE));
 
-        final String outputStream2 = OutputReplacer.ERROR.run(new OutputReplacer.Function() {
-            @Override
-            public void run() {
-                Json.prettyPrint(new ThrowHelper());
-            }
-        });
+        final String outputStream2 = OutputReplacer.ERROR.run(() -> Json.prettyPrint(new ThrowHelper()));
         assertTrue(outputStream2.contains(ThrowHelper.MESSAGE));
     }
 
@@ -222,7 +207,7 @@ public class SwaggerSerializerTest {
     }
 
     @Test
-    public void testDynamicRefSerialization() throws IOException {
+    public void testDynamicRefSerialization() {
         Schema<?> dynamicRefSchema = new Schema<>();
         dynamicRefSchema.set$dynamicRef("#node");
 
@@ -231,6 +216,28 @@ public class SwaggerSerializerTest {
         String json = Json.mapper().writeValueAsString(openAPI);
 
         assertTrue(json.contains("\"$dynamicRef\":\"#node\""));
+    }
+
+    @Test
+    public void testCreateJsonConverterPreservesRef() {
+        var result = Json31.converterMapper()
+                .convertValue(new Schema().$ref("#/components/schemas/Pet"), Map.class);
+        assertTrue(result.containsKey("$ref"),
+                "$ref must survive convertValue via converterMapper");
+        assertEquals(result.get("$ref"), "#/components/schemas/Pet");
+    }
+
+    @Test
+    public void testConverterMapperPreservesDeclarationOrder() {
+        Schema<?> schema = new Schema<>().type("string").format("date").title("Birth date").description("ISO date");
+        Map<String, Object> result = Json31.converterMapper().convertValue(schema, Map.class);
+        var keys = result.keySet().stream().toList();
+        assertTrue(keys.indexOf("title") < keys.indexOf("type"),
+                "title must come before type (field declaration order, not alphabetical)");
+        assertTrue(keys.indexOf("type") < keys.indexOf("description"),
+                "type must come before description (field declaration order, not alphabetical)");
+        assertTrue(keys.indexOf("description") < keys.indexOf("format"),
+                "description must come before format (field declaration order, not alphabetical)");
     }
 
 }

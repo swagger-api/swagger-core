@@ -10,8 +10,6 @@ import io.swagger.v3.oas.models.PathItem;
 import io.swagger.v3.oas.models.callbacks.Callback;
 import tools.jackson.databind.ValueDeserializer;
 
-import java.io.IOException;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -30,7 +28,7 @@ public class CallbackDeserializer extends ValueDeserializer<Callback> {
             mapper = Json.mapper();
         }
         Callback result = new Callback();
-        JsonNode node = jp.objectReadContext().readTree(jp);
+        JsonNode node = ctxt.readTree(jp);
         ObjectNode objectNode = (ObjectNode)node;
         Map<String, Object> extensions = new LinkedHashMap<>();
         for (Map.Entry<String, JsonNode> entry : objectNode.properties()) {

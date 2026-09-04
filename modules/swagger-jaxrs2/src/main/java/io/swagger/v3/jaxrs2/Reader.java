@@ -54,7 +54,6 @@ import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Application;
-import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
@@ -433,7 +432,7 @@ public class Reader implements OpenApiReader {
         // See https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html#getMethods--
         final List<Method> methods = Arrays.stream(cls.getMethods())
                 .sorted(new MethodComparator())
-                .collect(Collectors.toList());
+                .toList();
 
         // iterate class methods
         for (Method method : methods) {
@@ -540,7 +539,7 @@ public class Reader implements OpenApiReader {
                     if (annotatedMethod == null) { // annotatedMethod not null only when method with 0-2 parameters
                         Type[] genericParameterTypes = method.getGenericParameterTypes();
                         for (int i = 0; i < genericParameterTypes.length; i++) {
-                            final Type type = TypeFactory.createDefaultInstance().constructType(genericParameterTypes[i]);
+                            final Type type = TypeFactory.createDefaultInstance().resolveMemberType(genericParameterTypes[i], classType.getBindings());
                             io.swagger.v3.oas.annotations.Parameter paramAnnotation = AnnotationsUtils.getAnnotation(io.swagger.v3.oas.annotations.Parameter.class, paramAnnotations[i]);
                             Type paramType = ParameterProcessor.getParameterType(paramAnnotation, true);
                             if (paramType == null) {

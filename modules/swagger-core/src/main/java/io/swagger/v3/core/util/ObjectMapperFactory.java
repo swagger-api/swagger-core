@@ -286,9 +286,12 @@ public class ObjectMapperFactory {
         sourceMixins.put(Schema.class, SchemaConverterMixin.class);
         builder.addMixIns(sourceMixins);
         builder.configure(StreamWriteFeature.WRITE_BIGDECIMAL_AS_PLAIN, true);
+        builder.configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY, false);
         builder.changeDefaultPropertyInclusion(incl -> incl
                 .withContentInclusion(JsonInclude.Include.NON_NULL)
                 .withValueInclusion(JsonInclude.Include.NON_NULL));
+        builder.accessorNaming(new DefaultAccessorNamingStrategy.Provider()
+                .withFirstCharAcceptance(true, true));
 
         return builder.build();
     }
@@ -296,6 +299,7 @@ public class ObjectMapperFactory {
 
     public static ObjectMapper buildStrictGenericObjectMapper() {
         JsonMapper.Builder builder = JsonMapper.builder();
+        builder.configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY, false);
         builder.changeDefaultPropertyInclusion(incl -> incl
                 .withContentInclusion(JsonInclude.Include.NON_NULL)
                 .withValueInclusion(JsonInclude.Include.NON_NULL));

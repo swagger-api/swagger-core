@@ -147,6 +147,8 @@ import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.HeaderParam;
+import javax.ws.rs.QueryParam;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
@@ -216,8 +218,8 @@ public class ReaderTest {
         assertNull(pathItem.getPost());
         Operation operation = pathItem.getGet();
         assertNotNull(operation);
-        assertEquals(OPERATION_SUMMARY, operation.getSummary());
-        assertEquals(OPERATION_DESCRIPTION, operation.getDescription());
+        assertEquals(operation.getSummary(), OPERATION_SUMMARY);
+        assertEquals(operation.getDescription(), OPERATION_DESCRIPTION);
     }
 
     @Test(description = "scan methods")
@@ -225,22 +227,22 @@ public class ReaderTest {
         Reader reader = new Reader(new OpenAPI());
         OpenAPI openAPI = reader.read(CompleteFieldsResource.class);
         Paths paths = openAPI.getPaths();
-        assertEquals(PATHS_NUMBER, paths.size());
+        assertEquals(paths.size(), PATHS_NUMBER);
         PathItem pathItem = paths.get(PATH_REF);
         assertNotNull(pathItem);
         assertNull(pathItem.getPost());
         Operation operation = pathItem.getGet();
         assertNotNull(operation);
-        assertEquals(OPERATION_SUMMARY, operation.getSummary());
-        assertEquals(OPERATION_DESCRIPTION, operation.getDescription());
+        assertEquals(operation.getSummary(), OPERATION_SUMMARY);
+        assertEquals(operation.getDescription(), OPERATION_DESCRIPTION);
 
-        assertEquals(TAG_NUMBER, operation.getTags().size());
-        assertEquals(EXAMPLE_TAG, operation.getTags().get(0));
-        assertEquals(SECOND_TAG, operation.getTags().get(1));
+        assertEquals(operation.getTags().size(), TAG_NUMBER);
+        assertEquals(operation.getTags().get(0), EXAMPLE_TAG);
+        assertEquals(operation.getTags().get(1), SECOND_TAG);
 
         ExternalDocumentation externalDocs = operation.getExternalDocs();
-        assertEquals(EXTERNAL_DOCS_DESCRIPTION, externalDocs.getDescription());
-        assertEquals(EXTERNAL_DOCS_URL, externalDocs.getUrl());
+        assertEquals(externalDocs.getDescription(), EXTERNAL_DOCS_DESCRIPTION);
+        assertEquals(externalDocs.getUrl(), EXTERNAL_DOCS_URL);
     }
 
     @Test(description = "scan methods")
@@ -261,8 +263,8 @@ public class ReaderTest {
         Method[] methods = BasicFieldsResource.class.getMethods();
         Operation operation = reader.parseMethod(methods[0], null, null);
         assertNotNull(operation);
-        assertEquals(OPERATION_SUMMARY, operation.getSummary());
-        assertEquals(OPERATION_DESCRIPTION, operation.getDescription());
+        assertEquals(operation.getSummary(), OPERATION_SUMMARY);
+        assertEquals(operation.getDescription(), OPERATION_DESCRIPTION);
     }
 
     @Test(description = "Get a Duplicated Operation Id")
@@ -324,7 +326,7 @@ public class ReaderTest {
         assertNotNull(components);
         Map<String, SecurityScheme> securitySchemes = components.getSecuritySchemes();
         assertNotNull(securitySchemes);
-        assertEquals(SECURITY_SCHEMAS, securitySchemes.size());
+        assertEquals(securitySchemes.size(), SECURITY_SCHEMAS);
     }
 
     @Test(description = "Deprecated Method")
@@ -342,7 +344,7 @@ public class ReaderTest {
         OpenAPI openAPI = reader.read(TagsResource.class);
         Operation operation = openAPI.getPaths().get("/").getGet();
         assertNotNull(operation);
-        assertEquals(6, operation.getTags().size());
+        assertEquals(operation.getTags().size(), 6);
         assertEquals(operation.getTags().get(3), EXAMPLE_TAG);
         assertEquals(operation.getTags().get(1), SECOND_TAG);
         assertEquals(openAPI.getTags().get(1).getDescription(), "desc definition");
@@ -355,7 +357,7 @@ public class ReaderTest {
         OpenAPI openAPI = reader.read(ServersResource.class);
         Operation operation = openAPI.getPaths().get("/").getGet();
         assertNotNull(operation);
-        assertEquals(5, operation.getServers().size());
+        assertEquals(operation.getServers().size(), 5);
         assertEquals(operation.getServers().get(0).getUrl(), "http://class1");
         assertEquals(operation.getServers().get(1).getUrl(), "http://class2");
         assertEquals(operation.getServers().get(2).getUrl(), "http://method1");
@@ -380,47 +382,49 @@ public class ReaderTest {
         assertNotNull(responseOperation);
 
         ApiResponses responses = responseOperation.getResponses();
-        assertEquals(RESPONSES_NUMBER, responses.size());
+        assertEquals(responses.size(), RESPONSES_NUMBER);
 
         ApiResponse apiResponse = responses.get(RESPONSE_CODE_200);
         assertNotNull(apiResponse);
-        assertEquals(RESPONSE_DESCRIPTION, apiResponse.getDescription());
+        assertEquals(apiResponse.getDescription(), RESPONSE_DESCRIPTION);
     }
 
     @Test(description = "More Responses")
     public void testMoreResponses() {
         Reader reader = new Reader(new OpenAPI());
         OpenAPI openAPI = reader.read(EnhancedResponsesResource.class);
-        String yaml = "openapi: 3.0.1\n" +
-                "paths:\n" +
-                "  /:\n" +
-                "    get:\n" +
-                "      summary: Simple get operation\n" +
-                "      description: Defines a simple get operation with no inputs and a complex output\n" +
-                "        object\n" +
-                "      operationId: getWithPayloadResponse\n" +
-                "      responses:\n" +
-                "        \"200\":\n" +
-                "          description: voila!\n" +
-                "          content:\n" +
-                "            application/json:\n" +
-                "              schema:\n" +
-                "                $ref: \"#/components/schemas/SampleResponseSchema\"\n" +
-                "        \"404\":\n" +
-                "          description: not found!\n" +
-                "        \"400\":\n" +
-                "          description: boo\n" +
-                "          content:\n" +
-                "            '*/*':\n" +
-                "              schema:\n" +
-                "                $ref: \"#/components/schemas/GenericError\"\n" +
-                "      deprecated: true\n" +
-                "components:\n" +
-                "  schemas:\n" +
-                "    GenericError:\n" +
-                "      type: object\n" +
-                "    SampleResponseSchema:\n" +
-                "      type: object\n";
+        String yaml = """
+                openapi: 3.0.1
+                paths:
+                  /:
+                    get:
+                      summary: Simple get operation
+                      description: Defines a simple get operation with no inputs and a complex output
+                        object
+                      operationId: getWithPayloadResponse
+                      responses:
+                        "200":
+                          description: voila!
+                          content:
+                            application/json:
+                              schema:
+                                $ref: "#/components/schemas/SampleResponseSchema"
+                        "404":
+                          description: not found!
+                        "400":
+                          description: boo
+                          content:
+                            '*/*':
+                              schema:
+                                $ref: "#/components/schemas/GenericError"
+                      deprecated: true
+                components:
+                  schemas:
+                    GenericError:
+                      type: object
+                    SampleResponseSchema:
+                      type: object
+                """;
 
         SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
     }
@@ -430,131 +434,132 @@ public class ReaderTest {
         Reader reader = new Reader(new OpenAPI());
 
         OpenAPI openAPI = reader.read(ResponsesResource.class);
-        String yaml = "openapi: 3.0.1\n" +
-                "paths:\n" +
-                "  /:\n" +
-                "    get:\n" +
-                "      summary: Simple get operation\n" +
-                "      description: Defines a simple get operation with no inputs and a complex output\n" +
-                "        object\n" +
-                "      operationId: getWithPayloadResponse\n" +
-                "      responses:\n" +
-                "        \"200\":\n" +
-                "          description: voila!\n" +
-                "          content:\n" +
-                "            application/json:\n" +
-                "              schema:\n" +
-                "                $ref: \"#/components/schemas/SampleResponseSchema\"\n" +
-                "        default:\n" +
-                "          description: boo\n" +
-                "          content:\n" +
-                "            '*/*':\n" +
-                "              schema:\n" +
-                "                $ref: \"#/components/schemas/GenericError\"\n" +
-                "      deprecated: true\n" +
-                "  /allOf:\n" +
-                "    get:\n" +
-                "      summary: Test inheritance / polymorphism\n" +
-                "      operationId: getAllOf\n" +
-                "      parameters:\n" +
-                "      - name: number\n" +
-                "        in: query\n" +
-                "        description: Test inheritance / polymorphism\n" +
-                "        required: true\n" +
-                "        schema:\n" +
-                "          type: integer\n" +
-                "          format: int32\n" +
-                "        example: 1\n" +
-                "      responses:\n" +
-                "        \"200\":\n" +
-                "          description: bean answer\n" +
-                "          content:\n" +
-                "            application/json:\n" +
-                "              schema:\n" +
-                "                allOf:\n" +
-                "                - $ref: \"#/components/schemas/MultipleSub1Bean\"\n" +
-                "                - $ref: \"#/components/schemas/MultipleSub2Bean\"\n" +
-                "  /anyOf:\n" +
-                "    get:\n" +
-                "      summary: Test inheritance / polymorphism\n" +
-                "      operationId: getAnyOf\n" +
-                "      parameters:\n" +
-                "      - name: number\n" +
-                "        in: query\n" +
-                "        description: Test inheritance / polymorphism\n" +
-                "        required: true\n" +
-                "        schema:\n" +
-                "          type: integer\n" +
-                "          format: int32\n" +
-                "        example: 1\n" +
-                "      responses:\n" +
-                "        \"200\":\n" +
-                "          description: bean answer\n" +
-                "          content:\n" +
-                "            application/json:\n" +
-                "              schema:\n" +
-                "                anyOf:\n" +
-                "                - $ref: \"#/components/schemas/MultipleSub1Bean\"\n" +
-                "                - $ref: \"#/components/schemas/MultipleSub2Bean\"\n" +
-                "  /oneOf:\n" +
-                "    get:\n" +
-                "      summary: Test inheritance / polymorphism\n" +
-                "      operationId: getOneOf\n" +
-                "      parameters:\n" +
-                "      - name: number\n" +
-                "        in: query\n" +
-                "        description: Test inheritance / polymorphism\n" +
-                "        required: true\n" +
-                "        schema:\n" +
-                "          type: integer\n" +
-                "          format: int32\n" +
-                "        example: 1\n" +
-                "      responses:\n" +
-                "        \"200\":\n" +
-                "          description: bean answer\n" +
-                "          content:\n" +
-                "            application/json:\n" +
-                "              schema:\n" +
-                "                oneOf:\n" +
-                "                - $ref: \"#/components/schemas/MultipleSub1Bean\"\n" +
-                "                - $ref: \"#/components/schemas/MultipleSub2Bean\"\n" +
-                "components:\n" +
-                "  schemas:\n" +
-                "    SampleResponseSchema:\n" +
-                "      type: object\n" +
-                "    GenericError:\n" +
-                "      type: object\n" +
-                "    MultipleSub1Bean:\n" +
-                "      type: object\n" +
-                "      description: MultipleSub1Bean\n" +
-                "      allOf:\n" +
-                "      - $ref: \"#/components/schemas/MultipleBaseBean\"\n" +
-                "      - type: object\n" +
-                "        properties:\n" +
-                "          c:\n" +
-                "            type: integer\n" +
-                "            format: int32\n" +
-                "    MultipleSub2Bean:\n" +
-                "      type: object\n" +
-                "      description: MultipleSub2Bean\n" +
-                "      allOf:\n" +
-                "      - $ref: \"#/components/schemas/MultipleBaseBean\"\n" +
-                "      - type: object\n" +
-                "        properties:\n" +
-                "          d:\n" +
-                "            type: integer\n" +
-                "            format: int32\n" +
-                "    MultipleBaseBean:\n" +
-                "      type: object\n" +
-                "      properties:\n" +
-                "        beanType:\n" +
-                "          type: string\n" +
-                "        a:\n" +
-                "          type: integer\n" +
-                "          format: int32\n" +
-                "        b:\n" +
-                "          type: string\n" +
-                "      description: MultipleBaseBean";
+        String yaml = """
+                openapi: 3.0.1
+                paths:
+                  /:
+                    get:
+                      summary: Simple get operation
+                      description: Defines a simple get operation with no inputs and a complex output
+                        object
+                      operationId: getWithPayloadResponse
+                      responses:
+                        "200":
+                          description: voila!
+                          content:
+                            application/json:
+                              schema:
+                                $ref: "#/components/schemas/SampleResponseSchema"
+                        default:
+                          description: boo
+                          content:
+                            '*/*':
+                              schema:
+                                $ref: "#/components/schemas/GenericError"
+                      deprecated: true
+                  /allOf:
+                    get:
+                      summary: Test inheritance / polymorphism
+                      operationId: getAllOf
+                      parameters:
+                      - name: number
+                        in: query
+                        description: Test inheritance / polymorphism
+                        required: true
+                        schema:
+                          type: integer
+                          format: int32
+                        example: 1
+                      responses:
+                        "200":
+                          description: bean answer
+                          content:
+                            application/json:
+                              schema:
+                                allOf:
+                                - $ref: "#/components/schemas/MultipleSub1Bean"
+                                - $ref: "#/components/schemas/MultipleSub2Bean"
+                  /anyOf:
+                    get:
+                      summary: Test inheritance / polymorphism
+                      operationId: getAnyOf
+                      parameters:
+                      - name: number
+                        in: query
+                        description: Test inheritance / polymorphism
+                        required: true
+                        schema:
+                          type: integer
+                          format: int32
+                        example: 1
+                      responses:
+                        "200":
+                          description: bean answer
+                          content:
+                            application/json:
+                              schema:
+                                anyOf:
+                                - $ref: "#/components/schemas/MultipleSub1Bean"
+                                - $ref: "#/components/schemas/MultipleSub2Bean"
+                  /oneOf:
+                    get:
+                      summary: Test inheritance / polymorphism
+                      operationId: getOneOf
+                      parameters:
+                      - name: number
+                        in: query
+                        description: Test inheritance / polymorphism
+                        required: true
+                        schema:
+                          type: integer
+                          format: int32
+                        example: 1
+                      responses:
+                        "200":
+                          description: bean answer
+                          content:
+                            application/json:
+                              schema:
+                                oneOf:
+                                - $ref: "#/components/schemas/MultipleSub1Bean"
+                                - $ref: "#/components/schemas/MultipleSub2Bean"
+                components:
+                  schemas:
+                    SampleResponseSchema:
+                      type: object
+                    GenericError:
+                      type: object
+                    MultipleSub1Bean:
+                      type: object
+                      description: MultipleSub1Bean
+                      allOf:
+                      - $ref: "#/components/schemas/MultipleBaseBean"
+                      - type: object
+                        properties:
+                          c:
+                            type: integer
+                            format: int32
+                    MultipleSub2Bean:
+                      type: object
+                      description: MultipleSub2Bean
+                      allOf:
+                      - $ref: "#/components/schemas/MultipleBaseBean"
+                      - type: object
+                        properties:
+                          d:
+                            type: integer
+                            format: int32
+                    MultipleBaseBean:
+                      type: object
+                      properties:
+                        beanType:
+                          type: string
+                        a:
+                          type: integer
+                          format: int32
+                        b:
+                          type: string
+                      description: MultipleBaseBean""";
         SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
     }
 
@@ -569,7 +574,7 @@ public class ReaderTest {
         assertEquals(externalDocs.getDescription(), "External documentation description in method");
         assertEquals(externalDocs.getUrl(), EXTERNAL_DOCS_URL);
         externalDocs = openAPI.getComponents().getSchemas().get("ExternalDocsSchema").getExternalDocs();
-        assertEquals("External documentation description in schema", externalDocs.getDescription());
+        assertEquals(externalDocs.getDescription(), "External documentation description in schema");
         assertEquals(externalDocs.getUrl(), EXTERNAL_DOCS_URL);
     }
 
@@ -591,7 +596,7 @@ public class ReaderTest {
         assertNotNull(openAPI);
         Map<String, Object> extensions = openAPI.getPaths().get("/").getGet().getParameters().get(0).getExtensions();
         assertNotNull(extensions);
-        assertEquals(1, extensions.size());
+        assertEquals(extensions.size(), 1);
         assertNotNull(extensions.get("x-parameter"));
 
     }
@@ -626,12 +631,12 @@ public class ReaderTest {
         assertNotNull(securityOperation);
         List<SecurityRequirement> securityRequirements = securityOperation.getSecurity();
         assertNotNull(securityRequirements);
-        assertEquals(SECURITY_REQUIREMENT_NUMBER, securityRequirements.size());
+        assertEquals(securityRequirements.size(), SECURITY_REQUIREMENT_NUMBER);
         List<String> scopes = securityRequirements.get(0).get(SECURITY_KEY);
         assertNotNull(scopes);
-        assertEquals(SCOPE_NUMBER, scopes.size());
-        assertEquals(SCOPE_VALUE1, scopes.get(0));
-        assertEquals(SCOPE_VALUE2, scopes.get(1));
+        assertEquals(scopes.size(), SCOPE_NUMBER);
+        assertEquals(scopes.get(0), SCOPE_VALUE1);
+        assertEquals(scopes.get(1), SCOPE_VALUE2);
     }
 
     @Test(description = "Callbacks")
@@ -648,15 +653,15 @@ public class ReaderTest {
         assertNotNull(pathItem);
         Operation postOperation = pathItem.getPost();
         assertNotNull(postOperation);
-        assertEquals(CALLBACK_POST_OPERATION_DESCRIPTION, postOperation.getDescription());
+        assertEquals(postOperation.getDescription(), CALLBACK_POST_OPERATION_DESCRIPTION);
 
         Operation getOperation = pathItem.getGet();
         assertNotNull(getOperation);
-        assertEquals(CALLBACK_GET_OPERATION_DESCRIPTION, getOperation.getDescription());
+        assertEquals(getOperation.getDescription(), CALLBACK_GET_OPERATION_DESCRIPTION);
 
         Operation putOperation = pathItem.getPut();
         assertNotNull(putOperation);
-        assertEquals(CALLBACK_POST_OPERATION_DESCRIPTION, putOperation.getDescription());
+        assertEquals(putOperation.getDescription(), CALLBACK_POST_OPERATION_DESCRIPTION);
     }
 
     @Test(description = "Get the Param of an operation")
@@ -672,21 +677,21 @@ public class ReaderTest {
         assertNotNull(operation);
         List<Parameter> parameters = operation.getParameters();
         assertNotNull(parameters);
-        assertEquals(PARAMETER_NUMBER, parameters.size());
+        assertEquals(parameters.size(), PARAMETER_NUMBER);
         Parameter parameter = parameters.get(0);
         assertNotNull(parameter);
-        assertEquals(PARAMETER_IN, parameter.getIn());
-        assertEquals(PARAMETER_NAME, parameter.getName());
-        assertEquals(PARAMETER_DESCRIPTION, parameter.getDescription());
-        assertEquals(Boolean.TRUE, parameter.getRequired());
-        assertEquals(Boolean.TRUE, parameter.getAllowEmptyValue());
-        assertEquals(Boolean.TRUE, parameter.getAllowReserved());
+        assertEquals(parameter.getIn(), PARAMETER_IN);
+        assertEquals(parameter.getName(), PARAMETER_NAME);
+        assertEquals(parameter.getDescription(), PARAMETER_DESCRIPTION);
+        assertEquals(parameter.getRequired(), Boolean.TRUE);
+        assertEquals(parameter.getAllowEmptyValue(), Boolean.TRUE);
+        assertEquals(parameter.getAllowReserved(), Boolean.TRUE);
         Schema schema = parameter.getSchema();
         assertNotNull(schema);
-        assertEquals(SCHEMA_TYPE, schema.getType());
-        assertEquals(SCHEMA_FORMAT, schema.getFormat());
-        assertEquals(SCHEMA_DESCRIPTION, schema.getDescription());
-        assertEquals(Boolean.TRUE, schema.getReadOnly());
+        assertEquals(schema.getType(), SCHEMA_TYPE);
+        assertEquals(schema.getFormat(), SCHEMA_FORMAT);
+        assertEquals(schema.getDescription(), SCHEMA_DESCRIPTION);
+        assertEquals(schema.getReadOnly(), Boolean.TRUE);
 
     }
 
@@ -711,7 +716,6 @@ public class ReaderTest {
         assertNotNull(openAPI.getComponents().getSchemas().get("B").getProperties().get("test"));
         assertEquals(((Schema) openAPI.getComponents().getSchemas().get("B").getProperties().get("test")).get$ref(), "#/components/schemas/IssueTemplateRet");
 
-        //Yaml.prettyPrint(openAPI);
     }
 
     public static class A {
@@ -746,7 +750,6 @@ public class ReaderTest {
         @Consumes("application/json")
         @GET
         @io.swagger.v3.oas.annotations.Operation(tags = "/receiver/rest")
-        //public void test1(@QueryParam("aa") String a) {
         public void test1(A a) {
         }
     }
@@ -1076,28 +1079,29 @@ public class ReaderTest {
         Reader reader = new Reader(new OpenAPI());
 
         OpenAPI openAPI = reader.read(Ticket2763Resource.class);
-        String yaml = "openapi: 3.0.1\n" +
-                "paths:\n" +
-                "  /array:\n" +
-                "    get:\n" +
-                "      operationId: getArrayResponses\n" +
-                "      responses:\n" +
-                "        default:\n" +
-                "          content:\n" +
-                "            application/json:\n" +
-                "              schema:\n" +
-                "                type: array\n" +
-                "                items:\n" +
-                "                  $ref: https://openebench.bsc.es/monitor/tool/tool.json\n" +
-                "  /schema:\n" +
-                "    get:\n" +
-                "      operationId: getSchemaResponses\n" +
-                "      responses:\n" +
-                "        default:\n" +
-                "          content:\n" +
-                "            application/json:\n" +
-                "              schema:\n" +
-                "                $ref: https://openebench.bsc.es/monitor/tool/tool.json";
+        String yaml = """
+                openapi: 3.0.1
+                paths:
+                  /array:
+                    get:
+                      operationId: getArrayResponses
+                      responses:
+                        default:
+                          content:
+                            application/json:
+                              schema:
+                                type: array
+                                items:
+                                  $ref: https://openebench.bsc.es/monitor/tool/tool.json
+                  /schema:
+                    get:
+                      operationId: getSchemaResponses
+                      responses:
+                        default:
+                          content:
+                            application/json:
+                              schema:
+                                $ref: https://openebench.bsc.es/monitor/tool/tool.json""";
         SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
     }
 
@@ -1106,52 +1110,54 @@ public class ReaderTest {
         Reader reader = new Reader(new OpenAPI());
 
         OpenAPI openAPI = reader.read(Ticket2340Resource.class);
-        String yaml = "openapi: 3.0.1\n" +
-                "paths:\n" +
-                "  /test/test:\n" +
-                "    post:\n" +
-                "      operationId: getAnimal\n" +
-                "      requestBody:\n" +
-                "        content:\n" +
-                "          application/json:\n" +
-                "            schema:\n" +
-                "              $ref: \"#/components/schemas/Animal\"\n" +
-                "      responses:\n" +
-                "        default:\n" +
-                "          description: default response\n" +
-                "          content:\n" +
-                "            application/json:\n" +
-                "              schema:\n" +
-                "                type: string\n" +
-                "components:\n" +
-                "  schemas:\n" +
-                "    Animal:\n" +
-                "      required:\n" +
-                "      - type\n" +
-                "      type: object\n" +
-                "      properties:\n" +
-                "        type:\n" +
-                "          type: string\n" +
-                "      discriminator:\n" +
-                "        propertyName: type\n" +
-                "    Cat:\n" +
-                "      type: object\n" +
-                "      allOf:\n" +
-                "      - $ref: \"#/components/schemas/Animal\"\n" +
-                "      - type: object\n" +
-                "        properties:\n" +
-                "          lives:\n" +
-                "            type: integer\n" +
-                "            format: int32\n" +
-                "    Dog:\n" +
-                "      type: object\n" +
-                "      allOf:\n" +
-                "      - $ref: \"#/components/schemas/Animal\"\n" +
-                "      - type: object\n" +
-                "        properties:\n" +
-                "          barkVolume:\n" +
-                "            type: number\n" +
-                "            format: double\n";
+        String yaml = """
+                openapi: 3.0.1
+                paths:
+                  /test/test:
+                    post:
+                      operationId: getAnimal
+                      requestBody:
+                        content:
+                          application/json:
+                            schema:
+                              $ref: "#/components/schemas/Animal"
+                      responses:
+                        default:
+                          description: default response
+                          content:
+                            application/json:
+                              schema:
+                                type: string
+                components:
+                  schemas:
+                    Animal:
+                      required:
+                      - type
+                      type: object
+                      properties:
+                        type:
+                          type: string
+                      discriminator:
+                        propertyName: type
+                    Cat:
+                      type: object
+                      allOf:
+                      - $ref: "#/components/schemas/Animal"
+                      - type: object
+                        properties:
+                          lives:
+                            type: integer
+                            format: int32
+                    Dog:
+                      type: object
+                      allOf:
+                      - $ref: "#/components/schemas/Animal"
+                      - type: object
+                        properties:
+                          barkVolume:
+                            type: number
+                            format: double
+                """;
         SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
     }
 
@@ -1160,36 +1166,38 @@ public class ReaderTest {
         Reader reader = new Reader(new OpenAPI());
 
         OpenAPI openAPI = reader.read(Ticket2806Resource.class);
-        String yaml = "openapi: 3.0.1\n" +
-                "paths:\n" +
-                "  /test:\n" +
-                "    get:\n" +
-                "      operationId: getTest\n" +
-                "      responses:\n" +
-                "        default:\n" +
-                "          description: default response\n" +
-                "          content:\n" +
-                "            '*/*':\n" +
-                "              schema:\n" +
-                "                $ref: \"#/components/schemas/Test\"\n" +
-                "components:\n" +
-                "  schemas:\n" +
-                "    Test:\n" +
-                "      type: object\n" +
-                "      properties:\n" +
-                "        stringArray:\n" +
-                "          maxItems: 4\n" +
-                "          minItems: 2\n" +
-                "          uniqueItems: true\n" +
-                "          type: array\n" +
-                "          description: Array desc\n" +
-                "          example:\n" +
-                "          - aaa\n" +
-                "          - bbb\n" +
-                "          items:\n" +
-                "            type: string\n" +
-                "            description: Hello, World!\n" +
-                "            example: Lorem ipsum dolor set\n";
+        String yaml = """
+                openapi: 3.0.1
+                paths:
+                  /test:
+                    get:
+                      operationId: getTest
+                      responses:
+                        default:
+                          description: default response
+                          content:
+                            '*/*':
+                              schema:
+                                $ref: "#/components/schemas/Test"
+                components:
+                  schemas:
+                    Test:
+                      type: object
+                      properties:
+                        stringArray:
+                          maxItems: 4
+                          minItems: 2
+                          uniqueItems: true
+                          type: array
+                          description: Array desc
+                          example:
+                          - aaa
+                          - bbb
+                          items:
+                            type: string
+                            description: Hello, World!
+                            example: Lorem ipsum dolor set
+                """;
         SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
     }
 
@@ -1198,88 +1206,88 @@ public class ReaderTest {
         Reader reader = new Reader(new OpenAPI());
 
         OpenAPI openAPI = reader.read(Ticket2794Resource.class);
-        String yaml = "openapi: 3.0.1\n" +
-                "paths:\n" +
-                "  /notnullparameter:\n" +
-                "    get:\n" +
-                "      operationId: getBooks\n" +
-                "      parameters:\n" +
-                "      - name: page\n" +
-                "        in: query\n" +
-                "        required: true\n" +
-                "        schema:\n" +
-                "          type: integer\n" +
-                "          format: int32\n" +
-                "      responses:\n" +
-                "        default:\n" +
-                "          description: default response\n" +
-                "          content:\n" +
-                "            application/json: {}\n" +
-                "  /notnullparameter/newnotnull:\n" +
-                "    post:\n" +
-                "      operationId: insertnotnull\n" +
-                "      requestBody:\n" +
-                "        content:\n" +
-                "          '*/*':\n" +
-                "            schema:\n" +
-                "              $ref: \"#/components/schemas/Book\"\n" +
-                "        required: true\n" +
-                "      responses:\n" +
-                "        default:\n" +
-                "          description: default response\n" +
-                "          content:\n" +
-                "            '*/*': {}\n" +
-                "  /notnullparameter/new_reqBody_required:\n" +
-                "    post:\n" +
-                "      operationId: insert\n" +
-                "      requestBody:\n" +
-                "        content:\n" +
-                "          '*/*':\n" +
-                "            schema:\n" +
-                "              $ref: \"#/components/schemas/Book\"\n" +
-                "        required: true\n" +
-                "      responses:\n" +
-                "        default:\n" +
-                "          description: default response\n" +
-                "          content:\n" +
-                "            '*/*': {}\n" +
-                "components:\n" +
-                "  schemas:\n" +
-                "    Book:\n" +
-                "      type: object\n" +
-                "      properties:\n" +
-                "        foo:\n" +
-                "          type: string\n";
+        String yaml = """
+                openapi: 3.0.1
+                paths:
+                  /notnullparameter:
+                    get:
+                      operationId: getBooks
+                      parameters:
+                      - name: page
+                        in: query
+                        required: true
+                        schema:
+                          type: integer
+                          format: int32
+                      responses:
+                        default:
+                          description: default response
+                          content:
+                            application/json: {}
+                  /notnullparameter/newnotnull:
+                    post:
+                      operationId: insertnotnull
+                      requestBody:
+                        content:
+                          '*/*':
+                            schema:
+                              $ref: "#/components/schemas/Book"
+                        required: true
+                      responses:
+                        default:
+                          description: default response
+                          content:
+                            '*/*': {}
+                  /notnullparameter/new_reqBody_required:
+                    post:
+                      operationId: insert
+                      requestBody:
+                        content:
+                          '*/*':
+                            schema:
+                              $ref: "#/components/schemas/Book"
+                        required: true
+                      responses:
+                        default:
+                          description: default response
+                          content:
+                            '*/*': {}
+                components:
+                  schemas:
+                    Book:
+                      type: object
+                      properties:
+                        foo:
+                          type: string
+                """;
         SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
     }
 
-    /*
-    TODO: in a scenario like the one in ticket 2793, currently no NPE is thrown
-    but map is still not supported. When solved, update expected yaml in test case accordingly
-     */
     @Test(description = "no NPE resolving map")
     public void testTicket2793() {
         Reader reader = new Reader(new OpenAPI());
 
         OpenAPI openAPI = reader.read(Ticket2793Resource.class);
-        String yaml = "openapi: 3.0.1\n" +
-                "paths:\n" +
-                "  /distances:\n" +
-                "    get:\n" +
-                "      operationId: getDistances\n" +
-                "      responses:\n" +
-                "        \"200\":\n" +
-                "          content:\n" +
-                "            application/json:\n" +
-                "              schema:\n" +
-                "                $ref: \"#/components/schemas/DistancesResponse\"\n" +
-                "components:\n" +
-                "  schemas:\n" +
-                "    DistancesResponse:\n" +
-                "      type: object\n" +
-                "      properties:\n" +
-                "        empty:\n" +
-                "          type: boolean\n";
+        String yaml = """
+                openapi: 3.0.1
+                paths:
+                  /distances:
+                    get:
+                      operationId: getDistances
+                      responses:
+                        "200":
+                          content:
+                            application/json:
+                              schema:
+                                $ref: "#/components/schemas/DistancesResponse"
+                components:
+                  schemas:
+                    DistancesResponse:
+                      type: object
+                      properties:
+                        empty:
+                          type: boolean
+                """;
         SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
     }
 
@@ -1310,41 +1318,42 @@ public class ReaderTest {
 
         OpenAPI openAPI = reader.read(RefResponsesResource.class);
 
-        String yaml = "openapi: 3.0.1\n" +
-                "info:\n" +
-                "  description: info\n" +
-                "paths:\n" +
-                "  /:\n" +
-                "    get:\n" +
-                "      summary: Simple get operation\n" +
-                "      description: Defines a simple get operation with no inputs and a complex output\n" +
-                "        object\n" +
-                "      operationId: getWithPayloadResponse\n" +
-                "      responses:\n" +
-                "        \"200\":\n" +
-                "          description: voila!\n" +
-                "          content:\n" +
-                "            application/json:\n" +
-                "              schema:\n" +
-                "                $ref: \"#/components/schemas/SampleResponseSchema\"\n" +
-                "        default:\n" +
-                "          description: boo\n" +
-                "          content:\n" +
-                "            '*/*':\n" +
-                "              schema:\n" +
-                "                $ref: \"#/components/schemas/GenericError\"\n" +
-                "        \"401\":\n" +
-                "          $ref: \"#/components/responses/invalidJWT\"\n" +
-                "      deprecated: true\n" +
-                "components:\n" +
-                "  schemas:\n" +
-                "    GenericError:\n" +
-                "      type: object\n" +
-                "    SampleResponseSchema:\n" +
-                "      type: object\n" +
-                "  responses:\n" +
-                "    invalidJWT:\n" +
-                "      description: when JWT token invalid/expired";
+        String yaml = """
+                openapi: 3.0.1
+                info:
+                  description: info
+                paths:
+                  /:
+                    get:
+                      summary: Simple get operation
+                      description: Defines a simple get operation with no inputs and a complex output
+                        object
+                      operationId: getWithPayloadResponse
+                      responses:
+                        "200":
+                          description: voila!
+                          content:
+                            application/json:
+                              schema:
+                                $ref: "#/components/schemas/SampleResponseSchema"
+                        default:
+                          description: boo
+                          content:
+                            '*/*':
+                              schema:
+                                $ref: "#/components/schemas/GenericError"
+                        "401":
+                          $ref: "#/components/responses/invalidJWT"
+                      deprecated: true
+                components:
+                  schemas:
+                    GenericError:
+                      type: object
+                    SampleResponseSchema:
+                      type: object
+                  responses:
+                    invalidJWT:
+                      description: when JWT token invalid/expired""";
         SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
     }
 
@@ -1364,41 +1373,42 @@ public class ReaderTest {
         SpecFilter f = new SpecFilter();
         openAPI = f.filter(openAPI, filterImpl, null, null, null);
 
-        String yaml = "openapi: 3.0.1\n" +
-                "info:\n" +
-                "  description: info\n" +
-                "paths:\n" +
-                "  /:\n" +
-                "    get:\n" +
-                "      summary: Simple get operation\n" +
-                "      description: Defines a simple get operation with no inputs and a complex output\n" +
-                "        object\n" +
-                "      operationId: getWithPayloadResponse\n" +
-                "      responses:\n" +
-                "        \"200\":\n" +
-                "          description: voila!\n" +
-                "          content:\n" +
-                "            application/json:\n" +
-                "              schema:\n" +
-                "                $ref: \"#/components/schemas/SampleResponseSchema\"\n" +
-                "        default:\n" +
-                "          description: boo\n" +
-                "          content:\n" +
-                "            '*/*':\n" +
-                "              schema:\n" +
-                "                $ref: \"#/components/schemas/GenericError\"\n" +
-                "        \"401\":\n" +
-                "          $ref: \"#/components/responses/invalidJWT\"\n" +
-                "      deprecated: true\n" +
-                "components:\n" +
-                "  schemas:\n" +
-                "    GenericError:\n" +
-                "      type: object\n" +
-                "    SampleResponseSchema:\n" +
-                "      type: object\n" +
-                "  responses:\n" +
-                "    invalidJWT:\n" +
-                "      description: when JWT token invalid/expired";
+        String yaml = """
+                openapi: 3.0.1
+                info:
+                  description: info
+                paths:
+                  /:
+                    get:
+                      summary: Simple get operation
+                      description: Defines a simple get operation with no inputs and a complex output
+                        object
+                      operationId: getWithPayloadResponse
+                      responses:
+                        "200":
+                          description: voila!
+                          content:
+                            application/json:
+                              schema:
+                                $ref: "#/components/schemas/SampleResponseSchema"
+                        default:
+                          description: boo
+                          content:
+                            '*/*':
+                              schema:
+                                $ref: "#/components/schemas/GenericError"
+                        "401":
+                          $ref: "#/components/responses/invalidJWT"
+                      deprecated: true
+                components:
+                  schemas:
+                    GenericError:
+                      type: object
+                    SampleResponseSchema:
+                      type: object
+                  responses:
+                    invalidJWT:
+                      description: when JWT token invalid/expired""";
         SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
     }
 
@@ -1421,31 +1431,33 @@ public class ReaderTest {
         Reader reader = new Reader(new OpenAPI());
 
         OpenAPI openAPI = reader.read(Ticket2848Resource.class);
-        String yaml = "openapi: 3.0.1\n" +
-                "paths:\n" +
-                "  /:\n" +
-                "    get:\n" +
-                "      operationId: getter\n" +
-                "      responses:\n" +
-                "        default:\n" +
-                "          description: default response\n" +
-                "          content:\n" +
-                "            '*/*':\n" +
-                "              schema:\n" +
-                "                $ref: \"#/components/schemas/Town\"\n" +
-                "components:\n" +
-                "  schemas:\n" +
-                "    Town:\n" +
-                "      required:\n" +
-                "      - streets\n" +
-                "      type: object\n" +
-                "      properties:\n" +
-                "        streets:\n" +
-                "          minItems: 1\n" +
-                "          uniqueItems: true\n" +
-                "          type: array\n" +
-                "          items:\n" +
-                "            type: string\n";
+        String yaml = """
+                openapi: 3.0.1
+                paths:
+                  /:
+                    get:
+                      operationId: getter
+                      responses:
+                        default:
+                          description: default response
+                          content:
+                            '*/*':
+                              schema:
+                                $ref: "#/components/schemas/Town"
+                components:
+                  schemas:
+                    Town:
+                      required:
+                      - streets
+                      type: object
+                      properties:
+                        streets:
+                          minItems: 1
+                          uniqueItems: true
+                          type: array
+                          items:
+                            type: string
+                """;
         SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
     }
 
@@ -1460,52 +1472,54 @@ public class ReaderTest {
         Reader reader = new Reader(oas);
         OpenAPI openAPI = reader.read(RefRequestBodyResource.class);
 
-        String yaml = "openapi: 3.0.1\n" +
-                "info:\n" +
-                "  description: info\n" +
-                "paths:\n" +
-                "  /:\n" +
-                "    get:\n" +
-                "      summary: Simple get operation\n" +
-                "      description: Defines a simple get operation with a payload complex input object\n" +
-                "      operationId: sendPayload\n" +
-                "      requestBody:\n" +
-                "        $ref: \"#/components/requestBodies/User\"\n" +
-                "      responses:\n" +
-                "        default:\n" +
-                "          description: default response\n" +
-                "          content:\n" +
-                "            '*/*': {}\n" +
-                "      deprecated: true\n" +
-                "components:\n" +
-                "  schemas:\n" +
-                "    User:\n" +
-                "      type: object\n" +
-                "      properties:\n" +
-                "        id:\n" +
-                "          type: integer\n" +
-                "          format: int64\n" +
-                "        username:\n" +
-                "          type: string\n" +
-                "        firstName:\n" +
-                "          type: string\n" +
-                "        lastName:\n" +
-                "          type: string\n" +
-                "        email:\n" +
-                "          type: string\n" +
-                "        password:\n" +
-                "          type: string\n" +
-                "        phone:\n" +
-                "          type: string\n" +
-                "        userStatus:\n" +
-                "          type: integer\n" +
-                "          description: User Status\n" +
-                "          format: int32\n" +
-                "      xml:\n" +
-                "        name: User\n" +
-                "  requestBodies:\n" +
-                "    User:\n" +
-                "      description: Test RequestBody\n";
+        String yaml = """
+                openapi: 3.0.1
+                info:
+                  description: info
+                paths:
+                  /:
+                    get:
+                      summary: Simple get operation
+                      description: Defines a simple get operation with a payload complex input object
+                      operationId: sendPayload
+                      requestBody:
+                        $ref: "#/components/requestBodies/User"
+                      responses:
+                        default:
+                          description: default response
+                          content:
+                            '*/*': {}
+                      deprecated: true
+                components:
+                  schemas:
+                    User:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          format: int64
+                        username:
+                          type: string
+                        firstName:
+                          type: string
+                        lastName:
+                          type: string
+                        email:
+                          type: string
+                        password:
+                          type: string
+                        phone:
+                          type: string
+                        userStatus:
+                          type: integer
+                          description: User Status
+                          format: int32
+                      xml:
+                        name: User
+                  requestBodies:
+                    User:
+                      description: Test RequestBody
+                """;
         SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
     }
 
@@ -1524,51 +1538,53 @@ public class ReaderTest {
         SpecFilter f = new SpecFilter();
         openAPI = f.filter(openAPI, filterImpl, null, null, null);
 
-        String yaml = "openapi: 3.0.1\n" +
-                "info:\n" +
-                "  description: info\n" +
-                "paths:\n" +
-                "  /:\n" +
-                "    get:\n" +
-                "      summary: Simple get operation\n" +
-                "      description: Defines a simple get operation with a payload complex input object\n" +
-                "      operationId: sendPayload\n" +
-                "      requestBody:\n" +
-                "        $ref: \"#/components/requestBodies/User\"\n" +
-                "      responses:\n" +
-                "        default:\n" +
-                "          description: default response\n" +
-                "          content:\n" +
-                "            '*/*': {}\n" +
-                "      deprecated: true\n" +
-                "components:\n" +
-                "  schemas:\n" +
-                "    User:\n" +
-                "      type: object\n" +
-                "      properties:\n" +
-                "        id:\n" +
-                "          type: integer\n" +
-                "          format: int64\n" +
-                "        username:\n" +
-                "          type: string\n" +
-                "        firstName:\n" +
-                "          type: string\n" +
-                "        lastName:\n" +
-                "          type: string\n" +
-                "        email:\n" +
-                "          type: string\n" +
-                "        password:\n" +
-                "          type: string\n" +
-                "        phone:\n" +
-                "          type: string\n" +
-                "        userStatus:\n" +
-                "          type: integer\n" +
-                "          description: User Status\n" +
-                "          format: int32\n" +
-                "      xml:\n" +
-                "        name: User\n" +
-                "  requestBodies:\n" +
-                "    User: {}\n";
+        String yaml = """
+                openapi: 3.0.1
+                info:
+                  description: info
+                paths:
+                  /:
+                    get:
+                      summary: Simple get operation
+                      description: Defines a simple get operation with a payload complex input object
+                      operationId: sendPayload
+                      requestBody:
+                        $ref: "#/components/requestBodies/User"
+                      responses:
+                        default:
+                          description: default response
+                          content:
+                            '*/*': {}
+                      deprecated: true
+                components:
+                  schemas:
+                    User:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          format: int64
+                        username:
+                          type: string
+                        firstName:
+                          type: string
+                        lastName:
+                          type: string
+                        email:
+                          type: string
+                        password:
+                          type: string
+                        phone:
+                          type: string
+                        userStatus:
+                          type: integer
+                          description: User Status
+                          format: int32
+                      xml:
+                        name: User
+                  requestBodies:
+                    User: {}
+                """;
         SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
     }
 
@@ -1602,33 +1618,35 @@ public class ReaderTest {
         Reader reader = new Reader(oas);
         OpenAPI openAPI = reader.read(RefParameterResource.class);
 
-        String yaml = "openapi: 3.0.1\n" +
-                "info:\n" +
-                "  description: info\n" +
-                "paths:\n" +
-                "  /:\n" +
-                "    get:\n" +
-                "      summary: Simple get operation\n" +
-                "      description: Defines a simple get operation with a payload complex input object\n" +
-                "      operationId: sendPayload\n" +
-                "      parameters:\n" +
-                "      - $ref: \"#/components/parameters/id\"\n" +
-                "      responses:\n" +
-                "        default:\n" +
-                "          description: default response\n" +
-                "          content:\n" +
-                "            '*/*': {}\n" +
-                "      deprecated: true\n" +
-                "components:\n" +
-                "  parameters: \n" +
-                "    id:\n" +
-                "      in: query\n" +
-                "      description: Id Description\n" +
-                "      required: true\n" +
-                "      schema:\n" +
-                "        type: integer\n" +
-                "        format: int32\n" +
-                "      example: 1\n";
+        String yaml = """
+                openapi: 3.0.1
+                info:
+                  description: info
+                paths:
+                  /:
+                    get:
+                      summary: Simple get operation
+                      description: Defines a simple get operation with a payload complex input object
+                      operationId: sendPayload
+                      parameters:
+                      - $ref: "#/components/parameters/id"
+                      responses:
+                        default:
+                          description: default response
+                          content:
+                            '*/*': {}
+                      deprecated: true
+                components:
+                  parameters:\s
+                    id:
+                      in: query
+                      description: Id Description
+                      required: true
+                      schema:
+                        type: integer
+                        format: int32
+                      example: 1
+                """;
         SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
     }
 
@@ -1653,33 +1671,35 @@ public class ReaderTest {
         SpecFilter f = new SpecFilter();
         openAPI = f.filter(openAPI, filterImpl, null, null, null);
 
-        String yaml = "openapi: 3.0.1\n" +
-                "info:\n" +
-                "  description: info\n" +
-                "paths:\n" +
-                "  /:\n" +
-                "    get:\n" +
-                "      summary: Simple get operation\n" +
-                "      description: Defines a simple get operation with a payload complex input object\n" +
-                "      operationId: sendPayload\n" +
-                "      parameters:\n" +
-                "      - $ref: \"#/components/parameters/id\"\n" +
-                "      responses:\n" +
-                "        default:\n" +
-                "          description: default response\n" +
-                "          content:\n" +
-                "            '*/*': {}\n" +
-                "      deprecated: true\n" +
-                "components:\n" +
-                "  parameters: \n" +
-                "    id:\n" +
-                "      in: query\n" +
-                "      description: Id Description\n" +
-                "      required: true\n" +
-                "      schema:\n" +
-                "        type: integer\n" +
-                "        format: int32\n" +
-                "      example: 1\n";
+        String yaml = """
+                openapi: 3.0.1
+                info:
+                  description: info
+                paths:
+                  /:
+                    get:
+                      summary: Simple get operation
+                      description: Defines a simple get operation with a payload complex input object
+                      operationId: sendPayload
+                      parameters:
+                      - $ref: "#/components/parameters/id"
+                      responses:
+                        default:
+                          description: default response
+                          content:
+                            '*/*': {}
+                      deprecated: true
+                components:
+                  parameters:\s
+                    id:
+                      in: query
+                      description: Id Description
+                      required: true
+                      schema:
+                        type: integer
+                        format: int32
+                      example: 1
+                """;
         SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
     }
 
@@ -1710,56 +1730,58 @@ public class ReaderTest {
         Reader reader = new Reader(oas);
         OpenAPI openAPI = reader.read(RefExamplesResource.class);
 
-        String yaml = "openapi: 3.0.1\n" +
-                "info:\n" +
-                "  description: info\n" +
-                "paths:\n" +
-                "  /example:\n" +
-                "    post:\n" +
-                "      description: subscribes a client to updates relevant to the requestor's account\n" +
-                "      operationId: subscribe\n" +
-                "      parameters:\n" +
-                "      - name: subscriptionId\n" +
-                "        in: path\n" +
-                "        required: true\n" +
-                "        style: simple\n" +
-                "        schema:\n" +
-                "          type: string\n" +
-                "          description: Schema\n" +
-                "          example: Subscription example\n" +
-                "        examples:\n" +
-                "          subscriptionId_1:\n" +
-                "            summary: Subscription number 12345\n" +
-                "            description: subscriptionId_1\n" +
-                "            value: 12345\n" +
-                "            externalValue: Subscription external value 1\n" +
-                "            $ref: \"#/components/examples/Id\"\n" +
-                "        example: example\n" +
-                "      requestBody:\n" +
-                "        content:\n" +
-                "          '*/*':\n" +
-                "            schema:\n" +
-                "              type: integer\n" +
-                "              format: int32\n" +
-                "      responses:\n" +
-                "        default:\n" +
-                "          description: default response\n" +
-                "          content:\n" +
-                "            '*/*':\n" +
-                "              schema:\n" +
-                "                $ref: \"#/components/schemas/SubscriptionResponse\"\n" +
-                "components:\n" +
-                "  schemas:\n" +
-                "    SubscriptionResponse:\n" +
-                "      type: object\n" +
-                "      properties:\n" +
-                "        subscriptionId:\n" +
-                "          type: string\n" +
-                "  examples:\n" +
-                "    Id:\n" +
-                "      summary: Id Example\n" +
-                "      description: Id Example\n" +
-                "      value: \"1\"\n";
+        String yaml = """
+                openapi: 3.0.1
+                info:
+                  description: info
+                paths:
+                  /example:
+                    post:
+                      description: subscribes a client to updates relevant to the requestor's account
+                      operationId: subscribe
+                      parameters:
+                      - name: subscriptionId
+                        in: path
+                        required: true
+                        style: simple
+                        schema:
+                          type: string
+                          description: Schema
+                          example: Subscription example
+                        examples:
+                          subscriptionId_1:
+                            summary: Subscription number 12345
+                            description: subscriptionId_1
+                            value: 12345
+                            externalValue: Subscription external value 1
+                            $ref: "#/components/examples/Id"
+                        example: example
+                      requestBody:
+                        content:
+                          '*/*':
+                            schema:
+                              type: integer
+                              format: int32
+                      responses:
+                        default:
+                          description: default response
+                          content:
+                            '*/*':
+                              schema:
+                                $ref: "#/components/schemas/SubscriptionResponse"
+                components:
+                  schemas:
+                    SubscriptionResponse:
+                      type: object
+                      properties:
+                        subscriptionId:
+                          type: string
+                  examples:
+                    Id:
+                      summary: Id Example
+                      description: Id Example
+                      value: "1"
+                """;
         SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
     }
 
@@ -1779,42 +1801,44 @@ public class ReaderTest {
         SpecFilter f = new SpecFilter();
         openAPI = f.filter(openAPI, filterImpl, null, null, null);
 
-        String yaml = "openapi: 3.0.1\n" +
-                "info:\n" +
-                "  description: info\n" +
-                "paths:\n" +
-                "  /example:\n" +
-                "    post:\n" +
-                "      description: subscribes a client to updates relevant to the requestor's account\n" +
-                "      operationId: subscribe\n" +
-                "      parameters:\n" +
-                "      - example:\n" +
-                "          $ref: \"#/components/examples/Id\"\n" +
-                "      requestBody:\n" +
-                "        content:\n" +
-                "          '*/*':\n" +
-                "            schema:\n" +
-                "              type: integer\n" +
-                "              format: int32\n" +
-                "      responses:\n" +
-                "        default:\n" +
-                "          description: default response\n" +
-                "          content:\n" +
-                "            '*/*':\n" +
-                "              schema:\n" +
-                "                $ref: \"#/components/schemas/SubscriptionResponse\"\n" +
-                "components:\n" +
-                "  schemas:\n" +
-                "    SubscriptionResponse:\n" +
-                "      type: object\n" +
-                "      properties:\n" +
-                "        subscriptionId:\n" +
-                "          type: string\n" +
-                "  examples:\n" +
-                "    Id:\n" +
-                "      summary: Id Example\n" +
-                "      description: Id Example\n" +
-                "      value: \"1\"\n";
+        String yaml = """
+                openapi: 3.0.1
+                info:
+                  description: info
+                paths:
+                  /example:
+                    post:
+                      description: subscribes a client to updates relevant to the requestor's account
+                      operationId: subscribe
+                      parameters:
+                      - example:
+                          $ref: "#/components/examples/Id"
+                      requestBody:
+                        content:
+                          '*/*':
+                            schema:
+                              type: integer
+                              format: int32
+                      responses:
+                        default:
+                          description: default response
+                          content:
+                            '*/*':
+                              schema:
+                                $ref: "#/components/schemas/SubscriptionResponse"
+                components:
+                  schemas:
+                    SubscriptionResponse:
+                      type: object
+                      properties:
+                        subscriptionId:
+                          type: string
+                  examples:
+                    Id:
+                      summary: Id Example
+                      description: Id Example
+                      value: "1"
+                """;
         SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
     }
 
@@ -1845,30 +1869,32 @@ public class ReaderTest {
         Reader reader = new Reader(oas);
         OpenAPI openAPI = reader.read(RefHeaderResource.class);
 
-        String yaml = "openapi: 3.0.1\n" +
-                "info:\n" +
-                "  description: info\n" +
-                "paths:\n" +
-                "  /path:\n" +
-                "    get:\n" +
-                "      summary: Simple get operation\n" +
-                "      description: Defines a simple get operation with no inputs and a complex output\n" +
-                "      operationId: getWithPayloadResponse\n" +
-                "      responses:\n" +
-                "        \"200\":\n" +
-                "          description: voila!\n" +
-                "          headers:\n" +
-                "            Rate-Limit-Limit:\n" +
-                "              description: The number of allowed requests in the current period\n" +
-                "              $ref: \"#/components/headers/Header\"\n" +
-                "              style: simple\n" +
-                "              schema:\n" +
-                "                type: integer\n" +
-                "      deprecated: true\n" +
-                "components:\n" +
-                "  headers:\n" +
-                "    Header:\n" +
-                "      description: Header Description\n";
+        String yaml = """
+                openapi: 3.0.1
+                info:
+                  description: info
+                paths:
+                  /path:
+                    get:
+                      summary: Simple get operation
+                      description: Defines a simple get operation with no inputs and a complex output
+                      operationId: getWithPayloadResponse
+                      responses:
+                        "200":
+                          description: voila!
+                          headers:
+                            Rate-Limit-Limit:
+                              description: The number of allowed requests in the current period
+                              $ref: "#/components/headers/Header"
+                              style: simple
+                              schema:
+                                type: integer
+                      deprecated: true
+                components:
+                  headers:
+                    Header:
+                      description: Header Description
+                """;
         SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
     }
 
@@ -1885,38 +1911,40 @@ public class ReaderTest {
         Reader reader = new Reader(oas);
         OpenAPI openAPI = reader.read(RefSecurityResource.class);
 
-        String yaml = "openapi: 3.0.1\n" +
-                "info:\n" +
-                "  description: info\n" +
-                "paths:\n" +
-                "  /:\n" +
-                "    get:\n" +
-                "      description: description\n" +
-                "      operationId: Operation Id\n" +
-                "      responses:\n" +
-                "        default:\n" +
-                "          description: default response\n" +
-                "          content:\n" +
-                "            '*/*': {}\n" +
-                "      security:\n" +
-                "      - security_key:\n" +
-                "        - write:pets\n" +
-                "        - read:pets\n" +
-                "components:\n" +
-                "  securitySchemes:\n" +
-                "    Security:\n" +
-                "      type: oauth2\n" +
-                "      description: Security Example\n" +
-                "    myOauth2Security:\n" +
-                "      type: oauth2\n" +
-                "      description: myOauthSecurity Description\n" +
-                "      $ref: \"#/components/securitySchemes/Security\"\n" +
-                "      in: header\n" +
-                "      flows:\n" +
-                "        implicit:\n" +
-                "          authorizationUrl: http://x.com\n" +
-                "          scopes:\n" +
-                "            write:pets: modify pets in your account\n";
+        String yaml = """
+                openapi: 3.0.1
+                info:
+                  description: info
+                paths:
+                  /:
+                    get:
+                      description: description
+                      operationId: Operation Id
+                      responses:
+                        default:
+                          description: default response
+                          content:
+                            '*/*': {}
+                      security:
+                      - security_key:
+                        - write:pets
+                        - read:pets
+                components:
+                  securitySchemes:
+                    Security:
+                      type: oauth2
+                      description: Security Example
+                    myOauth2Security:
+                      type: oauth2
+                      description: myOauthSecurity Description
+                      $ref: "#/components/securitySchemes/Security"
+                      in: header
+                      flows:
+                        implicit:
+                          authorizationUrl: http://x.com
+                          scopes:
+                            write:pets: modify pets in your account
+                """;
         SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
     }
 
@@ -1931,36 +1959,38 @@ public class ReaderTest {
         Reader reader = new Reader(oas);
         OpenAPI openAPI = reader.read(RefLinksResource.class);
 
-        String yaml = "openapi: 3.0.1\n" +
-                "info:\n" +
-                "  description: info\n" +
-                "paths:\n" +
-                "  /links:\n" +
-                "    get:\n" +
-                "      operationId: getUserWithAddress\n" +
-                "      parameters:\n" +
-                "      - name: userId\n" +
-                "        in: query\n" +
-                "        schema:\n" +
-                "          type: string\n" +
-                "      responses:\n" +
-                "        default:\n" +
-                "          description: test description\n" +
-                "          content:\n" +
-                "            '*/*':\n" +
-                "              schema:\n" +
-                "                $ref: \"#/components/schemas/User\"\n" +
-                "          links:\n" +
-                "            address:\n" +
-                "              operationId: getAddress\n" +
-                "              parameters:\n" +
-                "                userId: $request.query.userId\n" +
-                "              $ref: \"#/components/links/Link\"\n" +
-                "components:\n" +
-                "  links:\n" +
-                "    Link:\n" +
-                "      operationId: id\n" +
-                "      description: Link Description\n";
+        String yaml = """
+                openapi: 3.0.1
+                info:
+                  description: info
+                paths:
+                  /links:
+                    get:
+                      operationId: getUserWithAddress
+                      parameters:
+                      - name: userId
+                        in: query
+                        schema:
+                          type: string
+                      responses:
+                        default:
+                          description: test description
+                          content:
+                            '*/*':
+                              schema:
+                                $ref: "#/components/schemas/User"
+                          links:
+                            address:
+                              operationId: getAddress
+                              parameters:
+                                userId: $request.query.userId
+                              $ref: "#/components/links/Link"
+                components:
+                  links:
+                    Link:
+                      operationId: id
+                      description: Link Description
+                """;
         SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
     }
 
@@ -1975,25 +2005,27 @@ public class ReaderTest {
         Reader reader = new Reader(oas);
         OpenAPI openAPI = reader.read(RefCallbackResource.class);
 
-        String yaml = "openapi: 3.0.1\n" +
-                "info:\n" +
-                "  description: info\n" +
-                "paths:\n" +
-                "  /simplecallback:\n" +
-                "    get:\n" +
-                "      summary: Simple get operation\n" +
-                "      operationId: getWithNoParameters\n" +
-                "      responses:\n" +
-                "        \"200\":\n" +
-                "          description: voila!\n" +
-                "      callbacks:\n" +
-                "        testCallback1:\n" +
-                "          $ref: \"#/components/callbacks/Callback\"\n" +
-                "components:\n" +
-                "  callbacks:\n" +
-                "    Callback:\n" +
-                "      /post:\n" +
-                "        description: Post Path Item\n";
+        String yaml = """
+                openapi: 3.0.1
+                info:
+                  description: info
+                paths:
+                  /simplecallback:
+                    get:
+                      summary: Simple get operation
+                      operationId: getWithNoParameters
+                      responses:
+                        "200":
+                          description: voila!
+                      callbacks:
+                        testCallback1:
+                          $ref: "#/components/callbacks/Callback"
+                components:
+                  callbacks:
+                    Callback:
+                      /post:
+                        description: Post Path Item
+                """;
         SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
     }
 
@@ -2002,78 +2034,82 @@ public class ReaderTest {
         Reader reader = new Reader(new OpenAPI());
 
         OpenAPI openAPI = reader.read(Ticket3015Resource.class);
-        String yaml = "openapi: 3.0.1\n" +
-                "paths:\n" +
-                "  /test/test:\n" +
-                "    get:\n" +
-                "      operationId: schemaImpl\n" +
-                "      responses:\n" +
-                "        \"200\":\n" +
-                "          description: OK\n" +
-                "          content:\n" +
-                "            '*/*':\n" +
-                "              schema:\n" +
-                "                type: string\n" +
-                "                format: uri\n" +
-                "        \"400\":\n" +
-                "          description: Bad Request\n" +
-                "        \"500\":\n" +
-                "          description: Internal Server Error\n";
+        String yaml = """
+                openapi: 3.0.1
+                paths:
+                  /test/test:
+                    get:
+                      operationId: schemaImpl
+                      responses:
+                        "200":
+                          description: OK
+                          content:
+                            '*/*':
+                              schema:
+                                type: string
+                                format: uri
+                        "400":
+                          description: Bad Request
+                        "500":
+                          description: Internal Server Error
+                """;
         SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
         PrimitiveType.customExcludedClasses().add(URI.class.getName());
         openAPI = reader.read(Ticket3015Resource.class);
-        yaml = "openapi: 3.0.1\n" +
-                "paths:\n" +
-                "  /test/test:\n" +
-                "    get:\n" +
-                "      operationId: schemaImpl_1\n" +
-                "      responses:\n" +
-                "        \"200\":\n" +
-                "          description: OK\n" +
-                "          content:\n" +
-                "            '*/*':\n" +
-                "              schema:\n" +
-                "                type: object\n" +
-                "                properties:\n" +
-                "                  scheme:\n" +
-                "                    type: string\n" +
-                "                  fragment:\n" +
-                "                    type: string\n" +
-                "                  authority:\n" +
-                "                    type: string\n" +
-                "                  userInfo:\n" +
-                "                    type: string\n" +
-                "                  host:\n" +
-                "                    type: string\n" +
-                "                  port:\n" +
-                "                    type: integer\n" +
-                "                    format: int32\n" +
-                "                  path:\n" +
-                "                    type: string\n" +
-                "                  query:\n" +
-                "                    type: string\n" +
-                "                  schemeSpecificPart:\n" +
-                "                    type: string\n" +
-                "                  rawSchemeSpecificPart:\n" +
-                "                    type: string\n" +
-                "                  rawAuthority:\n" +
-                "                    type: string\n" +
-                "                  rawUserInfo:\n" +
-                "                    type: string\n" +
-                "                  rawPath:\n" +
-                "                    type: string\n" +
-                "                  rawQuery:\n" +
-                "                    type: string\n" +
-                "                  rawFragment:\n" +
-                "                    type: string\n" +
-                "                  absolute:\n" +
-                "                    type: boolean\n" +
-                "                  opaque:\n" +
-                "                    type: boolean\n" +
-                "        \"400\":\n" +
-                "          description: Bad Request\n" +
-                "        \"500\":\n" +
-                "          description: Internal Server Error\n";
+        yaml = """
+                openapi: 3.0.1
+                paths:
+                  /test/test:
+                    get:
+                      operationId: schemaImpl_1
+                      responses:
+                        "200":
+                          description: OK
+                          content:
+                            '*/*':
+                              schema:
+                                type: object
+                                properties:
+                                  scheme:
+                                    type: string
+                                  fragment:
+                                    type: string
+                                  authority:
+                                    type: string
+                                  userInfo:
+                                    type: string
+                                  host:
+                                    type: string
+                                  port:
+                                    type: integer
+                                    format: int32
+                                  path:
+                                    type: string
+                                  query:
+                                    type: string
+                                  schemeSpecificPart:
+                                    type: string
+                                  rawSchemeSpecificPart:
+                                    type: string
+                                  rawAuthority:
+                                    type: string
+                                  rawUserInfo:
+                                    type: string
+                                  rawPath:
+                                    type: string
+                                  rawQuery:
+                                    type: string
+                                  rawFragment:
+                                    type: string
+                                  absolute:
+                                    type: boolean
+                                  opaque:
+                                    type: boolean
+                        "400":
+                          description: Bad Request
+                        "500":
+                          description: Internal Server Error
+                """;
         SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
         PrimitiveType.customExcludedClasses().remove(URI.class.getName());
     }
@@ -2095,42 +2131,44 @@ public class ReaderTest {
         Reader reader = new Reader(oas);
         OpenAPI openAPI = reader.read(RefParameter3029Resource.class);
 
-        String yaml = "openapi: 3.0.1\n" +
-                "info:\n" +
-                "  description: info\n" +
-                "paths:\n" +
-                "  /2:\n" +
-                "    get:\n" +
-                "      summary: Simple get operation\n" +
-                "      operationId: sendPayload2\n" +
-                "      parameters:\n" +
-                "      - $ref: \"#/components/parameters/id\"\n" +
-                "      responses:\n" +
-                "        default:\n" +
-                "          description: default response\n" +
-                "          content:\n" +
-                "            '*/*': {}\n" +
-                "  /1:\n" +
-                "    get:\n" +
-                "      summary: Simple get operation\n" +
-                "      operationId: sendPayload1\n" +
-                "      parameters:\n" +
-                "      - $ref: \"#/components/parameters/id\"\n" +
-                "      responses:\n" +
-                "        default:\n" +
-                "          description: default response\n" +
-                "          content:\n" +
-                "            '*/*': {}\n" +
-                "components:\n" +
-                "  parameters:\n" +
-                "    id:\n" +
-                "      in: query\n" +
-                "      description: Id Description\n" +
-                "      required: true\n" +
-                "      schema:\n" +
-                "        type: integer\n" +
-                "        format: int32\n" +
-                "      example: 1\n";
+        String yaml = """
+                openapi: 3.0.1
+                info:
+                  description: info
+                paths:
+                  /2:
+                    get:
+                      summary: Simple get operation
+                      operationId: sendPayload2
+                      parameters:
+                      - $ref: "#/components/parameters/id"
+                      responses:
+                        default:
+                          description: default response
+                          content:
+                            '*/*': {}
+                  /1:
+                    get:
+                      summary: Simple get operation
+                      operationId: sendPayload1
+                      parameters:
+                      - $ref: "#/components/parameters/id"
+                      responses:
+                        default:
+                          description: default response
+                          content:
+                            '*/*': {}
+                components:
+                  parameters:
+                    id:
+                      in: query
+                      description: Id Description
+                      required: true
+                      schema:
+                        type: integer
+                        format: int32
+                      example: 1
+                """;
         SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
     }
 
@@ -2139,30 +2177,32 @@ public class ReaderTest {
         Reader reader = new Reader(new OpenAPI());
         OpenAPI openAPI = reader.read(ProcessTokenRestService.class);
 
-        String yaml = "openapi: 3.0.1\n" +
-                "paths:\n" +
-                "  /token:\n" +
-                "    post:\n" +
-                "      operationId: create\n" +
-                "      requestBody:\n" +
-                "        content:\n" +
-                "          application/json:\n" +
-                "            schema:\n" +
-                "              $ref: \"#/components/schemas/ProcessTokenDTO\"\n" +
-                "      responses:\n" +
-                "        default:\n" +
-                "          description: default response\n" +
-                "          content:\n" +
-                "            application/json:\n" +
-                "              schema:\n" +
-                "                $ref: \"#/components/schemas/ProcessTokenDTO\"\n" +
-                "components:\n" +
-                "  schemas:\n" +
-                "    ProcessTokenDTO:\n" +
-                "      type: object\n" +
-                "      properties:\n" +
-                "        guid:\n" +
-                "          type: string\n";
+        String yaml = """
+                openapi: 3.0.1
+                paths:
+                  /token:
+                    post:
+                      operationId: create
+                      requestBody:
+                        content:
+                          application/json:
+                            schema:
+                              $ref: "#/components/schemas/ProcessTokenDTO"
+                      responses:
+                        default:
+                          description: default response
+                          content:
+                            application/json:
+                              schema:
+                                $ref: "#/components/schemas/ProcessTokenDTO"
+                components:
+                  schemas:
+                    ProcessTokenDTO:
+                      type: object
+                      properties:
+                        guid:
+                          type: string
+                """;
         SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
     }
 
@@ -2185,66 +2225,68 @@ public class ReaderTest {
         Reader reader = new Reader(new OpenAPI());
         OpenAPI openAPI = reader.read(SingleExampleResource.class);
 
-        String yaml = "openapi: 3.0.1\n" +
-                "paths:\n" +
-                "  /test1:\n" +
-                "    post:\n" +
-                "      operationId: test1\n" +
-                "      requestBody:\n" +
-                "        content:\n" +
-                "          application/json:\n" +
-                "            schema:\n" +
-                "              $ref: \"#/components/schemas/User\"\n" +
-                "            example:\n" +
-                "              foo: foo\n" +
-                "              bar: bar\n" +
-                "      responses:\n" +
-                "        default:\n" +
-                "          description: default response\n" +
-                "          content:\n" +
-                "            '*/*': {}\n" +
-                "  /test2:\n" +
-                "    post:\n" +
-                "      operationId: test2\n" +
-                "      requestBody:\n" +
-                "        content:\n" +
-                "          application/json:\n" +
-                "            schema:\n" +
-                "              $ref: \"#/components/schemas/User\"\n" +
-                "            example:\n" +
-                "              foo: foo\n" +
-                "              bar: bar\n" +
-                "      responses:\n" +
-                "        default:\n" +
-                "          description: default response\n" +
-                "          content:\n" +
-                "            '*/*': {}\n" +
-                "components:\n" +
-                "  schemas:\n" +
-                "    User:\n" +
-                "      type: object\n" +
-                "      properties:\n" +
-                "        id:\n" +
-                "          type: integer\n" +
-                "          format: int64\n" +
-                "        username:\n" +
-                "          type: string\n" +
-                "        firstName:\n" +
-                "          type: string\n" +
-                "        lastName:\n" +
-                "          type: string\n" +
-                "        email:\n" +
-                "          type: string\n" +
-                "        password:\n" +
-                "          type: string\n" +
-                "        phone:\n" +
-                "          type: string\n" +
-                "        userStatus:\n" +
-                "          type: integer\n" +
-                "          description: User Status\n" +
-                "          format: int32\n" +
-                "      xml:\n" +
-                "        name: User\n";
+        String yaml = """
+                openapi: 3.0.1
+                paths:
+                  /test1:
+                    post:
+                      operationId: test1
+                      requestBody:
+                        content:
+                          application/json:
+                            schema:
+                              $ref: "#/components/schemas/User"
+                            example:
+                              foo: foo
+                              bar: bar
+                      responses:
+                        default:
+                          description: default response
+                          content:
+                            '*/*': {}
+                  /test2:
+                    post:
+                      operationId: test2
+                      requestBody:
+                        content:
+                          application/json:
+                            schema:
+                              $ref: "#/components/schemas/User"
+                            example:
+                              foo: foo
+                              bar: bar
+                      responses:
+                        default:
+                          description: default response
+                          content:
+                            '*/*': {}
+                components:
+                  schemas:
+                    User:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          format: int64
+                        username:
+                          type: string
+                        firstName:
+                          type: string
+                        lastName:
+                          type: string
+                        email:
+                          type: string
+                        password:
+                          type: string
+                        phone:
+                          type: string
+                        userStatus:
+                          type: integer
+                          description: User Status
+                          format: int32
+                      xml:
+                        name: User
+                """;
         SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
     }
 
@@ -2253,53 +2295,54 @@ public class ReaderTest {
         Reader reader = new Reader(new OpenAPI());
 
         OpenAPI openAPI = reader.read(UploadResource.class);
-        String yaml = "openapi: 3.0.1\n" +
-                "paths:\n" +
-                "  /upload:\n" +
-                "    post:\n" +
-                "      operationId: uploadWithBean\n" +
-                "      requestBody:\n" +
-                "        content:\n" +
-                "          multipart/form-data:\n" +
-                "            schema:\n" +
-                "              type: object\n" +
-                "              properties:\n" +
-                "                name:\n" +
-                "                  type: string\n" +
-                "                picture:\n" +
-                "                  $ref: \"#/components/schemas/picture\"\n" +
-                "      responses:\n" +
-                "        default:\n" +
-                "          description: default response\n" +
-                "          content:\n" +
-                "            application/json: {}\n" +
-                "  /upload/requestbody:\n" +
-                "    post:\n" +
-                "      operationId: uploadWithBeanAndRequestBody\n" +
-                "      requestBody:\n" +
-                "        content:\n" +
-                "          multipart/form-data:\n" +
-                "            schema:\n" +
-                "              $ref: \"#/components/schemas/UploadRequest\"\n" +
-                "      responses:\n" +
-                "        default:\n" +
-                "          description: default response\n" +
-                "          content:\n" +
-                "            application/json: {}\n" +
-                "components:\n" +
-                "  schemas:\n" +
-                "    picture:\n" +
-                "      type: object\n" +
-                "      format: binary\n" +
-                "    UploadRequest:\n" +
-                "      title: Schema for Upload\n" +
-                "      type: object\n" +
-                "      properties:\n" +
-                "        name:\n" +
-                "          type: string\n" +
-                "        picture:\n" +
-                "          type: string\n" +
-                "          format: binary";
+        String yaml = """
+                openapi: 3.0.1
+                paths:
+                  /upload:
+                    post:
+                      operationId: uploadWithBean
+                      requestBody:
+                        content:
+                          multipart/form-data:
+                            schema:
+                              type: object
+                              properties:
+                                name:
+                                  type: string
+                                picture:
+                                  $ref: "#/components/schemas/picture"
+                      responses:
+                        default:
+                          description: default response
+                          content:
+                            application/json: {}
+                  /upload/requestbody:
+                    post:
+                      operationId: uploadWithBeanAndRequestBody
+                      requestBody:
+                        content:
+                          multipart/form-data:
+                            schema:
+                              $ref: "#/components/schemas/UploadRequest"
+                      responses:
+                        default:
+                          description: default response
+                          content:
+                            application/json: {}
+                components:
+                  schemas:
+                    picture:
+                      type: object
+                      format: binary
+                    UploadRequest:
+                      title: Schema for Upload
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                        picture:
+                          type: string
+                          format: binary""";
         SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
     }
 
@@ -2308,37 +2351,38 @@ public class ReaderTest {
         Reader reader = new Reader(new OpenAPI());
 
         OpenAPI openAPI = reader.read(Ticket3587Resource.class);
-        String yaml = "openapi: 3.0.1\n"
-                + "paths:\n"
-                + "  /test/test:\n"
-                + "    get:\n"
-                + "      operationId: parameterExamplesOrderingTest\n"
-                + "      parameters:\n"
-                + "      - in: query\n"
-                + "        schema:\n"
-                + "          type: string\n"
-                + "        examples:\n"
-                + "          Example One:\n"
-                + "            description: Example One\n"
-                + "          Example Two:\n"
-                + "            description: Example Two\n"
-                + "          Example Three:\n"
-                + "            description: Example Three\n"
-                + "      - in: query\n"
-                + "        schema:\n"
-                + "          type: string\n"
-                + "        examples:\n"
-                + "          Example Three:\n"
-                + "            description: Example Three\n"
-                + "          Example Two:\n"
-                + "            description: Example Two\n"
-                + "          Example One:\n"
-                + "            description: Example One\n"
-                + "      responses:\n"
-                + "        default:\n"
-                + "          description: default response\n"
-                + "          content:\n"
-                + "            '*/*': {}";
+        String yaml = """
+                openapi: 3.0.1
+                paths:
+                  /test/test:
+                    get:
+                      operationId: parameterExamplesOrderingTest
+                      parameters:
+                      - in: query
+                        schema:
+                          type: string
+                        examples:
+                          Example One:
+                            description: Example One
+                          Example Two:
+                            description: Example Two
+                          Example Three:
+                            description: Example Three
+                      - in: query
+                        schema:
+                          type: string
+                        examples:
+                          Example Three:
+                            description: Example Three
+                          Example Two:
+                            description: Example Two
+                          Example One:
+                            description: Example One
+                      responses:
+                        default:
+                          description: default response
+                          content:
+                            '*/*': {}""";
         SerializationMatchers.assertEqualsToYamlExact(openAPI, yaml);
     }
 
@@ -2347,104 +2391,105 @@ public class ReaderTest {
         Reader reader = new Reader(new OpenAPI());
 
         OpenAPI openAPI = reader.read(Service.class);
-        String yaml = "openapi: 3.0.1\n" +
-                "paths:\n" +
-                "  /example/model:\n" +
-                "    get:\n" +
-                "      tags:\n" +
-                "      - ExampleService\n" +
-                "      summary: ' Retrieve models for display to the user'\n" +
-                "      operationId: getModels\n" +
-                "      responses:\n" +
-                "        default:\n" +
-                "          description: default response\n" +
-                "          content:\n" +
-                "            application/json:\n" +
-                "              schema:\n" +
-                "                $ref: \"#/components/schemas/Response\"\n" +
-                "  /example/model/by/ids:\n" +
-                "    get:\n" +
-                "      tags:\n" +
-                "      - ExampleService\n" +
-                "      summary: ' Retrieve models by their ids'\n" +
-                "      operationId: getModelsById\n" +
-                "      responses:\n" +
-                "        default:\n" +
-                "          description: default response\n" +
-                "          content:\n" +
-                "            application/json:\n" +
-                "              schema:\n" +
-                "                $ref: \"#/components/schemas/ByIdResponse\"\n" +
-                "  /example/containerized/model:\n" +
-                "    get:\n" +
-                "      tags:\n" +
-                "      - ExampleService\n" +
-                "      summary: ' Retrieve review insights for a specific product'\n" +
-                "      operationId: getContainerizedModels\n" +
-                "      responses:\n" +
-                "        default:\n" +
-                "          description: default response\n" +
-                "          content:\n" +
-                "            application/json:\n" +
-                "              schema:\n" +
-                "                $ref: \"#/components/schemas/ContainerizedResponse\"\n" +
-                "components:\n" +
-                "  schemas:\n" +
-                "    Model:\n" +
-                "      type: object\n" +
-                "      properties:\n" +
-                "        text:\n" +
-                "          type: string\n" +
-                "        title:\n" +
-                "          type: string\n" +
-                "        active:\n" +
-                "          type: boolean\n" +
-                "        schemaParent:\n" +
-                "          $ref: \"#/components/schemas/Model\"\n" +
-                "        optionalString:\n" +
-                "          type: string\n" +
-                "        parent:\n" +
-                "          $ref: \"#/components/schemas/Model\"\n" +
-                "        id:\n" +
-                "          type: integer\n" +
-                "          format: int32\n" +
-                "    Response:\n" +
-                "      type: object\n" +
-                "      properties:\n" +
-                "        count:\n" +
-                "          type: integer\n" +
-                "          format: int32\n" +
-                "        models:\n" +
-                "          type: array\n" +
-                "          items:\n" +
-                "            $ref: \"#/components/schemas/Model\"\n" +
-                "    ByIdResponse:\n" +
-                "      type: object\n" +
-                "      properties:\n" +
-                "        modelsById:\n" +
-                "          type: object\n" +
-                "          additionalProperties:\n" +
-                "            $ref: \"#/components/schemas/Model\"\n" +
-                "    ContainerizedResponse:\n" +
-                "      type: object\n" +
-                "      properties:\n" +
-                "        totalCount:\n" +
-                "          type: integer\n" +
-                "          format: int32\n" +
-                "        containerizedModels:\n" +
-                "          type: array\n" +
-                "          items:\n" +
-                "            $ref: \"#/components/schemas/ModelContainer\"\n" +
-                "    ModelContainer:\n" +
-                "      type: object\n" +
-                "      properties:\n" +
-                "        text:\n" +
-                "          type: string\n" +
-                "        model:\n" +
-                "          $ref: \"#/components/schemas/Model\"\n" +
-                "        id:\n" +
-                "          type: integer\n" +
-                "          format: int32";
+        String yaml = """
+                openapi: 3.0.1
+                paths:
+                  /example/model:
+                    get:
+                      tags:
+                      - ExampleService
+                      summary: ' Retrieve models for display to the user'
+                      operationId: getModels
+                      responses:
+                        default:
+                          description: default response
+                          content:
+                            application/json:
+                              schema:
+                                $ref: "#/components/schemas/Response"
+                  /example/model/by/ids:
+                    get:
+                      tags:
+                      - ExampleService
+                      summary: ' Retrieve models by their ids'
+                      operationId: getModelsById
+                      responses:
+                        default:
+                          description: default response
+                          content:
+                            application/json:
+                              schema:
+                                $ref: "#/components/schemas/ByIdResponse"
+                  /example/containerized/model:
+                    get:
+                      tags:
+                      - ExampleService
+                      summary: ' Retrieve review insights for a specific product'
+                      operationId: getContainerizedModels
+                      responses:
+                        default:
+                          description: default response
+                          content:
+                            application/json:
+                              schema:
+                                $ref: "#/components/schemas/ContainerizedResponse"
+                components:
+                  schemas:
+                    Model:
+                      type: object
+                      properties:
+                        text:
+                          type: string
+                        title:
+                          type: string
+                        active:
+                          type: boolean
+                        schemaParent:
+                          $ref: "#/components/schemas/Model"
+                        optionalString:
+                          type: string
+                        parent:
+                          $ref: "#/components/schemas/Model"
+                        id:
+                          type: integer
+                          format: int32
+                    Response:
+                      type: object
+                      properties:
+                        count:
+                          type: integer
+                          format: int32
+                        models:
+                          type: array
+                          items:
+                            $ref: "#/components/schemas/Model"
+                    ByIdResponse:
+                      type: object
+                      properties:
+                        modelsById:
+                          type: object
+                          additionalProperties:
+                            $ref: "#/components/schemas/Model"
+                    ContainerizedResponse:
+                      type: object
+                      properties:
+                        totalCount:
+                          type: integer
+                          format: int32
+                        containerizedModels:
+                          type: array
+                          items:
+                            $ref: "#/components/schemas/ModelContainer"
+                    ModelContainer:
+                      type: object
+                      properties:
+                        text:
+                          type: string
+                        model:
+                          $ref: "#/components/schemas/Model"
+                        id:
+                          type: integer
+                          format: int32""";
         SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
     }
 
@@ -2453,68 +2498,70 @@ public class ReaderTest {
         Reader reader = new Reader(new OpenAPI());
 
         OpenAPI openAPI = reader.read(UrlEncodedResourceWithEncodings.class);
-        String yaml = "openapi: 3.0.1\n" +
-                "paths:\n" +
-                "  /things/search:\n" +
-                "    post:\n" +
-                "      operationId: searchForThings\n" +
-                "      requestBody:\n" +
-                "        content:\n" +
-                "          application/x-www-form-urlencoded:\n" +
-                "            schema:\n" +
-                "              type: object\n" +
-                "              properties:\n" +
-                "                id:\n" +
-                "                  type: array\n" +
-                "                  description: id param\n" +
-                "                  items:\n" +
-                "                    type: string\n" +
-                "                name:\n" +
-                "                  type: array\n" +
-                "                  items:\n" +
-                "                    type: string\n" +
-                "            encoding:\n" +
-                "              id:\n" +
-                "                style: form\n" +
-                "                explode: true\n" +
-                "              name:\n" +
-                "                style: form\n" +
-                "                explode: false\n" +
-                "      responses:\n" +
-                "        default:\n" +
-                "          description: default response\n" +
-                "          content:\n" +
-                "            application/json: {}\n" +
-                "  /things/sriracha:\n" +
-                "    post:\n" +
-                "      operationId: srirachaThing\n" +
-                "      requestBody:\n" +
-                "        content:\n" +
-                "          application/x-www-form-urlencoded:\n" +
-                "            schema:\n" +
-                "              type: object\n" +
-                "              properties:\n" +
-                "                id:\n" +
-                "                  type: array\n" +
-                "                  description: id param\n" +
-                "                  items:\n" +
-                "                    type: string\n" +
-                "                name:\n" +
-                "                  type: array\n" +
-                "                  items:\n" +
-                "                    type: string\n" +
-                "            encoding:\n" +
-                "              id:\n" +
-                "                style: form\n" +
-                "                explode: true\n" +
-                "              name:\n" +
-                "                style: form\n" +
-                "                explode: false\n" +
-                "      responses:\n" +
-                "        default:\n" +
-                "          description: default response\n" +
-                "          content:\n" +
-                "            application/json: {}\n";
+        String yaml = """
+                openapi: 3.0.1
+                paths:
+                  /things/search:
+                    post:
+                      operationId: searchForThings
+                      requestBody:
+                        content:
+                          application/x-www-form-urlencoded:
+                            schema:
+                              type: object
+                              properties:
+                                id:
+                                  type: array
+                                  description: id param
+                                  items:
+                                    type: string
+                                name:
+                                  type: array
+                                  items:
+                                    type: string
+                            encoding:
+                              id:
+                                style: form
+                                explode: true
+                              name:
+                                style: form
+                                explode: false
+                      responses:
+                        default:
+                          description: default response
+                          content:
+                            application/json: {}
+                  /things/sriracha:
+                    post:
+                      operationId: srirachaThing
+                      requestBody:
+                        content:
+                          application/x-www-form-urlencoded:
+                            schema:
+                              type: object
+                              properties:
+                                id:
+                                  type: array
+                                  description: id param
+                                  items:
+                                    type: string
+                                name:
+                                  type: array
+                                  items:
+                                    type: string
+                            encoding:
+                              id:
+                                style: form
+                                explode: true
+                              name:
+                                style: form
+                                explode: false
+                      responses:
+                        default:
+                          description: default response
+                          content:
+                            application/json: {}
+                """;
         SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
     }
 
@@ -2523,154 +2570,158 @@ public class ReaderTest {
         Reader reader = new Reader(new OpenAPI());
 
         OpenAPI openAPI = reader.read(Ticket3694ResourceExtendedType.class);
-        String yaml = "openapi: 3.0.1\n" +
-                "paths:\n" +
-                "  /foo:\n" +
-                "    post:\n" +
-                "      tags:\n" +
-                "      - Foo\n" +
-                "      summary: Foo List in Interface\n" +
-                "      operationId: foo\n" +
-                "      requestBody:\n" +
-                "        content:\n" +
-                "          application/json:\n" +
-                "            schema:\n" +
-                "              type: array\n" +
-                "              items:\n" +
-                "                type: string\n" +
-                "      responses:\n" +
-                "        default:\n" +
-                "          description: default response\n" +
-                "          content:\n" +
-                "            '*/*': {}\n" +
-                "  /bar:\n" +
-                "    post:\n" +
-                "      operationId: bar\n" +
-                "      requestBody:\n" +
-                "        content:\n" +
-                "          application/json:\n" +
-                "            schema:\n" +
-                "              type: array\n" +
-                "              items:\n" +
-                "                type: string\n" +
-                "      responses:\n" +
-                "        default:\n" +
-                "          description: default response\n" +
-                "          content:\n" +
-                "            '*/*':\n" +
-                "              schema:\n" +
-                "                type: string\n" +
-                "  /another:\n" +
-                "    post:\n" +
-                "      operationId: another\n" +
-                "      requestBody:\n" +
-                "        content:\n" +
-                "          application/json:\n" +
-                "            schema:\n" +
-                "              type: string\n" +
-                "      responses:\n" +
-                "        default:\n" +
-                "          description: default response\n" +
-                "          content:\n" +
-                "            '*/*': {}";
+        String yaml = """
+                openapi: 3.0.1
+                paths:
+                  /foo:
+                    post:
+                      tags:
+                      - Foo
+                      summary: Foo List in Interface
+                      operationId: foo
+                      requestBody:
+                        content:
+                          application/json:
+                            schema:
+                              type: array
+                              items:
+                                type: string
+                      responses:
+                        default:
+                          description: default response
+                          content:
+                            '*/*': {}
+                  /bar:
+                    post:
+                      operationId: bar
+                      requestBody:
+                        content:
+                          application/json:
+                            schema:
+                              type: array
+                              items:
+                                type: string
+                      responses:
+                        default:
+                          description: default response
+                          content:
+                            '*/*':
+                              schema:
+                                type: string
+                  /another:
+                    post:
+                      operationId: another
+                      requestBody:
+                        content:
+                          application/json:
+                            schema:
+                              type: string
+                      responses:
+                        default:
+                          description: default response
+                          content:
+                            '*/*': {}""";
         SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
 
         reader = new Reader(new OpenAPI());
         openAPI = reader.read(Ticket3694Resource.class);
-        yaml = "openapi: 3.0.1\n" +
-                "paths:\n" +
-                "  /foo:\n" +
-                "    post:\n" +
-                "      tags:\n" +
-                "      - Foo\n" +
-                "      summary: Foo List in Interface\n" +
-                "      operationId: foo\n" +
-                "      requestBody:\n" +
-                "        content:\n" +
-                "          application/json:\n" +
-                "            schema:\n" +
-                "              type: array\n" +
-                "              items:\n" +
-                "                type: string\n" +
-                "      responses:\n" +
-                "        default:\n" +
-                "          description: default response\n" +
-                "          content:\n" +
-                "            '*/*': {}\n" +
-                "  /bar:\n" +
-                "    post:\n" +
-                "      operationId: bar\n" +
-                "      requestBody:\n" +
-                "        content:\n" +
-                "          application/json:\n" +
-                "            schema:\n" +
-                "              type: array\n" +
-                "              items:\n" +
-                "                type: string\n" +
-                "      responses:\n" +
-                "        default:\n" +
-                "          description: default response\n" +
-                "          content:\n" +
-                "            '*/*':\n" +
-                "              schema:\n" +
-                "                type: string\n" +
-                "  /another:\n" +
-                "    post:\n" +
-                "      operationId: another\n" +
-                "      requestBody:\n" +
-                "        content:\n" +
-                "          application/json:\n" +
-                "            schema:\n" +
-                "              type: string\n" +
-                "      responses:\n" +
-                "        default:\n" +
-                "          description: default response\n" +
-                "          content:\n" +
-                "            '*/*': {}";
+        yaml = """
+                openapi: 3.0.1
+                paths:
+                  /foo:
+                    post:
+                      tags:
+                      - Foo
+                      summary: Foo List in Interface
+                      operationId: foo
+                      requestBody:
+                        content:
+                          application/json:
+                            schema:
+                              type: array
+                              items:
+                                type: string
+                      responses:
+                        default:
+                          description: default response
+                          content:
+                            '*/*': {}
+                  /bar:
+                    post:
+                      operationId: bar
+                      requestBody:
+                        content:
+                          application/json:
+                            schema:
+                              type: array
+                              items:
+                                type: string
+                      responses:
+                        default:
+                          description: default response
+                          content:
+                            '*/*':
+                              schema:
+                                type: string
+                  /another:
+                    post:
+                      operationId: another
+                      requestBody:
+                        content:
+                          application/json:
+                            schema:
+                              type: string
+                      responses:
+                        default:
+                          description: default response
+                          content:
+                            '*/*': {}""";
         SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
 
         reader = new Reader(new OpenAPI());
         openAPI = reader.read(Ticket3694ResourceSimple.class);
-        yaml = "openapi: 3.0.1\n" +
-                "paths:\n" +
-                "  /bar:\n" +
-                "    post:\n" +
-                "      operationId: bar\n" +
-                "      requestBody:\n" +
-                "        content:\n" +
-                "          application/json:\n" +
-                "            schema:\n" +
-                "              type: array\n" +
-                "              items:\n" +
-                "                type: string\n" +
-                "      responses:\n" +
-                "        default:\n" +
-                "          description: default response\n" +
-                "          content:\n" +
-                "            '*/*':\n" +
-                "              schema:\n" +
-                "                type: string";
+        yaml = """
+                openapi: 3.0.1
+                paths:
+                  /bar:
+                    post:
+                      operationId: bar
+                      requestBody:
+                        content:
+                          application/json:
+                            schema:
+                              type: array
+                              items:
+                                type: string
+                      responses:
+                        default:
+                          description: default response
+                          content:
+                            '*/*':
+                              schema:
+                                type: string""";
         SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
 
         reader = new Reader(new OpenAPI());
         openAPI = reader.read(Ticket3694ResourceSimpleSameReturn.class);
-        yaml = "openapi: 3.0.1\n" +
-                "paths:\n" +
-                "  /bar:\n" +
-                "    post:\n" +
-                "      operationId: bar\n" +
-                "      requestBody:\n" +
-                "        content:\n" +
-                "          application/json:\n" +
-                "            schema:\n" +
-                "              type: array\n" +
-                "              items:\n" +
-                "                type: string\n" +
-                "      responses:\n" +
-                "        default:\n" +
-                "          description: default response\n" +
-                "          content:\n" +
-                "            '*/*': {}";
+        yaml = """
+                openapi: 3.0.1
+                paths:
+                  /bar:
+                    post:
+                      operationId: bar
+                      requestBody:
+                        content:
+                          application/json:
+                            schema:
+                              type: array
+                              items:
+                                type: string
+                      responses:
+                        default:
+                          description: default response
+                          content:
+                            '*/*': {}""";
         SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
     }
 
@@ -2679,85 +2730,86 @@ public class ReaderTest {
         Reader reader = new Reader(new OpenAPI());
 
         OpenAPI openAPI = reader.read(ItemResource.class);
-        String yaml = "openapi: 3.0.1\n" +
-                "paths:\n" +
-                "  /item/{id}:\n" +
-                "    get:\n" +
-                "      operationId: getById\n" +
-                "      parameters:\n" +
-                "      - name: id\n" +
-                "        in: path\n" +
-                "        required: true\n" +
-                "        schema:\n" +
-                "          type: string\n" +
-                "      responses:\n" +
-                "        default:\n" +
-                "          description: default response\n" +
-                "          content:\n" +
-                "            '*/*':\n" +
-                "              schema:\n" +
-                "                $ref: \"#/components/schemas/ItemWithChildren\"\n" +
-                "  /item/nogeneric/{id}:\n" +
-                "    get:\n" +
-                "      operationId: getByIdNoGeneric\n" +
-                "      parameters:\n" +
-                "      - name: id\n" +
-                "        in: path\n" +
-                "        required: true\n" +
-                "        schema:\n" +
-                "          type: string\n" +
-                "      responses:\n" +
-                "        default:\n" +
-                "          description: default response\n" +
-                "          content:\n" +
-                "            '*/*':\n" +
-                "              schema:\n" +
-                "                $ref: \"#/components/schemas/ItemWithChildren\"\n" +
-                "  /item/nogenericsamereturn/{id}:\n" +
-                "    get:\n" +
-                "      operationId: getByIdNoGenericSameReturn\n" +
-                "      parameters:\n" +
-                "      - name: id\n" +
-                "        in: path\n" +
-                "        required: true\n" +
-                "        schema:\n" +
-                "          type: string\n" +
-                "      responses:\n" +
-                "        default:\n" +
-                "          description: default response\n" +
-                "          content:\n" +
-                "            '*/*':\n" +
-                "              schema:\n" +
-                "                $ref: \"#/components/schemas/BaseDTO\"\n" +
-                "  /item/genericparam:\n" +
-                "    post:\n" +
-                "      operationId: genericParam\n" +
-                "      requestBody:\n" +
-                "        content:\n" +
-                "          '*/*':\n" +
-                "            schema:\n" +
-                "              $ref: \"#/components/schemas/ItemWithChildren\"\n" +
-                "      responses:\n" +
-                "        default:\n" +
-                "          description: default response\n" +
-                "          content:\n" +
-                "            '*/*':\n" +
-                "              schema:\n" +
-                "                $ref: \"#/components/schemas/BaseDTO\"\n" +
-                "components:\n" +
-                "  schemas:\n" +
-                "    ItemWithChildren:\n" +
-                "      type: object\n" +
-                "      properties:\n" +
-                "        name:\n" +
-                "          type: string\n" +
-                "        names:\n" +
-                "          type: string\n" +
-                "    BaseDTO:\n" +
-                "      type: object\n" +
-                "      properties:\n" +
-                "        name:\n" +
-                "          type: string";
+        String yaml = """
+                openapi: 3.0.1
+                paths:
+                  /item/{id}:
+                    get:
+                      operationId: getById
+                      parameters:
+                      - name: id
+                        in: path
+                        required: true
+                        schema:
+                          type: string
+                      responses:
+                        default:
+                          description: default response
+                          content:
+                            '*/*':
+                              schema:
+                                $ref: "#/components/schemas/ItemWithChildren"
+                  /item/nogeneric/{id}:
+                    get:
+                      operationId: getByIdNoGeneric
+                      parameters:
+                      - name: id
+                        in: path
+                        required: true
+                        schema:
+                          type: string
+                      responses:
+                        default:
+                          description: default response
+                          content:
+                            '*/*':
+                              schema:
+                                $ref: "#/components/schemas/ItemWithChildren"
+                  /item/nogenericsamereturn/{id}:
+                    get:
+                      operationId: getByIdNoGenericSameReturn
+                      parameters:
+                      - name: id
+                        in: path
+                        required: true
+                        schema:
+                          type: string
+                      responses:
+                        default:
+                          description: default response
+                          content:
+                            '*/*':
+                              schema:
+                                $ref: "#/components/schemas/BaseDTO"
+                  /item/genericparam:
+                    post:
+                      operationId: genericParam
+                      requestBody:
+                        content:
+                          '*/*':
+                            schema:
+                              $ref: "#/components/schemas/ItemWithChildren"
+                      responses:
+                        default:
+                          description: default response
+                          content:
+                            '*/*':
+                              schema:
+                                $ref: "#/components/schemas/BaseDTO"
+                components:
+                  schemas:
+                    ItemWithChildren:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                        names:
+                          type: string
+                    BaseDTO:
+                      type: object
+                      properties:
+                        name:
+                          type: string""";
         SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
     }
 
@@ -2766,77 +2818,78 @@ public class ReaderTest {
         Reader reader = new Reader(new OpenAPI());
 
         OpenAPI openAPI = reader.read(MainResource.class);
-        String yaml = "openapi: 3.0.1\n" +
-                "paths:\n" +
-                "  /test:\n" +
-                "    post:\n" +
-                "      tags:\n" +
-                "      - Test inheritance on default implementation in interfaces\n" +
-                "      operationId: firstEndpoint\n" +
-                "      requestBody:\n" +
-                "        content:\n" +
-                "          '*/*':\n" +
-                "            schema:\n" +
-                "              $ref: \"#/components/schemas/SampleDTO\"\n" +
-                "      responses:\n" +
-                "        \"201\":\n" +
-                "          description: Created\n" +
-                "        \"400\":\n" +
-                "          description: Bad Request\n" +
-                "        \"403\":\n" +
-                "          description: Forbidden\n" +
-                "        \"404\":\n" +
-                "          description: Not Found\n" +
-                "  /test/{id}:\n" +
-                "    get:\n" +
-                "      tags:\n" +
-                "      - Test inheritance on default implementation in interfaces\n" +
-                "      operationId: secondEnpoint\n" +
-                "      requestBody:\n" +
-                "        content:\n" +
-                "          '*/*':\n" +
-                "            schema:\n" +
-                "              $ref: \"#/components/schemas/SampleOtherDTO\"\n" +
-                "      responses:\n" +
-                "        \"200\":\n" +
-                "          description: OK\n" +
-                "        \"400\":\n" +
-                "          description: Bad Request\n" +
-                "        \"403\":\n" +
-                "          description: Forbidden\n" +
-                "        \"404\":\n" +
-                "          description: Not Found\n" +
-                "  /test/original/{id}:\n" +
-                "    get:\n" +
-                "      tags:\n" +
-                "      - Test inheritance on default implementation in interfaces\n" +
-                "      operationId: originalEndpoint\n" +
-                "      requestBody:\n" +
-                "        content:\n" +
-                "          '*/*':\n" +
-                "            schema:\n" +
-                "              $ref: \"#/components/schemas/SampleOtherDTO\"\n" +
-                "      responses:\n" +
-                "        \"200\":\n" +
-                "          description: OK\n" +
-                "        \"400\":\n" +
-                "          description: Bad Request\n" +
-                "        \"403\":\n" +
-                "          description: Forbidden\n" +
-                "        \"404\":\n" +
-                "          description: Not Found\n" +
-                "components:\n" +
-                "  schemas:\n" +
-                "    SampleDTO:\n" +
-                "      type: object\n" +
-                "      properties:\n" +
-                "        name:\n" +
-                "          type: string\n" +
-                "    SampleOtherDTO:\n" +
-                "      type: object\n" +
-                "      properties:\n" +
-                "        label:\n" +
-                "          type: string";
+        String yaml = """
+                openapi: 3.0.1
+                paths:
+                  /test:
+                    post:
+                      tags:
+                      - Test inheritance on default implementation in interfaces
+                      operationId: firstEndpoint
+                      requestBody:
+                        content:
+                          '*/*':
+                            schema:
+                              $ref: "#/components/schemas/SampleDTO"
+                      responses:
+                        "201":
+                          description: Created
+                        "400":
+                          description: Bad Request
+                        "403":
+                          description: Forbidden
+                        "404":
+                          description: Not Found
+                  /test/{id}:
+                    get:
+                      tags:
+                      - Test inheritance on default implementation in interfaces
+                      operationId: secondEnpoint
+                      requestBody:
+                        content:
+                          '*/*':
+                            schema:
+                              $ref: "#/components/schemas/SampleOtherDTO"
+                      responses:
+                        "200":
+                          description: OK
+                        "400":
+                          description: Bad Request
+                        "403":
+                          description: Forbidden
+                        "404":
+                          description: Not Found
+                  /test/original/{id}:
+                    get:
+                      tags:
+                      - Test inheritance on default implementation in interfaces
+                      operationId: originalEndpoint
+                      requestBody:
+                        content:
+                          '*/*':
+                            schema:
+                              $ref: "#/components/schemas/SampleOtherDTO"
+                      responses:
+                        "200":
+                          description: OK
+                        "400":
+                          description: Bad Request
+                        "403":
+                          description: Forbidden
+                        "404":
+                          description: Not Found
+                components:
+                  schemas:
+                    SampleDTO:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                    SampleOtherDTO:
+                      type: object
+                      properties:
+                        label:
+                          type: string""";
         SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
     }
 
@@ -2845,24 +2898,25 @@ public class ReaderTest {
         Reader reader = new Reader(new OpenAPI());
 
         OpenAPI openAPI = reader.read(Ticket3426Resource.class);
-        String yaml = "openapi: 3.0.1\n" +
-                "paths:\n" +
-                "  /inheritExample/{input}:\n" +
-                "    get:\n" +
-                "      operationId: get\n" +
-                "      parameters:\n" +
-                "      - name: input\n" +
-                "        in: path\n" +
-                "        required: true\n" +
-                "        schema:\n" +
-                "          type: string\n" +
-                "      responses:\n" +
-                "        default:\n" +
-                "          description: default response\n" +
-                "          content:\n" +
-                "            '*/*':\n" +
-                "              schema:\n" +
-                "                type: string";
+        String yaml = """
+                openapi: 3.0.1
+                paths:
+                  /inheritExample/{input}:
+                    get:
+                      operationId: get
+                      parameters:
+                      - name: input
+                        in: path
+                        required: true
+                        schema:
+                          type: string
+                      responses:
+                        default:
+                          description: default response
+                          content:
+                            '*/*':
+                              schema:
+                                type: string""";
         SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
     }
 
@@ -2871,32 +2925,34 @@ public class ReaderTest {
         Reader reader = new Reader(new OpenAPI());
 
         OpenAPI openAPI = reader.read(Ticket3731Resource.class);
-        String yaml = "openapi: 3.0.1\n" +
-                "paths:\n" +
-                "  /test/cart:\n" +
-                "    get:\n" +
-                "      summary: Get cart items\n" +
-                "      description: Paging follows RFC 5005.\n" +
-                "      operationId: getCart\n" +
-                "      parameters:\n" +
-                "      - name: pageSize\n" +
-                "        in: query\n" +
-                "        description: \"Number of items per page. Range[1, 200]\"\n" +
-                "        schema:\n" +
-                "          maximum: 200\n" +
-                "          minimum: 1\n" +
-                "          type: integer\n" +
-                "          format: int32\n" +
-                "          default: 50\n" +
-                "      responses:\n" +
-                "        default:\n" +
-                "          description: default response\n" +
-                "          content:\n" +
-                "            '*/*':\n" +
-                "              schema:\n" +
-                "                type: array\n" +
-                "                items:\n" +
-                "                  type: string\n";
+        String yaml = """
+                openapi: 3.0.1
+                paths:
+                  /test/cart:
+                    get:
+                      summary: Get cart items
+                      description: Paging follows RFC 5005.
+                      operationId: getCart
+                      parameters:
+                      - name: pageSize
+                        in: query
+                        description: "Number of items per page. Range[1, 200]"
+                        schema:
+                          maximum: 200
+                          minimum: 1
+                          type: integer
+                          format: int32
+                          default: 50
+                      responses:
+                        default:
+                          description: default response
+                          content:
+                            '*/*':
+                              schema:
+                                type: array
+                                items:
+                                  type: string
+                """;
         SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
 
         reader = new Reader(new OpenAPI());
@@ -2909,148 +2965,150 @@ public class ReaderTest {
         Reader reader = new Reader(new OpenAPI());
 
         OpenAPI openAPI = reader.read(SchemaPropertiesResource.class);
-        String yaml = "openapi: 3.0.1\n" +
-                "paths:\n" +
-                "  /:\n" +
-                "    get:\n" +
-                "      summary: Simple get operation\n" +
-                "      description: Defines a simple get operation with no inputs and a complex output\n" +
-                "        object\n" +
-                "      operationId: getWithPayloadResponse\n" +
-                "      responses:\n" +
-                "        \"200\":\n" +
-                "          description: voila!\n" +
-                "          content:\n" +
-                "            application/json:\n" +
-                "              schema:\n" +
-                "                type: object\n" +
-                "                properties:\n" +
-                "                  foo:\n" +
-                "                    maximum: 1\n" +
-                "                    type: integer\n" +
-                "        default:\n" +
-                "          description: boo\n" +
-                "          content:\n" +
-                "            application/json:\n" +
-                "              schema:\n" +
-                "                maxProperties: 3\n" +
-                "                type: object\n" +
-                "                properties:\n" +
-                "                  foo:\n" +
-                "                    maximum: 1\n" +
-                "                    type: integer\n" +
-                "                description: various properties\n" +
-                "        \"400\":\n" +
-                "          description: additionalProperties schema\n" +
-                "          content:\n" +
-                "            application/json:\n" +
-                "              schema:\n" +
-                "                maxProperties: 2\n" +
-                "                type: object\n" +
-                "                additionalProperties:\n" +
-                "                  type: string\n" +
-                "        \"401\":\n" +
-                "          description: additionalProperties boolean\n" +
-                "          content:\n" +
-                "            application/json:\n" +
-                "              schema:\n" +
-                "                maxProperties: 2\n" +
-                "                type: object\n" +
-                "                additionalProperties: false\n" +
-                "      deprecated: true\n" +
-                "  /one:\n" +
-                "    get:\n" +
-                "      operationId: requestBodySchemaPropertyNoSchema\n" +
-                "      requestBody:\n" +
-                "        content:\n" +
-                "          application/yaml:\n" +
-                "            schema:\n" +
-                "              type: object\n" +
-                "              properties:\n" +
-                "                foo:\n" +
-                "                  type: string\n" +
-                "      responses:\n" +
-                "        default:\n" +
-                "          description: default response\n" +
-                "          content:\n" +
-                "            application/json:\n" +
-                "              schema:\n" +
-                "                $ref: \"#/components/schemas/MultipleBaseBean\"\n" +
-                "  /two:\n" +
-                "    get:\n" +
-                "      operationId: requestBodySchemaPropertySchema\n" +
-                "      requestBody:\n" +
-                "        content:\n" +
-                "          application/yaml:\n" +
-                "            schema:\n" +
-                "              required:\n" +
-                "              - foo\n" +
-                "              type: object\n" +
-                "              properties:\n" +
-                "                foo:\n" +
-                "                  type: string\n" +
-                "      responses:\n" +
-                "        default:\n" +
-                "          description: default response\n" +
-                "          content:\n" +
-                "            application/json:\n" +
-                "              schema:\n" +
-                "                $ref: \"#/components/schemas/MultipleBaseBean\"\n" +
-                "  /three:\n" +
-                "    get:\n" +
-                "      operationId: requestBodySchemaPropertySchemaArray\n" +
-                "      requestBody:\n" +
-                "        content:\n" +
-                "          application/yaml:\n" +
-                "            schema:\n" +
-                "              type: array\n" +
-                "              items:\n" +
-                "                required:\n" +
-                "                - foo\n" +
-                "                type: object\n" +
-                "                properties:\n" +
-                "                  foo:\n" +
-                "                    type: string\n" +
-                "      responses:\n" +
-                "        default:\n" +
-                "          description: default response\n" +
-                "          content:\n" +
-                "            application/json:\n" +
-                "              schema:\n" +
-                "                $ref: \"#/components/schemas/MultipleBaseBean\"\n" +
-                "components:\n" +
-                "  schemas:\n" +
-                "    MultipleBaseBean:\n" +
-                "      type: object\n" +
-                "      properties:\n" +
-                "        beanType:\n" +
-                "          type: string\n" +
-                "        a:\n" +
-                "          type: integer\n" +
-                "          format: int32\n" +
-                "        b:\n" +
-                "          type: string\n" +
-                "      description: MultipleBaseBean\n" +
-                "    MultipleSub1Bean:\n" +
-                "      type: object\n" +
-                "      description: MultipleSub1Bean\n" +
-                "      allOf:\n" +
-                "      - $ref: \"#/components/schemas/MultipleBaseBean\"\n" +
-                "      - type: object\n" +
-                "        properties:\n" +
-                "          c:\n" +
-                "            type: integer\n" +
-                "            format: int32\n" +
-                "    MultipleSub2Bean:\n" +
-                "      type: object\n" +
-                "      description: MultipleSub2Bean\n" +
-                "      allOf:\n" +
-                "      - $ref: \"#/components/schemas/MultipleBaseBean\"\n" +
-                "      - type: object\n" +
-                "        properties:\n" +
-                "          d:\n" +
-                "            type: integer\n" +
-                "            format: int32\n";
+        String yaml = """
+                openapi: 3.0.1
+                paths:
+                  /:
+                    get:
+                      summary: Simple get operation
+                      description: Defines a simple get operation with no inputs and a complex output
+                        object
+                      operationId: getWithPayloadResponse
+                      responses:
+                        "200":
+                          description: voila!
+                          content:
+                            application/json:
+                              schema:
+                                type: object
+                                properties:
+                                  foo:
+                                    maximum: 1
+                                    type: integer
+                        default:
+                          description: boo
+                          content:
+                            application/json:
+                              schema:
+                                maxProperties: 3
+                                type: object
+                                properties:
+                                  foo:
+                                    maximum: 1
+                                    type: integer
+                                description: various properties
+                        "400":
+                          description: additionalProperties schema
+                          content:
+                            application/json:
+                              schema:
+                                maxProperties: 2
+                                type: object
+                                additionalProperties:
+                                  type: string
+                        "401":
+                          description: additionalProperties boolean
+                          content:
+                            application/json:
+                              schema:
+                                maxProperties: 2
+                                type: object
+                                additionalProperties: false
+                      deprecated: true
+                  /one:
+                    get:
+                      operationId: requestBodySchemaPropertyNoSchema
+                      requestBody:
+                        content:
+                          application/yaml:
+                            schema:
+                              type: object
+                              properties:
+                                foo:
+                                  type: string
+                      responses:
+                        default:
+                          description: default response
+                          content:
+                            application/json:
+                              schema:
+                                $ref: "#/components/schemas/MultipleBaseBean"
+                  /two:
+                    get:
+                      operationId: requestBodySchemaPropertySchema
+                      requestBody:
+                        content:
+                          application/yaml:
+                            schema:
+                              required:
+                              - foo
+                              type: object
+                              properties:
+                                foo:
+                                  type: string
+                      responses:
+                        default:
+                          description: default response
+                          content:
+                            application/json:
+                              schema:
+                                $ref: "#/components/schemas/MultipleBaseBean"
+                  /three:
+                    get:
+                      operationId: requestBodySchemaPropertySchemaArray
+                      requestBody:
+                        content:
+                          application/yaml:
+                            schema:
+                              type: array
+                              items:
+                                required:
+                                - foo
+                                type: object
+                                properties:
+                                  foo:
+                                    type: string
+                      responses:
+                        default:
+                          description: default response
+                          content:
+                            application/json:
+                              schema:
+                                $ref: "#/components/schemas/MultipleBaseBean"
+                components:
+                  schemas:
+                    MultipleBaseBean:
+                      type: object
+                      properties:
+                        beanType:
+                          type: string
+                        a:
+                          type: integer
+                          format: int32
+                        b:
+                          type: string
+                      description: MultipleBaseBean
+                    MultipleSub1Bean:
+                      type: object
+                      description: MultipleSub1Bean
+                      allOf:
+                      - $ref: "#/components/schemas/MultipleBaseBean"
+                      - type: object
+                        properties:
+                          c:
+                            type: integer
+                            format: int32
+                    MultipleSub2Bean:
+                      type: object
+                      description: MultipleSub2Bean
+                      allOf:
+                      - $ref: "#/components/schemas/MultipleBaseBean"
+                      - type: object
+                        properties:
+                          d:
+                            type: integer
+                            format: int32
+                """;
         SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
     }
 
@@ -3059,67 +3117,69 @@ public class ReaderTest {
         Reader reader = new Reader(new OpenAPI());
 
         OpenAPI openAPI = reader.read(SchemaAdditionalPropertiesResource.class);
-        String yaml = "openapi: 3.0.1\n" +
-                "paths:\n" +
-                "  /arraySchemaImpl:\n" +
-                "    get:\n" +
-                "      operationId: arraySchemaImpl\n" +
-                "      responses:\n" +
-                "        \"200\":\n" +
-                "          description: voila!\n" +
-                "          content:\n" +
-                "            application/json:\n" +
-                "              schema:\n" +
-                "                type: object\n" +
-                "                additionalProperties:\n" +
-                "                  type: array\n" +
-                "                  items:\n" +
-                "                    $ref: \"#/components/schemas/Pet\"\n" +
-                "  /fromtResponseType:\n" +
-                "    get:\n" +
-                "      operationId: fromtResponseType\n" +
-                "      responses:\n" +
-                "        default:\n" +
-                "          description: default response\n" +
-                "          content:\n" +
-                "            '*/*':\n" +
-                "              schema:\n" +
-                "                type: object\n" +
-                "                additionalProperties:\n" +
-                "                  type: array\n" +
-                "                  items:\n" +
-                "                    $ref: \"#/components/schemas/Pet\"\n" +
-                "  /schemaImpl:\n" +
-                "    get:\n" +
-                "      operationId: schemaImpl\n" +
-                "      responses:\n" +
-                "        \"200\":\n" +
-                "          description: voila!\n" +
-                "          content:\n" +
-                "            application/json:\n" +
-                "              schema:\n" +
-                "                type: object\n" +
-                "                additionalProperties:\n" +
-                "                  $ref: \"#/components/schemas/Pet\"\n" +
-                "  /schemaNotImpl:\n" +
-                "    get:\n" +
-                "      operationId: schemaNotImpl\n" +
-                "      responses:\n" +
-                "        \"200\":\n" +
-                "          description: voila!\n" +
-                "          content:\n" +
-                "            application/json:\n" +
-                "              schema:\n" +
-                "                type: object\n" +
-                "                additionalProperties:\n" +
-                "                  $ref: \"#/components/schemas/Pet\"\n" +
-                "components:\n" +
-                "  schemas:\n" +
-                "    Pet:\n" +
-                "      type: object\n" +
-                "      properties:\n" +
-                "        foo:\n" +
-                "          type: string\n";
+        String yaml = """
+                openapi: 3.0.1
+                paths:
+                  /arraySchemaImpl:
+                    get:
+                      operationId: arraySchemaImpl
+                      responses:
+                        "200":
+                          description: voila!
+                          content:
+                            application/json:
+                              schema:
+                                type: object
+                                additionalProperties:
+                                  type: array
+                                  items:
+                                    $ref: "#/components/schemas/Pet"
+                  /fromtResponseType:
+                    get:
+                      operationId: fromtResponseType
+                      responses:
+                        default:
+                          description: default response
+                          content:
+                            '*/*':
+                              schema:
+                                type: object
+                                additionalProperties:
+                                  type: array
+                                  items:
+                                    $ref: "#/components/schemas/Pet"
+                  /schemaImpl:
+                    get:
+                      operationId: schemaImpl
+                      responses:
+                        "200":
+                          description: voila!
+                          content:
+                            application/json:
+                              schema:
+                                type: object
+                                additionalProperties:
+                                  $ref: "#/components/schemas/Pet"
+                  /schemaNotImpl:
+                    get:
+                      operationId: schemaNotImpl
+                      responses:
+                        "200":
+                          description: voila!
+                          content:
+                            application/json:
+                              schema:
+                                type: object
+                                additionalProperties:
+                                  $ref: "#/components/schemas/Pet"
+                components:
+                  schemas:
+                    Pet:
+                      type: object
+                      properties:
+                        foo:
+                          type: string
+                """;
         SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
     }
 
@@ -3130,38 +3190,40 @@ public class ReaderTest {
         Reader reader = new Reader(config);
 
         OpenAPI openAPI = reader.read(SchemaAdditionalPropertiesBooleanResource.class);
-        String yaml = "openapi: 3.0.1\n" +
-                "paths:\n" +
-                "  /test:\n" +
-                "    get:\n" +
-                "      operationId: test\n" +
-                "      responses:\n" +
-                "        default:\n" +
-                "          description: default response\n" +
-                "          content:\n" +
-                "            '*/*':\n" +
-                "              schema:\n" +
-                "                $ref: \"#/components/schemas/Pet\"\n" +
-                "components:\n" +
-                "  schemas:\n" +
-                "    Bar:\n" +
-                "      type: object\n" +
-                "      properties:\n" +
-                "        foo:\n" +
-                "          type: string\n" +
-                "    Pet:\n" +
-                "      type: object\n" +
-                "      properties:\n" +
-                "        bar:\n" +
-                "          allOf:\n" +
-                "          - additionalProperties:\n" +
-                "              $ref: \"#/components/schemas/Bar\"\n" +
-                "          - $ref: \"#/components/schemas/Bar\"\n" +
-                "        vbar:\n" +
-                "          allOf:\n" +
-                "          - additionalProperties: false\n" +
-                "          - $ref: \"#/components/schemas/Bar\"\n" +
-                "      additionalProperties: false\n";
+        String yaml = """
+                openapi: 3.0.1
+                paths:
+                  /test:
+                    get:
+                      operationId: test
+                      responses:
+                        default:
+                          description: default response
+                          content:
+                            '*/*':
+                              schema:
+                                $ref: "#/components/schemas/Pet"
+                components:
+                  schemas:
+                    Bar:
+                      type: object
+                      properties:
+                        foo:
+                          type: string
+                    Pet:
+                      type: object
+                      properties:
+                        bar:
+                          allOf:
+                          - additionalProperties:
+                              $ref: "#/components/schemas/Bar"
+                          - $ref: "#/components/schemas/Bar"
+                        vbar:
+                          allOf:
+                          - additionalProperties: false
+                          - $ref: "#/components/schemas/Bar"
+                      additionalProperties: false
+                """;
         SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
         ModelConverters.reset();
     }
@@ -3172,29 +3234,31 @@ public class ReaderTest {
         Reader reader = new Reader(config);
 
         OpenAPI openAPI = reader.read(ArraySchemaImplementationResource.class);
-        String yaml = "openapi: 3.1.0\n" +
-                "paths:\n" +
-                "  /test:\n" +
-                "    get:\n" +
-                "      operationId: test\n" +
-                "      responses:\n" +
-                "        default:\n" +
-                "          description: default response\n" +
-                "          content:\n" +
-                "            '*/*':\n" +
-                "              schema:\n" +
-                "                $ref: \"#/components/schemas/Pet\"\n" +
-                "components:\n" +
-                "  schemas:\n" +
-                "    Pet:\n" +
-                "      type: object\n" +
-                "      properties:\n" +
-                "        cars:\n" +
-                "          type: array\n" +
-                "          items:\n" +
-                "            type: integer\n" +
-                "            format: int32\n" +
-                "            description: A house in a street\n";
+        String yaml = """
+                openapi: 3.1.0
+                paths:
+                  /test:
+                    get:
+                      operationId: test
+                      responses:
+                        default:
+                          description: default response
+                          content:
+                            '*/*':
+                              schema:
+                                $ref: "#/components/schemas/Pet"
+                components:
+                  schemas:
+                    Pet:
+                      type: object
+                      properties:
+                        cars:
+                          type: array
+                          items:
+                            type: integer
+                            format: int32
+                            description: A house in a street
+                """;
         SerializationMatchers.assertEqualsToYaml31(openAPI, yaml);
     }
 
@@ -3203,65 +3267,66 @@ public class ReaderTest {
         Reader reader = new Reader(new OpenAPI());
 
         OpenAPI openAPI = reader.read(ResponseReturnTypeResource.class);
-        String yaml = "openapi: 3.0.1\n" +
-                "paths:\n" +
-                "  /sample/{id}:\n" +
-                "    get:\n" +
-                "      summary: Find by id\n" +
-                "      description: Find by id operation\n" +
-                "      operationId: find\n" +
-                "      parameters:\n" +
-                "      - name: id\n" +
-                "        in: path\n" +
-                "        description: ID\n" +
-                "        required: true\n" +
-                "        schema:\n" +
-                "          type: integer\n" +
-                "          format: int32\n" +
-                "      responses:\n" +
-                "        \"200\":\n" +
-                "          description: Ok\n" +
-                "          content:\n" +
-                "            application/json:\n" +
-                "              schema:\n" +
-                "                $ref: \"#/components/schemas/TestDTO\"\n" +
-                "        \"201\":\n" +
-                "          description: \"201\"\n" +
-                "          content:\n" +
-                "            application/json:\n" +
-                "              schema:\n" +
-                "                $ref: \"#/components/schemas/TestDTO\"\n" +
-                "        \"204\":\n" +
-                "          description: No Content\n" +
-                "          content:\n" +
-                "            application/json: {}\n" +
-                "  /sample/{id}/default:\n" +
-                "    get:\n" +
-                "      summary: Find by id (default)\n" +
-                "      description: Find by id operation (default)\n" +
-                "      operationId: findDefault\n" +
-                "      parameters:\n" +
-                "      - name: id\n" +
-                "        in: path\n" +
-                "        description: ID\n" +
-                "        required: true\n" +
-                "        schema:\n" +
-                "          type: integer\n" +
-                "          format: int32\n" +
-                "      responses:\n" +
-                "        default:\n" +
-                "          description: default response\n" +
-                "          content:\n" +
-                "            application/json:\n" +
-                "              schema:\n" +
-                "                $ref: \"#/components/schemas/TestDTO\"\n" +
-                "components:\n" +
-                "  schemas:\n" +
-                "    TestDTO:\n" +
-                "      type: object\n" +
-                "      properties:\n" +
-                "        foo:\n" +
-                "          type: string";
+        String yaml = """
+                openapi: 3.0.1
+                paths:
+                  /sample/{id}:
+                    get:
+                      summary: Find by id
+                      description: Find by id operation
+                      operationId: find
+                      parameters:
+                      - name: id
+                        in: path
+                        description: ID
+                        required: true
+                        schema:
+                          type: integer
+                          format: int32
+                      responses:
+                        "200":
+                          description: Ok
+                          content:
+                            application/json:
+                              schema:
+                                $ref: "#/components/schemas/TestDTO"
+                        "201":
+                          description: "201"
+                          content:
+                            application/json:
+                              schema:
+                                $ref: "#/components/schemas/TestDTO"
+                        "204":
+                          description: No Content
+                          content:
+                            application/json: {}
+                  /sample/{id}/default:
+                    get:
+                      summary: Find by id (default)
+                      description: Find by id operation (default)
+                      operationId: findDefault
+                      parameters:
+                      - name: id
+                        in: path
+                        description: ID
+                        required: true
+                        schema:
+                          type: integer
+                          format: int32
+                      responses:
+                        default:
+                          description: default response
+                          content:
+                            application/json:
+                              schema:
+                                $ref: "#/components/schemas/TestDTO"
+                components:
+                  schemas:
+                    TestDTO:
+                      type: object
+                      properties:
+                        foo:
+                          type: string""";
         SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
     }
 
@@ -3271,18 +3336,20 @@ public class ReaderTest {
         Reader reader = new Reader(config);
 
         OpenAPI openAPI = reader.read(DefaultResponseResource.class);
-        String yaml = "openapi: 3.0.1\n" +
-                "paths:\n" +
-                "  /:\n" +
-                "    get:\n" +
-                "      operationId: test\n" +
-                "      responses:\n" +
-                "        \"200\":\n" +
-                "          description: default response\n" +
-                "          content:\n" +
-                "            '*/*':\n" +
-                "              schema:\n" +
-                "                type: string\n";
+        String yaml = """
+                openapi: 3.0.1
+                paths:
+                  /:
+                    get:
+                      operationId: test
+                      responses:
+                        "200":
+                          description: default response
+                          content:
+                            '*/*':
+                              schema:
+                                type: string
+                """;
         SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
     }
 
@@ -3291,27 +3358,28 @@ public class ReaderTest {
         Reader reader = new Reader(new OpenAPI());
 
         OpenAPI openAPI = reader.read(Ticket4412Resource.class);
-        String yaml = "openapi: 3.0.1\n" +
-                "paths:\n" +
-                "  /test/sws/{var}:\n" +
-                "    get:\n" +
-                "      operationId: getCart\n" +
-                "      parameters:\n" +
-                "      - name: var\n" +
-                "        in: path\n" +
-                "        required: true\n" +
-                "        schema:\n" +
-                "          pattern: .*\n" +
-                "          type: string\n" +
-                "      responses:\n" +
-                "        default:\n" +
-                "          description: default response\n" +
-                "          content:\n" +
-                "            text/xml:\n" +
-                "              schema:\n" +
-                "                type: array\n" +
-                "                items:\n" +
-                "                  type: string";
+        String yaml = """
+                openapi: 3.0.1
+                paths:
+                  /test/sws/{var}:
+                    get:
+                      operationId: getCart
+                      parameters:
+                      - name: var
+                        in: path
+                        required: true
+                        schema:
+                          pattern: .*
+                          type: string
+                      responses:
+                        default:
+                          description: default response
+                          content:
+                            text/xml:
+                              schema:
+                                type: array
+                                items:
+                                  type: string""";
         SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
     }
 
@@ -3321,290 +3389,292 @@ public class ReaderTest {
         Reader reader = new Reader(config);
 
         OpenAPI openAPI = reader.read(PetResource.class);
-        String yaml = "openapi: 3.1.0\n" +
-                "paths:\n" +
-                "  /pet:\n" +
-                "    put:\n" +
-                "      summary: Update an existing pet\n" +
-                "      operationId: updatePet\n" +
-                "      requestBody:\n" +
-                "        description: Pet object that needs to be added to the store\n" +
-                "        content:\n" +
-                "          application/json:\n" +
-                "            schema:\n" +
-                "              $ref: \"#/components/schemas/Pet\"\n" +
-                "        required: true\n" +
-                "      responses:\n" +
-                "        \"400\":\n" +
-                "          description: Invalid ID supplied\n" +
-                "        \"404\":\n" +
-                "          description: Pet not found\n" +
-                "        \"405\":\n" +
-                "          description: Validation exception\n" +
-                "    post:\n" +
-                "      summary: Add a new pet to the store\n" +
-                "      operationId: addPet\n" +
-                "      requestBody:\n" +
-                "        description: Pet object that needs to be added to the store\n" +
-                "        content:\n" +
-                "          application/json:\n" +
-                "            schema:\n" +
-                "              $ref: \"#/components/schemas/Pet\"\n" +
-                "          application/xml:\n" +
-                "            schema:\n" +
-                "              $ref: \"#/components/schemas/Pet\"\n" +
-                "        required: true\n" +
-                "      responses:\n" +
-                "        \"405\":\n" +
-                "          description: Invalid input\n" +
-                "  /pet/bodyid:\n" +
-                "    post:\n" +
-                "      summary: Add a new pet to the store passing an integer with generic parameter\n" +
-                "        annotation\n" +
-                "      operationId: addPetByInteger\n" +
-                "      requestBody:\n" +
-                "        description: Pet object that needs to be added to the store\n" +
-                "        content:\n" +
-                "          application/json:\n" +
-                "            schema:\n" +
-                "              type: integer\n" +
-                "              format: int32\n" +
-                "          application/xml:\n" +
-                "            schema:\n" +
-                "              type: integer\n" +
-                "              format: int32\n" +
-                "        required: true\n" +
-                "      responses:\n" +
-                "        \"405\":\n" +
-                "          description: Invalid input\n" +
-                "  /pet/bodyidnoannotation:\n" +
-                "    post:\n" +
-                "      summary: Add a new pet to the store passing an integer without parameter annotation\n" +
-                "      operationId: addPetByIntegerNoAnnotation\n" +
-                "      requestBody:\n" +
-                "        content:\n" +
-                "          application/json:\n" +
-                "            schema:\n" +
-                "              type: integer\n" +
-                "              format: int32\n" +
-                "          application/xml:\n" +
-                "            schema:\n" +
-                "              type: integer\n" +
-                "              format: int32\n" +
-                "      responses:\n" +
-                "        \"405\":\n" +
-                "          description: Invalid input\n" +
-                "  /pet/bodynoannotation:\n" +
-                "    post:\n" +
-                "      summary: Add a new pet to the store no annotation\n" +
-                "      operationId: addPetNoAnnotation\n" +
-                "      requestBody:\n" +
-                "        content:\n" +
-                "          application/json:\n" +
-                "            schema:\n" +
-                "              $ref: \"#/components/schemas/Pet\"\n" +
-                "          application/xml:\n" +
-                "            schema:\n" +
-                "              $ref: \"#/components/schemas/Pet\"\n" +
-                "      responses:\n" +
-                "        \"405\":\n" +
-                "          description: Invalid input\n" +
-                "  /pet/findByStatus:\n" +
-                "    get:\n" +
-                "      summary: Finds Pets by status\n" +
-                "      description: Multiple status values can be provided with comma separated strings\n" +
-                "      operationId: findPetsByStatus\n" +
-                "      parameters:\n" +
-                "      - name: status\n" +
-                "        in: query\n" +
-                "        description: Status values that need to be considered for filter\n" +
-                "        required: true\n" +
-                "        schema:\n" +
-                "          type: string\n" +
-                "      - name: skip\n" +
-                "        in: query\n" +
-                "        schema:\n" +
-                "          type: integer\n" +
-                "          format: int32\n" +
-                "      - name: limit\n" +
-                "        in: query\n" +
-                "        schema:\n" +
-                "          type: integer\n" +
-                "          format: int32\n" +
-                "      responses:\n" +
-                "        default:\n" +
-                "          content:\n" +
-                "            application/json:\n" +
-                "              schema:\n" +
-                "                $ref: \"#/components/schemas/Pet\"\n" +
-                "        \"400\":\n" +
-                "          description: Invalid status value\n" +
-                "  /pet/findByTags:\n" +
-                "    get:\n" +
-                "      summary: Finds Pets by tags\n" +
-                "      description: \"Multiple tags can be provided with comma separated strings. Use\\\n" +
-                "        \\ tag1, tag2, tag3 for testing.\"\n" +
-                "      operationId: findPetsByTags\n" +
-                "      parameters:\n" +
-                "      - name: tags\n" +
-                "        in: query\n" +
-                "        description: Tags to filter by\n" +
-                "        required: true\n" +
-                "        schema:\n" +
-                "          type: string\n" +
-                "      responses:\n" +
-                "        default:\n" +
-                "          description: Pets matching criteria\n" +
-                "          content:\n" +
-                "            application/json:\n" +
-                "              schema:\n" +
-                "                $ref: \"#/components/schemas/Pet\"\n" +
-                "        \"400\":\n" +
-                "          description: Invalid tag value\n" +
-                "      deprecated: true\n" +
-                "  /pet/{petId}:\n" +
-                "    get:\n" +
-                "      summary: Find pet by ID\n" +
-                "      description: Returns a pet when 0 < ID <= 10.  ID > 10 or nonintegers will simulate\n" +
-                "        API error conditions\n" +
-                "      operationId: getPetById\n" +
-                "      parameters:\n" +
-                "      - name: petId\n" +
-                "        in: path\n" +
-                "        description: ID of pet that needs to be fetched\n" +
-                "        required: true\n" +
-                "        schema:\n" +
-                "          type: integer\n" +
-                "          format: int64\n" +
-                "      responses:\n" +
-                "        default:\n" +
-                "          description: The pet\n" +
-                "          content:\n" +
-                "            application/json:\n" +
-                "              schema:\n" +
-                "                $ref: \"#/components/schemas/Pet\"\n" +
-                "            application/xml:\n" +
-                "              schema:\n" +
-                "                $ref: \"#/components/schemas/Pet\"\n" +
-                "        \"400\":\n" +
-                "          description: Invalid ID supplied\n" +
-                "        \"404\":\n" +
-                "          description: Pet not found\n" +
-                "components:\n" +
-                "  schemas:\n" +
-                "    Bar:\n" +
-                "      type: object\n" +
-                "      deprecated: true\n" +
-                "      description: Bar\n" +
-                "      properties:\n" +
-                "        foo:\n" +
-                "          type: string\n" +
-                "          const: bar\n" +
-                "        bar:\n" +
-                "          type: integer\n" +
-                "          format: int32\n" +
-                "          exclusiveMaximum: 4\n" +
-                "        foobar:\n" +
-                "          type:\n" +
-                "          - string\n" +
-                "          - integer\n" +
-                "          format: int32\n" +
-                "    Category:\n" +
-                "      type: object\n" +
-                "      properties:\n" +
-                "        id:\n" +
-                "          type: integer\n" +
-                "          format: int64\n" +
-                "        name:\n" +
-                "          type: string\n" +
-                "      xml:\n" +
-                "        name: Category\n" +
-                "    Foo:\n" +
-                "      type: object\n" +
-                "      deprecated: true\n" +
-                "      description: Foo\n" +
-                "      properties:\n" +
-                "        foo:\n" +
-                "          type: string\n" +
-                "          const: foo\n" +
-                "        bar:\n" +
-                "          type: integer\n" +
-                "          format: int32\n" +
-                "          exclusiveMaximum: 2\n" +
-                "        foobar:\n" +
-                "          type:\n" +
-                "          - string\n" +
-                "          - object\n" +
-                "          format: int32\n" +
-                "    IfSchema:\n" +
-                "      type: object\n" +
-                "      deprecated: true\n" +
-                "      description: if schema\n" +
-                "      properties:\n" +
-                "        foo:\n" +
-                "          type: string\n" +
-                "          const: foo\n" +
-                "        bar:\n" +
-                "          type: integer\n" +
-                "          format: int32\n" +
-                "          exclusiveMaximum: 2\n" +
-                "        foobar:\n" +
-                "          type:\n" +
-                "          - string\n" +
-                "          - object\n" +
-                "          format: int32\n" +
-                "    Pet:\n" +
-                "      type: object\n" +
-                "      properties:\n" +
-                "        id:\n" +
-                "          type: integer\n" +
-                "          format: int64\n" +
-                "        category:\n" +
-                "          $ref: \"#/components/schemas/Category\"\n" +
-                "        name:\n" +
-                "          type: string\n" +
-                "        photoUrls:\n" +
-                "          type: array\n" +
-                "          items:\n" +
-                "            type: string\n" +
-                "            xml:\n" +
-                "              name: photoUrl\n" +
-                "          xml:\n" +
-                "            wrapped: true\n" +
-                "        tags:\n" +
-                "          type: array\n" +
-                "          items:\n" +
-                "            $ref: \"#/components/schemas/Tag\"\n" +
-                "          xml:\n" +
-                "            wrapped: true\n" +
-                "        status:\n" +
-                "          type: string\n" +
-                "          if:\n" +
-                "            $ref: \"#/components/schemas/IfSchema\"\n" +
-                "          $id: idtest\n" +
-                "          description: pet status in the store\n" +
-                "          enum:\n" +
-                "          - \"available,pending,sold\"\n" +
-                "      xml:\n" +
-                "        name: Pet\n" +
-                "    Tag:\n" +
-                "      type: object\n" +
-                "      properties:\n" +
-                "        id:\n" +
-                "          type: integer\n" +
-                "          format: int64\n" +
-                "        name:\n" +
-                "          type: string\n" +
-                "        annotated:\n" +
-                "          $ref: \"#/components/schemas/Category\"\n" +
-                "          description: child description\n" +
-                "          properties:\n" +
-                "            foo:\n" +
-                "              $ref: \"#/components/schemas/Foo\"\n" +
-                "            bar:\n" +
-                "              $ref: \"#/components/schemas/Bar\"\n" +
-                "      xml:\n" +
-                "        name: Tag\n";
+        String yaml = """
+                openapi: 3.1.0
+                paths:
+                  /pet:
+                    put:
+                      summary: Update an existing pet
+                      operationId: updatePet
+                      requestBody:
+                        description: Pet object that needs to be added to the store
+                        content:
+                          application/json:
+                            schema:
+                              $ref: "#/components/schemas/Pet"
+                        required: true
+                      responses:
+                        "400":
+                          description: Invalid ID supplied
+                        "404":
+                          description: Pet not found
+                        "405":
+                          description: Validation exception
+                    post:
+                      summary: Add a new pet to the store
+                      operationId: addPet
+                      requestBody:
+                        description: Pet object that needs to be added to the store
+                        content:
+                          application/json:
+                            schema:
+                              $ref: "#/components/schemas/Pet"
+                          application/xml:
+                            schema:
+                              $ref: "#/components/schemas/Pet"
+                        required: true
+                      responses:
+                        "405":
+                          description: Invalid input
+                  /pet/bodyid:
+                    post:
+                      summary: Add a new pet to the store passing an integer with generic parameter
+                        annotation
+                      operationId: addPetByInteger
+                      requestBody:
+                        description: Pet object that needs to be added to the store
+                        content:
+                          application/json:
+                            schema:
+                              type: integer
+                              format: int32
+                          application/xml:
+                            schema:
+                              type: integer
+                              format: int32
+                        required: true
+                      responses:
+                        "405":
+                          description: Invalid input
+                  /pet/bodyidnoannotation:
+                    post:
+                      summary: Add a new pet to the store passing an integer without parameter annotation
+                      operationId: addPetByIntegerNoAnnotation
+                      requestBody:
+                        content:
+                          application/json:
+                            schema:
+                              type: integer
+                              format: int32
+                          application/xml:
+                            schema:
+                              type: integer
+                              format: int32
+                      responses:
+                        "405":
+                          description: Invalid input
+                  /pet/bodynoannotation:
+                    post:
+                      summary: Add a new pet to the store no annotation
+                      operationId: addPetNoAnnotation
+                      requestBody:
+                        content:
+                          application/json:
+                            schema:
+                              $ref: "#/components/schemas/Pet"
+                          application/xml:
+                            schema:
+                              $ref: "#/components/schemas/Pet"
+                      responses:
+                        "405":
+                          description: Invalid input
+                  /pet/findByStatus:
+                    get:
+                      summary: Finds Pets by status
+                      description: Multiple status values can be provided with comma separated strings
+                      operationId: findPetsByStatus
+                      parameters:
+                      - name: status
+                        in: query
+                        description: Status values that need to be considered for filter
+                        required: true
+                        schema:
+                          type: string
+                      - name: skip
+                        in: query
+                        schema:
+                          type: integer
+                          format: int32
+                      - name: limit
+                        in: query
+                        schema:
+                          type: integer
+                          format: int32
+                      responses:
+                        default:
+                          content:
+                            application/json:
+                              schema:
+                                $ref: "#/components/schemas/Pet"
+                        "400":
+                          description: Invalid status value
+                  /pet/findByTags:
+                    get:
+                      summary: Finds Pets by tags
+                      description: "Multiple tags can be provided with comma separated strings. Use\\
+                        \\ tag1, tag2, tag3 for testing."
+                      operationId: findPetsByTags
+                      parameters:
+                      - name: tags
+                        in: query
+                        description: Tags to filter by
+                        required: true
+                        schema:
+                          type: string
+                      responses:
+                        default:
+                          description: Pets matching criteria
+                          content:
+                            application/json:
+                              schema:
+                                $ref: "#/components/schemas/Pet"
+                        "400":
+                          description: Invalid tag value
+                      deprecated: true
+                  /pet/{petId}:
+                    get:
+                      summary: Find pet by ID
+                      description: Returns a pet when 0 < ID <= 10.  ID > 10 or nonintegers will simulate
+                        API error conditions
+                      operationId: getPetById
+                      parameters:
+                      - name: petId
+                        in: path
+                        description: ID of pet that needs to be fetched
+                        required: true
+                        schema:
+                          type: integer
+                          format: int64
+                      responses:
+                        default:
+                          description: The pet
+                          content:
+                            application/json:
+                              schema:
+                                $ref: "#/components/schemas/Pet"
+                            application/xml:
+                              schema:
+                                $ref: "#/components/schemas/Pet"
+                        "400":
+                          description: Invalid ID supplied
+                        "404":
+                          description: Pet not found
+                components:
+                  schemas:
+                    Bar:
+                      type: object
+                      deprecated: true
+                      description: Bar
+                      properties:
+                        foo:
+                          type: string
+                          const: bar
+                        bar:
+                          type: integer
+                          format: int32
+                          exclusiveMaximum: 4
+                        foobar:
+                          type:
+                          - string
+                          - integer
+                          format: int32
+                    Category:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          format: int64
+                        name:
+                          type: string
+                      xml:
+                        name: Category
+                    Foo:
+                      type: object
+                      deprecated: true
+                      description: Foo
+                      properties:
+                        foo:
+                          type: string
+                          const: foo
+                        bar:
+                          type: integer
+                          format: int32
+                          exclusiveMaximum: 2
+                        foobar:
+                          type:
+                          - string
+                          - object
+                          format: int32
+                    IfSchema:
+                      type: object
+                      deprecated: true
+                      description: if schema
+                      properties:
+                        foo:
+                          type: string
+                          const: foo
+                        bar:
+                          type: integer
+                          format: int32
+                          exclusiveMaximum: 2
+                        foobar:
+                          type:
+                          - string
+                          - object
+                          format: int32
+                    Pet:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          format: int64
+                        category:
+                          $ref: "#/components/schemas/Category"
+                        name:
+                          type: string
+                        photoUrls:
+                          type: array
+                          items:
+                            type: string
+                            xml:
+                              name: photoUrl
+                          xml:
+                            wrapped: true
+                        tags:
+                          type: array
+                          items:
+                            $ref: "#/components/schemas/Tag"
+                          xml:
+                            wrapped: true
+                        status:
+                          type: string
+                          if:
+                            $ref: "#/components/schemas/IfSchema"
+                          $id: idtest
+                          description: pet status in the store
+                          enum:
+                          - "available,pending,sold"
+                      xml:
+                        name: Pet
+                    Tag:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          format: int64
+                        name:
+                          type: string
+                        annotated:
+                          $ref: "#/components/schemas/Category"
+                          description: child description
+                          properties:
+                            foo:
+                              $ref: "#/components/schemas/Foo"
+                            bar:
+                              $ref: "#/components/schemas/Bar"
+                      xml:
+                        name: Tag
+                """;
         SerializationMatchers.assertEqualsToYaml31(openAPI, yaml);
     }
 
@@ -3614,47 +3684,49 @@ public class ReaderTest {
         Reader reader = new Reader(config);
 
         OpenAPI openAPI = reader.read(TagResource.class);
-        String yaml = "openapi: 3.1.0\n" +
-                "paths:\n" +
-                "  /tag/tag:\n" +
-                "    get:\n" +
-                "      operationId: getTag\n" +
-                "      responses:\n" +
-                "        default:\n" +
-                "          description: default response\n" +
-                "          content:\n" +
-                "            '*/*':\n" +
-                "              schema:\n" +
-                "                $ref: \"#/components/schemas/SimpleTag\"\n" +
-                "components:\n" +
-                "  schemas:\n" +
-                "    Foo:\n" +
-                "      type: object\n" +
-                "      deprecated: true\n" +
-                "      description: Foo\n" +
-                "      properties:\n" +
-                "        foo:\n" +
-                "          type: string\n" +
-                "          const: foo\n" +
-                "        bar:\n" +
-                "          type: integer\n" +
-                "          format: int32\n" +
-                "          exclusiveMaximum: 2\n" +
-                "        foobar:\n" +
-                "          type:\n" +
-                "          - string\n" +
-                "          - object\n" +
-                "          format: int32\n" +
-                "    SimpleTag:\n" +
-                "      type: object\n" +
-                "      properties:\n" +
-                "        annotated:\n" +
-                "          $ref: \"#/components/schemas/SimpleCategory\"\n" +
-                "          description: child description\n" +
-                "          properties:\n" +
-                "            foo:\n" +
-                "              $ref: \"#/components/schemas/Foo\"\n" +
-                "    SimpleCategory: {}\n";
+        String yaml = """
+                openapi: 3.1.0
+                paths:
+                  /tag/tag:
+                    get:
+                      operationId: getTag
+                      responses:
+                        default:
+                          description: default response
+                          content:
+                            '*/*':
+                              schema:
+                                $ref: "#/components/schemas/SimpleTag"
+                components:
+                  schemas:
+                    Foo:
+                      type: object
+                      deprecated: true
+                      description: Foo
+                      properties:
+                        foo:
+                          type: string
+                          const: foo
+                        bar:
+                          type: integer
+                          format: int32
+                          exclusiveMaximum: 2
+                        foobar:
+                          type:
+                          - string
+                          - object
+                          format: int32
+                    SimpleTag:
+                      type: object
+                      properties:
+                        annotated:
+                          $ref: "#/components/schemas/SimpleCategory"
+                          description: child description
+                          properties:
+                            foo:
+                              $ref: "#/components/schemas/Foo"
+                    SimpleCategory: {}
+                """;
         SerializationMatchers.assertEqualsToYaml31(openAPI, yaml);
     }
 
@@ -3663,34 +3735,36 @@ public class ReaderTest {
         Reader reader = new Reader(new SwaggerConfiguration().openAPI(new OpenAPI()).openAPI31(true));
 
         OpenAPI openAPI = reader.read(SiblingsResource.class);
-        String yaml = "openapi: 3.1.0\n" +
-                "paths:\n" +
-                "  /test:\n" +
-                "    get:\n" +
-                "      operationId: getCart\n" +
-                "      responses:\n" +
-                "        default:\n" +
-                "          description: default response\n" +
-                "          content:\n" +
-                "            '*/*':\n" +
-                "              schema:\n" +
-                "                $ref: \"#/components/schemas/Pet\"\n" +
-                "components:\n" +
-                "  schemas:\n" +
-                "    Category:\n" +
-                "      type: object\n" +
-                "      description: parent\n" +
-                "      properties:\n" +
-                "        id:\n" +
-                "          type: integer\n" +
-                "          format: int64\n" +
-                "    Pet:\n" +
-                "      type: object\n" +
-                "      description: Pet\n" +
-                "      properties:\n" +
-                "        category:\n" +
-                "          $ref: \"#/components/schemas/Category\"\n" +
-                "          description: child\n";
+        String yaml = """
+                openapi: 3.1.0
+                paths:
+                  /test:
+                    get:
+                      operationId: getCart
+                      responses:
+                        default:
+                          description: default response
+                          content:
+                            '*/*':
+                              schema:
+                                $ref: "#/components/schemas/Pet"
+                components:
+                  schemas:
+                    Category:
+                      type: object
+                      description: parent
+                      properties:
+                        id:
+                          type: integer
+                          format: int64
+                    Pet:
+                      type: object
+                      description: Pet
+                      properties:
+                        category:
+                          $ref: "#/components/schemas/Category"
+                          description: child
+                """;
         SerializationMatchers.assertEqualsToYaml31(openAPI, yaml);
     }
 
@@ -3699,36 +3773,38 @@ public class ReaderTest {
         Reader reader = new Reader(new SwaggerConfiguration().openAPI(new OpenAPI()).openAPI31(true));
 
         OpenAPI openAPI = reader.read(SiblingsResourceSimple.class);
-        String yaml = "openapi: 3.1.0\n" +
-                "paths:\n" +
-                "  /test:\n" +
-                "    get:\n" +
-                "      operationId: getCart\n" +
-                "      responses:\n" +
-                "        \"300\":\n" +
-                "          description: aaa\n" +
-                "          content:\n" +
-                "            '*/*':\n" +
-                "              schema:\n" +
-                "                $ref: \"#/components/schemas/PetSimple\"\n" +
-                "                description: resource pet\n" +
-                "                readOnly: true\n" +
-                "  /test/impl:\n" +
-                "    get:\n" +
-                "      operationId: getCartImpl\n" +
-                "      responses:\n" +
-                "        \"300\":\n" +
-                "          description: aaa\n" +
-                "          content:\n" +
-                "            '*/*':\n" +
-                "              schema:\n" +
-                "                $ref: \"#/components/schemas/PetSimple\"\n" +
-                "                description: resource pet\n" +
-                "                readOnly: true\n" +
-                "components:\n" +
-                "  schemas:\n" +
-                "    PetSimple:\n" +
-                "      description: Pet\n";
+        String yaml = """
+                openapi: 3.1.0
+                paths:
+                  /test:
+                    get:
+                      operationId: getCart
+                      responses:
+                        "300":
+                          description: aaa
+                          content:
+                            '*/*':
+                              schema:
+                                $ref: "#/components/schemas/PetSimple"
+                                description: resource pet
+                                readOnly: true
+                  /test/impl:
+                    get:
+                      operationId: getCartImpl
+                      responses:
+                        "300":
+                          description: aaa
+                          content:
+                            '*/*':
+                              schema:
+                                $ref: "#/components/schemas/PetSimple"
+                                description: resource pet
+                                readOnly: true
+                components:
+                  schemas:
+                    PetSimple:
+                      description: Pet
+                """;
         SerializationMatchers.assertEqualsToYaml31(openAPI, yaml);
     }
 
@@ -3737,46 +3813,48 @@ public class ReaderTest {
         Reader reader = new Reader(new SwaggerConfiguration().openAPI(new OpenAPI()).openAPI31(true));
 
         OpenAPI openAPI = reader.read(SiblingsResourceResponse.class);
-        String yaml = "openapi: 3.1.0\n" +
-                "paths:\n" +
-                "  /test:\n" +
-                "    get:\n" +
-                "      operationId: getCart\n" +
-                "      responses:\n" +
-                "        \"300\":\n" +
-                "          description: aaa\n" +
-                "          content:\n" +
-                "            application/json:\n" +
-                "              schema:\n" +
-                "                $ref: \"#/components/schemas/PetSimple\"\n" +
-                "                description: resource pet\n" +
-                "                readOnly: true\n" +
-                "            application/xml:\n" +
-                "              schema:\n" +
-                "                $ref: \"#/components/schemas/PetSimple\"\n" +
-                "                description: resource pet xml\n" +
-                "                readOnly: true\n" +
-                "  /test/impl:\n" +
-                "    get:\n" +
-                "      operationId: getCartImpl\n" +
-                "      responses:\n" +
-                "        \"300\":\n" +
-                "          description: aaa\n" +
-                "          content:\n" +
-                "            application/json:\n" +
-                "              schema:\n" +
-                "                $ref: \"#/components/schemas/PetSimple\"\n" +
-                "                description: resource pet\n" +
-                "                readOnly: true\n" +
-                "            application/xml:\n" +
-                "              schema:\n" +
-                "                $ref: \"#/components/schemas/PetSimple\"\n" +
-                "                description: resource pet xml\n" +
-                "                readOnly: true\n" +
-                "components:\n" +
-                "  schemas:\n" +
-                "    PetSimple:\n" +
-                "      description: Pet\n";
+        String yaml = """
+                openapi: 3.1.0
+                paths:
+                  /test:
+                    get:
+                      operationId: getCart
+                      responses:
+                        "300":
+                          description: aaa
+                          content:
+                            application/json:
+                              schema:
+                                $ref: "#/components/schemas/PetSimple"
+                                description: resource pet
+                                readOnly: true
+                            application/xml:
+                              schema:
+                                $ref: "#/components/schemas/PetSimple"
+                                description: resource pet xml
+                                readOnly: true
+                  /test/impl:
+                    get:
+                      operationId: getCartImpl
+                      responses:
+                        "300":
+                          description: aaa
+                          content:
+                            application/json:
+                              schema:
+                                $ref: "#/components/schemas/PetSimple"
+                                description: resource pet
+                                readOnly: true
+                            application/xml:
+                              schema:
+                                $ref: "#/components/schemas/PetSimple"
+                                description: resource pet xml
+                                readOnly: true
+                components:
+                  schemas:
+                    PetSimple:
+                      description: Pet
+                """;
         SerializationMatchers.assertEqualsToYaml31(openAPI, yaml);
     }
 
@@ -3785,43 +3863,45 @@ public class ReaderTest {
         Reader reader = new Reader(new SwaggerConfiguration().openAPI(new OpenAPI()).openAPI31(true));
 
         OpenAPI openAPI = reader.read(SiblingsResourceRequestBody.class);
-        String yaml = "openapi: 3.1.0\n" +
-                "paths:\n" +
-                "  /test/bodyimpl:\n" +
-                "    get:\n" +
-                "      operationId: getBodyImpl\n" +
-                "      requestBody:\n" +
-                "        description: aaa\n" +
-                "        content:\n" +
-                "          application/json:\n" +
-                "            schema:\n" +
-                "              $ref: \"#/components/schemas/PetSimple\"\n" +
-                "              description: resource pet\n" +
-                "              writeOnly: true\n" +
-                "      responses:\n" +
-                "        default:\n" +
-                "          description: default response\n" +
-                "          content:\n" +
-                "            '*/*': {}\n" +
-                "  /test/bodyimplparam:\n" +
-                "    get:\n" +
-                "      operationId: getBodyImplParam\n" +
-                "      requestBody:\n" +
-                "        content:\n" +
-                "          '*/*':\n" +
-                "            schema:\n" +
-                "              $ref: \"#/components/schemas/PetSimple\"\n" +
-                "              description: resource pet\n" +
-                "              writeOnly: true\n" +
-                "      responses:\n" +
-                "        default:\n" +
-                "          description: default response\n" +
-                "          content:\n" +
-                "            '*/*': {}\n" +
-                "components:\n" +
-                "  schemas:\n" +
-                "    PetSimple:\n" +
-                "      description: Pet\n";
+        String yaml = """
+                openapi: 3.1.0
+                paths:
+                  /test/bodyimpl:
+                    get:
+                      operationId: getBodyImpl
+                      requestBody:
+                        description: aaa
+                        content:
+                          application/json:
+                            schema:
+                              $ref: "#/components/schemas/PetSimple"
+                              description: resource pet
+                              writeOnly: true
+                      responses:
+                        default:
+                          description: default response
+                          content:
+                            '*/*': {}
+                  /test/bodyimplparam:
+                    get:
+                      operationId: getBodyImplParam
+                      requestBody:
+                        content:
+                          '*/*':
+                            schema:
+                              $ref: "#/components/schemas/PetSimple"
+                              description: resource pet
+                              writeOnly: true
+                      responses:
+                        default:
+                          description: default response
+                          content:
+                            '*/*': {}
+                components:
+                  schemas:
+                    PetSimple:
+                      description: Pet
+                """;
         SerializationMatchers.assertEqualsToYaml31(openAPI, yaml);
     }
 
@@ -3830,74 +3910,76 @@ public class ReaderTest {
         Reader reader = new Reader(new SwaggerConfiguration().openAPI(new OpenAPI()).openAPI31(true));
 
         OpenAPI openAPI = reader.read(SiblingsResourceRequestBodyMultiple.class);
-        String yaml = "openapi: 3.1.0\n" +
-                "paths:\n" +
-                "  /test/bodyimpl:\n" +
-                "    get:\n" +
-                "      operationId: getBodyImpl\n" +
-                "      requestBody:\n" +
-                "        description: aaa\n" +
-                "        content:\n" +
-                "          application/json:\n" +
-                "            schema:\n" +
-                "              $ref: \"#/components/schemas/PetSimple\"\n" +
-                "              description: resource pet\n" +
-                "              writeOnly: true\n" +
-                "          application/xml:\n" +
-                "            schema:\n" +
-                "              $ref: \"#/components/schemas/PetSimple\"\n" +
-                "              description: resource pet xml\n" +
-                "              writeOnly: true\n" +
-                "      responses:\n" +
-                "        default:\n" +
-                "          description: default response\n" +
-                "          content:\n" +
-                "            '*/*': {}\n" +
-                "  /test/bodyimplparam:\n" +
-                "    get:\n" +
-                "      operationId: getBodyImplParam\n" +
-                "      requestBody:\n" +
-                "        content:\n" +
-                "          application/json:\n" +
-                "            schema:\n" +
-                "              $ref: \"#/components/schemas/PetSimple\"\n" +
-                "              description: resource pet\n" +
-                "              writeOnly: true\n" +
-                "          application/xml:\n" +
-                "            schema:\n" +
-                "              $ref: \"#/components/schemas/PetSimple\"\n" +
-                "              description: resource pet xml\n" +
-                "              writeOnly: true\n" +
-                "      responses:\n" +
-                "        default:\n" +
-                "          description: default response\n" +
-                "          content:\n" +
-                "            '*/*': {}\n" +
-                "  /test/bodyparam:\n" +
-                "    get:\n" +
-                "      operationId: getBodyParam\n" +
-                "      requestBody:\n" +
-                "        description: test\n" +
-                "        content:\n" +
-                "          application/json:\n" +
-                "            schema:\n" +
-                "              $ref: \"#/components/schemas/PetSimple\"\n" +
-                "              description: resource pet\n" +
-                "              writeOnly: true\n" +
-                "          application/xml:\n" +
-                "            schema:\n" +
-                "              $ref: \"#/components/schemas/PetSimple\"\n" +
-                "              description: resource pet xml\n" +
-                "              writeOnly: true\n" +
-                "      responses:\n" +
-                "        default:\n" +
-                "          description: default response\n" +
-                "          content:\n" +
-                "            '*/*': {}\n" +
-                "components:\n" +
-                "  schemas:\n" +
-                "    PetSimple:\n" +
-                "      description: Pet\n";
+        String yaml = """
+                openapi: 3.1.0
+                paths:
+                  /test/bodyimpl:
+                    get:
+                      operationId: getBodyImpl
+                      requestBody:
+                        description: aaa
+                        content:
+                          application/json:
+                            schema:
+                              $ref: "#/components/schemas/PetSimple"
+                              description: resource pet
+                              writeOnly: true
+                          application/xml:
+                            schema:
+                              $ref: "#/components/schemas/PetSimple"
+                              description: resource pet xml
+                              writeOnly: true
+                      responses:
+                        default:
+                          description: default response
+                          content:
+                            '*/*': {}
+                  /test/bodyimplparam:
+                    get:
+                      operationId: getBodyImplParam
+                      requestBody:
+                        content:
+                          application/json:
+                            schema:
+                              $ref: "#/components/schemas/PetSimple"
+                              description: resource pet
+                              writeOnly: true
+                          application/xml:
+                            schema:
+                              $ref: "#/components/schemas/PetSimple"
+                              description: resource pet xml
+                              writeOnly: true
+                      responses:
+                        default:
+                          description: default response
+                          content:
+                            '*/*': {}
+                  /test/bodyparam:
+                    get:
+                      operationId: getBodyParam
+                      requestBody:
+                        description: test
+                        content:
+                          application/json:
+                            schema:
+                              $ref: "#/components/schemas/PetSimple"
+                              description: resource pet
+                              writeOnly: true
+                          application/xml:
+                            schema:
+                              $ref: "#/components/schemas/PetSimple"
+                              description: resource pet xml
+                              writeOnly: true
+                      responses:
+                        default:
+                          description: default response
+                          content:
+                            '*/*': {}
+                components:
+                  schemas:
+                    PetSimple:
+                      description: Pet
+                """;
         SerializationMatchers.assertEqualsToYaml31(openAPI, yaml);
     }
 
@@ -3906,87 +3988,89 @@ public class ReaderTest {
         Reader reader = new Reader(new SwaggerConfiguration().openAPI(new OpenAPI()).openAPI31(true));
         Set<Class<?>> classes = new HashSet<>(Arrays.asList(SiblingPropResource.class, WebHookResource.class));
         OpenAPI openAPI = reader.read(classes);
-        String yaml = "openapi: 3.1.0\n" +
-                "paths:\n" +
-                "  /pet:\n" +
-                "    put:\n" +
-                "      tags:\n" +
-                "      - pet\n" +
-                "      summary: Update an existing pet\n" +
-                "      operationId: updatePet\n" +
-                "      requestBody:\n" +
-                "        description: Pet object that needs to be updated in the store\n" +
-                "        content:\n" +
-                "          application/json:\n" +
-                "            schema:\n" +
-                "              $ref: \"#/components/schemas/Pet\"\n" +
-                "              description: A Pet in JSON Format\n" +
-                "              required:\n" +
-                "              - id\n" +
-                "              writeOnly: true\n" +
-                "          application/xml:\n" +
-                "            schema:\n" +
-                "              $ref: \"#/components/schemas/Pet\"\n" +
-                "              description: A Pet in XML Format\n" +
-                "              required:\n" +
-                "              - id\n" +
-                "              writeOnly: true\n" +
-                "        required: true\n" +
-                "      responses:\n" +
-                "        \"200\":\n" +
-                "          description: Successful operation\n" +
-                "          content:\n" +
-                "            application/xml:\n" +
-                "              schema:\n" +
-                "                $ref: \"#/components/schemas/Pet\"\n" +
-                "                description: A Pet in XML Format\n" +
-                "                readOnly: true\n" +
-                "            application/json:\n" +
-                "              schema:\n" +
-                "                $ref: \"#/components/schemas/Pet\"\n" +
-                "                description: A Pet in JSON Format\n" +
-                "                readOnly: true\n" +
-                "        \"400\":\n" +
-                "          description: Invalid ID supplied\n" +
-                "        \"404\":\n" +
-                "          description: Pet not found\n" +
-                "        \"405\":\n" +
-                "          description: Validation exception\n" +
-                "      security:\n" +
-                "      - petstore_auth:\n" +
-                "        - write:pets\n" +
-                "        - read:pets\n" +
-                "      - mutual_tls: []\n" +
-                "components:\n" +
-                "  schemas:\n" +
-                "    Category:\n" +
-                "      type: object\n" +
-                "      description: parent\n" +
-                "      properties:\n" +
-                "        id:\n" +
-                "          type: integer\n" +
-                "          format: int64\n" +
-                "    Pet:\n" +
-                "      type: object\n" +
-                "      description: Pet\n" +
-                "      properties:\n" +
-                "        category:\n" +
-                "          $ref: \"#/components/schemas/Category\"\n" +
-                "          description: child\n" +
-                "webhooks:\n" +
-                "  newPet:\n" +
-                "    post:\n" +
-                "      requestBody:\n" +
-                "        description: Information about a new pet in the system\n" +
-                "        content:\n" +
-                "          application/json:\n" +
-                "            schema:\n" +
-                "              $ref: \"#/components/schemas/Pet\"\n" +
-                "              description: Webhook Pet\n" +
-                "      responses:\n" +
-                "        \"200\":\n" +
-                "          description: Return a 200 status to indicate that the data was received\n" +
-                "            successfully\n";
+        String yaml = """
+                openapi: 3.1.0
+                paths:
+                  /pet:
+                    put:
+                      tags:
+                      - pet
+                      summary: Update an existing pet
+                      operationId: updatePet
+                      requestBody:
+                        description: Pet object that needs to be updated in the store
+                        content:
+                          application/json:
+                            schema:
+                              $ref: "#/components/schemas/Pet"
+                              description: A Pet in JSON Format
+                              required:
+                              - id
+                              writeOnly: true
+                          application/xml:
+                            schema:
+                              $ref: "#/components/schemas/Pet"
+                              description: A Pet in XML Format
+                              required:
+                              - id
+                              writeOnly: true
+                        required: true
+                      responses:
+                        "200":
+                          description: Successful operation
+                          content:
+                            application/xml:
+                              schema:
+                                $ref: "#/components/schemas/Pet"
+                                description: A Pet in XML Format
+                                readOnly: true
+                            application/json:
+                              schema:
+                                $ref: "#/components/schemas/Pet"
+                                description: A Pet in JSON Format
+                                readOnly: true
+                        "400":
+                          description: Invalid ID supplied
+                        "404":
+                          description: Pet not found
+                        "405":
+                          description: Validation exception
+                      security:
+                      - petstore_auth:
+                        - write:pets
+                        - read:pets
+                      - mutual_tls: []
+                components:
+                  schemas:
+                    Category:
+                      type: object
+                      description: parent
+                      properties:
+                        id:
+                          type: integer
+                          format: int64
+                    Pet:
+                      type: object
+                      description: Pet
+                      properties:
+                        category:
+                          $ref: "#/components/schemas/Category"
+                          description: child
+                webhooks:
+                  newPet:
+                    post:
+                      requestBody:
+                        description: Information about a new pet in the system
+                        content:
+                          application/json:
+                            schema:
+                              $ref: "#/components/schemas/Pet"
+                              description: Webhook Pet
+                      responses:
+                        "200":
+                          description: Return a 200 status to indicate that the data was received
+                            successfully
+                """;
         SerializationMatchers.assertEqualsToYaml31(openAPI, yaml);
     }
 
@@ -3995,140 +4079,142 @@ public class ReaderTest {
         Reader reader = new Reader(new SwaggerConfiguration().openAPI(new OpenAPI()).openAPI31(true));
         Set<Class<?>> classes = new HashSet<>(Arrays.asList(Misc31Resource.class));
         OpenAPI openAPI = reader.read(classes);
-        String yaml = "openapi: 3.1.0\n" +
-                "paths:\n" +
-                "  /pet:\n" +
-                "    put:\n" +
-                "      operationId: updatePet\n" +
-                "      responses:\n" +
-                "        default:\n" +
-                "          description: default response\n" +
-                "          content:\n" +
-                "            application/json:\n" +
-                "              schema:\n" +
-                "                $ref: \"#/components/schemas/ModelWithOAS31Stuff\"\n" +
-                "            application/xml:\n" +
-                "              schema:\n" +
-                "                $ref: \"#/components/schemas/ModelWithOAS31Stuff\"\n" +
-                "components:\n" +
-                "  schemas:\n" +
-                "    ModelWithOAS31Stuff:\n" +
-                "      type: object\n" +
-                "      $comment: Random comment at schema level\n" +
-                "      $id: http://yourdomain.com/schemas/myschema.json\n" +
-                "      description: this is model for testing OAS 3.1 resolving\n" +
-                "      properties:\n" +
-                "        randomList:\n" +
-                "          type: array\n" +
-                "          contains:\n" +
-                "            type: string\n" +
-                "          items:\n" +
-                "            type: string\n" +
-                "          maxContains: 10\n" +
-                "          minContains: 1\n" +
-                "          prefixItems:\n" +
-                "          - type: string\n" +
-                "          unevaluatedItems:\n" +
-                "            type: number\n" +
-                "        status:\n" +
-                "          type:\n" +
-                "          - string\n" +
-                "          - number\n" +
-                "        intValue:\n" +
-                "          type: integer\n" +
-                "          format: int32\n" +
-                "          $anchor: intValue\n" +
-                "          $comment: comment at schema property level\n" +
-                "          exclusiveMaximum: 100\n" +
-                "          exclusiveMinimum: 1\n" +
-                "        text:\n" +
-                "          type: string\n" +
-                "          contentEncoding: plan/text\n" +
-                "          contentMediaType: base64\n" +
-                "        encodedString:\n" +
-                "          type: string\n" +
-                "          contentMediaType: application/jwt\n" +
-                "          contentSchema:\n" +
-                "            $ref: \"#/components/schemas/MultipleBaseBean\"\n" +
-                "        address:\n" +
-                "          $ref: \"#/components/schemas/Address\"\n" +
-                "        client:\n" +
-                "          type: string\n" +
-                "          dependentSchemas:\n" +
-                "            creditCard:\n" +
-                "              $ref: \"#/components/schemas/CreditCard\"\n" +
-                "    MultipleBaseBean:\n" +
-                "      type: object\n" +
-                "      description: MultipleBaseBean\n" +
-                "      properties:\n" +
-                "        beanType:\n" +
-                "          type: string\n" +
-                "        a:\n" +
-                "          type: integer\n" +
-                "          format: int32\n" +
-                "        b:\n" +
-                "          type: string\n" +
-                "    MultipleSub1Bean:\n" +
-                "      allOf:\n" +
-                "      - $ref: \"#/components/schemas/MultipleBaseBean\"\n" +
-                "      - type: object\n" +
-                "        properties:\n" +
-                "          c:\n" +
-                "            type: integer\n" +
-                "            format: int32\n" +
-                "      description: MultipleSub1Bean\n" +
-                "    MultipleSub2Bean:\n" +
-                "      allOf:\n" +
-                "      - $ref: \"#/components/schemas/MultipleBaseBean\"\n" +
-                "      - type: object\n" +
-                "        properties:\n" +
-                "          d:\n" +
-                "            type: integer\n" +
-                "            format: int32\n" +
-                "      description: MultipleSub2Bean\n" +
-                "    Address:\n" +
-                "      type: object\n" +
-                "      if:\n" +
-                "        $ref: \"#/components/schemas/AnnotatedCountry\"\n" +
-                "      then:\n" +
-                "        $ref: \"#/components/schemas/PostalCodeNumberPattern\"\n" +
-                "      else:\n" +
-                "        $ref: \"#/components/schemas/PostalCodePattern\"\n" +
-                "      dependentRequired:\n" +
-                "        street:\n" +
-                "        - country\n" +
-                "      properties:\n" +
-                "        street:\n" +
-                "          type: string\n" +
-                "        country:\n" +
-                "          type: string\n" +
-                "          enum:\n" +
-                "          - United States of America\n" +
-                "          - Canada\n" +
-                "      propertyNames:\n" +
-                "        pattern: \"^[A-Za-z_][A-Za-z0-9_]*$\"\n" +
-                "    AnnotatedCountry:\n" +
-                "      type: object\n" +
-                "      properties:\n" +
-                "        country:\n" +
-                "          const: United States\n" +
-                "    CreditCard:\n" +
-                "      type: object\n" +
-                "      properties:\n" +
-                "        billingAddress:\n" +
-                "          type: string\n" +
-                "    PostalCodeNumberPattern:\n" +
-                "      type: object\n" +
-                "      properties:\n" +
-                "        postalCode:\n" +
-                "          pattern: \"[0-9]{5}(-[0-9]{4})?\"\n" +
-                "    PostalCodePattern:\n" +
-                "      type: object\n" +
-                "      properties:\n" +
-                "        postalCode:\n" +
-                "          pattern: \"[A-Z][0-9][A-Z] [0-9][A-Z][0-9]\"\n" +
-                "    PropertyNamesPattern:\n" +
-                "      pattern: \"^[A-Za-z_][A-Za-z0-9_]*$\"\n";
+        String yaml = """
+                openapi: 3.1.0
+                paths:
+                  /pet:
+                    put:
+                      operationId: updatePet
+                      responses:
+                        default:
+                          description: default response
+                          content:
+                            application/json:
+                              schema:
+                                $ref: "#/components/schemas/ModelWithOAS31Stuff"
+                            application/xml:
+                              schema:
+                                $ref: "#/components/schemas/ModelWithOAS31Stuff"
+                components:
+                  schemas:
+                    ModelWithOAS31Stuff:
+                      type: object
+                      $comment: Random comment at schema level
+                      $id: http://yourdomain.com/schemas/myschema.json
+                      description: this is model for testing OAS 3.1 resolving
+                      properties:
+                        randomList:
+                          type: array
+                          contains:
+                            type: string
+                          items:
+                            type: string
+                          maxContains: 10
+                          minContains: 1
+                          prefixItems:
+                          - type: string
+                          unevaluatedItems:
+                            type: number
+                        status:
+                          type:
+                          - string
+                          - number
+                        intValue:
+                          type: integer
+                          format: int32
+                          $anchor: intValue
+                          $comment: comment at schema property level
+                          exclusiveMaximum: 100
+                          exclusiveMinimum: 1
+                        text:
+                          type: string
+                          contentEncoding: plan/text
+                          contentMediaType: base64
+                        encodedString:
+                          type: string
+                          contentMediaType: application/jwt
+                          contentSchema:
+                            $ref: "#/components/schemas/MultipleBaseBean"
+                        address:
+                          $ref: "#/components/schemas/Address"
+                        client:
+                          type: string
+                          dependentSchemas:
+                            creditCard:
+                              $ref: "#/components/schemas/CreditCard"
+                    MultipleBaseBean:
+                      type: object
+                      description: MultipleBaseBean
+                      properties:
+                        beanType:
+                          type: string
+                        a:
+                          type: integer
+                          format: int32
+                        b:
+                          type: string
+                    MultipleSub1Bean:
+                      allOf:
+                      - $ref: "#/components/schemas/MultipleBaseBean"
+                      - type: object
+                        properties:
+                          c:
+                            type: integer
+                            format: int32
+                      description: MultipleSub1Bean
+                    MultipleSub2Bean:
+                      allOf:
+                      - $ref: "#/components/schemas/MultipleBaseBean"
+                      - type: object
+                        properties:
+                          d:
+                            type: integer
+                            format: int32
+                      description: MultipleSub2Bean
+                    Address:
+                      type: object
+                      if:
+                        $ref: "#/components/schemas/AnnotatedCountry"
+                      then:
+                        $ref: "#/components/schemas/PostalCodeNumberPattern"
+                      else:
+                        $ref: "#/components/schemas/PostalCodePattern"
+                      dependentRequired:
+                        street:
+                        - country
+                      properties:
+                        street:
+                          type: string
+                        country:
+                          type: string
+                          enum:
+                          - United States of America
+                          - Canada
+                      propertyNames:
+                        pattern: "^[A-Za-z_][A-Za-z0-9_]*$"
+                    AnnotatedCountry:
+                      type: object
+                      properties:
+                        country:
+                          const: United States
+                    CreditCard:
+                      type: object
+                      properties:
+                        billingAddress:
+                          type: string
+                    PostalCodeNumberPattern:
+                      type: object
+                      properties:
+                        postalCode:
+                          pattern: "[0-9]{5}(-[0-9]{4})?"
+                    PostalCodePattern:
+                      type: object
+                      properties:
+                        postalCode:
+                          pattern: "[A-Z][0-9][A-Z] [0-9][A-Z][0-9]"
+                    PropertyNamesPattern:
+                      pattern: "^[A-Za-z_][A-Za-z0-9_]*$"
+                """;
         SerializationMatchers.assertEqualsToYaml31(openAPI, yaml);
     }
 
@@ -4137,31 +4223,33 @@ public class ReaderTest {
         Reader reader = new Reader(new OpenAPI());
 
         OpenAPI openAPI = reader.read(Ticket4446Resource.class);
-        String yaml = "openapi: 3.0.1\n" +
-                "paths:\n" +
-                "  /test/test:\n" +
-                "    get:\n" +
-                "      operationId: getCart\n" +
-                "      responses:\n" +
-                "        default:\n" +
-                "          description: default response\n" +
-                "          content:\n" +
-                "            '*/*':\n" +
-                "              schema:\n" +
-                "                $ref: \"#/components/schemas/MyPojo\"\n" +
-                "components:\n" +
-                "  schemas:\n" +
-                "    MyPojo:\n" +
-                "      type: object\n" +
-                "      properties:\n" +
-                "        someStrings:\n" +
-                "          type: array\n" +
-                "          items:\n" +
-                "            type: string\n" +
-                "        morePojos:\n" +
-                "          type: array\n" +
-                "          items:\n" +
-                "            $ref: \"#/components/schemas/MyPojo\"\n";
+        String yaml = """
+                openapi: 3.0.1
+                paths:
+                  /test/test:
+                    get:
+                      operationId: getCart
+                      responses:
+                        default:
+                          description: default response
+                          content:
+                            '*/*':
+                              schema:
+                                $ref: "#/components/schemas/MyPojo"
+                components:
+                  schemas:
+                    MyPojo:
+                      type: object
+                      properties:
+                        someStrings:
+                          type: array
+                          items:
+                            type: string
+                        morePojos:
+                          type: array
+                          items:
+                            $ref: "#/components/schemas/MyPojo"
+                """;
         SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
     }
 
@@ -4170,26 +4258,28 @@ public class ReaderTest {
         Reader reader = new Reader(new SwaggerConfiguration().openAPI(new OpenAPI()).openAPI31(true));
 
         OpenAPI openAPI = reader.read(ParameterMaximumValueResource.class);
-        String yaml = "openapi: 3.1.0\n" +
-                "paths:\n" +
-                "  /test/{petId}:\n" +
-                "    get:\n" +
-                "      operationId: getPetById\n" +
-                "      parameters:\n" +
-                "      - name: petId\n" +
-                "        in: path\n" +
-                "        description: ID of pet that needs to be fetched\n" +
-                "        required: true\n" +
-                "        schema:\n" +
-                "          type: integer\n" +
-                "          format: int64\n" +
-                "          exclusiveMaximum: 10\n" +
-                "          exclusiveMinimum: 1\n" +
-                "      responses:\n" +
-                "        default:\n" +
-                "          description: default response\n" +
-                "          content:\n" +
-                "            '*/*': {}\n";
+        String yaml = """
+                openapi: 3.1.0
+                paths:
+                  /test/{petId}:
+                    get:
+                      operationId: getPetById
+                      parameters:
+                      - name: petId
+                        in: path
+                        description: ID of pet that needs to be fetched
+                        required: true
+                        schema:
+                          type: integer
+                          format: int64
+                          exclusiveMaximum: 10
+                          exclusiveMinimum: 1
+                      responses:
+                        default:
+                          description: default response
+                          content:
+                            '*/*': {}
+                """;
         SerializationMatchers.assertEqualsToYaml31(openAPI, yaml);
     }
 
@@ -4198,79 +4288,81 @@ public class ReaderTest {
         Reader reader = new Reader(new OpenAPI());
 
         OpenAPI openAPI = reader.read(Ticket4483Resource.class);
-        String yaml = "openapi: 3.0.1\n" +
-                "tags:\n" +
-                "- name: Dummy\n" +
-                "  description: Dummy resource for testing setup\n" +
-                "paths:\n" +
-                "  /test:\n" +
-                "    get:\n" +
-                "      tags:\n" +
-                "      - Dummy\n" +
-                "      description: Dummy GET\n" +
-                "      operationId: dummy\n" +
-                "      responses:\n" +
-                "        \"401\":\n" +
-                "          description: Authentication is required\n" +
-                "          content:\n" +
-                "            application/json:\n" +
-                "              schema:\n" +
-                "                type: array\n" +
-                "                items:\n" +
-                "                  $ref: \"#/components/schemas/LocalizedError\"\n" +
-                "        \"200\":\n" +
-                "          description: test\n" +
-                "          content:\n" +
-                "            application/json:\n" +
-                "              schema:\n" +
-                "                type: object\n" +
-                "                additionalProperties:\n" +
-                "                  type: boolean\n" +
-                "  /test/opresp:\n" +
-                "    get:\n" +
-                "      tags:\n" +
-                "      - Dummy\n" +
-                "      operationId: dummyopresp\n" +
-                "      responses:\n" +
-                "        \"401\":\n" +
-                "          description: Authentication is required\n" +
-                "          content:\n" +
-                "            application/json:\n" +
-                "              schema:\n" +
-                "                type: array\n" +
-                "                items:\n" +
-                "                  $ref: \"#/components/schemas/LocalizedError\"\n" +
-                "        \"200\":\n" +
-                "          description: Dummy GET opresp\n" +
-                "          content:\n" +
-                "            application/json:\n" +
-                "              schema:\n" +
-                "                type: object\n" +
-                "                additionalProperties:\n" +
-                "                  type: boolean\n" +
-                "  /test/oprespnodesc:\n" +
-                "    get:\n" +
-                "      tags:\n" +
-                "      - Dummy\n" +
-                "      operationId: oprespnodesc\n" +
-                "      responses:\n" +
-                "        \"401\":\n" +
-                "          description: Authentication is required\n" +
-                "          content:\n" +
-                "            application/json:\n" +
-                "              schema:\n" +
-                "                type: array\n" +
-                "                items:\n" +
-                "                  $ref: \"#/components/schemas/LocalizedError\"\n" +
-                "components:\n" +
-                "  schemas:\n" +
-                "    LocalizedError:\n" +
-                "      type: object\n" +
-                "      properties:\n" +
-                "        code:\n" +
-                "          type: string\n" +
-                "        message:\n" +
-                "          type: string\n";
+        String yaml = """
+                openapi: 3.0.1
+                tags:
+                - name: Dummy
+                  description: Dummy resource for testing setup
+                paths:
+                  /test:
+                    get:
+                      tags:
+                      - Dummy
+                      description: Dummy GET
+                      operationId: dummy
+                      responses:
+                        "401":
+                          description: Authentication is required
+                          content:
+                            application/json:
+                              schema:
+                                type: array
+                                items:
+                                  $ref: "#/components/schemas/LocalizedError"
+                        "200":
+                          description: test
+                          content:
+                            application/json:
+                              schema:
+                                type: object
+                                additionalProperties:
+                                  type: boolean
+                  /test/opresp:
+                    get:
+                      tags:
+                      - Dummy
+                      operationId: dummyopresp
+                      responses:
+                        "401":
+                          description: Authentication is required
+                          content:
+                            application/json:
+                              schema:
+                                type: array
+                                items:
+                                  $ref: "#/components/schemas/LocalizedError"
+                        "200":
+                          description: Dummy GET opresp
+                          content:
+                            application/json:
+                              schema:
+                                type: object
+                                additionalProperties:
+                                  type: boolean
+                  /test/oprespnodesc:
+                    get:
+                      tags:
+                      - Dummy
+                      operationId: oprespnodesc
+                      responses:
+                        "401":
+                          description: Authentication is required
+                          content:
+                            application/json:
+                              schema:
+                                type: array
+                                items:
+                                  $ref: "#/components/schemas/LocalizedError"
+                components:
+                  schemas:
+                    LocalizedError:
+                      type: object
+                      properties:
+                        code:
+                          type: string
+                        message:
+                          type: string
+                """;
         SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
     }
 
@@ -4280,18 +4372,20 @@ public class ReaderTest {
         Reader reader = new Reader(config);
 
         OpenAPI openAPI = reader.read(DefaultResponseResource.class);
-        String yaml = "openapi: 3.0.4\n" +
-                "paths:\n" +
-                "  /:\n" +
-                "    get:\n" +
-                "      operationId: test\n" +
-                "      responses:\n" +
-                "        default:\n" +
-                "          description: default response\n" +
-                "          content:\n" +
-                "            '*/*':\n" +
-                "              schema:\n" +
-                "                type: string\n";
+        String yaml = """
+                openapi: 3.0.4
+                paths:
+                  /:
+                    get:
+                      operationId: test
+                      responses:
+                        default:
+                          description: default response
+                          content:
+                            '*/*':
+                              schema:
+                                type: string
+                """;
         SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
     }
 
@@ -4302,197 +4396,199 @@ public class ReaderTest {
         Reader reader = new Reader(config);
 
         OpenAPI openAPI = reader.read(Ticket4804Resource.class);
-        String yaml = "openapi: 3.0.1\n" +
-                "paths:\n" +
-                "  /test/barcart:\n" +
-                "    put:\n" +
-                "      operationId: barCart\n" +
-                "      requestBody:\n" +
-                "        content:\n" +
-                "          '*/*':\n" +
-                "            schema:\n" +
-                "              required:\n" +
-                "              - notNullcartDetails\n" +
-                "              type: object\n" +
-                "              properties:\n" +
-                "                pageSize:\n" +
-                "                  type: integer\n" +
-                "                  format: int32\n" +
-                "                cartDetails:\n" +
-                "                  required:\n" +
-                "                  - description\n" +
-                "                  type: object\n" +
-                "                  properties:\n" +
-                "                    name:\n" +
-                "                      type: string\n" +
-                "                    description:\n" +
-                "                      type: string\n" +
-                "                notNullcartDetails:\n" +
-                "                  required:\n" +
-                "                  - description\n" +
-                "                  type: object\n" +
-                "                  properties:\n" +
-                "                    name:\n" +
-                "                      type: string\n" +
-                "                    description:\n" +
-                "                      type: string\n" +
-                "      responses:\n" +
-                "        default:\n" +
-                "          description: default response\n" +
-                "          content:\n" +
-                "            '*/*': {}\n" +
-                "  /test/foocart:\n" +
-                "    put:\n" +
-                "      operationId: fooCart\n" +
-                "      requestBody:\n" +
-                "        content:\n" +
-                "          '*/*':\n" +
-                "            schema:\n" +
-                "              required:\n" +
-                "              - cartDetails\n" +
-                "              - notNullcartDetails\n" +
-                "              type: object\n" +
-                "              properties:\n" +
-                "                pageSize:\n" +
-                "                  type: integer\n" +
-                "                  format: int32\n" +
-                "                cartDetails:\n" +
-                "                  required:\n" +
-                "                  - description\n" +
-                "                  type: object\n" +
-                "                  properties:\n" +
-                "                    name:\n" +
-                "                      type: string\n" +
-                "                    description:\n" +
-                "                      type: string\n" +
-                "                notNullcartDetails:\n" +
-                "                  required:\n" +
-                "                  - description\n" +
-                "                  type: object\n" +
-                "                  properties:\n" +
-                "                    name:\n" +
-                "                      type: string\n" +
-                "                    description:\n" +
-                "                      type: string\n" +
-                "      responses:\n" +
-                "        default:\n" +
-                "          description: default response\n" +
-                "          content:\n" +
-                "            '*/*': {}\n" +
-                "  /test/createcart:\n" +
-                "    post:\n" +
-                "      operationId: postCart\n" +
-                "      requestBody:\n" +
-                "        content:\n" +
-                "          '*/*':\n" +
-                "            schema:\n" +
-                "              required:\n" +
-                "              - notNullcartDetails\n" +
-                "              - pageSize\n" +
-                "              type: object\n" +
-                "              properties:\n" +
-                "                pageSize:\n" +
-                "                  type: integer\n" +
-                "                  format: int32\n" +
-                "                cartDetails:\n" +
-                "                  required:\n" +
-                "                  - description\n" +
-                "                  - name\n" +
-                "                  type: object\n" +
-                "                  properties:\n" +
-                "                    name:\n" +
-                "                      type: string\n" +
-                "                    description:\n" +
-                "                      type: string\n" +
-                "                notNullcartDetails:\n" +
-                "                  required:\n" +
-                "                  - description\n" +
-                "                  - name\n" +
-                "                  type: object\n" +
-                "                  properties:\n" +
-                "                    name:\n" +
-                "                      type: string\n" +
-                "                    description:\n" +
-                "                      type: string\n" +
-                "      responses:\n" +
-                "        default:\n" +
-                "          description: default response\n" +
-                "          content:\n" +
-                "            '*/*': {}\n" +
-                "  /test/updatecart:\n" +
-                "    put:\n" +
-                "      operationId: putCart\n" +
-                "      requestBody:\n" +
-                "        content:\n" +
-                "          '*/*':\n" +
-                "            schema:\n" +
-                "              required:\n" +
-                "              - notNullcartDetails\n" +
-                "              type: object\n" +
-                "              properties:\n" +
-                "                pageSize:\n" +
-                "                  type: integer\n" +
-                "                  format: int32\n" +
-                "                cartDetails:\n" +
-                "                  required:\n" +
-                "                  - description\n" +
-                "                  type: object\n" +
-                "                  properties:\n" +
-                "                    name:\n" +
-                "                      type: string\n" +
-                "                    description:\n" +
-                "                      type: string\n" +
-                "                notNullcartDetails:\n" +
-                "                  required:\n" +
-                "                  - description\n" +
-                "                  type: object\n" +
-                "                  properties:\n" +
-                "                    name:\n" +
-                "                      type: string\n" +
-                "                    description:\n" +
-                "                      type: string\n" +
-                "      responses:\n" +
-                "        default:\n" +
-                "          description: default response\n" +
-                "          content:\n" +
-                "            '*/*': {}\n" +
-                "components:\n" +
-                "  schemas:\n" +
-                "    Cart:\n" +
-                "      required:\n" +
-                "      - notNullcartDetails\n" +
-                "      type: object\n" +
-                "      properties:\n" +
-                "        pageSize:\n" +
-                "          type: integer\n" +
-                "          format: int32\n" +
-                "        cartDetails:\n" +
-                "          required:\n" +
-                "          - description\n" +
-                "          type: object\n" +
-                "          properties:\n" +
-                "            name:\n" +
-                "              type: string\n" +
-                "            description:\n" +
-                "              type: string\n" +
-                "        notNullcartDetails:\n" +
-                "          required:\n" +
-                "          - description\n" +
-                "          type: object\n" +
-                "          properties:\n" +
-                "            name:\n" +
-                "              type: string\n" +
-                "            description:\n" +
-                "              type: string\n" +
-                "    CartDetails:\n" +
-                "      required:\n" +
-                "      - description\n" +
-                "      type: object\n" +
-                "      properties:\n" +
-                "        name:\n" +
-                "          type: string\n" +
-                "        description:\n" +
-                "          type: string\n";
+        String yaml = """
+                openapi: 3.0.1
+                paths:
+                  /test/barcart:
+                    put:
+                      operationId: barCart
+                      requestBody:
+                        content:
+                          '*/*':
+                            schema:
+                              required:
+                              - notNullcartDetails
+                              type: object
+                              properties:
+                                pageSize:
+                                  type: integer
+                                  format: int32
+                                cartDetails:
+                                  required:
+                                  - description
+                                  type: object
+                                  properties:
+                                    name:
+                                      type: string
+                                    description:
+                                      type: string
+                                notNullcartDetails:
+                                  required:
+                                  - description
+                                  type: object
+                                  properties:
+                                    name:
+                                      type: string
+                                    description:
+                                      type: string
+                      responses:
+                        default:
+                          description: default response
+                          content:
+                            '*/*': {}
+                  /test/foocart:
+                    put:
+                      operationId: fooCart
+                      requestBody:
+                        content:
+                          '*/*':
+                            schema:
+                              required:
+                              - cartDetails
+                              - notNullcartDetails
+                              type: object
+                              properties:
+                                pageSize:
+                                  type: integer
+                                  format: int32
+                                cartDetails:
+                                  required:
+                                  - description
+                                  type: object
+                                  properties:
+                                    name:
+                                      type: string
+                                    description:
+                                      type: string
+                                notNullcartDetails:
+                                  required:
+                                  - description
+                                  type: object
+                                  properties:
+                                    name:
+                                      type: string
+                                    description:
+                                      type: string
+                      responses:
+                        default:
+                          description: default response
+                          content:
+                            '*/*': {}
+                  /test/createcart:
+                    post:
+                      operationId: postCart
+                      requestBody:
+                        content:
+                          '*/*':
+                            schema:
+                              required:
+                              - notNullcartDetails
+                              - pageSize
+                              type: object
+                              properties:
+                                pageSize:
+                                  type: integer
+                                  format: int32
+                                cartDetails:
+                                  required:
+                                  - description
+                                  - name
+                                  type: object
+                                  properties:
+                                    name:
+                                      type: string
+                                    description:
+                                      type: string
+                                notNullcartDetails:
+                                  required:
+                                  - description
+                                  - name
+                                  type: object
+                                  properties:
+                                    name:
+                                      type: string
+                                    description:
+                                      type: string
+                      responses:
+                        default:
+                          description: default response
+                          content:
+                            '*/*': {}
+                  /test/updatecart:
+                    put:
+                      operationId: putCart
+                      requestBody:
+                        content:
+                          '*/*':
+                            schema:
+                              required:
+                              - notNullcartDetails
+                              type: object
+                              properties:
+                                pageSize:
+                                  type: integer
+                                  format: int32
+                                cartDetails:
+                                  required:
+                                  - description
+                                  type: object
+                                  properties:
+                                    name:
+                                      type: string
+                                    description:
+                                      type: string
+                                notNullcartDetails:
+                                  required:
+                                  - description
+                                  type: object
+                                  properties:
+                                    name:
+                                      type: string
+                                    description:
+                                      type: string
+                      responses:
+                        default:
+                          description: default response
+                          content:
+                            '*/*': {}
+                components:
+                  schemas:
+                    Cart:
+                      required:
+                      - notNullcartDetails
+                      type: object
+                      properties:
+                        pageSize:
+                          type: integer
+                          format: int32
+                        cartDetails:
+                          required:
+                          - description
+                          type: object
+                          properties:
+                            name:
+                              type: string
+                            description:
+                              type: string
+                        notNullcartDetails:
+                          required:
+                          - description
+                          type: object
+                          properties:
+                            name:
+                              type: string
+                            description:
+                              type: string
+                    CartDetails:
+                      required:
+                      - description
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                        description:
+                          type: string
+                """;
         SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
         ModelConverters.reset();
     }
@@ -4504,83 +4600,85 @@ public class ReaderTest {
         Reader reader = new Reader(config);
 
         OpenAPI openAPI = reader.read(Ticket4804Resource.class);
-        String yaml = "openapi: 3.0.1\n" +
-                "paths:\n" +
-                "  /test/barcart:\n" +
-                "    put:\n" +
-                "      operationId: barCart\n" +
-                "      requestBody:\n" +
-                "        content:\n" +
-                "          '*/*':\n" +
-                "            schema:\n" +
-                "              $ref: \"#/components/schemas/Cart\"\n" +
-                "      responses:\n" +
-                "        default:\n" +
-                "          description: default response\n" +
-                "          content:\n" +
-                "            '*/*': {}\n" +
-                "  /test/foocart:\n" +
-                "    put:\n" +
-                "      operationId: fooCart\n" +
-                "      requestBody:\n" +
-                "        content:\n" +
-                "          '*/*':\n" +
-                "            schema:\n" +
-                "              $ref: \"#/components/schemas/Cart\"\n" +
-                "      responses:\n" +
-                "        default:\n" +
-                "          description: default response\n" +
-                "          content:\n" +
-                "            '*/*': {}\n" +
-                "  /test/createcart:\n" +
-                "    post:\n" +
-                "      operationId: postCart\n" +
-                "      requestBody:\n" +
-                "        content:\n" +
-                "          '*/*':\n" +
-                "            schema:\n" +
-                "              $ref: \"#/components/schemas/Cart\"\n" +
-                "      responses:\n" +
-                "        default:\n" +
-                "          description: default response\n" +
-                "          content:\n" +
-                "            '*/*': {}\n" +
-                "  /test/updatecart:\n" +
-                "    put:\n" +
-                "      operationId: putCart\n" +
-                "      requestBody:\n" +
-                "        content:\n" +
-                "          '*/*':\n" +
-                "            schema:\n" +
-                "              $ref: \"#/components/schemas/Cart\"\n" +
-                "      responses:\n" +
-                "        default:\n" +
-                "          description: default response\n" +
-                "          content:\n" +
-                "            '*/*': {}\n" +
-                "components:\n" +
-                "  schemas:\n" +
-                "    Cart:\n" +
-                "      required:\n" +
-                "      - notNullcartDetails\n" +
-                "      type: object\n" +
-                "      properties:\n" +
-                "        pageSize:\n" +
-                "          type: integer\n" +
-                "          format: int32\n" +
-                "        cartDetails:\n" +
-                "          $ref: \"#/components/schemas/CartDetails\"\n" +
-                "        notNullcartDetails:\n" +
-                "          $ref: \"#/components/schemas/CartDetails\"\n" +
-                "    CartDetails:\n" +
-                "      required:\n" +
-                "      - description\n" +
-                "      type: object\n" +
-                "      properties:\n" +
-                "        name:\n" +
-                "          type: string\n" +
-                "        description:\n" +
-                "          type: string\n";
+        String yaml = """
+                openapi: 3.0.1
+                paths:
+                  /test/barcart:
+                    put:
+                      operationId: barCart
+                      requestBody:
+                        content:
+                          '*/*':
+                            schema:
+                              $ref: "#/components/schemas/Cart"
+                      responses:
+                        default:
+                          description: default response
+                          content:
+                            '*/*': {}
+                  /test/foocart:
+                    put:
+                      operationId: fooCart
+                      requestBody:
+                        content:
+                          '*/*':
+                            schema:
+                              $ref: "#/components/schemas/Cart"
+                      responses:
+                        default:
+                          description: default response
+                          content:
+                            '*/*': {}
+                  /test/createcart:
+                    post:
+                      operationId: postCart
+                      requestBody:
+                        content:
+                          '*/*':
+                            schema:
+                              $ref: "#/components/schemas/Cart"
+                      responses:
+                        default:
+                          description: default response
+                          content:
+                            '*/*': {}
+                  /test/updatecart:
+                    put:
+                      operationId: putCart
+                      requestBody:
+                        content:
+                          '*/*':
+                            schema:
+                              $ref: "#/components/schemas/Cart"
+                      responses:
+                        default:
+                          description: default response
+                          content:
+                            '*/*': {}
+                components:
+                  schemas:
+                    Cart:
+                      required:
+                      - notNullcartDetails
+                      type: object
+                      properties:
+                        pageSize:
+                          type: integer
+                          format: int32
+                        cartDetails:
+                          $ref: "#/components/schemas/CartDetails"
+                        notNullcartDetails:
+                          $ref: "#/components/schemas/CartDetails"
+                    CartDetails:
+                      required:
+                      - description
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                        description:
+                          type: string
+                """;
         SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
         ModelConverters.reset();
     }
@@ -4592,76 +4690,78 @@ public class ReaderTest {
         Reader reader = new Reader(config);
 
         OpenAPI openAPI = reader.read(Ticket4804NotBlankResource.class);
-        String yaml = "openapi: 3.0.1\n" +
-                "paths:\n" +
-                "  /test/barcart:\n" +
-                "    put:\n" +
-                "      operationId: barCart\n" +
-                "      requestBody:\n" +
-                "        content:\n" +
-                "          '*/*':\n" +
-                "            schema:\n" +
-                "              $ref: \"#/components/schemas/Cart\"\n" +
-                "      responses:\n" +
-                "        default:\n" +
-                "          description: default response\n" +
-                "          content:\n" +
-                "            '*/*': {}\n" +
-                "  /test/createcart:\n" +
-                "    post:\n" +
-                "      operationId: postCart\n" +
-                "      requestBody:\n" +
-                "        content:\n" +
-                "          '*/*':\n" +
-                "            schema:\n" +
-                "              $ref: \"#/components/schemas/Cart\"\n" +
-                "      responses:\n" +
-                "        default:\n" +
-                "          description: default response\n" +
-                "          content:\n" +
-                "            '*/*': {}\n" +
-                "  /test/updatecart:\n" +
-                "    put:\n" +
-                "      operationId: putCart\n" +
-                "      requestBody:\n" +
-                "        content:\n" +
-                "          '*/*':\n" +
-                "            schema:\n" +
-                "              $ref: \"#/components/schemas/Cart\"\n" +
-                "      responses:\n" +
-                "        default:\n" +
-                "          description: default response\n" +
-                "          content:\n" +
-                "            '*/*': {}\n" +
-                "components:\n" +
-                "  schemas:\n" +
-                "    Cart:\n" +
-                "      required:\n" +
-                "      - notNullcartDetails\n" +
-                "      - pageSizes\n" +
-                "      type: object\n" +
-                "      properties:\n" +
-                "        pageSizes:\n" +
-                "          type: array\n" +
-                "          items:\n" +
-                "            type: integer\n" +
-                "            format: int32\n" +
-                "        notNullcartDetails:\n" +
-                "          $ref: \"#/components/schemas/CartDetails\"\n" +
-                "    CartDetails:\n" +
-                "      required:\n" +
-                "      - description\n" +
-                "      - name\n" +
-                "      type: object\n" +
-                "      properties:\n" +
-                "        name:\n" +
-                "          minLength: 1\n" +
-                "          type: string\n" +
-                "        description:\n" +
-                "          minItems: 1\n" +
-                "          type: array\n" +
-                "          items:\n" +
-                "            type: string\n";
+        String yaml = """
+                openapi: 3.0.1
+                paths:
+                  /test/barcart:
+                    put:
+                      operationId: barCart
+                      requestBody:
+                        content:
+                          '*/*':
+                            schema:
+                              $ref: "#/components/schemas/Cart"
+                      responses:
+                        default:
+                          description: default response
+                          content:
+                            '*/*': {}
+                  /test/createcart:
+                    post:
+                      operationId: postCart
+                      requestBody:
+                        content:
+                          '*/*':
+                            schema:
+                              $ref: "#/components/schemas/Cart"
+                      responses:
+                        default:
+                          description: default response
+                          content:
+                            '*/*': {}
+                  /test/updatecart:
+                    put:
+                      operationId: putCart
+                      requestBody:
+                        content:
+                          '*/*':
+                            schema:
+                              $ref: "#/components/schemas/Cart"
+                      responses:
+                        default:
+                          description: default response
+                          content:
+                            '*/*': {}
+                components:
+                  schemas:
+                    Cart:
+                      required:
+                      - notNullcartDetails
+                      - pageSizes
+                      type: object
+                      properties:
+                        pageSizes:
+                          type: array
+                          items:
+                            type: integer
+                            format: int32
+                        notNullcartDetails:
+                          $ref: "#/components/schemas/CartDetails"
+                    CartDetails:
+                      required:
+                      - description
+                      - name
+                      type: object
+                      properties:
+                        name:
+                          minLength: 1
+                          type: string
+                        description:
+                          minItems: 1
+                          type: array
+                          items:
+                            type: string
+                """;
         SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
         ModelConverters.reset();
     }
@@ -4673,86 +4773,88 @@ public class ReaderTest {
         Reader reader = new Reader(config);
 
         OpenAPI openAPI = reader.read(Ticket4804Resource.class);
-        String yaml = "openapi: 3.0.1\n" +
-                "paths:\n" +
-                "  /test/barcart:\n" +
-                "    put:\n" +
-                "      operationId: barCart\n" +
-                "      requestBody:\n" +
-                "        content:\n" +
-                "          '*/*':\n" +
-                "            schema:\n" +
-                "              $ref: \"#/components/schemas/Cart\"\n" +
-                "      responses:\n" +
-                "        default:\n" +
-                "          description: default response\n" +
-                "          content:\n" +
-                "            '*/*': {}\n" +
-                "  /test/foocart:\n" +
-                "    put:\n" +
-                "      operationId: fooCart\n" +
-                "      requestBody:\n" +
-                "        content:\n" +
-                "          '*/*':\n" +
-                "            schema:\n" +
-                "              $ref: \"#/components/schemas/Cart\"\n" +
-                "      responses:\n" +
-                "        default:\n" +
-                "          description: default response\n" +
-                "          content:\n" +
-                "            '*/*': {}\n" +
-                "  /test/createcart:\n" +
-                "    post:\n" +
-                "      operationId: postCart\n" +
-                "      requestBody:\n" +
-                "        content:\n" +
-                "          '*/*':\n" +
-                "            schema:\n" +
-                "              $ref: \"#/components/schemas/Cart\"\n" +
-                "      responses:\n" +
-                "        default:\n" +
-                "          description: default response\n" +
-                "          content:\n" +
-                "            '*/*': {}\n" +
-                "  /test/updatecart:\n" +
-                "    put:\n" +
-                "      operationId: putCart\n" +
-                "      requestBody:\n" +
-                "        content:\n" +
-                "          '*/*':\n" +
-                "            schema:\n" +
-                "              $ref: \"#/components/schemas/Cart\"\n" +
-                "      responses:\n" +
-                "        default:\n" +
-                "          description: default response\n" +
-                "          content:\n" +
-                "            '*/*': {}\n" +
-                "components:\n" +
-                "  schemas:\n" +
-                "    Cart:\n" +
-                "      required:\n" +
-                "      - cartDetails\n" +
-                "      - notNullcartDetails\n" +
-                "      - pageSize\n" +
-                "      type: object\n" +
-                "      properties:\n" +
-                "        pageSize:\n" +
-                "          type: integer\n" +
-                "          format: int32\n" +
-                "        cartDetails:\n" +
-                "          $ref: \"#/components/schemas/CartDetails\"\n" +
-                "        notNullcartDetails:\n" +
-                "          $ref: \"#/components/schemas/CartDetails\"\n" +
-                "    CartDetails:\n" +
-                "      required:\n" +
-                "      - description\n" +
-                "      - name\n" +
-                "      type: object\n" +
-                "      properties:\n" +
-                "        name:\n" +
-                "          type: string\n" +
-                "        description:\n" +
-                "          type: string\n";
+        String yaml = """
+                openapi: 3.0.1
+                paths:
+                  /test/barcart:
+                    put:
+                      operationId: barCart
+                      requestBody:
+                        content:
+                          '*/*':
+                            schema:
+                              $ref: "#/components/schemas/Cart"
+                      responses:
+                        default:
+                          description: default response
+                          content:
+                            '*/*': {}
+                  /test/foocart:
+                    put:
+                      operationId: fooCart
+                      requestBody:
+                        content:
+                          '*/*':
+                            schema:
+                              $ref: "#/components/schemas/Cart"
+                      responses:
+                        default:
+                          description: default response
+                          content:
+                            '*/*': {}
+                  /test/createcart:
+                    post:
+                      operationId: postCart
+                      requestBody:
+                        content:
+                          '*/*':
+                            schema:
+                              $ref: "#/components/schemas/Cart"
+                      responses:
+                        default:
+                          description: default response
+                          content:
+                            '*/*': {}
+                  /test/updatecart:
+                    put:
+                      operationId: putCart
+                      requestBody:
+                        content:
+                          '*/*':
+                            schema:
+                              $ref: "#/components/schemas/Cart"
+                      responses:
+                        default:
+                          description: default response
+                          content:
+                            '*/*': {}
+                components:
+                  schemas:
+                    Cart:
+                      required:
+                      - cartDetails
+                      - notNullcartDetails
+                      - pageSize
+                      type: object
+                      properties:
+                        pageSize:
+                          type: integer
+                          format: int32
+                        cartDetails:
+                          $ref: "#/components/schemas/CartDetails"
+                        notNullcartDetails:
+                          $ref: "#/components/schemas/CartDetails"
+                    CartDetails:
+                      required:
+                      - description
+                      - name
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                        description:
+                          type: string
+                """;
         SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
         ModelConverters.reset();
     }
@@ -4764,79 +4866,81 @@ public class ReaderTest {
         Reader reader = new Reader(config);
 
         OpenAPI openAPI = reader.read(Ticket4804Resource.class);
-        String yaml = "openapi: 3.0.1\n" +
-                "paths:\n" +
-                "  /test/barcart:\n" +
-                "    put:\n" +
-                "      operationId: barCart\n" +
-                "      requestBody:\n" +
-                "        content:\n" +
-                "          '*/*':\n" +
-                "            schema:\n" +
-                "              $ref: \"#/components/schemas/Cart\"\n" +
-                "      responses:\n" +
-                "        default:\n" +
-                "          description: default response\n" +
-                "          content:\n" +
-                "            '*/*': {}\n" +
-                "  /test/foocart:\n" +
-                "    put:\n" +
-                "      operationId: fooCart\n" +
-                "      requestBody:\n" +
-                "        content:\n" +
-                "          '*/*':\n" +
-                "            schema:\n" +
-                "              $ref: \"#/components/schemas/Cart\"\n" +
-                "      responses:\n" +
-                "        default:\n" +
-                "          description: default response\n" +
-                "          content:\n" +
-                "            '*/*': {}\n" +
-                "  /test/createcart:\n" +
-                "    post:\n" +
-                "      operationId: postCart\n" +
-                "      requestBody:\n" +
-                "        content:\n" +
-                "          '*/*':\n" +
-                "            schema:\n" +
-                "              $ref: \"#/components/schemas/Cart\"\n" +
-                "      responses:\n" +
-                "        default:\n" +
-                "          description: default response\n" +
-                "          content:\n" +
-                "            '*/*': {}\n" +
-                "  /test/updatecart:\n" +
-                "    put:\n" +
-                "      operationId: putCart\n" +
-                "      requestBody:\n" +
-                "        content:\n" +
-                "          '*/*':\n" +
-                "            schema:\n" +
-                "              $ref: \"#/components/schemas/Cart\"\n" +
-                "      responses:\n" +
-                "        default:\n" +
-                "          description: default response\n" +
-                "          content:\n" +
-                "            '*/*': {}\n" +
-                "components:\n" +
-                "  schemas:\n" +
-                "    Cart:\n" +
-                "      type: object\n" +
-                "      properties:\n" +
-                "        pageSize:\n" +
-                "          type: integer\n" +
-                "          format: int32\n" +
-                "        cartDetails:\n" +
-                "          $ref: \"#/components/schemas/CartDetails\"\n" +
-                "        notNullcartDetails:\n" +
-                "          $ref: \"#/components/schemas/CartDetails\"\n" +
-                "    CartDetails:\n" +
-                "      type: object\n" +
-                "      properties:\n" +
-                "        name:\n" +
-                "          type: string\n" +
-                "        description:\n" +
-                "          type: string\n";
+        String yaml = """
+                openapi: 3.0.1
+                paths:
+                  /test/barcart:
+                    put:
+                      operationId: barCart
+                      requestBody:
+                        content:
+                          '*/*':
+                            schema:
+                              $ref: "#/components/schemas/Cart"
+                      responses:
+                        default:
+                          description: default response
+                          content:
+                            '*/*': {}
+                  /test/foocart:
+                    put:
+                      operationId: fooCart
+                      requestBody:
+                        content:
+                          '*/*':
+                            schema:
+                              $ref: "#/components/schemas/Cart"
+                      responses:
+                        default:
+                          description: default response
+                          content:
+                            '*/*': {}
+                  /test/createcart:
+                    post:
+                      operationId: postCart
+                      requestBody:
+                        content:
+                          '*/*':
+                            schema:
+                              $ref: "#/components/schemas/Cart"
+                      responses:
+                        default:
+                          description: default response
+                          content:
+                            '*/*': {}
+                  /test/updatecart:
+                    put:
+                      operationId: putCart
+                      requestBody:
+                        content:
+                          '*/*':
+                            schema:
+                              $ref: "#/components/schemas/Cart"
+                      responses:
+                        default:
+                          description: default response
+                          content:
+                            '*/*': {}
+                components:
+                  schemas:
+                    Cart:
+                      type: object
+                      properties:
+                        pageSize:
+                          type: integer
+                          format: int32
+                        cartDetails:
+                          $ref: "#/components/schemas/CartDetails"
+                        notNullcartDetails:
+                          $ref: "#/components/schemas/CartDetails"
+                    CartDetails:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                        description:
+                          type: string
+                """;
         SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
         ModelConverters.reset();
     }
@@ -4851,169 +4955,171 @@ public class ReaderTest {
         Reader reader = new Reader(config);
 
         OpenAPI openAPI = reader.read(Ticket4804Resource.class);
-        String yaml = "openapi: 3.0.1\n" +
-                "paths:\n" +
-                "  /test/barcart:\n" +
-                "    put:\n" +
-                "      operationId: barCart\n" +
-                "      requestBody:\n" +
-                "        content:\n" +
-                "          '*/*':\n" +
-                "            schema:\n" +
-                "              type: object\n" +
-                "              properties:\n" +
-                "                pageSize:\n" +
-                "                  type: integer\n" +
-                "                  format: int32\n" +
-                "                cartDetails:\n" +
-                "                  type: object\n" +
-                "                  properties:\n" +
-                "                    name:\n" +
-                "                      type: string\n" +
-                "                    description:\n" +
-                "                      type: string\n" +
-                "                notNullcartDetails:\n" +
-                "                  type: object\n" +
-                "                  properties:\n" +
-                "                    name:\n" +
-                "                      type: string\n" +
-                "                    description:\n" +
-                "                      type: string\n" +
-                "      responses:\n" +
-                "        default:\n" +
-                "          description: default response\n" +
-                "          content:\n" +
-                "            '*/*': {}\n" +
-                "  /test/foocart:\n" +
-                "    put:\n" +
-                "      operationId: fooCart\n" +
-                "      requestBody:\n" +
-                "        content:\n" +
-                "          '*/*':\n" +
-                "            schema:\n" +
-                "              required:\n" +
-                "              - cartDetails\n" +
-                "              type: object\n" +
-                "              properties:\n" +
-                "                pageSize:\n" +
-                "                  type: integer\n" +
-                "                  format: int32\n" +
-                "                cartDetails:\n" +
-                "                  type: object\n" +
-                "                  properties:\n" +
-                "                    name:\n" +
-                "                      type: string\n" +
-                "                    description:\n" +
-                "                      type: string\n" +
-                "                notNullcartDetails:\n" +
-                "                  type: object\n" +
-                "                  properties:\n" +
-                "                    name:\n" +
-                "                      type: string\n" +
-                "                    description:\n" +
-                "                      type: string\n" +
-                "      responses:\n" +
-                "        default:\n" +
-                "          description: default response\n" +
-                "          content:\n" +
-                "            '*/*': {}\n" +
-                "  /test/createcart:\n" +
-                "    post:\n" +
-                "      operationId: postCart\n" +
-                "      requestBody:\n" +
-                "        content:\n" +
-                "          '*/*':\n" +
-                "            schema:\n" +
-                "              required:\n" +
-                "              - pageSize\n" +
-                "              type: object\n" +
-                "              properties:\n" +
-                "                pageSize:\n" +
-                "                  type: integer\n" +
-                "                  format: int32\n" +
-                "                cartDetails:\n" +
-                "                  required:\n" +
-                "                  - name\n" +
-                "                  type: object\n" +
-                "                  properties:\n" +
-                "                    name:\n" +
-                "                      type: string\n" +
-                "                    description:\n" +
-                "                      type: string\n" +
-                "                notNullcartDetails:\n" +
-                "                  required:\n" +
-                "                  - name\n" +
-                "                  type: object\n" +
-                "                  properties:\n" +
-                "                    name:\n" +
-                "                      type: string\n" +
-                "                    description:\n" +
-                "                      type: string\n" +
-                "      responses:\n" +
-                "        default:\n" +
-                "          description: default response\n" +
-                "          content:\n" +
-                "            '*/*': {}\n" +
-                "  /test/updatecart:\n" +
-                "    put:\n" +
-                "      operationId: putCart\n" +
-                "      requestBody:\n" +
-                "        content:\n" +
-                "          '*/*':\n" +
-                "            schema:\n" +
-                "              type: object\n" +
-                "              properties:\n" +
-                "                pageSize:\n" +
-                "                  type: integer\n" +
-                "                  format: int32\n" +
-                "                cartDetails:\n" +
-                "                  type: object\n" +
-                "                  properties:\n" +
-                "                    name:\n" +
-                "                      type: string\n" +
-                "                    description:\n" +
-                "                      type: string\n" +
-                "                notNullcartDetails:\n" +
-                "                  type: object\n" +
-                "                  properties:\n" +
-                "                    name:\n" +
-                "                      type: string\n" +
-                "                    description:\n" +
-                "                      type: string\n" +
-                "      responses:\n" +
-                "        default:\n" +
-                "          description: default response\n" +
-                "          content:\n" +
-                "            '*/*': {}\n" +
-                "components:\n" +
-                "  schemas:\n" +
-                "    Cart:\n" +
-                "      type: object\n" +
-                "      properties:\n" +
-                "        pageSize:\n" +
-                "          type: integer\n" +
-                "          format: int32\n" +
-                "        cartDetails:\n" +
-                "          type: object\n" +
-                "          properties:\n" +
-                "            name:\n" +
-                "              type: string\n" +
-                "            description:\n" +
-                "              type: string\n" +
-                "        notNullcartDetails:\n" +
-                "          type: object\n" +
-                "          properties:\n" +
-                "            name:\n" +
-                "              type: string\n" +
-                "            description:\n" +
-                "              type: string\n" +
-                "    CartDetails:\n" +
-                "      type: object\n" +
-                "      properties:\n" +
-                "        name:\n" +
-                "          type: string\n" +
-                "        description:\n" +
-                "          type: string\n";
+        String yaml = """
+                openapi: 3.0.1
+                paths:
+                  /test/barcart:
+                    put:
+                      operationId: barCart
+                      requestBody:
+                        content:
+                          '*/*':
+                            schema:
+                              type: object
+                              properties:
+                                pageSize:
+                                  type: integer
+                                  format: int32
+                                cartDetails:
+                                  type: object
+                                  properties:
+                                    name:
+                                      type: string
+                                    description:
+                                      type: string
+                                notNullcartDetails:
+                                  type: object
+                                  properties:
+                                    name:
+                                      type: string
+                                    description:
+                                      type: string
+                      responses:
+                        default:
+                          description: default response
+                          content:
+                            '*/*': {}
+                  /test/foocart:
+                    put:
+                      operationId: fooCart
+                      requestBody:
+                        content:
+                          '*/*':
+                            schema:
+                              required:
+                              - cartDetails
+                              type: object
+                              properties:
+                                pageSize:
+                                  type: integer
+                                  format: int32
+                                cartDetails:
+                                  type: object
+                                  properties:
+                                    name:
+                                      type: string
+                                    description:
+                                      type: string
+                                notNullcartDetails:
+                                  type: object
+                                  properties:
+                                    name:
+                                      type: string
+                                    description:
+                                      type: string
+                      responses:
+                        default:
+                          description: default response
+                          content:
+                            '*/*': {}
+                  /test/createcart:
+                    post:
+                      operationId: postCart
+                      requestBody:
+                        content:
+                          '*/*':
+                            schema:
+                              required:
+                              - pageSize
+                              type: object
+                              properties:
+                                pageSize:
+                                  type: integer
+                                  format: int32
+                                cartDetails:
+                                  required:
+                                  - name
+                                  type: object
+                                  properties:
+                                    name:
+                                      type: string
+                                    description:
+                                      type: string
+                                notNullcartDetails:
+                                  required:
+                                  - name
+                                  type: object
+                                  properties:
+                                    name:
+                                      type: string
+                                    description:
+                                      type: string
+                      responses:
+                        default:
+                          description: default response
+                          content:
+                            '*/*': {}
+                  /test/updatecart:
+                    put:
+                      operationId: putCart
+                      requestBody:
+                        content:
+                          '*/*':
+                            schema:
+                              type: object
+                              properties:
+                                pageSize:
+                                  type: integer
+                                  format: int32
+                                cartDetails:
+                                  type: object
+                                  properties:
+                                    name:
+                                      type: string
+                                    description:
+                                      type: string
+                                notNullcartDetails:
+                                  type: object
+                                  properties:
+                                    name:
+                                      type: string
+                                    description:
+                                      type: string
+                      responses:
+                        default:
+                          description: default response
+                          content:
+                            '*/*': {}
+                components:
+                  schemas:
+                    Cart:
+                      type: object
+                      properties:
+                        pageSize:
+                          type: integer
+                          format: int32
+                        cartDetails:
+                          type: object
+                          properties:
+                            name:
+                              type: string
+                            description:
+                              type: string
+                        notNullcartDetails:
+                          type: object
+                          properties:
+                            name:
+                              type: string
+                            description:
+                              type: string
+                    CartDetails:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                        description:
+                          type: string
+                """;
         SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
         ModelConverters.reset();
     }
@@ -5028,165 +5134,167 @@ public class ReaderTest {
         Reader reader = new Reader(config);
 
         OpenAPI openAPI = reader.read(Ticket4804ProcessorResource.class);
-        String yaml = "openapi: 3.0.1\n" +
-                "paths:\n" +
-                "  /test/barcart:\n" +
-                "    put:\n" +
-                "      operationId: barCart\n" +
-                "      requestBody:\n" +
-                "        content:\n" +
-                "          '*/*':\n" +
-                "            schema:\n" +
-                "              type: object\n" +
-                "              properties:\n" +
-                "                pageSize:\n" +
-                "                  type: integer\n" +
-                "                  format: int32\n" +
-                "                cartDetails:\n" +
-                "                  type: object\n" +
-                "                  properties:\n" +
-                "                    name:\n" +
-                "                      type: string\n" +
-                "                    description:\n" +
-                "                      type: string\n" +
-                "                notNullcartDetails:\n" +
-                "                  type: object\n" +
-                "                  properties:\n" +
-                "                    name:\n" +
-                "                      type: string\n" +
-                "                    description:\n" +
-                "                      type: string\n" +
-                "      responses:\n" +
-                "        default:\n" +
-                "          description: default response\n" +
-                "          content:\n" +
-                "            '*/*': {}\n" +
-                "  /test/foocart:\n" +
-                "    put:\n" +
-                "      operationId: fooCart\n" +
-                "      requestBody:\n" +
-                "        content:\n" +
-                "          '*/*':\n" +
-                "            schema:\n" +
-                "              type: object\n" +
-                "              properties:\n" +
-                "                pageSize:\n" +
-                "                  type: integer\n" +
-                "                  format: int32\n" +
-                "                cartDetails:\n" +
-                "                  type: object\n" +
-                "                  properties:\n" +
-                "                    name:\n" +
-                "                      type: string\n" +
-                "                    description:\n" +
-                "                      type: string\n" +
-                "                notNullcartDetails:\n" +
-                "                  type: object\n" +
-                "                  properties:\n" +
-                "                    name:\n" +
-                "                      type: string\n" +
-                "                    description:\n" +
-                "                      type: string\n" +
-                "      responses:\n" +
-                "        default:\n" +
-                "          description: default response\n" +
-                "          content:\n" +
-                "            '*/*': {}\n" +
-                "  /test/createcart:\n" +
-                "    post:\n" +
-                "      operationId: postCart\n" +
-                "      requestBody:\n" +
-                "        content:\n" +
-                "          '*/*':\n" +
-                "            schema:\n" +
-                "              type: object\n" +
-                "              properties:\n" +
-                "                pageSize:\n" +
-                "                  type: integer\n" +
-                "                  format: int32\n" +
-                "                cartDetails:\n" +
-                "                  type: object\n" +
-                "                  properties:\n" +
-                "                    name:\n" +
-                "                      type: string\n" +
-                "                    description:\n" +
-                "                      type: string\n" +
-                "                notNullcartDetails:\n" +
-                "                  type: object\n" +
-                "                  properties:\n" +
-                "                    name:\n" +
-                "                      type: string\n" +
-                "                    description:\n" +
-                "                      type: string\n" +
-                "      responses:\n" +
-                "        default:\n" +
-                "          description: default response\n" +
-                "          content:\n" +
-                "            '*/*': {}\n" +
-                "  /test/updatecart:\n" +
-                "    put:\n" +
-                "      operationId: putCart\n" +
-                "      requestBody:\n" +
-                "        content:\n" +
-                "          '*/*':\n" +
-                "            schema:\n" +
-                "              required:\n" +
-                "              - cartDetails\n" +
-                "              type: object\n" +
-                "              properties:\n" +
-                "                pageSize:\n" +
-                "                  type: integer\n" +
-                "                  format: int32\n" +
-                "                cartDetails:\n" +
-                "                  type: object\n" +
-                "                  properties:\n" +
-                "                    name:\n" +
-                "                      type: string\n" +
-                "                    description:\n" +
-                "                      type: string\n" +
-                "                notNullcartDetails:\n" +
-                "                  type: object\n" +
-                "                  properties:\n" +
-                "                    name:\n" +
-                "                      type: string\n" +
-                "                    description:\n" +
-                "                      type: string\n" +
-                "      responses:\n" +
-                "        default:\n" +
-                "          description: default response\n" +
-                "          content:\n" +
-                "            '*/*': {}\n" +
-                "components:\n" +
-                "  schemas:\n" +
-                "    Cart:\n" +
-                "      required:\n" +
-                "      - cartDetails\n" +
-                "      type: object\n" +
-                "      properties:\n" +
-                "        pageSize:\n" +
-                "          type: integer\n" +
-                "          format: int32\n" +
-                "        cartDetails:\n" +
-                "          type: object\n" +
-                "          properties:\n" +
-                "            name:\n" +
-                "              type: string\n" +
-                "            description:\n" +
-                "              type: string\n" +
-                "        notNullcartDetails:\n" +
-                "          type: object\n" +
-                "          properties:\n" +
-                "            name:\n" +
-                "              type: string\n" +
-                "            description:\n" +
-                "              type: string\n" +
-                "    CartDetails:\n" +
-                "      type: object\n" +
-                "      properties:\n" +
-                "        name:\n" +
-                "          type: string\n" +
-                "        description:\n" +
-                "          type: string\n";
+        String yaml = """
+                openapi: 3.0.1
+                paths:
+                  /test/barcart:
+                    put:
+                      operationId: barCart
+                      requestBody:
+                        content:
+                          '*/*':
+                            schema:
+                              type: object
+                              properties:
+                                pageSize:
+                                  type: integer
+                                  format: int32
+                                cartDetails:
+                                  type: object
+                                  properties:
+                                    name:
+                                      type: string
+                                    description:
+                                      type: string
+                                notNullcartDetails:
+                                  type: object
+                                  properties:
+                                    name:
+                                      type: string
+                                    description:
+                                      type: string
+                      responses:
+                        default:
+                          description: default response
+                          content:
+                            '*/*': {}
+                  /test/foocart:
+                    put:
+                      operationId: fooCart
+                      requestBody:
+                        content:
+                          '*/*':
+                            schema:
+                              type: object
+                              properties:
+                                pageSize:
+                                  type: integer
+                                  format: int32
+                                cartDetails:
+                                  type: object
+                                  properties:
+                                    name:
+                                      type: string
+                                    description:
+                                      type: string
+                                notNullcartDetails:
+                                  type: object
+                                  properties:
+                                    name:
+                                      type: string
+                                    description:
+                                      type: string
+                      responses:
+                        default:
+                          description: default response
+                          content:
+                            '*/*': {}
+                  /test/createcart:
+                    post:
+                      operationId: postCart
+                      requestBody:
+                        content:
+                          '*/*':
+                            schema:
+                              type: object
+                              properties:
+                                pageSize:
+                                  type: integer
+                                  format: int32
+                                cartDetails:
+                                  type: object
+                                  properties:
+                                    name:
+                                      type: string
+                                    description:
+                                      type: string
+                                notNullcartDetails:
+                                  type: object
+                                  properties:
+                                    name:
+                                      type: string
+                                    description:
+                                      type: string
+                      responses:
+                        default:
+                          description: default response
+                          content:
+                            '*/*': {}
+                  /test/updatecart:
+                    put:
+                      operationId: putCart
+                      requestBody:
+                        content:
+                          '*/*':
+                            schema:
+                              required:
+                              - cartDetails
+                              type: object
+                              properties:
+                                pageSize:
+                                  type: integer
+                                  format: int32
+                                cartDetails:
+                                  type: object
+                                  properties:
+                                    name:
+                                      type: string
+                                    description:
+                                      type: string
+                                notNullcartDetails:
+                                  type: object
+                                  properties:
+                                    name:
+                                      type: string
+                                    description:
+                                      type: string
+                      responses:
+                        default:
+                          description: default response
+                          content:
+                            '*/*': {}
+                components:
+                  schemas:
+                    Cart:
+                      required:
+                      - cartDetails
+                      type: object
+                      properties:
+                        pageSize:
+                          type: integer
+                          format: int32
+                        cartDetails:
+                          type: object
+                          properties:
+                            name:
+                              type: string
+                            description:
+                              type: string
+                        notNullcartDetails:
+                          type: object
+                          properties:
+                            name:
+                              type: string
+                            description:
+                              type: string
+                    CartDetails:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                        description:
+                          type: string
+                """;
         SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
         ModelConverters.reset();
     }
@@ -5195,39 +5303,41 @@ public class ReaderTest {
     public void shouldIncludeOnlyNonGroupedJakartaValidatedFieldsAsMandatoryByDefault() {
         ModelConverters.reset();
         ResolvedSchema schema = ModelConverters.getInstance(false).resolveAsResolvedSchema(new AnnotatedType().type(Ticket4804CustomClass.class));
-        String expectedYaml = "schema:\n" +
-                "  required:\n" +
-                "  - nonGroupValidatedField\n" +
-                "  type: object\n" +
-                "  properties:\n" +
-                "    nonGroupValidatedField:\n" +
-                "      type: string\n" +
-                "    singleGroupValidatedField:\n" +
-                "      type: integer\n" +
-                "      format: int32\n" +
-                "    multipleGroupValidatedField:\n" +
-                "      type: number\n" +
-                "    otherGroupValidatedField:\n" +
-                "      type: string\n" +
-                "    singleGroupValidatedField2:\n" +
-                "      type: string\n" +
-                "referencedSchemas:\n" +
-                "  Ticket4804CustomClass:\n" +
-                "    required:\n" +
-                "    - nonGroupValidatedField\n" +
-                "    type: object\n" +
-                "    properties:\n" +
-                "      nonGroupValidatedField:\n" +
-                "        type: string\n" +
-                "      singleGroupValidatedField:\n" +
-                "        type: integer\n" +
-                "        format: int32\n" +
-                "      multipleGroupValidatedField:\n" +
-                "        type: number\n" +
-                "      otherGroupValidatedField:\n" +
-                "        type: string\n" +
-                "      singleGroupValidatedField2:\n" +
-                "        type: string\n";
+        String expectedYaml = """
+                schema:
+                  required:
+                  - nonGroupValidatedField
+                  type: object
+                  properties:
+                    nonGroupValidatedField:
+                      type: string
+                    singleGroupValidatedField:
+                      type: integer
+                      format: int32
+                    multipleGroupValidatedField:
+                      type: number
+                    otherGroupValidatedField:
+                      type: string
+                    singleGroupValidatedField2:
+                      type: string
+                referencedSchemas:
+                  Ticket4804CustomClass:
+                    required:
+                    - nonGroupValidatedField
+                    type: object
+                    properties:
+                      nonGroupValidatedField:
+                        type: string
+                      singleGroupValidatedField:
+                        type: integer
+                        format: int32
+                      multipleGroupValidatedField:
+                        type: number
+                      otherGroupValidatedField:
+                        type: string
+                      singleGroupValidatedField2:
+                        type: string
+                """;
         SerializationMatchers.assertEqualsToYaml(schema, expectedYaml);
         ModelConverters.reset();
     }
@@ -5239,33 +5349,35 @@ public class ReaderTest {
         Reader reader = new Reader(config);
 
         OpenAPI openAPI = reader.read(Ticket4859Resource.class);
-        String yaml = "openapi: 3.0.1\n" +
-                "paths:\n" +
-                "  /test/minlength:\n" +
-                "    put:\n" +
-                "      operationId: minlength\n" +
-                "      requestBody:\n" +
-                "        content:\n" +
-                "          '*/*':\n" +
-                "            schema:\n" +
-                "              $ref: \"#/components/schemas/Minlength\"\n" +
-                "      responses:\n" +
-                "        default:\n" +
-                "          description: default response\n" +
-                "          content:\n" +
-                "            '*/*': {}\n" +
-                "components:\n" +
-                "  schemas:\n" +
-                "    Minlength:\n" +
-                "      required:\n" +
-                "      - name\n" +
-                "      type: object\n" +
-                "      properties:\n" +
-                "        name:\n" +
-                "          maxLength: 19\n" +
-                "          minLength: 12\n" +
-                "          type: string\n" +
-                "          example: \"4242424242424242\"\n";
+        String yaml = """
+                openapi: 3.0.1
+                paths:
+                  /test/minlength:
+                    put:
+                      operationId: minlength
+                      requestBody:
+                        content:
+                          '*/*':
+                            schema:
+                              $ref: "#/components/schemas/Minlength"
+                      responses:
+                        default:
+                          description: default response
+                          content:
+                            '*/*': {}
+                components:
+                  schemas:
+                    Minlength:
+                      required:
+                      - name
+                      type: object
+                      properties:
+                        name:
+                          maxLength: 19
+                          minLength: 12
+                          type: string
+                          example: "4242424242424242"
+                """;
         SerializationMatchers.assertEqualsToYaml(openAPI, yaml);
         ModelConverters.reset();
     }
@@ -5277,81 +5389,83 @@ public class ReaderTest {
         Reader reader = new Reader(config);
 
         OpenAPI openAPI = reader.read(Ticket4879Resource.class);
-        String yaml = "openapi: 3.1.0\n" +
-                "paths:\n" +
-                "  /test/test:\n" +
-                "    put:\n" +
-                "      operationId: test\n" +
-                "      requestBody:\n" +
-                "        content:\n" +
-                "          '*/*':\n" +
-                "            schema:\n" +
-                "              $ref: \"#/components/schemas/DefaultClass\"\n" +
-                "      responses:\n" +
-                "        default:\n" +
-                "          description: default response\n" +
-                "          content:\n" +
-                "            '*/*': {}\n" +
-                "  /test/testDefaultValueAnnotation:\n" +
-                "    get:\n" +
-                "      operationId: testDefault\n" +
-                "      parameters:\n" +
-                "      - name: myBool\n" +
-                "        in: query\n" +
-                "        schema:\n" +
-                "          type: boolean\n" +
-                "          default: true\n" +
-                "      - name: myInt\n" +
-                "        in: query\n" +
-                "        schema:\n" +
-                "          type: integer\n" +
-                "          format: int32\n" +
-                "          default: 1\n" +
-                "      responses:\n" +
-                "        default:\n" +
-                "          description: default response\n" +
-                "          content:\n" +
-                "            '*/*': {}\n" +
-                "  /test/testsize:\n" +
-                "    get:\n" +
-                "      operationId: testSize\n" +
-                "      requestBody:\n" +
-                "        content:\n" +
-                "          '*/*':\n" +
-                "            schema:\n" +
-                "              type: array\n" +
-                "              items:\n" +
-                "                type: string\n" +
-                "              maxItems: 100\n" +
-                "              minItems: 1\n" +
-                "      responses:\n" +
-                "        default:\n" +
-                "          description: default response\n" +
-                "          content:\n" +
-                "            '*/*': {}\n" +
-                "  /test/teststringsize:\n" +
-                "    get:\n" +
-                "      operationId: testStringSize\n" +
-                "      requestBody:\n" +
-                "        content:\n" +
-                "          '*/*':\n" +
-                "            schema:\n" +
-                "              type: string\n" +
-                "              maxLength: 50\n" +
-                "              minLength: 1\n" +
-                "      responses:\n" +
-                "        default:\n" +
-                "          description: default response\n" +
-                "          content:\n" +
-                "            '*/*': {}\n" +
-                "components:\n" +
-                "  schemas:\n" +
-                "    DefaultClass:\n" +
-                "      type: object\n" +
-                "      properties:\n" +
-                "        name:\n" +
-                "          type: boolean\n" +
-                "          default: true\n";
+        String yaml = """
+                openapi: 3.1.0
+                paths:
+                  /test/test:
+                    put:
+                      operationId: test
+                      requestBody:
+                        content:
+                          '*/*':
+                            schema:
+                              $ref: "#/components/schemas/DefaultClass"
+                      responses:
+                        default:
+                          description: default response
+                          content:
+                            '*/*': {}
+                  /test/testDefaultValueAnnotation:
+                    get:
+                      operationId: testDefault
+                      parameters:
+                      - name: myBool
+                        in: query
+                        schema:
+                          type: boolean
+                          default: true
+                      - name: myInt
+                        in: query
+                        schema:
+                          type: integer
+                          format: int32
+                          default: 1
+                      responses:
+                        default:
+                          description: default response
+                          content:
+                            '*/*': {}
+                  /test/testsize:
+                    get:
+                      operationId: testSize
+                      requestBody:
+                        content:
+                          '*/*':
+                            schema:
+                              type: array
+                              items:
+                                type: string
+                              maxItems: 100
+                              minItems: 1
+                      responses:
+                        default:
+                          description: default response
+                          content:
+                            '*/*': {}
+                  /test/teststringsize:
+                    get:
+                      operationId: testStringSize
+                      requestBody:
+                        content:
+                          '*/*':
+                            schema:
+                              type: string
+                              maxLength: 50
+                              minLength: 1
+                      responses:
+                        default:
+                          description: default response
+                          content:
+                            '*/*': {}
+                components:
+                  schemas:
+                    DefaultClass:
+                      type: object
+                      properties:
+                        name:
+                          type: boolean
+                          default: true
+                """;
         SerializationMatchers.assertEqualsToYaml31(openAPI, yaml);
         ModelConverters.reset();
     }
@@ -5363,25 +5477,27 @@ public class ReaderTest {
         Reader reader = new Reader(config);
 
         OpenAPI openAPI = reader.read(Ticket4065Resource.class);
-        String yaml = "openapi: 3.0.1\n" +
-                "paths:\n" +
-                "  /bar:\n" +
-                "    get:\n" +
-                "      operationId: test\n" +
-                "      parameters:\n" +
-                "      - name: blub\n" +
-                "        in: query\n" +
-                "        explode: false\n" +
-                "        schema:\n" +
-                "          type: array\n" +
-                "          items:\n" +
-                "            type: integer\n" +
-                "            format: int64\n" +
-                "      responses:\n" +
-                "        default:\n" +
-                "          description: default response\n" +
-                "          content:\n" +
-                "            application/json: {}\n";
+        String yaml = """
+                openapi: 3.0.1
+                paths:
+                  /bar:
+                    get:
+                      operationId: test
+                      parameters:
+                      - name: blub
+                        in: query
+                        explode: false
+                        schema:
+                          type: array
+                          items:
+                            type: integer
+                            format: int64
+                      responses:
+                        default:
+                          description: default response
+                          content:
+                            application/json: {}
+                """;
         SerializationMatchers.assertEqualsToYaml31(openAPI, yaml);
         ModelConverters.reset();
     }
@@ -5394,27 +5510,28 @@ public class ReaderTest {
         OpenAPI openAPI = reader.read(Ticket4850Resource.class);
         assertNotNull(openAPI);
 
-        String yaml = "openapi: 3.1.0\n" +
-                "paths:\n" +
-                "  /bar:\n" +
-                "    get:\n" +
-                "      operationId: test\n" +
-                "      responses:\n" +
-                "        default:\n" +
-                "          description: default response\n" +
-                "          content:\n" +
-                "            '*/*':\n" +
-                "              schema:\n" +
-                "                $ref: \"#/components/schemas/ExtensionsResource\"\n" +
-                "components:\n" +
-                "  schemas:\n" +
-                "    ExtensionsResource:\n" +
-                "      description: ExtensionsResource\n" +
-                "      x-user:\n" +
-                "        name: Josh\n" +
-                "      user-extensions:\n" +
-                "        lastName: Hart\n" +
-                "        address: House";
+        String yaml = """
+                openapi: 3.1.0
+                paths:
+                  /bar:
+                    get:
+                      operationId: test
+                      responses:
+                        default:
+                          description: default response
+                          content:
+                            '*/*':
+                              schema:
+                                $ref: "#/components/schemas/ExtensionsResource"
+                components:
+                  schemas:
+                    ExtensionsResource:
+                      description: ExtensionsResource
+                      x-user:
+                        name: Josh
+                      user-extensions:
+                        lastName: Hart
+                        address: House""";
         SerializationMatchers.assertEqualsToYaml31(openAPI, yaml);
     }
     @Test(description = "Test model resolution for global path parameters with openAPI 3.1")
@@ -5424,29 +5541,31 @@ public class ReaderTest {
         Reader reader = new Reader(config);
 
         OpenAPI openAPI = reader.read(Ticket4878Resource.class);
-        String yaml = "openapi: 3.1.0\n" +
-                "paths:\n" +
-                "  /{globalPathParam}/{localPathParam}:\n" +
-                "    get:\n" +
-                "      operationId: getMethod\n" +
-                "      parameters:\n" +
-                "      - name: globalPathParam\n" +
-                "        in: path\n" +
-                "        required: true\n" +
-                "        schema:\n" +
-                "          type: string\n" +
-                "          $comment: 3.1 property for global path param\n" +
-                "      - name: localPathParam\n" +
-                "        in: path\n" +
-                "        required: true\n" +
-                "        schema:\n" +
-                "          type: string\n" +
-                "          $comment: 3.1 property for local path param\n" +
-                "      responses:\n" +
-                "        default:\n" +
-                "          description: default response\n" +
-                "          content:\n" +
-                "            '*/*': {}\n";
+        String yaml = """
+                openapi: 3.1.0
+                paths:
+                  /{globalPathParam}/{localPathParam}:
+                    get:
+                      operationId: getMethod
+                      parameters:
+                      - name: globalPathParam
+                        in: path
+                        required: true
+                        schema:
+                          type: string
+                          $comment: 3.1 property for global path param
+                      - name: localPathParam
+                        in: path
+                        required: true
+                        schema:
+                          type: string
+                          $comment: 3.1 property for local path param
+                      responses:
+                        default:
+                          description: default response
+                          content:
+                            '*/*': {}
+                """;
         SerializationMatchers.assertEqualsToYaml31(openAPI, yaml);
         ModelConverters.reset();
     }
@@ -5459,58 +5578,62 @@ public class ReaderTest {
         SwaggerConfiguration config = new SwaggerConfiguration().openAPI31(true);
         Reader reader = new Reader(config);
         OpenAPI openAPI = reader.read(Ticket4878Resource.class);
-        String yaml = "openapi: 3.1.0\n" +
-                "paths:\n" +
-                "  /{globalPathParam}/{localPathParam}:\n" +
-                "    get:\n" +
-                "      operationId: getMethod\n" +
-                "      parameters:\n" +
-                "      - name: globalPathParam\n" +
-                "        in: path\n" +
-                "        required: true\n" +
-                "        schema:\n" +
-                "          type: string\n" +
-                "          $comment: 3.1 property for global path param\n" +
-                "      - name: localPathParam\n" +
-                "        in: path\n" +
-                "        required: true\n" +
-                "        schema:\n" +
-                "          type: string\n" +
-                "          $comment: 3.1 property for local path param\n" +
-                "      responses:\n" +
-                "        default:\n" +
-                "          description: default response\n" +
-                "          content:\n" +
-                "            '*/*': {}\n";
+        String yaml = """
+                openapi: 3.1.0
+                paths:
+                  /{globalPathParam}/{localPathParam}:
+                    get:
+                      operationId: getMethod
+                      parameters:
+                      - name: globalPathParam
+                        in: path
+                        required: true
+                        schema:
+                          type: string
+                          $comment: 3.1 property for global path param
+                      - name: localPathParam
+                        in: path
+                        required: true
+                        schema:
+                          type: string
+                          $comment: 3.1 property for local path param
+                      responses:
+                        default:
+                          description: default response
+                          content:
+                            '*/*': {}
+                """;
         SerializationMatchers.assertEqualsToYaml31(openAPI, yaml);
 
         // openAPI31 true and openAPI set
         config.setOpenAPI(new OpenAPI().openapi("3.1.1"));
         reader = new Reader(config);
         openAPI = reader.read(Ticket4878Resource.class);
-        yaml = "openapi: 3.1.1\n" +
-                "paths:\n" +
-                "  /{globalPathParam}/{localPathParam}:\n" +
-                "    get:\n" +
-                "      operationId: getMethod\n" +
-                "      parameters:\n" +
-                "      - name: globalPathParam\n" +
-                "        in: path\n" +
-                "        required: true\n" +
-                "        schema:\n" +
-                "          type: string\n" +
-                "          $comment: 3.1 property for global path param\n" +
-                "      - name: localPathParam\n" +
-                "        in: path\n" +
-                "        required: true\n" +
-                "        schema:\n" +
-                "          type: string\n" +
-                "          $comment: 3.1 property for local path param\n" +
-                "      responses:\n" +
-                "        default:\n" +
-                "          description: default response\n" +
-                "          content:\n" +
-                "            '*/*': {}\n";
+        yaml = """
+                openapi: 3.1.1
+                paths:
+                  /{globalPathParam}/{localPathParam}:
+                    get:
+                      operationId: getMethod
+                      parameters:
+                      - name: globalPathParam
+                        in: path
+                        required: true
+                        schema:
+                          type: string
+                          $comment: 3.1 property for global path param
+                      - name: localPathParam
+                        in: path
+                        required: true
+                        schema:
+                          type: string
+                          $comment: 3.1 property for local path param
+                      responses:
+                        default:
+                          description: default response
+                          content:
+                            '*/*': {}
+                """;
         SerializationMatchers.assertEqualsToYaml31(openAPI, yaml);
 
         // openAPI31 true and openAPIVersion set
@@ -5518,29 +5641,31 @@ public class ReaderTest {
         config.setOpenAPIVersion("3.1.1");
         reader = new Reader(config);
         openAPI = reader.read(Ticket4878Resource.class);
-        yaml = "openapi: 3.1.1\n" +
-                "paths:\n" +
-                "  /{globalPathParam}/{localPathParam}:\n" +
-                "    get:\n" +
-                "      operationId: getMethod\n" +
-                "      parameters:\n" +
-                "      - name: globalPathParam\n" +
-                "        in: path\n" +
-                "        required: true\n" +
-                "        schema:\n" +
-                "          type: string\n" +
-                "          $comment: 3.1 property for global path param\n" +
-                "      - name: localPathParam\n" +
-                "        in: path\n" +
-                "        required: true\n" +
-                "        schema:\n" +
-                "          type: string\n" +
-                "          $comment: 3.1 property for local path param\n" +
-                "      responses:\n" +
-                "        default:\n" +
-                "          description: default response\n" +
-                "          content:\n" +
-                "            '*/*': {}\n";
+        yaml = """
+                openapi: 3.1.1
+                paths:
+                  /{globalPathParam}/{localPathParam}:
+                    get:
+                      operationId: getMethod
+                      parameters:
+                      - name: globalPathParam
+                        in: path
+                        required: true
+                        schema:
+                          type: string
+                          $comment: 3.1 property for global path param
+                      - name: localPathParam
+                        in: path
+                        required: true
+                        schema:
+                          type: string
+                          $comment: 3.1 property for local path param
+                      responses:
+                        default:
+                          description: default response
+                          content:
+                            '*/*': {}
+                """;
         SerializationMatchers.assertEqualsToYaml31(openAPI, yaml);
         ModelConverters.reset();
     }
@@ -5633,37 +5758,39 @@ public class ReaderTest {
         SpecFilter f = new SpecFilter();
         openAPI = f.filter(openAPI, filterImpl, null, null, null);
 
-        String yaml = "openapi: 3.1.0\n" +
-                "paths:\n" +
-                "  /test:\n" +
-                "    get:\n" +
-                "      operationId: myMethod\n" +
-                "      requestBody:\n" +
-                "        content:\n" +
-                "          '*/*':\n" +
-                "            schema:\n" +
-                "              $ref: \"#/components/schemas/Example\"\n" +
-                "      responses:\n" +
-                "        default:\n" +
-                "          description: default response\n" +
-                "          content:\n" +
-                "            '*/*': {}\n" +
-                "components:\n" +
-                "  schemas:\n" +
-                "    Example:\n" +
-                "      type: object\n" +
-                "      properties:\n" +
-                "        myMap:\n" +
-                "          type: object\n" +
-                "          additionalProperties:\n" +
-                "            type: string\n" +
-                "          propertyNames:\n" +
-                "            $ref: \"#/components/schemas/MyEnum\"\n" +
-                "    MyEnum:\n" +
-                "      type: string\n" +
-                "      enum:\n" +
-                "      - FOO\n" +
-                "      - BAR\n";
+        String yaml = """
+                openapi: 3.1.0
+                paths:
+                  /test:
+                    get:
+                      operationId: myMethod
+                      requestBody:
+                        content:
+                          '*/*':
+                            schema:
+                              $ref: "#/components/schemas/Example"
+                      responses:
+                        default:
+                          description: default response
+                          content:
+                            '*/*': {}
+                components:
+                  schemas:
+                    Example:
+                      type: object
+                      properties:
+                        myMap:
+                          type: object
+                          additionalProperties:
+                            type: string
+                          propertyNames:
+                            $ref: "#/components/schemas/MyEnum"
+                    MyEnum:
+                      type: string
+                      enum:
+                      - FOO
+                      - BAR
+                """;
         SerializationMatchers.assertEqualsToYaml31(openAPI, yaml);
         ModelResolver.enumsAsRef = false;
     }
@@ -5678,5 +5805,42 @@ public class ReaderTest {
         public boolean isOpenAPI31Filter() {
             return true;
         }
+    }
+
+    @Test(description = "generic resource with 3-param method resolves type variable")
+    public void testGenericResourceWithThreeParamMethodResolvesTypeVariable() {
+        Reader reader = new Reader(new OpenAPI());
+        OpenAPI openAPI = reader.read(GenericPetCreateResource.class);
+
+        assertNotNull(openAPI.getPaths());
+        PathItem pathItem = openAPI.getPaths().get("/generic-pets");
+        assertNotNull(pathItem);
+        assertNotNull(pathItem.getPost());
+        assertNotNull(pathItem.getPost().getRequestBody());
+
+        io.swagger.v3.oas.models.media.Schema bodySchema = pathItem.getPost().getRequestBody()
+                .getContent().get("application/json").getSchema();
+        assertNotNull(bodySchema);
+        String ref = bodySchema.get$ref();
+        assertTrue(ref != null && ref.contains("GenericPet"),
+                "T must resolve to GenericPet, not Object; got: " + ref);
+    }
+
+    abstract static class GenericBaseResource<T> {
+        @POST
+        @Path("/generic-pets")
+        @Consumes("application/json")
+        public abstract void create(T body, @HeaderParam("x-header") String header, @QueryParam("dryRun") boolean dryRun);
+    }
+
+    static class GenericPetCreateResource extends GenericBaseResource<GenericPet> {
+        @Override
+        public void create(GenericPet body, String header, boolean dryRun) {
+        }
+    }
+
+    static class GenericPet {
+        public String name;
+        public String getName() { return name; }
     }
 }

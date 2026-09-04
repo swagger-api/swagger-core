@@ -7,7 +7,6 @@ import tools.jackson.databind.JsonNode;
 import io.swagger.v3.oas.models.media.EncodingProperty;
 import tools.jackson.databind.ValueDeserializer;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
@@ -15,7 +14,7 @@ public class EncodingPropertyStyleEnumDeserializer extends ValueDeserializer<Enc
     @Override
     public EncodingProperty.StyleEnum deserialize(JsonParser jp, DeserializationContext ctxt)
             throws JacksonException {
-        JsonNode node = jp.objectReadContext().readTree(jp);
+        JsonNode node = ctxt.readTree(jp);
         if (node != null) {
             String value = node.asText();
             return getStyleEnum(value);

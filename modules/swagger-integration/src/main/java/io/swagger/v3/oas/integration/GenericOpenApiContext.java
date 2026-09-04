@@ -299,7 +299,7 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
     /**
      * @since 2.1.8
      */
-    public void setOpenAPI31(Boolean v) {
+    public void setOpenAPI31(Boolean openAPI31) {
         this.openAPI31 = openAPI31;
     }
 
@@ -431,12 +431,12 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
     }
 
     protected ObjectMapperProcessor buildObjectMapperProcessor(final OpenAPIConfiguration openApiConfiguration) throws Exception {
-        ObjectMapperProcessor objectMapperProcessor = null;
+        ObjectMapperProcessor omProcessor = null;
         if (StringUtils.isNotBlank(openApiConfiguration.getObjectMapperProcessorClass())) {
             Class cls = getClass().getClassLoader().loadClass(openApiConfiguration.getObjectMapperProcessorClass());
-            objectMapperProcessor = (ObjectMapperProcessor) cls.newInstance();
+            omProcessor = (ObjectMapperProcessor) cls.newInstance();
         }
-        return objectMapperProcessor;
+        return omProcessor;
     }
 
     protected Set<ModelConverter> buildModelConverters(final OpenAPIConfiguration openApiConfiguration) throws Exception {
@@ -584,8 +584,7 @@ public class GenericOpenApiContext<T extends GenericOpenApiContext> implements O
 
         try {
             if (objectMapperProcessor != null) {
-                ObjectMapper mapper = IntegrationObjectMapperFactory.createJson();
-                objectMapperProcessor.processJsonObjectMapper(mapper);
+                ObjectMapper mapper = objectMapperProcessor.processJsonObjectMapper(IntegrationObjectMapperFactory.createJson());
                 ModelConverters.getInstance(Boolean.TRUE.equals(openApiConfiguration.isOpenAPI31()), openApiConfiguration.getSchemaResolution()).addConverter(new ModelResolver(mapper));
 
                 outputJsonMapper = objectMapperProcessor.processOutputJsonObjectMapper(outputJsonMapper);

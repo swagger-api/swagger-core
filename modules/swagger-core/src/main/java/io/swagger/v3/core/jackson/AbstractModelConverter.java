@@ -4,11 +4,11 @@ import tools.jackson.core.Version;
 import tools.jackson.databind.AnnotationIntrospector;
 import tools.jackson.databind.BeanDescription;
 import tools.jackson.databind.JavaType;
+import tools.jackson.databind.MapperFeature;
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.PropertyName;
 import tools.jackson.databind.cfg.MapperBuilder;
 import tools.jackson.databind.introspect.AccessorNamingStrategy;
-import tools.jackson.databind.introspect.BasicBeanDescription;
 import tools.jackson.databind.introspect.DefaultAccessorNamingStrategy;
 import tools.jackson.databind.jsontype.NamedType;
 import tools.jackson.databind.module.SimpleModule;
@@ -37,16 +37,21 @@ public abstract class AbstractModelConverter implements ModelConverter {
     }
 
     protected AbstractModelConverter(ObjectMapper mapper, TypeNameResolver typeNameResolver) {
-        _mapper = mapper.rebuild()
+        MapperBuilder<?, ?> builder = mapper.rebuild()
                 .addModule(new SimpleModule("swagger", Version.unknownVersion()) {
                     @Override
                     public void setupModule(SetupContext context) {
                         context.insertAnnotationIntrospector(new SwaggerAnnotationIntrospector());
                     }
                 })
-                .accessorNaming(new DefaultAccessorNamingStrategy.Provider()
-                        .withFirstCharAcceptance(true, true))
-                .build();
+                .configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY, false);
+        AccessorNamingStrategy.Provider currentNaming =
+                mapper.serializationConfig().getAccessorNaming();
+        if (currentNaming.getClass() == DefaultAccessorNamingStrategy.Provider.class) {
+            builder.accessorNaming(new DefaultAccessorNamingStrategy.Provider()
+                    .withFirstCharAcceptance(true, true));
+        }
+        _mapper = builder.build();
         _typeNameResolver = typeNameResolver;
     }
 

@@ -10,8 +10,6 @@ import io.swagger.v3.oas.models.PathItem;
 import io.swagger.v3.oas.models.Paths;
 import tools.jackson.databind.ValueDeserializer;
 
-import java.io.IOException;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -31,7 +29,7 @@ public class PathsDeserializer extends ValueDeserializer<Paths> {
         }
 
         Paths result = new Paths();
-        JsonNode node = jp.objectReadContext().readTree(jp);
+        JsonNode node = ctxt.readTree(jp);
         ObjectNode objectNode = (ObjectNode)node;
         Map<String, Object> extensions = new LinkedHashMap<>();
         for (Map.Entry<String, JsonNode> entry : objectNode.properties()) {

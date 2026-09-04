@@ -30,7 +30,6 @@ import org.apache.commons.lang3.StringUtils;
 import tools.jackson.databind.ValueDeserializer;
 import tools.jackson.databind.node.StringNode;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -74,7 +73,7 @@ public class ModelDeserializer extends ValueDeserializer<Schema> {
     @Override
     public Schema deserialize(JsonParser jp, DeserializationContext ctxt)
             throws JacksonException {
-        JsonNode node = jp.objectReadContext().readTree(jp);
+        JsonNode node = ctxt.readTree(jp);
 
         Schema schema;
 
@@ -156,12 +155,12 @@ public class ModelDeserializer extends ValueDeserializer<Schema> {
             }
             schema = Json31.mapper().convertValue(node, JsonSchema.class);
             if (type instanceof StringNode) {
-                schema.types(new LinkedHashSet<>(Arrays.asList(type.textValue())));
+                schema.types(new LinkedHashSet<>(Arrays.asList(type.stringValue(null))));
             } else if (type instanceof ArrayNode arrayNode){
                 Set<String> types = new LinkedHashSet<>();
-                arrayNode.values().iterator().forEachRemaining( n -> {
-                    types.add(n.textValue());
-                });
+                arrayNode.values().iterator().forEachRemaining( n ->
+                    types.add(n.stringValue(null))
+                );
                 schema.types(types);
             }
             if (additionalProperties != null) {
@@ -186,7 +185,8 @@ public class ModelDeserializer extends ValueDeserializer<Schema> {
 
     private Schema deserializeSchemaWithType(JsonNode node, JsonNode typeNode) {
         Schema schema = null;
-        String type = typeNode.textValue();
+        //this should be explicit cast
+        String type = ((StringNode) typeNode).stringValue();
         String format = node.get(FORMAT) == null ? "" : getNodeAsString(node, FORMAT);
 
         if (type.equals(ARRAY_TYPE)) {
@@ -229,10 +229,11 @@ public class ModelDeserializer extends ValueDeserializer<Schema> {
     }
 
     private String getNodeAsString(JsonNode jsonNode, String field) {
-        return jsonNode.get(field).textValue();
+        return jsonNode.get(field).stringValue(null);
     }
 
     private String getRefAsString(JsonNode jsonNode) {
-        return jsonNode.get(REF).asText();
+        JsonNode ref = jsonNode.get(REF);
+        return ref.isValueNode() ? ref.asString() : "";
     }
 }

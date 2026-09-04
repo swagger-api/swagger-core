@@ -1,7 +1,7 @@
 package io.swagger.v3.java17.resolving;
 
-import com.fasterxml.jackson.databind.PropertyNamingStrategies;
-import com.fasterxml.jackson.databind.annotation.JsonNaming;
+import tools.jackson.databind.PropertyNamingStrategies;
+import tools.jackson.databind.annotation.JsonNaming;
 import io.swagger.v3.core.converter.AnnotatedType;
 import io.swagger.v3.core.converter.ModelConverterContextImpl;
 import io.swagger.v3.core.jackson.ModelResolver;
@@ -98,7 +98,9 @@ public class RecordPropertyNamingStrategyTest {
     @Test
     public void testSnakeCaseNamingStrategyAppliedToRecordComponents() {
         ModelResolver modelResolver = new ModelResolver(
-                Json.mapper().copy().setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE));
+                Json.mapper().rebuild()
+                        .propertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE)
+                        .build());
         ModelConverterContextImpl context = new ModelConverterContextImpl(modelResolver);
 
         Schema<?> schema = modelResolver.resolve(new AnnotatedType(PidLookupResponse.class), context, null);
@@ -118,13 +120,13 @@ public class RecordPropertyNamingStrategyTest {
 
     @Test
     public void testClassLevelJsonNamingAppliedToRecordComponents() {
-        ModelResolver modelResolver = new ModelResolver(Json.mapper().copy());
+        ModelResolver modelResolver = new ModelResolver(Json.mapper().rebuild().build());
         ModelConverterContextImpl context = new ModelConverterContextImpl(modelResolver);
 
         Schema<?> schema = modelResolver.resolve(new AnnotatedType(JsonNamingPidLookupResponse.class), context, null);
 
         assertNull(modelResolver.objectMapper()
-                        .getSerializationConfig()
+                        .serializationConfig()
                         .getPropertyNamingStrategy());
         assertTrue(schema.getProperties().containsKey("family_name"));
         assertTrue(schema.getProperties().containsKey("expiry_date"));
@@ -141,14 +143,15 @@ public class RecordPropertyNamingStrategyTest {
 
     @Test
     public void testMixInJsonNamingAppliedToRecordComponents() {
-        ModelResolver modelResolver = new ModelResolver(Json.mapper().copy()
-                .addMixIn(MixInPidLookupResponse.class, SnakeCaseMixIn.class));
+        ModelResolver modelResolver = new ModelResolver(Json.mapper().rebuild()
+                .addMixIn(MixInPidLookupResponse.class, SnakeCaseMixIn.class)
+                .build());
         ModelConverterContextImpl context = new ModelConverterContextImpl(modelResolver);
 
         Schema<?> schema = modelResolver.resolve(new AnnotatedType(MixInPidLookupResponse.class), context, null);
 
         assertNull(modelResolver.objectMapper()
-                .getSerializationConfig()
+                .serializationConfig()
                 .getPropertyNamingStrategy());
         assertTrue(schema.getProperties().containsKey("family_name"));
         assertTrue(schema.getProperties().containsKey("expiry_date"));
@@ -166,7 +169,9 @@ public class RecordPropertyNamingStrategyTest {
     @Test
     public void testBooleanIsRecordComponentWithSnakeCaseNamingStrategy() {
         ModelResolver modelResolver = new ModelResolver(
-                Json.mapper().copy().setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE));
+                Json.mapper().rebuild()
+                        .propertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE)
+                        .build());
         ModelConverterContextImpl context = new ModelConverterContextImpl(modelResolver);
 
         Schema<?> schema = modelResolver.resolve(new AnnotatedType(BooleanStatusResponse.class), context, null);
@@ -178,13 +183,13 @@ public class RecordPropertyNamingStrategyTest {
 
     @Test
     public void testLegacyIsPersistentNameWithNoNamingStrategy() {
-        ModelResolver modelResolver = new ModelResolver(Json.mapper().copy());
+        ModelResolver modelResolver = new ModelResolver(Json.mapper().rebuild().build());
         ModelConverterContextImpl context = new ModelConverterContextImpl(modelResolver);
 
         Schema<?> schema = modelResolver.resolve(new AnnotatedType(LegacyIsPersistentResponse.class), context, null);
 
         assertNull(modelResolver.objectMapper()
-                .getSerializationConfig()
+                .serializationConfig()
                 .getPropertyNamingStrategy());
         assertTrue(schema.getProperties().containsKey("is_persistent"),
                 "expected is_persistent but got " + schema.getProperties().keySet());
@@ -195,13 +200,13 @@ public class RecordPropertyNamingStrategyTest {
 
     @Test
     public void testXmlRenamedIsPrefixFieldKeepsOriginalNameWithNoNamingStrategy() {
-        ModelResolver modelResolver = new ModelResolver(Json.mapper().copy());
+        ModelResolver modelResolver = new ModelResolver(Json.mapper().rebuild().build());
         ModelConverterContextImpl context = new ModelConverterContextImpl(modelResolver);
 
         Schema<?> schema = modelResolver.resolve(new AnnotatedType(XmlRenamedIsPrefixResponse.class), context, null);
 
         assertNull(modelResolver.objectMapper()
-                .getSerializationConfig()
+                .serializationConfig()
                 .getPropertyNamingStrategy());
         assertTrue(schema.getProperties().containsKey("isotonicDrinkOnlyXmlElement"),
                 "expected isotonicDrinkOnlyXmlElement but got " + schema.getProperties().keySet());
@@ -211,7 +216,9 @@ public class RecordPropertyNamingStrategyTest {
     @Test
     public void testCustomNamingStrategyAppliedToGetAndIsPrefixedRecordComponents() {
         ModelResolver modelResolver = new ModelResolver(
-                Json.mapper().copy().setPropertyNamingStrategy(new CustomPrefixStrategy()));
+                Json.mapper().rebuild()
+                        .propertyNamingStrategy(new CustomPrefixStrategy())
+                        .build());
         ModelConverterContextImpl context = new ModelConverterContextImpl(modelResolver);
 
         Schema<?> schema = modelResolver.resolve(new AnnotatedType(PidLookupResponse.class), context, null);

@@ -10,8 +10,6 @@ import io.swagger.v3.oas.models.responses.ApiResponse;
 import io.swagger.v3.oas.models.responses.ApiResponses;
 import tools.jackson.databind.ValueDeserializer;
 
-import java.io.IOException;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -30,7 +28,7 @@ public class ApiResponsesDeserializer extends ValueDeserializer<ApiResponses> {
             mapper = Json.mapper();
         }
         ApiResponses result = new ApiResponses();
-        JsonNode node = jp.objectReadContext().readTree(jp);
+        JsonNode node = ctxt.readTree(jp);
         ObjectNode objectNode = (ObjectNode) node;
         Map<String, Object> extensions = new LinkedHashMap<>();
         for (Map.Entry<String, JsonNode> entry : objectNode.properties()) {

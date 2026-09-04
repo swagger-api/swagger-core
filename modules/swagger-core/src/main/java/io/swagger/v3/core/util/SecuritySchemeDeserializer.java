@@ -10,10 +10,8 @@ import io.swagger.v3.oas.models.security.OAuthFlows;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import tools.jackson.databind.ValueDeserializer;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.Iterator;
-import java.util.List;
 
 public class SecuritySchemeDeserializer extends ValueDeserializer<SecurityScheme> {
 
@@ -30,7 +28,7 @@ public class SecuritySchemeDeserializer extends ValueDeserializer<SecurityScheme
         }
         SecurityScheme result = null;
 
-        JsonNode node = jp.objectReadContext().readTree(jp);
+        JsonNode node = ctxt.readTree(jp);
 
         JsonNode inNode = node.get("type");
 

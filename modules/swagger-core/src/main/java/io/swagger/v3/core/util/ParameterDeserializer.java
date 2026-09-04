@@ -14,7 +14,6 @@ import io.swagger.v3.oas.models.parameters.QueryParameter;
 import tools.jackson.databind.ValueDeserializer;
 import tools.jackson.databind.cfg.EnumFeature;
 
-import java.io.IOException;
 
 public class ParameterDeserializer extends ValueDeserializer<Parameter> {
 
@@ -25,7 +24,7 @@ public class ParameterDeserializer extends ValueDeserializer<Parameter> {
             throws JacksonException {
         Parameter result = null;
 
-        JsonNode node = jp.objectReadContext().readTree(jp);
+        JsonNode node = ctxt.readTree(jp);
         JsonNode sub = node.get("$ref");
         JsonNode inNode = node.get("in");
         JsonNode desc = node.get("description");
