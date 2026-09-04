@@ -19,7 +19,6 @@ import tools.jackson.databind.JavaType;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.PropertyMetadata;
-import tools.jackson.databind.SerializationFeature;
 import tools.jackson.databind.annotation.JsonSerialize;
 import tools.jackson.databind.annotation.JsonNaming;
 import tools.jackson.databind.cfg.EnumFeature;
@@ -66,7 +65,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import tools.jackson.core.JacksonException;
 
 import javax.validation.constraints.DecimalMax;
 import javax.validation.constraints.DecimalMin;
@@ -89,7 +87,6 @@ import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlElementRefs;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchema;
-import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedParameterizedType;
 import java.lang.reflect.Field;
@@ -123,7 +120,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
     Logger LOGGER = LoggerFactory.getLogger(ModelResolver.class);
     public static List<String> NOT_NULL_ANNOTATIONS = Arrays.asList("NotNull", "NonNull", "NotBlank", "NotEmpty");
-    public static List<String> NULLABLE_ANNOTATIONS = Arrays.asList("Nullable");
+    public static List<String> NULLABLE_ANNOTATIONS = List.of("Nullable");
 
     public static final String SET_PROPERTY_OF_COMPOSED_MODEL_AS_SIBLING = "composed-model-properties-as-sibiling";
     public static final String SET_PROPERTY_OF_ENUMS_AS_REF = "enums-as-ref";
@@ -320,7 +317,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
         if (model == null && !annotatedType.isSkipOverride() && resolvedSchemaAnnotation != null &&
             StringUtils.isNotEmpty(resolvedSchemaAnnotation.type()) &&
-            !resolvedSchemaAnnotation.type().equals("object")) {
+            !resolvedSchemaAnnotation.type().equals(OBJECT_TYPE)) {
             PrimitiveType primitiveType = PrimitiveType.fromTypeAndFormat(resolvedSchemaAnnotation.type(), resolvedSchemaAnnotation.format());
             if (primitiveType == null) {
                 primitiveType = PrimitiveType.fromType(type);
@@ -1039,7 +1036,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                     .distinct()
                     .filter(c -> !this.shouldIgnoreClass(c))
                     .filter(c -> !(c.equals(Void.class)))
-                    .collect(Collectors.toList());
+                    .toList();
             allOfFiltered.forEach(c -> {
                 Schema allOfRef = context.resolve(new AnnotatedType().components(annotatedType.getComponents()).type(c).jsonViewAnnotation(annotatedType.getJsonViewAnnotation()));
                 Schema refSchema = new Schema().$ref(Components.COMPONENTS_SCHEMAS_REF + allOfRef.getName());
@@ -1060,7 +1057,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                     .distinct()
                     .filter(c -> !this.shouldIgnoreClass(c))
                     .filter(c -> !(c.equals(Void.class)))
-                    .collect(Collectors.toList());
+                    .toList();
             anyOfFiltered.forEach(c -> {
                 Schema anyOfRef = context.resolve(new AnnotatedType().components(annotatedType.getComponents()).type(c).jsonViewAnnotation(annotatedType.getJsonViewAnnotation()));
                 if (anyOfRef != null) {
@@ -1081,7 +1078,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                     .distinct()
                     .filter(c -> !this.shouldIgnoreClass(c))
                     .filter(c -> !(c.equals(Void.class)))
-                    .collect(Collectors.toList());
+                    .toList();
             oneOfFiltered.forEach(c -> {
                 Schema oneOfRef = context.resolve(new AnnotatedType().components(annotatedType.getComponents()).type(c).jsonViewAnnotation(annotatedType.getJsonViewAnnotation()));
                 if (oneOfRef != null) {
@@ -1836,7 +1833,6 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         if (parent != null && annos.containsKey(JAVAX_NOT_NULL) && applyNotNullAnnotations) {
             NotNull anno = (NotNull) annos.get(JAVAX_NOT_NULL);
             if (anno.groups().length == 0 && acceptNoGroups) {
-                ;
                 // no groups, so apply
                 modified = updateRequiredItem(parent, property.getName()) || modified;
             } else {
@@ -2165,7 +2161,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                     .distinct()
                     .filter(c -> !this.shouldIgnoreClass(c))
                     .filter(c -> !(c.equals(Void.class)))
-                    .collect(Collectors.toList());
+                    .toList();
 
             if (!parentClasses.isEmpty()) {
                 return parentClasses;
@@ -3592,6 +3588,11 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
     protected boolean isNumberSchema(Schema schema) {
         return SchemaTypeUtils.isNumberSchema(schema);
+    }
+
+    private AnnotatedMember invokeMethod(final BeanDescription beanDesc, String methodName) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+        Method m = BeanDescription.class.getMethod(methodName);
+        return (AnnotatedMember) m.invoke(beanDesc);
     }
 
     protected Schema buildRefSchemaIfObject(Schema schema, ModelConverterContext context) {

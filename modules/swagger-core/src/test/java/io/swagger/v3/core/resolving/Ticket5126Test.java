@@ -1,6 +1,6 @@
 package io.swagger.v3.core.resolving;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 import io.swagger.v3.core.util.AnnotationsUtils;
 import io.swagger.v3.core.util.Json;
 import io.swagger.v3.core.jackson.ModelResolver;

@@ -1,6 +1,7 @@
 package io.swagger.v3.core.serialization;
 
 import org.snakeyaml.engine.v2.api.LoadSettings;
+import tools.jackson.core.util.DefaultIndenter;
 import tools.jackson.core.util.DefaultPrettyPrinter;
 import tools.jackson.core.json.JsonFactory;
 import tools.jackson.dataformat.yaml.JacksonYAMLParseException;
@@ -18,7 +19,6 @@ import io.swagger.v3.oas.models.responses.ApiResponse;
 import io.swagger.v3.oas.models.responses.ApiResponses;
 import io.swagger.v3.oas.models.servers.Server;
 import org.testng.annotations.Test;
-import org.yaml.snakeyaml.LoaderOptions;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -30,7 +30,7 @@ import static org.testng.Assert.assertTrue;
 public class JsonSerializationTest {
 
     @Test
-    public void testSerializeASpecWithPathReferences() throws Exception {
+    public void testSerializeASpecWithPathReferences() {
 
         OpenAPI swagger = new OpenAPI()
                 .addServersItem(new Server().url("http://petstore.swagger.io"));
@@ -155,7 +155,7 @@ public class JsonSerializationTest {
         final String yaml = ResourceUtils.loadClassResource(getClass(), "specFiles/null-example.yaml");
 
         // when
-        OpenAPI deser = ObjectMapperFactory.createYaml(yamlFactory).readValue(yaml, OpenAPI.class);
+        ObjectMapperFactory.createYaml(yamlFactory).readValue(yaml, OpenAPI.class);
 
         // then - Throw JacksonYAMLParseException
     }
@@ -163,29 +163,21 @@ public class JsonSerializationTest {
     @Test
     public void testCustomPrettyPrinterIsHonored() {
         //given
-        DefaultPrettyPrinter originalPrinter = (DefaultPrettyPrinter) Json.mapper().getSerializationConfig().getDefaultPrettyPrinter();
+        DefaultPrettyPrinter printer = new DefaultPrettyPrinter();
+        printer.indentObjectsWith(new DefaultIndenter("    ", "\n"));
 
-        try {
-            DefaultPrettyPrinter printer = new DefaultPrettyPrinter();
-            printer.indentObjectsWith(new DefaultIndenter("    ", "\n"));
-            Json.mapper().setDefaultPrettyPrinter(printer);
+        //when
+        OpenAPI openAPI = new OpenAPI()
+                .info(new Info().title("Pet Store"));
 
-            //when
-            OpenAPI openAPI = new OpenAPI()
-                    .info(new Info().title("Pet Store"));
+        String json = Json.mapper().writer().with(printer).writeValueAsString(openAPI);
 
-            String json = Json.pretty(openAPI);
-
-            //then
-            assertTrue(json.contains("{\n    \"openapi\""),
-                    "Custom four-space indentation should be honored");
-            assertTrue(json.contains("    \"info\" : {"),
-                    "Nested objects should use four-space indentation");
-            assertTrue(json.contains("        \"title\" : \"Pet Store\""),
-                    "Doubly-nested properties should use eight-space indentation");
-        } finally {
-            // Restore original pretty printer to avoid affecting other tests
-            Json.mapper().setDefaultPrettyPrinter(originalPrinter);
-        }
+        //then
+        assertTrue(json.contains("{\n    \"openapi\""),
+                "Custom four-space indentation should be honored");
+        assertTrue(json.contains("    \"info\" : {"),
+                "Nested objects should use four-space indentation");
+        assertTrue(json.contains("        \"title\" : \"Pet Store\""),
+                "Doubly-nested properties should use eight-space indentation");
     }
 }
