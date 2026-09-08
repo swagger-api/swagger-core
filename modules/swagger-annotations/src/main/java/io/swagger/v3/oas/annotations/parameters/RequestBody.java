@@ -24,6 +24,14 @@ import static java.lang.annotation.ElementType.PARAMETER;
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
 public @interface RequestBody {
+
+    /**
+     * Unique name to identify this RequestBody component. Used in components block.
+     *
+     * @return the name of the RequestBody
+     */
+    String name() default "";
+
     /**
      * A brief description of the request body.
      *
