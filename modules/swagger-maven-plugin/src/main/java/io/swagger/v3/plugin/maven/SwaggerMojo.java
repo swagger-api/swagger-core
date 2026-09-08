@@ -164,6 +164,9 @@ public class SwaggerMojo extends AbstractMojo {
         if (convertToOpenAPI31 == null) {
             convertToOpenAPI31 = Boolean.FALSE;
         }
+        if (ignoreHidden == null) {
+            ignoreHidden = Boolean.FALSE;
+        }
         if (config.isPrettyPrint() == null) {
             config.prettyPrint(prettyPrint);
         }
@@ -184,6 +187,9 @@ public class SwaggerMojo extends AbstractMojo {
         }
         if (config.isConvertToOpenAPI31() == null) {
             config.setConvertToOpenAPI31(convertToOpenAPI31);
+        }
+        if (config.isIgnoreHidden() == null) {
+            config.setIgnoreHidden(ignoreHidden);
         }
 
     }
@@ -375,6 +381,10 @@ public class SwaggerMojo extends AbstractMojo {
             config.openAPIVersion(openAPIVersion);
         }
 
+        if (ignoreHidden != null) {
+            config.ignoreHidden(ignoreHidden);
+        }
+
         return config;
     }
 
@@ -497,6 +507,12 @@ public class SwaggerMojo extends AbstractMojo {
      */
     @Parameter(property = "resolve.openAPIVersion")
     private String openAPIVersion;
+
+    /**
+     * @since 2.2.40
+     */
+    @Parameter(property = "resolve.ignoreHidden")
+    private Boolean ignoreHidden;
 
     private String projectEncoding = "UTF-8";
     private SwaggerConfiguration config;

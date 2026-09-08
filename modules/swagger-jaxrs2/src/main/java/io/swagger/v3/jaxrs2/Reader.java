@@ -299,7 +299,8 @@ public class Reader implements OpenApiReader {
             openAPI.setOpenapi("3.1.0");
         }
 
-        if (hidden != null) { //  || (apiPath == null && !isSubresource)) {
+        // Skip class if @Hidden annotation is present and ignoreHidden is not enabled
+        if (hidden != null && !Boolean.TRUE.equals(config.isIgnoreHidden())) { //  || (apiPath == null && !isSubresource)) {
             return openAPI;
         }
 
@@ -1611,11 +1612,13 @@ public class Reader implements OpenApiReader {
 
     protected boolean isOperationHidden(Method method) {
         io.swagger.v3.oas.annotations.Operation apiOperation = ReflectionUtils.getAnnotation(method, io.swagger.v3.oas.annotations.Operation.class);
-        if (apiOperation != null && apiOperation.hidden()) {
+        // Check @Operation(hidden=true) - respect ignoreHidden configuration
+        if (apiOperation != null && apiOperation.hidden() && !Boolean.TRUE.equals(config.isIgnoreHidden())) {
             return true;
         }
+        // Check @Hidden annotation - respect ignoreHidden configuration
         Hidden hidden = method.getAnnotation(Hidden.class);
-        if (hidden != null) {
+        if (hidden != null && !Boolean.TRUE.equals(config.isIgnoreHidden())) {
             return true;
         }
         if (config != null && !Boolean.TRUE.equals(config.isReadAllResources()) && apiOperation == null) {
