@@ -4,7 +4,7 @@
 plugins {
     id 'java-gradle-plugin'
     // Publishing publicly
-    id 'com.gradle.plugin-publish' version '1.3.0'
+    id 'com.gradle.plugin-publish' version '2.1.1'
     // Publishing to maven
     id 'maven-publish'
 }

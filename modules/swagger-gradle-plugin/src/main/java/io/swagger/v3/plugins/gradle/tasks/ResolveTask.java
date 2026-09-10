@@ -132,7 +132,7 @@ public class ResolveTask extends DefaultTask {
 
     @Input
     @Optional
-    private Property<String> openAPIVersion = getProject().getObjects().property(String.class);;
+    private Property<String> openAPIVersion = getProject().getObjects().property(String.class);
 
     @Input
     @Optional
@@ -345,7 +345,6 @@ public class ResolveTask extends DefaultTask {
 
     public void setReadAllResources(Boolean readAllResources) {
         this.readAllResources.set(readAllResources);
-        ;
     }
 
     public void setReadAllResources(@Nullable String readAllResources) {
@@ -405,7 +404,6 @@ public class ResolveTask extends DefaultTask {
      */
     public void setSkipResolveAppPath(Boolean skipResolveAppPath) {
         this.skipResolveAppPath.set(skipResolveAppPath);
-        ;
     }
 
     public Property<Boolean> getOpenAPI31() {
@@ -482,11 +480,9 @@ public class ResolveTask extends DefaultTask {
                 .distinct()
                 .toArray(URL[]::new);
 
-        //ClassLoader classLoader = new URLClassLoader(urls.toArray(new URL[urls.size()]), Thread.currentThread().getContextClassLoader());
-
         try (URLClassLoader classLoader = new URLClassLoader(urls)) {
             Class<?> swaggerLoaderClass = classLoader.loadClass("io.swagger.v3.jaxrs2.integration.SwaggerLoader");
-            Object swaggerLoader = swaggerLoaderClass.newInstance();
+            Object swaggerLoader = swaggerLoaderClass.getDeclaredConstructor().newInstance();
 
             Method method = null;
             method = swaggerLoaderClass.getDeclaredMethod("setOutputFormat", String.class);
