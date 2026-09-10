@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        java: [ 17, 25 ]
+        java: [ 17, 21, 25 ]
 
     steps:
     - uses: actions/checkout@v6
@@ -71,7 +71,7 @@ jobs:
       working-directory: modules/swagger-gradle-plugin
       run: ./gradlew build --info --stacktrace --no-daemon
     - name: Deploy snapshot to maven central
-      if: steps.project-version.outputs.is_snapshot == 'true' && matrix.java == 11
+      if: steps.project-version.outputs.is_snapshot == 'true' && matrix.java == 17
       run: ./mvnw --no-transfer-progress -B clean deploy -e
       env:
         MAVEN_USERNAME: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
