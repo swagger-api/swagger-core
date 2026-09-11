@@ -17,8 +17,7 @@ public class SwaggerPlugin implements Plugin<Project> {
     private static final String PLUGIN_VERSION = loadPluginVersion();
 
     public void apply(Project project) {
-        final Configuration config = project.getConfigurations().create("swaggerDeps")
-                .setVisible(false);
+        final Configuration config = project.getConfigurations().create("swaggerDeps");
 
         config.defaultDependencies(new Action<DependencySet>() {
             public void execute(DependencySet dependencies) {
@@ -28,7 +27,7 @@ public class SwaggerPlugin implements Plugin<Project> {
                 dependencies.add(project.getDependencies().create("javax.servlet:javax.servlet-api:3.1.0"));
             }
         });
-        TaskProvider<ResolveTask> lazyTask = project.getTasks().register("resolve", ResolveTask.class,task -> {
+        project.getTasks().register("resolve", ResolveTask.class,task -> {
             task.buildClasspath.setFrom(config);
             task.classpath.setFrom(project.getExtensions().findByType(SourceSetContainer.class).getByName("main").getRuntimeClasspath());
             task.prettyPrint.convention(false);

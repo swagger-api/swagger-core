@@ -1,6 +1,6 @@
 package io.swagger.v3.core.util;
 
-import com.fasterxml.jackson.databind.JavaType;
+import tools.jackson.databind.JavaType;
 import io.swagger.v3.core.converter.AnnotatedType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

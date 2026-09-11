@@ -1,7 +1,7 @@
 package io.swagger.v3.jaxrs2.annotations;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.JsonNode;
+import tools.jackson.databind.JsonNode;
 import io.swagger.v3.core.converter.ModelConverters;
 import io.swagger.v3.core.util.Yaml;
 import io.swagger.v3.jaxrs2.Reader;
@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
+import tools.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -34,11 +35,15 @@ public abstract class AbstractAnnotationTest {
         OpenAPI openAPI = reader.read(cls);
 
         try {
-            Yaml.mapper().setSerializationInclusion(JsonInclude.Include.NON_NULL);
+            ObjectMapper mapper = Yaml.mapper().rebuild()
+                    .changeDefaultPropertyInclusion(incl -> incl
+                            .withContentInclusion(JsonInclude.Include.NON_NULL)
+                            .withValueInclusion(JsonInclude.Include.NON_NULL))
+                    .build();
             // parse JSON
-            JsonNode jsonNodeTree = Yaml.mapper().readTree(Yaml.mapper().writeValueAsString(openAPI));
+            JsonNode jsonNodeTree = mapper.readTree(mapper.writeValueAsString(openAPI));
             // return it as YAML
-            return Yaml.mapper().writeValueAsString(jsonNodeTree);
+            return mapper.writeValueAsString(jsonNodeTree);
         } catch (Exception e) {
             return "Empty YAML";
         }

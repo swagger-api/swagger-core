@@ -1,13 +1,17 @@
 package io.swagger.v3.core.jackson;
 
-import com.fasterxml.jackson.core.Version;
-import com.fasterxml.jackson.databind.AnnotationIntrospector;
-import com.fasterxml.jackson.databind.BeanDescription;
-import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.PropertyName;
-import com.fasterxml.jackson.databind.jsontype.NamedType;
-import com.fasterxml.jackson.databind.module.SimpleModule;
+import tools.jackson.core.Version;
+import tools.jackson.databind.AnnotationIntrospector;
+import tools.jackson.databind.BeanDescription;
+import tools.jackson.databind.JavaType;
+import tools.jackson.databind.MapperFeature;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.PropertyName;
+import tools.jackson.databind.cfg.MapperBuilder;
+import tools.jackson.databind.introspect.AccessorNamingStrategy;
+import tools.jackson.databind.introspect.DefaultAccessorNamingStrategy;
+import tools.jackson.databind.jsontype.NamedType;
+import tools.jackson.databind.module.SimpleModule;
 import io.swagger.v3.core.converter.AnnotatedType;
 import io.swagger.v3.core.converter.ModelConverter;
 import io.swagger.v3.core.converter.ModelConverterContext;
@@ -33,14 +37,21 @@ public abstract class AbstractModelConverter implements ModelConverter {
     }
 
     protected AbstractModelConverter(ObjectMapper mapper, TypeNameResolver typeNameResolver) {
-        mapper.registerModule(
-                new SimpleModule("swagger", Version.unknownVersion()) {
+        MapperBuilder<?, ?> builder = mapper.rebuild()
+                .addModule(new SimpleModule("swagger", Version.unknownVersion()) {
                     @Override
                     public void setupModule(SetupContext context) {
                         context.insertAnnotationIntrospector(new SwaggerAnnotationIntrospector());
                     }
-                });
-        _mapper = mapper;
+                })
+                .configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY, false);
+        AccessorNamingStrategy.Provider currentNaming =
+                mapper.serializationConfig().getAccessorNaming();
+        if (currentNaming.getClass() == DefaultAccessorNamingStrategy.Provider.class) {
+            builder.accessorNaming(new DefaultAccessorNamingStrategy.Provider()
+                    .withFirstCharAcceptance(true, true));
+        }
+        _mapper = builder.build();
         _typeNameResolver = typeNameResolver;
     }
 
@@ -61,7 +72,7 @@ public abstract class AbstractModelConverter implements ModelConverter {
      * @return the current AnnotationIntrospector
      */
     protected AnnotationIntrospector _intr() {
-        return _mapper.getSerializationConfig().getAnnotationIntrospector();
+        return _mapper.serializationConfig().getAnnotationIntrospector();
     }
 
     protected String _typeName(JavaType type) {
@@ -95,10 +106,10 @@ public abstract class AbstractModelConverter implements ModelConverter {
             return "List";
         }
         if (beanDesc == null) {
-            beanDesc = _mapper.getSerializationConfig().introspectClassAnnotations(type);
+            beanDesc = _mapper._serializationContext().introspectBeanDescription(type);
         }
 
-        PropertyName rootName = _intr().findRootName(beanDesc.getClassInfo());
+        PropertyName rootName = _intr().findRootName(_mapper.serializationConfig(), beanDesc.getClassInfo());
         if (rootName != null && rootName.hasSimpleName()) {
             return rootName.getSimpleName();
         }

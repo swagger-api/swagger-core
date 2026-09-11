@@ -4,7 +4,7 @@
 plugins {
     id 'java-gradle-plugin'
     // Publishing publicly
-    id 'com.gradle.plugin-publish' version '0.21.0'
+    id 'com.gradle.plugin-publish' version '2.1.1'
     // Publishing to maven
     id 'maven-publish'
 }
@@ -19,7 +19,7 @@ repositories {
 }
 
 compileJava {
-    options.release = 8
+    options.release = 17
 }
 
 processResources {
@@ -76,38 +76,21 @@ project.ext.pluginId    = 'io.swagger.core.v3.swagger-gradle-plugin'
 project.ext.scm         = 'https://github.com/swagger-api/swagger-core.git'
 project.ext.url         = 'https://github.com/swagger-api/swagger-core/tree/master/modules/swagger-gradle-plugin'
 
-// Configuration for: java-gradle-plugin
+// Configuration for: java-gradle-plugin + com.gradle.plugin-publish
 gradlePlugin {
+    website = project.url
+    vcsUrl = project.scm
     plugins {
         swagger {
             id = project.pluginId
             implementationClass = 'io.swagger.v3.plugins.gradle.SwaggerPlugin'
-        }
-    }
-}
-
-// * * * * * * * * * * * *
-// Publishing
-// * * * * * * * * * * * *
-
-
-// Publishing to plugins.gradle.org
-// --------------------------------
-
-// Configuration for: com.gradle.plugin-publish
-pluginBundle {
-    website = project.url
-    vcsUrl = project.scm
-    tags = ['swagger', 'openapi', 'api']
-
-    plugins {
-        swagger {
-            displayName = 'Swagger Gradle Plugin '
+            displayName = 'Swagger Gradle Plugin'
             description = project.description
-            id          = project.pluginId
+            tags.set(['swagger', 'openapi', 'api'])
         }
     }
 }
+
 
 test {
     useTestNG()

@@ -22,6 +22,7 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.StringUtils;
+import tools.jackson.core.JacksonException;
 
 import java.io.File;
 import java.io.IOException;
@@ -287,14 +288,14 @@ public class SwaggerMojo extends AbstractMojo {
         list.add((content, typeClass) -> {
             try {
                 return Json.mapper().readValue(content, typeClass);
-            } catch (IOException e) {
+            } catch (JacksonException e) {
                 throw new IllegalStateException(e);
             }
         });
         list.add((content, typeClass) -> {
             try {
                 return Yaml.mapper().readValue(content, typeClass);
-            } catch (IOException e) {
+            } catch (JacksonException e) {
                 throw new IllegalStateException(e);
             }
         });

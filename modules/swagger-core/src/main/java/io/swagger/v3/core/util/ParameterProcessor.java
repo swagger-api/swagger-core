@@ -16,9 +16,9 @@ import io.swagger.v3.oas.models.parameters.Parameter;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.core.JacksonException;
 
 import javax.validation.constraints.Size;
-import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -79,7 +79,7 @@ public class ParameterProcessor {
             Configuration configuration) {
 
         boolean openapi31 = configuration != null && configuration.isOpenAPI31() != null && configuration.isOpenAPI31();
-        Schema.SchemaResolution schemaResolution = configuration.getSchemaResolution();;
+        Schema.SchemaResolution schemaResolution = configuration.getSchemaResolution();
         final AnnotationsHelper helper = new AnnotationsHelper(annotations, type);
         if (helper.isContext()) {
             return null;
@@ -201,7 +201,7 @@ public class ParameterProcessor {
                 if (StringUtils.isNotBlank(p.example())) {
                     try {
                         parameter.setExample(Json.mapper().readTree(p.example()));
-                    } catch (IOException e) {
+                    } catch (JacksonException e) {
                         parameter.setExample(p.example());
                     }
                 }

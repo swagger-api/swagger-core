@@ -1,7 +1,7 @@
 package io.swagger.v3.core.serialization;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 import io.swagger.v3.core.util.Json;
 import io.swagger.v3.core.util.Json31;
 import io.swagger.v3.core.util.Yaml;
@@ -40,7 +40,7 @@ public class ComprehensiveSerializationTest {
      * Test basic serialization of OpenAPI 3.0 document to JSON
      */
     @Test
-    public void testBasicSerialization30Json() throws IOException {
+    public void testBasicSerialization30Json() {
         // Create a simple OpenAPI 3.0 document
         OpenAPI openAPI = createBasicOpenAPI30();
         
@@ -70,7 +70,7 @@ public class ComprehensiveSerializationTest {
      * Test basic serialization of OpenAPI 3.0 document to YAML
      */
     @Test
-    public void testBasicSerialization30Yaml() throws IOException {
+    public void testBasicSerialization30Yaml() {
         // Create a simple OpenAPI 3.0 document
         OpenAPI openAPI = createBasicOpenAPI30();
         
@@ -100,7 +100,7 @@ public class ComprehensiveSerializationTest {
      * Test basic serialization of OpenAPI 3.1 document to JSON
      */
     @Test
-    public void testBasicSerialization31Json() throws IOException {
+    public void testBasicSerialization31Json() {
         // Create a simple OpenAPI 3.1 document
         OpenAPI openAPI = createBasicOpenAPI31();
         
@@ -136,7 +136,7 @@ public class ComprehensiveSerializationTest {
      * Test basic serialization of OpenAPI 3.1 document to YAML
      */
     @Test
-    public void testBasicSerialization31Yaml() throws IOException {
+    public void testBasicSerialization31Yaml() {
         // Create a simple OpenAPI 3.1 document
         OpenAPI openAPI = createBasicOpenAPI31();
         
@@ -172,7 +172,7 @@ public class ComprehensiveSerializationTest {
      * Test serialization of OpenAPI 3.1 document with component path items
      */
     @Test
-    public void testComponentPathItemsSerialization() throws IOException {
+    public void testComponentPathItemsSerialization() {
         // Create an OpenAPI 3.1 document with component path items
         OpenAPI openAPI = createBasicOpenAPI31();
         
@@ -232,7 +232,7 @@ public class ComprehensiveSerializationTest {
      * Test serialization of OpenAPI 3.1 document with path item references and siblings
      */
     @Test
-    public void testPathItemRefsAndSiblingsSerialization() throws IOException {
+    public void testPathItemRefsAndSiblingsSerialization() {
         // Create an OpenAPI 3.1 document with path item references and siblings
         OpenAPI openAPI = createBasicOpenAPI31();
         
@@ -268,7 +268,7 @@ public class ComprehensiveSerializationTest {
      * Test serialization of OpenAPI 3.1 document with parameter references and siblings
      */
     @Test
-    public void testParameterRefsAndSiblingsSerialization() throws IOException {
+    public void testParameterRefsAndSiblingsSerialization() {
         // Create an OpenAPI 3.1 document with parameter references and siblings
         OpenAPI openAPI = createBasicOpenAPI31();
         
@@ -303,7 +303,7 @@ public class ComprehensiveSerializationTest {
      * Test serialization of OpenAPI 3.1 document with example references and siblings
      */
     @Test
-    public void testExampleRefsAndSiblingsSerialization() throws IOException {
+    public void testExampleRefsAndSiblingsSerialization() {
         // Create an OpenAPI 3.1 document with example references and siblings
         OpenAPI openAPI = createBasicOpenAPI31();
         
@@ -350,7 +350,7 @@ public class ComprehensiveSerializationTest {
      * Test serialization of OpenAPI 3.1 document with boolean schema
      */
     @Test
-    public void testBooleanSchemaSerialization() throws IOException {
+    public void testBooleanSchemaSerialization() {
         // Create an OpenAPI 3.1 document with boolean schema
         OpenAPI openAPI = createBasicOpenAPI31();
         
@@ -378,7 +378,7 @@ public class ComprehensiveSerializationTest {
      * Test serialization of OpenAPI 3.1 document with null values
      */
     @Test
-    public void testNullValuesSerialization() throws IOException {
+    public void testNullValuesSerialization() {
         // Create an OpenAPI 3.1 document with null values
         OpenAPI openAPI = createBasicOpenAPI31();
         
@@ -507,5 +507,17 @@ public class ComprehensiveSerializationTest {
         openAPI.setWebhooks(webhooks);
         
         return openAPI;
+    }
+
+    @Test
+    public void testSchemaWithNumericFormatParsesWithoutException() {
+        Schema schema = Yaml.mapper().readValue("type: string\nformat: 32\n", Schema.class);
+        assertNotNull(schema);
+    }
+
+    @Test
+    public void testOas31SchemaWithArrayTypeParsesWithoutException() {
+        Schema schema = Yaml31.mapper().readValue("type:\n  - string\n  - integer\n", Schema.class);
+        assertNotNull(schema);
     }
 }

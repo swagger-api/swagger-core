@@ -1,19 +1,12 @@
 package io.swagger.v3.core.deserialization;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.core.matchers.SerializationMatchers;
-import io.swagger.v3.core.util.Json;
-import io.swagger.v3.core.util.ResourceUtils;
-import io.swagger.v3.core.util.TestUtils;
-import io.swagger.v3.core.util.Yaml;
+import io.swagger.v3.core.util.*;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.PathItem;
 import io.swagger.v3.oas.models.examples.Example;
 import io.swagger.v3.oas.models.headers.Header;
-import io.swagger.v3.oas.models.media.ComposedSchema;
-import io.swagger.v3.oas.models.media.Encoding;
-import io.swagger.v3.oas.models.media.EncodingProperty;
-import io.swagger.v3.oas.models.media.Schema;
+import io.swagger.v3.oas.models.media.*;
 import io.swagger.v3.oas.models.responses.ApiResponse;
 import io.swagger.v3.oas.models.responses.ApiResponses;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
@@ -21,18 +14,18 @@ import io.swagger.v3.oas.models.security.SecurityScheme;
 import org.apache.commons.io.FileUtils;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import tools.jackson.databind.ObjectMapper;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.fail;
 
 public class JsonDeserializationTest {
     private final ObjectMapper m = Json.mapper();
@@ -41,14 +34,14 @@ public class JsonDeserializationTest {
     public void testPetstore() throws IOException {
         final String json = ResourceUtils.loadClassResource(getClass(), "specFiles/petstore-3.0.json");
         final Object swagger = m.readValue(json, OpenAPI.class);
-        assertTrue(swagger instanceof OpenAPI);
+        assertNotNull(swagger);
     }
 
     @Test(description = "it should deserialize the composition test")
     public void testCompositionTest() throws IOException {
         final String json = ResourceUtils.loadClassResource(getClass(), "specFiles/compositionTest-3.0.json");
         final Object deserialized = m.readValue(json, OpenAPI.class);
-        assertTrue(deserialized instanceof OpenAPI);
+        assertNotNull(deserialized);
         OpenAPI openAPI = (OpenAPI) deserialized;
         Schema lizardSchema = openAPI.getComponents().getSchemas().get("Lizard");
         assertTrue(lizardSchema instanceof ComposedSchema);
@@ -61,29 +54,31 @@ public class JsonDeserializationTest {
     }
 
     @Test(description = "it should deserialize a simple ObjectProperty")
-    public void testObjectProperty() throws IOException {
-        final String json = "{\n" +
-                "   \"type\":\"object\",\n" +
-                "   \"title\":\"objectProperty\",\n" +
-                "   \"description\":\"top level object\",\n" +
-                "   \"properties\":{\n" +
-                "      \"property1\":{\n" +
-                "         \"type\":\"string\",\n" +
-                "         \"description\":\"First property\"\n" +
-                "      },\n" +
-                "      \"property2\":{\n" +
-                "         \"type\":\"string\",\n" +
-                "         \"description\":\"Second property\"\n" +
-                "      },\n" +
-                "      \"property3\":{\n" +
-                "         \"type\":\"string\",\n" +
-                "         \"description\":\"Third property\"\n" +
-                "      }\n" +
-                "   }\n" +
-                "}";
+    public void testObjectProperty() {
+        final String json = """
+                {
+                   "type":"object",
+                   "title":"objectProperty",
+                   "description":"top level object",
+                   "properties":{
+                      "property1":{
+                         "type":"string",
+                         "description":"First property"
+                      },
+                      "property2":{
+                         "type":"string",
+                         "description":"Second property"
+                      },
+                      "property3":{
+                         "type":"string",
+                         "description":"Third property"
+                      }
+                   }
+                }
+                """;
         final Schema result = m.readValue(json, Schema.class);
-        assertEquals(3, result.getProperties().size());
-        assertEquals("objectProperty", result.getTitle());
+        assertEquals(result.getProperties().size(), 3);
+        assertEquals(result.getTitle(), "objectProperty");
     }
 
     @DataProvider(name = "nonTextSchemaTypes")
@@ -97,7 +92,7 @@ public class JsonDeserializationTest {
     }
 
     @Test(dataProvider = "nonTextSchemaTypes")
-    public void deserializeSchemaWithNonTextTypeFailsWithLegacyCastException(String json) throws IOException {
+    public void deserializeSchemaWithNonTextTypeFailsWithLegacyCastException(String json) {
         try {
             m.readValue(json, Schema.class);
         } catch (RuntimeException e) {
@@ -105,7 +100,7 @@ public class JsonDeserializationTest {
             return;
         }
 
-        assertTrue(false, "Expected ClassCastException");
+        fail("Expected ClassCastException");
     }
 
     @DataProvider(name = "nonTextSchemaRef")
@@ -119,60 +114,62 @@ public class JsonDeserializationTest {
     }
 
     @Test(dataProvider = "nonTextSchemaRef")
-    public void deserializeSchemaWithNonTextRef(String json, String expectedRef) throws IOException {
+    public void deserializeSchemaWithNonTextRef(String json, String expectedRef) {
         Schema schema = m.readValue(json, Schema.class);
 
         assertEquals(schema.get$ref(), expectedRef);
     }
 
     @Test(description = "it should deserialize nested ObjectProperty(s)")
-    public void testNestedObjectProperty() throws IOException {
-        final String json = "{\n" +
-                "   \"type\":\"object\",\n" +
-                "   \"description\":\"top level object\",\n" +
-                "   \"properties\":{\n" +
-                "      \"property1\":{\n" +
-                "         \"type\":\"string\",\n" +
-                "         \"description\":\"First property\"\n" +
-                "      },\n" +
-                "      \"property2\":{\n" +
-                "         \"type\":\"string\",\n" +
-                "         \"description\":\"Second property\"\n" +
-                "      },\n" +
-                "      \"property3\":{\n" +
-                "         \"type\":\"object\",\n" +
-                "         \"description\":\"Third property\",\n" +
-                "         \"properties\":{\n" +
-                "            \"property1\":{\n" +
-                "               \"type\":\"string\",\n" +
-                "               \"description\":\"First nested property\"\n" +
-                "            }\n" +
-                "         }\n" +
-                "      }\n" +
-                "   }\n" +
-                "}";
+    public void testNestedObjectProperty() {
+        final String json = """
+                {
+                   "type":"object",
+                   "description":"top level object",
+                   "properties":{
+                      "property1":{
+                         "type":"string",
+                         "description":"First property"
+                      },
+                      "property2":{
+                         "type":"string",
+                         "description":"Second property"
+                      },
+                      "property3":{
+                         "type":"object",
+                         "description":"Third property",
+                         "properties":{
+                            "property1":{
+                               "type":"string",
+                               "description":"First nested property"
+                            }
+                         }
+                      }
+                   }
+                }
+                """;
         final Schema result = m.readValue(json, Schema.class);
         final Map<String, Schema> firstLevelProperties = result.getProperties();
         assertEquals(firstLevelProperties.size(), 3);
 
         final Schema property3 = firstLevelProperties.get("property3");
 
-        final Map<String, Schema> secondLevelProperties = property3.getProperties();
+        final var secondLevelProperties = property3.getProperties();
         assertEquals(secondLevelProperties.size(), 1);
     }
 
     @Test
-    public void testDeserializePetStoreFile() throws Exception {
+    public void testDeserializePetStoreFile() {
         TestUtils.deserializeJsonFileFromClasspath("specFiles/petstore.json", OpenAPI.class);
     }
 
     @Test
-    public void testDeserializeCompositionTest() throws Exception {
+    public void testDeserializeCompositionTest() {
         TestUtils.deserializeJsonFileFromClasspath("specFiles/compositionTest.json", OpenAPI.class);
     }
 
     @Test
-    public void testDeserializeAPathRef() throws Exception {
+    public void testDeserializeAPathRef() {
         final OpenAPI oas = TestUtils.deserializeJsonFileFromClasspath("specFiles/pathRef.json", OpenAPI.class);
 
         final PathItem petPath = oas.getPaths().get("/pet");
@@ -182,15 +179,14 @@ public class JsonDeserializationTest {
     }
 
     @Test
-    public void testDeserializeAResponseRef() throws Exception {
+    public void testDeserializeAResponseRef() {
         final OpenAPI oas = TestUtils.deserializeJsonFileFromClasspath("specFiles/responseRef.json", OpenAPI.class);
 
         final ApiResponses responseMap = oas.getPaths().get("/pet").getPut().getResponses();
 
-        // TODO: missing response ref
         assertIsRefResponse(responseMap.get("405"), "http://my.company.com/responses/errors.json#/method-not-allowed");
         assertIsRefResponse(responseMap.get("404"), "http://my.company.com/responses/errors.json#/not-found");
-        assertTrue(responseMap.get("400") instanceof ApiResponse);
+        assertNotNull(responseMap.get("400"));
     }
 
     private void assertIsRefResponse(Object response, String expectedRef) {
@@ -201,7 +197,7 @@ public class JsonDeserializationTest {
     }
 
     @Test
-    public void testDeserializeSecurity() throws Exception {
+    public void testDeserializeSecurity() {
         final OpenAPI swagger = TestUtils.deserializeJsonFileFromClasspath("specFiles/securityDefinitions.json", OpenAPI.class);
 
         final List<SecurityRequirement> security = swagger.getSecurity();
@@ -271,21 +267,21 @@ public class JsonDeserializationTest {
     }
 
     @Test(description = "it should deserialize a Header with style")
-    public void deserializeHeaderWithStyle() throws IOException {
+    public void deserializeHeaderWithStyle() {
         final String json = "{\"description\":\"aaaa\",\"style\":\"simple\"}";
         final Header p = m.readValue(json, Header.class);
         SerializationMatchers.assertEqualsToJson(p, json);
     }
 
     @Test(description = "it should deserialize an Encoding with style")
-    public void deserializeEncodingWithStyle() throws IOException {
+    public void deserializeEncodingWithStyle() {
         final String json = "{\"style\":\"spaceDelimited\"}";
         final Encoding p = m.readValue(json, Encoding.class);
         SerializationMatchers.assertEqualsToJson(p, json);
     }
 
     @Test(description = "it should deserialize an EncodingProperty with style")
-    public void deserializeEncodingPropertyWithStyle() throws IOException {
+    public void deserializeEncodingPropertyWithStyle() {
         final String json = "{\"style\":\"spaceDelimited\"}";
         final EncodingProperty p = m.readValue(json, EncodingProperty.class);
         SerializationMatchers.assertEqualsToJson(p, json);
@@ -310,105 +306,111 @@ public class JsonDeserializationTest {
         final String jsonString = ResourceUtils.loadClassResource(getClass(), "specFiles/swos-126.yaml");
         final OpenAPI swagger = Yaml.mapper().readValue(jsonString, OpenAPI.class);
         assertNotNull(swagger);
-        Map<String, Schema> props = swagger.getComponents().getSchemas().get("MyModel").getProperties();
+        var props = swagger.getComponents().getSchemas().get("MyModel").getProperties();
         assertTrue(Yaml.pretty().writeValueAsString(props.get("date")).contains("example: 2019-08-05"));
         assertTrue(Yaml.pretty().writeValueAsString(props.get("dateTime")).contains("example: 2019-08-05T12:34:56Z"));
 
     }
 
     @Test(description = "Deserialize ref callback")
-    public void testDeserializeRefCallback() throws Exception {
-        String yaml = "openapi: 3.0.1\n" +
-                "info:\n" +
-                "  description: info\n" +
-                "paths:\n" +
-                "  /simplecallback:\n" +
-                "    get:\n" +
-                "      summary: Simple get operation\n" +
-                "      operationId: getWithNoParameters\n" +
-                "      responses:\n" +
-                "        \"200\":\n" +
-                "          description: voila!\n" +
-                "      callbacks:\n" +
-                "        testCallback1:\n" +
-                "          $ref: \"#/components/callbacks/Callback\"\n" +
-                "      callbacks:\n" +
-                "        testCallback1:\n" +
-                "          $ref: \"#/components/callbacks/Callback\"\n" +
-                "components:\n" +
-                "  callbacks:\n" +
-                "    Callback:\n" +
-                "      /post:\n" +
-                "        description: Post Path Item\n";
+    public void testDeserializeRefCallback() {
+        String yaml = """
+                openapi: 3.0.1
+                info:
+                  description: info
+                paths:
+                  /simplecallback:
+                    get:
+                      summary: Simple get operation
+                      operationId: getWithNoParameters
+                      responses:
+                        "200":
+                          description: voila!
+                      callbacks:
+                        testCallback1:
+                          $ref: "#/components/callbacks/Callback"
+                      callbacks:
+                        testCallback1:
+                          $ref: "#/components/callbacks/Callback"
+                components:
+                  callbacks:
+                    Callback:
+                      /post:
+                        description: Post Path Item
+                """;
 
         OpenAPI oas = Yaml.mapper().readValue(yaml, OpenAPI.class);
         assertEquals(oas.getPaths().get("/simplecallback").getGet().getCallbacks().get("testCallback1").get$ref(), "#/components/callbacks/Callback");
     }
 
     @Test(description = "Deserialize null enum item")
-    public void testNullEnumItem() throws Exception {
-        String yaml = "openapi: 3.0.1\n" +
-                "paths:\n" +
-                "  /:\n" +
-                "    get:\n" +
-                "      tags:\n" +
-                "      - MyTag\n" +
-                "      summary: Operation Summary\n" +
-                "      description: Operation Description\n" +
-                "      operationId: operationId\n" +
-                "      parameters:\n" +
-                "      - name: subscriptionId\n" +
-                "        in: query\n" +
-                "        schema:\n" +
-                "          type: string\n" +
-                "      responses:\n" +
-                "        default:\n" +
-                "          description: default response\n" +
-                "          content:\n" +
-                "            '*/*': {}\n" +
-                "components:\n" +
-                "  schemas:\n" +
-                "    UserStatus:\n" +
-                "      type: integer\n" +
-                "      description: some int values with null\n" +
-                "      format: int32\n" +
-                "      enum:\n" +
-                "      - 1\n" +
-                "      - 2\n" +
-                "      - null\n";
+    public void testNullEnumItem() {
+        String yaml = """
+                openapi: 3.0.1
+                paths:
+                  /:
+                    get:
+                      tags:
+                      - MyTag
+                      summary: Operation Summary
+                      description: Operation Description
+                      operationId: operationId
+                      parameters:
+                      - name: subscriptionId
+                        in: query
+                        schema:
+                          type: string
+                      responses:
+                        default:
+                          description: default response
+                          content:
+                            '*/*': {}
+                components:
+                  schemas:
+                    UserStatus:
+                      type: integer
+                      description: some int values with null
+                      format: int32
+                      enum:
+                      - 1
+                      - 2
+                      - null
+                """;
 
         OpenAPI oas = Yaml.mapper().readValue(yaml, OpenAPI.class);
 
         assertEquals(oas.getComponents().getSchemas().get("UserStatus").getEnum(), Arrays.asList(1, 2, null));
 
-        yaml = "openapi: 3.0.1\n" +
-                "paths:\n" +
-                "  /:\n" +
-                "    get:\n" +
-                "      tags:\n" +
-                "      - MyTag\n" +
-                "      summary: Operation Summary\n" +
-                "      description: Operation Description\n" +
-                "      operationId: operationId\n" +
-                "      parameters:\n" +
-                "      - name: subscriptionId\n" +
-                "        in: query\n" +
-                "        schema:\n" +
-                "          type: string\n" +
-                "      responses:\n" +
-                "        default:\n" +
-                "          description: default response\n" +
-                "          content:\n" +
-                "            '*/*': {}\n" +
-                "components:\n" +
-                "  schemas:\n" +
-                "    UserStatus:\n" +
-                "      type: string\n" +
-                "      description: some int values with null\n" +
-                "      enum:\n" +
-                "      - 1\n" +
-                "      - 2\n" +
-                "      - null\n";
+        yaml = """
+                openapi: 3.0.1
+                paths:
+                  /:
+                    get:
+                      tags:
+                      - MyTag
+                      summary: Operation Summary
+                      description: Operation Description
+                      operationId: operationId
+                      parameters:
+                      - name: subscriptionId
+                        in: query
+                        schema:
+                          type: string
+                      responses:
+                        default:
+                          description: default response
+                          content:
+                            '*/*': {}
+                components:
+                  schemas:
+                    UserStatus:
+                      type: string
+                      description: some int values with null
+                      enum:
+                      - 1
+                      - 2
+                      - null
+                """;
 
         oas = Yaml.mapper().readValue(yaml, OpenAPI.class);
 
@@ -416,29 +418,33 @@ public class JsonDeserializationTest {
     }
 
     @Test
-    public void testNullExampleDeserialization() throws Exception {
-        String yamlNull = "openapi: 3.0.1\n" +
-                "paths:\n" +
-                "  /:\n" +
-                "    get:\n" +
-                "      description: Operation Description\n" +
-                "      operationId: operationId\n" +
-                "components:\n" +
-                "  schemas:\n" +
-                "    UserStatus:\n" +
-                "      type: string\n" +
-                "      example: null\n";
+    public void testNullExampleDeserialization() {
+        String yamlNull = """
+                openapi: 3.0.1
+                paths:
+                  /:
+                    get:
+                      description: Operation Description
+                      operationId: operationId
+                components:
+                  schemas:
+                    UserStatus:
+                      type: string
+                      example: null
+                """;
 
-        String yamlMissing = "openapi: 3.0.1\n" +
-                "paths:\n" +
-                "  /:\n" +
-                "    get:\n" +
-                "      description: Operation Description\n" +
-                "      operationId: operationId\n" +
-                "components:\n" +
-                "  schemas:\n" +
-                "    UserStatus:\n" +
-                "      type: string\n";
+        String yamlMissing = """
+                openapi: 3.0.1
+                paths:
+                  /:
+                    get:
+                      description: Operation Description
+                      operationId: operationId
+                components:
+                  schemas:
+                    UserStatus:
+                      type: string
+                """;
 
         OpenAPI oas = Yaml.mapper().readValue(yamlNull, OpenAPI.class);
         Yaml.prettyPrint(oas);
@@ -453,77 +459,89 @@ public class JsonDeserializationTest {
     }
 
     @Test
-    public void testNullExampleAndValues() throws Exception {
-        String yamlNull = "openapi: 3.0.1\n" +
-                "paths:\n" +
-                "  /:\n" +
-                "    get:\n" +
-                "      description: Operation Description\n" +
-                "      operationId: operationId\n" +
-                "components:\n" +
-                "  schemas:\n" +
-                "    UserStatus:\n" +
-                "      type: object\n" +
-                "      example: null\n";
+    public void testNullExampleAndValues() {
+        String yamlNull = """
+                openapi: 3.0.1
+                paths:
+                  /:
+                    get:
+                      description: Operation Description
+                      operationId: operationId
+                components:
+                  schemas:
+                    UserStatus:
+                      type: object
+                      example: null
+                """;
 
-        String yamlMissing = "openapi: 3.0.1\n" +
-                "paths:\n" +
-                "  /:\n" +
-                "    get:\n" +
-                "      description: Operation Description\n" +
-                "      operationId: operationId\n" +
-                "components:\n" +
-                "  schemas:\n" +
-                "    UserStatus:\n" +
-                "      type: object\n";
+        String yamlMissing = """
+                openapi: 3.0.1
+                paths:
+                  /:
+                    get:
+                      description: Operation Description
+                      operationId: operationId
+                components:
+                  schemas:
+                    UserStatus:
+                      type: object
+                """;
 
-        String yamlNotNull = "openapi: 3.0.1\n" +
-                "paths:\n" +
-                "  /:\n" +
-                "    get:\n" +
-                "      description: Operation Description\n" +
-                "      operationId: operationId\n" +
-                "components:\n" +
-                "  schemas:\n" +
-                "    UserStatus:\n" +
-                "      type: object\n" +
-                "      example:\n" +
-                "        value: bar\n";
+        String yamlNotNull = """
+                openapi: 3.0.1
+                paths:
+                  /:
+                    get:
+                      description: Operation Description
+                      operationId: operationId
+                components:
+                  schemas:
+                    UserStatus:
+                      type: object
+                      example:
+                        value: bar
+                """;
 
-        String yamlValueNull = "openapi: 3.0.1\n" +
-                "paths:\n" +
-                "  /:\n" +
-                "    get:\n" +
-                "      description: Operation Description\n" +
-                "      operationId: operationId\n" +
-                "components:\n" +
-                "  examples:\n" +
-                "    UserStatus:\n" +
-                "      summary: string\n" +
-                "      value: null\n";
+        String yamlValueNull = """
+                openapi: 3.0.1
+                paths:
+                  /:
+                    get:
+                      description: Operation Description
+                      operationId: operationId
+                components:
+                  examples:
+                    UserStatus:
+                      summary: string
+                      value: null
+                """;
 
-        String yamlValueMissing = "openapi: 3.0.1\n" +
-                "paths:\n" +
-                "  /:\n" +
-                "    get:\n" +
-                "      description: Operation Description\n" +
-                "      operationId: operationId\n" +
-                "components:\n" +
-                "  examples:\n" +
-                "    UserStatus:\n" +
-                "      summary: string\n";
+        String yamlValueMissing = """
+                openapi: 3.0.1
+                paths:
+                  /:
+                    get:
+                      description: Operation Description
+                      operationId: operationId
+                components:
+                  examples:
+                    UserStatus:
+                      summary: string
+                """;
 
-        String yamlValueNotNull = "openapi: 3.0.1\n" +
-                "paths:\n" +
-                "  /:\n" +
-                "    get:\n" +
-                "      description: Operation Description\n" +
-                "      operationId: operationId\n" +
-                "components:\n" +
-                "  examples:\n" +
-                "    UserStatus:\n" +
-                "      summary: string\n" +
-                "      value: bar\n";
+        String yamlValueNotNull = """
+                openapi: 3.0.1
+                paths:
+                  /:
+                    get:
+                      description: Operation Description
+                      operationId: operationId
+                components:
+                  examples:
+                    UserStatus:
+                      summary: string
+                      value: bar
+                """;
 
         OpenAPI oas = Yaml.mapper().readValue(yamlNull, OpenAPI.class);
         Yaml.prettyPrint(oas);
@@ -587,41 +605,42 @@ public class JsonDeserializationTest {
         String content = FileUtils.readFileToString(new File("src/test/resources/dateSchema.yaml"), "UTF-8");
         OpenAPI openAPI = Yaml.mapper().readValue(content, OpenAPI.class);
         Yaml.prettyPrint(openAPI);
-        SerializationMatchers.assertEqualsToYaml(openAPI, "openapi: 3.0.3\n" +
-                "info:\n" +
-                "  title: Simple Inventory API\n" +
-                "  version: 1.0.0\n" +
-                "paths:\n" +
-                "  /inventory:\n" +
-                "    get:\n" +
-                "      operationId: searchInventory\n" +
-                "      parameters:\n" +
-                "      - name: test\n" +
-                "        in: header\n" +
-                "        schema:\n" +
-                "          type: string\n" +
-                "          format: date\n" +
-                "          enum:\n" +
-                "          - 2023-12-12\n" +
-                "          default: 2023-12-12\n" +
-                "      responses:\n" +
-                "        \"200\":\n" +
-                "          description: search results matching criteria\n" +
-                "          content:\n" +
-                "            application/json:\n" +
-                "              schema:\n" +
-                "                type: array\n" +
-                "                items:\n" +
-                "                  $ref: \"#/components/schemas/InventoryItem\"\n" +
-                "components:\n" +
-                "  schemas:\n" +
-                "    InventoryItem:\n" +
-                "      type: object\n" +
-                "      properties:\n" +
-                "        releaseDate:\n" +
-                "          type: string\n" +
-                "          format: date-time\n" +
-                "          example: 2016-08-29T09:12:33.001Z");
+        SerializationMatchers.assertEqualsToYaml(openAPI, """
+                openapi: 3.0.3
+                info:
+                  title: Simple Inventory API
+                  version: 1.0.0
+                paths:
+                  /inventory:
+                    get:
+                      operationId: searchInventory
+                      parameters:
+                      - name: test
+                        in: header
+                        schema:
+                          type: string
+                          format: date
+                          enum:
+                          - 2023-12-12
+                          default: 2023-12-12
+                      responses:
+                        "200":
+                          description: search results matching criteria
+                          content:
+                            application/json:
+                              schema:
+                                type: array
+                                items:
+                                  $ref: "#/components/schemas/InventoryItem"
+                components:
+                  schemas:
+                    InventoryItem:
+                      type: object
+                      properties:
+                        releaseDate:
+                          type: string
+                          format: date-time
+                          example: 2016-08-29T09:12:33.001Z""");
     }
 
 }
