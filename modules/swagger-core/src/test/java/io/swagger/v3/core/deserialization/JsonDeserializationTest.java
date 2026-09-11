@@ -1,19 +1,12 @@
 package io.swagger.v3.core.deserialization;
 
-import tools.jackson.databind.ObjectMapper;
 import io.swagger.v3.core.matchers.SerializationMatchers;
-import io.swagger.v3.core.util.Json;
-import io.swagger.v3.core.util.ResourceUtils;
-import io.swagger.v3.core.util.TestUtils;
-import io.swagger.v3.core.util.Yaml;
+import io.swagger.v3.core.util.*;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.PathItem;
 import io.swagger.v3.oas.models.examples.Example;
 import io.swagger.v3.oas.models.headers.Header;
-import io.swagger.v3.oas.models.media.ComposedSchema;
-import io.swagger.v3.oas.models.media.Encoding;
-import io.swagger.v3.oas.models.media.EncodingProperty;
-import io.swagger.v3.oas.models.media.Schema;
+import io.swagger.v3.oas.models.media.*;
 import io.swagger.v3.oas.models.responses.ApiResponse;
 import io.swagger.v3.oas.models.responses.ApiResponses;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
@@ -21,18 +14,18 @@ import io.swagger.v3.oas.models.security.SecurityScheme;
 import org.apache.commons.io.FileUtils;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import tools.jackson.databind.ObjectMapper;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.fail;
 
 public class JsonDeserializationTest {
     private final ObjectMapper m = Json.mapper();
@@ -41,14 +34,14 @@ public class JsonDeserializationTest {
     public void testPetstore() throws IOException {
         final String json = ResourceUtils.loadClassResource(getClass(), "specFiles/petstore-3.0.json");
         final Object swagger = m.readValue(json, OpenAPI.class);
-        assertTrue(swagger instanceof OpenAPI);
+        assertNotNull(swagger);
     }
 
     @Test(description = "it should deserialize the composition test")
     public void testCompositionTest() throws IOException {
         final String json = ResourceUtils.loadClassResource(getClass(), "specFiles/compositionTest-3.0.json");
         final Object deserialized = m.readValue(json, OpenAPI.class);
-        assertTrue(deserialized instanceof OpenAPI);
+        assertNotNull(deserialized);
         OpenAPI openAPI = (OpenAPI) deserialized;
         Schema lizardSchema = openAPI.getComponents().getSchemas().get("Lizard");
         assertTrue(lizardSchema instanceof ComposedSchema);
@@ -107,7 +100,7 @@ public class JsonDeserializationTest {
             return;
         }
 
-        assertTrue(false, "Expected ClassCastException");
+        fail("Expected ClassCastException");
     }
 
     @DataProvider(name = "nonTextSchemaRef")
@@ -161,7 +154,7 @@ public class JsonDeserializationTest {
 
         final Schema property3 = firstLevelProperties.get("property3");
 
-        final Map<String, Schema> secondLevelProperties = property3.getProperties();
+        final var secondLevelProperties = property3.getProperties();
         assertEquals(secondLevelProperties.size(), 1);
     }
 
@@ -191,7 +184,6 @@ public class JsonDeserializationTest {
 
         final ApiResponses responseMap = oas.getPaths().get("/pet").getPut().getResponses();
 
-        // TODO: missing response ref
         assertIsRefResponse(responseMap.get("405"), "http://my.company.com/responses/errors.json#/method-not-allowed");
         assertIsRefResponse(responseMap.get("404"), "http://my.company.com/responses/errors.json#/not-found");
         assertNotNull(responseMap.get("400"));
@@ -314,7 +306,7 @@ public class JsonDeserializationTest {
         final String jsonString = ResourceUtils.loadClassResource(getClass(), "specFiles/swos-126.yaml");
         final OpenAPI swagger = Yaml.mapper().readValue(jsonString, OpenAPI.class);
         assertNotNull(swagger);
-        Map<String, Schema> props = swagger.getComponents().getSchemas().get("MyModel").getProperties();
+        var props = swagger.getComponents().getSchemas().get("MyModel").getProperties();
         assertTrue(Yaml.pretty().writeValueAsString(props.get("date")).contains("example: 2019-08-05"));
         assertTrue(Yaml.pretty().writeValueAsString(props.get("dateTime")).contains("example: 2019-08-05T12:34:56Z"));
 
