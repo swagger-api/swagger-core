@@ -73,6 +73,12 @@
                         <configuration>
                             <rules>
                                 <DependencyConvergence/>
+                                <bannedDependencies>
+                                    <excludes>
+                                        <exclude>org.yaml:snakeyaml</exclude>
+                                    </excludes>
+                                    <message>Use org.snakeyaml:snakeyaml-engine (via jackson-dataformat-yaml). Classic org.yaml:snakeyaml is not compatible with Jackson 3.</message>
+                                </bannedDependencies>
                                 <requireReleaseDeps>
                                     <onlyWhenRelease>true</onlyWhenRelease>
                                     <message>No Snapshots Allowed!</message>

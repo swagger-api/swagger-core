@@ -77,6 +77,9 @@ import java.util.Map;
 
 public class ObjectMapperFactory {
 
+    protected ObjectMapperFactory() {
+    }
+
     public static ObjectMapper createJson(JsonFactory jsonFactory) {
         return create(jsonFactory, false);
     }
@@ -127,8 +130,12 @@ public class ObjectMapperFactory {
             mapperBuilder = JsonMapper.builder(factory);
         } else if (jsonFactory instanceof YAMLFactory factory) {
             mapperBuilder = YAMLMapper.builder(factory);
-        } else {
+        } else if (jsonFactory == null) {
             mapperBuilder = new ObjectMapper().rebuild();
+        } else {
+            throw new IllegalArgumentException(
+                    "Unsupported TokenStreamFactory: " + jsonFactory.getClass().getName()
+                    + ". Supported types: JsonFactory, YAMLFactory.");
         }
 
         if (!openapi31) {
