@@ -90,7 +90,6 @@ import javax.xml.bind.annotation.XmlSchema;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedParameterizedType;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
@@ -480,7 +479,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             if (annotatedType.getCtxAnnotations() != null) {
                 strippedCtxAnnotations.addAll(Arrays.stream(annotatedType.getCtxAnnotations())
                         .filter(ANNOTATIONS_THAT_SHOULD_BE_STRIPPED_FOR_CONTAINER_ITEMS.negate())
-                        .collect(Collectors.toList()));
+                        .toList());
             }
 
             Schema.SchemaResolution containerResolvedSchemaResolution = AnnotationsUtils.resolveSchemaResolution(this.schemaResolution, resolvedSchemaAnnotation);
@@ -547,10 +546,9 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                     return null;
                 }
                 if (annotatedType.isSchemaProperty() && annotatedType.getCtxAnnotations() != null && annotatedType.getCtxAnnotations().length > 0) {
-                    if (!"object".equals(items.getType())) {
+                    if (!OBJECT_TYPE.equals(items.getType())) {
                         for (Annotation annotation : annotatedType.getCtxAnnotations()) {
-                            if (annotation instanceof XmlElement) {
-                                XmlElement xmlElement = (XmlElement) annotation;
+                            if (annotation instanceof XmlElement xmlElement) {
                                 if (xmlElement != null && xmlElement.name() != null && !"".equals(xmlElement.name()) && !JAXB_DEFAULT.equals(xmlElement.name())) {
                                     XML xml = items.getXml() != null ? items.getXml() : new XML();
                                     xml.setName(xmlElement.name());
@@ -713,8 +711,8 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
                 JavaType propType = member.getType();
                 if (propType != null && "void".equals(propType.getRawClass().getName())) {
-                    if (member instanceof AnnotatedMethod) {
-                        propType = ((AnnotatedMethod) member).getParameterType(0);
+                    if (member instanceof AnnotatedMethod annotatedMethod) {
+                        propType = annotatedMethod.getParameterType(0);
                     }
 
                 }
@@ -1239,17 +1237,15 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 .anyMatch(schema -> ref.equals(schema.get$ref()));
     }
 
-    private Boolean isRecordType(BeanPropertyDefinition propDef) {
+    private boolean isRecordType(BeanPropertyDefinition propDef) {
         try {
-            if (propDef.getPrimaryMember() != null) {
+            if (propDef != null && propDef.getPrimaryMember() != null) {
                 Class<?> clazz = propDef.getPrimaryMember().getDeclaringClass();
                 Method isRecordMethod = Class.class.getMethod("isRecord");
-                return (Boolean) isRecordMethod.invoke(clazz);
+                return (boolean) isRecordMethod.invoke(clazz);
             } else {
                 return false;
             }
-        } catch (NoSuchMethodException e) {
-            return false;
         } catch (Exception e) {
             return false;
         }
@@ -1262,11 +1258,9 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
     private Stream<Annotation> getGenericTypeArgumentAnnotations(java.lang.reflect.AnnotatedType annotatedType) {
         return Optional.of(annotatedType)
                 .filter(type -> type instanceof AnnotatedParameterizedType)
-                .map(type -> (AnnotatedParameterizedType) type)
-                .map(AnnotatedParameterizedType::getAnnotatedActualTypeArguments)
-                .map(types -> Stream.of(types)
-                        .flatMap(type -> Stream.of(type.getAnnotations())))
-                .orElseGet(Stream::of);
+                .map(AnnotatedParameterizedType.class::cast)
+                .map(AnnotatedParameterizedType::getAnnotatedActualTypeArguments).stream().flatMap(types -> Stream.of(types)
+                        .flatMap(type -> Stream.of(type.getAnnotations())));
     }
 
     private boolean shouldResolveEnumAsRef(io.swagger.v3.oas.annotations.media.Schema resolvedSchemaAnnotation, boolean isResolveEnumAsRef) {
@@ -1274,28 +1268,8 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
     }
 
     protected Type findJsonValueType(final BeanDescription beanDesc) {
-
-        // use recursion to check for method findJsonValueAccessor existence (Jackson 2.9+)
-        // if not found use previous deprecated method which could lead to inaccurate result
-        try {
-            AnnotatedMember jsonValueMember = invokeMethod(beanDesc, "findJsonValueAccessor");
-            if (jsonValueMember != null) {
-                return jsonValueMember.getType();
-            }
-            return null;
-        } catch (Exception e) {
-            LOGGER.warn("jackson BeanDescription.findJsonValueAccessor not found, this could lead to inaccurate result, please update jackson to 2.9+");
-        }
-
-        try {
-            AnnotatedMember jsonValueMember = invokeMethod(beanDesc, "findJsonValueMethod");
-            if (jsonValueMember != null) {
-                return jsonValueMember.getType();
-            }
-        } catch (Exception e) {
-            LOGGER.error("Neither 'findJsonValueMethod' nor 'findJsonValueAccessor' found in jackson BeanDescription. Please verify your Jackson version.");
-        }
-        return null;
+        AnnotatedMember jsonValueMember = beanDesc.findJsonValueAccessor();
+        return jsonValueMember != null ? jsonValueMember.getType() : null;
     }
 
     private Schema clone(Schema property) {
@@ -3588,11 +3562,6 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
     protected boolean isNumberSchema(Schema schema) {
         return SchemaTypeUtils.isNumberSchema(schema);
-    }
-
-    private AnnotatedMember invokeMethod(final BeanDescription beanDesc, String methodName) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
-        Method m = BeanDescription.class.getMethod(methodName);
-        return (AnnotatedMember) m.invoke(beanDesc);
     }
 
     protected Schema buildRefSchemaIfObject(Schema schema, ModelConverterContext context) {

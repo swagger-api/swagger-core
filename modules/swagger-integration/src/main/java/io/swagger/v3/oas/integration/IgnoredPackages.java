@@ -13,6 +13,7 @@ public final class IgnoredPackages {
         ignored.add("org.jboss.resteasy");
         ignored.add("com.sun.jersey");
         ignored.add("com.fasterxml.jackson");
+        ignored.add("tools.jackson");
     }
 
 }
