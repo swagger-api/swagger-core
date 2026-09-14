@@ -1,4 +1,4 @@
-package io.swagger.v3.java17.resources;
+package records;
 
 public record JavaRecordResource(
         @io.swagger.v3.oas.annotations.media.Schema(description = "Testing of Java Record Processing") String test,

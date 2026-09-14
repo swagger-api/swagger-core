@@ -1,4 +1,4 @@
-package io.swagger.v3.java17.resources;
+package records;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.*;
