@@ -1,4 +1,4 @@
-package records;
+package io.swagger.v3.core.resolving;
 
 import tools.jackson.databind.PropertyNamingStrategies;
 import tools.jackson.databind.annotation.JsonNaming;

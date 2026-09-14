@@ -1,8 +1,8 @@
-package records;
+package io.swagger.v3.core.resolving;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.core.converter.ModelConverters;
-import io.swagger.v3.jaxrs2.matchers.SerializationMatchers;
+import io.swagger.v3.core.matchers.SerializationMatchers;
 import io.swagger.v3.oas.models.media.Schema;
 import org.testng.annotations.Test;
 
