@@ -151,7 +151,6 @@ jobs:
         fetch-depth: 0
 
     env:
-      ACTIONS_ALLOW_UNSECURE_COMMANDS:  true
       MAVEN_USERNAME: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
       MAVEN_PASSWORD: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
