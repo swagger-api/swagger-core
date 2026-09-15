@@ -41,11 +41,6 @@ sc_find="version=$SC_VERSION"
 sc_replace="version=$SC_NEXT_VERSION-SNAPSHOT"
 sed -i -e "s/$sc_find/$sc_replace/g" $CUR/modules/swagger-gradle-plugin/gradle.properties
 
-sc_find="<version>$SC_VERSION<\/version>"
-sc_replace="<version>$SC_NEXT_VERSION-SNAPSHOT<\/version>"
-sed -i -e "s/$sc_find/$sc_replace/g" $CUR/modules/swagger-java17-support/pom.xml
-rm -f $CUR/modules/swagger-java17-support/pom.xml.versionsBackup
-
 #####################
 ### Copy scripts to temp folder, as they are not available when checking out different branch or repo
 #####################
