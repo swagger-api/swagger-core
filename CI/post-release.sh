@@ -28,10 +28,6 @@ cd modules/swagger-bom
 ../../mvnw versions:commit
 cd ../..
 
-cd modules/swagger-project-jakarta
-../../mvnw versions:set -DnewVersion="${SC_NEXT_VERSION}-SNAPSHOT"
-../../mvnw versions:commit
-cd ../..
 
 #####################
 ### update all other versions in files around to the next snapshot or new release, including readme and gradle ###

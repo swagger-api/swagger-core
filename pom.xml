@@ -405,12 +405,9 @@
         <module>modules/swagger-core</module>
         <module>modules/swagger-integration</module>
         <module>modules/swagger-jaxrs2</module>
-        <module>modules/swagger-jaxrs2-servlet-initializer</module>
         <module>modules/swagger-jaxrs2-servlet-initializer-v2</module>
         <module>modules/swagger-bom</module>
         <module>modules/swagger-maven-plugin</module>
-        <module>modules/swagger-eclipse-transformer-maven-plugin</module>
-        <module>modules/swagger-project-jakarta</module>
 
     </modules>
     <reporting>
@@ -661,7 +658,7 @@
         <coverage.complexity.minimum>0.90</coverage.complexity.minimum>
         <coverage.line.minimum>0.90</coverage.line.minimum>
         <coverage.missed.classes>0</coverage.missed.classes>
-        <transformer-maven-plugin-version>0.5.0</transformer-maven-plugin-version>
+
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.build.outputTimestamp>2026-08-31T09:02:19Z</project.build.outputTimestamp>
     </properties>
