@@ -30,7 +30,7 @@
     <dependencies>
         <dependency>
             <groupId>io.swagger.core.v3</groupId>
-            <artifactId>swagger-jaxrs2</artifactId>
+            <artifactId>swagger-rest</artifactId>
             <version>${project.version}</version>
         </dependency>
 

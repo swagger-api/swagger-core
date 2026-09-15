@@ -29,7 +29,7 @@ public class SwaggerResolveTest {
             System.getProperty("swagger.plugin.version"),
             "Missing swagger.plugin.version test system property"
     );
-    private static final String SWAGGER_JAXRS2_DEPENDENCY = "io.swagger.core.v3:swagger-jaxrs2:" +
+    private static final String SWAGGER_REST_DEPENDENCY = "io.swagger.core.v3:swagger-rest:" +
             PROJECT_VERSION;
 
     private Path testProjectDir;
@@ -110,7 +110,7 @@ public class SwaggerResolveTest {
                 "    mavenCentral()\n" +
                 "}\n" +
                 "dependencies {  \n" +
-                "    implementation '" + SWAGGER_JAXRS2_DEPENDENCY + "'\n" +
+                "    implementation '" + SWAGGER_REST_DEPENDENCY + "'\n" +
                 "    implementation 'javax.ws.rs:javax.ws.rs-api:2.1'\n" +
                 "    implementation 'javax.servlet:javax.servlet-api:3.1.0'\n" +
                 "    testImplementation 'com.github.tomakehurst:wiremock:2.27.2'\n" +
@@ -183,7 +183,7 @@ public class SwaggerResolveTest {
                 "    mavenCentral()\n" +
                 "}\n" +
                 "dependencies {  \n" +
-                "    implementation '" + SWAGGER_JAXRS2_DEPENDENCY + "'\n" +
+                "    implementation '" + SWAGGER_REST_DEPENDENCY + "'\n" +
                 "    implementation 'javax.ws.rs:javax.ws.rs-api:2.1'\n" +
                 "    implementation 'javax.servlet:javax.servlet-api:3.1.0'\n" +
                 "    testImplementation 'com.github.tomakehurst:wiremock:2.27.2'\n" +
@@ -267,7 +267,7 @@ public class SwaggerResolveTest {
                 "    mavenCentral()\n" +
                 "}\n" +
                 "dependencies {  \n" +
-                "    implementation '" + SWAGGER_JAXRS2_DEPENDENCY + "'\n" +
+                "    implementation '" + SWAGGER_REST_DEPENDENCY + "'\n" +
                 "    implementation 'javax.ws.rs:javax.ws.rs-api:2.1'\n" +
                 "    implementation 'javax.servlet:javax.servlet-api:3.1.0'\n" +
                 "}\n" +
@@ -336,7 +336,7 @@ public class SwaggerResolveTest {
                 "    mavenCentral()\n" +
                 "}\n" +
                 "dependencies {\n" +
-                "    implementation '" + SWAGGER_JAXRS2_DEPENDENCY + "'\n" +
+                "    implementation '" + SWAGGER_REST_DEPENDENCY + "'\n" +
                 "    implementation 'javax.ws.rs:javax.ws.rs-api:2.1'\n" +
                 "    implementation 'javax.servlet:javax.servlet-api:3.1.0'\n" +
                 "    testImplementation 'org.testng:testng:7.10.2'\n" +
