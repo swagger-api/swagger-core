@@ -7,12 +7,12 @@ import io.swagger.v3.oas.integration.IgnoredPackages;
 import io.swagger.v3.oas.integration.OpenApiConfigurationException;
 import io.swagger.v3.oas.integration.SwaggerConfiguration;
 
-import javax.servlet.ServletContainerInitializer;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.annotation.HandlesTypes;
-import javax.ws.rs.ApplicationPath;
-import javax.ws.rs.Path;
+import jakarta.servlet.ServletContainerInitializer;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.HandlesTypes;
+import jakarta.ws.rs.ApplicationPath;
+import jakarta.ws.rs.Path;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;

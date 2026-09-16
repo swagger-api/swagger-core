@@ -1,7 +1,7 @@
 package io.swagger.v3.jaxrs2.resources.model;
 
-import javax.ws.rs.BeanParam;
-import javax.ws.rs.FormParam;
+import jakarta.ws.rs.BeanParam;
+import jakarta.ws.rs.FormParam;
 
 public class FormParamBean {
 

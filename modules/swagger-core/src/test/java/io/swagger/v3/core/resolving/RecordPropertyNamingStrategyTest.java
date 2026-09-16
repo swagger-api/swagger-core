@@ -9,7 +9,7 @@ import io.swagger.v3.core.util.Json;
 import io.swagger.v3.oas.models.media.Schema;
 import org.testng.annotations.Test;
 
-import javax.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlElement;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;

@@ -10,7 +10,7 @@ import io.swagger.v3.core.util.ResourceUtils;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.testng.annotations.Test;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -27,8 +27,6 @@ import static org.testng.Assert.assertNull;
  * <p>Tests that @Nullable annotation does not affect an object in an invalid manner. Any nullability that is configured
  * with a schema annotation (nullable = true for OAS30 and null in types for OAS31) is retained.
  *
- * <p>Note: This test uses javax.annotation.Nullable which is automatically transformed to
- * jakarta.annotation.Nullable in the swagger-core-jakarta module via the Eclipse Transformer.
  */
 public class Issue5115Test {
 

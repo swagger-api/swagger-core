@@ -4,8 +4,8 @@ import io.swagger.v3.plugin.maven.resources.exception.NotFoundException;
 import io.swagger.v3.plugin.maven.resources.model.User;
 import io.swagger.v3.oas.annotations.Operation;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
 
 /**
  * Resource with a Response at Method Level

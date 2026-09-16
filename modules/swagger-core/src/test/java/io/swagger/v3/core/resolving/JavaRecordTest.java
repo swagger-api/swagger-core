@@ -6,7 +6,7 @@ import io.swagger.v3.core.matchers.SerializationMatchers;
 import io.swagger.v3.oas.models.media.Schema;
 import org.testng.annotations.Test;
 
-import javax.validation.constraints.*;
+import jakarta.validation.constraints.*;
 import java.util.List;
 import java.util.Map;
 

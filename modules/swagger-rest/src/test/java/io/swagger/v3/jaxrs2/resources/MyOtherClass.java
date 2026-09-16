@@ -1,7 +1,7 @@
 package io.swagger.v3.jaxrs2.resources;
 
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlElement;
 
 public class MyOtherClass extends MySuperClass {
 
