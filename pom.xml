@@ -404,8 +404,8 @@
         <module>modules/swagger-models</module>
         <module>modules/swagger-core</module>
         <module>modules/swagger-integration</module>
-        <module>modules/swagger-jaxrs2</module>
-        <module>modules/swagger-jaxrs2-servlet-initializer-v2</module>
+        <module>modules/swagger-rest</module>
+        <module>modules/swagger-rest-servlet-initializer</module>
         <module>modules/swagger-bom</module>
         <module>modules/swagger-maven-plugin</module>
 

@@ -37,7 +37,7 @@ to `swagger` [configuration property](https://github.com/swagger-api/swagger-cor
     <dependencies>
         <dependency>
             <groupId>io.swagger.core.v3</groupId>
-            <artifactId>swagger-jaxrs2</artifactId>
+            <artifactId>swagger-rest</artifactId>
             <version>3.0.0-SNAPSHOT</version>
         </dependency>
 

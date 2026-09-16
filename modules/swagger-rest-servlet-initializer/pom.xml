@@ -9,9 +9,9 @@
         <relativePath>../../</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>swagger-jaxrs2-servlet-initializer-v2</artifactId>
-    <name>swagger-jaxrs2-servlet-initializer-v2</name>
-    <description>swagger-servlet-initializer-v2</description>
+    <artifactId>swagger-rest-servlet-initializer</artifactId>
+    <name>swagger-rest-servlet-initializer</name>
+    <description>swagger-rest-servlet-initializer</description>
     <build>
         <sourceDirectory>src/main/java</sourceDirectory>
         <defaultGoal>install</defaultGoal>
@@ -89,7 +89,7 @@
                 <dependencies>
                     <dependency>
                         <groupId>io.swagger.core.v3</groupId>
-                        <artifactId>swagger-jaxrs2</artifactId>
+                        <artifactId>swagger-rest</artifactId>
                         <version>${project.version}</version>
                     </dependency>
                 </dependencies>
@@ -139,7 +139,7 @@
         </dependency>
         <dependency>
             <groupId>io.swagger.core.v3</groupId>
-            <artifactId>swagger-jaxrs2</artifactId>
+            <artifactId>swagger-rest</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>

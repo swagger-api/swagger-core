@@ -210,11 +210,11 @@ Import it once and omit versions on all individual Swagger dependencies.
   </dependency>
   <dependency>
     <groupId>io.swagger.core.v3</groupId>
-    <artifactId>swagger-jaxrs2</artifactId>
+    <artifactId>swagger-rest</artifactId>
   </dependency>
   <dependency>
     <groupId>io.swagger.core.v3</groupId>
-    <artifactId>swagger-jaxrs2-servlet-initializer-v2</artifactId>
+    <artifactId>swagger-rest-servlet-initializer</artifactId>
   </dependency>
 </dependencies>
 ```
