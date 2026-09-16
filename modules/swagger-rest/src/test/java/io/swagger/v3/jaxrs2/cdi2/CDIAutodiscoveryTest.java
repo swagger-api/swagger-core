@@ -10,8 +10,8 @@ import org.testng.annotations.Test;
 import io.swagger.v3.jaxrs2.SwaggerSerializers;
 import io.swagger.v3.jaxrs2.integration.resources.OpenApiResource;
 
-import javax.enterprise.inject.spi.Extension;
-import javax.inject.Inject;
+import jakarta.enterprise.inject.spi.Extension;
+import jakarta.inject.Inject;
 
 public class CDIAutodiscoveryTest extends Arquillian {
 

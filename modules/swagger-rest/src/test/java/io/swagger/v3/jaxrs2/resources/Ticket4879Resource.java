@@ -2,12 +2,12 @@ package io.swagger.v3.jaxrs2.resources;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
-import javax.validation.constraints.Size;
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.GET;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.QueryParam;
+import jakarta.validation.constraints.Size;
+import jakarta.ws.rs.DefaultValue;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.PUT;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.QueryParam;
 import java.util.List;
 
 @Path("/test")

@@ -1,8 +1,8 @@
 package io.swagger.v3.jaxrs2.resources.model;
 
-import javax.ws.rs.BeanParam;
-import javax.ws.rs.DefaultValue;
-import javax.ws.rs.QueryParam;
+import jakarta.ws.rs.BeanParam;
+import jakarta.ws.rs.DefaultValue;
+import jakarta.ws.rs.QueryParam;
 
 public class NestedBeanParam {
 

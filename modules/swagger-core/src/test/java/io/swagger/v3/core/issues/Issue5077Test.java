@@ -11,7 +11,7 @@ import io.swagger.v3.oas.models.media.ArraySchema;
 import io.swagger.v3.oas.models.media.Schema;
 import org.testng.annotations.Test;
 
-import javax.annotation.Nullable;
+import jakarta.annotation.Nullable;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -29,9 +29,6 @@ import static org.testng.Assert.assertTrue;
  * Issue using Nullable annotation for OAS 3.1
  *
  * <p>Tests that @Nullable annotation does not affect the item in a list:
- *
- * <p>Note: This test uses javax.annotation.Nullable which is automatically transformed to
- * jakarta.annotation.Nullable in the swagger-core-jakarta module via the Eclipse Transformer.
  *
  */
 public class Issue5077Test {

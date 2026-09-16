@@ -17,6 +17,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Objects;
 import java.util.Properties;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.gradle.testkit.runner.BuildResult;
 import org.gradle.testkit.runner.GradleRunner;
@@ -86,6 +88,66 @@ public class SwaggerResolveTest {
     }
 
     @Test
+    public void testSwaggerDepsUsesJakartaDependencies() throws IOException {
+        writeFile(buildFile,
+                "plugins {\n" +
+                "    id 'java'\n" +
+                "    id 'io.swagger.core.v3.swagger-gradle-plugin'\n" +
+                "}\n" +
+                "repositories {\n" +
+                "    mavenLocal()\n" +
+                "    mavenCentral()\n" +
+                "}\n" +
+                "tasks.register('reportSwaggerDeps') {\n" +
+                "    doLast {\n" +
+                "        configurations.swaggerDeps.incoming.resolutionResult.allComponents\n" +
+                "            .collect { it.id }\n" +
+                "            .findAll { it instanceof org.gradle.api.artifacts.component.ModuleComponentIdentifier }\n" +
+                "            .collect { \"${it.group}:${it.module}:${it.version}\" }\n" +
+                "            .sort()\n" +
+                "            .each { println 'SWAGGER_DEPS_COORDINATE=' + it }\n" +
+                "    }\n" +
+                "}\n");
+        writeFile(settingsFile,
+                "pluginManagement {\n" +
+                "    repositories {\n" +
+                "        mavenLocal()\n" +
+                "        mavenCentral()\n" +
+                "        gradlePluginPortal()\n" +
+                "    }\n" +
+                "}\n" +
+                "rootProject.name = 'gradle-dependency-test'\n");
+
+        BuildResult result = GradleRunner.create()
+                .withPluginClasspath()
+                .withProjectDir(testProjectDir.toFile())
+                .withArguments("reportSwaggerDeps", "--stacktrace")
+                .forwardOutput()
+                .build();
+
+        assertTrue(result.taskPaths(SUCCESS).contains(":reportSwaggerDeps"));
+        Set<String> coordinates = result.getOutput().lines()
+                .filter(line -> line.startsWith("SWAGGER_DEPS_COORDINATE="))
+                .map(line -> line.substring("SWAGGER_DEPS_COORDINATE=".length()))
+                .collect(Collectors.toSet());
+        assertEquals(coordinates.stream()
+                        .filter(value -> value.startsWith("io.swagger.core.v3:swagger-rest:"))
+                        .collect(Collectors.toSet()),
+                Set.of(SWAGGER_REST_DEPENDENCY));
+        assertEquals(coordinates.stream()
+                        .filter(value -> value.startsWith("jakarta.ws.rs:jakarta.ws.rs-api:"))
+                        .collect(Collectors.toSet()),
+                Set.of("jakarta.ws.rs:jakarta.ws.rs-api:3.1.0"));
+        assertEquals(coordinates.stream()
+                        .filter(value -> value.startsWith("jakarta.servlet:jakarta.servlet-api:"))
+                        .collect(Collectors.toSet()),
+                Set.of("jakarta.servlet:jakarta.servlet-api:6.0.0"));
+        assertTrue(coordinates.stream().noneMatch(value ->
+                value.startsWith("javax.ws.rs:javax.ws.rs-api:") ||
+                        value.startsWith("javax.servlet:javax.servlet-api:")));
+    }
+
+    @Test
     public void testSwaggerResolveTask() throws IOException {
         outputDir = testProjectDir.toString() + "/target";
         outputFile = testProjectDir.toString() + "/testAPI.json";
@@ -111,9 +173,9 @@ public class SwaggerResolveTest {
                 "}\n" +
                 "dependencies {  \n" +
                 "    implementation '" + SWAGGER_REST_DEPENDENCY + "'\n" +
-                "    implementation 'javax.ws.rs:javax.ws.rs-api:2.1'\n" +
-                "    implementation 'javax.servlet:javax.servlet-api:3.1.0'\n" +
-                "    testImplementation 'com.github.tomakehurst:wiremock:2.27.2'\n" +
+                "    implementation 'jakarta.ws.rs:jakarta.ws.rs-api:3.1.0'\n" +
+                "    implementation 'jakarta.servlet:jakarta.servlet-api:6.0.0'\n" +
+                "    testImplementation 'org.wiremock:wiremock-standalone:3.13.2'\n" +
                 "    testImplementation 'org.testng:testng:7.10.2'\n" +
                 "\n" +
                 "\n" +
@@ -184,9 +246,9 @@ public class SwaggerResolveTest {
                 "}\n" +
                 "dependencies {  \n" +
                 "    implementation '" + SWAGGER_REST_DEPENDENCY + "'\n" +
-                "    implementation 'javax.ws.rs:javax.ws.rs-api:2.1'\n" +
-                "    implementation 'javax.servlet:javax.servlet-api:3.1.0'\n" +
-                "    testImplementation 'com.github.tomakehurst:wiremock:2.27.2'\n" +
+                "    implementation 'jakarta.ws.rs:jakarta.ws.rs-api:3.1.0'\n" +
+                "    implementation 'jakarta.servlet:jakarta.servlet-api:6.0.0'\n" +
+                "    testImplementation 'org.wiremock:wiremock-standalone:3.13.2'\n" +
                 "    testImplementation 'org.testng:testng:7.10.2'\n" +
                 "\n" +
                 "\n" +
@@ -268,8 +330,8 @@ public class SwaggerResolveTest {
                 "}\n" +
                 "dependencies {  \n" +
                 "    implementation '" + SWAGGER_REST_DEPENDENCY + "'\n" +
-                "    implementation 'javax.ws.rs:javax.ws.rs-api:2.1'\n" +
-                "    implementation 'javax.servlet:javax.servlet-api:3.1.0'\n" +
+                "    implementation 'jakarta.ws.rs:jakarta.ws.rs-api:3.1.0'\n" +
+                "    implementation 'jakarta.servlet:jakarta.servlet-api:6.0.0'\n" +
                 "}\n" +
                 resolveTask + " {\n" +
                 "    outputFileName = 'PetStoreAPIDefaults'\n" +
@@ -337,8 +399,8 @@ public class SwaggerResolveTest {
                 "}\n" +
                 "dependencies {\n" +
                 "    implementation '" + SWAGGER_REST_DEPENDENCY + "'\n" +
-                "    implementation 'javax.ws.rs:javax.ws.rs-api:2.1'\n" +
-                "    implementation 'javax.servlet:javax.servlet-api:3.1.0'\n" +
+                "    implementation 'jakarta.ws.rs:jakarta.ws.rs-api:3.1.0'\n" +
+                "    implementation 'jakarta.servlet:jakarta.servlet-api:6.0.0'\n" +
                 "    testImplementation 'org.testng:testng:7.10.2'\n" +
                 "}\n" +
                 "sourceSets {\n" +
@@ -418,7 +480,7 @@ public class SwaggerResolveTest {
                 "}\n" +
                 "dependencies {\n" +
                 "    implementation project(':app')\n" +
-                "    implementation 'javax.ws.rs:javax.ws.rs-api:2.1'\n" +
+                "    implementation 'jakarta.ws.rs:jakarta.ws.rs-api:3.1.0'\n" +
                 "}\n" +
                 "resolve {\n" +
                 "    resourcePackages = ['com.example.api']\n" +
@@ -426,8 +488,8 @@ public class SwaggerResolveTest {
                 "}\n");
         writeFile(apiDir.resolve("src/main/java/com/example/api/HelloResource.java"),
                 "package com.example.api;\n" +
-                "import javax.ws.rs.GET;\n" +
-                "import javax.ws.rs.Path;\n" +
+                "import jakarta.ws.rs.GET;\n" +
+                "import jakarta.ws.rs.Path;\n" +
                 "@Path(\"/hello\")\n" +
                 "public class HelloResource {\n" +
                 "    @GET\n" +

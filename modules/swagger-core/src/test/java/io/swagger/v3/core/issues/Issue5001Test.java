@@ -2,8 +2,6 @@ package io.swagger.v3.core.issues;
 
 import io.swagger.v3.core.converter.AnnotatedType;
 import io.swagger.v3.core.converter.ModelConverterContextImpl;
-import io.swagger.v3.core.converter.ModelConverters;
-import io.swagger.v3.core.converter.ResolvedSchema;
 import io.swagger.v3.core.jackson.ModelResolver;
 import io.swagger.v3.core.util.Configuration;
 import io.swagger.v3.core.util.Json;
@@ -11,8 +9,7 @@ import io.swagger.v3.core.util.Json31;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.testng.annotations.Test;
 
-import javax.annotation.Nullable;
-import java.util.List;
+import jakarta.annotation.Nullable;
 import java.util.Set;
 
 import static org.testng.Assert.*;
@@ -24,9 +21,6 @@ import static org.testng.Assert.*;
  * <p>Tests that @Nullable annotation is recognized and generates appropriate nullable output:
  * - OAS 3.0: nullable keyword
  * - OAS 3.1: type array with "null"
- *
- * <p>Note: This test uses javax.annotation.Nullable which is automatically transformed to
- * jakarta.annotation.Nullable in the swagger-core-jakarta module via the Eclipse Transformer.
  *
  * @see <a href="https://github.com/swagger-api/swagger-core/issues/5001">...</a>
  */
@@ -141,9 +135,7 @@ public class Issue5001Test {
     }
 
     /**
-     * Model using @Nullable annotation
-     * Note: Uses javax.annotation.Nullable which gets transformed to jakarta.annotation.Nullable
-     * in the swagger-core-jakarta module
+     * Model using @Nullable annotation.
      */
     public static class NullableModel {
         @Nullable

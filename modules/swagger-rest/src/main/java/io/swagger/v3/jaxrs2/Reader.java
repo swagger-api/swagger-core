@@ -50,10 +50,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.ws.rs.ApplicationPath;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Application;
+import jakarta.ws.rs.ApplicationPath;
+import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.Application;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
@@ -73,7 +73,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.CompletionStage;
-import java.util.stream.Collectors;
 
 public class Reader implements OpenApiReader {
     private static final Logger LOGGER = LoggerFactory.getLogger(Reader.class);
@@ -286,7 +285,7 @@ public class Reader implements OpenApiReader {
 
         Hidden hidden = cls.getAnnotation(Hidden.class);
         // class path
-        final javax.ws.rs.Path apiPath = ReflectionUtils.getAnnotation(cls, javax.ws.rs.Path.class);
+        final jakarta.ws.rs.Path apiPath = ReflectionUtils.getAnnotation(cls, jakarta.ws.rs.Path.class);
         final boolean openapi31 = Boolean.TRUE.equals(config.isOpenAPI31());
 
         if (
@@ -314,8 +313,8 @@ public class Reader implements OpenApiReader {
         io.swagger.v3.oas.annotations.tags.Tag[] apiTags = ReflectionUtils.getRepeatableAnnotationsArray(cls, io.swagger.v3.oas.annotations.tags.Tag.class);
         io.swagger.v3.oas.annotations.servers.Server[] apiServers = ReflectionUtils.getRepeatableAnnotationsArray(cls, io.swagger.v3.oas.annotations.servers.Server.class);
 
-        javax.ws.rs.Consumes classConsumes = ReflectionUtils.getAnnotation(cls, javax.ws.rs.Consumes.class);
-        javax.ws.rs.Produces classProduces = ReflectionUtils.getAnnotation(cls, javax.ws.rs.Produces.class);
+        jakarta.ws.rs.Consumes classConsumes = ReflectionUtils.getAnnotation(cls, jakarta.ws.rs.Consumes.class);
+        jakarta.ws.rs.Produces classProduces = ReflectionUtils.getAnnotation(cls, jakarta.ws.rs.Produces.class);
 
         boolean classDeprecated = ReflectionUtils.getAnnotation(cls, Deprecated.class) != null
                 || (KotlinDetector.isKotlinPresent() && ReflectionUtils.getAnnotation(cls, KotlinDetector.getKotlinDeprecated()) != null);
@@ -440,8 +439,8 @@ public class Reader implements OpenApiReader {
                 continue;
             }
             AnnotatedMethod annotatedMethod = bd.findMethod(method.getName(), method.getParameterTypes());
-            javax.ws.rs.Produces methodProduces = ReflectionUtils.getAnnotation(method, javax.ws.rs.Produces.class);
-            javax.ws.rs.Consumes methodConsumes = ReflectionUtils.getAnnotation(method, javax.ws.rs.Consumes.class);
+            jakarta.ws.rs.Produces methodProduces = ReflectionUtils.getAnnotation(method, jakarta.ws.rs.Produces.class);
+            jakarta.ws.rs.Consumes methodConsumes = ReflectionUtils.getAnnotation(method, jakarta.ws.rs.Consumes.class);
 
             if (isMethodOverridden(method, cls)) {
                 continue;
@@ -450,7 +449,7 @@ public class Reader implements OpenApiReader {
             boolean methodDeprecated = ReflectionUtils.getAnnotation(method, Deprecated.class) != null
                     || (KotlinDetector.isKotlinPresent() && ReflectionUtils.getAnnotation(method, KotlinDetector.getKotlinDeprecated()) != null);
 
-            javax.ws.rs.Path methodPath = ReflectionUtils.getAnnotation(method, javax.ws.rs.Path.class);
+            jakarta.ws.rs.Path methodPath = ReflectionUtils.getAnnotation(method, jakarta.ws.rs.Path.class);
 
             String operationPath = ReaderUtils.getPath(apiPath, methodPath, parentPath, isSubresource);
 
@@ -857,8 +856,8 @@ public class Reader implements OpenApiReader {
                 encoding != null && !encoding.isEmpty()) {
             Content content = operation.getRequestBody().getContent();
             for (String mediaKey: content.keySet()) {
-                if (mediaKey.equals(javax.ws.rs.core.MediaType.APPLICATION_FORM_URLENCODED) ||
-                        mediaKey.equals(javax.ws.rs.core.MediaType.MULTIPART_FORM_DATA)) {
+                if (mediaKey.equals(jakarta.ws.rs.core.MediaType.APPLICATION_FORM_URLENCODED) ||
+                        mediaKey.equals(jakarta.ws.rs.core.MediaType.MULTIPART_FORM_DATA)) {
                     MediaType m = content.get(mediaKey);
                     m.encoding(encoding);
                 }
@@ -1327,7 +1326,7 @@ public class Reader implements OpenApiReader {
             rawClassName = className.replace("[simple type, class ", "");
             rawClassName = rawClassName.substring(0, rawClassName.length() -1);
         }
-        ignore = rawClassName.startsWith("javax.ws.rs.");
+        ignore = rawClassName.startsWith("jakarta.ws.rs.");
         ignore = ignore || rawClassName.equalsIgnoreCase("void");
         ignore = ignore || ModelConverters.getInstance(config.toConfiguration()).isRegisteredAsSkippedClass(rawClassName);
         return ignore;
@@ -1524,8 +1523,8 @@ public class Reader implements OpenApiReader {
         return Optional.of(parametersObject);
     }
 
-    protected ResolvedParameter getParameters(Type type, List<Annotation> annotations, Operation operation, javax.ws.rs.Consumes classConsumes,
-                                              javax.ws.rs.Consumes methodConsumes, JsonView jsonViewAnnotation) {
+    protected ResolvedParameter getParameters(Type type, List<Annotation> annotations, Operation operation, jakarta.ws.rs.Consumes classConsumes,
+                                              jakarta.ws.rs.Consumes methodConsumes, JsonView jsonViewAnnotation) {
         final Iterator<OpenAPIExtension> chain = OpenAPIExtensions.chain();
         if (!chain.hasNext()) {
             return new ResolvedParameter();
@@ -1680,7 +1679,7 @@ public class Reader implements OpenApiReader {
             type = rawType;
         }
 
-        if (method.getAnnotation(javax.ws.rs.Path.class) != null) {
+        if (method.getAnnotation(jakarta.ws.rs.Path.class) != null) {
             if (ReaderUtils.extractOperationMethod(method, null) == null) {
                 return type;
             }

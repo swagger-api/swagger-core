@@ -222,7 +222,7 @@ public class ReflectionUtils {
     public static boolean isInject(List<Annotation> annotations) {
         for (Annotation annotation : annotations) {
             // use string name to avoid additional dependencies
-            if ("javax.inject.Inject".equals(annotation.annotationType().getName())) {
+            if ("jakarta.inject.Inject".equals(annotation.annotationType().getName())) {
                 return true;
             }
         }

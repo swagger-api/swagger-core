@@ -70,21 +70,24 @@
                         <configuration>
                             <systemPropertyVariables>
                                 <jetty.port>${jetty.port}</jetty.port>
+                                <jetty.port.stop>${jetty.port.stop}</jetty.port.stop>
                             </systemPropertyVariables>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
             <plugin>
-                <groupId>org.eclipse.jetty</groupId>
-                <artifactId>jetty-maven-plugin</artifactId>
+                <groupId>org.eclipse.jetty.ee10</groupId>
+                <artifactId>jetty-ee10-maven-plugin</artifactId>
                 <configuration>
-                    <scanIntervalSeconds>10</scanIntervalSeconds>
+                    <scan>10</scan>
                     <httpConnector><port>${jetty.port}</port></httpConnector>
                     <stopKey>a</stopKey>
                     <stopPort>${jetty.port.stop}</stopPort>
+                    <supportedPackagings>
+                        <supportedPackaging>jar</supportedPackaging>
+                    </supportedPackagings>
                     <useTestScope>true</useTestScope>
-                    <webAppSourceDirectory>${project.basedir}/src/test/webapp</webAppSourceDirectory>
                 </configuration>
                 <dependencies>
                     <dependency>
@@ -101,7 +104,7 @@
                             <goal>start</goal>
                         </goals>
                         <configuration>
-                            <scanIntervalSeconds>0</scanIntervalSeconds>
+                            <scan>0</scan>
                         </configuration>
                     </execution>
                     <execution>
@@ -154,10 +157,6 @@
             <scope>test</scope>
             <exclusions>
                 <exclusion>
-                    <groupId>javax.xml.bind</groupId>
-                    <artifactId>jaxb-api</artifactId>
-                </exclusion>
-                <exclusion>
                     <groupId>org.apache.httpcomponents</groupId>
                     <artifactId>httpmime</artifactId>
                 </exclusion>
@@ -171,7 +170,7 @@
         <dependency>
             <groupId>org.glassfish.jersey.core</groupId>
             <artifactId>jersey-server</artifactId>
-            <version>${jersey2-version}</version>
+            <version>${jersey-version}</version>
             <scope>test</scope>
             <exclusions>
                 <exclusion>
