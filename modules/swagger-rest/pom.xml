@@ -58,10 +58,10 @@
                 </executions>
             </plugin>
             <plugin>
-                <groupId>org.eclipse.jetty</groupId>
-                <artifactId>jetty-maven-plugin</artifactId>
+                <groupId>org.eclipse.jetty.ee10</groupId>
+                <artifactId>jetty-ee10-maven-plugin</artifactId>
                 <configuration>
-                    <scanIntervalSeconds>10</scanIntervalSeconds>
+                    <scan>10</scan>
                     <httpConnector><port>${jetty.port}</port></httpConnector>
                     <stopKey>a</stopKey>
                     <stopPort>${jetty.port.stop}</stopPort>
@@ -69,7 +69,12 @@
                         <supportedPackaging>jar</supportedPackaging>
                     </supportedPackagings>
                     <useTestScope>true</useTestScope>
-                    <webAppSourceDirectory>${project.basedir}/src/test/webapp</webAppSourceDirectory>
+                    <webApp>
+                        <resourceBases>
+                            <resourceBase>${project.basedir}/src/test/webapp</resourceBase>
+                        </resourceBases>
+                        <descriptor>${project.basedir}/src/test/webapp/WEB-INF/web.xml</descriptor>
+                    </webApp>
                 </configuration>
                 <executions>
                     <execution>
@@ -79,7 +84,7 @@
                             <goal>start</goal>
                         </goals>
                         <configuration>
-                            <scanIntervalSeconds>0</scanIntervalSeconds>
+                            <scan>0</scan>
                         </configuration>
                     </execution>
                     <execution>
@@ -94,7 +99,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>${surefire-version}</version>
                 <configuration>
                     <argLine>--add-opens java.base/java.lang=ALL-UNNAMED</argLine>
                     <forkCount>1</forkCount>
@@ -117,6 +121,7 @@
                         <configuration>
                             <systemPropertyVariables>
                                 <jetty.port>${jetty.port}</jetty.port>
+                                <jetty.port.stop>${jetty.port.stop}</jetty.port.stop>
                             </systemPropertyVariables>
                         </configuration>
                     </execution>
@@ -185,6 +190,12 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>biz.aQute.bnd</groupId>
+            <artifactId>biz.aQute.resolve</artifactId>
+            <version>${bnd-version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpmime</artifactId>
             <scope>test</scope>
@@ -194,10 +205,6 @@
             <artifactId>rest-assured</artifactId>
             <scope>test</scope>
             <exclusions>
-                <exclusion>
-                    <groupId>javax.xml.bind</groupId>
-                    <artifactId>jaxb-api</artifactId>
-                </exclusion>
                 <exclusion>
                     <groupId>org.apache.httpcomponents</groupId>
                     <artifactId>httpmime</artifactId>
@@ -212,7 +219,7 @@
         <dependency>
             <groupId>org.jboss.weld</groupId>
             <artifactId>weld-core-impl</artifactId>
-            <version>3.1.9.Final</version>
+            <version>${weld-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -224,7 +231,7 @@
         <dependency>
             <groupId>org.jboss.arquillian.container</groupId>
             <artifactId>arquillian-weld-embedded</artifactId>
-            <version>2.1.0.Final</version>
+            <version>3.0.2.Final</version>
             <scope>test</scope>
             <exclusions>
                 <exclusion>
@@ -244,13 +251,9 @@
         <dependency>
             <groupId>org.glassfish.jersey.containers</groupId>
             <artifactId>jersey-container-servlet</artifactId>
-            <version>${jersey2-version}</version>
+            <version>${jersey-version}</version>
             <scope>test</scope>
             <exclusions>
-                <exclusion>
-                    <groupId>javax.annotation</groupId>
-                    <artifactId>javax.annotation-api</artifactId>
-                </exclusion>
                 <exclusion>
                     <groupId>org.javassist</groupId>
                     <artifactId>javassist</artifactId>
@@ -260,13 +263,9 @@
         <dependency>
             <groupId>org.glassfish.jersey.media</groupId>
             <artifactId>jersey-media-multipart</artifactId>
-            <version>${jersey2-version}</version>
+            <version>${jersey-version}</version>
             <scope>test</scope>
             <exclusions>
-                <exclusion>
-                    <groupId>javax.annotation</groupId>
-                    <artifactId>javax.annotation-api</artifactId>
-                </exclusion>
                 <exclusion>
                     <groupId>org.javassist</groupId>
                     <artifactId>javassist</artifactId>
@@ -276,13 +275,9 @@
         <dependency>
             <groupId>org.glassfish.jersey.inject</groupId>
             <artifactId>jersey-hk2</artifactId>
-            <version>${jersey2-version}</version>
+            <version>${jersey-version}</version>
             <scope>test</scope>
             <exclusions>
-                <exclusion>
-                    <groupId>javax.annotation</groupId>
-                    <artifactId>javax.annotation-api</artifactId>
-                </exclusion>
                 <exclusion>
                     <groupId>org.javassist</groupId>
                     <artifactId>javassist</artifactId>
@@ -290,13 +285,13 @@
             </exclusions>
         </dependency>
         <dependency>
-            <groupId>tools.jackson.jaxrs</groupId>
-            <artifactId>jackson-jaxrs-json-provider</artifactId>
+            <groupId>tools.jackson.jakarta.rs</groupId>
+            <artifactId>jackson-jakarta-rs-json-provider</artifactId>
             <version>${jackson-version}</version>
         </dependency>
         <dependency>
             <groupId>tools.jackson.module</groupId>
-            <artifactId>jackson-module-jaxb-annotations</artifactId>
+            <artifactId>jackson-module-jakarta-xmlbind-annotations</artifactId>
             <version>${jackson-version}</version>
         </dependency>
     </dependencies>

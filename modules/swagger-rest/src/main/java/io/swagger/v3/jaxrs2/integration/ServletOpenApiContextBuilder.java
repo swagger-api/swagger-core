@@ -6,7 +6,7 @@ import io.swagger.v3.oas.integration.OpenApiContextLocator;
 import io.swagger.v3.oas.integration.api.OpenApiContext;
 import org.apache.commons.lang3.StringUtils;
 
-import javax.servlet.ServletConfig;
+import jakarta.servlet.ServletConfig;
 
 public class ServletOpenApiContextBuilder<T extends ServletOpenApiContextBuilder> extends GenericOpenApiContextBuilder<ServletOpenApiContextBuilder> {
 

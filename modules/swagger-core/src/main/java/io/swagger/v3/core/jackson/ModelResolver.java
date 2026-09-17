@@ -60,33 +60,33 @@ import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.media.StringSchema;
 import io.swagger.v3.oas.models.media.UUIDSchema;
 import io.swagger.v3.oas.models.media.XML;
-import javax.validation.constraints.Email;
+import jakarta.validation.constraints.Email;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.validation.constraints.DecimalMax;
-import javax.validation.constraints.DecimalMin;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.Negative;
-import javax.validation.constraints.NegativeOrZero;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Positive;
-import javax.validation.constraints.PositiveOrZero;
-import javax.validation.constraints.Size;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementRef;
-import javax.xml.bind.annotation.XmlElementRefs;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlSchema;
+import jakarta.validation.constraints.DecimalMax;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.Negative;
+import jakarta.validation.constraints.NegativeOrZero;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
+import jakarta.validation.constraints.Size;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlElementRef;
+import jakarta.xml.bind.annotation.XmlElementRefs;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlSchema;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedParameterizedType;
 import java.lang.reflect.Field;
@@ -107,7 +107,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.Objects;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static io.swagger.v3.core.jackson.JAXBAnnotationsHelper.JAXB_DEFAULT;
@@ -131,7 +130,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
     private static final Predicate<Annotation> ANNOTATIONS_THAT_SHOULD_BE_STRIPPED_FOR_CONTAINER_ITEMS = annotation ->
             annotation.annotationType().getName().startsWith("io.swagger") ||
-            annotation.annotationType().getName().startsWith("javax.validation.constraints") ||
+            annotation.annotationType().getName().startsWith("jakarta.validation.constraints") ||
             NULLABLE_ANNOTATIONS.contains(annotation.annotationType().getSimpleName());
 
     /**
@@ -1804,8 +1803,8 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         }
         boolean acceptNoGroups = !strategy.equals(Configuration.GroupsValidationStrategy.NEVER_IF_NO_CONTEXT);
         // if we get here, validate only if groups match.
-        if (parent != null && annos.containsKey(JAVAX_NOT_NULL) && applyNotNullAnnotations) {
-            NotNull anno = (NotNull) annos.get(JAVAX_NOT_NULL);
+        if (parent != null && annos.containsKey(JAKARTA_NOT_NULL) && applyNotNullAnnotations) {
+            NotNull anno = (NotNull) annos.get(JAKARTA_NOT_NULL);
             if (anno.groups().length == 0 && acceptNoGroups) {
                 // no groups, so apply
                 modified = updateRequiredItem(parent, property.getName()) || modified;
@@ -1819,8 +1818,8 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             }
         }
 
-        if (annos.containsKey(JAVAX_NOT_EMPTY)) {
-            NotEmpty anno = (NotEmpty) annos.get(JAVAX_NOT_EMPTY);
+        if (annos.containsKey(JAKARTA_NOT_EMPTY)) {
+            NotEmpty anno = (NotEmpty) annos.get(JAKARTA_NOT_EMPTY);
             boolean apply = checkGroupValidation(anno.groups(), invocationGroups, acceptNoGroups);
             if (apply) {
                 io.swagger.v3.oas.annotations.media.Schema ctxSchema = AnnotationsUtils.getSchemaAnnotation(annotations);
@@ -1832,8 +1831,8 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             }
         }
 
-        if (annos.containsKey(JAVAX_NOT_BLANK)) {
-            NotBlank anno = (NotBlank) annos.get(JAVAX_NOT_BLANK);
+        if (annos.containsKey(JAKARTA_NOT_BLANK)) {
+            NotBlank anno = (NotBlank) annos.get(JAKARTA_NOT_BLANK);
             boolean apply = checkGroupValidation(anno.groups(), invocationGroups, acceptNoGroups);
             if (apply) {
                 io.swagger.v3.oas.annotations.media.Schema ctxSchema = AnnotationsUtils.getSchemaAnnotation(annotations);
@@ -1843,78 +1842,78 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 }
             }
         }
-        if (annos.containsKey(JAVAX_MIN)) {
-            Min anno = (Min) annos.get(JAVAX_MIN);
+        if (annos.containsKey(JAKARTA_MIN)) {
+            Min anno = (Min) annos.get(JAKARTA_MIN);
             boolean apply = checkGroupValidation(anno.groups(), invocationGroups, acceptNoGroups);
             if (apply) {
                 modified = ValidationAnnotationsUtils.applyMinConstraint(property, anno) || modified;
             }
         }
-        if (annos.containsKey(JAVAX_MAX)) {
-            Max anno = (Max) annos.get(JAVAX_MAX);
+        if (annos.containsKey(JAKARTA_MAX)) {
+            Max anno = (Max) annos.get(JAKARTA_MAX);
             boolean apply = checkGroupValidation(anno.groups(), invocationGroups, acceptNoGroups);
             if (apply) {
                 modified = ValidationAnnotationsUtils.applyMaxConstraint(property, anno) || modified;
             }
         }
-        if (annos.containsKey(JAVAX_SIZE)) {
-            Size anno = (Size) annos.get(JAVAX_SIZE);
+        if (annos.containsKey(JAKARTA_SIZE)) {
+            Size anno = (Size) annos.get(JAKARTA_SIZE);
             boolean apply = checkGroupValidation(anno.groups(), invocationGroups, acceptNoGroups);
             if (apply) {
                 modified = ValidationAnnotationsUtils.applySizeConstraint(property, anno) || modified;
             }
         }
-        if (annos.containsKey(JAVAX_DECIMAL_MIN)) {
-            DecimalMin min = (DecimalMin) annos.get(JAVAX_DECIMAL_MIN);
+        if (annos.containsKey(JAKARTA_DECIMAL_MIN)) {
+            DecimalMin min = (DecimalMin) annos.get(JAKARTA_DECIMAL_MIN);
             boolean apply = checkGroupValidation(min.groups(), invocationGroups, acceptNoGroups);
             if (apply) {
                 modified = ValidationAnnotationsUtils.applyDecimalMinConstraint(property, min) || modified;
             }
         }
-        if (annos.containsKey(JAVAX_DECIMAL_MAX)) {
-            DecimalMax max = (DecimalMax) annos.get(JAVAX_DECIMAL_MAX);
+        if (annos.containsKey(JAKARTA_DECIMAL_MAX)) {
+            DecimalMax max = (DecimalMax) annos.get(JAKARTA_DECIMAL_MAX);
             boolean apply = checkGroupValidation(max.groups(), invocationGroups, acceptNoGroups);
             if (apply) {
                 modified = ValidationAnnotationsUtils.applyDecimalMaxConstraint(property, max) || modified;
             }
         }
-        if (annos.containsKey(JAVAX_PATTERN)) {
-            Pattern pattern = (Pattern) annos.get(JAVAX_PATTERN);
+        if (annos.containsKey(JAKARTA_PATTERN)) {
+            Pattern pattern = (Pattern) annos.get(JAKARTA_PATTERN);
             boolean apply = checkGroupValidation(pattern.groups(), invocationGroups, acceptNoGroups);
             if (apply) {
                 modified = ValidationAnnotationsUtils.applyPatternConstraint(property, pattern) || modified;
             }
         }
-        if (annos.containsKey(JAVAX_EMAIL)) {
-            Email email = (Email) annos.get(JAVAX_EMAIL);
+        if (annos.containsKey(JAKARTA_EMAIL)) {
+            Email email = (Email) annos.get(JAKARTA_EMAIL);
             boolean apply = checkGroupValidation(email.groups(), invocationGroups, acceptNoGroups);
             if (apply) {
                 modified = ValidationAnnotationsUtils.applyEmailConstraint(property, email) || modified;
             }
         }
-        if (annos.containsKey(JAVAX_POSITIVE)) {
-            Positive positive = (Positive) annos.get(JAVAX_POSITIVE);
+        if (annos.containsKey(JAKARTA_POSITIVE)) {
+            Positive positive = (Positive) annos.get(JAKARTA_POSITIVE);
             boolean apply = checkGroupValidation(positive.groups(), invocationGroups, acceptNoGroups);
             if (apply) {
                 modified = ValidationAnnotationsUtils.applyPositiveConstraint(property) || modified;
             }
         }
-        if (annos.containsKey(JAVAX_POSITIVE_OR_ZERO)) {
-            PositiveOrZero positiveOrZero = (PositiveOrZero) annos.get(JAVAX_POSITIVE_OR_ZERO);
+        if (annos.containsKey(JAKARTA_POSITIVE_OR_ZERO)) {
+            PositiveOrZero positiveOrZero = (PositiveOrZero) annos.get(JAKARTA_POSITIVE_OR_ZERO);
             boolean apply = checkGroupValidation(positiveOrZero.groups(), invocationGroups, acceptNoGroups);
             if (apply) {
                 modified = ValidationAnnotationsUtils.applyPositiveOrZeroConstraint(property) || modified;
             }
         }
-        if (annos.containsKey(JAVAX_NEGATIVE)) {
-            Negative negative = (Negative) annos.get(JAVAX_NEGATIVE);
+        if (annos.containsKey(JAKARTA_NEGATIVE)) {
+            Negative negative = (Negative) annos.get(JAKARTA_NEGATIVE);
             boolean apply = checkGroupValidation(negative.groups(), invocationGroups, acceptNoGroups);
             if (apply) {
                 modified = ValidationAnnotationsUtils.applyNegativeConstraint(property) || modified;
             }
         }
-        if (annos.containsKey(JAVAX_NEGATIVE_OR_ZERO)) {
-            NegativeOrZero negativeOrZero = (NegativeOrZero) annos.get(JAVAX_NEGATIVE_OR_ZERO);
+        if (annos.containsKey(JAKARTA_NEGATIVE_OR_ZERO)) {
+            NegativeOrZero negativeOrZero = (NegativeOrZero) annos.get(JAKARTA_NEGATIVE_OR_ZERO);
             boolean apply = checkGroupValidation(negativeOrZero.groups(), invocationGroups, acceptNoGroups);
             if (apply) {
                 modified = ValidationAnnotationsUtils.applyNegativeOrZeroConstraint(property) || modified;
@@ -1956,44 +1955,44 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 modified = updateRequiredItem(parent, property.getName());
             }
         }
-        if (annos.containsKey(JAVAX_MIN)) {
-            Min min = (Min) annos.get(JAVAX_MIN);
+        if (annos.containsKey(JAKARTA_MIN)) {
+            Min min = (Min) annos.get(JAKARTA_MIN);
             modified = ValidationAnnotationsUtils.applyMinConstraint(property, min) || modified;
         }
-        if (annos.containsKey(JAVAX_MAX)) {
-            Max max = (Max) annos.get(JAVAX_MAX);
+        if (annos.containsKey(JAKARTA_MAX)) {
+            Max max = (Max) annos.get(JAKARTA_MAX);
             modified = ValidationAnnotationsUtils.applyMaxConstraint(property, max) || modified;
         }
-        if (annos.containsKey(JAVAX_SIZE)) {
-            Size size = (Size) annos.get(JAVAX_SIZE);
+        if (annos.containsKey(JAKARTA_SIZE)) {
+            Size size = (Size) annos.get(JAKARTA_SIZE);
             modified = ValidationAnnotationsUtils.applySizeConstraint(property, size) || modified;
         }
-        if (annos.containsKey(JAVAX_DECIMAL_MIN)) {
-            DecimalMin min = (DecimalMin) annos.get(JAVAX_DECIMAL_MIN);
+        if (annos.containsKey(JAKARTA_DECIMAL_MIN)) {
+            DecimalMin min = (DecimalMin) annos.get(JAKARTA_DECIMAL_MIN);
             modified = ValidationAnnotationsUtils.applyDecimalMinConstraint(property, min) || modified;
         }
-        if (annos.containsKey(JAVAX_DECIMAL_MAX)) {
-            DecimalMax max = (DecimalMax) annos.get(JAVAX_DECIMAL_MAX);
+        if (annos.containsKey(JAKARTA_DECIMAL_MAX)) {
+            DecimalMax max = (DecimalMax) annos.get(JAKARTA_DECIMAL_MAX);
             modified = ValidationAnnotationsUtils.applyDecimalMaxConstraint(property, max) || modified;
         }
-        if (annos.containsKey(JAVAX_PATTERN)) {
-            Pattern pattern = (Pattern) annos.get(JAVAX_PATTERN);
+        if (annos.containsKey(JAKARTA_PATTERN)) {
+            Pattern pattern = (Pattern) annos.get(JAKARTA_PATTERN);
             modified = ValidationAnnotationsUtils.applyPatternConstraint(property, pattern) || modified;
         }
-        if (annos.containsKey(JAVAX_EMAIL)) {
-            Email pattern = (Email) annos.get(JAVAX_EMAIL);
+        if (annos.containsKey(JAKARTA_EMAIL)) {
+            Email pattern = (Email) annos.get(JAKARTA_EMAIL);
             modified = ValidationAnnotationsUtils.applyEmailConstraint(property, pattern) || modified;
         }
-        if (annos.containsKey(JAVAX_POSITIVE)) {
+        if (annos.containsKey(JAKARTA_POSITIVE)) {
             modified = ValidationAnnotationsUtils.applyPositiveConstraint(property) || modified;
         }
-        if (annos.containsKey(JAVAX_POSITIVE_OR_ZERO)) {
+        if (annos.containsKey(JAKARTA_POSITIVE_OR_ZERO)) {
             modified = ValidationAnnotationsUtils.applyPositiveOrZeroConstraint(property) || modified;
         }
-        if (annos.containsKey(JAVAX_NEGATIVE)) {
+        if (annos.containsKey(JAKARTA_NEGATIVE)) {
             modified = ValidationAnnotationsUtils.applyNegativeConstraint(property) || modified;
         }
-        if (annos.containsKey(JAVAX_NEGATIVE_OR_ZERO)) {
+        if (annos.containsKey(JAKARTA_NEGATIVE_OR_ZERO)) {
             modified = ValidationAnnotationsUtils.applyNegativeOrZeroConstraint(property) || modified;
         }
         return modified;
@@ -3350,7 +3349,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
     protected boolean shouldIgnoreClass(Type type) {
         if (type instanceof Class) {
             Class<?> cls = (Class<?>) type;
-            if (cls.getName().equals("javax.ws.rs.Response")) {
+            if (cls.getName().equals("jakarta.ws.rs.core.Response")) {
                 return true;
             }
         } else {

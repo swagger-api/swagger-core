@@ -3,7 +3,7 @@ package io.swagger.v3.jaxrs2.integration;
 import io.swagger.v3.oas.integration.api.OpenApiContext;
 import org.apache.commons.lang3.StringUtils;
 
-import javax.servlet.ServletConfig;
+import jakarta.servlet.ServletConfig;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Set;

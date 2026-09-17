@@ -35,7 +35,7 @@ import org.testng.annotations.Test;
 import records.*;
 import tools.jackson.databind.ObjectMapper;
 
-import javax.ws.rs.*;
+import jakarta.ws.rs.*;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;

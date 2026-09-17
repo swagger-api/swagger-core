@@ -3,8 +3,8 @@ package com.my.sorted.resources;
 import io.swagger.v3.jaxrs2.resources.model.Pet;
 import io.swagger.v3.oas.annotations.Operation;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
 
 @Path("/sorted")
 public class SortedThing {

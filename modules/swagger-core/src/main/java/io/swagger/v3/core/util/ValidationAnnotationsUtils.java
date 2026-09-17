@@ -3,8 +3,8 @@ package io.swagger.v3.core.util;
 import io.swagger.v3.oas.models.SpecVersion;
 import io.swagger.v3.oas.models.media.Schema;
 
-import javax.validation.OverridesAttribute;
-import javax.validation.constraints.*;
+import jakarta.validation.OverridesAttribute;
+import jakarta.validation.constraints.*;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
@@ -19,21 +19,21 @@ import static io.swagger.v3.core.util.SchemaTypeUtils.*;
 
 public class ValidationAnnotationsUtils {
 
-    private static final String JAVAX_PACKAGE_BASE = "javax.validation.constraints";
-    public static final String JAVAX_NOT_NULL = JAVAX_PACKAGE_BASE + ".NotNull";
-    public static final String JAVAX_NOT_EMPTY = JAVAX_PACKAGE_BASE + ".NotEmpty";
-    public static final String JAVAX_NOT_BLANK = JAVAX_PACKAGE_BASE + ".NotBlank";
-    public static final String JAVAX_MIN = JAVAX_PACKAGE_BASE + ".Min";
-    public static final String JAVAX_MAX = JAVAX_PACKAGE_BASE + ".Max";
-    public static final String JAVAX_SIZE = JAVAX_PACKAGE_BASE + ".Size";
-    public static final String JAVAX_DECIMAL_MIN = JAVAX_PACKAGE_BASE + ".DecimalMin";
-    public static final String JAVAX_DECIMAL_MAX = JAVAX_PACKAGE_BASE + ".DecimalMax";
-    public static final String JAVAX_PATTERN = JAVAX_PACKAGE_BASE + ".Pattern";
-    public static final String JAVAX_EMAIL = JAVAX_PACKAGE_BASE + ".Email";
-    public static final String JAVAX_POSITIVE = JAVAX_PACKAGE_BASE + ".Positive";
-    public static final String JAVAX_POSITIVE_OR_ZERO = JAVAX_PACKAGE_BASE + ".PositiveOrZero";
-    public static final String JAVAX_NEGATIVE = JAVAX_PACKAGE_BASE + ".Negative";
-    public static final String JAVAX_NEGATIVE_OR_ZERO = JAVAX_PACKAGE_BASE + ".NegativeOrZero";
+    private static final String JAKARTA_PACKAGE_BASE = "jakarta.validation.constraints";
+    public static final String JAKARTA_NOT_NULL = JAKARTA_PACKAGE_BASE + ".NotNull";
+    public static final String JAKARTA_NOT_EMPTY = JAKARTA_PACKAGE_BASE + ".NotEmpty";
+    public static final String JAKARTA_NOT_BLANK = JAKARTA_PACKAGE_BASE + ".NotBlank";
+    public static final String JAKARTA_MIN = JAKARTA_PACKAGE_BASE + ".Min";
+    public static final String JAKARTA_MAX = JAKARTA_PACKAGE_BASE + ".Max";
+    public static final String JAKARTA_SIZE = JAKARTA_PACKAGE_BASE + ".Size";
+    public static final String JAKARTA_DECIMAL_MIN = JAKARTA_PACKAGE_BASE + ".DecimalMin";
+    public static final String JAKARTA_DECIMAL_MAX = JAKARTA_PACKAGE_BASE + ".DecimalMax";
+    public static final String JAKARTA_PATTERN = JAKARTA_PACKAGE_BASE + ".Pattern";
+    public static final String JAKARTA_EMAIL = JAKARTA_PACKAGE_BASE + ".Email";
+    public static final String JAKARTA_POSITIVE = JAKARTA_PACKAGE_BASE + ".Positive";
+    public static final String JAKARTA_POSITIVE_OR_ZERO = JAKARTA_PACKAGE_BASE + ".PositiveOrZero";
+    public static final String JAKARTA_NEGATIVE = JAKARTA_PACKAGE_BASE + ".Negative";
+    public static final String JAKARTA_NEGATIVE_OR_ZERO = JAKARTA_PACKAGE_BASE + ".NegativeOrZero";
 
     private static final String SCHEMA_EMAIL_FORMAT_NAME = "email";
 
@@ -347,7 +347,7 @@ public class ValidationAnnotationsUtils {
                 for (Annotation meta : annotation.annotationType().getAnnotations()) {
                     if (meta == null) continue;
                     String name = meta.annotationType().getName();
-                    if (name.startsWith(JAVAX_PACKAGE_BASE)) {
+                    if (name.startsWith(JAKARTA_PACKAGE_BASE)) {
                         if (!annotationsThatRelyOnOverride.contains(meta.annotationType())) {
                             merged.putIfAbsent(name, meta);
                         }

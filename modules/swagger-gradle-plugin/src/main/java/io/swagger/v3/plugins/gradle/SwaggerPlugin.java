@@ -10,7 +10,6 @@ import org.gradle.api.Project;
 import org.gradle.api.artifacts.Configuration;
 import org.gradle.api.artifacts.DependencySet;
 import org.gradle.api.tasks.SourceSetContainer;
-import org.gradle.api.tasks.TaskProvider;
 
 public class SwaggerPlugin implements Plugin<Project> {
     private static final String PLUGIN_PROPERTIES = "/swagger-gradle-plugin.properties";
@@ -23,8 +22,8 @@ public class SwaggerPlugin implements Plugin<Project> {
             public void execute(DependencySet dependencies) {
                 dependencies.add(project.getDependencies().create("org.apache.commons:commons-lang3:3.20.0"));
                 dependencies.add(project.getDependencies().create("io.swagger.core.v3:swagger-rest:" + PLUGIN_VERSION));
-                dependencies.add(project.getDependencies().create("javax.ws.rs:javax.ws.rs-api:2.1"));
-                dependencies.add(project.getDependencies().create("javax.servlet:javax.servlet-api:3.1.0"));
+                dependencies.add(project.getDependencies().create("jakarta.ws.rs:jakarta.ws.rs-api:3.1.0"));
+                dependencies.add(project.getDependencies().create("jakarta.servlet:jakarta.servlet-api:6.0.0"));
             }
         });
         project.getTasks().register("resolve", ResolveTask.class,task -> {

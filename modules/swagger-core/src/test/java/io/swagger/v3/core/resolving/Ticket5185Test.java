@@ -6,7 +6,7 @@ import io.swagger.v3.core.jackson.ModelResolver;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.testng.annotations.Test;
 
-import javax.validation.constraints.Email;
+import jakarta.validation.constraints.Email;
 import java.net.URI;
 
 import static io.swagger.v3.core.resolving.SwaggerTestBase.mapper;

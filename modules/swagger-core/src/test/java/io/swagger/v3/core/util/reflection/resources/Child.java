@@ -1,6 +1,6 @@
 package io.swagger.v3.core.util.reflection.resources;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 public class Child extends Parent<Integer> implements IParent<Long> {
 
