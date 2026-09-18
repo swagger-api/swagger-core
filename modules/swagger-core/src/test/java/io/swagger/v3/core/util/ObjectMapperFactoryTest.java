@@ -112,7 +112,7 @@ public class ObjectMapperFactoryTest {
 
     @Test(dataProvider = "publicMappers")
     public void rejectsTrailingRootContentButAllowsWhitespace(
-            String name, Supplier<ObjectMapper> supplier) throws Exception {
+            String name, Supplier<ObjectMapper> supplier) {
         ObjectMapper mapper = supplier.get();
         assertTrue(mapper.isEnabled(DeserializationFeature.FAIL_ON_TRAILING_TOKENS), name);
         String twoRoots = input(mapper, "{\"known\":\"one\"} {\"known\":\"two\"}",
@@ -151,7 +151,7 @@ public class ObjectMapperFactoryTest {
 
     @Test(dataProvider = "publicMappers")
     public void doesNotTreatUnannotatedGettersAsSetters(
-            String name, Supplier<ObjectMapper> supplier) throws Exception {
+            String name, Supplier<ObjectMapper> supplier) {
         ObjectMapper mapper = supplier.get();
         assertFalse(mapper.isEnabled(tools.jackson.databind.MapperFeature.USE_GETTERS_AS_SETTERS), name);
         GetterOnlyList value = mapper.readValue(input(mapper, "{\"values\":[\"new\"]}",
@@ -166,7 +166,7 @@ public class ObjectMapperFactoryTest {
     }
 
     @Test(dataProvider = "publicMappers")
-    public void doesNotMutateImplicitFinalFields(String name, Supplier<ObjectMapper> supplier) throws Exception {
+    public void doesNotMutateImplicitFinalFields(String name, Supplier<ObjectMapper> supplier) {
         ObjectMapper mapper = supplier.get();
         assertFalse(mapper.isEnabled(tools.jackson.databind.MapperFeature.ALLOW_FINAL_FIELDS_AS_MUTATORS), name);
         FinalValue value = mapper.readValue(input(mapper, "{\"value\":7}", "value: 7\n"), FinalValue.class);
@@ -183,7 +183,7 @@ public class ObjectMapperFactoryTest {
 
     @Test(dataProvider = "publicMappers")
     public void activeViewsExcludeUnannotatedProperties(
-            String name, Supplier<ObjectMapper> supplier) throws Exception {
+            String name, Supplier<ObjectMapper> supplier) {
         ObjectMapper mapper = supplier.get();
         assertFalse(mapper.isEnabled(tools.jackson.databind.MapperFeature.DEFAULT_VIEW_INCLUSION), name);
         ViewBean source = new ViewBean();
@@ -226,44 +226,56 @@ public class ObjectMapperFactoryTest {
     }
 
     @Test(dataProvider = "publicMappers")
-    public void usesIso8601DurationText(String name, Supplier<ObjectMapper> supplier) throws Exception {
+    public void preservesNumericDurationOutput(String name, Supplier<ObjectMapper> supplier) {
         ObjectMapper mapper = supplier.get();
-        assertFalse(mapper.isEnabled(DateTimeFeature.WRITE_DURATIONS_AS_TIMESTAMPS), name);
-        Duration duration = Duration.ofSeconds(-2, 123456789);
-        String output = mapper.writeValueAsString(duration);
-        assertEquals(mapper.readTree(output).asText(), duration.toString(), name);
-        assertEquals(mapper.readValue(output, Duration.class), duration, name);
+        assertTrue(mapper.isEnabled(DateTimeFeature.WRITE_DURATIONS_AS_TIMESTAMPS), name);
+
         Duration positive = Duration.ofMillis(2234);
         String positiveOutput = mapper.writeValueAsString(positive);
-        assertEquals(mapper.readTree(positiveOutput).asText(), "PT2.234S", name);
+        assertTrue(mapper.readTree(positiveOutput).isNumber(), name + ": " + positiveOutput);
+        assertEquals(mapper.readTree(positiveOutput).decimalValue().compareTo(new BigDecimal("2.234")), 0, name);
         assertEquals(mapper.readValue(positiveOutput, Duration.class), positive, name);
+
+        Duration negative = Duration.ofMillis(-2234);
+        String negativeOutput = mapper.writeValueAsString(negative);
+        assertTrue(mapper.readTree(negativeOutput).isNumber(), name + ": " + negativeOutput);
+        assertEquals(mapper.readTree(negativeOutput).decimalValue().compareTo(new BigDecimal("-2.234")), 0, name);
+        assertEquals(mapper.readValue(negativeOutput, Duration.class), negative, name);
+
+        Duration nanoseconds = Duration.ofSeconds(2, 123456789);
+        String nanosecondsOutput = mapper.writeValueAsString(nanoseconds);
+        assertTrue(mapper.readTree(nanosecondsOutput).isNumber(), name + ": " + nanosecondsOutput);
+        assertEquals(mapper.readTree(nanosecondsOutput).decimalValue().compareTo(new BigDecimal("2.123456789")),
+                0, name);
+        assertEquals(mapper.readValue(nanosecondsOutput, Duration.class), nanoseconds, name);
     }
 
     @Test(dataProvider = "publicMappers")
-    public void usesOneBasedMonthValues(String name, Supplier<ObjectMapper> supplier) throws Exception {
+    public void preservesJackson2MonthHandling(String name, Supplier<ObjectMapper> supplier) {
         ObjectMapper mapper = supplier.get();
-        assertTrue(mapper.isEnabled(DateTimeFeature.ONE_BASED_MONTHS), name);
-        assertEquals(mapper.readTree(mapper.writeValueAsString(Month.JANUARY)).intValue(), 1, name);
-        assertEquals(mapper.readValue("1", Month.class), Month.JANUARY, name);
-        assertEquals(mapper.readValue("12", Month.class), Month.DECEMBER, name);
+        assertFalse(mapper.isEnabled(DateTimeFeature.ONE_BASED_MONTHS), name);
+        assertEquals(mapper.readTree(mapper.writeValueAsString(Month.JANUARY)).asString(), "JANUARY", name);
+        assertEquals(mapper.readValue("0", Month.class), Month.JANUARY, name);
+        assertEquals(mapper.readValue("1", Month.class), Month.FEBRUARY, name);
+        assertEquals(mapper.readValue("11", Month.class), Month.DECEMBER, name);
         assertEquals(mapper.readValue(input(mapper, "\"JANUARY\"", "JANUARY\n"), Month.class), Month.JANUARY, name);
-        InvalidFormatException zero = expectThrows(InvalidFormatException.class,
-                () -> mapper.readValue("0", Month.class));
-        assertTrue(zero.getMessage().contains("outside 1-12 range"), name + ": " + zero.getMessage());
-        InvalidFormatException thirteen = expectThrows(InvalidFormatException.class,
-                () -> mapper.readValue("13", Month.class));
-        assertTrue(thirteen.getMessage().contains("outside 1-12 range"), name + ": " + thirteen.getMessage());
+        InvalidFormatException twelve = expectThrows(InvalidFormatException.class,
+                () -> mapper.readValue("12", Month.class));
+        assertTrue(twelve.getMessage().contains("outside 0-11 range"), name + ": " + twelve.getMessage());
+        InvalidFormatException negative = expectThrows(InvalidFormatException.class,
+                () -> mapper.readValue("-1", Month.class));
+        assertTrue(negative.getMessage().contains("outside 0-11 range"), name + ": " + negative.getMessage());
 
         MonthAsText explicit = new MonthAsText();
         explicit.month = Month.JANUARY;
         String explicitOutput = mapper.writeValueAsString(explicit);
-        assertEquals(mapper.readTree(explicitOutput).get("month").asText(), "January", name);
+        assertEquals(mapper.readTree(explicitOutput).get("month").asString(), "January", name);
         assertEquals(mapper.readValue(explicitOutput, MonthAsText.class).month, Month.JANUARY, name);
     }
 
     @Test(dataProvider = "publicMappers")
     public void detectsVoidPropertiesOnlyWhenNullsAreIncluded(
-            String name, Supplier<ObjectMapper> supplier) throws Exception {
+            String name, Supplier<ObjectMapper> supplier) {
         ObjectMapper mapper = supplier.get();
         assertTrue(mapper.isEnabled(tools.jackson.databind.MapperFeature.ALLOW_VOID_VALUED_PROPERTIES), name);
         assertTrue(mapper.readTree(mapper.writeValueAsString(new IncludedVoid())).has("nothing"), name);
@@ -271,7 +283,7 @@ public class ObjectMapperFactoryTest {
     }
 
     @Test(dataProvider = "publicMappers")
-    public void usesJackson3AccessorNames(String name, Supplier<ObjectMapper> supplier) throws Exception {
+    public void usesJackson3AccessorNames(String name, Supplier<ObjectMapper> supplier) {
         ObjectMapper mapper = supplier.get();
         assertTrue(mapper.isEnabled(tools.jackson.databind.MapperFeature.FIX_FIELD_NAME_UPPER_CASE_PREFIX), name);
         AccessorNames value = new AccessorNames();
@@ -297,13 +309,13 @@ public class ObjectMapperFactoryTest {
 
         AccessorRecord record = new AccessorRecord("record");
         var recordTree = mapper.readTree(mapper.writeValueAsString(record));
-        assertEquals(recordTree.get("recordValue").asText(), "record", name);
+        assertEquals(recordTree.get("recordValue").asString(), "record", name);
         assertEquals(mapper.readValue(mapper.writeValueAsString(record), AccessorRecord.class), record, name);
     }
 
     @Test(dataProvider = "publicMappers")
     public void schemaAndSerializationUseTheSameAccessorNames(
-            String name, Supplier<ObjectMapper> supplier) throws Exception {
+            String name, Supplier<ObjectMapper> supplier) {
         ObjectMapper mapper = supplier.get();
         ModelConverterContextImpl context = new ModelConverterContextImpl(new ModelResolver(mapper));
         Schema<?> schema = context.resolve(new AnnotatedType(AccessorParityBean.class));
@@ -317,59 +329,38 @@ public class ObjectMapperFactoryTest {
     }
 
     @Test(dataProvider = "publicMappers")
-    public void usesZForUtcDates(String name, Supplier<ObjectMapper> supplier) throws Exception {
+    public void usesZForUtcDates(String name, Supplier<ObjectMapper> supplier) {
         ObjectMapper mapper = supplier.get();
         assertFalse(mapper.isEnabled(DateTimeFeature.WRITE_UTC_AS_OFFSET), name);
-        assertTrue(mapper.readTree(mapper.writeValueAsString(new Date(0))).asText().endsWith("Z"), name);
+        assertTrue(mapper.readTree(mapper.writeValueAsString(new Date(0))).asString().endsWith("Z"), name);
 
         ObjectMapper offsetMapper = mapper.rebuild()
                 .defaultTimeZone(TimeZone.getTimeZone("GMT+02:00"))
                 .build();
-        String offsetDate = offsetMapper.readTree(offsetMapper.writeValueAsString(new Date(0))).asText();
+        String offsetDate = offsetMapper.readTree(offsetMapper.writeValueAsString(new Date(0))).asString();
         assertTrue(offsetDate.endsWith("+02:00"), name + ": " + offsetDate);
         Calendar offsetCalendar = Calendar.getInstance(TimeZone.getTimeZone("GMT+02:00"));
         offsetCalendar.setTimeInMillis(0);
-        String calendarOutput = offsetMapper.readTree(offsetMapper.writeValueAsString(offsetCalendar)).asText();
+        String calendarOutput = offsetMapper.readTree(offsetMapper.writeValueAsString(offsetCalendar)).asString();
         assertTrue(calendarOutput.endsWith("+02:00"), name + ": " + calendarOutput);
     }
 
     @Test(dataProvider = "publicMappers")
-    public void preservesDecimalTreeScale(String name, Supplier<ObjectMapper> supplier) throws Exception {
+    public void preservesDecimalTreeScale(String name, Supplier<ObjectMapper> supplier) {
         ObjectMapper mapper = supplier.get().rebuild()
                 .enable(DeserializationFeature.USE_BIG_DECIMAL_FOR_FLOATS)
                 .build();
         assertFalse(mapper.isEnabled(JsonNodeFeature.STRIP_TRAILING_BIGDECIMAL_ZEROES), name);
         var node = mapper.readTree("1.2300");
         assertEquals(node.decimalValue().scale(), 4, name);
-        assertEquals(mapper.readTree(mapper.writeValueAsString(node)).decimalValue().scale(), 4, name);
+        String output = mapper.writeValueAsString(node);
+        assertTrue(output.matches("(?s)\\s*(?:---\\s*)?1\\.2300\\s*"), name + ": " + output);
+        assertEquals(mapper.readTree(output).decimalValue().scale(), 4, name);
         assertEquals(mapper.readValue("1.2300", BigDecimal.class).scale(), 4, name);
     }
 
     @Test(dataProvider = "publicMappers")
-    public void keepsJackson3MapOrderingFeaturePolicy(
-            String name, Supplier<ObjectMapper> supplier) throws Exception {
-        ObjectMapper mapper = supplier.get().rebuild()
-                .enable(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS)
-                .build();
-        assertFalse(mapper.isEnabled(SerializationFeature.FAIL_ON_ORDER_MAP_BY_INCOMPARABLE_KEY), name);
-        // Jackson 3.2.2 still throws ClassCastException when the first key is comparable but later
-        // keys have incompatible types. A non-comparable first key exercises its supported fallback.
-        Map<String, String> comparable = new LinkedHashMap<>();
-        comparable.put("z", "last");
-        comparable.put("a", "first");
-        String sorted = mapper.writeValueAsString(comparable);
-        assertTrue(sorted.indexOf("a") < sorted.indexOf("z"), name + ": " + sorted);
-
-        Map<Object, String> incomparable = new LinkedHashMap<>();
-        incomparable.put(new StableKey("first"), "one");
-        incomparable.put("second", "two");
-        String insertionOrder = mapper.writeValueAsString(incomparable);
-        assertTrue(insertionOrder.indexOf("first") < insertionOrder.indexOf("second"),
-                name + ": incomparable keys must retain insertion order: " + insertionOrder);
-    }
-
-    @Test(dataProvider = "publicMappers")
-    public void ignoresUnknownPropertiesExplicitly(String name, Supplier<ObjectMapper> supplier) throws Exception {
+    public void ignoresUnknownPropertiesExplicitly(String name, Supplier<ObjectMapper> supplier) {
         ObjectMapper mapper = supplier.get();
         assertFalse(mapper.isEnabled(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES), name);
 
@@ -384,7 +375,7 @@ public class ObjectMapperFactoryTest {
     }
 
     @Test(dataProvider = "publicMappers")
-    public void writesEmptyBeans(String name, Supplier<ObjectMapper> supplier) throws Exception {
+    public void writesEmptyBeans(String name, Supplier<ObjectMapper> supplier) {
         ObjectMapper mapper = supplier.get();
         assertFalse(mapper.isEnabled(SerializationFeature.FAIL_ON_EMPTY_BEANS), name);
         assertTrue(mapper.readTree(mapper.writeValueAsString(new EmptyBean())).isObject(), name);
@@ -392,16 +383,29 @@ public class ObjectMapperFactoryTest {
     }
 
     @Test(dataProvider = "publicMappers")
-    public void preservesAsymmetricEnumPolicy(String name, Supplier<ObjectMapper> supplier) throws Exception {
+    public void preservesAsymmetricEnumPolicy(String name, Supplier<ObjectMapper> supplier) {
         ObjectMapper mapper = supplier.get();
         assertTrue(mapper.isEnabled(EnumFeature.WRITE_ENUMS_USING_TO_STRING), name);
         assertFalse(mapper.isEnabled(EnumFeature.READ_ENUMS_USING_TO_STRING), name);
-        assertEquals(mapper.readTree(mapper.writeValueAsString(WireEnum.VALUE)).asText(), "wire-value", name);
+        assertEquals(mapper.readTree(mapper.writeValueAsString(WireEnum.VALUE)).asString(), "wire-value", name);
         assertEquals(mapper.readValue(input(mapper, "\"VALUE\"", "VALUE\n"), WireEnum.class), WireEnum.VALUE, name);
         InvalidFormatException enumValue = expectThrows(InvalidFormatException.class,
                 () -> mapper.readValue(input(mapper, "\"wire-value\"", "wire-value\n"), WireEnum.class));
         assertTrue(enumValue.getMessage().contains("wire-value"), name + ": " + enumValue.getMessage());
         assertTrue(enumValue.getMessage().contains("WireEnum"), name + ": " + enumValue.getMessage());
+
+        WireEnumContainer property = new WireEnumContainer();
+        property.value = WireEnum.VALUE;
+        assertEquals(mapper.readTree(mapper.writeValueAsString(property)).get("value").asString(),
+                "wire-value", name);
+        assertEquals(mapper.readValue(input(mapper, "{\"value\":\"VALUE\"}", "value: VALUE\n"),
+                WireEnumContainer.class).value, WireEnum.VALUE, name);
+        InvalidFormatException enumProperty = expectThrows(InvalidFormatException.class,
+                () -> mapper.readValue(input(mapper,
+                                "{\"value\":\"wire-value\"}", "value: wire-value\n"),
+                        WireEnumContainer.class));
+        assertTrue(enumProperty.getMessage().contains("wire-value"), name + ": " + enumProperty.getMessage());
+        assertTrue(enumProperty.getMessage().contains("WireEnum"), name + ": " + enumProperty.getMessage());
 
         Map<WireEnum, String> enumKeys = new LinkedHashMap<>();
         enumKeys.put(WireEnum.VALUE, "value");
@@ -419,7 +423,7 @@ public class ObjectMapperFactoryTest {
     }
 
     @Test
-    public void parameterDeserializerKeepsItsToStringEnumException() throws Exception {
+    public void parameterDeserializerKeepsItsToStringEnumException() {
         io.swagger.v3.oas.models.parameters.Parameter parameter = Json.mapper().readValue(
                 "{\"in\":\"query\",\"style\":\"deepObject\"}",
                 io.swagger.v3.oas.models.parameters.Parameter.class);
@@ -428,7 +432,7 @@ public class ObjectMapperFactoryTest {
     }
 
     @Test(dataProvider = "outputMappers")
-    public void writesDatesAsText(String name, Supplier<ObjectMapper> supplier) throws Exception {
+    public void writesDatesAsText(String name, Supplier<ObjectMapper> supplier) {
         ObjectMapper mapper = supplier.get();
         assertFalse(mapper.isEnabled(DateTimeFeature.WRITE_DATES_AS_TIMESTAMPS), name);
         assertTrue(mapper.readTree(mapper.writeValueAsString(new Date(0))).isString(), name);
@@ -441,7 +445,20 @@ public class ObjectMapperFactoryTest {
     }
 
     @Test(dataProvider = "outputMappers")
-    public void preservesDeclarationPropertyOrder(String name, Supplier<ObjectMapper> supplier) throws Exception {
+    public void writesOffsetDateTimeWithItsOffsetAndReadsAtTheMapperTimeZone(
+            String name, Supplier<ObjectMapper> supplier) {
+        ObjectMapper mapper = supplier.get();
+        OffsetDateTime value = OffsetDateTime.ofInstant(Instant.EPOCH, ZoneOffset.ofHours(2));
+
+        String output = mapper.writeValueAsString(value);
+
+        assertEquals(mapper.readTree(output).asString(), "1970-01-01T02:00:00+02:00", name);
+        assertEquals(mapper.readValue(output, OffsetDateTime.class),
+                OffsetDateTime.ofInstant(Instant.EPOCH, ZoneOffset.UTC), name);
+    }
+
+    @Test(dataProvider = "outputMappers")
+    public void preservesDeclarationPropertyOrder(String name, Supplier<ObjectMapper> supplier) {
         ObjectMapper mapper = supplier.get();
         assertFalse(mapper.isEnabled(tools.jackson.databind.MapperFeature.SORT_PROPERTIES_ALPHABETICALLY), name);
         String output = mapper.writeValueAsString(new OrderedBean());
@@ -450,7 +467,7 @@ public class ObjectMapperFactoryTest {
 
     @Test(dataProvider = "outputMappers")
     public void excludesNullPropertiesAndMapValuesButKeepsListPositions(
-            String name, Supplier<ObjectMapper> supplier) throws Exception {
+            String name, Supplier<ObjectMapper> supplier) {
         ObjectMapper mapper = supplier.get();
         NullContainer value = new NullContainer();
         String output = mapper.writeValueAsString(value);
@@ -461,7 +478,7 @@ public class ObjectMapperFactoryTest {
     }
 
     @Test(dataProvider = "outputMappers")
-    public void writesBigDecimalWithoutExponent(String name, Supplier<ObjectMapper> supplier) throws Exception {
+    public void writesBigDecimalWithoutExponent(String name, Supplier<ObjectMapper> supplier) {
         ObjectMapper mapper = supplier.get();
         assertTrue(mapper.isEnabled(StreamWriteFeature.WRITE_BIGDECIMAL_AS_PLAIN), name);
         var output = mapper.readTree(mapper.writeValueAsString(new BigDecimal("1E+2")));
@@ -471,7 +488,7 @@ public class ObjectMapperFactoryTest {
 
     @Test(dataProvider = "strictMapper")
     public void strictMapperRejectsTrailingContent(
-            String name, Supplier<ObjectMapper> supplier) throws Exception {
+            String name, Supplier<ObjectMapper> supplier) {
         ObjectMapper mapper = supplier.get();
         assertTrue(mapper.isEnabled(DeserializationFeature.FAIL_ON_TRAILING_TOKENS), name);
         MismatchedInputException trailing = expectThrows(MismatchedInputException.class,
@@ -481,7 +498,7 @@ public class ObjectMapperFactoryTest {
 
     @Test(dataProvider = "strictMapper")
     public void strictMapperIgnoresUnknownProperties(
-            String name, Supplier<ObjectMapper> supplier) throws Exception {
+            String name, Supplier<ObjectMapper> supplier) {
         ObjectMapper mapper = supplier.get();
         assertFalse(mapper.isEnabled(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES), name);
         KnownProperty known = mapper.readValue("{\"known\":\"kept\",\"unknown\":1}", KnownProperty.class);
@@ -490,7 +507,7 @@ public class ObjectMapperFactoryTest {
 
     @Test(dataProvider = "strictMapper")
     public void strictMapperWritesEmptyBeans(
-            String name, Supplier<ObjectMapper> supplier) throws Exception {
+            String name, Supplier<ObjectMapper> supplier) {
         ObjectMapper mapper = supplier.get();
         assertFalse(mapper.isEnabled(SerializationFeature.FAIL_ON_EMPTY_BEANS), name);
         assertEquals(mapper.readTree(mapper.writeValueAsString(new EmptyBean())).size(), 0, name);
@@ -498,7 +515,7 @@ public class ObjectMapperFactoryTest {
 
     @Test(dataProvider = "strictMapper")
     public void strictMapperWritesDatesAsText(
-            String name, Supplier<ObjectMapper> supplier) throws Exception {
+            String name, Supplier<ObjectMapper> supplier) {
         ObjectMapper mapper = supplier.get();
         assertFalse(mapper.isEnabled(DateTimeFeature.WRITE_DATES_AS_TIMESTAMPS), name);
         assertTrue(mapper.readTree(mapper.writeValueAsString(new Date(0))).isString(), name);
@@ -506,17 +523,17 @@ public class ObjectMapperFactoryTest {
 
     @Test(dataProvider = "strictMapper")
     public void strictMapperPreservesAsymmetricEnumPolicy(
-            String name, Supplier<ObjectMapper> supplier) throws Exception {
+            String name, Supplier<ObjectMapper> supplier) {
         ObjectMapper mapper = supplier.get();
         assertTrue(mapper.isEnabled(EnumFeature.WRITE_ENUMS_USING_TO_STRING), name);
         assertFalse(mapper.isEnabled(EnumFeature.READ_ENUMS_USING_TO_STRING), name);
-        assertEquals(mapper.readTree(mapper.writeValueAsString(WireEnum.VALUE)).asText(), "wire-value", name);
+        assertEquals(mapper.readTree(mapper.writeValueAsString(WireEnum.VALUE)).asString(), "wire-value", name);
         assertEquals(mapper.readValue("\"VALUE\"", WireEnum.class), WireEnum.VALUE, name);
     }
 
     @Test(dataProvider = "strictMapper")
     public void strictMapperExcludesNullPropertiesAndMapValues(
-            String name, Supplier<ObjectMapper> supplier) throws Exception {
+            String name, Supplier<ObjectMapper> supplier) {
         ObjectMapper mapper = supplier.get();
         var nullTree = mapper.readTree(mapper.writeValueAsString(new NullContainer()));
         assertFalse(nullTree.has("missing"), name);
@@ -526,7 +543,7 @@ public class ObjectMapperFactoryTest {
 
     @Test(dataProvider = "strictMapper")
     public void strictMapperKeepsDefaultBigDecimalOutput(
-            String name, Supplier<ObjectMapper> supplier) throws Exception {
+            String name, Supplier<ObjectMapper> supplier) {
         ObjectMapper mapper = supplier.get();
         assertFalse(mapper.isEnabled(StreamWriteFeature.WRITE_BIGDECIMAL_AS_PLAIN), name);
         assertEquals(mapper.writeValueAsString(new BigDecimal("1E+2")), "1E+2", name);
@@ -579,6 +596,10 @@ public class ObjectMapperFactoryTest {
         public String toString() {
             return "wire-value";
         }
+    }
+
+    public static class WireEnumContainer {
+        public WireEnum value;
     }
 
     public static class OrderedBean {
@@ -795,19 +816,6 @@ public class ObjectMapperFactoryTest {
 
         @JsonProperty("explicitName")
         public String getImplicitName() { return "explicit"; }
-    }
-
-    public static class StableKey {
-        private final String value;
-
-        public StableKey(String value) {
-            this.value = value;
-        }
-
-        @Override
-        public String toString() {
-            return value;
-        }
     }
 
     private static JsonView jsonView(Class<?> view) {

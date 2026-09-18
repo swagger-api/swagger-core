@@ -1,22 +1,29 @@
 package io.swagger.v3.core.util;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import tools.jackson.core.JacksonException;
+import tools.jackson.core.JsonGenerator;
 import tools.jackson.core.StreamWriteFeature;
 import tools.jackson.core.json.JsonFactory;
 import tools.jackson.databind.BeanDescription;
+import tools.jackson.databind.BeanProperty;
 import tools.jackson.databind.DeserializationFeature;
 import tools.jackson.databind.JacksonModule;
 import tools.jackson.databind.MapperFeature;
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.SerializationConfig;
+import tools.jackson.databind.SerializationContext;
 import tools.jackson.databind.SerializationFeature;
 import tools.jackson.databind.ValueSerializer;
 import tools.jackson.databind.cfg.DateTimeFeature;
 import tools.jackson.databind.cfg.EnumFeature;
 import tools.jackson.databind.cfg.MapperBuilder;
+import tools.jackson.databind.ext.javatime.ser.MonthSerializer;
 import tools.jackson.databind.introspect.DefaultAccessorNamingStrategy;
 import tools.jackson.databind.json.JsonMapper;
 import tools.jackson.databind.module.SimpleModule;
+import tools.jackson.databind.ser.std.StdSerializer;
 import io.swagger.v3.core.jackson.ExampleSerializer;
 import io.swagger.v3.core.jackson.Schema31Serializer;
 import io.swagger.v3.core.jackson.MediaTypeSerializer;
@@ -76,6 +83,7 @@ import tools.jackson.dataformat.yaml.YAMLFactory;
 import tools.jackson.dataformat.yaml.YAMLMapper;
 import tools.jackson.dataformat.yaml.YAMLWriteFeature;
 
+import java.time.Month;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -243,6 +251,7 @@ public class ObjectMapperFactory {
         }
         mapperBuilder.addMixIns(sourceMixins);
         configureSwaggerPolicy(mapperBuilder);
+        configureJackson2TimeCompatibility(mapperBuilder);
         configureSwaggerOutput(mapperBuilder);
 
         return mapperBuilder.build();
@@ -292,6 +301,7 @@ public class ObjectMapperFactory {
         sourceMixins.put(Schema.class, SchemaConverterMixin.class);
         builder.addMixIns(sourceMixins);
         configureSwaggerPolicy(builder);
+        configureJackson2TimeCompatibility(builder);
         configureSwaggerOutput(builder);
 
         return builder.build();
@@ -316,8 +326,41 @@ public class ObjectMapperFactory {
                 .withValueInclusion(JsonInclude.Include.NON_NULL));
     }
 
+    private static void configureJackson2TimeCompatibility(MapperBuilder<?, ?> builder) {
+        builder.configure(DateTimeFeature.WRITE_DURATIONS_AS_TIMESTAMPS, true);
+        builder.configure(DateTimeFeature.ONE_BASED_MONTHS, false);
+        builder.addModule(new SimpleModule().addSerializer(Month.class, new Jackson2MonthSerializer()));
+    }
+
+    /**
+     * Jackson 2 handled {@link Month} as an enum, so Swagger mappers historically
+     * wrote its enum name. Jackson 3 handles it as a date/time value instead.
+     */
+    private static final class Jackson2MonthSerializer extends StdSerializer<Month> {
+
+        private Jackson2MonthSerializer() {
+            super(Month.class);
+        }
+
+        @Override
+        public void serialize(Month value, JsonGenerator generator, SerializationContext context)
+                throws JacksonException {
+            generator.writeString(value.name());
+        }
+
+        @Override
+        public ValueSerializer<?> createContextual(SerializationContext context, BeanProperty property) {
+            JsonFormat.Value format = findFormatOverrides(context, property, Month.class);
+            if (format != null && (format.hasPattern() || format.getShape() != JsonFormat.Shape.ANY)) {
+                return MonthSerializer.INSTANCE.createContextual(context, property);
+            }
+            return this;
+        }
+    }
+
     private static void configureSwaggerOutput(MapperBuilder<?, ?> builder) {
         builder.configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY, false);
+        builder.configure(SerializationFeature.FAIL_ON_ORDER_MAP_BY_INCOMPARABLE_KEY, true);
         builder.configure(StreamWriteFeature.WRITE_BIGDECIMAL_AS_PLAIN, true);
         builder.accessorNaming(new DefaultAccessorNamingStrategy.Provider()
                 .withFirstCharAcceptance(true, true));
