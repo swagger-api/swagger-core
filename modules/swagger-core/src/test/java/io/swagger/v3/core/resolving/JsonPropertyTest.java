@@ -4,7 +4,12 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import io.swagger.v3.core.converter.ModelConverters;
 import io.swagger.v3.core.matchers.SerializationMatchers;
 import io.swagger.v3.core.resolving.resources.User2169;
+import io.swagger.v3.core.resolving.resources.UserJsonPropertyWinsOverGetterPrefix;
+import io.swagger.v3.oas.models.media.Schema;
 import org.testng.annotations.Test;
+
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertTrue;
 
 public class JsonPropertyTest {
 
@@ -192,5 +197,22 @@ public class JsonPropertyTest {
         public Ticket2845Child child;
 
         public Ticket2845Child childNoAnnotation;
+    }
+
+    @Test(description = "an explicit @JsonProperty value must win over the get/is prefix-stripping heuristic")
+    public void testJsonPropertyWinsOverGetterPrefix() {
+
+        final Schema model = ModelConverters.getInstance().read(UserJsonPropertyWinsOverGetterPrefix.class)
+                .get("UserJsonPropertyWinsOverGetterPrefix");
+
+        // The member is named getvalue/setvalue (get/is prefix followed by a lower-case letter),
+        // which the prefix-stripping heuristic would restore as "getvalue". The explicit
+        // @JsonProperty("renamed") must take precedence instead.
+        assertTrue(model.getProperties().containsKey("renamed"));
+        assertFalse(model.getProperties().containsKey("getvalue"));
+
+        // Without an explicit name (@JsonProperty("") empty or absent), the heuristic must still
+        // restore the raw member name.
+        assertTrue(model.getProperties().containsKey("isdetermined"));
     }
 }
