@@ -37,6 +37,8 @@ public class Ticket3853Test extends SwaggerTestBase {
                 "      type: string\n" +
                 "    type:\n" +
                 "      type: string\n" +
+                "  oneOf:\n" +
+                "  - $ref: \"#/components/schemas/io.swagger.v3.core.resolving.Ticket3853Test$SubClass\"\n" +
                 "io.swagger.v3.core.resolving.Ticket3853Test$SubClass:\n" +
                 "  type: object\n" +
                 "  allOf:\n" +

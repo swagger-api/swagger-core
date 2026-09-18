@@ -11,7 +11,15 @@
         },
         "discriminator" : {
             "propertyName" : "type"
-        }
+        },
+        "oneOf": [
+            {
+                "$ref": "#/components/schemas/Human"
+            },
+            {
+                "$ref": "#/components/schemas/Pet"
+            }
+        ]
     },
     "Human": {
         "type": "object",
