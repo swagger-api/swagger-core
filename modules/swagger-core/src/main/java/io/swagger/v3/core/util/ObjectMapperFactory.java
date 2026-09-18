@@ -4,11 +4,15 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import tools.jackson.core.StreamWriteFeature;
 import tools.jackson.core.json.JsonFactory;
 import tools.jackson.databind.BeanDescription;
+import tools.jackson.databind.DeserializationFeature;
 import tools.jackson.databind.JacksonModule;
 import tools.jackson.databind.MapperFeature;
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.SerializationConfig;
+import tools.jackson.databind.SerializationFeature;
 import tools.jackson.databind.ValueSerializer;
+import tools.jackson.databind.cfg.DateTimeFeature;
+import tools.jackson.databind.cfg.EnumFeature;
 import tools.jackson.databind.cfg.MapperBuilder;
 import tools.jackson.databind.introspect.DefaultAccessorNamingStrategy;
 import tools.jackson.databind.json.JsonMapper;
@@ -238,13 +242,8 @@ public class ObjectMapperFactory {
             sourceMixins.put(Discriminator.class, Discriminator31Mixin.class);
         }
         mapperBuilder.addMixIns(sourceMixins);
-        mapperBuilder.configure(StreamWriteFeature.WRITE_BIGDECIMAL_AS_PLAIN, true);
-        mapperBuilder.configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY, false);
-        mapperBuilder.changeDefaultPropertyInclusion(incl -> incl
-                .withContentInclusion(JsonInclude.Include.NON_NULL)
-                .withValueInclusion(JsonInclude.Include.NON_NULL));
-        mapperBuilder.accessorNaming(new DefaultAccessorNamingStrategy.Provider()
-                .withFirstCharAcceptance(true, true));
+        configureSwaggerPolicy(mapperBuilder);
+        configureSwaggerOutput(mapperBuilder);
 
         return mapperBuilder.build();
     }
@@ -292,13 +291,8 @@ public class ObjectMapperFactory {
 
         sourceMixins.put(Schema.class, SchemaConverterMixin.class);
         builder.addMixIns(sourceMixins);
-        builder.configure(StreamWriteFeature.WRITE_BIGDECIMAL_AS_PLAIN, true);
-        builder.configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY, false);
-        builder.changeDefaultPropertyInclusion(incl -> incl
-                .withContentInclusion(JsonInclude.Include.NON_NULL)
-                .withValueInclusion(JsonInclude.Include.NON_NULL));
-        builder.accessorNaming(new DefaultAccessorNamingStrategy.Provider()
-                .withFirstCharAcceptance(true, true));
+        configureSwaggerPolicy(builder);
+        configureSwaggerOutput(builder);
 
         return builder.build();
     }
@@ -306,11 +300,27 @@ public class ObjectMapperFactory {
 
     public static ObjectMapper buildStrictGenericObjectMapper() {
         JsonMapper.Builder builder = JsonMapper.builder();
-        builder.configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY, false);
+        configureSwaggerPolicy(builder);
+        builder.configure(DeserializationFeature.FAIL_ON_TRAILING_TOKENS, true);
+        return builder.build();
+    }
+
+    private static void configureSwaggerPolicy(MapperBuilder<?, ?> builder) {
+        builder.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+        builder.configure(DateTimeFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+        builder.configure(EnumFeature.WRITE_ENUMS_USING_TO_STRING, true);
+        builder.configure(EnumFeature.READ_ENUMS_USING_TO_STRING, false);
+        builder.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         builder.changeDefaultPropertyInclusion(incl -> incl
                 .withContentInclusion(JsonInclude.Include.NON_NULL)
                 .withValueInclusion(JsonInclude.Include.NON_NULL));
-        return builder.build();
+    }
+
+    private static void configureSwaggerOutput(MapperBuilder<?, ?> builder) {
+        builder.configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY, false);
+        builder.configure(StreamWriteFeature.WRITE_BIGDECIMAL_AS_PLAIN, true);
+        builder.accessorNaming(new DefaultAccessorNamingStrategy.Provider()
+                .withFirstCharAcceptance(true, true));
     }
 
 }
