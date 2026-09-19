@@ -2,8 +2,11 @@ package io.swagger.v3.core.resolving;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonView;
+import tools.jackson.databind.BeanDescription;
 import tools.jackson.databind.ObjectMapper;
 import io.swagger.v3.core.converter.AnnotatedType;
+import io.swagger.v3.core.converter.ModelConverterContext;
 import io.swagger.v3.core.converter.ModelConverterContextImpl;
 import io.swagger.v3.core.jackson.ModelResolver;
 import io.swagger.v3.oas.annotations.media.DiscriminatorMapping;
@@ -230,6 +233,41 @@ public class JsonSubTypesAndSchemaOneOfTest extends SwaggerTestBase {
         assertTrue(subModel2 instanceof ComposedSchema);
         ComposedSchema cm2 = (ComposedSchema) subModel2;
         assertEquals(cm2.getAllOf().get(0).get$ref(), "#/components/schemas/PolymorphicInterface");
+    }
+
+    @Test
+    public void extensionPointAllowsSubclassToRestorePreviousBehavior() {
+        // The @JsonSubTypes -> oneOf composition can be disabled by overriding the (now protected)
+        // resolveSubtypes() to do nothing, restoring the pre-pr-25 behavior. This provides an
+        // extension point so consumers who dislike the allOf+oneOf hybrid can opt out.
+
+        // 1) Default resolver: parent becomes a oneOf ComposedSchema.
+        final Schema<?> defaultModel = context.resolve(new AnnotatedType(PolymorphicInterface.class));
+        assertTrue(defaultModel instanceof ComposedSchema,
+                "with the default resolver the @JsonSubTypes-only parent should be converted to a oneOf ComposedSchema");
+        assertNotNull(((ComposedSchema) defaultModel).getOneOf());
+
+        // 2) Subclass that overrides resolveSubtypes() to restore previous behavior (no oneOf).
+        final ModelConverterContextImpl subclassContext =
+                new ModelConverterContextImpl(new RestorePreviousBehaviorModelResolver(new ObjectMapper()));
+        final Schema<?> restoredModel = subclassContext.resolve(new AnnotatedType(PolymorphicInterface.class));
+        // The override opts out of the @JsonSubTypes -> oneOf composition, so the parent must
+        // not be auto-converted into a oneOf ComposedSchema (previous behavior restored).
+        assertFalse(restoredModel instanceof ComposedSchema && ((ComposedSchema) restoredModel).getOneOf() != null,
+                "the resolved parent must not be auto-converted to a oneOf ComposedSchema when resolveSubtypes() is overridden");
+    }
+
+    static class RestorePreviousBehaviorModelResolver extends ModelResolver {
+        RestorePreviousBehaviorModelResolver(ObjectMapper mapper) {
+            super(mapper);
+        }
+
+        @Override
+        protected boolean resolveSubtypes(Schema model, BeanDescription bean,
+                                          ModelConverterContext context, JsonView jsonViewAnnotation) {
+            // Restore the previous behavior: do not compose subtypes into a oneOf.
+            return false;
+        }
     }
 
     // Interface with @JsonSubTypes only (no @Schema(oneOf=...))

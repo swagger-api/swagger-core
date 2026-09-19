@@ -2015,7 +2015,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         return modified;
     }
 
-    private boolean resolveSubtypes(Schema model, BeanDescription bean, ModelConverterContext context, JsonView jsonViewAnnotation) {
+    protected boolean resolveSubtypes(Schema model, BeanDescription bean, ModelConverterContext context, JsonView jsonViewAnnotation) {
         final List<NamedType> types = _intr().findSubtypes(_mapper.serializationConfig(), bean.getClassInfo());
         if (types == null || types.isEmpty()) {
             return false;
