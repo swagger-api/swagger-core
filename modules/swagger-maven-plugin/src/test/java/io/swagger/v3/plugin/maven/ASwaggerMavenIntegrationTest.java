@@ -2,11 +2,11 @@ package io.swagger.v3.plugin.maven;
 
 import io.swagger.v3.core.util.Json;
 import io.swagger.v3.core.util.Json31;
+import io.swagger.v3.core.util.StringUtils;
 import io.swagger.v3.core.util.Yaml;
 import io.swagger.v3.core.util.Yaml31;
 import io.swagger.v3.oas.models.OpenAPI;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.codehaus.plexus.configuration.PlexusConfiguration;
 
 import java.io.File;
@@ -36,7 +36,7 @@ public abstract class ASwaggerMavenIntegrationTest extends BetterAbstractMojoTes
 
         SwaggerMojo swaggerMojo = (SwaggerMojo) lookupConfiguredMojo(pom, "resolve");
         // set random context id to not mix states with multiple tests
-        swaggerMojo.setContextId(RandomStringUtils.randomAscii(32));
+        swaggerMojo.setContextId(StringUtils.randomAscii(32));
         assertNotNull(swaggerMojo);
 
         swaggerMojo.execute();

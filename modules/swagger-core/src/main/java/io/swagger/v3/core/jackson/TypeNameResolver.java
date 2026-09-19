@@ -3,8 +3,7 @@ package io.swagger.v3.core.jackson;
 import tools.jackson.databind.JavaType;
 import io.swagger.v3.core.util.AnnotationsUtils;
 import io.swagger.v3.core.util.PrimitiveType;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.text.WordUtils;
+import io.swagger.v3.core.util.StringUtils;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -70,7 +69,7 @@ public class TypeNameResolver {
             final JavaType arg = type.containedType(i);
             final String argName = PrimitiveType.fromType(arg) != null ? nameForClass(arg, options) :
                     nameForType(arg, options);
-            generic.append(WordUtils.capitalize(argName));
+            generic.append(StringUtils.capitalize(argName));
         }
         return generic.toString();
     }
