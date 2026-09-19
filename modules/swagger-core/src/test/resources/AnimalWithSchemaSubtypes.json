@@ -11,7 +11,15 @@
         },
         "discriminator" : {
             "propertyName" : "type"
-        }
+        },
+        "oneOf": [
+            {
+                "$ref": "#/components/schemas/HumanWithSchemaSubtypes"
+            },
+            {
+                "$ref": "#/components/schemas/PetWithSchemaSubtypes"
+            }
+        ]
     },
     "HumanWithSchemaSubtypes": {
         "type": "object",
@@ -53,7 +61,6 @@
                         "type": "boolean"
                     }
                 }
-
             }
         ],
         "required": [

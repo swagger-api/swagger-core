@@ -18,7 +18,15 @@
                 "description": "An arbitrary field"
             }
         },
-        "description": "I am an Abstract Base Model with Sub-Types"
+        "description": "I am an Abstract Base Model with Sub-Types",
+        "oneOf": [
+            {
+                "$ref": "#/components/schemas/Thing1"
+            },
+            {
+                "$ref": "#/components/schemas/Thing2"
+            }
+        ]
     },
     "ModelWithFieldWithSubTypes": {
         "type": "object",

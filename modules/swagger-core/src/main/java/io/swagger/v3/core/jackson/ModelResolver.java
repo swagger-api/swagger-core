@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.annotation.JsonView;
@@ -968,6 +969,14 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             model.setDiscriminator(null);
         }
 
+        // Get the updated model from context after resolveSubtypes (which may have replaced it with oneOf)
+        if (!type.isContainerType() && StringUtils.isNotBlank(name)) {
+            Schema updatedModel = context.getDefinedModels().get(name);
+            if (updatedModel != null) {
+                model = updatedModel;
+            }
+        }
+
         Discriminator discriminator = resolveDiscriminator(type, context);
         if (discriminator != null) {
             model.setDiscriminator(discriminator);
@@ -1071,6 +1080,9 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
             });
 
+            // Process the explicit @Schema(oneOf = ...) always. When the class also has
+            // @JsonSubTypes, resolveSubtypes() returns early (explicit oneOf wins), so
+            // there is no conflict.
             List<Class<?>> oneOfFiltered = Stream.of(oneOf)
                     .distinct()
                     .filter(c -> !this.shouldIgnoreClass(c))
@@ -1998,9 +2010,19 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         return modified;
     }
 
-    private boolean resolveSubtypes(Schema model, BeanDescription bean, ModelConverterContext context, JsonView jsonViewAnnotation) {
+    protected boolean resolveSubtypes(Schema model, BeanDescription bean, ModelConverterContext context, JsonView jsonViewAnnotation) {
         final List<NamedType> types = _intr().findSubtypes(_mapper.serializationConfig(), bean.getClassInfo());
-        if (types == null) {
+        if (types == null || types.isEmpty()) {
+            return false;
+        }
+
+        // If the class declares an explicit @Schema(oneOf = ...), it fully defines the polymorphism and
+        // must win over the @JsonSubTypes-derived composition. Skip the automatic allOf/oneOf
+        // composition to avoid the recursive allOf<->oneOf structure that is undesirable for many
+        // tools (see review on swagger-api/swagger-core#5320).
+        io.swagger.v3.oas.annotations.media.Schema declaredSchema =
+                AnnotationsUtils.getSchemaDeclaredAnnotation(bean.getClassInfo().getAnnotated());
+        if (declaredSchema != null && declaredSchema.oneOf().length > 0) {
             return false;
         }
 
@@ -2018,6 +2040,12 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
          */
         removeSuperClassAndInterfaceSubTypes(types, bean);
 
+        // Deduplicate subtypes (Jackson 3 AnnotationIntrospectorPair may return duplicates)
+        List<NamedType> uniqueTypes = new ArrayList<>(new LinkedHashSet<>(types));
+        types.clear();
+        types.addAll(uniqueTypes);
+
+        Map<Class<?>, String> subtypeNames = new HashMap<>();
         int count = 0;
         final Class<?> beanClass = bean.getClassInfo().getAnnotated();
         for (NamedType subtype : types) {
@@ -2069,8 +2097,25 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             Class<?> currentType = subtype.getType();
             if (StringUtils.isNotBlank(composedSchema.getName())) {
                 context.defineModel(composedSchema.getName(), composedSchema, new AnnotatedType().type(currentType), null);
+                subtypeNames.put(subtypeType, composedSchema.getName());
             }
 
+            count++;
+        }
+        
+        // Convert parent model to oneOf if subtypes were found
+        if (count != 0) {
+            ComposedSchema oneOfSchema = ComposedSchema.from(model);
+            oneOfSchema.setOneOf(new ArrayList<>());
+            
+            for (NamedType subtype : types) {
+                Schema refSchema = openapi31 ? new JsonSchema() : new Schema();
+                refSchema.$ref(Components.COMPONENTS_SCHEMAS_REF + subtypeNames.getOrDefault(subtype.getType(), subtype.getType().getSimpleName()));
+                oneOfSchema.addOneOfItem(refSchema);
+            }
+            
+            // Replace parent model in context with oneOf schema
+            context.defineModel(model.getName(), oneOfSchema, new AnnotatedType().type(beanClass), null);
         }
         return count != 0;
     }
@@ -2700,6 +2745,13 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 }
                 if (JsonTypeInfo.Id.NAME.equals(id) && name == null) {
                     name = type.getRawClass().getSimpleName();
+                }
+                // If model already has oneOf (from @JsonSubTypes), add wrapper property directly
+                // instead of nesting the entire model inside a wrapper schema
+                if (model.getOneOf() != null && !model.getOneOf().isEmpty()) {
+                    Schema idSchema = openapi31 ? new JsonSchema().typesItem("object") : new ObjectSchema();
+                    model.addProperties(name, idSchema);
+                    return model;
                 }
                 Schema wrapperSchema = openapi31 ? new JsonSchema().typesItem("object") : new ObjectSchema();
                 wrapperSchema.name(model.getName());
