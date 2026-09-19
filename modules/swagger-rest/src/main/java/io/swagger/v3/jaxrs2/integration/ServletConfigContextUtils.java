@@ -1,7 +1,7 @@
 package io.swagger.v3.jaxrs2.integration;
 
 import io.swagger.v3.oas.integration.api.OpenApiContext;
-import org.apache.commons.lang3.StringUtils;
+import io.swagger.v3.core.util.StringUtils;
 
 import jakarta.servlet.ServletConfig;
 import java.util.Arrays;

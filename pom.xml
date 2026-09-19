@@ -502,12 +502,6 @@
                 <scope>compile</scope>
             </dependency>
             <dependency>
-                <groupId>org.apache.commons</groupId>
-                <artifactId>commons-lang3</artifactId>
-                <version>${commons-lang-version}</version>
-                <scope>compile</scope>
-            </dependency>
-            <dependency>
                 <groupId>org.testng</groupId>
                 <artifactId>testng</artifactId>
                 <version>${testng-version}</version>
@@ -646,7 +640,6 @@
         <classgraph-version>4.8.192</classgraph-version>
         <guava-version>32.1.3-jre</guava-version>
         <ant-version>1.10.15</ant-version>
-        <commons-lang-version>3.20.0</commons-lang-version>
         <slf4j-version>2.0.18</slf4j-version>
         <jetty-version>12.0.39</jetty-version>
         <testng-version>7.12.0</testng-version>

@@ -20,7 +20,6 @@ public class SwaggerPlugin implements Plugin<Project> {
 
         config.defaultDependencies(new Action<DependencySet>() {
             public void execute(DependencySet dependencies) {
-                dependencies.add(project.getDependencies().create("org.apache.commons:commons-lang3:3.20.0"));
                 dependencies.add(project.getDependencies().create("io.swagger.core.v3:swagger-rest:" + PLUGIN_VERSION));
                 dependencies.add(project.getDependencies().create("jakarta.ws.rs:jakarta.ws.rs-api:3.1.0"));
                 dependencies.add(project.getDependencies().create("jakarta.servlet:jakarta.servlet-api:6.0.0"));
