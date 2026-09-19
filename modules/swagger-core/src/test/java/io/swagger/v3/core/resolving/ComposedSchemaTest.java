@@ -49,25 +49,24 @@ public class ComposedSchemaTest {
 
         schemas = ModelConverters.getInstance().readAll(TestObjectTicket2620Subtypes.class);
         model = schemas.get("Child2TestObject");
-        assertNull(model.getProperties());
-        properties = ((ComposedSchema)model).getAllOf().get(1).getProperties();
-        assertNull(properties.get("name"));
-        assertNotNull(properties.get("childName"));
-        assertTrue(model instanceof ComposedSchema);
-        model = schemas.get("ChildTestObject");
-        assertNull(model.getProperties());
-        properties = ((ComposedSchema)model).getAllOf().get(1).getProperties();
-        assertNull(properties.get("name"));
-        assertNotNull(properties.get("childName"));
-        assertTrue(model instanceof ComposedSchema);
-        assertEquals(((ComposedSchema) model).getAllOf().size(), 2);
-
-        model = schemas.get("TestObjectTicket2620Subtypes");
+        // Children are plain object schemas (no recursive allOf->parent), with both parent and child props.
+        assertNotNull(model.getProperties());
         properties = model.getProperties();
         assertNotNull(properties.get("name"));
-        assertNull(properties.get("childName"));
+        assertNotNull(properties.get("childName"));
+        assertFalse(model instanceof ComposedSchema);
+        model = schemas.get("ChildTestObject");
+        properties = model.getProperties();
+        assertNotNull(properties.get("name"));
+        assertNotNull(properties.get("childName"));
+        assertFalse(model instanceof ComposedSchema);
+
+        model = schemas.get("TestObjectTicket2620Subtypes");
+        // The parent is a oneOf ComposedSchema (no shared properties kept).
         assertTrue(model instanceof ComposedSchema);
         assertEquals(((ComposedSchema) model).getOneOf().size(), 2);
+        assertTrue(model.getProperties() == null || model.getProperties().isEmpty(),
+                "parent should not retain non-discriminator properties under B1");
     }
 
     @Test(description = "read composed schem refs #2900")

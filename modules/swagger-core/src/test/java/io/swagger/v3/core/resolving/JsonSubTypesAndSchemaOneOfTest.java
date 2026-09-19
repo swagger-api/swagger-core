@@ -47,55 +47,41 @@ public class JsonSubTypesAndSchemaOneOfTest extends SwaggerTestBase {
     }
 
     @Test
-    public void beanWithJsonSubTypesAndSchemaOneOfHasAllOfAndOneOfInModelSchemaObject() {
+    public void beanWithJsonSubTypesAndSchemaOneOfUsesExplicitOneOfWithoutRecursiveAllOf() {
         final Schema<?> baseModel = context.resolve(new AnnotatedType(BaseBean.class));
         assertNotNull(baseModel);
-        assertBasePropertiesValid(baseModel.getProperties());
+        // Explicit @Schema(oneOf) wins: parent keeps only the shared discriminator property.
+        assertBasePropertiesProperties(baseModel.getProperties());
 
-        // The base class contains a oneOf-definition which will make the child classes have a recursive reference.
-        // Child's allOf -> Parent -> Parent's oneOf -> Child -> Child's allOf -> ...
+        // The parent exposes the explicitly declared oneOf.
         assertNotNull(baseModel.getOneOf());
         assertEquals(baseModel.getOneOf().size(), 2);
+        assertEquals(baseModel.getOneOf().get(0).get$ref(), "#/components/schemas/SubBean1");
+        assertEquals(baseModel.getOneOf().get(1).get$ref(), "#/components/schemas/SubBean2");
 
         assertEquals(baseModel.getDiscriminator().getPropertyName(), DISCRIMINATOR_PROPERTY_NAME);
         assertEquals(baseModel.getDiscriminator().getMapping().get(SUB_BEAN_1_NAME), "#/components/schemas/SubBean1");
         assertEquals(baseModel.getDiscriminator().getMapping().get(SUB_BEAN_2_NAME), "#/components/schemas/SubBean2");
 
+        // Children are plain object schemas without the recursive allOf->parent reference.
         final Schema<?> subModel1 = context.getDefinedModels().get(SUB_BEAN_1_NAME);
         assertNotNull(subModel1);
-        // make sure child points at parent
-        assertTrue(subModel1 instanceof ComposedSchema);
-        ComposedSchema cm1 = (ComposedSchema) subModel1;
-        assertEquals(cm1.getAllOf().get(0).get$ref(), "#/components/schemas/BaseBean");
-
-        // make sure parent properties are filtered out of subclass
-        assertSubPropertiesValid(cm1.getAllOf().get(1).getProperties(), CHILD_1_PROPERTY);
+        assertNull(subModel1.getAllOf(), "child must not carry an allOf ref to the parent");
+        assertTrue(subModel1.getProperties() != null && subModel1.getProperties().containsKey(CHILD_1_PROPERTY));
+        assertTrue(subModel1.getProperties().containsKey(BASE_PROPERTY));
 
         final Schema<?> subModel2 = context.getDefinedModels().get(SUB_BEAN_2_NAME);
         assertNotNull(subModel2);
-        // make sure child points at parent
-        assertTrue(subModel2 instanceof ComposedSchema);
-        ComposedSchema cm2 = (ComposedSchema) subModel2;
-        assertEquals(cm2.getAllOf().get(0).get$ref(), "#/components/schemas/BaseBean");
-
-        // make sure parent properties are filtered out of subclass
-        assertSubPropertiesValid(cm1.getAllOf().get(1).getProperties(), CHILD_2_PROPERTY);
+        assertNull(subModel2.getAllOf(), "child must not carry an allOf ref to the parent");
+        assertTrue(subModel2.getProperties() != null && subModel2.getProperties().containsKey(CHILD_2_PROPERTY));
+        assertTrue(subModel2.getProperties().containsKey(BASE_PROPERTY));
     }
 
-    private void assertBasePropertiesValid(Map<String, Schema> baseProperties) {
-        assertEquals(baseProperties.size(), 3);
-        for (Map.Entry<String, Schema> entry : baseProperties.entrySet()) {
-            final String name = entry.getKey();
-            final Schema<?> prop = entry.getValue();
-            if ("type".equals(name)) {
-                assertEquals(prop.getType(), "string");
-            } else if (BASE_PROPERTY.equals(name)) {
-                assertEquals(prop.getType(), "integer");
-                assertEquals(prop.getFormat(), "int32");
-            } else if (BASE_PROPERTY_2.equals(name)) {
-                assertEquals(prop.getType(), "string");
-            }
-        }
+    private void assertBasePropertiesProperties(Map<String, Schema> baseProperties) {
+        // Parent keeps only the shared discriminator property; the others are on the children.
+        assertEquals(baseProperties.size(), 1);
+        assertTrue(baseProperties.containsKey(DISCRIMINATOR_PROPERTY_NAME));
+        assertEquals(baseProperties.get(DISCRIMINATOR_PROPERTY_NAME).getType(), "string");
     }
 
     @JsonTypeInfo(include = JsonTypeInfo.As.PROPERTY, use = JsonTypeInfo.Id.NAME, property = "type", visible = true)

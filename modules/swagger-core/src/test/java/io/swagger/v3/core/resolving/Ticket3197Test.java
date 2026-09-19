@@ -43,8 +43,6 @@ public class Ticket3197Test extends SwaggerTestBase {
                 "  - type\n" +
                 "  type: object\n" +
                 "  properties:\n" +
-                "    carMetaData:\n" +
-                "      type: string\n" +
                 "    type:\n" +
                 "      type: string\n" +
                 "  discriminator:\n" +
@@ -60,28 +58,26 @@ public class Ticket3197Test extends SwaggerTestBase {
                 "  - carMetaData\n" +
                 "  - id\n" +
                 "  type: object\n" +
-                "  allOf:\n" +
-                "  - $ref: \"#/components/schemas/Car\"\n" +
-                "  - type: object\n" +
-                "    properties:\n" +
-                "      id:\n" +
-                "        type: integer\n" +
-                "        format: int64\n" +
-                "      model:\n" +
-                "        type: string\n" +
+                "  properties:\n" +
+                "    carMetaData:\n" +
+                "      type: string\n" +
+                "    id:\n" +
+                "      type: integer\n" +
+                "      format: int64\n" +
+                "    model:\n" +
+                "      type: string\n" +
                 "SportCar:\n" +
                 "  required:\n" +
                 "  - id\n" +
                 "  type: object\n" +
-                "  allOf:\n" +
-                "  - $ref: \"#/components/schemas/Car\"\n" +
-                "  - type: object\n" +
-                "    properties:\n" +
-                "      id:\n" +
-                "        type: integer\n" +
-                "        format: int64\n" +
-                "      model:\n" +
-                "        type: string\n";
+                "  properties:\n" +
+                "    carMetaData:\n" +
+                "      type: string\n" +
+                "    id:\n" +
+                "      type: integer\n" +
+                "      format: int64\n" +
+                "    model:\n" +
+                "      type: string\n";
 
         SerializationMatchers.assertEqualsToYaml(context.getDefinedModels(), yaml);
     }
@@ -101,8 +97,6 @@ public class Ticket3197Test extends SwaggerTestBase {
                 "  - type\n" +
                 "  type: object\n" +
                 "  properties:\n" +
-                "    carMetaData:\n" +
-                "      type: string\n" +
                 "    type:\n" +
                 "      type: string\n" +
                 "  discriminator:\n" +
@@ -119,25 +113,25 @@ public class Ticket3197Test extends SwaggerTestBase {
                 "  - id\n" +
                 "  type: object\n" +
                 "  properties:\n" +
+                "    carMetaData:\n" +
+                "      type: string\n" +
                 "    id:\n" +
                 "      type: integer\n" +
                 "      format: int64\n" +
                 "    model:\n" +
                 "      type: string\n" +
-                "  allOf:\n" +
-                "  - $ref: \"#/components/schemas/Car\"\n" +
                 "SportCar:\n" +
                 "  required:\n" +
                 "  - id\n" +
                 "  type: object\n" +
                 "  properties:\n" +
+                "    carMetaData:\n" +
+                "      type: string\n" +
                 "    id:\n" +
                 "      type: integer\n" +
                 "      format: int64\n" +
                 "    model:\n" +
-                "      type: string\n" +
-                "  allOf:\n" +
-                "  - $ref: \"#/components/schemas/Car\"\n";
+                "      type: string\n";
 
         SerializationMatchers.assertEqualsToYaml(myContext.getDefinedModels(), yaml);
         ModelResolver.composedModelPropertiesAsSibling = false;

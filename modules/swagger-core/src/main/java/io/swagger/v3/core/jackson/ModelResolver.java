@@ -1080,35 +1080,30 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
             });
 
-            // Check if class has @JsonSubTypes annotation (handled by resolveSubtypes)
-            Annotation[] annotations = beanDesc.getClassInfo().getAnnotated().getDeclaredAnnotations();
-            boolean hasJsonSubTypes = Arrays.stream(annotations)
-                    .anyMatch(ann -> ann.annotationType().equals(JsonSubTypes.class));
-
-            // Skip oneOf processing if class has @JsonSubTypes annotation (handled by resolveSubtypes)
-            if (!hasJsonSubTypes) {
-                List<Class<?>> oneOfFiltered = Stream.of(oneOf)
-                        .distinct()
-                        .filter(c -> !this.shouldIgnoreClass(c))
-                        .filter(c -> !(c.equals(Void.class)))
-                        .toList();
-                oneOfFiltered.forEach(c -> {
-                    Schema oneOfRef = context.resolve(new AnnotatedType().components(annotatedType.getComponents()).type(c).jsonViewAnnotation(annotatedType.getJsonViewAnnotation()));
-                    if (oneOfRef != null) {
-                        if (StringUtils.isBlank(oneOfRef.getName())) {
-                            schemaWithCompositionKeys.addOneOfItem(oneOfRef);
-                        } else {
-                            schemaWithCompositionKeys.addOneOfItem(new Schema().$ref(Components.COMPONENTS_SCHEMAS_REF + oneOfRef.getName()));
-                        }
-                        // remove shared properties defined in the parent
-                        if (isSubtype(beanDesc.getClassInfo(), c)) {
-                            removeParentProperties(schemaWithCompositionKeys, oneOfRef);
-                        }
+            // Process the explicit @Schema(oneOf = ...) always. When the class also has
+            // @JsonSubTypes, resolveSubtypes() returns early (explicit oneOf wins), so
+            // there is no conflict.
+            List<Class<?>> oneOfFiltered = Stream.of(oneOf)
+                    .distinct()
+                    .filter(c -> !this.shouldIgnoreClass(c))
+                    .filter(c -> !(c.equals(Void.class)))
+                    .toList();
+            oneOfFiltered.forEach(c -> {
+                Schema oneOfRef = context.resolve(new AnnotatedType().components(annotatedType.getComponents()).type(c).jsonViewAnnotation(annotatedType.getJsonViewAnnotation()));
+                if (oneOfRef != null) {
+                    if (StringUtils.isBlank(oneOfRef.getName())) {
+                        schemaWithCompositionKeys.addOneOfItem(oneOfRef);
+                    } else {
+                        schemaWithCompositionKeys.addOneOfItem(new Schema().$ref(Components.COMPONENTS_SCHEMAS_REF + oneOfRef.getName()));
                     }
+                    // remove shared properties defined in the parent
+                    if (isSubtype(beanDesc.getClassInfo(), c)) {
+                        removeParentProperties(schemaWithCompositionKeys, oneOfRef);
+                    }
+                }
 
-                    dropRootRefIfComposed(schemaWithCompositionKeys);
-                });
-            }
+                dropRootRefIfComposed(schemaWithCompositionKeys);
+            });
 
             if (!composedModelPropertiesAsSibling) {
                 if (schemaWithCompositionKeys.getAllOf() != null && !schemaWithCompositionKeys.getAllOf().isEmpty()) {
@@ -2018,6 +2013,16 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
     protected boolean resolveSubtypes(Schema model, BeanDescription bean, ModelConverterContext context, JsonView jsonViewAnnotation) {
         final List<NamedType> types = _intr().findSubtypes(_mapper.serializationConfig(), bean.getClassInfo());
         if (types == null || types.isEmpty()) {
+            return false;
+        }
+
+        // If the class declares an explicit @Schema(oneOf = ...), it fully defines the polymorphism and
+        // must win over the @JsonSubTypes-derived composition. Skip the automatic allOf/oneOf
+        // composition to avoid the recursive allOf<->oneOf structure that is undesirable for many
+        // tools (see review on swagger-api/swagger-core#5320).
+        io.swagger.v3.oas.annotations.media.Schema declaredSchema =
+                AnnotationsUtils.getSchemaDeclaredAnnotation(bean.getClassInfo().getAnnotated());
+        if (declaredSchema != null && declaredSchema.oneOf().length > 0) {
             return false;
         }
 
