@@ -25,6 +25,7 @@ import io.swagger.v3.core.jackson.mixin.DateSchemaMixin;
 import io.swagger.v3.core.jackson.mixin.Discriminator31Mixin;
 import io.swagger.v3.core.jackson.mixin.Discriminator32Mixin;
 import io.swagger.v3.core.jackson.mixin.DiscriminatorMixin;
+import io.swagger.v3.core.jackson.mixin.Encoding30Mixin;
 import io.swagger.v3.core.jackson.mixin.Example30Mixin;
 import io.swagger.v3.core.jackson.mixin.ExampleMixin;
 import io.swagger.v3.core.jackson.mixin.ExtensionsMixin;
@@ -279,6 +280,7 @@ public class ObjectMapperFactory {
                 sourceMixins.put(OAuthFlows.class, OAuthFlows30Mixin.class);
                 sourceMixins.put(OAuthFlow.class, OAuthFlow30Mixin.class);
                 sourceMixins.put(XML.class, XML30Mixin.class);
+                sourceMixins.put(Encoding.class, Encoding30Mixin.class);
                 break;
             case V31:
             case V32:
@@ -299,6 +301,7 @@ public class ObjectMapperFactory {
                     sourceMixins.put(OAuthFlows.class, OAuthFlows30Mixin.class);
                     sourceMixins.put(OAuthFlow.class, OAuthFlow30Mixin.class);
                     sourceMixins.put(XML.class, XML30Mixin.class);
+                    sourceMixins.put(Encoding.class, Encoding30Mixin.class);
                 }
                 if (specVersion == SpecVersion.V32) {
                     // '$self' is a fixed OpenAPI field as of 3.2, so it is not ignored here
@@ -341,7 +344,7 @@ public class ObjectMapperFactory {
         sourceMixins.put(Components.class, ComponentsMixin.class);
         sourceMixins.put(Contact.class, ExtensionsMixin.class);
         sourceMixins.put(Discriminator.class, DiscriminatorMixin.class);
-        sourceMixins.put(Encoding.class, ExtensionsMixin.class);
+        sourceMixins.put(Encoding.class, Encoding30Mixin.class);
         sourceMixins.put(EncodingProperty.class, ExtensionsMixin.class);
         sourceMixins.put(Example.class, Example30Mixin.class);
         sourceMixins.put(ExternalDocumentation.class, ExtensionsMixin.class);

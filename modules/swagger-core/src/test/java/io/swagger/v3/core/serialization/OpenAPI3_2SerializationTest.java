@@ -17,6 +17,7 @@ import io.swagger.v3.oas.models.examples.Example;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.media.Content;
 import io.swagger.v3.oas.models.media.Discriminator;
+import io.swagger.v3.oas.models.media.Encoding;
 import io.swagger.v3.oas.models.media.MediaType;
 import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.media.XML;
@@ -615,5 +616,142 @@ public class OpenAPI3_2SerializationTest {
         } catch (Exception expected) {
             assertTrue(expected.getMessage().contains("cookie"), expected.getMessage());
         }
+    }
+
+    private MediaType buildMultipartMediaType() {
+        Encoding inner = new Encoding().contentType("text/plain");
+        Encoding nested = new Encoding()
+                .contentType("application/json")
+                .addEncoding("prop", new Encoding().contentType("text/plain"))
+                .addPrefixEncoding(new Encoding().contentType("image/png"))
+                .itemEncoding(new Encoding().contentType("text/csv"));
+        return new MediaType()
+                .schema(new Schema())
+                .addPrefixEncoding(inner)
+                .itemEncoding(new Encoding().contentType("application/octet-stream"))
+                .addEncoding("named", nested);
+    }
+
+    @Test
+    public void positionalEncodingSerializes32() throws Exception {
+        MediaType mt = buildMultipartMediaType();
+        String out = Json32.mapper().writeValueAsString(mt);
+        assertTrue(out.contains("\"prefixEncoding\":"), "3.2 must emit prefixEncoding: " + out);
+        assertTrue(out.contains("\"itemEncoding\":"), "3.2 must emit itemEncoding: " + out);
+        // pin the nested Encoding.encoding property name at /encoding/named/encoding/prop
+        com.fasterxml.jackson.databind.JsonNode tree = Json32.mapper().readTree(out);
+        assertEquals(tree.at("/encoding/named/encoding/prop/contentType").asText(), "text/plain",
+                "nested Encoding.encoding must serialize as 'encoding': " + out);
+        assertEquals(tree.at("/encoding/named/prefixEncoding/0/contentType").asText(), "image/png",
+                "nested Encoding.prefixEncoding must serialize: " + out);
+        assertEquals(tree.at("/encoding/named/itemEncoding/contentType").asText(), "text/csv",
+                "nested Encoding.itemEncoding must serialize: " + out);
+        String yaml = Yaml32.mapper().writeValueAsString(mt);
+        assertTrue(yaml.contains("prefixEncoding:"), "3.2 YAML must emit prefixEncoding: " + yaml);
+        assertTrue(yaml.contains("itemEncoding:"), "3.2 YAML must emit itemEncoding: " + yaml);
+    }
+
+    @Test
+    public void positionalEncodingRoundTrip32() throws Exception {
+        MediaType mt = buildMultipartMediaType();
+        String out = Json32.mapper().writeValueAsString(mt);
+        MediaType readBack = Json32.mapper().readValue(out, MediaType.class);
+        assertNotNull(readBack.getPrefixEncoding());
+        assertEquals(readBack.getPrefixEncoding().size(), 1);
+        assertEquals(readBack.getPrefixEncoding().get(0).getContentType(), "text/plain");
+        assertNotNull(readBack.getItemEncoding());
+        assertEquals(readBack.getItemEncoding().getContentType(), "application/octet-stream");
+        Encoding named = readBack.getEncoding().get("named");
+        assertNotNull(named.getEncoding(), "nested Encoding.encoding map must bind");
+        assertEquals(named.getEncoding().get("prop").getContentType(), "text/plain");
+        assertEquals(named.getPrefixEncoding().get(0).getContentType(), "image/png",
+                "nested Encoding.prefixEncoding must bind");
+        assertEquals(named.getItemEncoding().getContentType(), "text/csv",
+                "nested Encoding.itemEncoding must bind");
+    }
+
+    @Test
+    public void positionalEncodingBindsFromDocument32() throws Exception {
+        // fixed input pins the wire property names, independent of the serializer
+        String doc = "encoding:\n" +
+                "  named:\n" +
+                "    contentType: application/json\n" +
+                "    encoding:\n" +
+                "      prop:\n" +
+                "        contentType: text/plain\n" +
+                "    prefixEncoding:\n" +
+                "      - contentType: image/png\n" +
+                "    itemEncoding:\n" +
+                "      contentType: text/csv\n";
+        MediaType readBack = Yaml32.mapper().readValue(doc, MediaType.class);
+        Encoding named = readBack.getEncoding().get("named");
+        assertNotNull(named);
+        assertEquals(named.getEncoding().get("prop").getContentType(), "text/plain");
+        assertEquals(named.getPrefixEncoding().get(0).getContentType(), "image/png");
+        assertEquals(named.getItemEncoding().getContentType(), "text/csv");
+    }
+
+    @Test
+    public void positionalEncodingHiddenIn30And31() throws Exception {
+        MediaType mt = buildMultipartMediaType();
+        String out30 = Json.mapper().writeValueAsString(mt);
+        assertFalse(out30.contains("prefixEncoding"), "3.0 must not emit prefixEncoding: " + out30);
+        assertFalse(out30.contains("itemEncoding"), "3.0 must not emit itemEncoding: " + out30);
+        // nested Encoding.encoding is a 3.2 field too, so a 3.0 write drops it
+        assertFalse(out30.contains("\"prop\""), "3.0 must not emit nested encoding: " + out30);
+        // the pre-existing MediaType.encoding map itself must still serialize
+        assertTrue(out30.contains("\"named\""), "3.0 must keep MediaType.encoding: " + out30);
+        assertTrue(out30.contains("\"contentType\":\"application/json\""),
+                "3.0 must keep non-3.2 Encoding fields: " + out30);
+        String out31 = Json31.mapper().writeValueAsString(mt);
+        assertFalse(out31.contains("prefixEncoding"), "3.1 must not emit prefixEncoding: " + out31);
+        assertFalse(out31.contains("itemEncoding"), "3.1 must not emit itemEncoding: " + out31);
+        assertFalse(out31.contains("\"prop\""), "3.1 must not emit nested encoding: " + out31);
+        assertTrue(out31.contains("\"named\""), "3.1 must keep MediaType.encoding: " + out31);
+    }
+
+    @Test
+    public void positionalEncodingNotBoundIn31() throws Exception {
+        String doc = "schema:\n" +
+                "  type: object\n" +
+                "prefixEncoding:\n" +
+                "  - contentType: text/plain\n" +
+                "itemEncoding:\n" +
+                "  contentType: application/octet-stream\n" +
+                "encoding:\n" +
+                "  named:\n" +
+                "    contentType: application/json\n" +
+                "    encoding:\n" +
+                "      prop:\n" +
+                "        contentType: text/plain\n" +
+                "    prefixEncoding:\n" +
+                "      - contentType: image/png\n" +
+                "    itemEncoding:\n" +
+                "      contentType: text/csv\n";
+        MediaType read31 = Yaml31.mapper().readValue(doc, MediaType.class);
+        assertNull(read31.getPrefixEncoding(), "3.1 must not bind prefixEncoding");
+        assertNull(read31.getItemEncoding(), "3.1 must not bind itemEncoding");
+        Encoding named31 = read31.getEncoding().get("named");
+        assertNotNull(named31, "3.1 must still bind the MediaType.encoding entry itself");
+        assertEquals(named31.getContentType(), "application/json");
+        assertNull(named31.getEncoding(), "3.1 must not bind nested Encoding.encoding");
+        assertNull(named31.getPrefixEncoding(), "3.1 must not bind nested Encoding.prefixEncoding");
+        assertNull(named31.getItemEncoding(), "3.1 must not bind nested Encoding.itemEncoding");
+    }
+
+    @Test
+    public void positionalEncodingHiddenInConverter() throws Exception {
+        MediaType mt = buildMultipartMediaType();
+        String out = io.swagger.v3.core.util.ObjectMapperFactory.createJsonConverter()
+                .writeValueAsString(mt);
+        assertFalse(out.contains("prefixEncoding"), "converter must not emit prefixEncoding: " + out);
+        assertFalse(out.contains("itemEncoding"), "converter must not emit itemEncoding: " + out);
+        // the V30 encoding map itself stays, but the nested 3.2 fields must be gone
+        com.fasterxml.jackson.databind.JsonNode tree =
+                io.swagger.v3.core.util.ObjectMapperFactory.createJsonConverter().readTree(out);
+        assertTrue(tree.at("/encoding/named").isContainerNode() || !tree.at("/encoding/named").isMissingNode(),
+                "converter must keep the MediaType.encoding entry: " + out);
+        assertTrue(tree.at("/encoding/named/encoding").isMissingNode(),
+                "converter must drop nested Encoding.encoding: " + out);
     }
 }
