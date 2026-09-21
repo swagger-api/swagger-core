@@ -1594,6 +1594,9 @@ public class Reader implements OpenApiReader {
         if (components.getPathItems() != null && !components.getPathItems().isEmpty()) {
             return false;
         }
+        if (components.getMediaTypes() != null && !components.getMediaTypes().isEmpty()) {
+            return false;
+        }
 
         return true;
     }

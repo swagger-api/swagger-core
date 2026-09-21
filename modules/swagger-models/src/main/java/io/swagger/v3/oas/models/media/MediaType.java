@@ -24,6 +24,15 @@ public class MediaType {
     private Object example = null;
     private Map<String, Encoding> encoding = null;
     /**
+     * Reference value allowed for content map entries as of OpenAPI 3.2
+     * (e.g. {@code "application/json": {"$ref": "#/components/mediaTypes/Pet"}}).
+     * When set, the other fields are ignored per Reference Object semantics.
+     *
+     * @since 2.2.56 (OpenAPI 3.2)
+     */
+    @OpenAPI32
+    private String $ref = null;
+    /**
      * Positional encoding for multipart array parts (OpenAPI 3.2, multipart media
      * types only). MUST NOT coexist with {@code encoding}.
      *
@@ -221,6 +230,29 @@ public class MediaType {
         return this;
     }
 
+    /**
+     * returns the $ref property from a MediaType instance.
+     *
+     * @since 2.2.56 (OpenAPI 3.2)
+     * @return String $ref
+     **/
+
+    @OpenAPI32
+    public String get$ref() {
+        return $ref;
+    }
+
+    @OpenAPI32
+    public void set$ref(String $ref) {
+        this.$ref = $ref;
+    }
+
+    @OpenAPI32
+    public MediaType $ref(String $ref) {
+        this.$ref = $ref;
+        return this;
+    }
+
     public boolean getExampleSetFlag() {
         return exampleSetFlag;
     }
@@ -245,12 +277,13 @@ public class MediaType {
                 Objects.equals(this.encoding, mediaType.encoding) &&
                 Objects.equals(this.prefixEncoding, mediaType.prefixEncoding) &&
                 Objects.equals(this.itemEncoding, mediaType.itemEncoding) &&
+                Objects.equals(this.$ref, mediaType.$ref) &&
                 Objects.equals(this.extensions, mediaType.extensions);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(schema, itemSchema, examples, example, encoding, prefixEncoding, itemEncoding, extensions);
+        return Objects.hash(schema, itemSchema, examples, example, encoding, prefixEncoding, itemEncoding, $ref, extensions);
     }
 
     public java.util.Map<String, Object> getExtensions() {
@@ -296,6 +329,7 @@ public class MediaType {
         sb.append("    encoding: ").append(toIndentedString(encoding)).append("\n");
         sb.append("    prefixEncoding: ").append(toIndentedString(prefixEncoding)).append("\n");
         sb.append("    itemEncoding: ").append(toIndentedString(itemEncoding)).append("\n");
+        sb.append("    $ref: ").append(toIndentedString($ref)).append("\n");
         sb.append("}");
         return sb.toString();
     }

@@ -13,6 +13,7 @@ import io.swagger.v3.oas.models.callbacks.Callback;
 import io.swagger.v3.oas.models.headers.Header;
 import io.swagger.v3.oas.models.media.ArraySchema;
 import io.swagger.v3.oas.models.media.Content;
+import io.swagger.v3.oas.models.media.Encoding;
 import io.swagger.v3.oas.models.media.MediaType;
 import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.parameters.Parameter;
@@ -103,6 +104,7 @@ public class SpecFilter {
             clone.getComponents().setRequestBodies(filteredOpenAPI.getComponents().getRequestBodies());
             clone.getComponents().setResponses(filteredOpenAPI.getComponents().getResponses());
             clone.getComponents().setPathItems(filteredOpenAPI.getComponents().getPathItems());
+            clone.getComponents().setMediaTypes(filteredOpenAPI.getComponents().getMediaTypes());
         }
 
         if (filter.isRemovingUnreferencedDefinitions()) {
@@ -356,8 +358,56 @@ public class SpecFilter {
     private void addContentSchemaRef(Content content, Set<String> referencedDefinitions) {
         if (content != null) {
             for (MediaType mediaType : content.values()) {
-                addSchemaRef(mediaType.getSchema(), referencedDefinitions);
+                addMediaTypeSchemaRef(mediaType, referencedDefinitions);
             }
+        }
+    }
+
+    private void addMediaTypeSchemaRef(MediaType mediaType, Set<String> referencedDefinitions) {
+        if (!StringUtils.isBlank(mediaType.get$ref())) {
+            // OpenAPI 3.2: a content map value may be a Reference Object; only a
+            // schema-targeting ref is relevant to schema pruning
+            if (mediaType.get$ref().startsWith(Components.COMPONENTS_SCHEMAS_REF)) {
+                referencedDefinitions.add(mediaType.get$ref());
+            }
+            return;
+        }
+        addSchemaRef(mediaType.getSchema(), referencedDefinitions);
+        addSchemaRef(mediaType.getItemSchema(), referencedDefinitions);
+        if (mediaType.getEncoding() != null) {
+            for (Encoding encoding : mediaType.getEncoding().values()) {
+                addEncodingSchemaRef(encoding, referencedDefinitions);
+            }
+        }
+        if (mediaType.getPrefixEncoding() != null) {
+            for (Encoding encoding : mediaType.getPrefixEncoding()) {
+                addEncodingSchemaRef(encoding, referencedDefinitions);
+            }
+        }
+        if (mediaType.getItemEncoding() != null) {
+            addEncodingSchemaRef(mediaType.getItemEncoding(), referencedDefinitions);
+        }
+    }
+
+    private void addEncodingSchemaRef(Encoding encoding, Set<String> referencedDefinitions) {
+        if (encoding.getHeaders() != null) {
+            for (Header header : encoding.getHeaders().values()) {
+                addHeaderSchemaRef(header, referencedDefinitions);
+            }
+        }
+        // nested encodings are OpenAPI 3.2 fields
+        if (encoding.getEncoding() != null) {
+            for (Encoding nested : encoding.getEncoding().values()) {
+                addEncodingSchemaRef(nested, referencedDefinitions);
+            }
+        }
+        if (encoding.getPrefixEncoding() != null) {
+            for (Encoding nested : encoding.getPrefixEncoding()) {
+                addEncodingSchemaRef(nested, referencedDefinitions);
+            }
+        }
+        if (encoding.getItemEncoding() != null) {
+            addEncodingSchemaRef(encoding.getItemEncoding(), referencedDefinitions);
         }
     }
 
@@ -460,6 +510,11 @@ public class SpecFilter {
             for (String resourcePath : components.getPathItems().keySet()) {
                 PathItem pathItem = components.getPathItems().get(resourcePath);
                 addPathItemSchemaRef(pathItem, referencedDefinitions);
+            }
+        }
+        if (components.getMediaTypes() != null) {
+            for (MediaType mediaType : components.getMediaTypes().values()) {
+                addMediaTypeSchemaRef(mediaType, referencedDefinitions);
             }
         }
     }

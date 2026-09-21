@@ -20,6 +20,7 @@ import io.swagger.v3.core.jackson.MediaTypeSerializer;
 import io.swagger.v3.core.jackson.SchemaSerializer;
 import io.swagger.v3.core.jackson.mixin.ApiResponse30Mixin;
 import io.swagger.v3.core.jackson.mixin.Components31Mixin;
+import io.swagger.v3.core.jackson.mixin.Components32Mixin;
 import io.swagger.v3.core.jackson.mixin.ComponentsMixin;
 import io.swagger.v3.core.jackson.mixin.DateSchemaMixin;
 import io.swagger.v3.core.jackson.mixin.Discriminator31Mixin;
@@ -179,7 +180,7 @@ public class ObjectMapperFactory {
                                 if (Schema.class.isAssignableFrom(desc.getBeanClass())) {
                                     return new SchemaSerializer((JsonSerializer<Object>) serializer);
                                 } else if (MediaType.class.isAssignableFrom(desc.getBeanClass())) {
-                                    return new MediaTypeSerializer((JsonSerializer<Object>) serializer);
+                                    return new MediaTypeSerializer((JsonSerializer<Object>) serializer, specVersion);
                                 } else if (Example.class.isAssignableFrom(desc.getBeanClass())) {
                                     return new ExampleSerializer((JsonSerializer<Object>) serializer, specVersion);
                                 }
@@ -202,7 +203,7 @@ public class ObjectMapperFactory {
                                 if (Schema.class.isAssignableFrom(desc.getBeanClass())) {
                                     return new Schema31Serializer((JsonSerializer<Object>) serializer);
                                 } else if (MediaType.class.isAssignableFrom(desc.getBeanClass())) {
-                                    return new MediaTypeSerializer((JsonSerializer<Object>) serializer);
+                                    return new MediaTypeSerializer((JsonSerializer<Object>) serializer, specVersion);
                                 } else if (Example.class.isAssignableFrom(desc.getBeanClass())) {
                                     return new ExampleSerializer((JsonSerializer<Object>) serializer, specVersion);
                                 }
@@ -286,10 +287,10 @@ public class ObjectMapperFactory {
             case V32:
                 sourceMixins.put(Info.class, ExtensionsMixin.class);
                 sourceMixins.put(Schema.class, Schema31Mixin.class);
-                sourceMixins.put(Components.class, Components31Mixin.class);
                 sourceMixins.put(DateSchema.class, DateSchemaMixin.class);
                 sourceMixins.put(Discriminator.class, Discriminator31Mixin.class);
                 if (specVersion == SpecVersion.V31) {
+                    sourceMixins.put(Components.class, Components31Mixin.class);
                     sourceMixins.put(OpenAPI.class, OpenAPI31Mixin.class);
                     // hide fixed fields introduced by OpenAPI 3.2
                     sourceMixins.put(Server.class, Server30Mixin.class);
@@ -306,6 +307,8 @@ public class ObjectMapperFactory {
                 if (specVersion == SpecVersion.V32) {
                     // '$self' is a fixed OpenAPI field as of 3.2, so it is not ignored here
                     sourceMixins.put(OpenAPI.class, OpenAPI32Mixin.class);
+                    // 'mediaTypes' is a fixed Components field as of 3.2, so it is not ignored here
+                    sourceMixins.put(Components.class, Components32Mixin.class);
                     // 'query' is a fixed Path Item field as of 3.2, so it is not ignored here
                     sourceMixins.put(PathItem.class, PathItem32Mixin.class);
                     // 'defaultMapping' is a fixed Discriminator field as of 3.2

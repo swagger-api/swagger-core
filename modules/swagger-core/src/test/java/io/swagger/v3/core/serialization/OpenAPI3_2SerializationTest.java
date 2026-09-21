@@ -937,4 +937,246 @@ public class OpenAPI3_2SerializationTest {
         assertNotNull(filtered.getComponents().getSchemas().get("Pet"),
                 "schema referenced only by an additional operation must not be pruned");
     }
+
+    // OpenAPI 3.2: content maps accept Reference Object values, and
+    // Components gains a reusable 'mediaTypes' map
+
+    @Test
+    public void contentMapRefValueRoundTrip32() throws Exception {
+        String doc = "openapi: 3.2.0\n" +
+                "info:\n" +
+                "  title: t\n" +
+                "  version: '1'\n" +
+                "paths:\n" +
+                "  /pets:\n" +
+                "    get:\n" +
+                "      operationId: getPets\n" +
+                "      responses:\n" +
+                "        '200':\n" +
+                "          description: ok\n" +
+                "          content:\n" +
+                "            application/json:\n" +
+                "              $ref: '#/components/mediaTypes/Pet'\n" +
+                "components:\n" +
+                "  mediaTypes:\n" +
+                "    Pet:\n" +
+                "      schema:\n" +
+                "        type: object\n";
+        OpenAPI readBack = Yaml32.mapper().readValue(doc, OpenAPI.class);
+        MediaType mediaType = readBack.getPaths().get("/pets").getGet()
+                .getResponses().get("200").getContent().get("application/json");
+        assertNotNull(mediaType, "content map value must bind");
+        assertEquals(mediaType.get$ref(), "#/components/mediaTypes/Pet",
+                "Reference Object value must bind to MediaType.$ref");
+        assertNull(mediaType.getSchema());
+
+        String serialized = Yaml32.mapper().writeValueAsString(readBack);
+        assertTrue(serialized.contains("$ref: '#/components/mediaTypes/Pet'")
+                        || serialized.contains("$ref: \"#/components/mediaTypes/Pet\""),
+                "3.2 serialization must keep the content map $ref value");
+        assertTrue(serialized.contains("mediaTypes:"),
+                "3.2 serialization must keep components.mediaTypes");
+
+        // JSON round-trip too
+        OpenAPI jsonReadBack = Json32.mapper().readValue(
+                Json32.mapper().writeValueAsString(readBack), OpenAPI.class);
+        assertEquals(jsonReadBack.getPaths().get("/pets").getGet()
+                        .getResponses().get("200").getContent()
+                        .get("application/json").get$ref(),
+                "#/components/mediaTypes/Pet");
+        assertNotNull(jsonReadBack.getComponents().getMediaTypes().get("Pet"));
+    }
+
+    @Test
+    public void contentMapRefValueNotBound3031() throws Exception {
+        String doc = "content:\n" +
+                "  application/json:\n" +
+                "    $ref: '#/components/mediaTypes/Pet'\n";
+        ApiResponse res32 = Yaml32.mapper().readValue(
+                "description: ok\n" + doc, ApiResponse.class);
+        assertEquals(res32.getContent().get("application/json").get$ref(),
+                "#/components/mediaTypes/Pet", "3.2 binds content $ref");
+
+        ApiResponse res31 = Yaml31.mapper().readValue(
+                "description: ok\n" + doc, ApiResponse.class);
+        assertNull(res31.getContent().get("application/json").get$ref(),
+                "3.1 must not bind content $ref");
+        ApiResponse res30 = io.swagger.v3.core.util.Yaml.mapper().readValue(
+                "description: ok\n" + doc, ApiResponse.class);
+        assertNull(res30.getContent().get("application/json").get$ref(),
+                "3.0 must not bind content $ref");
+    }
+
+    @Test
+    public void contentMapRefValueNotSerialized3031() throws Exception {
+        ApiResponse res = new ApiResponse().description("ok")
+                .content(new Content().addMediaType("application/json",
+                        new MediaType().$ref("#/components/mediaTypes/Pet")));
+        assertFalse(io.swagger.v3.core.util.Yaml.mapper().writeValueAsString(res).contains("$ref"),
+                "3.0 must not emit MediaType.$ref");
+        assertFalse(Yaml31.mapper().writeValueAsString(res).contains("$ref"),
+                "3.1 must not emit MediaType.$ref");
+        assertFalse(Json.mapper().writeValueAsString(res).contains("$ref"),
+                "3.0 JSON must not emit MediaType.$ref");
+    }
+
+    @Test
+    public void componentsMediaTypesRoundTrip32() throws Exception {
+        String doc = "openapi: 3.2.0\n" +
+                "info:\n" +
+                "  title: t\n" +
+                "  version: '1'\n" +
+                "paths: {}\n" +
+                "components:\n" +
+                "  mediaTypes:\n" +
+                "    Pet:\n" +
+                "      schema:\n" +
+                "        type: object\n" +
+                "    AliasedPet:\n" +
+                "      $ref: '#/components/mediaTypes/Pet'\n";
+        OpenAPI readBack = Yaml32.mapper().readValue(doc, OpenAPI.class);
+        Map<String, MediaType> mediaTypes = readBack.getComponents().getMediaTypes();
+        assertNotNull(mediaTypes, "3.2 must bind components.mediaTypes");
+        assertEquals(mediaTypes.get("AliasedPet").get$ref(), "#/components/mediaTypes/Pet",
+                "mediaTypes entries may themselves be Reference Objects");
+        assertNotNull(mediaTypes.get("Pet").getSchema());
+
+        String serialized = Yaml32.mapper().writeValueAsString(readBack);
+        assertTrue(serialized.contains("mediaTypes:"));
+        OpenAPI roundTripped = Yaml32.mapper().readValue(serialized, OpenAPI.class);
+        assertEquals(roundTripped.getComponents().getMediaTypes().get("AliasedPet").get$ref(),
+                "#/components/mediaTypes/Pet");
+    }
+
+    @Test
+    public void componentsMediaTypesNotSerializedOrBound3031() throws Exception {
+        OpenAPI doc = buildDoc()
+                .components(new Components().addMediaType("Pet",
+                        new MediaType().schema(new Schema().typesItem("object"))));
+        assertFalse(Yaml31.mapper().writeValueAsString(doc).contains("mediaTypes"),
+                "3.1 must not emit components.mediaTypes");
+        assertFalse(io.swagger.v3.core.util.Yaml.mapper().writeValueAsString(doc).contains("mediaTypes"),
+                "3.0 must not emit components.mediaTypes");
+        assertFalse(Json.mapper().writeValueAsString(doc).contains("mediaTypes"),
+                "3.0 JSON must not emit components.mediaTypes");
+        // legacy converter mapper is a 3.0-shape mapper
+        assertFalse(io.swagger.v3.core.util.ObjectMapperFactory.createJsonConverter()
+                        .writeValueAsString(doc).contains("mediaTypes"),
+                "converter mapper must not emit components.mediaTypes");
+
+        String yaml = "components:\n  mediaTypes:\n    Pet:\n      schema:\n        type: object\n";
+        assertNull(Yaml31.mapper().readValue(
+                        "openapi: 3.1.0\ninfo:\n  title: t\n  version: '1'\npaths: {}\n" + yaml,
+                        OpenAPI.class).getComponents().getMediaTypes(),
+                "3.1 must not bind components.mediaTypes");
+    }
+
+    @Test
+    public void mediaTypesSurviveSpecFilter() {
+        OpenAPI doc = buildDoc();
+        doc.setComponents(new Components().addMediaType("Pet",
+                new MediaType().$ref("#/components/mediaTypes/Base")));
+        OpenAPI filtered = new SpecFilter().filter(doc, new NoOpOperationsFilter(), null, null, null);
+        assertNotNull(filtered.getComponents().getMediaTypes(),
+                "SpecFilter must keep components.mediaTypes");
+        assertEquals(filtered.getComponents().getMediaTypes().get("Pet").get$ref(),
+                "#/components/mediaTypes/Base");
+    }
+
+    @Test
+    public void mediaTypesSchemaRefsSurviveUnreferencedPruning() {
+        // a schema referenced only from a components.mediaTypes entry must not be pruned
+        OpenAPI doc = buildDoc();
+        doc.setComponents(new Components()
+                .addSchemas("PetSchema", new Schema().typesItem("object"))
+                .addMediaType("Pet", new MediaType()
+                        .schema(new Schema().$ref("#/components/schemas/PetSchema"))));
+        OpenAPI filtered = new SpecFilter().filter(doc, new AbstractSpecFilter() {
+            @Override
+            public boolean isRemovingUnreferencedDefinitions() {
+                return true;
+            }
+        }, null, null, null);
+        assertNotNull(filtered.getComponents().getSchemas().get("PetSchema"),
+                "schema referenced only by components.mediaTypes must not be pruned");
+    }
+
+    @Test
+    public void contentMapRefValueSuppressesSiblings32() throws Exception {
+        // a $ref content value is a Reference Object: sibling fields are ignored
+        ApiResponse res = new ApiResponse().description("ok")
+                .content(new Content().addMediaType("application/json",
+                        new MediaType()
+                                .$ref("#/components/mediaTypes/Pet")
+                                .schema(new Schema().typesItem("object"))));
+        String serialized = Yaml32.mapper().writeValueAsString(res);
+        assertTrue(serialized.contains("$ref"), "3.2 must emit the $ref value");
+        assertFalse(serialized.contains("schema:"),
+                "3.2 must suppress sibling fields of a Reference Object value");
+        // same lenient input under 3.1: $ref is hidden, schema is emitted
+        String serialized31 = Yaml31.mapper().writeValueAsString(res);
+        assertTrue(serialized31.contains("schema:"));
+        assertFalse(serialized31.contains("$ref"));
+    }
+
+    @Test
+    public void mediaTypesRefDoesNotRetainSameNamedSchema() {
+        // '#/components/mediaTypes/X' must not keep an unrelated schemas.X alive
+        OpenAPI doc = buildDoc();
+        doc.setComponents(new Components()
+                .addSchemas("Base", new Schema().typesItem("object"))
+                .addMediaType("Pet", new MediaType().$ref("#/components/mediaTypes/Base")));
+        OpenAPI filtered = new SpecFilter().filter(doc, new AbstractSpecFilter() {
+            @Override
+            public boolean isRemovingUnreferencedDefinitions() {
+                return true;
+            }
+        }, null, null, null);
+        assertNull(filtered.getComponents().getSchemas() == null
+                        ? null
+                        : filtered.getComponents().getSchemas().get("Base"),
+                "schema named like a mediaTypes ref target must still be pruned");
+        assertNotNull(filtered.getComponents().getMediaTypes().get("Pet"));
+    }
+
+    @Test
+    public void contentMapRefToSchemaRetainsSchema() {
+        // lenient case: a content $ref pointing at a schema keeps it alive
+        OpenAPI doc = buildDoc();
+        doc.setComponents(new Components()
+                .addSchemas("Pet", new Schema().typesItem("object")));
+        doc.getPaths().get("/pets").getQuery().getResponses().get("200")
+                .content(new Content().addMediaType("application/json",
+                        new MediaType().$ref("#/components/schemas/Pet")));
+        OpenAPI filtered = new SpecFilter().filter(doc, new AbstractSpecFilter() {
+            @Override
+            public boolean isRemovingUnreferencedDefinitions() {
+                return true;
+            }
+        }, null, null, null);
+        assertNotNull(filtered.getComponents().getSchemas().get("Pet"),
+                "schema referenced by a content $ref must not be pruned");
+    }
+
+    @Test
+    public void mediaTypesEncodingSchemaRefsSurviveUnreferencedPruning() {
+        // a schema referenced inside a mediaTypes entry's encoding headers must not be pruned
+        OpenAPI doc = buildDoc();
+        Encoding encoding = new Encoding();
+        encoding.addHeader("X-Meta", new io.swagger.v3.oas.models.headers.Header()
+                .schema(new Schema().$ref("#/components/schemas/MetaSchema")));
+        doc.setComponents(new Components()
+                .addSchemas("MetaSchema", new Schema().typesItem("object"))
+                .addMediaType("Upload", new MediaType()
+                        .schema(new Schema().typesItem("string"))
+                        .addEncoding("part", encoding)));
+        OpenAPI filtered = new SpecFilter().filter(doc, new AbstractSpecFilter() {
+            @Override
+            public boolean isRemovingUnreferencedDefinitions() {
+                return true;
+            }
+        }, null, null, null);
+        assertNotNull(filtered.getComponents().getSchemas().get("MetaSchema"),
+                "schema referenced inside mediaTypes encoding headers must not be pruned");
+    }
 }

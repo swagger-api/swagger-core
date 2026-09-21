@@ -8,9 +8,9 @@ import java.util.List;
 
 /**
  * Mixin applied to {@link io.swagger.v3.oas.models.media.MediaType} for the
- * OpenAPI 3.0 and 3.1 mappers: {@code itemSchema}, {@code prefixEncoding} and
- * {@code itemEncoding} are fixed fields of the Media Type Object only as of
- * OpenAPI 3.2.
+ * OpenAPI 3.0 and 3.1 mappers: {@code itemSchema}, {@code prefixEncoding},
+ * {@code itemEncoding} and {@code $ref} are fixed fields of the Media Type
+ * Object (or allowed content map reference values) only as of OpenAPI 3.2.
  */
 public abstract class MediaType30Mixin extends MediaTypeMixin {
 
@@ -22,4 +22,7 @@ public abstract class MediaType30Mixin extends MediaTypeMixin {
 
     @JsonIgnore
     public abstract Encoding getItemEncoding();
+
+    @JsonIgnore
+    public abstract String get$ref();
 }
