@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.v3.oas.models.SpecVersion;
 import io.swagger.v3.oas.models.security.OAuthFlows;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 
@@ -16,17 +17,17 @@ import java.util.List;
 
 public class SecuritySchemeDeserializer extends JsonDeserializer<SecurityScheme> {
 
+    /**
+     * @deprecated kept for subclasses compiled against it; the version is read through
+     * {@link #specVersion()} so that subclasses can also express versions newer than 3.1.
+     */
+    @Deprecated
     protected boolean openapi31;
 
     @Override
     public SecurityScheme deserialize(JsonParser jp, DeserializationContext ctxt)
             throws IOException {
-        ObjectMapper mapper = null;
-        if (openapi31) {
-            mapper = Json31.mapper();
-        } else {
-            mapper = Json.mapper();
-        }
+        ObjectMapper mapper = mapper();
         SecurityScheme result = null;
 
         JsonNode node = jp.getCodec().readTree(jp);
@@ -88,5 +89,17 @@ public class SecuritySchemeDeserializer extends JsonDeserializer<SecurityScheme>
             return inNode.asText();
         }
         return null;
+    }
+
+    /**
+     * Returns the spec version this deserializer targets. "3.1 or later" semantics are
+     * shared by 3.2; subclasses override this to support newer versions.
+     */
+    protected SpecVersion specVersion() {
+        return openapi31 ? SpecVersion.V31 : SpecVersion.V30;
+    }
+
+    protected ObjectMapper mapper() {
+        return SpecVersionMappers.mapper(specVersion());
     }
 }
