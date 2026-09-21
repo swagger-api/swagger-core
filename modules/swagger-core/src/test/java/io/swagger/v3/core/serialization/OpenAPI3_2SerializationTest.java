@@ -520,4 +520,100 @@ public class OpenAPI3_2SerializationTest {
         assertEquals(filtered.get$self(), "https://example.com/openapi.yaml",
                 "SpecFilter must preserve $self");
     }
+
+    @Test
+    public void querystringParameterBinds32() throws Exception {
+        String doc = "openapi: 3.2.0\n" +
+                "info:\n" +
+                "  title: t\n" +
+                "  version: '1'\n" +
+                "paths:\n" +
+                "  /pets:\n" +
+                "    get:\n" +
+                "      parameters:\n" +
+                "        - name: queryString\n" +
+                "          in: querystring\n" +
+                "          content:\n" +
+                "            application/x-www-form-urlencoded:\n" +
+                "              schema:\n" +
+                "                type: object\n" +
+                "      responses:\n" +
+                "        '200':\n" +
+                "          description: ok\n";
+        OpenAPI readBack = Yaml32.mapper().readValue(doc, OpenAPI.class);
+        Parameter p = readBack.getPaths().get("/pets").getGet().getParameters().get(0);
+        assertTrue(p instanceof io.swagger.v3.oas.models.parameters.QueryStringParameter,
+                "in: querystring must bind to QueryStringParameter, got " + p.getClass());
+        assertEquals(p.getIn(), "querystring");
+        assertEquals(p.getName(), "queryString");
+        assertNotNull(p.getContent(), "querystring parameter must keep its content map");
+        MediaType mt = p.getContent().get("application/x-www-form-urlencoded");
+        assertNotNull(mt);
+        assertNotNull(mt.getSchema(), "media type schema must bind");
+        assertTrue(mt.getSchema().getTypes().contains("object"),
+                "schema types must contain 'object': " + mt.getSchema().getTypes());
+    }
+
+    @Test
+    public void querystringParameterRoundTrip32() throws Exception {
+        Parameter qs = new io.swagger.v3.oas.models.parameters.QueryStringParameter()
+                .name("queryString")
+                .content(new Content().addMediaType("application/x-www-form-urlencoded",
+                        new MediaType().schema(new Schema())));
+        String out = Json32.mapper().writeValueAsString(qs);
+        assertTrue(out.contains("\"in\":\"querystring\""), "must serialize in: querystring: " + out);
+        Parameter readBack = Json32.mapper().readValue(out, Parameter.class);
+        assertTrue(readBack instanceof io.swagger.v3.oas.models.parameters.QueryStringParameter);
+        assertEquals(readBack.getIn(), "querystring");
+        assertEquals(readBack.getName(), "queryString");
+        assertNotNull(readBack.getContent(), "round-trip must keep content");
+        assertNotNull(readBack.getContent().get("application/x-www-form-urlencoded").getSchema());
+    }
+
+    @Test
+    public void querystringNotBoundIn30And31() throws Exception {
+        String json = "{\"name\":\"queryString\",\"in\":\"querystring\"," +
+                "\"content\":{\"application/x-www-form-urlencoded\":{\"schema\":{\"type\":\"object\"}}}}";
+        assertNull(Yaml31.mapper().readValue(
+                "name: queryString\nin: querystring\ncontent:\n  application/x-www-form-urlencoded:\n    schema:\n      type: object\n",
+                Parameter.class), "3.1 must not bind in: querystring");
+        assertNull(Json.mapper().readValue(json, Parameter.class),
+                "3.0 must not bind in: querystring");
+    }
+
+    @Test
+    public void cookieStyleRoundTrip32() throws Exception {
+        Parameter cookie = new io.swagger.v3.oas.models.parameters.CookieParameter()
+                .name("sessionId")
+                .style(Parameter.StyleEnum.COOKIE);
+        String out = Json32.mapper().writeValueAsString(cookie);
+        assertTrue(out.contains("\"style\":\"cookie\""), "must serialize style: cookie: " + out);
+        Parameter readBack = Json32.mapper().readValue(out, Parameter.class);
+        assertEquals(readBack.getStyle(), Parameter.StyleEnum.COOKIE);
+    }
+
+    @Test
+    public void querystringAnnotationEnum() {
+        assertEquals(io.swagger.v3.oas.annotations.enums.ParameterIn.QUERYSTRING.toString(),
+                "querystring");
+    }
+
+    @Test
+    public void cookieStyleRejectedIn30And31() {
+        // style: cookie is a 3.2 addition; earlier versions must fail as they did
+        // when 'cookie' was an unknown enum value
+        String json = "{\"name\":\"sessionId\",\"in\":\"cookie\",\"style\":\"cookie\"}";
+        try {
+            Json.mapper().readValue(json, Parameter.class);
+            org.testng.Assert.fail("3.0 must reject style: cookie");
+        } catch (Exception expected) {
+            assertTrue(expected.getMessage().contains("cookie"), expected.getMessage());
+        }
+        try {
+            Json31.mapper().readValue(json, Parameter.class);
+            org.testng.Assert.fail("3.1 must reject style: cookie");
+        } catch (Exception expected) {
+            assertTrue(expected.getMessage().contains("cookie"), expected.getMessage());
+        }
+    }
 }

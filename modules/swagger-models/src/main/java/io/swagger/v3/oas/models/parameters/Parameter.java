@@ -35,7 +35,11 @@ public class Parameter {
         SIMPLE("simple"),
         SPACEDELIMITED("spaceDelimited"),
         PIPEDELIMITED("pipeDelimited"),
-        DEEPOBJECT("deepObject");
+        DEEPOBJECT("deepObject"),
+        /**
+         * @since 2.2.56 (OpenAPI 3.2)
+         */
+        COOKIE("cookie");
 
         private String value;
 

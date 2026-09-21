@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
@@ -13,6 +14,7 @@ import io.swagger.v3.oas.models.parameters.HeaderParameter;
 import io.swagger.v3.oas.models.parameters.Parameter;
 import io.swagger.v3.oas.models.parameters.PathParameter;
 import io.swagger.v3.oas.models.parameters.QueryParameter;
+import io.swagger.v3.oas.models.parameters.QueryStringParameter;
 
 import java.io.IOException;
 
@@ -55,9 +57,18 @@ public class ParameterDeserializer extends JsonDeserializer<Parameter> {
                 reader = mapper.readerFor(PathParameter.class);
             } else if ("cookie".equals(in)) {
                 reader = mapper.readerFor(CookieParameter.class);
+            } else if ("querystring".equals(in) && specVersion() == SpecVersion.V32) {
+                reader = mapper.readerFor(QueryStringParameter.class);
             }
             if (reader != null) {
                 result = reader.with(DeserializationFeature.READ_ENUMS_USING_TO_STRING).readValue(node);
+                if (result != null && result.getStyle() == Parameter.StyleEnum.COOKIE
+                        && specVersion() != SpecVersion.V32) {
+                    // 'cookie' parameter style was added in OpenAPI 3.2; reject it for
+                    // earlier versions to preserve the previous unknown-enum failure
+                    throw new JsonMappingException(jp,
+                            "Parameter style 'cookie' requires OpenAPI 3.2");
+                }
             }
         }
 
