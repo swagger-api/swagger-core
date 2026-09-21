@@ -1,6 +1,7 @@
 package io.swagger.v3.oas.models;
 
 import io.swagger.v3.oas.models.annotations.OpenAPI31;
+import io.swagger.v3.oas.models.annotations.OpenAPI32;
 import io.swagger.v3.oas.models.parameters.Parameter;
 import io.swagger.v3.oas.models.servers.Server;
 
@@ -29,6 +30,17 @@ public class PathItem {
     private Operation patch = null;
     private Operation trace = null;
     private Operation query = null;
+    /**
+     * Operations for HTTP methods other than the fixed fields (OpenAPI 3.2).
+     * Keys are HTTP method names in the letter case used on the wire; they are kept
+     * verbatim so they round-trip. Per the specification the map MUST NOT contain
+     * entries for methods covered by the fixed fields (get/put/post/delete/options/
+     * head/patch/trace/query); this is not enforced by the model itself.
+     *
+     * @since 2.2.56 (OpenAPI 3.2)
+     */
+    @OpenAPI32
+    private Map<String, Operation> additionalOperations = null;
     private List<Server> servers = null;
     private List<Parameter> parameters = null;
     private String $ref = null;
@@ -248,6 +260,37 @@ public class PathItem {
         return this;
     }
 
+    /**
+     * returns the additionalOperations property from a PathItem instance.
+     *
+     * @since 2.2.56 (OpenAPI 3.2)
+     * @return Map&lt;String, Operation&gt; additionalOperations
+     **/
+
+    @OpenAPI32
+    public Map<String, Operation> getAdditionalOperations() {
+        return additionalOperations;
+    }
+
+    @OpenAPI32
+    public void setAdditionalOperations(Map<String, Operation> additionalOperations) {
+        this.additionalOperations = additionalOperations;
+    }
+
+    @OpenAPI32
+    public PathItem additionalOperations(Map<String, Operation> additionalOperations) {
+        this.additionalOperations = additionalOperations;
+        return this;
+    }
+
+    public PathItem addAdditionalOperation(String method, Operation operation) {
+        if (this.additionalOperations == null) {
+            this.additionalOperations = new LinkedHashMap<>();
+        }
+        this.additionalOperations.put(method, operation);
+        return this;
+    }
+
     public List<Operation> readOperations() {
         List<Operation> allOperations = new ArrayList<>();
         if (this.get != null) {
@@ -276,6 +319,9 @@ public class PathItem {
         }
         if (this.query != null) {
             allOperations.add(this.query);
+        }
+        if (this.additionalOperations != null) {
+            allOperations.addAll(this.additionalOperations.values());
         }
 
         return allOperations;
@@ -507,6 +553,9 @@ public class PathItem {
         if (query != null ? !query.equals(pathItem.query) : pathItem.query != null) {
             return false;
         }
+        if (additionalOperations != null ? !additionalOperations.equals(pathItem.additionalOperations) : pathItem.additionalOperations != null) {
+            return false;
+        }
         if (servers != null ? !servers.equals(pathItem.servers) : pathItem.servers != null) {
             return false;
         }
@@ -533,6 +582,7 @@ public class PathItem {
         result = 31 * result + (patch != null ? patch.hashCode() : 0);
         result = 31 * result + (trace != null ? trace.hashCode() : 0);
         result = 31 * result + (query != null ? query.hashCode() : 0);
+        result = 31 * result + (additionalOperations != null ? additionalOperations.hashCode() : 0);
         result = 31 * result + (servers != null ? servers.hashCode() : 0);
         result = 31 * result + (parameters != null ? parameters.hashCode() : 0);
         result = 31 * result + ($ref != null ? $ref.hashCode() : 0);
@@ -555,6 +605,7 @@ public class PathItem {
         sb.append("    patch: ").append(toIndentedString(patch)).append("\n");
         sb.append("    trace: ").append(toIndentedString(trace)).append("\n");
         sb.append("    query: ").append(toIndentedString(query)).append("\n");
+        sb.append("    additionalOperations: ").append(toIndentedString(additionalOperations)).append("\n");
         sb.append("    servers: ").append(toIndentedString(servers)).append("\n");
         sb.append("    parameters: ").append(toIndentedString(parameters)).append("\n");
         sb.append("    $ref: ").append(toIndentedString($ref)).append("\n");

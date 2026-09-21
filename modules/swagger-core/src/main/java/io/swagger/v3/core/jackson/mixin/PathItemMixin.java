@@ -23,4 +23,7 @@ public abstract class PathItemMixin {
 
     @JsonIgnore
     public abstract Operation getQuery();
+
+    @JsonIgnore
+    public abstract Map<String, Operation> getAdditionalOperations();
 }

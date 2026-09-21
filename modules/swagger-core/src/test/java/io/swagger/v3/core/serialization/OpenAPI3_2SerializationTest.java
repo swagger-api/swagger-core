@@ -1,5 +1,6 @@
 package io.swagger.v3.core.serialization;
 
+import io.swagger.v3.core.filter.AbstractSpecFilter;
 import io.swagger.v3.core.filter.SpecFilter;
 import io.swagger.v3.core.filter.resources.NoOpOperationsFilter;
 import io.swagger.v3.core.util.Json;
@@ -32,6 +33,7 @@ import io.swagger.v3.oas.models.tags.Tag;
 import org.testng.annotations.Test;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.testng.Assert.assertEquals;
@@ -753,5 +755,186 @@ public class OpenAPI3_2SerializationTest {
                 "converter must keep the MediaType.encoding entry: " + out);
         assertTrue(tree.at("/encoding/named/encoding").isMissingNode(),
                 "converter must drop nested Encoding.encoding: " + out);
+    }
+
+    private PathItem buildAdditionalOpsPathItem() {
+        PathItem item = new PathItem().get(new Operation()
+                .operationId("getPets")
+                .responses(new ApiResponses().addApiResponse("200",
+                        new ApiResponse().description("ok"))));
+        item.addAdditionalOperation("PURGE", new Operation()
+                .operationId("purgePets")
+                .responses(new ApiResponses().addApiResponse("204",
+                        new ApiResponse().description("purged"))));
+        return item;
+    }
+
+    @Test
+    public void additionalOperationsSerialize32() throws Exception {
+        OpenAPI doc = buildDoc();
+        doc.getPaths().put("/pets", buildAdditionalOpsPathItem());
+        String out = Json32.mapper().writeValueAsString(doc);
+        assertTrue(out.contains("\"additionalOperations\""), "3.2 must emit additionalOperations: " + out);
+        // keys keep their original case per the spec (no lowercasing)
+        assertTrue(out.contains("\"PURGE\""), "method key must keep original case: " + out);
+        String yaml = Yaml32.mapper().writeValueAsString(doc);
+        assertTrue(yaml.contains("additionalOperations:"), "3.2 YAML must emit it: " + yaml);
+        assertTrue(yaml.contains("PURGE:"), "YAML key must keep original case: " + yaml);
+    }
+
+    @Test
+    public void additionalOperationsRoundTrip32() throws Exception {
+        OpenAPI doc = buildDoc();
+        doc.getPaths().put("/pets", buildAdditionalOpsPathItem());
+        String out = Json32.mapper().writeValueAsString(doc);
+        OpenAPI readBack = Json32.mapper().readValue(out, OpenAPI.class);
+        PathItem item = readBack.getPaths().get("/pets");
+        assertNotNull(item.getAdditionalOperations());
+        Operation purge = item.getAdditionalOperations().get("PURGE");
+        assertNotNull(purge, "PURGE key must survive round-trip with original case");
+        assertEquals(purge.getOperationId(), "purgePets");
+    }
+
+    @Test
+    public void additionalOperationsHiddenIn30And31() throws Exception {
+        OpenAPI doc = buildDoc();
+        doc.getPaths().put("/pets", buildAdditionalOpsPathItem());
+        String out30 = Json.mapper().writeValueAsString(doc);
+        assertFalse(out30.contains("additionalOperations"), "3.0 must not emit it: " + out30);
+        assertFalse(out30.contains("PURGE"), "3.0 must not leak the operation: " + out30);
+        String out31 = Json31.mapper().writeValueAsString(doc);
+        assertFalse(out31.contains("additionalOperations"), "3.1 must not emit it: " + out31);
+        assertFalse(out31.contains("PURGE"), "3.1 must not leak the operation: " + out31);
+    }
+
+    @Test
+    public void additionalOperationsNotBoundIn31() throws Exception {
+        String doc = "get:\n" +
+                "  operationId: getPets\n" +
+                "  responses:\n" +
+                "    '200':\n" +
+                "      description: ok\n" +
+                "additionalOperations:\n" +
+                "  PURGE:\n" +
+                "    operationId: purgePets\n" +
+                "    responses:\n" +
+                "      '204':\n" +
+                "        description: purged\n";
+        PathItem read31 = Yaml31.mapper().readValue(doc, PathItem.class);
+        assertNull(read31.getAdditionalOperations(), "3.1 must not bind additionalOperations");
+        PathItem read30 = io.swagger.v3.core.util.Yaml.mapper().readValue(doc, PathItem.class);
+        assertNull(read30.getAdditionalOperations(), "3.0 must not bind additionalOperations");
+    }
+
+    @Test
+    public void additionalOperationsInReadOperations() {
+        PathItem item = buildAdditionalOpsPathItem();
+        List<Operation> ops = item.readOperations();
+        assertEquals(ops.size(), 2, "readOperations must include additionalOperations values");
+        assertEquals(ops.get(1).getOperationId(), "purgePets");
+        // enum-keyed map stays limited to fixed methods
+        assertFalse(item.readOperationsMap().values().stream()
+                .anyMatch(o -> "purgePets".equals(o.getOperationId())),
+                "readOperationsMap cannot express non-enum methods");
+    }
+
+    @Test
+    public void additionalOperationsInWebhooks32() throws Exception {
+        // webhooks reuse PathItem; additionalOperations must work there too
+        String doc = "openapi: 3.2.0\n" +
+                "info:\n" +
+                "  title: t\n" +
+                "  version: '1'\n" +
+                "webhooks:\n" +
+                "  hook:\n" +
+                "    additionalOperations:\n" +
+                "      NOTIFY:\n" +
+                "        operationId: notifyHook\n" +
+                "        responses:\n" +
+                "          '200':\n" +
+                "            description: ok\n" +
+                "paths: {}\n";
+        OpenAPI readBack = Yaml32.mapper().readValue(doc, OpenAPI.class);
+        PathItem hook = readBack.getWebhooks().get("hook");
+        assertNotNull(hook.getAdditionalOperations());
+        assertEquals(hook.getAdditionalOperations().get("NOTIFY").getOperationId(), "notifyHook");
+    }
+
+    @Test
+    public void additionalOperationsDuplicateFixedMethodKeptLenient32() throws Exception {
+        // spec forbids keys duplicating fixed methods; the lenient model keeps the
+        // data and leaves enforcement to parser-side validation
+        String doc = "get:\n" +
+                "  operationId: getPets\n" +
+                "  responses:\n" +
+                "    '200':\n" +
+                "      description: ok\n" +
+                "additionalOperations:\n" +
+                "  get:\n" +
+                "    operationId: dupGet\n" +
+                "    responses:\n" +
+                "      '200':\n" +
+                "        description: dup\n";
+        PathItem readBack = Yaml32.mapper().readValue(doc, PathItem.class);
+        assertNotNull(readBack.getAdditionalOperations().get("get"),
+                "duplicate fixed-method key is retained (lenient); validation is parser-side");
+        assertEquals(readBack.getGet().getOperationId(), "getPets",
+                "fixed field wins for the fixed key");
+    }
+
+    @Test
+    public void additionalOperationsSurviveSpecFilter() {
+        OpenAPI doc = buildDoc();
+        doc.getPaths().put("/pets", buildAdditionalOpsPathItem());
+        OpenAPI filtered = new SpecFilter().filter(doc, new NoOpOperationsFilter(), null, null, null);
+        PathItem item = filtered.getPaths().get("/pets");
+        assertNotNull(item.getAdditionalOperations(), "SpecFilter must keep additionalOperations");
+        assertEquals(item.getAdditionalOperations().get("PURGE").getOperationId(), "purgePets");
+    }
+
+    @Test
+    public void additionalOperationsOnlyPathItemSurvivesSpecFilter() {
+        // a PathItem whose only operations are additional must not be dropped as empty
+        OpenAPI doc = buildDoc();
+        PathItem onlyAdditional = new PathItem();
+        onlyAdditional.addAdditionalOperation("PURGE", new Operation()
+                .operationId("purgePets")
+                .responses(new ApiResponses().addApiResponse("204",
+                        new ApiResponse().description("purged"))));
+        doc.getPaths().put("/purge", onlyAdditional);
+        OpenAPI filtered = new SpecFilter().filter(doc, new NoOpOperationsFilter(), null, null, null);
+        assertNotNull(filtered.getPaths().get("/purge"),
+                "path item with only additionalOperations must survive filtering");
+        assertNotNull(filtered.getPaths().get("/purge").getAdditionalOperations().get("PURGE"));
+    }
+
+    @Test
+    public void additionalOperationsSchemaRefsSurviveUnreferencedPruning() {
+        // a schema referenced only from an additional operation must not be pruned
+        OpenAPI doc = buildDoc();
+        Schema pet = new Schema().typesItem("object");
+        doc.setComponents(new Components().addSchemas("Pet", pet));
+
+        PathItem item = new PathItem();
+        Operation purge = new Operation()
+                .operationId("purgePets")
+                .responses(new ApiResponses().addApiResponse("200",
+                        new ApiResponse().description("ok")
+                                .content(new Content().addMediaType("application/json",
+                                        new MediaType().schema(new Schema()
+                                                .$ref("#/components/schemas/Pet"))))));
+        item.addAdditionalOperation("PURGE", purge);
+        doc.getPaths().put("/pets", item);
+
+        OpenAPI filtered = new SpecFilter().filter(doc, new AbstractSpecFilter() {
+            @Override
+            public boolean isRemovingUnreferencedDefinitions() {
+                return true;
+            }
+        }, null, null, null);
+        assertNotNull(filtered.getPaths().get("/pets").getAdditionalOperations().get("PURGE"),
+                "additional operation must survive");
+        assertNotNull(filtered.getComponents().getSchemas().get("Pet"),
+                "schema referenced only by an additional operation must not be pruned");
     }
 }

@@ -368,8 +368,9 @@ public class SpecFilter {
                 addContentSchemaRef(parameter.getContent(), referencedDefinitions);
             }
         }
-        Map<PathItem.HttpMethod, Operation> ops = pathItem.readOperationsMap();
-        for (Operation op : ops.values()) {
+        // readOperations() also covers additionalOperations (OpenAPI 3.2), whose
+        // method names are not needed for schema-reference collection
+        for (Operation op : pathItem.readOperations()) {
             if (op.getRequestBody() != null) {
                 addRequestBodySchemaRef(op.getRequestBody(), referencedDefinitions);
             }
@@ -560,6 +561,32 @@ public class SpecFilter {
                     tagFilter.getAllowedTags().addAll(op.getTags());
                 }
                 tagFilter.getFilteredTags().addAll(opTagsBeforeFilter);
+            }
+        }
+
+        if (filteredPathItem.getAdditionalOperations() != null) {
+            for (Map.Entry<String, Operation> entry : filteredPathItem.getAdditionalOperations().entrySet()) {
+                String method = entry.getKey();
+                Operation op = entry.getValue();
+                final List<String> opTagsBeforeFilter;
+                if (op.getTags() != null) {
+                    opTagsBeforeFilter = new ArrayList<>(op.getTags());
+                } else {
+                    opTagsBeforeFilter = new ArrayList<>();
+                }
+                op = filterOperation(filter, op, resourcePath, method, params, cookies, headers);
+                if (op != null) {
+                    clonedPathItem.addAdditionalOperation(method, op);
+                }
+                if (op == null) {
+                    tagFilter.getFilteredTags().addAll(opTagsBeforeFilter);
+                } else {
+                    if (op.getTags() != null) {
+                        opTagsBeforeFilter.removeAll(op.getTags());
+                        tagFilter.getAllowedTags().addAll(op.getTags());
+                    }
+                    tagFilter.getFilteredTags().addAll(opTagsBeforeFilter);
+                }
             }
         }
         return clonedPathItem;

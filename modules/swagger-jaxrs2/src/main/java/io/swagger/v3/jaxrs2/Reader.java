@@ -1548,29 +1548,11 @@ public class Reader implements OpenApiReader {
 
     private Set<String> extractOperationIdFromPathItem(PathItem path) {
         Set<String> ids = new HashSet<>();
-        if (path.getGet() != null && StringUtils.isNotBlank(path.getGet().getOperationId())) {
-            ids.add(path.getGet().getOperationId());
-        }
-        if (path.getPost() != null && StringUtils.isNotBlank(path.getPost().getOperationId())) {
-            ids.add(path.getPost().getOperationId());
-        }
-        if (path.getPut() != null && StringUtils.isNotBlank(path.getPut().getOperationId())) {
-            ids.add(path.getPut().getOperationId());
-        }
-        if (path.getDelete() != null && StringUtils.isNotBlank(path.getDelete().getOperationId())) {
-            ids.add(path.getDelete().getOperationId());
-        }
-        if (path.getOptions() != null && StringUtils.isNotBlank(path.getOptions().getOperationId())) {
-            ids.add(path.getOptions().getOperationId());
-        }
-        if (path.getHead() != null && StringUtils.isNotBlank(path.getHead().getOperationId())) {
-            ids.add(path.getHead().getOperationId());
-        }
-        if (path.getPatch() != null && StringUtils.isNotBlank(path.getPatch().getOperationId())) {
-            ids.add(path.getPatch().getOperationId());
-        }
-        if (path.getQuery() != null && StringUtils.isNotBlank(path.getQuery().getOperationId())) {
-            ids.add(path.getQuery().getOperationId());
+        // readOperations() covers every fixed method plus additionalOperations (3.2)
+        for (Operation operation : path.readOperations()) {
+            if (operation != null && StringUtils.isNotBlank(operation.getOperationId())) {
+                ids.add(operation.getOperationId());
+            }
         }
         return ids;
     }
