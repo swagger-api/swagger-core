@@ -1,5 +1,7 @@
 package io.swagger.v3.core.serialization;
 
+import io.swagger.v3.core.filter.SpecFilter;
+import io.swagger.v3.core.filter.resources.NoOpOperationsFilter;
 import io.swagger.v3.core.util.Json;
 import io.swagger.v3.core.util.Json31;
 import io.swagger.v3.core.util.Json32;
@@ -448,5 +450,74 @@ public class OpenAPI3_2SerializationTest {
 
         schema.setSpecVersion(SpecVersion.V30);
         assertFalse(schema.toString().contains("patternProperties:"), "V30 must not print 3.1 keywords");
+    }
+
+    @Test
+    public void selfSerializesIn32() throws Exception {
+        OpenAPI doc = buildDoc().$self("https://example.com/openapi.yaml");
+        String out = Json32.mapper().writeValueAsString(doc);
+        assertTrue(out.contains("\"$self\":\"https://example.com/openapi.yaml\""),
+                "3.2 JSON output should contain '$self': " + out);
+        String yaml = Yaml32.mapper().writeValueAsString(doc);
+        assertTrue(yaml.contains("$self: \"https://example.com/openapi.yaml\"") ||
+                        yaml.contains("$self: https://example.com/openapi.yaml"),
+                "3.2 YAML output should contain '$self': " + yaml);
+    }
+
+    @Test
+    public void selfHiddenIn30And31() throws Exception {
+        OpenAPI doc = buildDoc().$self("https://example.com/openapi.yaml");
+        String out30 = Json.mapper().writeValueAsString(doc);
+        assertFalse(out30.contains("$self"), "3.0 output must not contain '$self': " + out30);
+        String out31 = Json31.mapper().writeValueAsString(doc);
+        assertFalse(out31.contains("$self"), "3.1 output must not contain '$self': " + out31);
+        String out30Yaml = io.swagger.v3.core.util.Yaml.mapper().writeValueAsString(doc);
+        assertFalse(out30Yaml.contains("$self"), "3.0 YAML output must not contain '$self': " + out30Yaml);
+    }
+
+    @Test
+    public void selfRoundTrip32() throws Exception {
+        OpenAPI doc = buildDoc().$self("https://example.com/openapi.yaml");
+        String out = Json32.mapper().writeValueAsString(doc);
+        OpenAPI readBack = Json32.mapper().readValue(out, OpenAPI.class);
+        assertEquals(readBack.get$self(), "https://example.com/openapi.yaml");
+
+        String yaml = Yaml32.mapper().writeValueAsString(doc);
+        OpenAPI readBackYaml = Yaml32.mapper().readValue(yaml, OpenAPI.class);
+        assertEquals(readBackYaml.get$self(), "https://example.com/openapi.yaml");
+    }
+
+    @Test
+    public void selfIgnoredIn30And31Deserialization() throws Exception {
+        String doc = "openapi: 3.1.0\n" +
+                "$self: https://example.com/openapi.yaml\n" +
+                "info:\n" +
+                "  title: t\n" +
+                "  version: '1'\n" +
+                "paths: {}\n";
+        OpenAPI read31 = Yaml31.mapper().readValue(doc, OpenAPI.class);
+        assertNull(read31.get$self(), "3.1 mapper must not bind $self");
+
+        String doc30 = doc.replace("3.1.0", "3.0.3");
+        OpenAPI read30 = io.swagger.v3.core.util.Yaml.mapper().readValue(doc30, OpenAPI.class);
+        assertNull(read30.get$self(), "3.0 mapper must not bind $self");
+    }
+
+    @Test
+    public void selfHiddenInConverterMapper() throws Exception {
+        // the V30-style converter mapper shares OpenAPIMixin and must not emit $self either
+        OpenAPI doc = buildDoc().$self("https://example.com/openapi.yaml");
+        String out = io.swagger.v3.core.util.ObjectMapperFactory.createJsonConverter()
+                .writeValueAsString(doc);
+        assertFalse(out.contains("$self"), "converter mapper must not emit '$self': " + out);
+    }
+
+    @Test
+    public void selfSurvivesSpecFilter() {
+        // SpecFilter copies root fields onto a fresh OpenAPI; $self must be carried over
+        OpenAPI doc = buildDoc().$self("https://example.com/openapi.yaml");
+        OpenAPI filtered = new SpecFilter().filter(doc, new NoOpOperationsFilter(), null, null, null);
+        assertEquals(filtered.get$self(), "https://example.com/openapi.yaml",
+                "SpecFilter must preserve $self");
     }
 }

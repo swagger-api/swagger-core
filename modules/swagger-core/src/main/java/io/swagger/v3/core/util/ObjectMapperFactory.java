@@ -35,6 +35,7 @@ import io.swagger.v3.core.jackson.mixin.MediaTypeMixin;
 import io.swagger.v3.core.jackson.mixin.OAuthFlow30Mixin;
 import io.swagger.v3.core.jackson.mixin.OAuthFlows30Mixin;
 import io.swagger.v3.core.jackson.mixin.OpenAPI31Mixin;
+import io.swagger.v3.core.jackson.mixin.OpenAPI32Mixin;
 import io.swagger.v3.core.jackson.mixin.OpenAPIMixin;
 import io.swagger.v3.core.jackson.mixin.OperationMixin;
 import io.swagger.v3.core.jackson.mixin.PathItem32Mixin;
@@ -284,10 +285,10 @@ public class ObjectMapperFactory {
                 sourceMixins.put(Info.class, ExtensionsMixin.class);
                 sourceMixins.put(Schema.class, Schema31Mixin.class);
                 sourceMixins.put(Components.class, Components31Mixin.class);
-                sourceMixins.put(OpenAPI.class, OpenAPI31Mixin.class);
                 sourceMixins.put(DateSchema.class, DateSchemaMixin.class);
                 sourceMixins.put(Discriminator.class, Discriminator31Mixin.class);
                 if (specVersion == SpecVersion.V31) {
+                    sourceMixins.put(OpenAPI.class, OpenAPI31Mixin.class);
                     // hide fixed fields introduced by OpenAPI 3.2
                     sourceMixins.put(Server.class, Server30Mixin.class);
                     sourceMixins.put(Tag.class, Tag30Mixin.class);
@@ -300,6 +301,8 @@ public class ObjectMapperFactory {
                     sourceMixins.put(XML.class, XML30Mixin.class);
                 }
                 if (specVersion == SpecVersion.V32) {
+                    // '$self' is a fixed OpenAPI field as of 3.2, so it is not ignored here
+                    sourceMixins.put(OpenAPI.class, OpenAPI32Mixin.class);
                     // 'query' is a fixed Path Item field as of 3.2, so it is not ignored here
                     sourceMixins.put(PathItem.class, PathItem32Mixin.class);
                     // 'defaultMapping' is a fixed Discriminator field as of 3.2
