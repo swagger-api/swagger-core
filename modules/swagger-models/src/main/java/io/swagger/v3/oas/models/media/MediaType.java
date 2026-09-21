@@ -1,6 +1,7 @@
 package io.swagger.v3.oas.models.media;
 
 import io.swagger.v3.oas.models.annotations.OpenAPI31;
+import io.swagger.v3.oas.models.annotations.OpenAPI32;
 import io.swagger.v3.oas.models.examples.Example;
 
 import java.util.LinkedHashMap;
@@ -16,6 +17,8 @@ import java.util.Objects;
 
 public class MediaType {
     private Schema schema = null;
+    @OpenAPI32
+    private Schema itemSchema = null;
     private Map<String, Example> examples = null;
     private Object example = null;
     private Map<String, Encoding> encoding = null;
@@ -39,6 +42,29 @@ public class MediaType {
 
     public MediaType schema(Schema schema) {
         this.schema = schema;
+        return this;
+    }
+
+    /**
+     * returns the itemSchema property from a MediaType instance.
+     *
+     * @since 2.2.56 (OpenAPI 3.2)
+     * @return Schema itemSchema
+     **/
+
+    @OpenAPI32
+    public Schema getItemSchema() {
+        return itemSchema;
+    }
+
+    @OpenAPI32
+    public void setItemSchema(Schema itemSchema) {
+        this.itemSchema = itemSchema;
+    }
+
+    @OpenAPI32
+    public MediaType itemSchema(Schema itemSchema) {
+        this.itemSchema = itemSchema;
         return this;
     }
 
@@ -141,6 +167,7 @@ public class MediaType {
         }
         MediaType mediaType = (MediaType) o;
         return Objects.equals(this.schema, mediaType.schema) &&
+                Objects.equals(this.itemSchema, mediaType.itemSchema) &&
                 Objects.equals(this.examples, mediaType.examples) &&
                 Objects.equals(this.example, mediaType.example) &&
                 Objects.equals(this.encoding, mediaType.encoding) &&
@@ -149,7 +176,7 @@ public class MediaType {
 
     @Override
     public int hashCode() {
-        return Objects.hash(schema, examples, example, encoding, extensions);
+        return Objects.hash(schema, itemSchema, examples, example, encoding, extensions);
     }
 
     public java.util.Map<String, Object> getExtensions() {
@@ -189,6 +216,7 @@ public class MediaType {
         sb.append("class MediaType {\n");
 
         sb.append("    schema: ").append(toIndentedString(schema)).append("\n");
+        sb.append("    itemSchema: ").append(toIndentedString(itemSchema)).append("\n");
         sb.append("    examples: ").append(toIndentedString(examples)).append("\n");
         sb.append("    example: ").append(toIndentedString(example)).append("\n");
         sb.append("    encoding: ").append(toIndentedString(encoding)).append("\n");

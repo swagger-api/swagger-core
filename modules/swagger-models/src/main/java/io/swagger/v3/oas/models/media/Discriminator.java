@@ -1,6 +1,7 @@
 package io.swagger.v3.oas.models.media;
 
 import io.swagger.v3.oas.models.annotations.OpenAPI31;
+import io.swagger.v3.oas.models.annotations.OpenAPI32;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -8,6 +9,11 @@ import java.util.Objects;
 
 public class Discriminator {
     private String propertyName;
+    /**
+     * @since 2.2.56 (OpenAPI 3.2)
+     */
+    @OpenAPI32
+    private String defaultMapping;
     private Map<String, String> mapping;
 
     /**
@@ -27,6 +33,28 @@ public class Discriminator {
 
     public void setPropertyName(String propertyName) {
         this.propertyName = propertyName;
+    }
+
+    /**
+     * returns the defaultMapping property from a Discriminator instance.
+     *
+     * @since 2.2.56 (OpenAPI 3.2)
+     * @return String defaultMapping
+     **/
+    @OpenAPI32
+    public String getDefaultMapping() {
+        return defaultMapping;
+    }
+
+    @OpenAPI32
+    public void setDefaultMapping(String defaultMapping) {
+        this.defaultMapping = defaultMapping;
+    }
+
+    @OpenAPI32
+    public Discriminator defaultMapping(String defaultMapping) {
+        this.defaultMapping = defaultMapping;
+        return this;
     }
 
     public Discriminator mapping(String name, String value) {
@@ -94,6 +122,9 @@ public class Discriminator {
         if (propertyName != null ? !propertyName.equals(that.propertyName) : that.propertyName != null) {
             return false;
         }
+        if (defaultMapping != null ? !defaultMapping.equals(that.defaultMapping) : that.defaultMapping != null) {
+            return false;
+        }
         if (extensions != null ? !extensions.equals(that.extensions) : that.extensions != null) {
             return false;
         }
@@ -103,13 +134,14 @@ public class Discriminator {
 
     @Override
     public int hashCode() {
-        return Objects.hash(propertyName, mapping, extensions);
+        return Objects.hash(propertyName, defaultMapping, mapping, extensions);
     }
 
     @Override
     public String toString() {
         return "Discriminator{" +
                 "propertyName='" + propertyName + '\'' +
+                ", defaultMapping='" + defaultMapping + '\'' +
                 ", mapping=" + mapping +
                 ", extensions=" + extensions +
                 '}';

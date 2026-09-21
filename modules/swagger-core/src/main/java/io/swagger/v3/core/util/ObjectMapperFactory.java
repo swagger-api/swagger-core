@@ -18,16 +18,22 @@ import io.swagger.v3.core.jackson.ExampleSerializer;
 import io.swagger.v3.core.jackson.Schema31Serializer;
 import io.swagger.v3.core.jackson.MediaTypeSerializer;
 import io.swagger.v3.core.jackson.SchemaSerializer;
+import io.swagger.v3.core.jackson.mixin.ApiResponse30Mixin;
 import io.swagger.v3.core.jackson.mixin.Components31Mixin;
 import io.swagger.v3.core.jackson.mixin.ComponentsMixin;
 import io.swagger.v3.core.jackson.mixin.DateSchemaMixin;
 import io.swagger.v3.core.jackson.mixin.Discriminator31Mixin;
+import io.swagger.v3.core.jackson.mixin.Discriminator32Mixin;
 import io.swagger.v3.core.jackson.mixin.DiscriminatorMixin;
+import io.swagger.v3.core.jackson.mixin.Example30Mixin;
 import io.swagger.v3.core.jackson.mixin.ExampleMixin;
 import io.swagger.v3.core.jackson.mixin.ExtensionsMixin;
 import io.swagger.v3.core.jackson.mixin.InfoMixin;
 import io.swagger.v3.core.jackson.mixin.LicenseMixin;
+import io.swagger.v3.core.jackson.mixin.MediaType30Mixin;
 import io.swagger.v3.core.jackson.mixin.MediaTypeMixin;
+import io.swagger.v3.core.jackson.mixin.OAuthFlow30Mixin;
+import io.swagger.v3.core.jackson.mixin.OAuthFlows30Mixin;
 import io.swagger.v3.core.jackson.mixin.OpenAPI31Mixin;
 import io.swagger.v3.core.jackson.mixin.OpenAPIMixin;
 import io.swagger.v3.core.jackson.mixin.OperationMixin;
@@ -36,6 +42,10 @@ import io.swagger.v3.core.jackson.mixin.PathItemMixin;
 import io.swagger.v3.core.jackson.mixin.Schema31Mixin;
 import io.swagger.v3.core.jackson.mixin.SchemaConverterMixin;
 import io.swagger.v3.core.jackson.mixin.SchemaMixin;
+import io.swagger.v3.core.jackson.mixin.SecurityScheme30Mixin;
+import io.swagger.v3.core.jackson.mixin.Server30Mixin;
+import io.swagger.v3.core.jackson.mixin.Tag30Mixin;
+import io.swagger.v3.core.jackson.mixin.XML30Mixin;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.ExternalDocumentation;
 import io.swagger.v3.oas.models.OpenAPI;
@@ -169,7 +179,7 @@ public class ObjectMapperFactory {
                                 } else if (MediaType.class.isAssignableFrom(desc.getBeanClass())) {
                                     return new MediaTypeSerializer((JsonSerializer<Object>) serializer);
                                 } else if (Example.class.isAssignableFrom(desc.getBeanClass())) {
-                                    return new ExampleSerializer((JsonSerializer<Object>) serializer);
+                                    return new ExampleSerializer((JsonSerializer<Object>) serializer, specVersion);
                                 }
                                 return serializer;
                             }
@@ -192,7 +202,7 @@ public class ObjectMapperFactory {
                                 } else if (MediaType.class.isAssignableFrom(desc.getBeanClass())) {
                                     return new MediaTypeSerializer((JsonSerializer<Object>) serializer);
                                 } else if (Example.class.isAssignableFrom(desc.getBeanClass())) {
-                                    return new ExampleSerializer((JsonSerializer<Object>) serializer);
+                                    return new ExampleSerializer((JsonSerializer<Object>) serializer, specVersion);
                                 }
                                 return serializer;
                             }
@@ -258,6 +268,16 @@ public class ObjectMapperFactory {
                 sourceMixins.put(License.class, LicenseMixin.class);
                 sourceMixins.put(OpenAPI.class, OpenAPIMixin.class);
                 sourceMixins.put(Discriminator.class, DiscriminatorMixin.class);
+                // hide fixed fields introduced by OpenAPI 3.2
+                sourceMixins.put(Server.class, Server30Mixin.class);
+                sourceMixins.put(Tag.class, Tag30Mixin.class);
+                sourceMixins.put(ApiResponse.class, ApiResponse30Mixin.class);
+                sourceMixins.put(Example.class, Example30Mixin.class);
+                sourceMixins.put(MediaType.class, MediaType30Mixin.class);
+                sourceMixins.put(SecurityScheme.class, SecurityScheme30Mixin.class);
+                sourceMixins.put(OAuthFlows.class, OAuthFlows30Mixin.class);
+                sourceMixins.put(OAuthFlow.class, OAuthFlow30Mixin.class);
+                sourceMixins.put(XML.class, XML30Mixin.class);
                 break;
             case V31:
             case V32:
@@ -267,9 +287,23 @@ public class ObjectMapperFactory {
                 sourceMixins.put(OpenAPI.class, OpenAPI31Mixin.class);
                 sourceMixins.put(DateSchema.class, DateSchemaMixin.class);
                 sourceMixins.put(Discriminator.class, Discriminator31Mixin.class);
+                if (specVersion == SpecVersion.V31) {
+                    // hide fixed fields introduced by OpenAPI 3.2
+                    sourceMixins.put(Server.class, Server30Mixin.class);
+                    sourceMixins.put(Tag.class, Tag30Mixin.class);
+                    sourceMixins.put(ApiResponse.class, ApiResponse30Mixin.class);
+                    sourceMixins.put(Example.class, Example30Mixin.class);
+                    sourceMixins.put(MediaType.class, MediaType30Mixin.class);
+                    sourceMixins.put(SecurityScheme.class, SecurityScheme30Mixin.class);
+                    sourceMixins.put(OAuthFlows.class, OAuthFlows30Mixin.class);
+                    sourceMixins.put(OAuthFlow.class, OAuthFlow30Mixin.class);
+                    sourceMixins.put(XML.class, XML30Mixin.class);
+                }
                 if (specVersion == SpecVersion.V32) {
                     // 'query' is a fixed Path Item field as of 3.2, so it is not ignored here
                     sourceMixins.put(PathItem.class, PathItem32Mixin.class);
+                    // 'defaultMapping' is a fixed Discriminator field as of 3.2
+                    sourceMixins.put(Discriminator.class, Discriminator32Mixin.class);
                 }
                 break;
             default:
@@ -299,22 +333,23 @@ public class ObjectMapperFactory {
         Map<Class<?>, Class<?>> sourceMixins = new LinkedHashMap<>();
 
         sourceMixins.put(ApiResponses.class, ExtensionsMixin.class);
-        sourceMixins.put(ApiResponse.class, ExtensionsMixin.class);
+        sourceMixins.put(ApiResponse.class, ApiResponse30Mixin.class);
         sourceMixins.put(Callback.class, ExtensionsMixin.class);
         sourceMixins.put(Components.class, ComponentsMixin.class);
         sourceMixins.put(Contact.class, ExtensionsMixin.class);
+        sourceMixins.put(Discriminator.class, DiscriminatorMixin.class);
         sourceMixins.put(Encoding.class, ExtensionsMixin.class);
         sourceMixins.put(EncodingProperty.class, ExtensionsMixin.class);
-        sourceMixins.put(Example.class, ExampleMixin.class);
+        sourceMixins.put(Example.class, Example30Mixin.class);
         sourceMixins.put(ExternalDocumentation.class, ExtensionsMixin.class);
         sourceMixins.put(Header.class, ExtensionsMixin.class);
         sourceMixins.put(Info.class, ExtensionsMixin.class);
         sourceMixins.put(License.class, ExtensionsMixin.class);
         sourceMixins.put(Link.class, ExtensionsMixin.class);
         sourceMixins.put(LinkParameter.class, ExtensionsMixin.class);
-        sourceMixins.put(MediaType.class, MediaTypeMixin.class);
-        sourceMixins.put(OAuthFlow.class, ExtensionsMixin.class);
-        sourceMixins.put(OAuthFlows.class, ExtensionsMixin.class);
+        sourceMixins.put(MediaType.class, MediaType30Mixin.class);
+        sourceMixins.put(OAuthFlow.class, OAuthFlow30Mixin.class);
+        sourceMixins.put(OAuthFlows.class, OAuthFlows30Mixin.class);
         sourceMixins.put(OpenAPI.class, OpenAPIMixin.class);
         sourceMixins.put(Operation.class, OperationMixin.class);
         sourceMixins.put(Parameter.class, ExtensionsMixin.class);
@@ -322,12 +357,12 @@ public class ObjectMapperFactory {
         sourceMixins.put(Paths.class, ExtensionsMixin.class);
         sourceMixins.put(RequestBody.class, ExtensionsMixin.class);
         sourceMixins.put(Scopes.class, ExtensionsMixin.class);
-        sourceMixins.put(SecurityScheme.class, ExtensionsMixin.class);
-        sourceMixins.put(Server.class, ExtensionsMixin.class);
+        sourceMixins.put(SecurityScheme.class, SecurityScheme30Mixin.class);
+        sourceMixins.put(Server.class, Server30Mixin.class);
         sourceMixins.put(ServerVariable.class, ExtensionsMixin.class);
         sourceMixins.put(ServerVariables.class, ExtensionsMixin.class);
-        sourceMixins.put(Tag.class, ExtensionsMixin.class);
-        sourceMixins.put(XML.class, ExtensionsMixin.class);
+        sourceMixins.put(Tag.class, Tag30Mixin.class);
+        sourceMixins.put(XML.class, XML30Mixin.class);
 
         sourceMixins.put(Schema.class, SchemaConverterMixin.class);
         mapper.setMixIns(sourceMixins);
