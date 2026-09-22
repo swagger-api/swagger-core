@@ -4,7 +4,6 @@ import tools.jackson.core.Version;
 import tools.jackson.databind.AnnotationIntrospector;
 import tools.jackson.databind.BeanDescription;
 import tools.jackson.databind.JavaType;
-import tools.jackson.databind.MapperFeature;
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.PropertyName;
 import tools.jackson.databind.cfg.MapperBuilder;
@@ -43,8 +42,7 @@ public abstract class AbstractModelConverter implements ModelConverter {
                     public void setupModule(SetupContext context) {
                         context.insertAnnotationIntrospector(new SwaggerAnnotationIntrospector());
                     }
-                })
-                .configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY, false);
+                });
         AccessorNamingStrategy.Provider currentNaming =
                 mapper.serializationConfig().getAccessorNaming();
         if (currentNaming.getClass() == DefaultAccessorNamingStrategy.Provider.class) {
