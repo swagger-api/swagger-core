@@ -17,6 +17,7 @@ Key changes:
 - **Jakarta only** — `javax.*` namespace removed; only `jakarta.*` is supported
 - **SnakeYAML removed** — replaced by `org.snakeyaml:snakeyaml-engine` via Jackson
 - **ObjectMapperProcessor API** — method signatures changed to return `ObjectMapper`
+- **Java Records built in** — native Record support no longer requires the separate `swagger-java17-support` module
 
 Swagger Core 3.0 contains backward-incompatible changes.
 If you are upgrading from Swagger Core 2.x, see the [Migration Guide](MIGRATION.md).
@@ -72,6 +73,9 @@ Map<String, Schema> schemas = ModelConverters.getInstance().readAll(MyModel.clas
 ```
 
 See the [wiki](https://github.com/swagger-api/swagger-core/wiki) for full integration guides.
+> **Note:** The wiki currently documents Swagger Core 2.x integration patterns.
+> Core concepts (JAX-RS scanner setup, configuration properties, context IDs) apply to 3.0,
+> but dependency coordinates and namespace references reflect the 2.x versions.
 
 ## Maven BOM
 

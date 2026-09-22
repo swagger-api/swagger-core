@@ -44,12 +44,12 @@ to `swagger` [configuration property](https://github.com/swagger-api/swagger-cor
         <dependency>
             <groupId>jakarta.ws.rs</groupId>
             <artifactId>jakarta.ws.rs-api</artifactId>
-            <version>2.1.6</version>
+            <version>3.1.0</version>
         </dependency>
         <dependency>
             <groupId>jakarta.servlet</groupId>
             <artifactId>jakarta.servlet-api</artifactId>
-            <version>4.0.4</version>
+            <version>6.0.0</version>
         </dependency>
     </dependencies>
 </project>
