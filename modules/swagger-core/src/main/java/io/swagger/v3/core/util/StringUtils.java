@@ -46,7 +46,8 @@ public final class StringUtils {
     /**
      * @return the trimmed string, or null if the string is null or blank
      */
-if (str == null) {
+    public static String trimToNull(String str) {
+        if (str == null) {
             return null;
         }
         String trimmed = str.trim();
@@ -64,7 +65,7 @@ if (str == null) {
      * @return the string with prefix prepended if not already present, null-safe
      */
     public static String prependIfMissing(String str, String prefix) {
-return str == null || str.isEmpty() || prefix == null || prefix.isEmpty() || str.startsWith(prefix) ? str : prefix + str;
+        return str == null || str.isEmpty() || prefix == null || prefix.isEmpty() || str.startsWith(prefix) ? str : prefix + str;
     }
 
     /**
