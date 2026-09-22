@@ -1,6 +1,7 @@
 package io.swagger.v3.oas.models.media;
 
 import io.swagger.v3.oas.models.annotations.OpenAPI31;
+import io.swagger.v3.oas.models.annotations.OpenAPI32;
 
 import java.util.Objects;
 
@@ -15,6 +16,8 @@ public class XML {
     private String name = null;
     private String namespace = null;
     private String prefix = null;
+    @OpenAPI32
+    private String nodeType = null;
     private Boolean attribute = null;
     private Boolean wrapped = null;
     private java.util.Map<String, Object> extensions = null;
@@ -77,7 +80,35 @@ public class XML {
     }
 
     /**
+     * returns the nodeType property from a XML instance.
+     * One of {@code element}, {@code attribute}, {@code text}, {@code cdata},
+     * {@code none}. Mutually exclusive with the deprecated {@code attribute} and
+     * {@code wrapped} fields in 3.2 documents.
+     *
+     * @since 2.2.56 (OpenAPI 3.2)
+     * @return String nodeType
+     **/
+
+    @OpenAPI32
+    public String getNodeType() {
+        return nodeType;
+    }
+
+    @OpenAPI32
+    public void setNodeType(String nodeType) {
+        this.nodeType = nodeType;
+    }
+
+    @OpenAPI32
+    public XML nodeType(String nodeType) {
+        this.nodeType = nodeType;
+        return this;
+    }
+
+    /**
      * returns the attribute property from a XML instance.
+     * Deprecated in OpenAPI 3.2 documents in favor of {@code nodeType}; cannot be
+     * used together with {@code nodeType} there. Remains valid for 3.0/3.1 documents.
      *
      * @return Boolean attribute
      **/
@@ -97,6 +128,8 @@ public class XML {
 
     /**
      * returns the wrapped property from a XML instance.
+     * Deprecated in OpenAPI 3.2 documents in favor of {@code nodeType}; cannot be
+     * used together with {@code nodeType} there. Remains valid for 3.0/3.1 documents.
      *
      * @return Boolean wrapped
      **/
@@ -126,6 +159,7 @@ public class XML {
         return Objects.equals(this.name, XML.name) &&
                 Objects.equals(this.namespace, XML.namespace) &&
                 Objects.equals(this.prefix, XML.prefix) &&
+                Objects.equals(this.nodeType, XML.nodeType) &&
                 Objects.equals(this.attribute, XML.attribute) &&
                 Objects.equals(this.wrapped, XML.wrapped) &&
                 Objects.equals(this.extensions, XML.extensions);
@@ -133,7 +167,7 @@ public class XML {
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, namespace, prefix, attribute, wrapped, extensions);
+        return Objects.hash(name, namespace, prefix, nodeType, attribute, wrapped, extensions);
     }
 
     public java.util.Map<String, Object> getExtensions() {
@@ -175,6 +209,7 @@ public class XML {
         sb.append("    name: ").append(toIndentedString(name)).append("\n");
         sb.append("    namespace: ").append(toIndentedString(namespace)).append("\n");
         sb.append("    prefix: ").append(toIndentedString(prefix)).append("\n");
+        sb.append("    nodeType: ").append(toIndentedString(nodeType)).append("\n");
         sb.append("    attribute: ").append(toIndentedString(attribute)).append("\n");
         sb.append("    wrapped: ").append(toIndentedString(wrapped)).append("\n");
         sb.append("}");

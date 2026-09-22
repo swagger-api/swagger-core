@@ -17,6 +17,12 @@ public abstract class ExampleMixin {
     @JsonInclude(value = JsonInclude.Include.NON_NULL, content = JsonInclude.Include.ALWAYS)
     public abstract Object getValue();
 
+    @JsonInclude(value = JsonInclude.Include.NON_NULL, content = JsonInclude.Include.ALWAYS)
+    public abstract Object getDataValue();
+
     @JsonIgnore
     public abstract boolean getValueSetFlag();
+
+    @JsonIgnore
+    public abstract boolean getDataValueSetFlag();
 }

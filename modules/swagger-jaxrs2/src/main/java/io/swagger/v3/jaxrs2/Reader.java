@@ -68,6 +68,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -99,6 +100,7 @@ public class Reader implements OpenApiReader {
     private static final String TRACE_METHOD = "trace";
     private static final String HEAD_METHOD = "head";
     private static final String OPTIONS_METHOD = "options";
+    private static final String QUERY_METHOD = "query";
 
     public Reader() {
         this(new OpenAPI(), new Paths(), new LinkedHashSet<>(), new Components());
@@ -423,10 +425,10 @@ public class Reader implements OpenApiReader {
         final List<Parameter> globalParameters = new ArrayList<>();
 
         // look for constructor-level annotated properties
-        globalParameters.addAll(ReaderUtils.collectConstructorParameters(cls, components, classConsumes, null, config.getSchemaResolution(), openapi31));
+        globalParameters.addAll(ReaderUtils.collectConstructorParameters(cls, components, classConsumes, null, config.getSchemaResolution(), openapi31, config.toConfiguration()));
 
         // look for field-level annotated properties
-        globalParameters.addAll(ReaderUtils.collectFieldParameters(cls, components, classConsumes, null));
+        globalParameters.addAll(ReaderUtils.collectFieldParameters(cls, components, classConsumes, null, config.toConfiguration()));
 
         // Make sure that the class methods are sorted for deterministic order
         // See https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html#getMethods--
@@ -1372,7 +1374,9 @@ public class Reader implements OpenApiReader {
     }
 
     private void setPathItemOperation(PathItem pathItemObject, String method, Operation operation) {
-        switch (method) {
+        // fixed operation fields are matched case-insensitively; anything else is a
+        // custom method kept in additionalOperations with its original case (3.2)
+        switch (method.toLowerCase(Locale.ENGLISH)) {
             case POST_METHOD:
                 pathItemObject.post(operation);
                 break;
@@ -1397,8 +1401,11 @@ public class Reader implements OpenApiReader {
             case OPTIONS_METHOD:
                 pathItemObject.options(operation);
                 break;
+            case QUERY_METHOD:
+                pathItemObject.query(operation);
+                break;
             default:
-                // Do nothing here
+                pathItemObject.addAdditionalOperation(method, operation);
                 break;
         }
     }
@@ -1544,26 +1551,11 @@ public class Reader implements OpenApiReader {
 
     private Set<String> extractOperationIdFromPathItem(PathItem path) {
         Set<String> ids = new HashSet<>();
-        if (path.getGet() != null && StringUtils.isNotBlank(path.getGet().getOperationId())) {
-            ids.add(path.getGet().getOperationId());
-        }
-        if (path.getPost() != null && StringUtils.isNotBlank(path.getPost().getOperationId())) {
-            ids.add(path.getPost().getOperationId());
-        }
-        if (path.getPut() != null && StringUtils.isNotBlank(path.getPut().getOperationId())) {
-            ids.add(path.getPut().getOperationId());
-        }
-        if (path.getDelete() != null && StringUtils.isNotBlank(path.getDelete().getOperationId())) {
-            ids.add(path.getDelete().getOperationId());
-        }
-        if (path.getOptions() != null && StringUtils.isNotBlank(path.getOptions().getOperationId())) {
-            ids.add(path.getOptions().getOperationId());
-        }
-        if (path.getHead() != null && StringUtils.isNotBlank(path.getHead().getOperationId())) {
-            ids.add(path.getHead().getOperationId());
-        }
-        if (path.getPatch() != null && StringUtils.isNotBlank(path.getPatch().getOperationId())) {
-            ids.add(path.getPatch().getOperationId());
+        // readOperations() covers every fixed method plus additionalOperations (3.2)
+        for (Operation operation : path.readOperations()) {
+            if (operation != null && StringUtils.isNotBlank(operation.getOperationId())) {
+                ids.add(operation.getOperationId());
+            }
         }
         return ids;
     }
@@ -1603,6 +1595,9 @@ public class Reader implements OpenApiReader {
             return false;
         }
         if (components.getPathItems() != null && !components.getPathItems().isEmpty()) {
+            return false;
+        }
+        if (components.getMediaTypes() != null && !components.getMediaTypes().isEmpty()) {
             return false;
         }
 

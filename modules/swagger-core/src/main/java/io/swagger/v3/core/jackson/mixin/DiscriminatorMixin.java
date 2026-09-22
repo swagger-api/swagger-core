@@ -8,4 +8,7 @@ public abstract class DiscriminatorMixin {
 
     @JsonIgnore
     public abstract Map<String, Object> getExtensions();
+
+    @JsonIgnore
+    public abstract String getDefaultMapping();
 }

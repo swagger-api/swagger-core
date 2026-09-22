@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import io.swagger.v3.core.jackson.CallbackSerializer;
 import io.swagger.v3.oas.models.PathItem;
 import io.swagger.v3.oas.models.callbacks.Callback;
+import io.swagger.v3.oas.models.media.MediaType;
 
 import java.util.Map;
 
@@ -23,5 +24,9 @@ public abstract class ComponentsMixin {
 
     @JsonIgnore
     public abstract Map<String, PathItem> getPathItems();
+
+    // 'mediaTypes' is a fixed Components field only as of OpenAPI 3.2
+    @JsonIgnore
+    public abstract Map<String, MediaType> getMediaTypes();
 
 }

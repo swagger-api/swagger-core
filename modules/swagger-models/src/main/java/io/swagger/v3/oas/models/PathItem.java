@@ -1,6 +1,7 @@
 package io.swagger.v3.oas.models;
 
 import io.swagger.v3.oas.models.annotations.OpenAPI31;
+import io.swagger.v3.oas.models.annotations.OpenAPI32;
 import io.swagger.v3.oas.models.parameters.Parameter;
 import io.swagger.v3.oas.models.servers.Server;
 
@@ -14,6 +15,7 @@ import java.util.Map;
  *
  * @see <a href="https://github.com/OAI/OpenAPI-Specification/blob/3.0.4/versions/3.0.4.md#path-item-object">PathItem (OpenAPI 3.0 specification)</a>
  * @see <a href="https://github.com/OAI/OpenAPI-Specification/blob/3.1.1/versions/3.1.1.md#path-item-object">PathItem (OpenAPI 3.1 specification)</a>
+ * @see <a href="https://github.com/OAI/OpenAPI-Specification/blob/3.2.0/versions/3.2.0.md#path-item-object">PathItem (OpenAPI 3.2 specification)</a>
  */
 
 public class PathItem {
@@ -27,6 +29,18 @@ public class PathItem {
     private Operation head = null;
     private Operation patch = null;
     private Operation trace = null;
+    private Operation query = null;
+    /**
+     * Operations for HTTP methods other than the fixed fields (OpenAPI 3.2).
+     * Keys are HTTP method names in the letter case used on the wire; they are kept
+     * verbatim so they round-trip. Per the specification the map MUST NOT contain
+     * entries for methods covered by the fixed fields (get/put/post/delete/options/
+     * head/patch/trace/query); this is not enforced by the model itself.
+     *
+     * @since 2.2.56 (OpenAPI 3.2)
+     */
+    @OpenAPI32
+    private Map<String, Operation> additionalOperations = null;
     private List<Server> servers = null;
     private List<Parameter> parameters = null;
     private String $ref = null;
@@ -222,6 +236,61 @@ public class PathItem {
         return this;
     }
 
+    /**
+     * returns the query property from a PathItem instance.
+     *
+     * <p>The {@code query} HTTP method was introduced in OpenAPI 3.2. It is therefore not
+     * serialized by OpenAPI 3.0 and 3.1 mappers, which would otherwise emit a Path Item
+     * field that is not valid for those versions.
+     *
+     * @return Operation query
+     * @since OpenAPI 3.2
+     **/
+
+    public Operation getQuery() {
+        return query;
+    }
+
+    public void setQuery(Operation query) {
+        this.query = query;
+    }
+
+    public PathItem query(Operation query) {
+        this.query = query;
+        return this;
+    }
+
+    /**
+     * returns the additionalOperations property from a PathItem instance.
+     *
+     * @since 2.2.56 (OpenAPI 3.2)
+     * @return Map&lt;String, Operation&gt; additionalOperations
+     **/
+
+    @OpenAPI32
+    public Map<String, Operation> getAdditionalOperations() {
+        return additionalOperations;
+    }
+
+    @OpenAPI32
+    public void setAdditionalOperations(Map<String, Operation> additionalOperations) {
+        this.additionalOperations = additionalOperations;
+    }
+
+    @OpenAPI32
+    public PathItem additionalOperations(Map<String, Operation> additionalOperations) {
+        this.additionalOperations = additionalOperations;
+        return this;
+    }
+
+    public PathItem addAdditionalOperation(String method, Operation operation) {
+        if (this.additionalOperations == null) {
+            this.additionalOperations = new LinkedHashMap<>();
+        }
+        this.additionalOperations.put(method, operation);
+        return this;
+    }
+
     public List<Operation> readOperations() {
         List<Operation> allOperations = new ArrayList<>();
         if (this.get != null) {
@@ -247,6 +316,12 @@ public class PathItem {
         }
         if (this.trace != null) {
             allOperations.add(this.trace);
+        }
+        if (this.query != null) {
+            allOperations.add(this.query);
+        }
+        if (this.additionalOperations != null) {
+            allOperations.addAll(this.additionalOperations.values());
         }
 
         return allOperations;
@@ -278,6 +353,9 @@ public class PathItem {
             case DELETE:
                 this.delete = operation;
                 break;
+            case QUERY:
+                this.query = operation;
+                break;
             default:
         }
     }
@@ -290,7 +368,8 @@ public class PathItem {
         DELETE,
         HEAD,
         OPTIONS,
-        TRACE
+        TRACE,
+        QUERY
     }
 
     public Map<HttpMethod, Operation> readOperationsMap() {
@@ -319,6 +398,9 @@ public class PathItem {
         }
         if (this.trace != null) {
             result.put(HttpMethod.TRACE, this.trace);
+        }
+        if (this.query != null) {
+            result.put(HttpMethod.QUERY, this.query);
         }
 
         return result;
@@ -468,6 +550,12 @@ public class PathItem {
         if (trace != null ? !trace.equals(pathItem.trace) : pathItem.trace != null) {
             return false;
         }
+        if (query != null ? !query.equals(pathItem.query) : pathItem.query != null) {
+            return false;
+        }
+        if (additionalOperations != null ? !additionalOperations.equals(pathItem.additionalOperations) : pathItem.additionalOperations != null) {
+            return false;
+        }
         if (servers != null ? !servers.equals(pathItem.servers) : pathItem.servers != null) {
             return false;
         }
@@ -493,6 +581,8 @@ public class PathItem {
         result = 31 * result + (head != null ? head.hashCode() : 0);
         result = 31 * result + (patch != null ? patch.hashCode() : 0);
         result = 31 * result + (trace != null ? trace.hashCode() : 0);
+        result = 31 * result + (query != null ? query.hashCode() : 0);
+        result = 31 * result + (additionalOperations != null ? additionalOperations.hashCode() : 0);
         result = 31 * result + (servers != null ? servers.hashCode() : 0);
         result = 31 * result + (parameters != null ? parameters.hashCode() : 0);
         result = 31 * result + ($ref != null ? $ref.hashCode() : 0);
@@ -514,6 +604,8 @@ public class PathItem {
         sb.append("    head: ").append(toIndentedString(head)).append("\n");
         sb.append("    patch: ").append(toIndentedString(patch)).append("\n");
         sb.append("    trace: ").append(toIndentedString(trace)).append("\n");
+        sb.append("    query: ").append(toIndentedString(query)).append("\n");
+        sb.append("    additionalOperations: ").append(toIndentedString(additionalOperations)).append("\n");
         sb.append("    servers: ").append(toIndentedString(servers)).append("\n");
         sb.append("    parameters: ").append(toIndentedString(parameters)).append("\n");
         sb.append("    $ref: ").append(toIndentedString($ref)).append("\n");

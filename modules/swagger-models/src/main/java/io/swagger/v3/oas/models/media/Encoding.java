@@ -1,9 +1,11 @@
 package io.swagger.v3.oas.models.media;
 
 import io.swagger.v3.oas.models.annotations.OpenAPI31;
+import io.swagger.v3.oas.models.annotations.OpenAPI32;
 import io.swagger.v3.oas.models.headers.Header;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -19,6 +21,30 @@ public class Encoding {
     private StyleEnum style;
     private Boolean explode;
     private Boolean allowReserved;
+    /**
+     * Nested encoding for object properties (OpenAPI 3.2). MUST NOT coexist with
+     * {@code prefixEncoding}/{@code itemEncoding}.
+     *
+     * @since 2.2.56 (OpenAPI 3.2)
+     */
+    @OpenAPI32
+    private Map<String, Encoding> encoding;
+    /**
+     * Positional encoding for multipart array parts (OpenAPI 3.2). MUST NOT coexist
+     * with {@code encoding}.
+     *
+     * @since 2.2.56 (OpenAPI 3.2)
+     */
+    @OpenAPI32
+    private List<Encoding> prefixEncoding;
+    /**
+     * Encoding applied to array items beyond the {@code prefixEncoding} positions
+     * (OpenAPI 3.2). MUST NOT coexist with {@code encoding}.
+     *
+     * @since 2.2.56 (OpenAPI 3.2)
+     */
+    @OpenAPI32
+    private Encoding itemEncoding;
     private java.util.Map<String, Object> extensions = null;
 
     public enum StyleEnum {
@@ -124,6 +150,70 @@ public class Encoding {
         this.allowReserved = allowReserved;
     }
 
+    @OpenAPI32
+    public Map<String, Encoding> getEncoding() {
+        return encoding;
+    }
+
+    @OpenAPI32
+    public void setEncoding(Map<String, Encoding> encoding) {
+        this.encoding = encoding;
+    }
+
+    @OpenAPI32
+    public Encoding encoding(Map<String, Encoding> encoding) {
+        this.encoding = encoding;
+        return this;
+    }
+
+    public Encoding addEncoding(String name, Encoding encodingItem) {
+        if (this.encoding == null) {
+            this.encoding = new LinkedHashMap<>();
+        }
+        this.encoding.put(name, encodingItem);
+        return this;
+    }
+
+    @OpenAPI32
+    public List<Encoding> getPrefixEncoding() {
+        return prefixEncoding;
+    }
+
+    @OpenAPI32
+    public void setPrefixEncoding(List<Encoding> prefixEncoding) {
+        this.prefixEncoding = prefixEncoding;
+    }
+
+    @OpenAPI32
+    public Encoding prefixEncoding(List<Encoding> prefixEncoding) {
+        this.prefixEncoding = prefixEncoding;
+        return this;
+    }
+
+    public Encoding addPrefixEncoding(Encoding prefixEncodingItem) {
+        if (this.prefixEncoding == null) {
+            this.prefixEncoding = new java.util.ArrayList<>();
+        }
+        this.prefixEncoding.add(prefixEncodingItem);
+        return this;
+    }
+
+    @OpenAPI32
+    public Encoding getItemEncoding() {
+        return itemEncoding;
+    }
+
+    @OpenAPI32
+    public void setItemEncoding(Encoding itemEncoding) {
+        this.itemEncoding = itemEncoding;
+    }
+
+    @OpenAPI32
+    public Encoding itemEncoding(Encoding itemEncoding) {
+        this.itemEncoding = itemEncoding;
+        return this;
+    }
+
     public java.util.Map<String, Object> getExtensions() {
         return extensions;
     }
@@ -168,13 +258,16 @@ public class Encoding {
                 Objects.equals(this.headers, encoding.headers) &&
                 Objects.equals(this.style, encoding.style) &&
                 Objects.equals(this.explode, encoding.explode) &&
+                Objects.equals(this.encoding, encoding.encoding) &&
+                Objects.equals(this.prefixEncoding, encoding.prefixEncoding) &&
+                Objects.equals(this.itemEncoding, encoding.itemEncoding) &&
                 Objects.equals(this.extensions, encoding.extensions) &&
                 Objects.equals(this.allowReserved, encoding.allowReserved);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(contentType, headers, style, explode, allowReserved, extensions);
+        return Objects.hash(contentType, headers, style, explode, allowReserved, encoding, prefixEncoding, itemEncoding, extensions);
     }
 
     @Override
@@ -185,6 +278,9 @@ public class Encoding {
                 ", style='" + style + '\'' +
                 ", explode=" + explode +
                 ", allowReserved=" + allowReserved +
+                ", encoding=" + encoding +
+                ", prefixEncoding=" + prefixEncoding +
+                ", itemEncoding=" + itemEncoding +
                 ", extensions=" + extensions +
                 '}';
     }

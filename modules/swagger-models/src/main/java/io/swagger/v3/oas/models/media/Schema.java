@@ -2260,7 +2260,7 @@ public class Schema<T> {
         sb.append("    deprecated: ").append(toIndentedString(deprecated)).append("\n");
         sb.append("    discriminator: ").append(toIndentedString(discriminator)).append("\n");
         sb.append("    xml: ").append(toIndentedString(xml)).append("\n");
-        if (specVersion == SpecVersion.V31) {
+        if (specVersion != SpecVersion.V30) {
             sb.append("    patternProperties: ").append(toIndentedString(patternProperties)).append("\n");
             sb.append("    contains: ").append(toIndentedString(contains)).append("\n");
             sb.append("    $id: ").append(toIndentedString($id)).append("\n");
