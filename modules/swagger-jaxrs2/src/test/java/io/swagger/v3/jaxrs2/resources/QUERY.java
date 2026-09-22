@@ -13,8 +13,8 @@ import java.lang.annotation.Target;
  *
  * <p>It is meta-annotated with {@link HttpMethod} in the same way {@code javax.ws.rs.PATCH} is,
  * which is all the reader needs: {@code ReaderUtils.getHttpMethodFromCustomAnnotations} resolves
- * any such annotation to its lower-cased method name, which is then mapped onto
- * {@link io.swagger.v3.oas.models.PathItem#getQuery()}.
+ * any such annotation to its declared method name, which the reader then matches
+ * case-insensitively onto {@link io.swagger.v3.oas.models.PathItem#getQuery()}.
  */
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)

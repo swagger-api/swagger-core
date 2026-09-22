@@ -23,6 +23,9 @@ public class DeserializationModule32 extends DeserializationModule31 {
         this.addDeserializer(Paths.class, new Paths32Deserializer());
         this.addDeserializer(Callback.class, new Callback32Deserializer());
 
+        // re-register ungated: the inherited 3.1 module registers a cookie-gated serializer
+        this.addSerializer(Parameter.StyleEnum.class, new ParameterStyleSerializer(true));
+
         this.setDeserializerModifier(new BeanDeserializerModifier()
         {
             @Override public JsonDeserializer<?> modifyDeserializer(DeserializationConfig config, BeanDescription beanDesc, JsonDeserializer<?> deserializer) {

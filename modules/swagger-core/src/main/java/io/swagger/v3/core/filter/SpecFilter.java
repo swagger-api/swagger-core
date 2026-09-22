@@ -3,12 +3,14 @@ package io.swagger.v3.core.filter;
 import io.swagger.v3.core.model.ApiDescription;
 import io.swagger.v3.core.util.Json;
 import io.swagger.v3.core.util.Json31;
+import io.swagger.v3.core.util.Json32;
 import io.swagger.v3.core.util.RefUtils;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Operation;
 import io.swagger.v3.oas.models.PathItem;
 import io.swagger.v3.oas.models.Paths;
+import io.swagger.v3.oas.models.SpecVersion;
 import io.swagger.v3.oas.models.callbacks.Callback;
 import io.swagger.v3.oas.models.headers.Header;
 import io.swagger.v3.oas.models.media.ArraySchema;
@@ -42,6 +44,7 @@ public class SpecFilter {
         if (filteredOpenAPI == null) {
             return filteredOpenAPI;
         }
+        this.filterSpecVersion = specVersionOf(filteredOpenAPI);
 
         OpenAPI clone = new OpenAPI();
         clone.info(filteredOpenAPI.getInfo());
@@ -225,7 +228,39 @@ public class SpecFilter {
 
     }
 
+    // spec version of the document currently being filtered; set by filter() so the
+    // protected five-argument filterComponentsSchema signature stays intact for overrides
+    private SpecVersion filterSpecVersion;
+
     protected Map<String, Schema> filterComponentsSchema(OpenAPISpecFilter filter, Map<String, Schema> schemasMap, Map<String, List<String>> params, Map<String, String> cookies, Map<String, List<String>> headers) {
+        return filterComponentsSchema(filter, schemasMap, params, cookies, headers, filterSpecVersion);
+    }
+
+    /**
+     * Derives the effective spec version of a document. The {@code openapi} string is
+     * authoritative (programmatically built docs often leave {@code specVersion} at
+     * its default); the field is the fallback.
+     */
+    private SpecVersion specVersionOf(OpenAPI openAPI) {
+        if (openAPI == null) {
+            return null;
+        }
+        String version = openAPI.getOpenapi();
+        if (version != null) {
+            if (version.startsWith("3.2")) {
+                return SpecVersion.V32;
+            }
+            if (version.startsWith("3.1")) {
+                return SpecVersion.V31;
+            }
+            if (version.startsWith("3.0")) {
+                return SpecVersion.V30;
+            }
+        }
+        return openAPI.getSpecVersion();
+    }
+
+    protected Map<String, Schema> filterComponentsSchema(OpenAPISpecFilter filter, Map<String, Schema> schemasMap, Map<String, List<String>> params, Map<String, String> cookies, Map<String, List<String>> headers, SpecVersion specVersion) {
         if (schemasMap == null) {
             return null;
         }
@@ -265,7 +300,9 @@ public class SpecFilter {
                 try {
                     // TODO solve this, and generally handle clone and passing references
                     Schema clonedModel;
-                    if (filter.isOpenAPI31Filter()) {
+                    if (SpecVersion.V32.equals(specVersion)) {
+                        clonedModel = Json32.mapper().readValue(Json32.pretty(definition), Schema.class);
+                    } else if (SpecVersion.V31.equals(specVersion) || filter.isOpenAPI31Filter()) {
                         clonedModel = Json31.mapper().readValue(Json31.pretty(definition), Schema.class);
                     } else {
                         clonedModel = Json.mapper().readValue(Json.pretty(definition), Schema.class);
@@ -298,12 +335,21 @@ public class SpecFilter {
         }
         if (!StringUtils.isBlank(schema.get$ref())) {
             referencedDefinitions.add(schema.get$ref());
+            if (schema.getDiscriminator() != null && !StringUtils.isBlank(schema.getDiscriminator().getDefaultMapping())) {
+                // OpenAPI 3.2: defaultMapping may sit next to $ref and still holds a
+                // schema name or a URI reference that must be kept alive
+                referencedDefinitions.add(schema.getDiscriminator().getDefaultMapping());
+            }
             return;
         }
         if (schema.getDiscriminator() != null && schema.getDiscriminator().getMapping() != null) {
             for (Map.Entry<String, String> mapping : schema.getDiscriminator().getMapping().entrySet()) {
                 referencedDefinitions.add(mapping.getValue());
             }
+        }
+        if (schema.getDiscriminator() != null && !StringUtils.isBlank(schema.getDiscriminator().getDefaultMapping())) {
+            // OpenAPI 3.2: defaultMapping may hold a schema name or a URI reference
+            referencedDefinitions.add(schema.getDiscriminator().getDefaultMapping());
         }
 
         if (schema.getProperties() != null) {
@@ -370,7 +416,8 @@ public class SpecFilter {
             if (mediaType.get$ref().startsWith(Components.COMPONENTS_SCHEMAS_REF)) {
                 referencedDefinitions.add(mediaType.get$ref());
             }
-            return;
+            // keep traversing: for pre-3.2 documents the $ref field is not emitted,
+            // so it must not mask references held by sibling schema/encoding fields
         }
         addSchemaRef(mediaType.getSchema(), referencedDefinitions);
         addSchemaRef(mediaType.getItemSchema(), referencedDefinitions);

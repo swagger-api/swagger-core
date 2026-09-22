@@ -26,5 +26,7 @@ public class DeserializationModule extends SimpleModule {
         this.addDeserializer(ApiResponses.class, new ApiResponsesDeserializer());
         this.addDeserializer(Paths.class, new PathsDeserializer());
         this.addDeserializer(Callback.class, new CallbackDeserializer());
+
+        this.addSerializer(Parameter.StyleEnum.class, new ParameterStyleSerializer());
     }
 }

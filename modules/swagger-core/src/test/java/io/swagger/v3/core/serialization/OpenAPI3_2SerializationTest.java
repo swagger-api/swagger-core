@@ -6,6 +6,7 @@ import io.swagger.v3.core.filter.resources.NoOpOperationsFilter;
 import io.swagger.v3.core.util.Json;
 import io.swagger.v3.core.util.Json31;
 import io.swagger.v3.core.util.Json32;
+import io.swagger.v3.core.util.Yaml;
 import io.swagger.v3.core.util.Yaml31;
 import io.swagger.v3.core.util.Yaml32;
 import io.swagger.v3.oas.models.Components;
@@ -1178,5 +1179,170 @@ public class OpenAPI3_2SerializationTest {
         }, null, null, null);
         assertNotNull(filtered.getComponents().getSchemas().get("MetaSchema"),
                 "schema referenced inside mediaTypes encoding headers must not be pruned");
+    }
+
+    @Test
+    public void cookieStyleSerializesAndRoundTrips32() throws Exception {
+        Parameter p = new io.swagger.v3.oas.models.parameters.CookieParameter().name("session");
+        p.setStyle(Parameter.StyleEnum.COOKIE);
+        String serialized = Json32.mapper().writeValueAsString(p);
+        assertTrue(serialized.contains("\"style\":\"cookie\""));
+        Parameter back = Json32.mapper().readValue(serialized, Parameter.class);
+        assertEquals(back.getStyle(), Parameter.StyleEnum.COOKIE);
+        assertEquals(back.getIn(), "cookie");
+    }
+
+    @Test
+    public void cookieStyleRejectedBy30And31Serializers() {
+        Parameter p = new io.swagger.v3.oas.models.parameters.CookieParameter().name("session");
+        p.setStyle(Parameter.StyleEnum.COOKIE);
+        // serializing a 3.2-only style must fail like deserializing it would, instead
+        // of emitting a document the same mapper could not read back
+        org.testng.Assert.expectThrows(com.fasterxml.jackson.databind.JsonMappingException.class,
+                () -> Json.mapper().writeValueAsString(p));
+        org.testng.Assert.expectThrows(com.fasterxml.jackson.databind.JsonMappingException.class,
+                () -> Json31.mapper().writeValueAsString(p));
+        org.testng.Assert.expectThrows(com.fasterxml.jackson.databind.JsonMappingException.class,
+                () -> Yaml.mapper().writeValueAsString(p));
+    }
+
+    @Test
+    public void specFilterClonePreserves32SchemaFields() {
+        // bug: schema cloning used a pre-3.2 mapper and dropped discriminator.defaultMapping/xml.nodeType
+        OpenAPI doc = buildDoc();
+        Schema pet = new Schema().typesItem("object");
+        pet.setDiscriminator(new Discriminator().propertyName("kind")
+                .defaultMapping("#/components/schemas/Cat"));
+        pet.setXml(new XML().name("pet").nodeType("attribute"));
+        doc.setComponents(new Components().addSchemas("Pet", pet));
+        OpenAPI filtered = new SpecFilter().filter(doc, new NoOpOperationsFilter(), null, null, null);
+        Schema filteredPet = filtered.getComponents().getSchemas().get("Pet");
+        assertNotNull(filteredPet);
+        assertNotNull(filteredPet.getDiscriminator(), "discriminator must survive SpecFilter cloning");
+        assertEquals(filteredPet.getDiscriminator().getDefaultMapping(), "#/components/schemas/Cat");
+        assertNotNull(filteredPet.getXml(), "xml must survive SpecFilter cloning");
+        assertEquals(filteredPet.getXml().getNodeType(), "attribute");
+    }
+
+    @Test
+    public void defaultMappingRefSurvivesUnreferencedPruning() {
+        // bug: a schema referenced only via discriminator.defaultMapping was pruned
+        OpenAPI doc = buildDoc();
+        Schema pet = new Schema().typesItem("object");
+        pet.setDiscriminator(new Discriminator().propertyName("kind")
+                .defaultMapping("#/components/schemas/Cat"));
+        doc.setComponents(new Components()
+                .addSchemas("Pet", pet)
+                .addSchemas("Cat", new Schema().typesItem("object")));
+        // reference Pet from a response so the discriminator owner itself survives
+        Content content = new Content().addMediaType("application/json",
+                new MediaType().schema(new Schema().$ref("#/components/schemas/Pet")));
+        doc.getPaths().get("/pets").getQuery().getResponses().get("200").content(content);
+        OpenAPI filtered = new SpecFilter().filter(doc, new AbstractSpecFilter() {
+            @Override
+            public boolean isRemovingUnreferencedDefinitions() {
+                return true;
+            }
+        }, null, null, null);
+        assertNotNull(filtered.getComponents().getSchemas().get("Pet"));
+        assertNotNull(filtered.getComponents().getSchemas().get("Cat"),
+                "schema referenced only via discriminator.defaultMapping must not be pruned");
+    }
+
+    @Test
+    public void mediaTypeRefSchemaStillCollected31() {
+        // regression guard: a MediaType carrying $ref must not mask the schema refs it
+        // also holds; on pre-3.2 docs the schema traversal must still run
+        OpenAPI doc = new OpenAPI()
+                .openapi("3.1.0")
+                .info(new Info().title("t").version("1"))
+                .paths(new Paths());
+        MediaType mediaType = new MediaType()
+                .$ref("#/components/schemas/Unused")
+                .schema(new Schema().$ref("#/components/schemas/Pet"));
+        ApiResponse ok = new ApiResponse().description("ok")
+                .content(new Content().addMediaType("application/json", mediaType));
+        PathItem item = new PathItem().get(new Operation()
+                .operationId("listPets")
+                .responses(new ApiResponses().addApiResponse("200", ok)));
+        doc.getPaths().addPathItem("/pets", item);
+        doc.setComponents(new Components()
+                .addSchemas("Pet", new Schema().typesItem("object"))
+                .addSchemas("Unused", new Schema().typesItem("object")));
+        OpenAPI filtered = new SpecFilter().filter(doc, new AbstractSpecFilter() {
+            @Override
+            public boolean isRemovingUnreferencedDefinitions() {
+                return true;
+            }
+        }, null, null, null);
+        assertNotNull(filtered.getComponents().getSchemas().get("Pet"),
+                "schema referenced alongside a MediaType $ref must not be pruned");
+    }
+
+    @Test
+    public void defaultMappingRefSurvivesAlongsideSchemaRef() {
+        // a schema $ref must not hide a discriminator.defaultMapping sitting next to it
+        OpenAPI doc = buildDoc();
+        Schema pet = new Schema().$ref("#/components/schemas/Base");
+        pet.setDiscriminator(new Discriminator().propertyName("kind")
+                .defaultMapping("#/components/schemas/Cat"));
+        doc.setComponents(new Components()
+                .addSchemas("Pet", pet)
+                .addSchemas("Base", new Schema().typesItem("object"))
+                .addSchemas("Cat", new Schema().typesItem("object")));
+        Content content = new Content().addMediaType("application/json",
+                new MediaType().schema(new Schema().$ref("#/components/schemas/Pet")));
+        doc.getPaths().get("/pets").getQuery().getResponses().get("200").content(content);
+        OpenAPI filtered = new SpecFilter().filter(doc, new AbstractSpecFilter() {
+            @Override
+            public boolean isRemovingUnreferencedDefinitions() {
+                return true;
+            }
+        }, null, null, null);
+        assertNotNull(filtered.getComponents().getSchemas().get("Cat"),
+                "schema referenced via defaultMapping next to a $ref must not be pruned");
+    }
+
+    @Test
+    public void filterComponentsSchemaOverrideStillInvoked() {
+        // subclasses overriding the five-argument filterComponentsSchema must keep
+        // participating after the version-aware clone was introduced
+        final boolean[] called = {false};
+        SpecFilter custom = new SpecFilter() {
+            @Override
+            protected java.util.Map<String, Schema> filterComponentsSchema(
+                    io.swagger.v3.core.filter.OpenAPISpecFilter filter,
+                    java.util.Map<String, Schema> schemasMap,
+                    java.util.Map<String, List<String>> params,
+                    java.util.Map<String, String> cookies,
+                    java.util.Map<String, List<String>> headers) {
+                called[0] = true;
+                return super.filterComponentsSchema(filter, schemasMap, params, cookies, headers);
+            }
+        };
+        OpenAPI doc = buildDoc();
+        doc.setComponents(new Components().addSchemas("Pet", new Schema().typesItem("object")));
+        OpenAPI filtered = custom.filter(doc, new NoOpOperationsFilter(), null, null, null);
+        assertTrue(called[0], "overridden filterComponentsSchema must be invoked");
+        assertNotNull(filtered.getComponents().getSchemas().get("Pet"));
+    }
+
+    @Test
+    public void explicit30VersionClonesWith30Mapper() {
+        // an explicit openapi: 3.0.x is authoritative even when specVersion was left
+        // inconsistent; the schema must be cloned through the 3.0 mapper
+        OpenAPI doc = new OpenAPI()
+                .openapi("3.0.3")
+                .specVersion(SpecVersion.V32)
+                .info(new Info().title("t").version("1"))
+                .paths(new Paths());
+        // 'nullable' only survives a 3.0 clone; 3.1+/3.2 mappers drop it
+        doc.setComponents(new Components()
+                .addSchemas("S", new Schema().type("string").nullable(true)));
+        OpenAPI filtered = new SpecFilter().filter(doc, new NoOpOperationsFilter(), null, null, null);
+        Schema filteredSchema = filtered.getComponents().getSchemas().get("S");
+        assertNotNull(filteredSchema);
+        assertEquals(filteredSchema.getNullable(), Boolean.TRUE,
+                "a 3.0 document must be cloned through the 3.0 mapper, keeping 'nullable'");
     }
 }

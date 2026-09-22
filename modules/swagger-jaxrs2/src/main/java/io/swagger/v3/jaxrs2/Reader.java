@@ -68,6 +68,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -424,10 +425,10 @@ public class Reader implements OpenApiReader {
         final List<Parameter> globalParameters = new ArrayList<>();
 
         // look for constructor-level annotated properties
-        globalParameters.addAll(ReaderUtils.collectConstructorParameters(cls, components, classConsumes, null, config.getSchemaResolution(), openapi31));
+        globalParameters.addAll(ReaderUtils.collectConstructorParameters(cls, components, classConsumes, null, config.getSchemaResolution(), openapi31, config.toConfiguration()));
 
         // look for field-level annotated properties
-        globalParameters.addAll(ReaderUtils.collectFieldParameters(cls, components, classConsumes, null));
+        globalParameters.addAll(ReaderUtils.collectFieldParameters(cls, components, classConsumes, null, config.toConfiguration()));
 
         // Make sure that the class methods are sorted for deterministic order
         // See https://docs.oracle.com/javase/8/docs/api/java/lang/Class.html#getMethods--
@@ -1373,7 +1374,9 @@ public class Reader implements OpenApiReader {
     }
 
     private void setPathItemOperation(PathItem pathItemObject, String method, Operation operation) {
-        switch (method) {
+        // fixed operation fields are matched case-insensitively; anything else is a
+        // custom method kept in additionalOperations with its original case (3.2)
+        switch (method.toLowerCase(Locale.ENGLISH)) {
             case POST_METHOD:
                 pathItemObject.post(operation);
                 break;
@@ -1402,7 +1405,7 @@ public class Reader implements OpenApiReader {
                 pathItemObject.query(operation);
                 break;
             default:
-                // Do nothing here
+                pathItemObject.addAdditionalOperation(method, operation);
                 break;
         }
     }
