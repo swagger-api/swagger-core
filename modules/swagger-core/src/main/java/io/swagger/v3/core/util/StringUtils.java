@@ -69,16 +69,39 @@ public final class StringUtils {
     }
 
     /**
-     * Capitalizes the first character of the given string.
+     * Capitalizes all the whitespace separated words in a String.
+     * Only the first character of each word is changed.
      *
-     * @param str the string to capitalize
-     * @return the capitalized string, null if null input, empty if empty input
+     * <p>Whitespace is defined by {@link Character#isWhitespace(char)}.
+     * A {@code null} input String returns {@code null}.
+     * Capitalization uses the Unicode title case, normally equivalent to
+     * upper case.</p>
+     *
+     * <pre>
+     * capitalize(null)        = null
+     * capitalize("")          = ""
+     * capitalize("i am FINE") = "I Am FINE"
+     * </pre>
+     *
+     * @param str  the String to capitalize, may be null
+     * @return capitalized String, {@code null} if null String input
      */
-    public static String capitalize(String str) {
-        if (str == null || str.isEmpty()) {
+    public static String capitalize(final String str) {
+        if (isEmpty(str)) {
             return str;
         }
-        return Character.toTitleCase(str.charAt(0)) + str.substring(1);
+        final char[] buffer = str.toCharArray();
+        boolean capitalizeNext = true;
+        for (int i = 0; i < buffer.length; i++) {
+            final char ch = buffer[i];
+            if (Character.isWhitespace(ch)) {
+                capitalizeNext = true;
+            } else if (capitalizeNext) {
+                buffer[i] = Character.toTitleCase(ch);
+                capitalizeNext = false;
+            }
+        }
+        return new String(buffer);
     }
 
     /**
