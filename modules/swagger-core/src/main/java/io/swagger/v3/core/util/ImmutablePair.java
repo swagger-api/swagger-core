@@ -26,11 +26,9 @@ public final class ImmutablePair<L, R> extends Pair<L, R> {
     }
 
     @Override
-    public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        ImmutablePair<?, ?> that = (ImmutablePair<?, ?>) o;
-        return Objects.equals(left, that.left) && Objects.equals(right, that.right);
+        if (!(o instanceof Pair<?, ?> that)) return false;
+        return Objects.equals(left, that.getLeft()) && Objects.equals(right, that.getRight());
     }
 
     @Override

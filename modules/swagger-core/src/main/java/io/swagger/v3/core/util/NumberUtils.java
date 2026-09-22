@@ -18,7 +18,7 @@ public final class NumberUtils {
             return false;
         }
         try {
-            new BigDecimal(str.trim());
+            new BigDecimal(str);
             return true;
         } catch (NumberFormatException e) {
             return false;
