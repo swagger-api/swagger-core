@@ -1,6 +1,6 @@
 # swagger-gradle-plugin
 
-**`swagger-gradle-plugin` supports Gradle 3.2 and higher.**
+**`swagger-gradle-plugin` requires a Gradle version compatible with Java 17 or higher.**
 
 > **Note:** Swagger Core 3.0 requires Java 17+ and uses the Jakarta namespace (`jakarta.ws.rs`).
 > The JAX-RS provider in Jackson 3 is available in the Jakarta variant only.
