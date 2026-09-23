@@ -1,6 +1,6 @@
 package io.swagger.v3.core.util;
 
-import org.apache.commons.lang3.StringUtils;
+import io.swagger.v3.core.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

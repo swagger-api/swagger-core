@@ -1,9 +1,6 @@
 package io.swagger.v3.core.util;
 
 import io.swagger.v3.oas.models.Components;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
 
 public class RefUtils {
 
@@ -15,7 +12,7 @@ public class RefUtils {
         return prefix + simpleRef;
     }
 
-    public static Pair extractSimpleName(String ref) {
+    public static Pair<String, String> extractSimpleName(String ref) {
         int idx = ref.lastIndexOf('/');
         if (idx > 0) {
             String simple = ref.substring(idx + 1);

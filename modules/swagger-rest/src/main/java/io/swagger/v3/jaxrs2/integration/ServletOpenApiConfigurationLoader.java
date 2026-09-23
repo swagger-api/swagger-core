@@ -8,7 +8,7 @@ import io.swagger.v3.oas.integration.api.OpenAPIConfigBuilder;
 import io.swagger.v3.oas.integration.api.OpenAPIConfiguration;
 import io.swagger.v3.oas.integration.api.OpenApiConfigurationLoader;
 import io.swagger.v3.oas.models.media.Schema;
-import org.apache.commons.lang3.StringUtils;
+import io.swagger.v3.core.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -4,7 +4,7 @@ import io.swagger.v3.oas.integration.GenericOpenApiContextBuilder;
 import io.swagger.v3.oas.integration.OpenApiConfigurationException;
 import io.swagger.v3.oas.integration.OpenApiContextLocator;
 import io.swagger.v3.oas.integration.api.OpenApiContext;
-import org.apache.commons.lang3.StringUtils;
+import io.swagger.v3.core.util.StringUtils;
 
 import jakarta.servlet.ServletConfig;
 

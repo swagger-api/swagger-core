@@ -20,7 +20,7 @@ import io.swagger.v3.oas.models.parameters.RequestBody;
 import io.swagger.v3.oas.models.responses.ApiResponse;
 import io.swagger.v3.oas.models.responses.ApiResponses;
 import io.swagger.v3.oas.models.tags.Tag;
-import org.apache.commons.lang3.StringUtils;
+import io.swagger.v3.core.util.StringUtils;
 import tools.jackson.core.JacksonException;
 
 import java.io.IOException;
@@ -491,7 +491,7 @@ public class SpecFilter {
                 .getSchemas()
                 .keySet()
                 .retainAll(referencedDefinitions.stream()
-                        .map(s -> (String) RefUtils.extractSimpleName(s).getLeft())
+                        .map(s -> RefUtils.extractSimpleName(s).getLeft())
                         .collect(Collectors.toSet()));
         return openApi;
     }
@@ -514,7 +514,7 @@ public class SpecFilter {
 
     protected void locateReferencedDefinitions(String ref, Set<String> nestedReferencedDefinitions, OpenAPI openAPI) {
         nestedReferencedDefinitions.add(ref);
-        String simpleName = (String) RefUtils.extractSimpleName(ref).getLeft();
+        String simpleName = RefUtils.extractSimpleName(ref).getLeft();
         Schema model = openAPI.getComponents().getSchemas().get(simpleName);
         if (model != null) {
             addSchemaRef(model, nestedReferencedDefinitions);
