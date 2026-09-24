@@ -2,7 +2,6 @@ package io.swagger.v3.core.util;
 
 import tools.jackson.databind.JavaType;
 import tools.jackson.databind.type.TypeFactory;
-import org.apache.commons.lang3.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -415,9 +414,10 @@ public class ReflectionUtils {
                 for (int j = 0; j < overriddenAnnotations[i].length; j++) {
                     if (!types.contains(overriddenAnnotations[i][j]
                             .annotationType())) {
-                        methodAnnotations[i] = ArrayUtils.add(
-                                methodAnnotations[i],
-                                overriddenAnnotations[i][j]);
+                        Annotation[] current = methodAnnotations[i];
+                        Annotation[] newArray = Arrays.copyOf(current, current.length + 1);
+                        newArray[newArray.length - 1] = overriddenAnnotations[i][j];
+                        methodAnnotations[i] = newArray;
                     }
                 }
 

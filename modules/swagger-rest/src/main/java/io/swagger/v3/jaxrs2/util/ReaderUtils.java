@@ -9,7 +9,7 @@ import io.swagger.v3.oas.integration.api.OpenAPIConfiguration;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.parameters.Parameter;
-import org.apache.commons.lang3.StringUtils;
+import io.swagger.v3.core.util.StringUtils;
 
 import jakarta.ws.rs.HttpMethod;
 import jakarta.ws.rs.core.Context;

@@ -13,7 +13,7 @@ to `swagger` [configuration property](https://github.com/swagger-api/swagger-cor
             <plugin>
                 <groupId>io.swagger.core.v3</groupId>
                 <artifactId>swagger-maven-plugin</artifactId>
-                <version>3.0.0-SNAPSHOT</version>
+                <version>3.0.0</version>
                 <configuration>
                     <outputFileName>openapi</outputFileName>
                     <outputPath>${project.build.directory}/generatedtest</outputPath>
@@ -38,18 +38,18 @@ to `swagger` [configuration property](https://github.com/swagger-api/swagger-cor
         <dependency>
             <groupId>io.swagger.core.v3</groupId>
             <artifactId>swagger-rest</artifactId>
-            <version>3.0.0-SNAPSHOT</version>
+            <version>3.0.0</version>
         </dependency>
 
         <dependency>
             <groupId>jakarta.ws.rs</groupId>
             <artifactId>jakarta.ws.rs-api</artifactId>
-            <version>2.1.6</version>
+            <version>3.1.0</version>
         </dependency>
         <dependency>
             <groupId>jakarta.servlet</groupId>
             <artifactId>jakarta.servlet-api</artifactId>
-            <version>4.0.4</version>
+            <version>6.0.0</version>
         </dependency>
     </dependencies>
 </project>
@@ -64,7 +64,7 @@ to `swagger` [configuration property](https://github.com/swagger-api/swagger-cor
             <plugin>
                 <groupId>io.swagger.core.v3</groupId>
                 <artifactId>swagger-maven-plugin</artifactId>
-                <version>3.0.0-SNAPSHOT</version>
+                <version>3.0.0</version>
                 <configuration>
                     <outputFileName>openapi</outputFileName>
                     <outputPath>${project.build.directory}/generatedtest</outputPath>
@@ -85,35 +85,35 @@ to `swagger` [configuration property](https://github.com/swagger-api/swagger-cor
  ``` 
 
 #### Parameters
-Parameter | Description | Required      | Default
---------- | ----------- |---------------| -------
-`outputPath`|output path where file(s) are saved| true          |
-`outputFileName`|file name (no extension)| false         |`openapi`
-`outputFormat`|file format (`JSON`, `YAML`, `JSONANDYAML`| false         |`JSON`
-`skip`|if `TRUE` skip execution| false         |`FALSE`
-`encoding`|encoding of output file(s)| false         |
-`resourcePackages`|see [configuration property](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)| false         |
-`resourceClasses`|see [configuration property](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)| false         |
-`prettyPrint`|see [configuration property](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)| false         |`TRUE`
-`sortOutput`|see [configuration property](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)| false         |`FALSE`
-`alwaysResolveAppPath`|see [configuration property](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)| false         |`FALSE`
-`skipResolveAppPath`|see [configuration property](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)| false         |`FALSE`
-`openapiFilePath`|path to openapi file to be merged with resolved specification, see [config](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)| false         |
-`configurationFilePath`|path to swagger config file to be merged with resolved specification, see [config](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration)| false         |
-`filterClass`|see [configuration property](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)| false         |
-`readerClass`|see [configuration property](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)| false         |
-`scannerClass`|see [configuration property](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)| false         |
-`readAllResources`|see [configuration property](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)| false         |
-`ignoredRoutes`|see [configuration property](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)| false         |
-`objectMapperProcessorClass`|see [configuration property](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)| false         |
-`defaultResponseCode`|see [configuration property](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)| false         |
-`groupsValidationStrategy`|see [configuration property](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)|false|
-`validatorProcessorClass`|see [configuration property](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)|false|
-`modelConverterClasses`|see [configuration property](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)| false         |
-`contextId`|see [Context](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#context)| false         |${project.artifactId}
-`openapi31`|see [configuration property](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)| false         |
-`schemaResolution`|see [configuration property](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)| DEFAULT       |
-`openAPIVersion`|see [configuration property](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)| `3.0.1/3.1.0` |
+| Parameter                    | Description                                                                                                                                                                                        | Required      | Default               |
+|------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------|-----------------------|
+| `outputPath`                 | output path where file(s) are saved                                                                                                                                                                | true          |                       |
+| `outputFileName`             | file name (no extension)                                                                                                                                                                           | false         | `openapi`             |
+| `outputFormat`               | file format (`JSON`, `YAML`, `JSONANDYAML`                                                                                                                                                         | false         | `JSON`                |
+| `skip`                       | if `TRUE` skip execution                                                                                                                                                                           | false         | `FALSE`               |
+| `encoding`                   | encoding of output file(s)                                                                                                                                                                         | false         |                       |
+| `resourcePackages`           | see [configuration property](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)                                                | false         |                       |
+| `resourceClasses`            | see [configuration property](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)                                                | false         |                       |
+| `prettyPrint`                | see [configuration property](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)                                                | false         | `TRUE`                |
+| `sortOutput`                 | see [configuration property](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)                                                | false         | `FALSE`               |
+| `alwaysResolveAppPath`       | see [configuration property](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)                                                | false         | `FALSE`               |
+| `skipResolveAppPath`         | see [configuration property](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)                                                | false         | `FALSE`               |
+| `openapiFilePath`            | path to openapi file to be merged with resolved specification, see [config](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties) | false         |                       |
+| `configurationFilePath`      | path to swagger config file to be merged with resolved specification, see [config](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration)     | false         |                       |
+| `filterClass`                | see [configuration property](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)                                                | false         |                       |
+| `readerClass`                | see [configuration property](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)                                                | false         |                       |
+| `scannerClass`               | see [configuration property](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)                                                | false         |                       |
+| `readAllResources`           | see [configuration property](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)                                                | false         |                       |
+| `ignoredRoutes`              | see [configuration property](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)                                                | false         |                       |
+| `objectMapperProcessorClass` | see [configuration property](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)                                                | false         |                       |
+| `defaultResponseCode`        | see [configuration property](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)                                                | false         |                       |
+| `groupsValidationStrategy`   | see [configuration property](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)                                                | false         |                       |
+| `validatorProcessorClass`    | see [configuration property](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)                                                | false         |                       |
+| `modelConverterClasses`      | see [configuration property](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)                                                | false         |                       |
+| `contextId`                  | see [Context](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#context)                                                                                | false         | ${project.artifactId} |
+| `openapi31`                  | see [configuration property](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)                                                | false         |                       |
+| `schemaResolution`           | see [configuration property](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)                                                | DEFAULT       |                       |
+| `openAPIVersion`             | see [configuration property](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Integration-and-Configuration#configuration-properties)                                                | `3.0.1/3.1.0` |                       |
 
 ***
 

@@ -26,7 +26,7 @@ import io.swagger.v3.oas.models.media.StringSchema;
 import io.swagger.v3.oas.models.media.TimeLocalSchema;
 import io.swagger.v3.oas.models.media.TimeSchema;
 import io.swagger.v3.oas.models.media.UUIDSchema;
-import org.apache.commons.lang3.StringUtils;
+import io.swagger.v3.core.util.StringUtils;
 import tools.jackson.databind.ValueDeserializer;
 import tools.jackson.databind.node.StringNode;
 
