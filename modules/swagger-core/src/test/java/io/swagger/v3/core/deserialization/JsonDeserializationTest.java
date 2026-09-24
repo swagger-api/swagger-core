@@ -11,13 +11,14 @@ import io.swagger.v3.oas.models.responses.ApiResponse;
 import io.swagger.v3.oas.models.responses.ApiResponses;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
-import org.apache.commons.io.FileUtils;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 import tools.jackson.databind.ObjectMapper;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
 
 import static org.testng.Assert.assertEquals;
@@ -586,7 +587,7 @@ public class JsonDeserializationTest {
 
     @Test
     public void testExampleDeserializationOnMediaType() throws Exception {
-        String content = FileUtils.readFileToString(new File("src/test/resources/specFiles/media-type-null-example.yaml"), "UTF-8");
+        String content = Files.readString(Path.of("src/test/resources/specFiles/media-type-null-example.yaml"), StandardCharsets.UTF_8);
         OpenAPI openAPI = Yaml.mapper().readValue(content, OpenAPI.class);
 
         assertNull(openAPI.getPaths().get("/pets/{petId}").getGet().getResponses().get("200").getContent().get("application/json").getExample());
@@ -602,7 +603,7 @@ public class JsonDeserializationTest {
 
     @Test
     public void testDateSchemaSerialization() throws Exception {
-        String content = FileUtils.readFileToString(new File("src/test/resources/dateSchema.yaml"), "UTF-8");
+        String content = Files.readString(Path.of("src/test/resources/dateSchema.yaml"), StandardCharsets.UTF_8);
         OpenAPI openAPI = Yaml.mapper().readValue(content, OpenAPI.class);
         Yaml.prettyPrint(openAPI);
         SerializationMatchers.assertEqualsToYaml(openAPI, """

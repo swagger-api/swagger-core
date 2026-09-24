@@ -61,8 +61,8 @@ import io.swagger.v3.oas.models.media.StringSchema;
 import io.swagger.v3.oas.models.media.UUIDSchema;
 import io.swagger.v3.oas.models.media.XML;
 import jakarta.validation.constraints.Email;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
+import io.swagger.v3.core.util.StringUtils;
+import io.swagger.v3.core.util.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -678,20 +678,20 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                     && _mapper._serializationContext().getConfig().getPropertyNamingStrategy() == null
                     && jsonNamingAnnotation == null) {
                 final JsonProperty jsonPropertyAnn = propDef.getPrimaryMember().getAnnotation(JsonProperty.class);
-                if (jsonPropertyAnn == null || !jsonPropertyAnn.value().equals(propName)) {
-                    if (member != null) {
-                        java.lang.reflect.Member innerMember = member.getMember();
-                        if (innerMember != null) {
-                            String altName = innerMember.getName();
-                            if (altName != null) {
-                                final int length = altName.length();
-                                for (String prefix : Arrays.asList("get", "is")) {
-                                    final int offset = prefix.length();
-                                    if (altName.startsWith(prefix) && length > offset
-                                        && !Character.isUpperCase(altName.charAt(offset))) {
-                                        propName = altName;
-                                        break;
-                                    }
+                if (jsonPropertyAnn != null && !jsonPropertyAnn.value().isEmpty() && !jsonPropertyAnn.value().equals(propName)) {
+                    propName = jsonPropertyAnn.value();
+                } else if ((jsonPropertyAnn == null || jsonPropertyAnn.value().isEmpty()) && member != null) {
+                    java.lang.reflect.Member innerMember = member.getMember();
+                    if (innerMember != null) {
+                        String altName = innerMember.getName();
+                        if (altName != null) {
+                            final int length = altName.length();
+                            for (String prefix : Arrays.asList("get", "is")) {
+                                final int offset = prefix.length();
+                                if (altName.startsWith(prefix) && length > offset
+                                    && !Character.isUpperCase(altName.charAt(offset))) {
+                                    propName = altName;
+                                    break;
                                 }
                             }
                         }
@@ -961,10 +961,15 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         }
 
         /**
-         * This must be done after model.setProperties so that the model's set
-         * of properties is available to filter from any subtypes
-         **/
-        if (!resolveSubtypes(model, beanDesc, context, annotatedType.getJsonViewAnnotation())) {
+         * Skip resolveSubtypes for sealed classes with @Schema(oneOf).
+         * This prevents Jackson 3's auto-detected sealed class subtypes
+         * from creating unwanted allOf references.
+         */
+        boolean isSealedWithSchemaOneOf = beanDesc.getClassInfo().getAnnotated().isSealed()
+                && resolvedSchemaAnnotation != null && resolvedSchemaAnnotation.oneOf().length > 0;
+        if (isSealedWithSchemaOneOf) {
+            model.setDiscriminator(null);
+        } else if (!resolveSubtypes(model, beanDesc, context, annotatedType.getJsonViewAnnotation())) {
             model.setDiscriminator(null);
         }
 

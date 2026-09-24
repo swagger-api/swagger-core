@@ -2,7 +2,6 @@ package io.swagger.v3.core.util;
 
 import tools.jackson.core.JacksonException;
 import tools.jackson.databind.ObjectMapper;
-import org.apache.commons.io.IOUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -13,25 +12,19 @@ import java.io.InputStream;
 public class TestUtils {
 
     private static <T> T deserializeFileFromClasspath(String path, Class<T> type, ObjectMapper objectMapper) {
-        final InputStream resource = TestUtils.class.getClassLoader().getResourceAsStream(path);
+        try (InputStream resource = TestUtils.class.getClassLoader().getResourceAsStream(path)) {
+            if (resource == null) {
+                throw new RuntimeException("Could not find file on the classpath: " + path);
+            }
 
-        String contents;
-
-        if (resource == null) {
-            throw new RuntimeException("Could not find file on the classpath: " + path);
-        }
-
-        try {
-            contents = IOUtils.toString(resource);
+            String contents = new String(resource.readAllBytes());
+            try {
+                return objectMapper.readValue(contents, type);
+            } catch (JacksonException e) {
+                throw new RuntimeException("Could not deserialize contents into type: " + type, e);
+            }
         } catch (IOException e) {
             throw new RuntimeException("could not read from file " + path, e);
-        }
-
-        try {
-            T result = objectMapper.readValue(contents, type);
-            return result;
-        } catch (JacksonException e) {
-            throw new RuntimeException("Could not deserialize contents into type: " + type, e);
         }
     }
 
