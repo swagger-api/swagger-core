@@ -961,10 +961,15 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         }
 
         /**
-         * This must be done after model.setProperties so that the model's set
-         * of properties is available to filter from any subtypes
-         **/
-        if (!resolveSubtypes(model, beanDesc, context, annotatedType.getJsonViewAnnotation())) {
+         * Skip resolveSubtypes for sealed classes with @Schema(oneOf).
+         * This prevents Jackson 3's auto-detected sealed class subtypes
+         * from creating unwanted allOf references.
+         */
+        boolean isSealedWithSchemaOneOf = beanDesc.getClassInfo().getAnnotated().isSealed()
+                && resolvedSchemaAnnotation != null && resolvedSchemaAnnotation.oneOf().length > 0;
+        if (isSealedWithSchemaOneOf) {
+            model.setDiscriminator(null);
+        } else if (!resolveSubtypes(model, beanDesc, context, annotatedType.getJsonViewAnnotation())) {
             model.setDiscriminator(null);
         }
 
