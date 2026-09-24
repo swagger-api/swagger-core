@@ -2,14 +2,14 @@ package io.swagger.v3.plugin.maven;
 
 import io.swagger.v3.core.util.Json;
 import io.swagger.v3.core.util.Json31;
+import io.swagger.v3.core.util.StringUtils;
 import io.swagger.v3.core.util.Yaml;
 import io.swagger.v3.core.util.Yaml31;
 import io.swagger.v3.oas.models.OpenAPI;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.codehaus.plexus.configuration.PlexusConfiguration;
 
 import java.io.File;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -36,7 +36,7 @@ public abstract class ASwaggerMavenIntegrationTest extends BetterAbstractMojoTes
 
         SwaggerMojo swaggerMojo = (SwaggerMojo) lookupConfiguredMojo(pom, "resolve");
         // set random context id to not mix states with multiple tests
-        swaggerMojo.setContextId(RandomStringUtils.randomAscii(32));
+        swaggerMojo.setContextId(StringUtils.randomAscii(32));
         assertNotNull(swaggerMojo);
 
         swaggerMojo.execute();
@@ -49,11 +49,10 @@ public abstract class ASwaggerMavenIntegrationTest extends BetterAbstractMojoTes
         }
         boolean isOpenAPI31 = swaggerMojo.getInternalConfiguration() != null && Boolean.TRUE.equals(swaggerMojo.getInternalConfiguration().isOpenAPI31());
         String format = config.getChild("outputFormat").getValue();
-        if (format.toLowerCase().equals("yaml") || format.toLowerCase().equals("jsonandyaml")) {
+        if (format.equalsIgnoreCase("yaml") || format.equalsIgnoreCase("jsonandyaml")) {
             Path path = Paths.get(outputPath, outputFile + ".yaml");
-            File file = path.toFile();
             assertTrue(Files.isRegularFile(path));
-            String content = FileUtils.readFileToString(file, "UTF-8");
+            String content = Files.readString(path, StandardCharsets.UTF_8);
             final OpenAPI openAPI;
             if (isOpenAPI31) {
                 openAPI = Yaml31.mapper().readValue(content, OpenAPI.class);
@@ -63,11 +62,10 @@ public abstract class ASwaggerMavenIntegrationTest extends BetterAbstractMojoTes
             assertNotNull(openAPI);
             validator.accept(openAPI);
         }
-        if (format.toLowerCase().equals("json") || format.toLowerCase().equals("jsonandyaml")) {
+        if (format.equalsIgnoreCase("json") || format.equalsIgnoreCase("jsonandyaml")) {
             Path path = Paths.get(outputPath, outputFile + ".json");
-            File file = path.toFile();
             assertTrue(Files.isRegularFile(path));
-            String content = FileUtils.readFileToString(file, "UTF-8");
+            String content = Files.readString(path, StandardCharsets.UTF_8);
             final OpenAPI openAPI;
             if (isOpenAPI31) {
                 openAPI = Json31.mapper().readValue(content, OpenAPI.class);

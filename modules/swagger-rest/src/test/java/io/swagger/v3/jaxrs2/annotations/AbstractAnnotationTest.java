@@ -8,7 +8,6 @@ import io.swagger.v3.jaxrs2.Reader;
 import io.swagger.v3.jaxrs2.matchers.SerializationMatchers;
 import io.swagger.v3.oas.integration.SwaggerConfiguration;
 import io.swagger.v3.oas.models.OpenAPI;
-import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.AfterMethod;
@@ -18,6 +17,7 @@ import tools.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 
 import static org.testng.Assert.fail;
 
@@ -75,12 +75,8 @@ public abstract class AbstractAnnotationTest {
     }
 
     protected String getOpenAPIAsString(final String file) throws IOException {
-        InputStream in = null;
-        try {
-            in = getClass().getClassLoader().getResourceAsStream(file);
-            return IOUtils.toString(in, StandardCharsets.UTF_8);
-        } finally {
-            IOUtils.closeQuietly(in);
+        try (InputStream in = getClass().getClassLoader().getResourceAsStream(file)) {
+            return new String(Objects.requireNonNull(in).readAllBytes(), StandardCharsets.UTF_8);
         }
     }
 
