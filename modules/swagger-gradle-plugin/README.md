@@ -8,7 +8,7 @@
 
 ## Installation
 
-### Gradle 3.2 and higher
+### Gradle 7.3 and higher
 
 ```
 plugins {

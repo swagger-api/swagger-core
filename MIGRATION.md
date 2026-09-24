@@ -159,23 +159,10 @@ implementation("io.swagger.core.v3:swagger-rest-servlet-initializer:3.0.0")
 
 ### swagger-java17-support module removed
 
-**Impact:** Low (affects only projects that explicitly depended on `swagger-java17-support`)
+**Impact:** None (test-only module, no user action required)
 
-In Swagger Core 2.x, Java Record support required an optional `swagger-java17-support` module.
-In 3.0, Java 17 is the minimum requirement, so Record support is built into the core modules.
-The `swagger-java17-support` module no longer exists and must be removed.
-
-**Migration:** Remove the `swagger-java17-support` dependency from your build file. No replacement
-is needed — Record support is available automatically.
-
-```xml
-<!-- Remove this from your pom.xml -->
-<dependency>
-  <groupId>io.swagger.core.v3</groupId>
-  <artifactId>swagger-java17-support</artifactId>
-  <version>2.x.x</version>
-</dependency>
-```
+`swagger-java17-support` was a test-only module in 2.x. It contained no production code and
+was never a user dependency. Remove it from your build if present.
 
 ---
 

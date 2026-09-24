@@ -170,8 +170,7 @@ Artifacts are also available from Maven Central:
 
 ## Contributing
 
-See [CONTRIBUTING.md](https://github.com/swagger-api/swagger-core/blob/master/CONTRIBUTING.md)
-and the [wiki](https://github.com/swagger-api/swagger-core/wiki) for development guidelines.
+See the [wiki](https://github.com/swagger-api/swagger-core/wiki) for development guidelines.
 
 ## Security contact
 
