@@ -374,6 +374,63 @@ for the full list of default changes.
 
 ---
 
+### Mapper customization — cached mappers become stale
+
+**Impact:** Medium (affects only code that caches mappers at application startup)
+
+Jackson 3 ObjectMappers are immutable. Swagger Core 3.0 provides an API to customize mappers
+through `ObjectMapperFactory` with automatic rebuild when customizers are registered.
+However, **components that cache mappers at startup will not see customizers added later**.
+
+**Problem scenario:**
+
+```java
+// BAD - cached at initialization
+class MyComponent {
+    private final ObjectMapper mapper = Json.mapper();  // captured at init
+    
+    void process() {
+        mapper.readValue(...);  // won't see customizers added later!
+    }
+}
+
+// Later in application flow
+ObjectMapperFactory.addCustomizer((builder, target) -> {
+    builder.addModule(new KotlinModule.Builder().build());
+});
+// MyComponent.mapper still doesn't have KotlinModule
+```
+
+**Solution:**
+
+Obtain mappers at use time instead of caching them:
+
+```java
+// GOOD - fresh mapper every time
+class MyComponent {
+    void process() {
+        ObjectMapper mapper = Json.mapper();  // refreshed, sees all customizers
+        mapper.readValue(...);
+    }
+}
+```
+
+**Affected APIs:** `Json.mapper()`, `Yaml.mapper()`, `Json31.mapper()`, `Yaml31.mapper()`, `Json31.converterMapper()`
+
+**Best practice:** Register all customizers at application startup, before any mapper is used.
+This avoids rebuilds and ensures all components see the same mapper configuration.
+
+**Migration:** If your code caches mappers:
+1. Change from `final ObjectMapper mapper = Json.mapper()` to obtaining mapper at use time
+2. Or implement a refresh mechanism that re-obtains the mapper when customizers change
+3. Register customizers early (during application initialization)
+
+**Components in swagger-rest that need attention:**
+- `DefaultParameterExtension` - caches mapper at class init
+- `OpenAPI31SpecFilter` - caches converter mapper through `OpenAPISchema2JsonSchema`
+
+---
+
 ## Migration steps
 
 ### 1. Update Java version
@@ -498,6 +555,7 @@ See [ObjectMapperProcessor — method signatures changed](#objectmapperprocessor
 - [ ] `com.fasterxml.jackson.core:jackson-annotations` kept at 2.22 (unchanged)
 - [ ] `org.yaml:snakeyaml` removed from dependencies
 - [ ] `ObjectMapperProcessor` implementations updated: import and return type
+- [ ] Cached mappers reviewed: no `final ObjectMapper mapper = Json.mapper()` at class init (see [mapper customization](#mapper-customization--cached-mappers-become-stale))
 - [ ] Custom Jackson serializer/deserializer classes and method signatures updated (see [class and signature changes](#custom-serializers-and-deserializers--class-and-signature-changes))
 - [ ] Jackson databind imports updated: `com.fasterxml.jackson.databind` → `tools.jackson.databind`
 - [ ] Test suite passing
