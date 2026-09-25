@@ -167,8 +167,9 @@ public class ObjectMapperFactory {
         for (JacksonModule module : modules) {
             Objects.requireNonNull(module, "module");
         }
+        JacksonModule[] registeredModules = modules.clone();
         addCustomizer((builder, target) -> {
-            for (JacksonModule module : modules) {
+            for (JacksonModule module : registeredModules) {
                 builder.addModule(module);
             }
         });
