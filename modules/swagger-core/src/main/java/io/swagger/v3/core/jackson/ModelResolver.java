@@ -2755,6 +2755,11 @@ return count != 0;
         }
     }
 
+    /** An empty object schema for the current OpenAPI version. */
+    private Schema newObjectSchema() {
+        return openapi31 ? new JsonSchema().typesItem("object") : new ObjectSchema();
+    }
+
     /*
      TODO partial implementation supporting WRAPPER_OBJECT with JsonTypeInfo.Id.CLASS and JsonTypeInfo.Id.NAME
 
@@ -2779,7 +2784,14 @@ return count != 0;
                 if (JsonTypeInfo.Id.NAME.equals(id) && name == null) {
                     name = type.getRawClass().getSimpleName();
                 }
-                Schema wrapperSchema = openapi31 ? new JsonSchema().typesItem("object") : new ObjectSchema();
+                // If the model already carries a oneOf (e.g. from @Schema(oneOf) or @JsonSubTypes),
+                // adding the wrapper property alongside it preserves the composition instead of
+                // nesting the whole model (and dropping the oneOf) inside a wrapper schema.
+                if (model.getOneOf() != null && !model.getOneOf().isEmpty()) {
+                    model.addProperties(name, newObjectSchema());
+                    return model;
+                }
+                Schema wrapperSchema = newObjectSchema();
                 wrapperSchema.name(model.getName());
                 wrapperSchema.addProperties(name, model);
                 return wrapperSchema;
