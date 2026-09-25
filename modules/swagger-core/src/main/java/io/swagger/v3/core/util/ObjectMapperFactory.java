@@ -77,11 +77,126 @@ import tools.jackson.dataformat.yaml.YAMLMapper;
 import tools.jackson.dataformat.yaml.YAMLWriteFeature;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class ObjectMapperFactory {
 
+    private static final List<MapperCustomizer> CUSTOMIZERS = new CopyOnWriteArrayList<>();
+    private static final AtomicLong GENERATION = new AtomicLong();
+
     protected ObjectMapperFactory() {
+    }
+
+    /**
+     * Registers a {@link MapperCustomizer} that is applied, after swagger-core's own configuration, to every
+     * mapper subsequently built by this factory. The cached mappers exposed by {@link Json}, {@link Yaml},
+     * {@link Json31} and {@link Yaml31} are rebuilt lazily on next access, and the default
+     * {@link io.swagger.v3.core.jackson.ModelResolver} held by {@link io.swagger.v3.core.converter.ModelConverters}
+     * is refreshed, so customizers registered at any time take effect. Registering them at application startup,
+     * before any mapper is used, avoids rebuilding.
+     *
+     * @param customizer the customizer to add
+     * @since 3.0.0
+     */
+    public static void addCustomizer(MapperCustomizer customizer) {
+        CUSTOMIZERS.add(Objects.requireNonNull(customizer, "customizer"));
+        GENERATION.incrementAndGet();
+    }
+
+    /**
+     * Removes a previously registered customizer.
+     *
+     * @param customizer the customizer to remove
+     * @return {@code true} if it was registered
+     * @since 3.0.0
+     */
+    public static boolean removeCustomizer(MapperCustomizer customizer) {
+        boolean removed = CUSTOMIZERS.remove(customizer);
+        if (removed) {
+            GENERATION.incrementAndGet();
+        }
+        return removed;
+    }
+
+    /**
+     * Removes all registered customizers, restoring swagger-core's default mapper configuration.
+     *
+     * @since 3.0.0
+     */
+    public static void clearCustomizers() {
+        if (!CUSTOMIZERS.isEmpty()) {
+            CUSTOMIZERS.clear();
+            GENERATION.incrementAndGet();
+        }
+    }
+
+    /**
+     * @return an unmodifiable snapshot of the registered customizers, in registration order
+     * @since 3.0.0
+     */
+    public static List<MapperCustomizer> getCustomizers() {
+        return List.copyOf(CUSTOMIZERS);
+    }
+
+    /**
+     * Registers a Jackson module with every mapper built by this factory. Shortcut for
+     * {@code addCustomizer((builder, target) -> builder.addModule(module))}; this is the Jackson 3 replacement
+     * for {@code Json.mapper().registerModule(module)} (and the same call on {@code Yaml}, {@code Json31} and
+     * {@code Yaml31}).
+     *
+     * @param module the module to add
+     * @since 3.0.0
+     */
+    public static void addModule(JacksonModule module) {
+        Objects.requireNonNull(module, "module");
+        addCustomizer((builder, target) -> builder.addModule(module));
+    }
+
+    /**
+     * Registers several Jackson modules with every mapper built by this factory, see {@link #addModule(JacksonModule)}.
+     *
+     * @param modules the modules to add
+     * @since 3.0.0
+     */
+    public static void addModules(JacksonModule... modules) {
+        Objects.requireNonNull(modules, "modules");
+        for (JacksonModule module : modules) {
+            Objects.requireNonNull(module, "module");
+        }
+        JacksonModule[] registeredModules = modules.clone();
+        addCustomizer((builder, target) -> {
+            for (JacksonModule module : registeredModules) {
+                builder.addModule(module);
+            }
+        });
+    }
+
+    /**
+     * A counter incremented every time the set of customizers changes. Holders of cached mappers (such as
+     * {@link Json}) compare it with the generation they were built at to know when to rebuild.
+     *
+     * @return the current generation
+     * @since 3.0.0
+     */
+    public static long generation() {
+        return GENERATION.get();
+    }
+
+    /**
+     * Applies all registered customizers to the given builder.
+     *
+     * @param builder the builder to customize
+     * @param target  which mapper is being built
+     * @since 3.0.0
+     */
+    protected static void applyCustomizers(MapperBuilder<?, ?> builder, MapperTarget target) {
+        for (MapperCustomizer customizer : CUSTOMIZERS) {
+            customizer.customize(builder, target);
+        }
     }
 
     public static ObjectMapper createJson(JsonFactory jsonFactory) {
@@ -246,7 +361,16 @@ public class ObjectMapperFactory {
         configureJackson2TimeCompatibility(mapperBuilder);
         configureSwaggerOutput(mapperBuilder);
 
+        applyCustomizers(mapperBuilder, targetFor(jsonFactory, openapi31));
         return mapperBuilder.build();
+    }
+
+    private static MapperTarget targetFor(TokenStreamFactory factory, boolean openapi31) {
+        boolean yaml = factory instanceof YAMLFactory;
+        if (yaml) {
+            return openapi31 ? MapperTarget.YAML31 : MapperTarget.YAML;
+        }
+        return openapi31 ? MapperTarget.JSON31 : MapperTarget.JSON;
     }
 
     public static ObjectMapper createJsonConverter() {
@@ -296,10 +420,16 @@ public class ObjectMapperFactory {
         configureJackson2TimeCompatibility(builder);
         configureSwaggerOutput(builder);
 
+        applyCustomizers(builder, MapperTarget.JSON_CONVERTER);
         return builder.build();
     }
 
-
+    /**
+     * Builds a plain JSON mapper with no swagger-core modules or mixins, used to parse generic example values.
+     * Registered {@link MapperCustomizer}s are intentionally <b>not</b> applied.
+     *
+     * @return a new mapper
+     */
     public static ObjectMapper buildStrictGenericObjectMapper() {
         JsonMapper.Builder builder = JsonMapper.builder();
         configureSwaggerPolicy(builder);
