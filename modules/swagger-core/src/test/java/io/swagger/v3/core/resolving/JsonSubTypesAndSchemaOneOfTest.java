@@ -2,8 +2,11 @@ package io.swagger.v3.core.resolving;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonView;
+import tools.jackson.databind.BeanDescription;
 import tools.jackson.databind.ObjectMapper;
 import io.swagger.v3.core.converter.AnnotatedType;
+import io.swagger.v3.core.converter.ModelConverterContext;
 import io.swagger.v3.core.converter.ModelConverterContextImpl;
 import io.swagger.v3.core.jackson.ModelResolver;
 import io.swagger.v3.oas.annotations.media.DiscriminatorMapping;
@@ -13,10 +16,7 @@ import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import static org.testng.Assert.*;
 
@@ -44,6 +44,7 @@ public class JsonSubTypesAndSchemaOneOfTest extends SwaggerTestBase {
     @AfterTest
     public void afterTest() {
         ModelResolver.composedModelPropertiesAsSibling = false;
+        ModelResolver.jsonSubTypesOneOf = false;
     }
 
     @Test
@@ -195,46 +196,96 @@ public class JsonSubTypesAndSchemaOneOfTest extends SwaggerTestBase {
     }
 
     @Test
-    public void duplicateJsonSubTypesEntriesAreDeduplicated() {
-        // Identical @JsonSubTypes entries (and Jackson's AnnotationIntrospectorPair) can report the
-        // same subtype more than once. When the parent is composed into a oneOf, each entry would
-        // otherwise become a repeated $ref.
-        //
-        // NOTE: on 3.0.0 alone the parent is not composed into a oneOf, so this test passes
-        // trivially. It only starts guarding against duplicates once the @JsonSubTypes -> oneOf
-        // composition lands (swagger-api/swagger-core#5320); with that change and without the
-        // dedup fix in resolveSubtypes(), the oneOf contains 3 entries instead of 2.
-        final Schema<?> model = context.resolve(new AnnotatedType(DuplicateSubTypesParent.class));
+    public void jsonSubTypesOnlyParentHasNoOneOfByDefault() {
+        // Default behavior (opt-in disabled): a @JsonSubTypes-only type is NOT composed into a oneOf,
+        // matching the 3.0.0 behavior.
+        ModelResolver.jsonSubTypesOneOf = false;
+        final Schema<?> model = context.resolve(new AnnotatedType(PolymorphicInterface.class));
+        assertNotNull(model);
+        assertTrue(model.getOneOf() == null || model.getOneOf().isEmpty(),
+                "with the default (opt-in disabled) the @JsonSubTypes-only parent must not be composed into a oneOf");
+    }
 
-        if (model instanceof ComposedSchema && ((ComposedSchema) model).getOneOf() != null) {
-            final List<Schema> oneOf = ((ComposedSchema) model).getOneOf();
-            assertEquals(oneOf.size(), 2, "duplicate @JsonSubTypes entries must be deduplicated");
-            final Set<String> refs = new HashSet<>();
-            for (Schema<?> item : oneOf) {
-                assertTrue(refs.add(item.get$ref()),
-                        "oneOf must not contain a repeated $ref: " + item.get$ref());
-            }
+    @Test
+    public void jsonSubTypesOnlyParentIsComposedIntoOneOfWhenOptedIn() {
+        ModelResolver.jsonSubTypesOneOf = true;
+        try {
+            final Schema<?> model = context.resolve(new AnnotatedType(PolymorphicInterface.class));
+            assertTrue(model instanceof ComposedSchema,
+                    "when opted in the @JsonSubTypes-only parent should be converted to a oneOf ComposedSchema");
+            assertNotNull(model.getOneOf());
+            assertEquals(model.getOneOf().size(), 2);
+            assertEquals(model.getOneOf().get(0).get$ref(), "#/components/schemas/PolymorphicSubtype1");
+            assertEquals(model.getOneOf().get(1).get$ref(), "#/components/schemas/PolymorphicSubtype2");
+        } finally {
+            ModelResolver.jsonSubTypesOneOf = false;
+        }
+    }
+
+    @Test
+    public void extensionPointAllowsSubclassToRestorePreviousBehavior() {
+        ModelResolver.jsonSubTypesOneOf = true;
+        try {
+            final ModelConverterContextImpl subclassContext =
+                    new ModelConverterContextImpl(new RestorePreviousBehaviorModelResolver(new ObjectMapper()));
+            final Schema<?> restoredModel = subclassContext.resolve(new AnnotatedType(PolymorphicInterface.class));
+            assertFalse(restoredModel instanceof ComposedSchema && ((ComposedSchema) restoredModel).getOneOf() != null,
+                    "the resolved parent must not be auto-converted to a oneOf ComposedSchema when resolveSubtypes() is overridden");
+        } finally {
+            ModelResolver.jsonSubTypesOneOf = false;
+        }
+    }
+
+    static class RestorePreviousBehaviorModelResolver extends ModelResolver {
+        RestorePreviousBehaviorModelResolver(ObjectMapper mapper) {
+            super(mapper);
         }
 
-        // Regardless of composition, each distinct subtype schema must be defined.
-        assertTrue(context.getDefinedModels().containsKey("DuplicateSubTypesChild1"));
-        assertTrue(context.getDefinedModels().containsKey("DuplicateSubTypesChild2"));
+        @Override
+        protected boolean resolveSubtypes(Schema model, BeanDescription bean,
+                                          ModelConverterContext context, JsonView jsonViewAnnotation) {
+            return false;
+        }
     }
 
-    @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
+    @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type", visible = true)
     @JsonSubTypes({
-            @JsonSubTypes.Type(value = DuplicateSubTypesChild1.class),
-            @JsonSubTypes.Type(value = DuplicateSubTypesChild1.class),
-            @JsonSubTypes.Type(value = DuplicateSubTypesChild2.class)
+            @JsonSubTypes.Type(value = PolymorphicSubtype1.class, name = "subtype1"),
+            @JsonSubTypes.Type(value = PolymorphicSubtype2.class, name = "subtype2")
     })
-    static abstract class DuplicateSubTypesParent {
-        public String type;
+    interface PolymorphicInterface {
+        String getType();
+        String getName();
     }
 
-    static class DuplicateSubTypesChild1 extends DuplicateSubTypesParent {
+    static class PolymorphicSubtype1 implements PolymorphicInterface {
+        public String type = "subtype1";
+        public String name = "subtype1";
+
+        @Override
+        public String getType() {
+            return type;
+        }
+
+        @Override
+        public String getName() {
+            return name;
+        }
     }
 
-    static class DuplicateSubTypesChild2 extends DuplicateSubTypesParent {
+    static class PolymorphicSubtype2 implements PolymorphicInterface {
+        public String type = "subtype2";
+        public String name = "subtype2";
+
+        @Override
+        public String getType() {
+            return type;
+        }
+
+        @Override
+        public String getName() {
+            return name;
+        }
     }
 
     private void assertSubPropertiesValid(Map<String, Schema> subProperties, final String childPropertyName) {
