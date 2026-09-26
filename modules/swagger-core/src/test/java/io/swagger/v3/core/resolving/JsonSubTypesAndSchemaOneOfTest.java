@@ -13,7 +13,10 @@ import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static org.testng.Assert.*;
 
@@ -189,6 +192,49 @@ public class JsonSubTypesAndSchemaOneOfTest extends SwaggerTestBase {
 
     static class SubBean2InterfaceImplementor extends BaseBeanInterfaceImplementor {
         public int d;
+    }
+
+    @Test
+    public void duplicateJsonSubTypesEntriesAreDeduplicated() {
+        // Identical @JsonSubTypes entries (and Jackson's AnnotationIntrospectorPair) can report the
+        // same subtype more than once. When the parent is composed into a oneOf, each entry would
+        // otherwise become a repeated $ref.
+        //
+        // NOTE: on 3.0.0 alone the parent is not composed into a oneOf, so this test passes
+        // trivially. It only starts guarding against duplicates once the @JsonSubTypes -> oneOf
+        // composition lands (swagger-api/swagger-core#5320); with that change and without the
+        // dedup fix in resolveSubtypes(), the oneOf contains 3 entries instead of 2.
+        final Schema<?> model = context.resolve(new AnnotatedType(DuplicateSubTypesParent.class));
+
+        if (model instanceof ComposedSchema && ((ComposedSchema) model).getOneOf() != null) {
+            final List<Schema> oneOf = ((ComposedSchema) model).getOneOf();
+            assertEquals(oneOf.size(), 2, "duplicate @JsonSubTypes entries must be deduplicated");
+            final Set<String> refs = new HashSet<>();
+            for (Schema<?> item : oneOf) {
+                assertTrue(refs.add(item.get$ref()),
+                        "oneOf must not contain a repeated $ref: " + item.get$ref());
+            }
+        }
+
+        // Regardless of composition, each distinct subtype schema must be defined.
+        assertTrue(context.getDefinedModels().containsKey("DuplicateSubTypesChild1"));
+        assertTrue(context.getDefinedModels().containsKey("DuplicateSubTypesChild2"));
+    }
+
+    @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
+    @JsonSubTypes({
+            @JsonSubTypes.Type(value = DuplicateSubTypesChild1.class),
+            @JsonSubTypes.Type(value = DuplicateSubTypesChild1.class),
+            @JsonSubTypes.Type(value = DuplicateSubTypesChild2.class)
+    })
+    static abstract class DuplicateSubTypesParent {
+        public String type;
+    }
+
+    static class DuplicateSubTypesChild1 extends DuplicateSubTypesParent {
+    }
+
+    static class DuplicateSubTypesChild2 extends DuplicateSubTypesParent {
     }
 
     private void assertSubPropertiesValid(Map<String, Schema> subProperties, final String childPropertyName) {
