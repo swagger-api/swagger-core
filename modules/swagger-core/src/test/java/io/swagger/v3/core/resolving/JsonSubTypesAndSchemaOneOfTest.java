@@ -2,8 +2,11 @@ package io.swagger.v3.core.resolving;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonView;
+import tools.jackson.databind.BeanDescription;
 import tools.jackson.databind.ObjectMapper;
 import io.swagger.v3.core.converter.AnnotatedType;
+import io.swagger.v3.core.converter.ModelConverterContext;
 import io.swagger.v3.core.converter.ModelConverterContextImpl;
 import io.swagger.v3.core.jackson.ModelResolver;
 import io.swagger.v3.oas.annotations.media.DiscriminatorMapping;
@@ -41,6 +44,7 @@ public class JsonSubTypesAndSchemaOneOfTest extends SwaggerTestBase {
     @AfterTest
     public void afterTest() {
         ModelResolver.composedModelPropertiesAsSibling = false;
+        ModelResolver.jsonSubTypesOneOf = false;
     }
 
     @Test
@@ -189,6 +193,99 @@ public class JsonSubTypesAndSchemaOneOfTest extends SwaggerTestBase {
 
     static class SubBean2InterfaceImplementor extends BaseBeanInterfaceImplementor {
         public int d;
+    }
+
+    @Test
+    public void jsonSubTypesOnlyParentHasNoOneOfByDefault() {
+        // Default behavior (opt-in disabled): a @JsonSubTypes-only type is NOT composed into a oneOf,
+        // matching the 3.0.0 behavior.
+        ModelResolver.jsonSubTypesOneOf = false;
+        final Schema<?> model = context.resolve(new AnnotatedType(PolymorphicInterface.class));
+        assertNotNull(model);
+        assertTrue(model.getOneOf() == null || model.getOneOf().isEmpty(),
+                "with the default (opt-in disabled) the @JsonSubTypes-only parent must not be composed into a oneOf");
+    }
+
+    @Test
+    public void jsonSubTypesOnlyParentIsComposedIntoOneOfWhenOptedIn() {
+        ModelResolver.jsonSubTypesOneOf = true;
+        try {
+            final Schema<?> model = context.resolve(new AnnotatedType(PolymorphicInterface.class));
+            assertTrue(model instanceof ComposedSchema,
+                    "when opted in the @JsonSubTypes-only parent should be converted to a oneOf ComposedSchema");
+            assertNotNull(model.getOneOf());
+            assertEquals(model.getOneOf().size(), 2);
+            assertEquals(model.getOneOf().get(0).get$ref(), "#/components/schemas/PolymorphicSubtype1");
+            assertEquals(model.getOneOf().get(1).get$ref(), "#/components/schemas/PolymorphicSubtype2");
+        } finally {
+            ModelResolver.jsonSubTypesOneOf = false;
+        }
+    }
+
+    @Test
+    public void extensionPointAllowsSubclassToRestorePreviousBehavior() {
+        ModelResolver.jsonSubTypesOneOf = true;
+        try {
+            final ModelConverterContextImpl subclassContext =
+                    new ModelConverterContextImpl(new RestorePreviousBehaviorModelResolver(new ObjectMapper()));
+            final Schema<?> restoredModel = subclassContext.resolve(new AnnotatedType(PolymorphicInterface.class));
+            assertFalse(restoredModel instanceof ComposedSchema && ((ComposedSchema) restoredModel).getOneOf() != null,
+                    "the resolved parent must not be auto-converted to a oneOf ComposedSchema when resolveSubtypes() is overridden");
+        } finally {
+            ModelResolver.jsonSubTypesOneOf = false;
+        }
+    }
+
+    static class RestorePreviousBehaviorModelResolver extends ModelResolver {
+        RestorePreviousBehaviorModelResolver(ObjectMapper mapper) {
+            super(mapper);
+        }
+
+        @Override
+        protected boolean resolveSubtypes(Schema model, BeanDescription bean,
+                                          ModelConverterContext context, JsonView jsonViewAnnotation) {
+            return false;
+        }
+    }
+
+    @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type", visible = true)
+    @JsonSubTypes({
+            @JsonSubTypes.Type(value = PolymorphicSubtype1.class, name = "subtype1"),
+            @JsonSubTypes.Type(value = PolymorphicSubtype2.class, name = "subtype2")
+    })
+    interface PolymorphicInterface {
+        String getType();
+        String getName();
+    }
+
+    static class PolymorphicSubtype1 implements PolymorphicInterface {
+        public String type = "subtype1";
+        public String name = "subtype1";
+
+        @Override
+        public String getType() {
+            return type;
+        }
+
+        @Override
+        public String getName() {
+            return name;
+        }
+    }
+
+    static class PolymorphicSubtype2 implements PolymorphicInterface {
+        public String type = "subtype2";
+        public String name = "subtype2";
+
+        @Override
+        public String getType() {
+            return type;
+        }
+
+        @Override
+        public String getName() {
+            return name;
+        }
     }
 
     private void assertSubPropertiesValid(Map<String, Schema> subProperties, final String childPropertyName) {

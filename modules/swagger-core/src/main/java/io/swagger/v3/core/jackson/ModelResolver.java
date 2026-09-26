@@ -122,6 +122,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
     public static final String SET_PROPERTY_OF_COMPOSED_MODEL_AS_SIBLING = "composed-model-properties-as-sibiling";
     public static final String SET_PROPERTY_OF_ENUMS_AS_REF = "enums-as-ref";
+    public static final String SET_PROPERTY_OF_JSON_SUBTYPES_ONE_OF = "json-subtypes-oneof";
 
     public static boolean composedModelPropertiesAsSibling = System.getProperty(SET_PROPERTY_OF_COMPOSED_MODEL_AS_SIBLING) != null;
 
@@ -137,6 +138,16 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
      * Allows all enums to be resolved as a reference to a scheme added to the components section.
      */
     public static boolean enumsAsRef = System.getProperty(SET_PROPERTY_OF_ENUMS_AS_REF) != null;
+
+    /**
+     * Opt-in composition of a {@code @JsonSubTypes} parent into a self-referencing {@code oneOf}
+     * (the parent gets a {@code oneOf} to its subtypes while the subtypes keep {@code allOf} to the
+     * parent). This cyclic {@code allOf} <-> {@code oneOf} shape is off by default because several
+     * tools (swagger-ui, openapi-generator) dislike it; when enabled it can be turned on with
+     * {@code -Djson-subtypes-oneof} or by setting this field. An explicit {@code @Schema(oneOf)}
+     * is always honored regardless of this flag.
+     */
+    public static boolean jsonSubTypesOneOf = System.getProperty(SET_PROPERTY_OF_JSON_SUBTYPES_ONE_OF) != null;
 
     private boolean openapi31;
 
@@ -973,6 +984,15 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             model.setDiscriminator(null);
         }
 
+        // When opted in, resolveSubtypes() may have replaced the parent model in the context with
+        // a oneOf ComposedSchema; re-read it so subsequent processing sees the composed schema.
+        if (jsonSubTypesOneOf && !type.isContainerType() && StringUtils.isNotBlank(name)) {
+            Schema updatedModel = context.getDefinedModels().get(name);
+            if (updatedModel != null) {
+                model = updatedModel;
+            }
+        }
+
         Discriminator discriminator = resolveDiscriminator(type, context);
         if (discriminator != null) {
             model.setDiscriminator(discriminator);
@@ -1076,6 +1096,9 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
             });
 
+            // Process the explicit @Schema(oneOf = ...) always. When the class also has
+            // @JsonSubTypes, resolveSubtypes() returns early (explicit oneOf wins), so
+            // there is no conflict.
             List<Class<?>> oneOfFiltered = Stream.of(oneOf)
                     .distinct()
                     .filter(c -> !this.shouldIgnoreClass(c))
@@ -2003,10 +2026,22 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         return modified;
     }
 
-    private boolean resolveSubtypes(Schema model, BeanDescription bean, ModelConverterContext context, JsonView jsonViewAnnotation) {
+    protected boolean resolveSubtypes(Schema model, BeanDescription bean, ModelConverterContext context, JsonView jsonViewAnnotation) {
         final List<NamedType> types = _intr().findSubtypes(_mapper.serializationConfig(), bean.getClassInfo());
-        if (types == null) {
+        if (types == null || types.isEmpty()) {
             return false;
+        }
+
+        // When opted in, an explicit @Schema(oneOf = ...) fully defines the polymorphism and must
+        // win over the @JsonSubTypes-derived composition. Skip the automatic allOf/oneOf
+        // composition to avoid the recursive allOf<->oneOf structure that is undesirable for
+        // many tools (see review on swagger-api/swagger-core#5320).
+        if (jsonSubTypesOneOf) {
+            io.swagger.v3.oas.annotations.media.Schema declaredSchema =
+                    AnnotationsUtils.getSchemaDeclaredAnnotation(bean.getClassInfo().getAnnotated());
+            if (declaredSchema != null && declaredSchema.oneOf().length > 0) {
+                return false;
+            }
         }
 
         /**
@@ -2023,6 +2058,8 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
          */
         removeSuperClassAndInterfaceSubTypes(types, bean);
 
+        Map<Class<?>, String> subtypeNames = new HashMap<>();
+        boolean subtypesComposed = false;
         int count = 0;
         final Class<?> beanClass = bean.getClassInfo().getAnnotated();
         for (NamedType subtype : types) {
@@ -2074,8 +2111,26 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             Class<?> currentType = subtype.getType();
             if (StringUtils.isNotBlank(composedSchema.getName())) {
                 context.defineModel(composedSchema.getName(), composedSchema, new AnnotatedType().type(currentType), null);
+                subtypeNames.put(subtypeType, composedSchema.getName());
             }
 
+            subtypesComposed = true;
+        }
+        
+        // Convert parent model to oneOf if subtypes were found. This produces the cyclic
+        // allOf <-> oneOf shape and is therefore opt-in (see jsonSubTypesOneOf).
+        if (jsonSubTypesOneOf && subtypesComposed) {
+            ComposedSchema oneOfSchema = ComposedSchema.from(model);
+            oneOfSchema.setOneOf(new ArrayList<>());
+            
+            for (NamedType subtype : types) {
+                Schema refSchema = openapi31 ? new JsonSchema() : new Schema();
+                refSchema.$ref(Components.COMPONENTS_SCHEMAS_REF + subtypeNames.getOrDefault(subtype.getType(), subtype.getType().getSimpleName()));
+                oneOfSchema.addOneOfItem(refSchema);
+            }
+            
+            // Replace parent model in context with oneOf schema
+            context.defineModel(model.getName(), oneOfSchema, new AnnotatedType().type(beanClass), null);
         }
         return count != 0;
     }
