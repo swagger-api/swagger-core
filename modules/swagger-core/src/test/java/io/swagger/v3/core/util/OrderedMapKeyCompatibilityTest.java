@@ -37,7 +37,8 @@ public class OrderedMapKeyCompatibilityTest {
                 mapper("create(JSON, false)", () -> ObjectMapperFactory.create(new JsonFactory(), false)),
                 mapper("create(YAML, true)", () -> ObjectMapperFactory.create(new YAMLFactory(), true)),
                 mapper("createYaml(false)", () -> ObjectMapperFactory.createYaml(false)),
-                mapper("createYaml(true)", () -> ObjectMapperFactory.createYaml(true))
+                mapper("createYaml(true)", () -> ObjectMapperFactory.createYaml(true)),
+                mapper("buildStrictGenericObjectMapper", ObjectMapperFactory::buildStrictGenericObjectMapper)
         };
     }
 
