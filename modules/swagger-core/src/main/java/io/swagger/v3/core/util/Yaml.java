@@ -1,20 +1,78 @@
 package io.swagger.v3.core.util;
 
+import tools.jackson.databind.JacksonModule;
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.ObjectWriter;
+import tools.jackson.databind.cfg.MapperBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Objects;
+import java.util.function.Consumer;
+
 public class Yaml {
 
-    private static final class ObjectMapperHolder {
-        private static final ObjectMapper MAPPER = ObjectMapperFactory.createYaml();
-    }
+    private static final MapperHolder HOLDER = new MapperHolder(ObjectMapperFactory::createYaml);
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Yaml.class);
 
+    /**
+     * Returns the shared OpenAPI 3.0 YAML mapper. It is built lazily from {@link ObjectMapperFactory} and rebuilt when
+     * {@link MapperCustomizer}s are added or removed, unless a mapper was installed explicitly with
+     * {@link #mapper(ObjectMapper)} or {@link #configure(Consumer)}.
+     *
+     * @return the shared mapper
+     */
     public static ObjectMapper mapper() {
-        return ObjectMapperHolder.MAPPER;
+        return HOLDER.get();
+    }
+
+    /**
+     * Replaces the shared mapper. The given instance is used as-is until {@link #reset()} is called; registered
+     * {@link MapperCustomizer}s are not applied to it. Prefer {@link ObjectMapperFactory#addCustomizer(MapperCustomizer)}
+     * to customize all swagger-core mappers consistently, or {@link #configure(Consumer)} to tweak just this one.
+     *
+     * @param mapper the mapper to install
+     * @since 3.0.0
+     */
+    public static void mapper(ObjectMapper mapper) {
+        HOLDER.set(mapper);
+    }
+
+    /**
+     * Rebuilds the shared mapper from its current configuration, applying the given customization, and installs
+     * the result. This is the Jackson 3 replacement for mutating {@code Yaml.mapper()} directly, e.g.
+     * {@code Yaml.configure(b -> b.addModule(new KotlinModule.Builder().build()))}.
+     * Only this mapper is affected; use {@link ObjectMapperFactory#addCustomizer(MapperCustomizer)} to customize
+     * all swagger-core mappers.
+     *
+     * @param customizer customization applied to a builder seeded from the current mapper
+     * @return the new shared mapper
+     * @since 3.0.0
+     */
+    public static ObjectMapper configure(Consumer<MapperBuilder<?, ?>> customizer) {
+        return HOLDER.configure(customizer);
+    }
+
+    /**
+     * Adds a module to the shared mapper, shortcut for {@code configure(b -> b.addModule(module))}.
+     *
+     * @param module the module to add
+     * @return the new shared mapper
+     * @since 3.0.0
+     */
+    public static ObjectMapper addModule(JacksonModule module) {
+        Objects.requireNonNull(module, "module");
+        return configure(b -> b.addModule(module));
+    }
+
+    /**
+     * Discards any explicitly installed mapper; the next call to {@link #mapper()} builds a fresh one from
+     * {@link ObjectMapperFactory} with the currently registered customizers.
+     * @since 3.0.0
+     */
+    public static void reset() {
+        HOLDER.reset();
     }
 
     public static ObjectWriter pretty() {

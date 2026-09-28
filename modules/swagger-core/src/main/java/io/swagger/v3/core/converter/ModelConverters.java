@@ -5,6 +5,7 @@ import io.swagger.v3.core.jackson.ModelResolver;
 import io.swagger.v3.core.util.Configuration;
 import io.swagger.v3.core.util.Json;
 import io.swagger.v3.core.util.Json31;
+import io.swagger.v3.core.util.ObjectMapperFactory;
 import io.swagger.v3.oas.models.media.Schema;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,6 +21,7 @@ import java.util.Map.Entry;
 import java.util.ServiceLoader;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Supplier;
 
 public class ModelConverters {
     private static ModelConverters SINGLETON = null;
@@ -28,37 +30,67 @@ public class ModelConverters {
     private final List<ModelConverter> converters;
     private final Set<String> skippedPackages = new HashSet<>();
     private final Set<String> skippedClasses = new HashSet<>();
+    /**
+     * Builds the default {@link ModelResolver}; kept so that it can be rebuilt when the mappers change,
+     * see {@link #refreshDefaultResolverIfStale()}.
+     */
+    private final Supplier<ModelResolver> defaultResolverFactory;
+    private volatile ModelResolver defaultResolver;
+    private volatile long mapperGeneration;
 
     public ModelConverters() {
-        converters = new CopyOnWriteArrayList<>();
-        converters.add(new ModelResolver(Json.mapper()));
+        this(() -> new ModelResolver(Json.mapper()));
     }
 
     public ModelConverters(boolean openapi31) {
-        converters = new CopyOnWriteArrayList<>();
-        if (openapi31) {
-            converters.add(new ModelResolver(Json31.mapper()).openapi31(true));
-        } else {
-            converters.add(new ModelResolver(Json.mapper()));
-        }
+        this(openapi31
+                ? () -> new ModelResolver(Json31.mapper()).openapi31(true)
+                : () -> new ModelResolver(Json.mapper()));
     }
 
     public ModelConverters(boolean openapi31, Schema.SchemaResolution schemaResolution) {
-        converters = new CopyOnWriteArrayList<>();
-        if (openapi31) {
-            converters.add(new ModelResolver(Json31.mapper()).openapi31(true).schemaResolution(schemaResolution));
-        } else {
-            converters.add(new ModelResolver(Json.mapper()).schemaResolution(schemaResolution));
-        }
+        this(openapi31
+                ? () -> new ModelResolver(Json31.mapper()).openapi31(true).schemaResolution(schemaResolution)
+                : () -> new ModelResolver(Json.mapper()).schemaResolution(schemaResolution));
     }
 
     public ModelConverters(Configuration configuration) {
-        converters = new CopyOnWriteArrayList<>();
-        boolean openapi31 =configuration != null && configuration.isOpenAPI31() != null && configuration.isOpenAPI31();
-        if (openapi31) {
-            converters.add(new ModelResolver(Json31.mapper()).configuration(configuration));
-        } else {
-            converters.add(new ModelResolver(Json.mapper()).configuration(configuration));
+        this(configuration != null && configuration.isOpenAPI31() != null && configuration.isOpenAPI31()
+                ? () -> new ModelResolver(Json31.mapper()).configuration(configuration)
+                : () -> new ModelResolver(Json.mapper()).configuration(configuration));
+    }
+
+    private ModelConverters(Supplier<ModelResolver> defaultResolverFactory) {
+        this.defaultResolverFactory = defaultResolverFactory;
+        this.converters = new CopyOnWriteArrayList<>();
+        this.mapperGeneration = ObjectMapperFactory.generation();
+        this.defaultResolver = defaultResolverFactory.get();
+        this.converters.add(defaultResolver);
+    }
+
+    /**
+     * Jackson 3 mappers are immutable and {@link ModelResolver} captures its mapper at construction, so a module
+     * registered through {@link ObjectMapperFactory#addCustomizer} after this instance was created would otherwise
+     * never be seen by the default resolver. When the factory generation has moved, the default resolver is
+     * rebuilt in place; converters added by the user are untouched.
+     */
+    private void refreshDefaultResolverIfStale() {
+        long current = ObjectMapperFactory.generation();
+        if (mapperGeneration == current) {
+            return;
+        }
+        synchronized (this) {
+            if (mapperGeneration == current) {
+                return;
+            }
+            ModelResolver previous = defaultResolver;
+            ModelResolver replacement = defaultResolverFactory.get();
+            int idx = converters.indexOf(previous);
+            if (idx >= 0) {
+                converters.set(idx, replacement);
+            }
+            defaultResolver = replacement;
+            mapperGeneration = current;
         }
     }
 
@@ -159,6 +191,7 @@ public class ModelConverters {
     }
 
     public List<ModelConverter> getConverters() {
+        refreshDefaultResolverIfStale();
         return Collections.unmodifiableList(converters);
     }
 
@@ -176,6 +209,7 @@ public class ModelConverters {
     }
 
     public Map<String, Schema> read(AnnotatedType type) {
+        refreshDefaultResolverIfStale();
         Map<String, Schema> modelMap = new HashMap<>();
         if (shouldProcess(type.getType())) {
             ModelConverterContextImpl context = new ModelConverterContextImpl(
@@ -196,6 +230,7 @@ public class ModelConverters {
     }
 
     public Map<String, Schema> readAll(AnnotatedType type) {
+        refreshDefaultResolverIfStale();
         if (shouldProcess(type.getType())) {
             ModelConverterContextImpl context = new ModelConverterContextImpl(
                     converters);
@@ -218,6 +253,7 @@ public class ModelConverters {
     }
 
     public ResolvedSchema resolveAsResolvedSchema(AnnotatedType type) {
+        refreshDefaultResolverIfStale();
         ModelConverterContextImpl context = new ModelConverterContextImpl(
                 converters);
 

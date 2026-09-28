@@ -64,9 +64,11 @@ public abstract class AbstractModelConverter implements ModelConverter {
 
     /**
      * Retrieves the current AnnotationIntrospector from the ObjectMapper's serialization configuration.
-     * We do not cache the value of _intr because users can load jackson modules later,
-     * and we want to use their annotation inspection.
-     * 
+     * Jackson 3 mappers are immutable, so {@code _mapper} is a private copy of the mapper passed at construction:
+     * modules registered later (e.g. via {@link io.swagger.v3.core.util.ObjectMapperFactory#addCustomizer}) are
+     * picked up by {@link io.swagger.v3.core.converter.ModelConverters} rebuilding its default resolver, not by
+     * this instance changing.
+     *
      * @return the current AnnotationIntrospector
      */
     protected AnnotationIntrospector _intr() {
