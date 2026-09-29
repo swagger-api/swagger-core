@@ -11,6 +11,7 @@ import io.swagger.v3.core.filter.resources.NoPathItemFilter;
 import io.swagger.v3.core.filter.resources.NoPetOperationsFilter;
 import io.swagger.v3.core.filter.resources.NoPetRefSchemaFilter;
 import io.swagger.v3.core.filter.resources.RemoveInternalParamsFilter;
+import io.swagger.v3.core.filter.resources.RemoveResponsesFilter;
 import io.swagger.v3.core.filter.resources.RemoveUnreferencedDefinitionsFilter;
 import io.swagger.v3.core.filter.resources.ReplaceGetOperationsFilter;
 import io.swagger.v3.core.matchers.SerializationMatchers;
@@ -169,6 +170,16 @@ public class SpecFilterTest {
                 validateParameters(entry.getValue().getOptions());
             }
         }
+    }
+
+    @Test(description = "it should filter away a response")
+    public void filterAwayResponses() throws IOException {
+        final OpenAPI openAPI = getOpenAPI(RESOURCE_PATH);
+        final OpenAPI filtered = new SpecFilter().filter(openAPI, new RemoveResponsesFilter(), null, null, null);
+        final Operation get = filtered.getPaths().get("/pet/{petId}").getGet();
+        assertNull(get.getResponses().get("400"), "hidden 400 response should have been removed");
+        assertNotNull(get.getResponses().get("404"));
+        assertNotNull(get.getResponses().get("default"));
     }
 
     private void validateParameters(Operation operation) {
