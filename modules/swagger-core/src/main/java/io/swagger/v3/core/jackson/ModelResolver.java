@@ -3322,7 +3322,11 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 if (schema.getExamples() == null || schema.getExamples().isEmpty()) {
                     schema.setExamples(parsedExamples);
                 } else {
-                    schema.getExamples().addAll(parsedExamples);
+                    for (Object parsedExample : parsedExamples) {
+                        if (!schema.getExamples().contains(parsedExample)) {
+                            schema.getExamples().add(parsedExample);
+                        }
+                    }
                 }
             }
             String _const = resolveConst(a, annotations, schemaAnnotation);
