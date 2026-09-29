@@ -93,8 +93,9 @@ implementation("tools.jackson.core:jackson-databind:3.2.2")
 
 **Migration:** Update all `com.fasterxml.jackson.core`, `com.fasterxml.jackson.databind`,
 and `com.fasterxml.jackson.dataformat` dependencies to `tools.jackson.*`.
-Keep `com.fasterxml.jackson.core:jackson-annotations` unchanged — it stays on the original
-groupId at version 2.22.
+Change the matching Java imports to `tools.jackson` packages. Keep
+`com.fasterxml.jackson.annotation` imports unchanged. Keep
+`com.fasterxml.jackson.core:jackson-annotations` at version 2.22.
 
 ---
 
@@ -102,7 +103,7 @@ groupId at version 2.22.
 
 **Impact:** High
 
-Two modules were renamed in 3.0:
+Two modules were renamed in 3.0. Both use group `io.swagger.core.v3` and version `3.0.0`.
 
 | 2.x artifact ID | 3.0 artifact ID |
 |---|---|
@@ -153,7 +154,57 @@ implementation("io.swagger.core.v3:swagger-rest:3.0.0")
 implementation("io.swagger.core.v3:swagger-rest-servlet-initializer:3.0.0")
 ```
 
-**Migration:** Update both artifact IDs in your build file.
+**Migration:** Update both artifact IDs in your build file. The REST Java API also moved:
+
+| 2.x package | 3.0 package |
+|---|---|
+| `io.swagger.v3.jaxrs2` | `io.swagger.v3.rest` |
+| `io.swagger.v3.jaxrs2.ext` | `io.swagger.v3.rest.ext` |
+| `io.swagger.v3.jaxrs2.util` | `io.swagger.v3.rest.util` |
+| `io.swagger.v3.jaxrs2.integration` | `io.swagger.v3.rest.integration` |
+| `io.swagger.v3.jaxrs2.integration.api` | `io.swagger.v3.rest.integration.api` |
+| `io.swagger.v3.jaxrs2.integration.resources` | `io.swagger.v3.rest.integration.resources` |
+| `io.swagger.v3.jaxrs2.integration.servlet` | `io.swagger.v3.rest.integration.servlet` |
+
+Seven public types also changed names. Use the new package in the table above for each type.
+
+| 2.x type | 3.0 type |
+|---|---|
+| `JaxrsOpenApiContextBuilder` | `RestOpenApiContextBuilder` |
+| `JaxrsOpenApiContext` | `RestOpenApiContext` |
+| `JaxrsAnnotationScanner` | `RestAnnotationScanner` |
+| `JaxrsApplicationScanner` | `RestApplicationScanner` |
+| `JaxrsApplicationAndAnnotationScanner` | `RestApplicationAndAnnotationScanner` |
+| `JaxrsApplicationAndResourcePackagesAnnotationScanner` | `RestApplicationAndResourcePackagesAnnotationScanner` |
+| `JaxrsOpenApiScanner` | `RestOpenApiScanner` |
+
+Update Java imports, reflective class names, scanner configuration, and servlet declarations. For example:
+
+```xml
+<servlet>
+  <servlet-name>openapi</servlet-name>
+  <servlet-class>io.swagger.v3.rest.integration.OpenApiServlet</servlet-class>
+  <init-param>
+    <param-name>openApi.configuration.resourcePackages</param-name>
+    <param-value>com.example.resources</param-value>
+  </init-param>
+</servlet>
+```
+
+Custom `OpenAPIExtension` providers must import `io.swagger.v3.rest.ext.OpenAPIExtension` and
+rename their service descriptor from
+`META-INF/services/io.swagger.v3.jaxrs2.ext.OpenAPIExtension` to
+`META-INF/services/io.swagger.v3.rest.ext.OpenAPIExtension`. Keep the provider class name in
+the descriptor synchronized with the implementation package. Explicit JPMS `requires` entries
+must change from `io.swagger.v3.jaxrs2` to `io.swagger.v3.rest`, or from
+`io.swagger.v3.jaxrs2.integration.servlet` to `io.swagger.v3.rest.integration.servlet`.
+
+#### Check for mixed Swagger versions
+
+Do not mix Swagger Core 2.x and 3.0 artifacts in an application. Check the application's
+dependency graph with `mvn dependency:tree -Dincludes=io.swagger.core.v3` or
+`./gradlew dependencies --configuration runtimeClasspath`. Update or exclude dependencies
+that bring in 2.x Swagger artifacts.
 
 ---
 
@@ -481,7 +532,13 @@ Three Jackson packages move to the `tools.jackson` groupId. Apply all three repl
 Keep `com.fasterxml.jackson.annotation` imports unchanged — annotations stay on the original groupId.
 
 
-### 9. Run your test suite
+### 9. Update REST API references
+
+Update Java imports, the seven renamed types, servlet configuration, custom extension
+service descriptors, and explicit JPMS `requires` entries as described in
+[Module renames](#module-renames).
+
+### 10. Run your test suite
 
 Verify that OpenAPI output matches expectations, especially if you are using custom
 serializers or a custom `ObjectMapper`.
@@ -548,6 +605,8 @@ See [ObjectMapperProcessor — method signatures changed](#objectmapperprocessor
 - [ ] `io.swagger.core.v3` dependencies updated to 3.0.0
 - [ ] `swagger-jaxrs2` dependency renamed to `swagger-rest`
 - [ ] `swagger-jaxrs2-servlet-initializer-v2` dependency renamed to `swagger-rest-servlet-initializer`
+- [ ] REST imports, seven renamed types, servlet configuration, extension service descriptors, and JPMS `requires` entries updated to `io.swagger.v3.rest`
+- [ ] Application runtime dependency graph checked for 2.x Swagger REST artifacts
 - [ ] `swagger-java17-support` dependency removed (Record support is now built in)
 - [ ] Jakarta REST API updated to `jakarta.ws.rs-api:3.1.0`
 - [ ] Jakarta Servlet API updated to `jakarta.servlet-api:6.0.0`
@@ -555,8 +614,8 @@ See [ObjectMapperProcessor — method signatures changed](#objectmapperprocessor
 - [ ] `com.fasterxml.jackson.core:jackson-annotations` kept at 2.22 (unchanged)
 - [ ] `org.yaml:snakeyaml` removed from dependencies
 - [ ] `ObjectMapperProcessor` implementations updated: import and return type
-- [ ] Cached mappers reviewed: no `final ObjectMapper mapper = Json.mapper()` at class init (see [mapper customization](#mapper-customization--cached-mappers-become-stale))
-- [ ] Custom Jackson serializer/deserializer classes and method signatures updated (see [class and signature changes](#custom-serializers-and-deserializers--class-and-signature-changes))
+- [ ] Cached mappers reviewed: no `final ObjectMapper mapper = Json.mapper()` at class init (see [mapper customization](#mapper-customization-cached-mappers-become-stale))
+- [ ] Custom Jackson serializer/deserializer classes and method signatures updated (see [class and signature changes](#custom-serializers-and-deserializers-class-and-signature-changes))
 - [ ] Jackson databind imports updated: `com.fasterxml.jackson.databind` → `tools.jackson.databind`
 - [ ] Test suite passing
 - [ ] OpenAPI output verified

@@ -67,7 +67,7 @@ public class GenericOpenApiScanner implements OpenApiScanner {
             allowAllPackages = true;
         }
 
-        // this is generic, specific Jaxrs scanner will also look for @Path
+        // this is generic, specific REST scanner will also look for @Path
         final Set<Class<?>> classes;
         try (ScanResult scanResult = graph.scan()) {
             classes = new HashSet<>(scanResult.getClassesWithAnnotation(OpenAPIDefinition.class.getName()).loadClasses());
