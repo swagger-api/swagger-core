@@ -12,6 +12,7 @@ import org.testng.annotations.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -108,6 +109,19 @@ public class ModelResolverExamplesTest {
         final List<Object> examples = models.get("Bean").getExamples();
 
         assertTrue(examples.containsAll(Arrays.asList("Hello", "World", "Seeded")), "examples=" + examples);
+    }
+
+    @Test
+    public void immutableEmptyExamplesListIsReplacedByAnnotationExamples() {
+        final ModelResolver resolver = new ModelResolver(Json31.mapper());
+        resolver.openapi31(true);
+
+        final StringSchema schema = new StringSchema();
+        schema.setExamples(Collections.emptyList());
+
+        resolver.resolveSchemaMembers(schema, new AnnotatedType(Bean.class));
+
+        assertEquals(schema.getExamples(), Arrays.asList("Hello", "World"));
     }
 
     @Schema(examples = {"Hello", "World"})

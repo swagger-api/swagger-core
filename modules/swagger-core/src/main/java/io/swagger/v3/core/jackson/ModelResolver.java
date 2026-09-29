@@ -3319,7 +3319,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             }
             if (schemaAnnotation.examples().length > 0) {
                 List<Object> parsedExamples = io.swagger.v3.core.util.AnnotationsUtils.parseExamplesArray(schemaAnnotation, schema);
-                if (schema.getExamples() == null) {
+                if (schema.getExamples() == null || schema.getExamples().isEmpty()) {
                     schema.setExamples(parsedExamples);
                 } else {
                     for (Object parsedExample : parsedExamples) {
