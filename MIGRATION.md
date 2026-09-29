@@ -93,9 +93,9 @@ implementation("tools.jackson.core:jackson-databind:3.2.2")
 
 **Migration:** Update all `com.fasterxml.jackson.core`, `com.fasterxml.jackson.databind`,
 and `com.fasterxml.jackson.dataformat` dependencies to `tools.jackson.*`.
-Change the matching Java imports to `tools.jackson` packages. Keep
-`com.fasterxml.jackson.annotation` imports unchanged. Keep
-`com.fasterxml.jackson.core:jackson-annotations` at version 2.22.
+Change the Jackson imports in your code to the matching `tools.jackson` packages.
+Do not change the `com.fasterxml.jackson.annotation` imports.
+Keep `com.fasterxml.jackson.core:jackson-annotations` at version 2.22.
 
 ---
 
@@ -103,7 +103,7 @@ Change the matching Java imports to `tools.jackson` packages. Keep
 
 **Impact:** High
 
-Two modules were renamed in 3.0. Both use group `io.swagger.core.v3` and version `3.0.0`.
+Two modules have new names in 3.0. Both use the group `io.swagger.core.v3` and the version `3.0.0`.
 
 | 2.x artifact ID | 3.0 artifact ID |
 |---|---|
@@ -154,7 +154,11 @@ implementation("io.swagger.core.v3:swagger-rest:3.0.0")
 implementation("io.swagger.core.v3:swagger-rest-servlet-initializer:3.0.0")
 ```
 
-**Migration:** Update both artifact IDs in your build file. The REST Java API also moved:
+**Migration:** Update both artifact IDs in your build file.
+
+#### Renamed packages
+
+The Java packages of the REST API also have new names:
 
 | 2.x package | 3.0 package |
 |---|---|
@@ -166,7 +170,9 @@ implementation("io.swagger.core.v3:swagger-rest-servlet-initializer:3.0.0")
 | `io.swagger.v3.jaxrs2.integration.resources` | `io.swagger.v3.rest.integration.resources` |
 | `io.swagger.v3.jaxrs2.integration.servlet` | `io.swagger.v3.rest.integration.servlet` |
 
-Seven public types also changed names. Use the new package in the table above for each type.
+#### Renamed types
+
+Seven public types have new names. Each type is in the new package from the table above.
 
 | 2.x type | 3.0 type |
 |---|---|
@@ -178,33 +184,41 @@ Seven public types also changed names. Use the new package in the table above fo
 | `JaxrsApplicationAndResourcePackagesAnnotationScanner` | `RestApplicationAndResourcePackagesAnnotationScanner` |
 | `JaxrsOpenApiScanner` | `RestOpenApiScanner` |
 
-Update Java imports, reflective class names, scanner configuration, and servlet declarations. For example:
+#### Update your code and configuration
 
-```xml
-<servlet>
-  <servlet-name>openapi</servlet-name>
-  <servlet-class>io.swagger.v3.rest.integration.OpenApiServlet</servlet-class>
-  <init-param>
-    <param-name>openApi.configuration.resourcePackages</param-name>
-    <param-value>com.example.resources</param-value>
-  </init-param>
-</servlet>
-```
+1. Update the Java imports to the new packages and type names.
+2. Update the class names in reflection code and in the scanner configuration.
+3. Update the servlet declarations. For example:
 
-Custom `OpenAPIExtension` providers must import `io.swagger.v3.rest.ext.OpenAPIExtension` and
-rename their service descriptor from
-`META-INF/services/io.swagger.v3.jaxrs2.ext.OpenAPIExtension` to
-`META-INF/services/io.swagger.v3.rest.ext.OpenAPIExtension`. Keep the provider class name in
-the descriptor synchronized with the implementation package. Explicit JPMS `requires` entries
-must change from `io.swagger.v3.jaxrs2` to `io.swagger.v3.rest`, or from
-`io.swagger.v3.jaxrs2.integration.servlet` to `io.swagger.v3.rest.integration.servlet`.
+   ```xml
+   <servlet>
+     <servlet-name>openapi</servlet-name>
+     <servlet-class>io.swagger.v3.rest.integration.OpenApiServlet</servlet-class>
+     <init-param>
+       <param-name>openApi.configuration.resourcePackages</param-name>
+       <param-value>com.example.resources</param-value>
+     </init-param>
+   </servlet>
+   ```
+
+4. If you have a custom `OpenAPIExtension` provider, do these steps:
+   1. Change the import to `io.swagger.v3.rest.ext.OpenAPIExtension`.
+   2. Rename the service descriptor file from
+      `META-INF/services/io.swagger.v3.jaxrs2.ext.OpenAPIExtension` to
+      `META-INF/services/io.swagger.v3.rest.ext.OpenAPIExtension`.
+   3. Make sure that the class name in the descriptor file agrees with the package of your implementation.
+5. If your `module-info.java` has `requires` entries for Swagger, change them:
+   - `io.swagger.v3.jaxrs2` → `io.swagger.v3.rest`
+   - `io.swagger.v3.jaxrs2.integration.servlet` → `io.swagger.v3.rest.integration.servlet`
 
 #### Check for mixed Swagger versions
 
-Do not mix Swagger Core 2.x and 3.0 artifacts in an application. Check the application's
-dependency graph with `mvn dependency:tree -Dincludes=io.swagger.core.v3` or
-`./gradlew dependencies --configuration runtimeClasspath`. Update or exclude dependencies
-that bring in 2.x Swagger artifacts.
+Do not use Swagger Core 2.x and 3.0 artifacts in the same application.
+
+1. Show the dependency graph of your application:
+   - Maven: `mvn dependency:tree -Dincludes=io.swagger.core.v3`
+   - Gradle: `./gradlew dependencies --configuration runtimeClasspath`
+2. If a dependency brings in a 2.x Swagger artifact, update that dependency or exclude the artifact.
 
 ---
 
@@ -534,9 +548,9 @@ Keep `com.fasterxml.jackson.annotation` imports unchanged — annotations stay o
 
 ### 9. Update REST API references
 
-Update Java imports, the seven renamed types, servlet configuration, custom extension
-service descriptors, and explicit JPMS `requires` entries as described in
-[Module renames](#module-renames).
+Update the REST imports, the seven renamed types, the servlet configuration,
+the extension service descriptors, and the JPMS `requires` entries.
+See [Module renames](#module-renames).
 
 ### 10. Run your test suite
 
@@ -606,7 +620,7 @@ See [ObjectMapperProcessor — method signatures changed](#objectmapperprocessor
 - [ ] `swagger-jaxrs2` dependency renamed to `swagger-rest`
 - [ ] `swagger-jaxrs2-servlet-initializer-v2` dependency renamed to `swagger-rest-servlet-initializer`
 - [ ] REST imports, seven renamed types, servlet configuration, extension service descriptors, and JPMS `requires` entries updated to `io.swagger.v3.rest`
-- [ ] Application runtime dependency graph checked for 2.x Swagger REST artifacts
+- [ ] Dependency graph has no Swagger Core 2.x artifacts (see [mixed versions](#check-for-mixed-swagger-versions))
 - [ ] `swagger-java17-support` dependency removed (Record support is now built in)
 - [ ] Jakarta REST API updated to `jakarta.ws.rs-api:3.1.0`
 - [ ] Jakarta Servlet API updated to `jakarta.servlet-api:6.0.0`
@@ -614,8 +628,8 @@ See [ObjectMapperProcessor — method signatures changed](#objectmapperprocessor
 - [ ] `com.fasterxml.jackson.core:jackson-annotations` kept at 2.22 (unchanged)
 - [ ] `org.yaml:snakeyaml` removed from dependencies
 - [ ] `ObjectMapperProcessor` implementations updated: import and return type
-- [ ] Cached mappers reviewed: no `final ObjectMapper mapper = Json.mapper()` at class init (see [mapper customization](#mapper-customization-cached-mappers-become-stale))
-- [ ] Custom Jackson serializer/deserializer classes and method signatures updated (see [class and signature changes](#custom-serializers-and-deserializers-class-and-signature-changes))
+- [ ] Cached mappers reviewed: no `final ObjectMapper mapper = Json.mapper()` at class init (see [mapper customization](#mapper-customization--cached-mappers-become-stale))
+- [ ] Custom Jackson serializer/deserializer classes and method signatures updated (see [class and signature changes](#custom-serializers-and-deserializers--class-and-signature-changes))
 - [ ] Jackson databind imports updated: `com.fasterxml.jackson.databind` → `tools.jackson.databind`
 - [ ] Test suite passing
 - [ ] OpenAPI output verified
