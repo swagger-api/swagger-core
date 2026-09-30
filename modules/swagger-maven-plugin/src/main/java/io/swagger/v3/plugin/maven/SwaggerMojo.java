@@ -5,7 +5,7 @@ import io.swagger.v3.core.filter.SpecFilter;
 import io.swagger.v3.core.util.Configuration;
 import io.swagger.v3.core.util.Json;
 import io.swagger.v3.core.util.Yaml;
-import io.swagger.v3.jaxrs2.integration.JaxrsOpenApiContextBuilder;
+import io.swagger.v3.rest.integration.RestOpenApiContextBuilder;
 import io.swagger.v3.oas.integration.GenericOpenApiContextBuilder;
 import io.swagger.v3.oas.integration.OpenApiConfigurationException;
 import io.swagger.v3.oas.integration.SwaggerConfiguration;
@@ -77,7 +77,7 @@ public class SwaggerMojo extends AbstractMojo {
         setDefaultsIfMissing(config);
 
         try {
-            GenericOpenApiContextBuilder builder = new JaxrsOpenApiContextBuilder()
+            GenericOpenApiContextBuilder builder = new RestOpenApiContextBuilder()
                     .openApiConfiguration(config);
             if (StringUtils.isNotBlank(contextId)) {
                 builder.ctxId(contextId);

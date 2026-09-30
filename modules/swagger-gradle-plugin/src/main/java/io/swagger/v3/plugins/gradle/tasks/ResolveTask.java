@@ -18,7 +18,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
@@ -480,7 +479,7 @@ public class ResolveTask extends DefaultTask {
                 .toArray(URL[]::new);
 
         try (URLClassLoader classLoader = new URLClassLoader(urls)) {
-            Class<?> swaggerLoaderClass = classLoader.loadClass("io.swagger.v3.jaxrs2.integration.SwaggerLoader");
+            Class<?> swaggerLoaderClass = classLoader.loadClass("io.swagger.v3.rest.integration.SwaggerLoader");
             Object swaggerLoader = swaggerLoaderClass.getDeclaredConstructor().newInstance();
 
             Method method = null;
