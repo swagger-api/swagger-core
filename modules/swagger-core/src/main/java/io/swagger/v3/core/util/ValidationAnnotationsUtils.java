@@ -48,12 +48,12 @@ public class ValidationAnnotationsUtils {
                                                   io.swagger.v3.oas.annotations.media.ArraySchema ctxArraySchema) {
         if (isArraySchema(schema)) {
             if (ctxArraySchema == null || ctxArraySchema.minItems() == Integer.MAX_VALUE) {
-                schema.setMinItems(1);
+                schema.setMinItems(atLeast(schema.getMinItems(), 1));
                 return true;
             }
         } else if (isStringSchema(schema)) {
             if (ctxSchema == null || ctxSchema.minLength() == 0) {
-                schema.setMinLength(1);
+                schema.setMinLength(atLeast(schema.getMinLength(), 1));
                 return true;
             }
         } else if (isObjectSchema(schema)) {
@@ -73,7 +73,7 @@ public class ValidationAnnotationsUtils {
     public static boolean applyNotBlankConstraint(Schema schema, io.swagger.v3.oas.annotations.media.Schema ctxSchema) {
         if (isStringSchema(schema)) {
             if (ctxSchema == null || ctxSchema.minLength() == 0) {
-                schema.setMinLength(1);
+                schema.setMinLength(atLeast(schema.getMinLength(), 1));
                 return true;
             }
         }
@@ -118,16 +118,20 @@ public class ValidationAnnotationsUtils {
             return true;
         }
         if (isStringSchema(schema)) {
-            schema.setMinLength(annotation.min());
+            schema.setMinLength(atLeast(schema.getMinLength(), annotation.min()));
             schema.setMaxLength(annotation.max());
             return true;
         }
         if (isArraySchema(schema)) {
-            schema.setMinItems(annotation.min());
+            schema.setMinItems(atLeast(schema.getMinItems(), annotation.min()));
             schema.setMaxItems(annotation.max());
             return true;
         }
         return false;
+    }
+
+    private static int atLeast(Integer current, int minimum) {
+        return current == null ? minimum : Math.max(current, minimum);
     }
 
     /**
