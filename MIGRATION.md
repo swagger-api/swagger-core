@@ -409,33 +409,74 @@ public class MySerializer extends ValueSerializer<MyType> {
 
 ---
 
-### Mapper defaults — custom ObjectMapper instances
+### Mapper defaults
 
-**Impact:** Low (affects only `ObjectMapper` instances created outside of `ObjectMapperFactory`)
+`ObjectMapperFactory` calls `configureForJackson2()` before it applies Swagger Core options.
+This applies to JSON and YAML mappers, the JSON converter mapper, and the strict generic JSON mapper.
+The method restores selected Jackson 2 defaults. It does not restore every Jackson 2 behavior.
 
-Swagger Core 3.0 explicitly sets the following defaults in `ObjectMapperFactory` to preserve
-Jackson 2 behavioral compatibility:
+The table shows the defaults after `configureForJackson2()` and the final Swagger Core values.
+All listed values apply to these mappers unless the table names an exception.
 
-| Setting | Value | Reason |
+| Option | `configureForJackson2()` | Final value |
 |---|---|---|
-| `WRITE_DATES_AS_TIMESTAMPS` | `false` | Dates serialized as ISO-8601 strings |
-| `WRITE_DURATIONS_AS_TIMESTAMPS` | `true` | Jackson 2 compat |
-| `WRITE_UTC_AS_OFFSET` | `true` | Jackson 2 compat |
-| `FAIL_ON_EMPTY_BEANS` | `false` | Jackson 2 default |
-| `FAIL_ON_UNKNOWN_PROPERTIES` | `false` | Jackson 2 default |
-| `FAIL_ON_NULL_FOR_PRIMITIVES` | `false` | Jackson 2 default |
-| `STRIP_TRAILING_BIGDECIMAL_ZEROES` | `true` | Preserve numeric output |
-| `SORT_PROPERTIES_ALPHABETICALLY` | `false` | Preserve field order |
-| `WRITE_BIGDECIMAL_AS_PLAIN` | `true` | No scientific notation |
-| `FAIL_ON_ORDER_MAP_BY_INCOMPARABLE_KEY` | `true` | Fail fast on bad Map keys |
-| Property inclusion | `NON_NULL` | Omit null fields |
+| `ONE_BASED_MONTHS` | `false` | `false` |
+| `WRITE_DATES_AS_TIMESTAMPS` | `true` | `false` |
+| `WRITE_DURATIONS_AS_TIMESTAMPS` | `true` | `true` |
+| `WRITE_UTC_AS_OFFSET` | `true` | `true` |
+| `FAIL_ON_NULL_FOR_PRIMITIVES` | `false` | `false` |
+| `FAIL_ON_TRAILING_TOKENS` | `false` | `false` (public mappers), `true` (strict mapper) |
+| `FAIL_ON_UNKNOWN_PROPERTIES` | `true` | `false` |
+| `READ_ENUMS_USING_TO_STRING` | `false` | `false` |
+| `WRITE_ENUMS_USING_TO_STRING` | `false` | `true` |
+| `STRIP_TRAILING_BIGDECIMAL_ZEROES` | `true` | `true` |
+| `ALLOW_FINAL_FIELDS_AS_MUTATORS` | `true` | `true` |
+| `DETECT_PARAMETER_NAMES` | `false` | `false` |
+| `FIX_FIELD_NAME_UPPER_CASE_PREFIX` | `false` | `false` |
+| `SORT_PROPERTIES_ALPHABETICALLY` | `false` | `false` |
+| `USE_GETTERS_AS_SETTERS` | `true` | `true` |
+| `FAIL_ON_EMPTY_BEANS` | `true` | `false` |
 
-No behavioral changes to JSON or YAML output are expected when using the built-in mappers.
+Swagger Core overrides the date, enum output, unknown-property, and empty-bean defaults to keep
+its behavior from before the Jackson 3 migration. It also adds these options:
 
-If you create `ObjectMapper` instances outside of `ObjectMapperFactory`, you must account for
-Jackson 3's changed defaults. Refer to the
-[Jackson 3 migration notes](https://github.com/FasterXML/jackson/wiki/Jackson-Release-3.0)
-for the full list of default changes.
+| Option | Public JSON, YAML, and converter mappers | Strict generic JSON mapper |
+|---|---|---|
+| `FAIL_ON_ORDER_MAP_BY_INCOMPARABLE_KEY` | `true` | `true` |
+| Accessor first character | Lower-case letters and non-letters accepted | Lower-case letters and non-letters accepted |
+| Default inclusion for properties and map values | `NON_NULL` | `NON_NULL` |
+| `WRITE_BIGDECIMAL_AS_PLAIN` | `true` | `false` |
+
+The strict mapper rejects trailing tokens. Public mappers accept them. All mappers write general enum
+values through `Enum.toString()` but read them through `Enum.name()`.
+
+#### Known differences from Jackson 2
+
+| Case | Jackson 2 | Swagger Core 3.0 mapper |
+|---|---|---|
+| `Month.JANUARY` output | `"JANUARY"` | `0` |
+| Numeric `Month` input | `0` means January, `11` means December | Same values |
+| Text `Month` input | `"JANUARY"` accepted | `"JANUARY"` accepted |
+
+Jackson 3 treats `java.time.Month` as a date and time type. The generated schema still describes
+`Month` as a string, although the mapper writes a number.
+
+Jackson 3 also changes how it names properties from accessors with acronyms.
+`configureForJackson2()` does not restore Jackson 2's acronym rule.
+
+| Accessor | Jackson 2 property | Swagger Core 3.0 property |
+|---|---|---|
+| `getURL()` | `url` | `URL` |
+| `getIPhone()` | `iphone` | `IPhone` |
+| `isURL()` | `url` | `URL` |
+
+This difference affects JSON and YAML property names, input names, and generated schemas.
+The accessor option in the table accepts names such as `getvalue()` and `get_value()`.
+It does not change acronym names.
+
+If you create an `ObjectMapper` outside `ObjectMapperFactory`, these options do not apply.
+See the [Jackson 3 migration notes](https://github.com/FasterXML/jackson/wiki/Jackson-Release-3.0)
+for other changes to Jackson defaults.
 
 ---
 

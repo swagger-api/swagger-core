@@ -12,7 +12,7 @@ import tools.jackson.databind.SerializationConfig;
 import tools.jackson.databind.SerializationFeature;
 import tools.jackson.databind.ValueSerializer;
 import tools.jackson.databind.cfg.DateTimeFeature;
-import tools.jackson.databind.cfg.JsonNodeFeature;
+import tools.jackson.databind.cfg.EnumFeature;
 import tools.jackson.databind.cfg.MapperBuilder;
 import tools.jackson.databind.introspect.DefaultAccessorNamingStrategy;
 import tools.jackson.databind.json.JsonMapper;
@@ -256,6 +256,7 @@ public class ObjectMapperFactory {
                     "Unsupported TokenStreamFactory: " + jsonFactory.getClass().getName()
                     + ". Supported types: JsonFactory, YAMLFactory.");
         }
+        configureJackson2Compatibility(mapperBuilder);
 
         if (!openapi31) {
             // handle ref schema serialization skipping all other props
@@ -358,7 +359,6 @@ public class ObjectMapperFactory {
         }
         mapperBuilder.addMixIns(sourceMixins);
         configureSwaggerPolicy(mapperBuilder);
-        configureJackson2TimeCompatibility(mapperBuilder);
         configureSwaggerOutput(mapperBuilder);
 
         applyCustomizers(mapperBuilder, targetFor(jsonFactory, openapi31));
@@ -376,6 +376,7 @@ public class ObjectMapperFactory {
     public static ObjectMapper createJsonConverter() {
 
         JsonMapper.Builder builder = JsonMapper.builder();
+        configureJackson2Compatibility(builder);
 
 
         JacksonModule deserializerModule = new DeserializationModule();
@@ -417,7 +418,6 @@ public class ObjectMapperFactory {
         sourceMixins.put(Schema.class, SchemaConverterMixin.class);
         builder.addMixIns(sourceMixins);
         configureSwaggerPolicy(builder);
-        configureJackson2TimeCompatibility(builder);
         configureSwaggerOutput(builder);
 
         applyCustomizers(builder, MapperTarget.JSON_CONVERTER);
@@ -432,33 +432,33 @@ public class ObjectMapperFactory {
      */
     public static ObjectMapper buildStrictGenericObjectMapper() {
         JsonMapper.Builder builder = JsonMapper.builder();
+        configureJackson2Compatibility(builder);
         configureSwaggerPolicy(builder);
-        builder.configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY, false);
+        builder.configure(DeserializationFeature.FAIL_ON_TRAILING_TOKENS, true);
         return builder.build();
     }
 
+    private static void configureJackson2Compatibility(MapperBuilder<?, ?> builder) {
+        builder.configureForJackson2();
+        builder.configure(SerializationFeature.FAIL_ON_ORDER_MAP_BY_INCOMPARABLE_KEY, true);
+        builder.accessorNaming(new DefaultAccessorNamingStrategy.Provider()
+                .withFirstCharAcceptance(true, true));
+    }
+
     private static void configureSwaggerPolicy(MapperBuilder<?, ?> builder) {
-        builder.configure(JsonNodeFeature.STRIP_TRAILING_BIGDECIMAL_ZEROES, true);
         builder.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
         builder.configure(DateTimeFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+        builder.configure(EnumFeature.WRITE_ENUMS_USING_TO_STRING, true);
+        builder.configure(EnumFeature.READ_ENUMS_USING_TO_STRING, false);
         builder.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        builder.configure(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES, false);
+        builder.configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY, false);
         builder.changeDefaultPropertyInclusion(incl -> incl
                 .withContentInclusion(JsonInclude.Include.NON_NULL)
                 .withValueInclusion(JsonInclude.Include.NON_NULL));
     }
 
-    private static void configureJackson2TimeCompatibility(MapperBuilder<?, ?> builder) {
-        builder.configure(DateTimeFeature.WRITE_DURATIONS_AS_TIMESTAMPS, true);
-        builder.configure(DateTimeFeature.WRITE_UTC_AS_OFFSET, true);
-    }
-
     private static void configureSwaggerOutput(MapperBuilder<?, ?> builder) {
-        builder.configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY, false);
-        builder.configure(SerializationFeature.FAIL_ON_ORDER_MAP_BY_INCOMPARABLE_KEY, true);
         builder.configure(StreamWriteFeature.WRITE_BIGDECIMAL_AS_PLAIN, true);
-        builder.accessorNaming(new DefaultAccessorNamingStrategy.Provider()
-                .withFirstCharAcceptance(true, true));
     }
 
 }
