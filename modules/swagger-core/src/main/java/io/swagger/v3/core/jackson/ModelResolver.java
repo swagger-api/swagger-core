@@ -964,13 +964,14 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
          * Skip resolveSubtypes for sealed classes with @Schema(oneOf).
          * This prevents Jackson 3's auto-detected sealed class subtypes
          * from creating unwanted allOf references.
+         *
+         * No discriminator reset is needed here: the model has no discriminator yet at this point,
+         * it is set exclusively by resolveDiscriminator below.
          */
         boolean isSealedWithSchemaOneOf = beanDesc.getClassInfo().getAnnotated().isSealed()
                 && resolvedSchemaAnnotation != null && resolvedSchemaAnnotation.oneOf().length > 0;
-        if (isSealedWithSchemaOneOf) {
-            model.setDiscriminator(null);
-        } else if (!resolveSubtypes(model, beanDesc, context, annotatedType.getJsonViewAnnotation())) {
-            model.setDiscriminator(null);
+        if (!isSealedWithSchemaOneOf) {
+            resolveSubtypes(model, beanDesc, context, annotatedType.getJsonViewAnnotation());
         }
 
         Discriminator discriminator = resolveDiscriminator(type, context);
@@ -2003,10 +2004,10 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         return modified;
     }
 
-    private boolean resolveSubtypes(Schema model, BeanDescription bean, ModelConverterContext context, JsonView jsonViewAnnotation) {
+    private void resolveSubtypes(Schema model, BeanDescription bean, ModelConverterContext context, JsonView jsonViewAnnotation) {
         final List<NamedType> types = _intr().findSubtypes(_mapper.serializationConfig(), bean.getClassInfo());
         if (types == null) {
-            return false;
+            return;
         }
 
         /**
@@ -2023,7 +2024,6 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
          */
         removeSuperClassAndInterfaceSubTypes(types, bean);
 
-        int count = 0;
         final Class<?> beanClass = bean.getClassInfo().getAnnotated();
         for (NamedType subtype : types) {
             final Class<?> subtypeType = subtype.getType();
@@ -2077,7 +2077,6 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             }
 
         }
-        return count != 0;
     }
 
     private void removeSelfFromSubTypes(List<NamedType> types, BeanDescription bean) {
