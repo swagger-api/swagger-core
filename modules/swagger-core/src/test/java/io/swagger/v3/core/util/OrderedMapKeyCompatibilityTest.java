@@ -8,9 +8,11 @@ import tools.jackson.databind.SerializationFeature;
 import tools.jackson.databind.exc.InvalidDefinitionException;
 import tools.jackson.dataformat.yaml.YAMLFactory;
 
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.expectThrows;
@@ -37,9 +39,16 @@ public class OrderedMapKeyCompatibilityTest {
                 mapper("create(JSON, false)", () -> ObjectMapperFactory.create(new JsonFactory(), false)),
                 mapper("create(YAML, true)", () -> ObjectMapperFactory.create(new YAMLFactory(), true)),
                 mapper("createYaml(false)", () -> ObjectMapperFactory.createYaml(false)),
-                mapper("createYaml(true)", () -> ObjectMapperFactory.createYaml(true)),
-                mapper("buildStrictGenericObjectMapper", ObjectMapperFactory::buildStrictGenericObjectMapper)
+                mapper("createYaml(true)", () -> ObjectMapperFactory.createYaml(true))
         };
+    }
+
+    @DataProvider(name = "allMappers")
+    public Object[][] allMappers() {
+        return Stream.concat(Arrays.stream(publicMappers()),
+                Stream.<Object[]>of(mapper("buildStrictGenericObjectMapper",
+                        ObjectMapperFactory::buildStrictGenericObjectMapper)))
+                .toArray(Object[][]::new);
     }
 
     private static Object[] mapper(String name, Supplier<ObjectMapper> mapper) {
@@ -53,7 +62,7 @@ public class OrderedMapKeyCompatibilityTest {
                 SerializationFeature.FAIL_ON_ORDER_MAP_BY_INCOMPARABLE_KEY), name);
     }
 
-    @Test(dataProvider = "publicMappers")
+    @Test(dataProvider = "allMappers")
     public void sortsComparableStringKeys(String name, Supplier<ObjectMapper> supplier) {
         ObjectMapper mapper = withOrderedMapEntries(supplier);
         Map<String, String> values = new LinkedHashMap<>();
@@ -65,7 +74,7 @@ public class OrderedMapKeyCompatibilityTest {
         assertTrue(output.indexOf("a") < output.indexOf("z"), name + ": " + output);
     }
 
-    @Test(dataProvider = "publicMappers")
+    @Test(dataProvider = "allMappers")
     public void rejectsIncomparableOrderedMapKeys(
             String name, Supplier<ObjectMapper> supplier) {
         ObjectMapper mapper = withOrderedMapEntries(supplier);
