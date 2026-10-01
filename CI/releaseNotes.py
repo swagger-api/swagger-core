@@ -10,7 +10,7 @@ def allPulls(releaseDate):
     result = ""
 
     baseurl = "https://api.github.com/repos/swagger-api/swagger-core/pulls/"
-    content = ghApiClient.readUrl('repos/swagger-api/swagger-core/pulls?state=closed&base=master&per_page=100')
+    content = ghApiClient.readUrl('repos/swagger-api/swagger-core/pulls?state=closed&base=3.0.0&per_page=100')
     for l in content:
         stripped = l["url"][len(baseurl):]
         mergedAt = l["merged_at"]
@@ -34,7 +34,7 @@ def addRelease(release_title, tag, content):
     payload += "\"body\":" + json.dumps(content) + ", "
     payload += "\"draft\":" + "true" + ", "
     payload += "\"prerelease\":" + "false" + ", "
-    payload += "\"target_commitish\":\"" + "master" + "\"}"
+    payload += "\"target_commitish\":\"" + "3.0.0" + "\"}"
     content = ghApiClient.postUrl('repos/swagger-api/swagger-core/releases', payload)
     return content
 

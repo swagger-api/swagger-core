@@ -2,10 +2,10 @@ name: "Code scanning - action"
 
 on:
   push:
-    branches: [master, 1.5]
+    branches: ["3.0.0"]
   pull_request:
     # The branches below must be a subset of the branches above
-    branches: [master, 1.5]
+    branches: ["3.0.0"]
   schedule:
     - cron: '0 19 * * 1'
 
@@ -50,9 +50,9 @@ jobs:
       uses: actions/cache@v5
       with:
         path: ~/.m2/repository
-        key: ${{ runner.os }}-jdk11-maven-v2-${{ hashFiles('**/pom.xml') }}
+        key: ${{ runner.os }}-jdk17-maven-v2-${{ hashFiles('**/pom.xml') }}
         restore-keys: |
-          ${{ runner.os }}-jdk11-maven-v2-
+          ${{ runner.os }}-jdk17-maven-v2-
     - name: Set up Gradle
       uses: gradle/actions/setup-gradle@v6
       with:

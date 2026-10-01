@@ -36,9 +36,3 @@ cd ../..
 sc_find="version=$SC_VERSION"
 sc_replace="version=$SC_NEXT_VERSION-SNAPSHOT"
 sed -i -e "s/$sc_find/$sc_replace/g" $CUR/modules/swagger-gradle-plugin/gradle.properties
-
-#####################
-### Copy scripts to temp folder, as they are not available when checking out different branch or repo
-#####################
-cp -a $CUR/CI/update-v1-readme.sh $TMPDIR/update-v1-readme.sh
-cp -a $CUR/CI/update-wiki.sh $TMPDIR/update-wiki.sh
