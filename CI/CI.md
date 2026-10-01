@@ -1,15 +1,22 @@
 ## Continuous integration
 
+This file describes the CI of the `3.0.0` branch (3.x line). The `master` branch (2.x line) and the `1.5` branch (1.x line)
+have their own copies of the workflows and scripts.
+
 ### Build, test and deploy
 Swagger Core uses Github actions to run jobs/checks building, testing and deploying snapshots on push and PR events.
 
 These github actions are configured in `.github/workflows`:
 
-* maven.yml : Build Test Deploy master
-* maven-pulls.yml Build Test PR
-* maven-v1.yml : Build Test Deploy 1.5 (must exist in in `1.5` branch)
-* maven-v1-pulls.yml Build Test PR 1.5 (must exist in in `1.5` branch)
+* maven.yml : Build Test Deploy 3.0.0 (push to `3.0.0`, JDK 17, 21, 25; snapshot deploy on JDK 17 only)
+* maven-pulls.yml : Build Test PR (PRs to `3.0.0`, JDK 17, 21, 25)
+* codeql-analysis.yml : Code scanning - action (push and PRs to `3.0.0`, JDK 17)
+* dependency-review.yml : Dependency Review (all PRs)
+* prepare-release.yml : Prepare Release (manual)
+* release.yml : Release (manual)
 
+The workflow files have the same names on `master` and `3.0.0`. Branch triggers are set per branch in each file.
+The scheduled CodeQL run uses the file of the default branch (`master`) only.
 
 These actions use available actions in combination with short bash scripts.
 
@@ -19,21 +26,34 @@ Releases are semi-automated and consist in 2 actions using available public acti
 **TODO**: Python code is used for historical reasons to execute GitHub APIs calls, in general a more consistent environment would
 be more maintainable e.g. implementing a custom JavaScript or Docker Container GitHub Action and/or a bash only script(s).
 
+A manual run uses the workflow file of the branch selected in the `Run workflow` dropdown. Checkouts and PR bases use
+`github.ref_name`, so they point to the selected branch.
+
+Each release workflow starts with a `Verify release line` step. The step stops the run unless the selected branch is `3.0.0`
+and the pom version starts with `3.`. This prevents a 3.x release from the wrong branch.
+
+The `CI/*` scripts on `3.0.0` are the 3.x copies of the `master` scripts:
+
+* `lastRelease.py` finds the last published `v3*` release. If no `v3*` release exists (first 3.x release), it uses the
+last published `v2*` release and writes a warning to stderr.
+* `releaseNotes.py` lists PRs merged to `3.0.0` and creates the draft release with target `3.0.0`.
+* `publishRelease.py` publishes the draft release with target `3.0.0`.
+
+A 3.x release does not update the Wiki (the Wiki documents 2.x) and does not push changes to the `1.5` branch.
+
 #### Workflow summary
 
-1. execute `prepare-release.yml` / `Prepare Release` for `master` branch
+1. execute `prepare-release.yml` / `Prepare Release` for `3.0.0` branch
 1. check and merge the Prepare Release PR pushed by previous step. Delete the branch
-1. execute `release.yml` / `Release` for `master` branch
-1. check and merge the `1.5` branch Readme update PR pushed by previous step. Delete the branch
+1. execute `release.yml` / `Release` for `3.0.0` branch
 1. check and merge the next snaphot PR pushed by previous step. Delete the branch
 
 #### Prepare Release
 
-The first action to execute is `prepare-release.yml` / `Prepare Release` for master, and
-`prepare-release-v1.yml` / `Prepare Release V1` for `1.5` branch.
+The first action to execute is `prepare-release.yml` / `Prepare Release`.
 
-This is triggered by manually executing the action, selecting `Actions` in project GitHub UI, then `Prepare Release` workflow
-and clicking `Run Workflow` (or `Prepare Release V1` and selecting `1.5` in the dropdown)
+This is triggered by manually executing the action, selecting `Actions` in project GitHub UI, then `Prepare Release` workflow,
+selecting `3.0.0` in the branch dropdown and clicking `Run Workflow`.
 
 `Prepare Release` takes care of:
 
@@ -42,29 +62,26 @@ and clicking `Run Workflow` (or `Prepare Release V1` and selecting `1.5` in the 
 * bump versions to release, and update all affected files
 * build and test maven
 * build and test gradle plugin
-* push a Pull Request with the changes for human check.
+* push a Pull Request to `3.0.0` with the changes for human check.
 
 After the PR checks complete, the PR can me merged, and the second phase `Release` started.
 
 #### Release
 
-Once prepare release PR has been merged, the second phase is provided by `release.yml` / `Release` actions for master, and
-`release-v1.yml` / `Release V1` for `1.5` branch.
+Once prepare release PR has been merged, the second phase is provided by `release.yml` / `Release`.
 
-This is triggered by manually executing the action, selecting `Actions` in project GitHub UI, then `Release` workflow
-and clicking `Run Workflow` (or `Release V1` and selecting `1.5` in the dropdown)
+This is triggered by manually executing the action, selecting `Actions` in project GitHub UI, then `Release` workflow,
+selecting `3.0.0` in the branch dropdown and clicking `Run Workflow`.
 
 `Release` takes care of:
 
 * build and test maven
 * build and test gradle plugin
 * deploy/publish to maven central
-* publish javadocs to gh-pages
+* publish javadocs to gh-pages (`swagger-core/v<version>/apidocs`)
 * deploy/publish gradle plugin
 * publish the previously prepared GitHub release / tag
-* push PR for next snapshot
-* push PR for 1.5 Readme update with new v2 version
-* update Wiki with javadocs links to new version
+* push PR to `3.0.0` for next snapshot
 
 
 
@@ -86,8 +103,6 @@ https://central.sonatype.org/pages/working-with-pgp-signatures.html (I'd say wit
 * `MAVEN_CENTRAL_USERNAME` and `MAVEN_CENTRAL_PASSWORD`: sonatype user/token
 
 * `GRADLE_PUBLISH_KEY` and `GRADLE_PUBLISH_SECRET`: credentials for https://plugins.gradle.org/
-
-
 
 
 
