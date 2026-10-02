@@ -1,6 +1,6 @@
 # Swagger Core <img src="https://raw.githubusercontent.com/swagger-api/swagger.io/wordpress/images/assets/SW-logo-clr.png" height="50" align="right">
 
-![Build Test Deploy](https://github.com/swagger-api/swagger-core/workflows/Build%20Test%20Deploy%203.0.0/badge.svg?branch=3.0.0)
+![Build Test Deploy](https://github.com/swagger-api/swagger-core/actions/workflows/maven.yml/badge.svg?branch=3.0.0&event=push)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.swagger.core.v3/swagger-project/badge.svg?style=plastic)](https://maven-badges.herokuapp.com/maven-central/io.swagger.core.v3/swagger-project)
 
 Swagger Core is a Java implementation of the OpenAPI Specification.
@@ -15,6 +15,8 @@ Key changes:
 - **Java 17** — Java 17 or higher is now required (previously Java 8+)
 - **Jackson 3** — runtime dependency moved to `tools.jackson` groupId (version 3.2.2)
 - **Jakarta only** — `javax.*` namespace removed; only `jakarta.*` is supported
+- **Artifact names** — eight retired library IDs relocate to the new 3.0 artifacts.
+  See the [artifact mapping](MIGRATION.md#artifact-names-in-30).
 - **SnakeYAML removed** — replaced by `org.snakeyaml:snakeyaml-engine` via Jackson
 - **ObjectMapperProcessor API** — method signatures changed to return `ObjectMapper`
 - **Java Records built in** — native Record support no longer requires the separate `swagger-java17-support` module
@@ -61,7 +63,7 @@ implementation("io.swagger.core.v3:swagger-core:3.0.0")
 | `swagger-maven-plugin` | Maven plugin for spec generation at build time |
 | `swagger-gradle-plugin` | Gradle plugin for spec generation at build time |
 
-The REST public API uses the `io.swagger.v3.rest` namespace. See [MIGRATION.md](MIGRATION.md#module-renames) for package, type, and configuration changes from 2.x.
+The REST public API uses the `io.swagger.v3.rest` namespace. See [MIGRATION.md](MIGRATION.md#artifact-names-in-30) for artifact, package, type, and configuration changes from 2.x.
 
 ## Usage
 

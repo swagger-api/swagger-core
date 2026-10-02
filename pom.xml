@@ -412,6 +412,14 @@
         <module>modules/swagger-integration</module>
         <module>modules/swagger-rest</module>
         <module>modules/swagger-rest-servlet-initializer</module>
+        <module>modules/swagger-annotations-jakarta</module>
+        <module>modules/swagger-models-jakarta</module>
+        <module>modules/swagger-core-jakarta</module>
+        <module>modules/swagger-integration-jakarta</module>
+        <module>modules/swagger-jaxrs2</module>
+        <module>modules/swagger-jaxrs2-jakarta</module>
+        <module>modules/swagger-jaxrs2-servlet-initializer-v2</module>
+        <module>modules/swagger-jaxrs2-servlet-initializer-v2-jakarta</module>
         <module>modules/swagger-bom</module>
         <module>modules/swagger-maven-plugin</module>
 
