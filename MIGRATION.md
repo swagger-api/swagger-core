@@ -7,6 +7,9 @@ and raises the minimum Java version to 17. Users upgrading from 2.x must update 
 ensure Java 17+, and update any custom `ObjectMapperProcessor` implementations or Jackson
 serializer/deserializer classes.
 
+Eight Swagger library artifact IDs are retired in 3.0.
+Replace them with the IDs in [Swagger artifact IDs](#swagger-artifact-ids).
+
 ## Compatibility
 
 | | Swagger Core 2.x | Swagger Core 3.0 |
@@ -99,62 +102,49 @@ Keep `com.fasterxml.jackson.core:jackson-annotations` at version 2.22.
 
 ---
 
-### Module renames
+<a name="module-renames"></a>
+### Swagger artifact IDs
 
 **Impact:** High
 
-Two modules have new names in 3.0. Both use the group `io.swagger.core.v3` and the version `3.0.0`.
+Swagger Core 3.0 publishes these libraries under the replacement IDs only. No retired library ID has
+a 3.0 artifact. The replacements use group `io.swagger.core.v3` and version `3.0.0`.
+The 2.x Maven plugin `swagger-maven-plugin-jakarta` is also retired; use
+`swagger-maven-plugin` in 3.0.
 
 | 2.x artifact ID | 3.0 artifact ID |
 |---|---|
+| `swagger-annotations-jakarta` | `swagger-annotations` |
+| `swagger-models-jakarta` | `swagger-models` |
+| `swagger-core-jakarta` | `swagger-core` |
+| `swagger-integration-jakarta` | `swagger-integration` |
 | `swagger-jaxrs2` | `swagger-rest` |
+| `swagger-jaxrs2-jakarta` | `swagger-rest` |
 | `swagger-jaxrs2-servlet-initializer-v2` | `swagger-rest-servlet-initializer` |
+| `swagger-jaxrs2-servlet-initializer-v2-jakarta` | `swagger-rest-servlet-initializer` |
 
-**2.x (Maven):**
+Replace every direct dependency on a retired ID with its replacement. Specify version `3.0.0`,
+or import the 3.0 BOM and omit the version. A versionless retired ID is not managed by the BOM.
 
-```xml
-<dependency>
-  <groupId>io.swagger.core.v3</groupId>
-  <artifactId>swagger-jaxrs2</artifactId>
-  <version>2.2.55</version>
-</dependency>
-<dependency>
-  <groupId>io.swagger.core.v3</groupId>
-  <artifactId>swagger-jaxrs2-servlet-initializer-v2</artifactId>
-  <version>2.2.55</version>
-</dependency>
-```
-
-**3.0 (Maven):**
+For example, replace a direct `swagger-core-jakarta` dependency with `swagger-core`:
 
 ```xml
+<!-- Maven -->
 <dependency>
   <groupId>io.swagger.core.v3</groupId>
-  <artifactId>swagger-rest</artifactId>
-  <version>3.0.0</version>
-</dependency>
-<dependency>
-  <groupId>io.swagger.core.v3</groupId>
-  <artifactId>swagger-rest-servlet-initializer</artifactId>
+  <artifactId>swagger-core</artifactId>
   <version>3.0.0</version>
 </dependency>
 ```
 
-**2.x (Gradle):**
-
 ```kotlin
-implementation("io.swagger.core.v3:swagger-jaxrs2:2.2.55")
-implementation("io.swagger.core.v3:swagger-jaxrs2-servlet-initializer-v2:2.2.55")
+// Gradle (Kotlin DSL)
+implementation("io.swagger.core.v3:swagger-core:3.0.0")
 ```
 
-**3.0 (Gradle):**
-
-```kotlin
-implementation("io.swagger.core.v3:swagger-rest:3.0.0")
-implementation("io.swagger.core.v3:swagger-rest-servlet-initializer:3.0.0")
-```
-
-**Migration:** Update both artifact IDs in your build file.
+Third-party libraries compiled against Swagger Core 2.x need a release compatible with 3.0
+or a rebuild. A BOM or dependency exclusion cannot update their compiled code. If no
+compatible library is available, stay on Swagger Core 2.x until you can migrate it.
 
 #### Renamed packages
 
@@ -210,15 +200,6 @@ Seven public types have new names. Each type is in the new package from the tabl
 5. If your `module-info.java` has `requires` entries for Swagger, change them:
    - `io.swagger.v3.jaxrs2` → `io.swagger.v3.rest`
    - `io.swagger.v3.jaxrs2.integration.servlet` → `io.swagger.v3.rest.integration.servlet`
-
-#### Check for mixed Swagger versions
-
-Do not use Swagger Core 2.x and 3.0 artifacts in the same application.
-
-1. Show the dependency graph of your application:
-   - Maven: `mvn dependency:tree -Dincludes=io.swagger.core.v3`
-   - Gradle: `./gradlew dependencies --configuration runtimeClasspath`
-2. If a dependency brings in a 2.x Swagger artifact, update that dependency or exclude the artifact.
 
 ---
 
@@ -545,7 +526,8 @@ Ensure your environment and build are using Java 17 or higher.
 
 ### 2. Update swagger-core dependencies
 
-Update all `io.swagger.core.v3` artifacts to version 3.0.0.
+Replace each retired artifact ID with its 3.0 ID in [Swagger artifact IDs](#swagger-artifact-ids).
+Update all `io.swagger.core.v3` dependencies to version 3.0.0.
 
 ### 3. Update Jackson dependencies
 
@@ -591,12 +573,13 @@ Keep `com.fasterxml.jackson.annotation` imports unchanged — annotations stay o
 
 Update the REST imports, the seven renamed types, the servlet configuration,
 the extension service descriptors, and the JPMS `requires` entries.
-See [Module renames](#module-renames).
+See [Swagger artifact IDs](#swagger-artifact-ids).
 
-### 10. Run your test suite
+### 10. Inspect the runtime classpath and run tests
 
-Verify that OpenAPI output matches expectations, especially if you are using custom
-serializers or a custom `ObjectMapper`.
+Check the resolved runtime dependencies for Swagger Core 2.x artifacts with `mvn dependency:tree -Dscope=runtime -Dincludes=io.swagger.core.v3` or `./gradlew dependencies --configuration runtimeClasspath`.
+Run the application and your test suite. Compare generated OpenAPI output with expectations,
+especially if you use custom serializers or a custom `ObjectMapper`.
 
 ---
 
@@ -657,11 +640,10 @@ See [ObjectMapperProcessor — method signatures changed](#objectmapperprocessor
 ## Migration checklist
 
 - [ ] Java 17+ runtime and compiler configured
+- [ ] All eight retired artifact IDs replaced with their 3.0 IDs (see [Swagger artifact IDs](#swagger-artifact-ids))
 - [ ] `io.swagger.core.v3` dependencies updated to 3.0.0
-- [ ] `swagger-jaxrs2` dependency renamed to `swagger-rest`
-- [ ] `swagger-jaxrs2-servlet-initializer-v2` dependency renamed to `swagger-rest-servlet-initializer`
 - [ ] REST imports, seven renamed types, servlet configuration, extension service descriptors, and JPMS `requires` entries updated to `io.swagger.v3.rest`
-- [ ] Dependency graph has no Swagger Core 2.x artifacts (see [mixed versions](#check-for-mixed-swagger-versions))
+- [ ] Runtime dependencies contain only Swagger Core 3.0 artifacts
 - [ ] `swagger-java17-support` dependency removed (Record support is now built in)
 - [ ] Jakarta REST API updated to `jakarta.ws.rs-api:3.1.0`
 - [ ] Jakarta Servlet API updated to `jakarta.servlet-api:6.0.0`
@@ -673,4 +655,5 @@ See [ObjectMapperProcessor — method signatures changed](#objectmapperprocessor
 - [ ] Custom Jackson serializer/deserializer classes and method signatures updated (see [class and signature changes](#custom-serializers-and-deserializers--class-and-signature-changes))
 - [ ] Jackson databind imports updated: `com.fasterxml.jackson.databind` → `tools.jackson.databind`
 - [ ] Test suite passing
+- [ ] Application runs and Swagger-dependent library functions work
 - [ ] OpenAPI output verified
