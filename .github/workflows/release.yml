@@ -28,6 +28,8 @@ jobs:
         server-username: MAVEN_USERNAME
         server-password: MAVEN_PASSWORD
         gpg-private-key: ${{ secrets.OSSRH_GPG_PRIVATE_KEY }}
+        # env var holding the passphrase; also the one maven-gpg-plugin 3.2+ reads by default
+        gpg-passphrase: MAVEN_GPG_PASSPHRASE
     - name: Cache local Maven repository
       uses: actions/cache@v5
       with:
@@ -118,8 +120,6 @@ jobs:
       SC_VERSION:
       SC_NEXT_VERSION:
       GPG_PRIVATE_KEY: ${{ secrets.OSSRH_GPG_PRIVATE_KEY }}
-      GPG_PASSPHRASE: ${{ secrets.OSSRH_GPG_PRIVATE_PASSPHRASE }}
-      # read by maven-gpg-plugin 3.2+
       MAVEN_GPG_PASSPHRASE: ${{ secrets.OSSRH_GPG_PRIVATE_PASSPHRASE }}
       GRADLE_PUBLISH_KEY: ${{ secrets.GRADLE_PUBLISH_KEY }}
       GRADLE_PUBLISH_SECRET: ${{ secrets.GRADLE_PUBLISH_SECRET }}
