@@ -26,3 +26,31 @@ updates:
       # Old Dependency-Check majors can lose compatibility with the NVD API.
       - dependency-name: "org.owasp:dependency-check-maven"
         update-types: ["version-update:semver-major"]
+  - package-ecosystem: "maven"
+    target-branch: "3.0.0"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    allow:
+      - dependency-name: "*"
+        update-types:
+          - "version-update:semver-minor"
+          - "version-update:semver-patch"
+      # Old Dependency-Check majors can lose compatibility with the NVD API.
+      - dependency-name: "org.owasp:dependency-check-maven"
+        update-types: ["version-update:semver-major"]
+  - package-ecosystem: "gradle"
+    target-branch: "3.0.0"
+    directory: "/modules/swagger-gradle-plugin"
+    schedule:
+      interval: "weekly"
+    allow:
+      - dependency-name: "*"
+        update-types:
+          - "version-update:semver-minor"
+          - "version-update:semver-patch"
+  - package-ecosystem: "github-actions"
+    target-branch: "3.0.0"
+    directory: "/"
+    schedule:
+      interval: "weekly"
