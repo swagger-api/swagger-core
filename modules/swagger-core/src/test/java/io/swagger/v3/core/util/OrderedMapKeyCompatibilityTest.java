@@ -1,58 +1,23 @@
 package io.swagger.v3.core.util;
 
-import org.testng.annotations.DataProvider;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-import tools.jackson.core.json.JsonFactory;
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.SerializationFeature;
 import tools.jackson.databind.exc.InvalidDefinitionException;
-import tools.jackson.dataformat.yaml.YAMLFactory;
 
-import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Supplier;
-import java.util.stream.Stream;
 
 import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.expectThrows;
 
-public class OrderedMapKeyCompatibilityTest {
+public class OrderedMapKeyCompatibilityTest extends ObjectMapperFactoryTestBase {
 
-    @DataProvider(name = "publicMappers")
-    public Object[][] publicMappers() {
-        return new Object[][] {
-                mapper("Json.mapper", () -> Json.mapper().rebuild().build()),
-                mapper("Json31.mapper", () -> Json31.mapper().rebuild().build()),
-                mapper("Yaml.mapper", () -> Yaml.mapper().rebuild().build()),
-                mapper("Yaml31.mapper", () -> Yaml31.mapper().rebuild().build()),
-                mapper("createJson", ObjectMapperFactory::createJson),
-                mapper("createJson31", ObjectMapperFactory::createJson31),
-                mapper("createYaml", ObjectMapperFactory::createYaml),
-                mapper("createYaml31", ObjectMapperFactory::createYaml31),
-                mapper("createJson(factory)", () -> ObjectMapperFactory.createJson(new JsonFactory())),
-                mapper("createJson31(factory)", () -> ObjectMapperFactory.createJson31(new JsonFactory())),
-                mapper("createYaml(factory)", () -> ObjectMapperFactory.createYaml(new YAMLFactory())),
-                mapper("createYaml31(factory)", () -> ObjectMapperFactory.createYaml31(new YAMLFactory())),
-                mapper("createJsonConverter", ObjectMapperFactory::createJsonConverter),
-                mapper("Json31.converterMapper", () -> Json31.converterMapper().rebuild().build()),
-                mapper("create(JSON, false)", () -> ObjectMapperFactory.create(new JsonFactory(), false)),
-                mapper("create(YAML, true)", () -> ObjectMapperFactory.create(new YAMLFactory(), true)),
-                mapper("createYaml(false)", () -> ObjectMapperFactory.createYaml(false)),
-                mapper("createYaml(true)", () -> ObjectMapperFactory.createYaml(true))
-        };
-    }
-
-    @DataProvider(name = "allMappers")
-    public Object[][] allMappers() {
-        return Stream.concat(Arrays.stream(publicMappers()),
-                Stream.<Object[]>of(mapper("buildStrictGenericObjectMapper",
-                        ObjectMapperFactory::buildStrictGenericObjectMapper)))
-                .toArray(Object[][]::new);
-    }
-
-    private static Object[] mapper(String name, Supplier<ObjectMapper> mapper) {
-        return new Object[] {name, mapper};
+    @BeforeMethod
+    public void enableJackson2Compatibility() {
+        ObjectMapperFactory.setJackson2Compatibility(true);
     }
 
     @Test(dataProvider = "publicMappers")
