@@ -118,7 +118,7 @@
         <dependency>
             <groupId>jakarta.validation</groupId>
             <artifactId>jakarta.validation-api</artifactId>
-            <version>${validation-api-version}</version>
+            <version>${jakarta.validation-api-version}</version>
         </dependency>
         <dependency>
             <groupId>org.testng</groupId>
@@ -138,7 +138,6 @@
         </dependency>
     </dependencies>
     <properties>
-        <validation-api-version>3.0.2</validation-api-version>
         <coverage.complexity.minimum>0.60</coverage.complexity.minimum>
         <coverage.line.minimum>0.0</coverage.line.minimum>
         <coverage.missed.classes>3</coverage.missed.classes>

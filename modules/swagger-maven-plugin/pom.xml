@@ -81,7 +81,7 @@
         <dependency>
             <groupId>org.codehaus.plexus</groupId>
             <artifactId>plexus-archiver</artifactId>
-            <version>4.10.0</version>
+            <version>4.14.0</version>
             <scope>test</scope>
             <exclusions>
                 <exclusion>
@@ -181,19 +181,19 @@
             <groupId>com.github.jknack</groupId>
             <artifactId>handlebars-helpers</artifactId>
             <scope>test</scope>
-            <version>4.5.3</version>
+            <version>4.5.5</version>
         </dependency>
         <dependency>
             <groupId>com.github.jknack</groupId>
             <artifactId>handlebars</artifactId>
             <scope>test</scope>
-            <version>4.5.3</version>
+            <version>4.5.5</version>
         </dependency>
     </dependencies>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.version>3.9.16</maven.version>
         <junit.version>4.13.2</junit.version>
-        <commons-compress-version>1.27.1</commons-compress-version>
+        <commons-compress-version>1.28.0</commons-compress-version>
     </properties>
 </project>

@@ -102,8 +102,8 @@ public class OsgiJakartaClassLoadingTest {
 
     private static void assertRestWiring(List<Wire> wires) {
         assertNotNull(wires, "Resolver did not return wiring for swagger-rest");
-        assertPackageWire(wires, "jakarta.ws.rs", "3.1.0");
-        assertPackageWire(wires, "jakarta.servlet", "6.0.0");
+        assertPackageWire(wires, "jakarta.ws.rs", buildVersion("jakarta.ws-version"));
+        assertPackageWire(wires, "jakarta.servlet", buildVersion("servlet-api-version"));
         assertContractWire(wires, "JakartaRESTfulWebServices", "3.1.0");
         assertContractWire(wires, "JakartaServlet", "6.0.0");
     }
@@ -113,8 +113,8 @@ public class OsgiJakartaClassLoadingTest {
                 .filter(resource -> "io.swagger.core.v3.swagger-core".equals(identity(resource)))
                 .findFirst()
                 .orElseThrow(() -> new AssertionError("swagger-core was not part of the resolved graph"));
-        assertPackageWire(resolution.get(core), "jakarta.validation.constraints", "3.0.2");
-        assertPackageWire(resolution.get(core), "jakarta.xml.bind.annotation", "4.0.2");
+        assertPackageWire(resolution.get(core), "jakarta.validation.constraints", buildVersion("jakarta.validation-api-version"));
+        assertPackageWire(resolution.get(core), "jakarta.xml.bind.annotation", buildVersion("jakarta.xml.bind-api-version"));
     }
 
     private static void assertNoLegacyPackageProviders(Map<Resource, List<Wire>> resolution) {
@@ -151,13 +151,13 @@ public class OsgiJakartaClassLoadingTest {
             Constructor<?> constructor = modelResolver.getConstructor(objectMapper);
             assertNotNull(constructor.newInstance(mapper));
 
-            assertApiClass(loader, "jakarta.ws.rs.core.Response", "jakarta.ws.rs-api-3.1.0.jar");
+            assertApiClass(loader, "jakarta.ws.rs.core.Response", "jakarta.ws.rs-api-" + buildVersion("jakarta.ws-version") + ".jar");
             assertApiClass(loader, "jakarta.servlet.ServletContainerInitializer",
-                    "jakarta.servlet-api-6.0.0.jar");
+                    "jakarta.servlet-api-" + buildVersion("servlet-api-version") + ".jar");
             assertApiClass(loader, "jakarta.validation.constraints.NotNull",
-                    "jakarta.validation-api-3.0.2.jar");
+                    "jakarta.validation-api-" + buildVersion("jakarta.validation-api-version") + ".jar");
             assertApiClass(loader, "jakarta.xml.bind.annotation.XmlElement",
-                    "jakarta.xml.bind-api-4.0.2.jar");
+                    "jakarta.xml.bind-api-" + buildVersion("jakarta.xml.bind-api-version") + ".jar");
         }
     }
 
@@ -244,6 +244,13 @@ public class OsgiJakartaClassLoadingTest {
                 .addAttribute(CONTRACT_ATTRIBUTE, name)
                 .addAttribute("version", List.of(Version.parseVersion(version)))
                 .addDirective("uses", uses);
+    }
+
+    // Provider jar versions come from the build (see swagger-rest surefire config) so dependency bumps don't break the test.
+    private static String buildVersion(String property) {
+        String version = System.getProperty(property);
+        assertNotNull(version, "System property " + property + " is not set by the build");
+        return version;
     }
 
     private static void assertPackageWire(List<Wire> wires, String packageName, String version) {
