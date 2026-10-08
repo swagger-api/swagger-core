@@ -168,7 +168,10 @@ public class OsgiJakartaClassLoadingTest {
                 Object value = content.getAttributes().get(ContentNamespace.CAPABILITY_URL_ATTRIBUTE);
                 if (value != null) {
                     URI uri = value instanceof URI ? (URI) value : URI.create(value.toString());
-                    urls.add(uri.toURL());
+                    // bnd 7 also attaches content capabilities with non-loadable URIs (e.g. urn:) to synthetic resources.
+                    if ("file".equals(uri.getScheme())) {
+                        urls.add(uri.toURL());
+                    }
                 }
             }
         }
