@@ -81,12 +81,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class ObjectMapperFactory {
 
     private static final List<MapperCustomizer> CUSTOMIZERS = new CopyOnWriteArrayList<>();
     private static final AtomicLong GENERATION = new AtomicLong();
+    private static final AtomicBoolean JACKSON2_COMPATIBILITY = new AtomicBoolean();
 
     protected ObjectMapperFactory() {
     }
@@ -176,7 +178,42 @@ public class ObjectMapperFactory {
     }
 
     /**
-     * A counter incremented every time the set of customizers changes. Holders of cached mappers (such as
+     * Opts in (or out) of Jackson 2 compatible mapper behavior. It is disabled by default, so mappers start from
+     * Jackson 3 defaults. When enabled, {@code MapperBuilder.configureForJackson2()} is applied, plus
+     * {@code FAIL_ON_ORDER_MAP_BY_INCOMPARABLE_KEY=true}. Jackson 2 style accessor first-character acceptance
+     * (lower-case and non-letter) is a swagger-core default and applies regardless of this switch.
+     * <p>
+     * Options are layered, later layers override earlier ones:
+     * <ol>
+     * <li>Jackson 3 defaults;</li>
+     * <li>Jackson 2 compatibility, only when enabled here;</li>
+     * <li>swagger-core defaults (for example {@code FAIL_ON_UNKNOWN_PROPERTIES=false}, dates written as text);</li>
+     * <li>{@link MapperCustomizer}s registered with {@link #addCustomizer(MapperCustomizer)}.</li>
+     * </ol>
+     * The switch also applies to {@link #buildStrictGenericObjectMapper()}. Changing the value moves
+     * {@link #generation()}, so cached mappers ({@link Json}, {@link Yaml}, {@link Json31}, {@link Yaml31}) and
+     * the {@link io.swagger.v3.core.converter.ModelConverters} resolver are rebuilt on next access. The value is
+     * <b>not</b> reset by {@link #clearCustomizers()}.
+     *
+     * @param enabled {@code true} to apply Jackson 2 compatibility
+     * @since 3.0.0
+     */
+    public static void setJackson2Compatibility(boolean enabled) {
+        if (JACKSON2_COMPATIBILITY.getAndSet(enabled) != enabled) {
+            GENERATION.incrementAndGet();
+        }
+    }
+
+    /**
+     * @return whether Jackson 2 compatibility is enabled, see {@link #setJackson2Compatibility(boolean)}
+     * @since 3.0.0
+     */
+    public static boolean isJackson2Compatibility() {
+        return JACKSON2_COMPATIBILITY.get();
+    }
+
+    /**
+     * A counter incremented every time the set of customizers or the Jackson 2 compatibility switch changes. Holders of cached mappers (such as
      * {@link Json}) compare it with the generation they were built at to know when to rebuild.
      *
      * @return the current generation
@@ -256,7 +293,7 @@ public class ObjectMapperFactory {
                     "Unsupported TokenStreamFactory: " + jsonFactory.getClass().getName()
                     + ". Supported types: JsonFactory, YAMLFactory.");
         }
-        configureJackson2Compatibility(mapperBuilder);
+        applyJackson2Compatibility(mapperBuilder);
 
         if (!openapi31) {
             // handle ref schema serialization skipping all other props
@@ -376,8 +413,7 @@ public class ObjectMapperFactory {
     public static ObjectMapper createJsonConverter() {
 
         JsonMapper.Builder builder = JsonMapper.builder();
-        configureJackson2Compatibility(builder);
-
+        applyJackson2Compatibility(builder);
 
         JacksonModule deserializerModule = new DeserializationModule();
         builder.addModule(deserializerModule);
@@ -426,26 +462,32 @@ public class ObjectMapperFactory {
 
     /**
      * Builds a plain JSON mapper with no swagger-core modules or mixins, used to parse generic example values.
-     * Registered {@link MapperCustomizer}s are intentionally <b>not</b> applied.
+     * Registered {@link MapperCustomizer}s are intentionally <b>not</b> applied, but the
+     * {@linkplain #setJackson2Compatibility(boolean) Jackson 2 compatibility} switch is honored. Option layers:
+     * Jackson 3 defaults, then Jackson 2 compatibility (only if enabled), then swagger-core defaults
+     * (including {@code FAIL_ON_TRAILING_TOKENS=true}, always applied).
      *
      * @return a new mapper
      */
     public static ObjectMapper buildStrictGenericObjectMapper() {
         JsonMapper.Builder builder = JsonMapper.builder();
-        configureJackson2Compatibility(builder);
+        applyJackson2Compatibility(builder);
         configureSwaggerPolicy(builder);
         builder.configure(DeserializationFeature.FAIL_ON_TRAILING_TOKENS, true);
         return builder.build();
     }
 
-    private static void configureJackson2Compatibility(MapperBuilder<?, ?> builder) {
+    private static void applyJackson2Compatibility(MapperBuilder<?, ?> builder) {
+        if (!JACKSON2_COMPATIBILITY.get()) {
+            return;
+        }
         builder.configureForJackson2();
         builder.configure(SerializationFeature.FAIL_ON_ORDER_MAP_BY_INCOMPARABLE_KEY, true);
-        builder.accessorNaming(new DefaultAccessorNamingStrategy.Provider()
-                .withFirstCharAcceptance(true, true));
     }
 
     private static void configureSwaggerPolicy(MapperBuilder<?, ?> builder) {
+        builder.accessorNaming(new DefaultAccessorNamingStrategy.Provider()
+                .withFirstCharAcceptance(true, true));
         builder.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
         builder.configure(DateTimeFeature.WRITE_DATES_AS_TIMESTAMPS, false);
         builder.configure(EnumFeature.WRITE_ENUMS_USING_TO_STRING, true);
