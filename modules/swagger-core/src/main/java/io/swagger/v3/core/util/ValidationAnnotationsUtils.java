@@ -47,12 +47,13 @@ public class ValidationAnnotationsUtils {
                                                   io.swagger.v3.oas.annotations.media.Schema ctxSchema,
                                                   io.swagger.v3.oas.annotations.media.ArraySchema ctxArraySchema) {
         if (isArraySchema(schema)) {
-            if (ctxArraySchema == null || ctxArraySchema.minItems() == Integer.MAX_VALUE) {
+            if ((ctxArraySchema == null || ctxArraySchema.minItems() == Integer.MAX_VALUE)
+                    && raisesMinimum(schema.getMinItems(), 1)) {
                 schema.setMinItems(1);
                 return true;
             }
         } else if (isStringSchema(schema)) {
-            if (ctxSchema == null || ctxSchema.minLength() == 0) {
+            if ((ctxSchema == null || ctxSchema.minLength() == 0) && raisesMinimum(schema.getMinLength(), 1)) {
                 schema.setMinLength(1);
                 return true;
             }
@@ -72,7 +73,7 @@ public class ValidationAnnotationsUtils {
      */
     public static boolean applyNotBlankConstraint(Schema schema, io.swagger.v3.oas.annotations.media.Schema ctxSchema) {
         if (isStringSchema(schema)) {
-            if (ctxSchema == null || ctxSchema.minLength() == 0) {
+            if ((ctxSchema == null || ctxSchema.minLength() == 0) && raisesMinimum(schema.getMinLength(), 1)) {
                 schema.setMinLength(1);
                 return true;
             }
@@ -118,16 +119,24 @@ public class ValidationAnnotationsUtils {
             return true;
         }
         if (isStringSchema(schema)) {
-            schema.setMinLength(annotation.min());
+            if (raisesMinimum(schema.getMinLength(), annotation.min())) {
+                schema.setMinLength(annotation.min());
+            }
             schema.setMaxLength(annotation.max());
             return true;
         }
         if (isArraySchema(schema)) {
-            schema.setMinItems(annotation.min());
+            if (raisesMinimum(schema.getMinItems(), annotation.min())) {
+                schema.setMinItems(annotation.min());
+            }
             schema.setMaxItems(annotation.max());
             return true;
         }
         return false;
+    }
+
+    private static boolean raisesMinimum(Integer current, int minimum) {
+        return current == null || minimum > current;
     }
 
     /**
