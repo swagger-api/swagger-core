@@ -2023,6 +2023,8 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
          */
         removeSuperClassAndInterfaceSubTypes(types, bean);
 
+        removeDuplicateSubTypes(types);
+
         int count = 0;
         final Class<?> beanClass = bean.getClassInfo().getAnnotated();
         for (NamedType subtype : types) {
@@ -2100,6 +2102,17 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 }
             }
         }
+    }
+
+    /**
+     * Drops duplicate subtypes while preserving declaration order. Identical {@code @JsonSubTypes}
+     * entries and Jackson's {@code AnnotationIntrospectorPair} can report the same subtype more
+     * than once; without this, each duplicate becomes a repeated {@code $ref} once the parent is
+     * composed into a {@code oneOf} (see swagger-api/swagger-core#5320).
+     */
+    private void removeDuplicateSubTypes(List<NamedType> types) {
+        final Set<NamedType> seen = new HashSet<>();
+        types.removeIf(type -> !seen.add(type));
     }
 
     private void removeSuperSubTypes(List<NamedType> resultTypes, Class<?> superClass) {
