@@ -21,8 +21,8 @@ public class SwaggerPlugin implements Plugin<Project> {
         config.defaultDependencies(new Action<DependencySet>() {
             public void execute(DependencySet dependencies) {
                 dependencies.add(project.getDependencies().create("io.swagger.core.v3:swagger-rest:" + PLUGIN_VERSION));
-                dependencies.add(project.getDependencies().create("jakarta.ws.rs:jakarta.ws.rs-api:3.1.0"));
-                dependencies.add(project.getDependencies().create("jakarta.servlet:jakarta.servlet-api:6.0.0"));
+                dependencies.add(project.getDependencies().create("jakarta.ws.rs:jakarta.ws.rs-api:4.0.0"));
+                dependencies.add(project.getDependencies().create("jakarta.servlet:jakarta.servlet-api:6.1.0"));
             }
         });
         project.getTasks().register("resolve", ResolveTask.class,task -> {

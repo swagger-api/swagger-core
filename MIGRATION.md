@@ -216,13 +216,13 @@ was never a user dependency. Remove it from your build if present.
 
 **Impact:** High
 
-Swagger Core 3.0 requires the Jakarta EE 10 namespace (`jakarta.*`). The legacy `javax.*` namespace
-is not supported. This also means the minimum required API versions change:
+Swagger Core 3.0 uses the `jakarta.*` namespace only. The legacy `javax.*` namespace is not supported.
+**Jakarta EE 11 is the minimum required version.** This also means the minimum required API versions change:
 
 | API | 2.x compatible | 3.0 required |
 |---|---|---|
-| Jakarta REST (JAX-RS) | `jakarta.ws.rs-api` 2.x (`javax.ws.rs`) | `jakarta.ws.rs-api` **3.1.0** (`jakarta.ws.rs`) |
-| Jakarta Servlet | `jakarta.servlet-api` 4.x (`javax.servlet`) | `jakarta.servlet-api` **6.0.0** (`jakarta.servlet`) |
+| Jakarta REST (JAX-RS) | `jakarta.ws.rs-api` 2.x (`javax.ws.rs`) | `jakarta.ws.rs-api` **4.0.0** (`jakarta.ws.rs`) |
+| Jakarta Servlet | `jakarta.servlet-api` 4.x (`javax.servlet`) | `jakarta.servlet-api` **6.1.0** (`jakarta.servlet`) |
 
 **2.x (Maven):**
 
@@ -245,16 +245,16 @@ is not supported. This also means the minimum required API versions change:
 <dependency>
   <groupId>jakarta.ws.rs</groupId>
   <artifactId>jakarta.ws.rs-api</artifactId>
-  <version>3.1.0</version>
+  <version>4.0.0</version>
 </dependency>
 <dependency>
   <groupId>jakarta.servlet</groupId>
   <artifactId>jakarta.servlet-api</artifactId>
-  <version>6.0.0</version>
+  <version>6.1.0</version>
 </dependency>
 ```
 
-**Migration:** Update both API versions. Using older versions (2.x REST / 4.x Servlet) with
+**Migration:** Update both API versions. Using the `javax` versions (2.x REST / 4.x Servlet) with
 Swagger Core 3.0 will produce compile errors or `ClassNotFoundException` at runtime due to the
 namespace change.
 
@@ -579,7 +579,7 @@ If your project depended on `swagger-java17-support`, remove it. Record support 
 
 ### 5. Update Jakarta REST and Servlet API versions
 
-Update `jakarta.ws.rs-api` to 3.1.0 and `jakarta.servlet-api` to 6.0.0.
+Update `jakarta.ws.rs-api` to 4.0.0 and `jakarta.servlet-api` to 6.1.0.
 See [Jakarta REST and Servlet API versions](#jakarta-rest-and-servlet-api-versions).
 
 ### 6. Update ObjectMapperProcessor implementations
@@ -682,8 +682,9 @@ See [ObjectMapperProcessor — method signatures changed](#objectmapperprocessor
 - [ ] REST imports, seven renamed types, servlet configuration, extension service descriptors, and JPMS `requires` entries updated to `io.swagger.v3.rest`
 - [ ] Runtime dependencies contain only Swagger Core 3.0 artifacts
 - [ ] `swagger-java17-support` dependency removed (Record support is now built in)
-- [ ] Jakarta REST API updated to `jakarta.ws.rs-api:3.1.0`
-- [ ] Jakarta Servlet API updated to `jakarta.servlet-api:6.0.0`
+- [ ] Jakarta REST API updated to `jakarta.ws.rs-api:4.0.0`
+- [ ] Jakarta Servlet API updated to `jakarta.servlet-api:6.1.0`
+- [ ] `jakarta.validation-api` matches your validator (3.1.x with Hibernate Validator 9, or pinned to 3.0.2 with Hibernate Validator 8)
 - [ ] Jackson dependencies updated to `tools.jackson.*:3.2.2`
 - [ ] `com.fasterxml.jackson.core:jackson-annotations` kept at 2.22 (unchanged)
 - [ ] `org.yaml:snakeyaml` removed from dependencies

@@ -137,11 +137,11 @@ public class SwaggerResolveTest {
         assertEquals(coordinates.stream()
                         .filter(value -> value.startsWith("jakarta.ws.rs:jakarta.ws.rs-api:"))
                         .collect(Collectors.toSet()),
-                Set.of("jakarta.ws.rs:jakarta.ws.rs-api:3.1.0"));
+                Set.of("jakarta.ws.rs:jakarta.ws.rs-api:4.0.0"));
         assertEquals(coordinates.stream()
                         .filter(value -> value.startsWith("jakarta.servlet:jakarta.servlet-api:"))
                         .collect(Collectors.toSet()),
-                Set.of("jakarta.servlet:jakarta.servlet-api:6.0.0"));
+                Set.of("jakarta.servlet:jakarta.servlet-api:6.1.0"));
         assertTrue(coordinates.stream().noneMatch(value ->
                 value.startsWith("javax.ws.rs:javax.ws.rs-api:") ||
                         value.startsWith("javax.servlet:javax.servlet-api:")));
@@ -173,8 +173,8 @@ public class SwaggerResolveTest {
                 "}\n" +
                 "dependencies {  \n" +
                 "    implementation '" + SWAGGER_REST_DEPENDENCY + "'\n" +
-                "    implementation 'jakarta.ws.rs:jakarta.ws.rs-api:3.1.0'\n" +
-                "    implementation 'jakarta.servlet:jakarta.servlet-api:6.0.0'\n" +
+                "    implementation 'jakarta.ws.rs:jakarta.ws.rs-api:4.0.0'\n" +
+                "    implementation 'jakarta.servlet:jakarta.servlet-api:6.1.0'\n" +
                 "    testImplementation 'org.wiremock:wiremock-standalone:3.13.2'\n" +
                 "    testImplementation 'org.testng:testng:7.10.2'\n" +
                 "\n" +
@@ -246,8 +246,8 @@ public class SwaggerResolveTest {
                 "}\n" +
                 "dependencies {  \n" +
                 "    implementation '" + SWAGGER_REST_DEPENDENCY + "'\n" +
-                "    implementation 'jakarta.ws.rs:jakarta.ws.rs-api:3.1.0'\n" +
-                "    implementation 'jakarta.servlet:jakarta.servlet-api:6.0.0'\n" +
+                "    implementation 'jakarta.ws.rs:jakarta.ws.rs-api:4.0.0'\n" +
+                "    implementation 'jakarta.servlet:jakarta.servlet-api:6.1.0'\n" +
                 "    testImplementation 'org.wiremock:wiremock-standalone:3.13.2'\n" +
                 "    testImplementation 'org.testng:testng:7.10.2'\n" +
                 "\n" +
@@ -330,8 +330,8 @@ public class SwaggerResolveTest {
                 "}\n" +
                 "dependencies {  \n" +
                 "    implementation '" + SWAGGER_REST_DEPENDENCY + "'\n" +
-                "    implementation 'jakarta.ws.rs:jakarta.ws.rs-api:3.1.0'\n" +
-                "    implementation 'jakarta.servlet:jakarta.servlet-api:6.0.0'\n" +
+                "    implementation 'jakarta.ws.rs:jakarta.ws.rs-api:4.0.0'\n" +
+                "    implementation 'jakarta.servlet:jakarta.servlet-api:6.1.0'\n" +
                 "}\n" +
                 resolveTask + " {\n" +
                 "    outputFileName = 'PetStoreAPIDefaults'\n" +
@@ -399,8 +399,8 @@ public class SwaggerResolveTest {
                 "}\n" +
                 "dependencies {\n" +
                 "    implementation '" + SWAGGER_REST_DEPENDENCY + "'\n" +
-                "    implementation 'jakarta.ws.rs:jakarta.ws.rs-api:3.1.0'\n" +
-                "    implementation 'jakarta.servlet:jakarta.servlet-api:6.0.0'\n" +
+                "    implementation 'jakarta.ws.rs:jakarta.ws.rs-api:4.0.0'\n" +
+                "    implementation 'jakarta.servlet:jakarta.servlet-api:6.1.0'\n" +
                 "    testImplementation 'org.testng:testng:7.10.2'\n" +
                 "}\n" +
                 "sourceSets {\n" +
@@ -480,7 +480,7 @@ public class SwaggerResolveTest {
                 "}\n" +
                 "dependencies {\n" +
                 "    implementation project(':app')\n" +
-                "    implementation 'jakarta.ws.rs:jakarta.ws.rs-api:3.1.0'\n" +
+                "    implementation 'jakarta.ws.rs:jakarta.ws.rs-api:4.0.0'\n" +
                 "}\n" +
                 "resolve {\n" +
                 "    resourcePackages = ['com.example.api']\n" +

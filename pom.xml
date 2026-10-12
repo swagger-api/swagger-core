@@ -224,7 +224,7 @@
                             -define-contract: \
                                 osgi.contract;\
                                     osgi.contract=JakartaRESTfulWebServices;\
-                                    version:List<Version>="3.1";\
+                                    version:List<Version>="4.0";\
                                     uses:="\
                                         jakarta.ws.rs,\
                                         jakarta.ws.rs.client,\
@@ -234,7 +234,7 @@
                                         jakarta.ws.rs.sse",\
                                 osgi.contract;\
                                     osgi.contract=JakartaServlet;\
-                                    version:List<Version>="6.0";\
+                                    version:List<Version>="6.1";\
                                     uses:="\
                                         jakarta.servlet,\
                                         jakarta.servlet.annotation,\
@@ -264,8 +264,8 @@
                     </configuration>
                 </plugin>
                 <plugin>
-                    <groupId>org.eclipse.jetty.ee10</groupId>
-                    <artifactId>jetty-ee10-maven-plugin</artifactId>
+                    <groupId>org.eclipse.jetty.ee11</groupId>
+                    <artifactId>jetty-ee11-maven-plugin</artifactId>
                     <version>${jetty-version}</version>
                     <dependencies>
                         <dependency>
@@ -555,24 +555,24 @@
     <properties>
         <maven.compiler.release>17</maven.compiler.release>
         <joda-time-version>2.15.0</joda-time-version>
-        <jakarta.ws-version>3.1.0</jakarta.ws-version>
+        <jakarta.ws-version>4.0.0</jakarta.ws-version>
         <jakarta.xml.bind-api-version>4.0.5</jakarta.xml.bind-api-version>
-        <jakarta.validation-api-version>3.0.2</jakarta.validation-api-version>
+        <jakarta.validation-api-version>3.1.1</jakarta.validation-api-version>
         <jakarta.activation-api-version>2.1.4</jakarta.activation-api-version>
         <bnd-version>7.4.0</bnd-version>
-        <servlet-api-version>6.0.0</servlet-api-version>
-        <jersey-version>3.1.12</jersey-version>
+        <servlet-api-version>6.1.0</servlet-api-version>
+        <jersey-version>4.0.3</jersey-version>
         <jackson-version>3.2.3</jackson-version>
         <jackson-annotations-version>2.22</jackson-annotations-version>
         <logback-version>1.6.5</logback-version>
         <classgraph-version>4.8.197</classgraph-version>
         <guava-version>33.7.2-jre</guava-version>
         <slf4j-version>2.0.20</slf4j-version>
-        <jetty-version>12.0.40</jetty-version>
+        <jetty-version>12.1.14</jetty-version>
         <testng-version>7.12.0</testng-version>
         <httpcomponents-version>4.5.14</httpcomponents-version>
         <rest-assured-version>6.0.1</rest-assured-version>
-        <weld-version>5.1.7.Final</weld-version>
+        <weld-version>6.0.4.Final</weld-version>
 
         <maven-surefire-plugin.version>3.6.0</maven-surefire-plugin.version>
         <enforcer-plugin-version>3.6.3</enforcer-plugin-version>

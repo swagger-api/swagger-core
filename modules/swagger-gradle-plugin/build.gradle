@@ -36,8 +36,8 @@ dependencies {
     implementation gradleApi()
 
     testImplementation gradleTestKit()
-    testImplementation 'jakarta.servlet:jakarta.servlet-api:6.0.0'
-    testImplementation 'jakarta.ws.rs:jakarta.ws.rs-api:3.1.0'
+    testImplementation 'jakarta.servlet:jakarta.servlet-api:6.1.0'
+    testImplementation 'jakarta.ws.rs:jakarta.ws.rs-api:4.0.0'
     testImplementation "io.swagger.core.v3:swagger-rest:${project.version}"
     testImplementation 'org.testng:testng:7.12.0'
 }
