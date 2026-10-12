@@ -621,9 +621,9 @@ public class Issue4339Test {
      * Test that examples array is NOT set in OAS 3.0 (only OAS 3.1)
      * 
      * Note: In OAS 3.0, the 'examples' field (plural, as array) is only valid on:
-     * - Parameter Object (parameters[*].examples) - as Map<String, Example>
-     * - Media Type Object (content[media-type].examples) - as Map<String, Example>
-     * - Header Object (headers[*].examples) - as Map<String, Example>
+     * - Parameter Object (parameters[*].examples) - as {@code Map<String, Example>}
+     * - Media Type Object (content[media-type].examples) - as {@code Map<String, Example>}
+     * - Header Object (headers[*].examples) - as {@code Map<String, Example>}
      * 
      * For Schema objects, OAS 3.0 only supports the singular 'example' field.
      * The 'examples' array was added to Schema objects in OAS 3.1.

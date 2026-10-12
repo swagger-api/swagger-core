@@ -8,7 +8,6 @@ import io.swagger.v3.core.util.Configuration;
 import io.swagger.v3.core.util.Json;
 import io.swagger.v3.core.util.Json31;
 import io.swagger.v3.oas.annotations.media.Schema;
-import org.checkerframework.checker.nullness.qual.NonNull;
 import org.testng.annotations.Test;
 
 import java.math.BigDecimal;
@@ -148,7 +147,7 @@ public class Issue4838Test {
         assertNull(nullableBooleanField.getDefault());
     }
 
-    private static @NonNull ModelConverterContextImpl getModelConverterContext(ObjectMapper mapper, boolean openAPI31) {
+    private static ModelConverterContextImpl getModelConverterContext(ObjectMapper mapper, boolean openAPI31) {
         final ModelResolver modelResolver = new ModelResolver(mapper);
         Configuration configuration = new Configuration();
         configuration.setOpenAPI31(openAPI31);

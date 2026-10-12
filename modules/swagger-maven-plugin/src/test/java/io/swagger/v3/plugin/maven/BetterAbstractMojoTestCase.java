@@ -24,9 +24,11 @@ import java.util.Collections;
  * where you want more of the standard maven defaults to be set
  * (and where the {@link AbstractMojoTestCase} leaves them as null or empty).
  * This includes:
+ * <ul>
  * <li> local repo, repo sessions and managers configured
  * <li> maven default remote repos installed (NB: this does not use your ~/.m2 local settings)
  * <li> system properties are copies
+ * </ul>
  * <p>
  * No changes to subclass code is needed; this simply intercepts the {@link #newMavenSession(MavenProject)} method
  * used by the various {@link #lookupMojo(String, File)} methods.

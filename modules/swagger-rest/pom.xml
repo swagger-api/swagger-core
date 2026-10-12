@@ -101,6 +101,12 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
                     <argLine>--add-opens java.base/java.lang=ALL-UNNAMED</argLine>
+                    <systemPropertyVariables>
+                        <jakarta.ws-version>${jakarta.ws-version}</jakarta.ws-version>
+                        <servlet-api-version>${servlet-api-version}</servlet-api-version>
+                        <jakarta.validation-api-version>${jakarta.validation-api-version}</jakarta.validation-api-version>
+                        <jakarta.xml.bind-api-version>${jakarta.xml.bind-api-version}</jakarta.xml.bind-api-version>
+                    </systemPropertyVariables>
                     <forkCount>1</forkCount>
                     <reuseForks>true</reuseForks>
                 </configuration>
@@ -163,7 +169,8 @@
         <dependency>
             <groupId>org.javassist</groupId>
             <artifactId>javassist</artifactId>
-            <version>3.30.2-GA</version>
+            <version>3.33.0-GA</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>io.swagger.core.v3</groupId>
@@ -206,11 +213,6 @@
                     <artifactId>httpmime</artifactId>
                 </exclusion>
             </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-core</artifactId>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.jboss.weld</groupId>

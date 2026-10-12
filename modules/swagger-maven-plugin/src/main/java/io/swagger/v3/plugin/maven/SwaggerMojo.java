@@ -20,8 +20,6 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
-import org.codehaus.plexus.util.FileUtils;
-import org.codehaus.plexus.util.StringUtils;
 import tools.jackson.core.JacksonException;
 
 import java.io.File;
@@ -56,11 +54,11 @@ public class SwaggerMojo extends AbstractMojo {
 
         if (project != null) {
             String pEnc = project.getProperties().getProperty("project.build.sourceEncoding");
-            if (StringUtils.isNotBlank(pEnc)) {
+            if (isNotBlank(pEnc)) {
                 projectEncoding = pEnc;
             }
         }
-        if (StringUtils.isBlank(encoding)) {
+        if (isBlank(encoding)) {
             encoding = projectEncoding;
         }
 
@@ -79,13 +77,13 @@ public class SwaggerMojo extends AbstractMojo {
         try {
             GenericOpenApiContextBuilder builder = new RestOpenApiContextBuilder()
                     .openApiConfiguration(config);
-            if (StringUtils.isNotBlank(contextId)) {
+            if (isNotBlank(contextId)) {
                 builder.ctxId(contextId);
             }
             OpenApiContext context = builder.buildContext(true);
             OpenAPI openAPI = context.read();
 
-            if (StringUtils.isNotBlank(config.getFilterClass())) {
+            if (isNotBlank(config.getFilterClass())) {
                 try {
                     OpenAPISpecFilter filterImpl = (OpenAPISpecFilter) this.getClass().getClassLoader().loadClass(config.getFilterClass()).newInstance();
                     SpecFilter f = new SpecFilter();
@@ -203,7 +201,7 @@ public class SwaggerMojo extends AbstractMojo {
             throws MojoFailureException {
         try {
             // ignore if config is not provided
-            if (StringUtils.isBlank(filePath)) {
+            if (isBlank(filePath)) {
                 return Optional.empty();
             }
 
@@ -218,7 +216,7 @@ public class SwaggerMojo extends AbstractMojo {
             String fileContent = new String(Files.readAllBytes(pathObj), encoding);
 
             // if provided file is empty, log warning and finish
-            if (StringUtils.isBlank(fileContent)) {
+            if (isBlank(fileContent)) {
                 getLog().warn(format("It seems that file '%s' defined in config %s is empty",
                         pathObj.toString(), configName));
                 return Optional.empty();
@@ -277,11 +275,8 @@ public class SwaggerMojo extends AbstractMojo {
      * @return list of mappers
      */
     private <T> List<BiFunction<String, Class<T>, T>> getSortedMappers(Path pathObj) {
-        String ext = FileUtils.extension(pathObj.toString());
-        boolean yamlPreferred = false;
-        if (ext.equalsIgnoreCase("yaml") || ext.equalsIgnoreCase("yml")) {
-            yamlPreferred = true;
-        }
+        String fileName = pathObj.toString().toLowerCase(Locale.ROOT);
+        boolean yamlPreferred = fileName.endsWith(".yaml") || fileName.endsWith(".yml");
 
         List<BiFunction<String, Class<T>, T>> list = new ArrayList<>(2);
 
@@ -309,7 +304,7 @@ public class SwaggerMojo extends AbstractMojo {
 
     private SwaggerConfiguration mergeConfig(OpenAPI openAPIInput, SwaggerConfiguration config) {
         // overwrite all settings provided by other maven config
-        if (StringUtils.isNotBlank(filterClass)) {
+        if (isNotBlank(filterClass)) {
             config.filterClass(filterClass);
         }
         if (isCollectionNotBlank(ignoredRoutes)) {
@@ -330,10 +325,10 @@ public class SwaggerMojo extends AbstractMojo {
         if (readAllResources != null) {
             config.readAllResources(readAllResources);
         }
-        if (StringUtils.isNotBlank(readerClass)) {
+        if (isNotBlank(readerClass)) {
             config.readerClass(readerClass);
         }
-        if (StringUtils.isNotBlank(scannerClass)) {
+        if (isNotBlank(scannerClass)) {
             config.scannerClass(scannerClass);
         }
         if (isCollectionNotBlank(resourceClasses)) {
@@ -345,20 +340,20 @@ public class SwaggerMojo extends AbstractMojo {
         if (isCollectionNotBlank(resourcePackages)) {
             config.resourcePackages(resourcePackages);
         }
-        if (StringUtils.isNotBlank(objectMapperProcessorClass)) {
+        if (isNotBlank(objectMapperProcessorClass)) {
             config.objectMapperProcessorClass(objectMapperProcessorClass);
         }
-        if (StringUtils.isNotBlank(defaultResponseCode)) {
+        if (isNotBlank(defaultResponseCode)) {
             config.defaultResponseCode(defaultResponseCode);
         }
 
-        if (StringUtils.isNotBlank(defaultResponseCode)) {
+        if (isNotBlank(defaultResponseCode)) {
             config.defaultResponseCode(defaultResponseCode);
         }
-        if (StringUtils.isNotBlank(validatorProcessorClass)) {
+        if (isNotBlank(validatorProcessorClass)) {
             config.validatorProcessorClass(validatorProcessorClass);
         }
-        if (StringUtils.isNotBlank(groupsValidationStrategy)) {
+        if (isNotBlank(groupsValidationStrategy)) {
             config.groupsValidationStrategy(Configuration.GroupsValidationStrategy.valueOf(groupsValidationStrategy));
         }
         if (isCollectionNotBlank(modelConverterClasses)) {
@@ -368,11 +363,11 @@ public class SwaggerMojo extends AbstractMojo {
             config.openAPI31(openapi31);
         }
 
-        if (StringUtils.isNotBlank(schemaResolution)) {
+        if (isNotBlank(schemaResolution)) {
             config.schemaResolution(Schema.SchemaResolution.valueOf(schemaResolution));
         }
 
-        if (StringUtils.isNotBlank(openAPIVersion)) {
+        if (isNotBlank(openAPIVersion)) {
             config.openAPIVersion(openAPIVersion);
         }
 
@@ -520,5 +515,13 @@ public class SwaggerMojo extends AbstractMojo {
 
     SwaggerConfiguration getInternalConfiguration() {
         return config;
+    }
+
+    private static boolean isBlank(String value) {
+        return value == null || value.isBlank();
+    }
+
+    private static boolean isNotBlank(String value) {
+        return !isBlank(value);
     }
 }

@@ -29,7 +29,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-plugin-plugin</artifactId>
-                <version>3.15.2</version>
+                <version>3.16.0</version>
             </plugin>
         </plugins>
     </build>
@@ -69,7 +69,7 @@
         <dependency>
             <groupId>org.apache.maven.plugin-tools</groupId>
             <artifactId>maven-plugin-annotations</artifactId>
-            <version>3.15.1</version>
+            <version>3.16.0</version>
             <scope>provided</scope>
             <exclusions>
                 <exclusion>
@@ -81,7 +81,7 @@
         <dependency>
             <groupId>org.codehaus.plexus</groupId>
             <artifactId>plexus-archiver</artifactId>
-            <version>4.10.0</version>
+            <version>4.14.0</version>
             <scope>test</scope>
             <exclusions>
                 <exclusion>
@@ -97,7 +97,7 @@
         <dependency>
             <groupId>org.apache.maven.plugin-testing</groupId>
             <artifactId>maven-plugin-testing-harness</artifactId>
-            <version>3.3.0</version>
+            <version>3.5.1</version>
             <scope>test</scope>
             <exclusions>
                 <exclusion>
@@ -122,6 +122,8 @@
             <groupId>org.codehaus.plexus</groupId>
             <artifactId>plexus-utils</artifactId>
             <version>3.6.1</version>
+            <!-- Maven 3.9 core (used by the test harness) still needs plexus-utils 3.x; the plugin itself does not -->
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.codehaus.plexus</groupId>
@@ -177,23 +179,11 @@
             <artifactId>jakarta.ws.rs-api</artifactId>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>com.github.jknack</groupId>
-            <artifactId>handlebars-helpers</artifactId>
-            <scope>test</scope>
-            <version>4.5.3</version>
-        </dependency>
-        <dependency>
-            <groupId>com.github.jknack</groupId>
-            <artifactId>handlebars</artifactId>
-            <scope>test</scope>
-            <version>4.5.3</version>
-        </dependency>
     </dependencies>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.version>3.9.16</maven.version>
         <junit.version>4.13.2</junit.version>
-        <commons-compress-version>1.27.1</commons-compress-version>
+        <commons-compress-version>1.28.0</commons-compress-version>
     </properties>
 </project>
