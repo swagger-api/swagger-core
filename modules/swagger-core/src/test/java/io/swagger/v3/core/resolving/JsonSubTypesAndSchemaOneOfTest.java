@@ -12,6 +12,7 @@ import io.swagger.v3.core.jackson.ModelResolver;
 import io.swagger.v3.oas.annotations.media.DiscriminatorMapping;
 import io.swagger.v3.oas.models.media.ComposedSchema;
 import io.swagger.v3.oas.models.media.Schema;
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -37,8 +38,14 @@ public class JsonSubTypesAndSchemaOneOfTest extends SwaggerTestBase {
     @BeforeMethod
     public void setup() {
         ModelResolver.composedModelPropertiesAsSibling = false;
+        ModelResolver.jsonSubTypesOneOf = false;
         ModelResolver modelResolver = new ModelResolver(new ObjectMapper());
         context = new ModelConverterContextImpl(modelResolver);
+    }
+
+    @AfterMethod
+    public void resetJsonSubTypesOneOf() {
+        ModelResolver.jsonSubTypesOneOf = false;
     }
 
     @AfterTest
@@ -209,31 +216,23 @@ public class JsonSubTypesAndSchemaOneOfTest extends SwaggerTestBase {
     @Test
     public void jsonSubTypesOnlyParentIsComposedIntoOneOfWhenOptedIn() {
         ModelResolver.jsonSubTypesOneOf = true;
-        try {
-            final Schema<?> model = context.resolve(new AnnotatedType(PolymorphicInterface.class));
-            assertTrue(model instanceof ComposedSchema,
-                    "when opted in the @JsonSubTypes-only parent should be converted to a oneOf ComposedSchema");
-            assertNotNull(model.getOneOf());
-            assertEquals(model.getOneOf().size(), 2);
-            assertEquals(model.getOneOf().get(0).get$ref(), "#/components/schemas/PolymorphicSubtype1");
-            assertEquals(model.getOneOf().get(1).get$ref(), "#/components/schemas/PolymorphicSubtype2");
-        } finally {
-            ModelResolver.jsonSubTypesOneOf = false;
-        }
+        final Schema<?> model = context.resolve(new AnnotatedType(PolymorphicInterface.class));
+        assertTrue(model instanceof ComposedSchema,
+                "when opted in the @JsonSubTypes-only parent should be converted to a oneOf ComposedSchema");
+        assertNotNull(model.getOneOf());
+        assertEquals(model.getOneOf().size(), 2);
+        assertEquals(model.getOneOf().get(0).get$ref(), "#/components/schemas/PolymorphicSubtype1");
+        assertEquals(model.getOneOf().get(1).get$ref(), "#/components/schemas/PolymorphicSubtype2");
     }
 
     @Test
     public void extensionPointAllowsSubclassToRestorePreviousBehavior() {
         ModelResolver.jsonSubTypesOneOf = true;
-        try {
-            final ModelConverterContextImpl subclassContext =
-                    new ModelConverterContextImpl(new RestorePreviousBehaviorModelResolver(new ObjectMapper()));
-            final Schema<?> restoredModel = subclassContext.resolve(new AnnotatedType(PolymorphicInterface.class));
-            assertFalse(restoredModel instanceof ComposedSchema && ((ComposedSchema) restoredModel).getOneOf() != null,
-                    "the resolved parent must not be auto-converted to a oneOf ComposedSchema when resolveSubtypes() is overridden");
-        } finally {
-            ModelResolver.jsonSubTypesOneOf = false;
-        }
+        final ModelConverterContextImpl subclassContext =
+                new ModelConverterContextImpl(new RestorePreviousBehaviorModelResolver(new ObjectMapper()));
+        final Schema<?> restoredModel = subclassContext.resolve(new AnnotatedType(PolymorphicInterface.class));
+        assertFalse(restoredModel instanceof ComposedSchema && ((ComposedSchema) restoredModel).getOneOf() != null,
+                "the resolved parent must not be auto-converted to a oneOf ComposedSchema when resolveSubtypes() is overridden");
     }
 
     static class RestorePreviousBehaviorModelResolver extends ModelResolver {
@@ -286,6 +285,110 @@ public class JsonSubTypesAndSchemaOneOfTest extends SwaggerTestBase {
         public String getName() {
             return name;
         }
+    }
+
+    @Test
+    public void optInKeepsSubtypesAllOfParentAndParentProperties() {
+        ModelResolver.jsonSubTypesOneOf = true;
+        final Schema<?> parent = context.resolve(new AnnotatedType(PolymorphicInterface.class));
+        assertTrue(parent instanceof ComposedSchema);
+        assertNotNull(parent.getProperties(), "parent properties must survive the replacement");
+        assertTrue(parent.getProperties().containsKey("name"));
+
+        final Schema<?> sub = context.getDefinedModels().get("PolymorphicSubtype1");
+        assertTrue(sub instanceof ComposedSchema);
+        assertEquals(((ComposedSchema) sub).getAllOf().get(0).get$ref(), "#/components/schemas/PolymorphicInterface");
+    }
+
+    @Test
+    public void optInOneOfFollowsDeclarationOrderAndUsesResolvedNames() {
+        ModelResolver.jsonSubTypesOneOf = true;
+        final Schema<?> parent = context.resolve(new AnnotatedType(RenamedParent.class));
+        assertNotNull(parent.getOneOf());
+        assertEquals(parent.getOneOf().size(), 2);
+        assertEquals(parent.getOneOf().get(0).get$ref(), "#/components/schemas/RenamedFirst");
+        assertEquals(parent.getOneOf().get(1).get$ref(), "#/components/schemas/RenamedSecond");
+        for (Schema<?> ref : parent.getOneOf()) {
+            final String name = ref.get$ref().substring("#/components/schemas/".length());
+            assertNotNull(context.getDefinedModels().get(name), "dangling $ref in oneOf: " + name);
+        }
+    }
+
+    @Test
+    public void optInExplicitSchemaOneOfWinsOverJsonSubTypes() {
+        ModelResolver.jsonSubTypesOneOf = true;
+        final Schema<?> model = context.resolve(new AnnotatedType(BaseBean.class));
+        assertNotNull(model.getOneOf());
+        assertEquals(model.getOneOf().size(), 2);
+        assertEquals(model.getOneOf().get(0).get$ref(), "#/components/schemas/SubBean1");
+        assertEquals(model.getOneOf().get(1).get$ref(), "#/components/schemas/SubBean2");
+    }
+
+    @Test
+    public void optInProducesOneOfRefsForOpenApi31() {
+        ModelResolver.jsonSubTypesOneOf = true;
+        final ModelConverterContextImpl ctx31 =
+                new ModelConverterContextImpl(new ModelResolver(new ObjectMapper()).openapi31(true));
+        final Schema<?> model = ctx31.resolve(new AnnotatedType(PolymorphicInterface.class));
+        assertNotNull(model.getOneOf());
+        assertEquals(model.getOneOf().size(), 2);
+        assertEquals(model.getOneOf().get(0).get$ref(), "#/components/schemas/PolymorphicSubtype1");
+    }
+
+    @Test
+    public void defaultOutputUnchangedForSubtypesParent() {
+        ModelResolver.jsonSubTypesOneOf = false;
+        final Schema<?> parent = context.resolve(new AnnotatedType(PolymorphicInterface.class));
+        assertFalse(parent instanceof ComposedSchema && ((ComposedSchema) parent).getOneOf() != null);
+        assertTrue(parent.getProperties().containsKey("name"));
+        final Schema<?> sub = context.getDefinedModels().get("PolymorphicSubtype1");
+        assertTrue(sub instanceof ComposedSchema);
+        assertEquals(((ComposedSchema) sub).getAllOf().get(0).get$ref(), "#/components/schemas/PolymorphicInterface");
+    }
+
+    @Test
+    public void optInOneOfSkipsSubtypesNotAssignableToParent() {
+        ModelResolver.jsonSubTypesOneOf = true;
+        final Schema<?> parent = context.resolve(new AnnotatedType(ParentWithUnrelatedSubtype.class));
+        assertNotNull(parent.getOneOf());
+        assertEquals(parent.getOneOf().size(), 1);
+        assertEquals(parent.getOneOf().get(0).get$ref(), "#/components/schemas/RelatedImpl");
+    }
+
+    @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "kind")
+    @JsonSubTypes({
+            @JsonSubTypes.Type(value = RelatedImpl.class, name = "related"),
+            @JsonSubTypes.Type(value = UnrelatedType.class, name = "unrelated")
+    })
+    static class ParentWithUnrelatedSubtype {
+        public String id;
+    }
+
+    static class RelatedImpl extends ParentWithUnrelatedSubtype {
+        public String x;
+    }
+
+    static class UnrelatedType {
+        public String y;
+    }
+
+    @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "kind")
+    @JsonSubTypes({
+            @JsonSubTypes.Type(value = RenamedFirstImpl.class, name = "first"),
+            @JsonSubTypes.Type(value = RenamedSecondImpl.class, name = "second")
+    })
+    static class RenamedParent {
+        public String id;
+    }
+
+    @io.swagger.v3.oas.annotations.media.Schema(name = "RenamedFirst")
+    static class RenamedFirstImpl extends RenamedParent {
+        public String x;
+    }
+
+    @io.swagger.v3.oas.annotations.media.Schema(name = "RenamedSecond")
+    static class RenamedSecondImpl extends RenamedParent {
+        public String y;
     }
 
     private void assertSubPropertiesValid(Map<String, Schema> subProperties, final String childPropertyName) {
