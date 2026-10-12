@@ -436,7 +436,7 @@
                 <reportSets>
                     <reportSet>
                         <reports>
-                            <report>project-team</report>
+                            <report>team</report>
                         </reports>
                     </reportSet>
                 </reportSets>

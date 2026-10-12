@@ -23,10 +23,12 @@ compileJava {
 }
 
 processResources {
-    inputs.property 'pluginVersion', project.version
+    // resolve at configuration time; the filesMatching closure runs at execution time
+    def pluginVersion = project.version.toString()
+    inputs.property 'pluginVersion', pluginVersion
     filteringCharset = 'UTF-8'
     filesMatching('swagger-gradle-plugin.properties') {
-        expand(pluginVersion: project.version)
+        expand(pluginVersion: pluginVersion)
     }
 }
 
@@ -63,6 +65,13 @@ gradlePlugin {
             displayName = 'Swagger Gradle Plugin'
             description = project.description
             tags.set(['swagger', 'openapi', 'api'])
+            // Groovy DSL requires passing `it` as the receiver
+            compatibility(it) {
+                features {
+                    configurationCache = true
+                    isolatedProjects = true
+                }
+            }
         }
     }
 }
@@ -76,7 +85,7 @@ test {
 publishing {
     repositories {
         maven {
-            url mavenLocal().url
+            url = mavenLocal().url
         }
     }
 }
