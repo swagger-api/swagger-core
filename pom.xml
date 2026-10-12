@@ -540,11 +540,6 @@
                 <version>${joda-time-version}</version>
             </dependency>
             <dependency>
-                <groupId>org.joda</groupId>
-                <artifactId>joda-convert</artifactId>
-                <version>${joda-convert-version}</version>
-            </dependency>
-            <dependency>
                 <groupId>jakarta.ws.rs</groupId>
                 <artifactId>jakarta.ws.rs-api</artifactId>
                 <version>${jakarta.ws-version}</version>
@@ -559,7 +554,6 @@
     </dependencyManagement>
     <properties>
         <maven.compiler.release>17</maven.compiler.release>
-        <joda-convert-version>3.0.1</joda-convert-version>
         <joda-time-version>2.15.0</joda-time-version>
         <jakarta.ws-version>3.1.0</jakarta.ws-version>
         <jakarta.xml.bind-api-version>4.0.5</jakarta.xml.bind-api-version>
