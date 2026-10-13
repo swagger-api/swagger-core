@@ -143,7 +143,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
     /**
      * Opt-in composition of a {@code @JsonSubTypes} parent into a self-referencing {@code oneOf}
      * (the parent gets a {@code oneOf} to its subtypes while the subtypes keep {@code allOf} to the
-     * parent). This cyclic {@code allOf} <-> {@code oneOf} shape is off by default because several
+     * parent). This cyclic {@code allOf} &lt;-&gt; {@code oneOf} shape is off by default because several
      * tools (swagger-ui, openapi-generator) dislike it; when enabled it can be turned on with
      * {@code -Djson-subtypes-oneof} or by setting this field. When enabled, an explicit
      * {@code @Schema(oneOf)} on the parent wins over the automatic composition; when disabled,
@@ -1103,8 +1103,8 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             });
 
             // Process the explicit @Schema(oneOf = ...) always. When the class also has @JsonSubTypes and
-            // jsonSubTypesOneOf is enabled, resolveSubtypes() returns early (explicit oneOf wins),
-            // so there is no conflict.
+            // jsonSubTypesOneOf is enabled, resolveSubtypes() skips composing the parent as oneOf
+            // (explicit oneOf wins), so there is no conflict.
             List<Class<?>> oneOfFiltered = Stream.of(oneOf)
                     .distinct()
                     .filter(c -> !this.shouldIgnoreClass(c))
@@ -2032,22 +2032,10 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         return modified;
     }
 
-    protected boolean resolveSubtypes(Schema model, BeanDescription bean, ModelConverterContext context, JsonView jsonViewAnnotation) {
+    private boolean resolveSubtypes(Schema model, BeanDescription bean, ModelConverterContext context, JsonView jsonViewAnnotation) {
         final List<NamedType> types = _intr().findSubtypes(_mapper.serializationConfig(), bean.getClassInfo());
         if (types == null || types.isEmpty()) {
             return false;
-        }
-
-        // When opted in, an explicit @Schema(oneOf = ...) fully defines the polymorphism and must
-        // win over the @JsonSubTypes-derived composition. Skip the automatic allOf/oneOf
-        // composition to avoid the recursive allOf<->oneOf structure that is undesirable for
-        // many tools (see review on swagger-api/swagger-core#5320).
-        if (jsonSubTypesOneOf) {
-            io.swagger.v3.oas.annotations.media.Schema declaredSchema =
-                    AnnotationsUtils.getSchemaDeclaredAnnotation(bean.getClassInfo().getAnnotated());
-            if (declaredSchema != null && declaredSchema.oneOf().length > 0) {
-                return false;
-            }
         }
 
         /**
@@ -2122,7 +2110,13 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
             }
         }
 
-        if (jsonSubTypesOneOf && !subtypeNames.isEmpty()) {
+        // An explicit @Schema(oneOf = ...) defines the parent's composition and wins over the
+        // @JsonSubTypes-derived one, which avoids a recursive allOf<->oneOf structure. Subtype
+        // handling is unaffected.
+        final io.swagger.v3.oas.annotations.media.Schema declaredSchema =
+                AnnotationsUtils.getSchemaDeclaredAnnotation(beanClass);
+        final boolean explicitOneOf = declaredSchema != null && declaredSchema.oneOf().length > 0;
+        if (jsonSubTypesOneOf && !explicitOneOf && !subtypeNames.isEmpty()) {
             composeParentAsOneOf(model, beanClass, subtypeNames.values(), context);
         }
 return count != 0;

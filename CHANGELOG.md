@@ -6,6 +6,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Added
+- Opt-in `oneOf` composition for `@JsonSubTypes` parents. Enable it with
+  `-Djson-subtypes-oneof` or `ModelResolver.jsonSubTypesOneOf = true`. When enabled,
+  a parent class with `@JsonSubTypes` gets a `oneOf` that lists its resolved subtypes,
+  and the subtypes keep their `allOf` reference to the parent. An explicit
+  `@Schema(oneOf = ...)` on the parent takes priority. The default is off, so the
+  generated schemas do not change unless you enable it. Use it for abstract classes and
+  interfaces. A concrete parent class is not listed in its own `oneOf`, so an instance of
+  the parent itself does not match the schema. Note: the result has a cycle
+  (`allOf` from subtype to parent, `oneOf` from parent to subtype). Some tools, such as
+  swagger-ui and openapi-generator, may not handle this shape well.
+
 ## [2.2.54] - 2026-08-18
 
 ### Fixed

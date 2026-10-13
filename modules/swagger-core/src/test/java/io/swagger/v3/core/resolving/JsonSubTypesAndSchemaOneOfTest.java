@@ -2,11 +2,8 @@ package io.swagger.v3.core.resolving;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.fasterxml.jackson.annotation.JsonView;
-import tools.jackson.databind.BeanDescription;
 import tools.jackson.databind.ObjectMapper;
 import io.swagger.v3.core.converter.AnnotatedType;
-import io.swagger.v3.core.converter.ModelConverterContext;
 import io.swagger.v3.core.converter.ModelConverterContextImpl;
 import io.swagger.v3.core.jackson.ModelResolver;
 import io.swagger.v3.oas.annotations.media.DiscriminatorMapping;
@@ -225,28 +222,6 @@ public class JsonSubTypesAndSchemaOneOfTest extends SwaggerTestBase {
         assertEquals(model.getOneOf().get(1).get$ref(), "#/components/schemas/PolymorphicSubtype2");
     }
 
-    @Test
-    public void extensionPointAllowsSubclassToRestorePreviousBehavior() {
-        ModelResolver.jsonSubTypesOneOf = true;
-        final ModelConverterContextImpl subclassContext =
-                new ModelConverterContextImpl(new RestorePreviousBehaviorModelResolver(new ObjectMapper()));
-        final Schema<?> restoredModel = subclassContext.resolve(new AnnotatedType(PolymorphicInterface.class));
-        assertFalse(restoredModel instanceof ComposedSchema && ((ComposedSchema) restoredModel).getOneOf() != null,
-                "the resolved parent must not be auto-converted to a oneOf ComposedSchema when resolveSubtypes() is overridden");
-    }
-
-    static class RestorePreviousBehaviorModelResolver extends ModelResolver {
-        RestorePreviousBehaviorModelResolver(ObjectMapper mapper) {
-            super(mapper);
-        }
-
-        @Override
-        protected boolean resolveSubtypes(Schema model, BeanDescription bean,
-                                          ModelConverterContext context, JsonView jsonViewAnnotation) {
-            return false;
-        }
-    }
-
     @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type", visible = true)
     @JsonSubTypes({
             @JsonSubTypes.Type(value = PolymorphicSubtype1.class, name = "subtype1"),
@@ -322,6 +297,16 @@ public class JsonSubTypesAndSchemaOneOfTest extends SwaggerTestBase {
         assertEquals(model.getOneOf().size(), 2);
         assertEquals(model.getOneOf().get(0).get$ref(), "#/components/schemas/SubBean1");
         assertEquals(model.getOneOf().get(1).get$ref(), "#/components/schemas/SubBean2");
+
+        // subtype handling and discriminator are identical to the flag-off output
+        assertEquals(model.getDiscriminator().getPropertyName(), DISCRIMINATOR_PROPERTY_NAME);
+        assertEquals(model.getDiscriminator().getMapping().get(SUB_BEAN_1_NAME), "#/components/schemas/SubBean1");
+        assertEquals(model.getDiscriminator().getMapping().get(SUB_BEAN_2_NAME), "#/components/schemas/SubBean2");
+        for (String subName : new String[]{SUB_BEAN_1_NAME, SUB_BEAN_2_NAME}) {
+            final Schema<?> sub = context.getDefinedModels().get(subName);
+            assertTrue(sub instanceof ComposedSchema, subName + " must be composed");
+            assertEquals(((ComposedSchema) sub).getAllOf().get(0).get$ref(), "#/components/schemas/BaseBean");
+        }
     }
 
     @Test
