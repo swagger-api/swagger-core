@@ -114,8 +114,8 @@
                                     <message>No Snapshots Allowed!</message>
                                 </requireReleaseDeps>
                                 <requireMavenVersion>
-                                    <version>(,2.1.0),(2.1.0,2.2.0),(2.2.0,)</version>
-                                    <message>Maven 2.1.0 and 2.2.0 produce incorrect GPG signatures and checksums respectively.</message>
+                                    <version>[3.6.3,)</version>
+                                    <message>Maven 3.6.3 or newer is required (maven-compiler-plugin 3.14.1, maven-enforcer-plugin 3.6.x).</message>
                                 </requireMavenVersion>
                             </rules>
                         </configuration>
