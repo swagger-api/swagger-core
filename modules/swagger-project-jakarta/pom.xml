@@ -58,7 +58,7 @@
         <plugins>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.11.0</version>
+                <version>3.14.1</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -462,8 +462,8 @@
     <properties>
         <maven.compiler.release>8</maven.compiler.release>
         <joda-version>2.2.4</joda-version>
-        <joda-time-version>2.13.0</joda-time-version>
-        <snakeyaml-version>2.6</snakeyaml-version>
+        <joda-time-version>2.15.0</joda-time-version>
+        <snakeyaml-version>2.7</snakeyaml-version>
         <jakarta.ws-version>3.1.0</jakarta.ws-version>
         <jakarta.validation-version>3.0.2</jakarta.validation-version>
         <jakarta.xml.bind-api-version>3.0.1</jakarta.xml.bind-api-version>
@@ -471,25 +471,25 @@
         <bnd-version>6.4.0</bnd-version>
         <servlet-api-version>5.0.0</servlet-api-version>
         <jersey2-version>2.48</jersey2-version>
-        <jackson-version>2.22.1</jackson-version>
+        <jackson-version>2.22.3</jackson-version>
         <jackson-annotations-version>2.22</jackson-annotations-version>
-        <jackson-databind-version>2.22.1</jackson-databind-version>
-        <logback-version>1.6.3</logback-version>
-        <classgraph-version>4.8.192</classgraph-version>
+        <jackson-databind-version>2.22.3</jackson-databind-version>
+        <logback-version>1.6.5</logback-version>
+        <classgraph-version>4.8.198</classgraph-version>
         <guava-version>32.1.3-jre</guava-version>
-        <ant-version>1.10.15</ant-version>
-        <commons-lang-version>3.20.0</commons-lang-version>
-        <commons-io-version>2.18.0</commons-io-version>
-        <slf4j-version>2.0.18</slf4j-version>
+        <ant-version>1.10.18</ant-version>
+        <commons-lang-version>3.21.0</commons-lang-version>
+        <commons-io-version>2.22.0</commons-io-version>
+        <slf4j-version>2.0.20</slf4j-version>
         <jetty-version>9.4.56.v20240826g</jetty-version>
         <testng-version>7.9.0</testng-version>
         <mockito-version>2.28.2</mockito-version>
         <rest-assured-version>4.5.1</rest-assured-version>
         <httpcomponents-version>4.5.14</httpcomponents-version>
-        <commons-codec-version>1.17.2</commons-codec-version>
+        <commons-codec-version>1.23.0</commons-codec-version>
 
         <surefire-version>2.22.2</surefire-version>
-        <enforcer-plugin-version>3.2.1</enforcer-plugin-version>
+        <enforcer-plugin-version>3.6.3</enforcer-plugin-version>
         <failsafe-plugin-version>2.22.2</failsafe-plugin-version>
 
         <coverage.complexity.minimum>0.90</coverage.complexity.minimum>
