@@ -2779,6 +2779,12 @@ return count != 0;
                 if (JsonTypeInfo.Id.NAME.equals(id) && name == null) {
                     name = type.getRawClass().getSimpleName();
                 }
+                // A model that already carries a oneOf (e.g. from @Schema(oneOf) or @JsonSubTypes) is
+                // returned unchanged: nesting it inside a wrapper schema would hide the composition.
+                // TODO the per-subtype wrapper (e.g. {"Dog": {...}}) is not modelled for oneOf yet.
+                if (model.getOneOf() != null && !model.getOneOf().isEmpty()) {
+                    return model;
+                }
                 Schema wrapperSchema = openapi31 ? new JsonSchema().typesItem("object") : new ObjectSchema();
                 wrapperSchema.name(model.getName());
                 wrapperSchema.addProperties(name, model);
