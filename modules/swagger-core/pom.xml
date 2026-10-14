@@ -20,6 +20,7 @@
                 <configuration>
                     <bnd>
                         Import-Package: \
+                        jakarta.validation;version="[3.0,4)", \
                         jakarta.validation.constraints;version="[3.0,4)", \
                         jakarta.xml.bind.annotation;version="[4.0,5)", \
                         *
@@ -107,7 +108,7 @@
         <dependency>
             <groupId>jakarta.annotation</groupId>
             <artifactId>jakarta.annotation-api</artifactId>
-            <version>2.1.1</version>
+            <version>3.0.0</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

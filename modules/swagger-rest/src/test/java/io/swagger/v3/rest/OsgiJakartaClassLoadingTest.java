@@ -45,7 +45,7 @@ public class OsgiJakartaClassLoadingTest {
     private static final String CONTRACT_ATTRIBUTE = "osgi.contract";
 
     @Test
-    public void resolvesAndLoadsJakartaEe10ApisWithOsgiResolver() throws Exception {
+    public void resolvesAndLoadsJakartaEe11ApisWithOsgiResolver() throws Exception {
         Path restClasses = swaggerRestClasses();
         assertTrue(Files.isRegularFile(restClasses.resolve("META-INF/MANIFEST.MF")),
                 "Missing generated swagger-rest bundle manifest");
@@ -104,8 +104,8 @@ public class OsgiJakartaClassLoadingTest {
         assertNotNull(wires, "Resolver did not return wiring for swagger-rest");
         assertPackageWire(wires, "jakarta.ws.rs", buildVersion("jakarta.ws-version"));
         assertPackageWire(wires, "jakarta.servlet", buildVersion("servlet-api-version"));
-        assertContractWire(wires, "JakartaRESTfulWebServices", "3.1.0");
-        assertContractWire(wires, "JakartaServlet", "6.0.0");
+        assertContractWire(wires, "JakartaRESTfulWebServices", "4.0.0");
+        assertContractWire(wires, "JakartaServlet", "6.1.0");
     }
 
     private static void assertCoreWiring(Map<Resource, List<Wire>> resolution) {
@@ -227,9 +227,9 @@ public class OsgiJakartaClassLoadingTest {
                 .addAttribute(IdentityNamespace.IDENTITY_NAMESPACE, "swagger-test-jakarta-contracts")
                 .addAttribute(IdentityNamespace.CAPABILITY_VERSION_ATTRIBUTE, Version.emptyVersion)
                 .addAttribute(IdentityNamespace.CAPABILITY_TYPE_ATTRIBUTE, IdentityNamespace.TYPE_BUNDLE));
-        builder.addCapability(contract("JakartaRESTfulWebServices", "3.1.0",
+        builder.addCapability(contract("JakartaRESTfulWebServices", "4.0.0",
                 "jakarta.ws.rs,jakarta.ws.rs.client,jakarta.ws.rs.container,jakarta.ws.rs.core,jakarta.ws.rs.ext,jakarta.ws.rs.sse"));
-        builder.addCapability(contract("JakartaServlet", "6.0.0",
+        builder.addCapability(contract("JakartaServlet", "6.1.0",
                 "jakarta.servlet,jakarta.servlet.annotation,jakarta.servlet.descriptor,jakarta.servlet.http"));
         // A runtime component such as Aries SPI Fly supplies these extenders.
         // SLF4J 2 requires them before its exports can join the resolved graph.
