@@ -59,6 +59,7 @@ public abstract class BaseOpenApiResource {
                             getHeaders(headers));
                 } catch (Exception e) {
                     LOGGER.error("failed to load filter", e);
+                    return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
                 }
             }
         }
