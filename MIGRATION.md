@@ -27,9 +27,9 @@ Jackson annotations remain on the original `com.fasterxml.jackson.core` groupId.
 
 | Artifact | 2.x groupId | 3.0 groupId | 3.0 version |
 |---|---|---|---|
-| `jackson-core` | `com.fasterxml.jackson.core` | `tools.jackson.core` | 3.2.2 |
-| `jackson-databind` | `com.fasterxml.jackson.core` | `tools.jackson.core` | 3.2.2 |
-| `jackson-dataformat-yaml` | `com.fasterxml.jackson.dataformat` | `tools.jackson.dataformat` | 3.2.2 |
+| `jackson-core` | `com.fasterxml.jackson.core` | `tools.jackson.core` | 3.2.3 |
+| `jackson-databind` | `com.fasterxml.jackson.core` | `tools.jackson.core` | 3.2.3 |
+| `jackson-dataformat-yaml` | `com.fasterxml.jackson.dataformat` | `tools.jackson.dataformat` | 3.2.3 |
 | `jackson-annotations` | `com.fasterxml.jackson.core` | `com.fasterxml.jackson.core` **(unchanged)** | 2.22 |
 
 ### SnakeYAML
@@ -78,7 +78,7 @@ to the `tools.jackson` groupId.
 <dependency>
   <groupId>tools.jackson.core</groupId>
   <artifactId>jackson-databind</artifactId>
-  <version>3.2.2</version>
+  <version>3.2.3</version>
 </dependency>
 ```
 
@@ -91,7 +91,7 @@ implementation("com.fasterxml.jackson.core:jackson-databind:2.17.0")
 **3.0 (Gradle):**
 
 ```kotlin
-implementation("tools.jackson.core:jackson-databind:3.2.2")
+implementation("tools.jackson.core:jackson-databind:3.2.3")
 ```
 
 **Migration:** Update all `com.fasterxml.jackson.core`, `com.fasterxml.jackson.databind`,
@@ -663,7 +663,7 @@ especially if you use custom serializers or a custom `ObjectMapper`.
   <dependency>
     <groupId>tools.jackson.core</groupId>
     <artifactId>jackson-databind</artifactId>
-    <version>3.2.2</version>
+    <version>3.2.3</version>
   </dependency>
 </dependencies>
 ```
@@ -685,7 +685,7 @@ See [ObjectMapperProcessor — method signatures changed](#objectmapperprocessor
 - [ ] Jakarta REST API updated to `jakarta.ws.rs-api:4.0.0`
 - [ ] Jakarta Servlet API updated to `jakarta.servlet-api:6.1.0`
 - [ ] `jakarta.validation-api` matches your validator (3.1.x with Hibernate Validator 9, or pinned to 3.0.2 with Hibernate Validator 8)
-- [ ] Jackson dependencies updated to `tools.jackson.*:3.2.2`
+- [ ] Jackson dependencies updated to `tools.jackson.*:3.2.3`
 - [ ] `com.fasterxml.jackson.core:jackson-annotations` kept at 2.22 (unchanged)
 - [ ] `org.yaml:snakeyaml` removed from dependencies
 - [ ] `ObjectMapperProcessor` implementations updated: import and return type
