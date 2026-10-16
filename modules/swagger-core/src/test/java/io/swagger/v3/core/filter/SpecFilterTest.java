@@ -4,12 +4,14 @@ import com.google.common.collect.Sets;
 import io.swagger.v3.core.filter.resources.ChangeGetOperationsFilter;
 import io.swagger.v3.core.filter.resources.InternalModelPropertiesRemoverFilter;
 import io.swagger.v3.core.filter.resources.NoGetOperationsFilter;
+import io.swagger.v3.core.filter.resources.NoInternalOperationsFilter;
 import io.swagger.v3.core.filter.resources.NoOpOperationsFilter;
 import io.swagger.v3.core.filter.resources.NoOpenAPIFilter;
 import io.swagger.v3.core.filter.resources.NoParametersWithoutQueryInFilter;
 import io.swagger.v3.core.filter.resources.NoPathItemFilter;
 import io.swagger.v3.core.filter.resources.NoPetOperationsFilter;
 import io.swagger.v3.core.filter.resources.NoPetRefSchemaFilter;
+import io.swagger.v3.core.filter.resources.NoUserTagFilter;
 import io.swagger.v3.core.filter.resources.RemoveInternalParamsFilter;
 import io.swagger.v3.core.filter.resources.RemoveUnreferencedDefinitionsFilter;
 import io.swagger.v3.core.filter.resources.ReplaceGetOperationsFilter;
@@ -446,6 +448,28 @@ public class SpecFilterTest {
         final OpenAPI filtered = new SpecFilter().filter(openAPI, filter, null, null, null);
         assertEquals(getTagNames(filtered), Sets.newHashSet(USER_TAG, STORE_TAG));
 
+    }
+
+    @Test(description = "it should not contain top level tags removed by filterOpenAPI")
+    public void shouldNotContainTopLevelTagsRemovedByFilterOpenAPI() throws IOException {
+        final OpenAPI openAPI = getOpenAPI(RESOURCE_REFERRED_SCHEMAS);
+        final NoUserTagFilter filter = new NoUserTagFilter();
+        final OpenAPI filtered = new SpecFilter().filter(openAPI, filter, null, null, null);
+        assertEquals(getTagNames(filtered), Sets.newHashSet(PET_TAG, STORE_TAG));
+    }
+
+    @Test(description = "it should not contain top level tags only used by filtered webhooks")
+    public void shouldNotContainTopLevelTagsOfFilteredWebhooks() {
+        final OpenAPI openAPI = new OpenAPI()
+                .openapi("3.1.0")
+                .addTagsItem(new Tag().name(PET_TAG))
+                .addTagsItem(new Tag().name(NoInternalOperationsFilter.INTERNAL_TAG))
+                .path("/pet", new PathItem().get(new Operation().operationId("getPet").addTagsItem(PET_TAG)))
+                .addWebhooks("audit", new PathItem().post(new Operation().operationId("audit")
+                        .addTagsItem(NoInternalOperationsFilter.INTERNAL_TAG)));
+        final OpenAPI filtered = new SpecFilter().filter(openAPI, new NoInternalOperationsFilter(), null, null, null);
+        assertNull(filtered.getWebhooks());
+        assertEquals(getTagNames(filtered), Sets.newHashSet(PET_TAG));
     }
 
     @Test(description = "it should filter with null definitions")
