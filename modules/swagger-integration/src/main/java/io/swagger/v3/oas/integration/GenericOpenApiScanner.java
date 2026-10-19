@@ -34,7 +34,12 @@ public class GenericOpenApiScanner implements OpenApiScanner {
 
     @Override
     public Set<Class<?>> classes() {
-        ClassGraph graph = new ClassGraph().enableAllInfo();
+        ClassGraph graph = new ClassGraph()
+                .enableClasspath()
+                .enableNonSystemModules()
+                .enableClassInfo()
+                .enableAnnotationInfo()
+                .ignoreClassVisibility();
 
         Set<String> acceptablePackages = new HashSet<>();
 
@@ -60,7 +65,7 @@ public class GenericOpenApiScanner implements OpenApiScanner {
             for (String pkg : openApiConfiguration.getResourcePackages()) {
                 if (!isIgnored(pkg)) {
                     acceptablePackages.add(pkg);
-                    graph.whitelistPackages(pkg);
+                    graph.acceptPackages(pkg);
                 }
             }
         } else {
@@ -70,8 +75,8 @@ public class GenericOpenApiScanner implements OpenApiScanner {
         // this is generic, specific REST scanner will also look for @Path
         final Set<Class<?>> classes;
         try (ScanResult scanResult = graph.scan()) {
-            classes = new HashSet<>(scanResult.getClassesWithAnnotation(OpenAPIDefinition.class.getName()).loadClasses());
-            classes.addAll(new HashSet<>(scanResult.getClassesWithAnnotation(Webhooks.class.getName()).loadClasses()));
+            classes = ScannerClassLoader.loadClasses(scanResult.getClassesWithAnnotation(OpenAPIDefinition.class.getName()).getNames(), getClass());
+            classes.addAll(ScannerClassLoader.loadClasses(scanResult.getClassesWithAnnotation(Webhooks.class.getName()).getNames(), getClass()));
         }
 
 
