@@ -6,6 +6,7 @@ import io.swagger.v3.jaxrs2.integration.api.JaxrsOpenApiScanner;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Webhooks;
 import io.swagger.v3.oas.integration.IgnoredPackages;
+import io.swagger.v3.oas.integration.ClassGraphScannerHelper;
 import io.swagger.v3.oas.integration.SwaggerConfiguration;
 import io.swagger.v3.oas.integration.api.OpenAPIConfiguration;
 import org.apache.commons.lang3.StringUtils;
@@ -59,7 +60,7 @@ public class JaxrsAnnotationScanner<T extends JaxrsAnnotationScanner<T>> impleme
             openApiConfiguration = new SwaggerConfiguration();
         }
 
-        ClassGraph graph = new ClassGraph().enableAllInfo();
+        ClassGraph graph = ClassGraphScannerHelper.createClassGraph();
         Set<String> acceptablePackages = new HashSet<>();
         Set<Class<?>> output = new HashSet<>();
 
@@ -82,7 +83,7 @@ public class JaxrsAnnotationScanner<T extends JaxrsAnnotationScanner<T>> impleme
             for (String pkg : openApiConfiguration.getResourcePackages()) {
                 if (!isIgnored(pkg)) {
                     acceptablePackages.add(pkg);
-                    graph.whitelistPackages(pkg);
+                    graph.acceptPackages(pkg);
                 }
             }
         } else {
@@ -92,11 +93,11 @@ public class JaxrsAnnotationScanner<T extends JaxrsAnnotationScanner<T>> impleme
         }
         final Set<Class<?>> classes;
         try (ScanResult scanResult = graph.scan()) {
-            classes = new HashSet<>(scanResult.getClassesWithAnnotation(javax.ws.rs.Path.class.getName()).loadClasses());
-            classes.addAll(new HashSet<>(scanResult.getClassesWithAnnotation(OpenAPIDefinition.class.getName()).loadClasses()));
-            classes.addAll(new HashSet<>(scanResult.getClassesWithAnnotation(Webhooks.class.getName()).loadClasses()));
+            classes = ClassGraphScannerHelper.loadClasses(scanResult.getClassesWithAnnotation(javax.ws.rs.Path.class.getName()), getClass());
+            classes.addAll(ClassGraphScannerHelper.loadClasses(scanResult.getClassesWithAnnotation(OpenAPIDefinition.class.getName()), getClass()));
+            classes.addAll(ClassGraphScannerHelper.loadClasses(scanResult.getClassesWithAnnotation(Webhooks.class.getName()), getClass()));
             if (Boolean.TRUE.equals(openApiConfiguration.isAlwaysResolveAppPath())) {
-                classes.addAll(new HashSet<>(scanResult.getClassesWithAnnotation(ApplicationPath.class.getName()).loadClasses()));
+                classes.addAll(ClassGraphScannerHelper.loadClasses(scanResult.getClassesWithAnnotation(ApplicationPath.class.getName()), getClass()));
             }
         }
 
