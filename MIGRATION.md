@@ -102,6 +102,23 @@ Keep `com.fasterxml.jackson.core:jackson-annotations` at version 2.22.
 
 ---
 
+### Jackson 3 — ObjectMapper type and unchecked JacksonException
+
+**Impact:** Medium
+
+`Json.mapper()`, `Yaml.mapper()`, `Json31.mapper()`, `Yaml31.mapper()`, and `Json31.converterMapper()`
+now return `tools.jackson.databind.ObjectMapper`.
+
+`tools.jackson.core.JacksonException` is unchecked. It replaces the checked
+`com.fasterxml.jackson.core.JsonProcessingException`, so `catch (JsonProcessingException e)` blocks
+around mapper calls no longer compile or no longer catch errors.
+
+**Migration:** Update the `ObjectMapper` import and replace `JsonProcessingException` with
+`JacksonException` in your catch blocks. Handle `JacksonException` where your application needs
+to turn mapping errors into responses.
+
+---
+
 <a name="module-renames"></a>
 ### Swagger artifact IDs
 
@@ -257,6 +274,22 @@ Swagger Core 3.0 uses the `jakarta.*` namespace only. The legacy `javax.*` names
 **Migration:** Update both API versions. Using the `javax` versions (2.x REST / 4.x Servlet) with
 Swagger Core 3.0 will produce compile errors or `ClassNotFoundException` at runtime due to the
 namespace change.
+
+**Jersey:** Jersey 4.x is the Jersey line that implements Jakarta REST 4.0, so Jersey applications
+need Jersey 4.x. `swagger-rest` does not register a JSON provider for your own endpoints. With
+Jersey, add the Jackson 3 media module to your application:
+
+```xml
+<dependency>
+  <groupId>org.glassfish.jersey.media</groupId>
+  <artifactId>jersey-media-json-jackson3</artifactId>
+  <version>4.x</version>
+</dependency>
+```
+
+The module registers itself. Without it, JSON responses from your resources fail with a 500
+(`MessageBodyWriter not found`) and requests with a JSON body fail with a 415. With it, invalid
+request bodies, such as malformed JSON or an unknown enum value, return 400.
 
 ---
 
@@ -581,6 +614,7 @@ If your project depended on `swagger-java17-support`, remove it. Record support 
 
 Update `jakarta.ws.rs-api` to 4.0.0 and `jakarta.servlet-api` to 6.1.0.
 See [Jakarta REST and Servlet API versions](#jakarta-rest-and-servlet-api-versions).
+With Jersey, use Jersey 4.x and add `org.glassfish.jersey.media:jersey-media-json-jackson3`.
 
 ### 6. Update ObjectMapperProcessor implementations
 
@@ -684,6 +718,8 @@ See [ObjectMapperProcessor — method signatures changed](#objectmapperprocessor
 - [ ] `swagger-java17-support` dependency removed (Record support is now built in)
 - [ ] Jakarta REST API updated to `jakarta.ws.rs-api:4.0.0`
 - [ ] Jakarta Servlet API updated to `jakarta.servlet-api:6.1.0`
+- [ ] Jersey users: Jersey 4.x with `org.glassfish.jersey.media:jersey-media-json-jackson3` added
+- [ ] `catch (JsonProcessingException e)` blocks around mapper calls changed to `JacksonException`
 - [ ] `jakarta.validation-api` matches your validator (3.1.x with Hibernate Validator 9, or pinned to 3.0.2 with Hibernate Validator 8)
 - [ ] Jackson dependencies updated to `tools.jackson.*:3.2.3`
 - [ ] `com.fasterxml.jackson.core:jackson-annotations` kept at 2.22 (unchanged)
