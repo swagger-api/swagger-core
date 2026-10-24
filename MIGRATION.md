@@ -481,7 +481,7 @@ If you change the switch later, Swagger Core rebuilds the cached `Json`, `Yaml`,
 on the next access. These mappers are not rebuilt:
 
 - Mappers that you install with `Json.mapper(ObjectMapper)` or `Json.configure(...)`.
-- Instances that hold a mapper, for example `Json31.converterMapper()` in `OpenAPISchema2JsonSchema`.
+- Mappers that your own code keeps in a field (see [Mapper customization](#mapper-customization--cached-mappers-become-stale)).
 
 #### Order of options
 
@@ -582,9 +582,13 @@ This avoids rebuilds and ensures all components see the same mapper configuratio
 2. Or implement a refresh mechanism that re-obtains the mapper when customizers change
 3. Register customizers early (during application initialization)
 
-**Components in swagger-rest that need attention:**
-- `DefaultParameterExtension` - caches mapper at class init
-- `OpenAPI31SpecFilter` - caches converter mapper through `OpenAPISchema2JsonSchema`
+Swagger Core's own components (`DefaultParameterExtension`, and `OpenAPI31SpecFilter` through
+`OpenAPISchema2JsonSchema`) obtain their mappers at use time.
+
+**Replacing a shared mapper:** `Json.mapper(ObjectMapper)`, `Json.configure(...)` and `Json.reset()` (and the same
+methods of `Yaml`, `Json31` and `Yaml31`) move `ObjectMapperFactory.generation()`, like customizer changes, so
+`ModelConverters` and other components that derive mappers from them can rebuild. Customizers are not applied to an
+explicitly installed mapper.
 
 ---
 

@@ -2,7 +2,6 @@ package io.swagger.v3.rest;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import tools.jackson.databind.BeanDescription;
-import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.introspect.AnnotatedField;
 import tools.jackson.databind.introspect.AnnotatedMethod;
 import tools.jackson.databind.introspect.BeanPropertyDefinition;
@@ -35,8 +34,6 @@ public class DefaultParameterExtension extends AbstractOpenAPIExtension {
     private static final String HEADER_PARAM = "header";
     private static final String COOKIE_PARAM = "cookie";
     private static final String PATH_PARAM = "path";
-
-    final ObjectMapper mapper = Json.mapper();
 
     @Override
     public ResolvedParameter extractParameters(List<Annotation> annotations,
@@ -164,7 +161,7 @@ public class DefaultParameterExtension extends AbstractOpenAPIExtension {
         boolean processed = false;
         if (BeanParam.class.isAssignableFrom(annotation.getClass())) {
             // Use Jackson's logic for processing Beans
-            final BeanDescription beanDesc = mapper._serializationContext().introspectBeanDescription(constructType(type));
+            final BeanDescription beanDesc = Json.mapper()._serializationContext().introspectBeanDescription(constructType(type));
             final List<BeanPropertyDefinition> properties = beanDesc.findProperties();
 
             for (final BeanPropertyDefinition propDef : properties) {
