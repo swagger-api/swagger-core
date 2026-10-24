@@ -32,6 +32,17 @@ Jackson annotations remain on the original `com.fasterxml.jackson.core` groupId.
 | `jackson-dataformat-yaml` | `com.fasterxml.jackson.dataformat` | `tools.jackson.dataformat` | 3.2.3 |
 | `jackson-annotations` | `com.fasterxml.jackson.core` | `com.fasterxml.jackson.core` **(unchanged)** | 2.22 |
 
+### ClassGraph 5
+
+OpenAPI scanners now use `io.github.classgraph:classgraph:5.0.0`. Remove any
+ClassGraph 4 version override when upgrading to Swagger Core 3.0. These scanners
+no longer support ClassGraph 4.
+
+ClassGraph 5 no longer loads classes itself. Swagger loads discovered classes
+without running static initializers, trying the thread context classloader first,
+then the scanner and system classloaders. Applications using custom classloaders
+should verify resource discovery after upgrading.
+
 ### SnakeYAML
 
 `org.yaml:snakeyaml` is removed. YAML support is now provided by
