@@ -818,6 +818,13 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 boolean areSiblingsAllowed = AnnotationsUtils.areSiblingsAllowed(resolvedSchemaResolution, openapi31);
                 aType = AnnotationsUtils.addTypeWhenSiblingsAllowed(aType, ctxSchema, areSiblingsAllowed);
                 property = context.resolve(aType);
+                JsonUnwrapped unwrapped = propMember.getAnnotation(JsonUnwrapped.class);
+                if (property == null && unwrapped != null && unwrapped.enabled()) {
+                    // The jsonUnwrappedHandler merged the properties into the model: don't rebuild an empty
+                    // property from the remaining annotations, e.g. @Schema(requiredMode = REQUIRED). Also covers
+                    // the synthetic "@JsonUnwrapped/<n>" creator property of Jackson 3 records.
+                    continue;
+                }
                 property = clone(property);
                 Schema ctxProperty = null;
                 if (!applySchemaResolution()) {
