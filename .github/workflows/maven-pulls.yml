@@ -58,3 +58,5 @@ jobs:
       run: ./gradlew build --info --stacktrace --no-daemon
     - name: Verify BOM integration test
       run: ./mvnw --no-transfer-progress -B validate -Pbom-it
+    - name: Verify JPMS integration test
+      run: ./mvnw --no-transfer-progress -B verify -Pjpms-it -pl modules/swagger-jpms-integration-test -am -DskipTests -DskipITs -Dmaven.javadoc.skip=true -Djetty.skip=true

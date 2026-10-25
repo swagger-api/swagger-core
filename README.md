@@ -63,6 +63,9 @@ implementation("io.swagger.core.v3:swagger-core:3.0.0")
 
 The REST public API uses the `io.swagger.v3.rest` namespace. See [MIGRATION.md](MIGRATION.md#module-renames) for package, type, and configuration changes from 2.x.
 
+The six runtime libraries include native Java module descriptors. See [JPMS.md](JPMS.md)
+for module names, reflective access, service providers and module-path verification.
+
 ## Usage
 
 ### Basic usage

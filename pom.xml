@@ -80,6 +80,11 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${maven-surefire-plugin.version}</version>
+                <configuration>
+                    <!-- Preserve the existing classpath unit-test environment.
+                         The jpms-it profile tests the packaged named modules separately. -->
+                    <useModulePath>false</useModulePath>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -207,6 +212,13 @@
         </plugins>
         <pluginManagement>
             <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-failsafe-plugin</artifactId>
+                    <configuration>
+                        <useModulePath>false</useModulePath>
+                    </configuration>
+                </plugin>
                 <plugin>
                     <groupId>biz.aQute.bnd</groupId>
                     <artifactId>bnd-maven-plugin</artifactId>
@@ -374,6 +386,12 @@
             <id>bom-it</id>
             <modules>
                 <module>modules/swagger-bom-integration-test</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>jpms-it</id>
+            <modules>
+                <module>modules/swagger-jpms-integration-test</module>
             </modules>
         </profile>
 
