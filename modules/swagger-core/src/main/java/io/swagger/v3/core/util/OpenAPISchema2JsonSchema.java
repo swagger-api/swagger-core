@@ -9,11 +9,17 @@ import java.util.Map;
 
 public class OpenAPISchema2JsonSchema {
 
-    protected final ObjectMapper converterMapper = Json31.converterMapper();
+    /**
+     * @return the mapper converting schemas to JSON Schema, obtained at use time so that customizers registered
+     * with {@link ObjectMapperFactory} after this instance was created are applied
+     */
+    protected ObjectMapper converterMapper() {
+        return Json31.converterMapper();
+    }
 
     public void process(Schema<?> schema) {
         schema.specVersion(SpecVersion.V31);
-        Map<String, Object> jsonSchema = converterMapper.convertValue(schema, Map.class);
+        Map<String, Object> jsonSchema = converterMapper().convertValue(schema, Map.class);
 
         // handle nullable
         if (schema.getType() != null || Boolean.TRUE.equals(schema.getNullable())) {

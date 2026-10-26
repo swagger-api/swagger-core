@@ -32,6 +32,11 @@ Jackson annotations remain on the original `com.fasterxml.jackson.core` groupId.
 | `jackson-dataformat-yaml` | `com.fasterxml.jackson.dataformat` | `tools.jackson.dataformat` | 3.2.3 |
 | `jackson-annotations` | `com.fasterxml.jackson.core` | `com.fasterxml.jackson.core` **(unchanged)** | 2.22 |
 
+### commons-lang3
+
+Swagger Core no longer depends on `org.apache.commons:commons-lang3`. If your code uses it and relied on
+Swagger Core to bring it, add the dependency explicitly.
+
 ### SnakeYAML
 
 `org.yaml:snakeyaml` is removed. YAML support is now provided by
@@ -421,6 +426,14 @@ public class MySerializer extends ValueSerializer<MyType> {
 3. Replace `IOException` with `JacksonException` in serializer and deserializer method signatures
 4. Update `DeserializationContext` imports from `com.fasterxml.jackson.databind` to `tools.jackson.databind`
 
+#### `SwaggerAnnotationIntrospector` subclasses
+
+Like Jackson 3's `AnnotationIntrospector`, the methods of `SwaggerAnnotationIntrospector` take a `MapperConfig<?>`
+first parameter: `hasRequiredMarker(MapperConfig<?>, AnnotatedMember)`,
+`findPropertyDescription(MapperConfig<?>, Annotated)`, `findSubtypes(MapperConfig<?>, Annotated)` and
+`findTypeName(MapperConfig<?>, AnnotatedClass)`. Update overrides and keep `@Override` on them: without it, an
+override with the 2.x signature still compiles, as a new method that is never called.
+
 ---
 
 ### Mapper defaults
@@ -481,7 +494,7 @@ If you change the switch later, Swagger Core rebuilds the cached `Json`, `Yaml`,
 on the next access. These mappers are not rebuilt:
 
 - Mappers that you install with `Json.mapper(ObjectMapper)` or `Json.configure(...)`.
-- Instances that hold a mapper, for example `Json31.converterMapper()` in `OpenAPISchema2JsonSchema`.
+- Mappers that your own code keeps in a field (see [Mapper customization](#mapper-customization--cached-mappers-become-stale)).
 
 #### Order of options
 
@@ -526,7 +539,29 @@ Jackson 3 also names properties from acronym accessors in a different way.
 
 This change affects property names in JSON, YAML, and generated schemas.
 
-A mapper that you create outside `ObjectMapperFactory` does not get these options.
+Jackson 2 did not detect constructor parameter names by default, and Swagger Core 2.x did not enable it. Jackson 3
+enables `DETECT_PARAMETER_NAMES` by default, so the parameter names of a class's single public constructor are
+detected as properties (for classes compiled with `-parameters`, the default with Spring Boot). When such a name
+doesn't match a getter or field, the generated schema gets an extra `writeOnly` property:
+
+```java
+public class ErrorMessage {
+    private final String id;
+    private final String message;
+    public ErrorMessage(String id, String text) { this.id = id; this.message = text; }
+    public String getId() { return id; }
+    public String getMessage() { return message; }
+}
+// 2.x schema: id, message — 3.0 schema: id, message, text (writeOnly)
+```
+
+[Enabling Jackson 2 compatibility](#enable-jackson-2-compatibility) (opt-in) disables `DETECT_PARAMETER_NAMES`
+and restores the 2.x schema.
+
+A mapper that you create outside `ObjectMapperFactory` does not get these options. In particular, it doesn't
+detect accessors such as `get$ref()`, `get$id()` or `get$schema()`, and silently drops these properties from the
+models. (De)serialize Swagger models with `Json.mapper()`, `Json31.mapper()`, or
+`ObjectMapperFactory.buildStrictGenericObjectMapper()`.
 For other changes, see the [Jackson 3 release notes](https://github.com/FasterXML/jackson/wiki/Jackson-Release-3.0).
 
 ---
@@ -582,9 +617,13 @@ This avoids rebuilds and ensures all components see the same mapper configuratio
 2. Or implement a refresh mechanism that re-obtains the mapper when customizers change
 3. Register customizers early (during application initialization)
 
-**Components in swagger-rest that need attention:**
-- `DefaultParameterExtension` - caches mapper at class init
-- `OpenAPI31SpecFilter` - caches converter mapper through `OpenAPISchema2JsonSchema`
+Swagger Core's own components (`DefaultParameterExtension`, and `OpenAPI31SpecFilter` through
+`OpenAPISchema2JsonSchema`) obtain their mappers at use time.
+
+**Replacing a shared mapper:** `Json.mapper(ObjectMapper)`, `Json.configure(...)` and `Json.reset()` (and the same
+methods of `Yaml`, `Json31` and `Yaml31`) move `ObjectMapperFactory.generation()`, like customizer changes, so
+`ModelConverters` and other components that derive mappers from them can rebuild. Customizers are not applied to an
+explicitly installed mapper.
 
 ---
 
@@ -724,6 +763,8 @@ See [ObjectMapperProcessor — method signatures changed](#objectmapperprocessor
 - [ ] Jackson dependencies updated to `tools.jackson.*:3.2.3`
 - [ ] `com.fasterxml.jackson.core:jackson-annotations` kept at 2.22 (unchanged)
 - [ ] `org.yaml:snakeyaml` removed from dependencies
+- [ ] `commons-lang3` declared explicitly if your code uses it
+- [ ] `SwaggerAnnotationIntrospector` overrides updated with the `MapperConfig<?>` parameter
 - [ ] `ObjectMapperProcessor` implementations updated: import and return type
 - [ ] Cached mappers reviewed: no `final ObjectMapper mapper = Json.mapper()` at class init (see [mapper customization](#mapper-customization--cached-mappers-become-stale))
 - [ ] Custom Jackson serializer/deserializer classes and method signatures updated (see [class and signature changes](#custom-serializers-and-deserializers--class-and-signature-changes))
