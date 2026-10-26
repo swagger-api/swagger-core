@@ -34,7 +34,7 @@ Jackson annotations remain on the original `com.fasterxml.jackson.core` groupId.
 
 ### commons-lang3
 
-Swagger Core no longer depends on `org.apache.commons:commons-lang3` (#5323). If your code uses it and relied on
+Swagger Core no longer depends on `org.apache.commons:commons-lang3`. If your code uses it and relied on
 Swagger Core to bring it, add the dependency explicitly.
 
 ### SnakeYAML
@@ -539,9 +539,10 @@ Jackson 3 also names properties from acronym accessors in a different way.
 
 This change affects property names in JSON, YAML, and generated schemas.
 
-With `DETECT_PARAMETER_NAMES` enabled (the default), the parameter names of a class's single public constructor
-are detected as properties (for classes compiled with `-parameters`, the default with Spring Boot). When such a name doesn't match a getter or field, the generated schema gets an extra
-`writeOnly` property:
+Jackson 2 did not detect constructor parameter names by default, and Swagger Core 2.x did not enable it. Jackson 3
+enables `DETECT_PARAMETER_NAMES` by default, so the parameter names of a class's single public constructor are
+detected as properties (for classes compiled with `-parameters`, the default with Spring Boot). When such a name
+doesn't match a getter or field, the generated schema gets an extra `writeOnly` property:
 
 ```java
 public class ErrorMessage {
@@ -554,7 +555,8 @@ public class ErrorMessage {
 // 2.x schema: id, message — 3.0 schema: id, message, text (writeOnly)
 ```
 
-Jackson 2 compatibility restores the 2.x schema.
+[Enabling Jackson 2 compatibility](#enable-jackson-2-compatibility) (opt-in) disables `DETECT_PARAMETER_NAMES`
+and restores the 2.x schema.
 
 A mapper that you create outside `ObjectMapperFactory` does not get these options. In particular, it doesn't
 detect accessors such as `get$ref()`, `get$id()` or `get$schema()`, and silently drops these properties from the
