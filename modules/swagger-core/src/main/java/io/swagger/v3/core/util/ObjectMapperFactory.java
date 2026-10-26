@@ -213,7 +213,9 @@ public class ObjectMapperFactory {
     }
 
     /**
-     * A counter incremented every time the set of customizers or the Jackson 2 compatibility switch changes. Holders of cached mappers (such as
+     * A counter incremented every time the set of customizers or the Jackson 2 compatibility switch changes, or a
+     * shared mapper is replaced or reset ({@code Json.mapper(ObjectMapper)}, {@code Json.configure(...)},
+     * {@code Json.reset()}, and the same on {@code Yaml}, {@code Json31}, {@code Yaml31}). Holders of cached mappers (such as
      * {@link Json}) compare it with the generation they were built at to know when to rebuild.
      *
      * @return the current generation
@@ -221,6 +223,10 @@ public class ObjectMapperFactory {
      */
     public static long generation() {
         return GENERATION.get();
+    }
+
+    static void sharedMapperChanged() {
+        GENERATION.incrementAndGet();
     }
 
     /**
