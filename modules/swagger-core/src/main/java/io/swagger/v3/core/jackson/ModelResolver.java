@@ -796,10 +796,10 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 } else {
                     aType.ctxAnnotations(annotations);
                 }
-                final AnnotatedMember propMember = member;
+                final JsonUnwrapped uw = member.getAnnotation(JsonUnwrapped.class);
+                final boolean unwrapped = uw != null && uw.enabled();
                 aType.jsonUnwrappedHandler(t -> {
-                    JsonUnwrapped uw = propMember.getAnnotation(JsonUnwrapped.class);
-                    if (uw != null && uw.enabled()) {
+                    if (unwrapped) {
                         t
                                 .ctxAnnotations(null)
                                 .jsonUnwrappedHandler(null)
@@ -818,11 +818,8 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 boolean areSiblingsAllowed = AnnotationsUtils.areSiblingsAllowed(resolvedSchemaResolution, openapi31);
                 aType = AnnotationsUtils.addTypeWhenSiblingsAllowed(aType, ctxSchema, areSiblingsAllowed);
                 property = context.resolve(aType);
-                JsonUnwrapped unwrapped = propMember.getAnnotation(JsonUnwrapped.class);
-                if (property == null && unwrapped != null && unwrapped.enabled()) {
-                    // The jsonUnwrappedHandler merged the properties into the model: don't rebuild an empty
-                    // property from the remaining annotations, e.g. @Schema(requiredMode = REQUIRED). Also covers
-                    // the synthetic "@JsonUnwrapped/<n>" creator property of Jackson 3 records.
+                if (property == null && unwrapped) {
+                    // already merged by jsonUnwrappedHandler (incl. Jackson 3's "@JsonUnwrapped/<n>" record property)
                     continue;
                 }
                 property = clone(property);
