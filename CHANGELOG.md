@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [3.0.0] - 2026-10-28
+
 ### Added
 - Opt-in `oneOf` composition for `@JsonSubTypes` parents. Enable it with
   `-Djson-subtypes-oneof` or `ModelResolver.jsonSubTypesOneOf = true`. When enabled,

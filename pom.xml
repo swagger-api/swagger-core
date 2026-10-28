@@ -6,7 +6,7 @@
     <packaging>pom</packaging>
     <name>swagger-project</name>
     <description>swagger-project</description>
-    <version>3.0.0-SNAPSHOT</version>
+    <version>3.0.0</version>
     <url>https://github.com/swagger-api/swagger-core</url>
     <scm>
         <connection>scm:git:git@github.com:swagger-api/swagger-core.git</connection>
@@ -584,6 +584,6 @@
         <coverage.missed.classes>0</coverage.missed.classes>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.build.outputTimestamp>2026-08-31T09:02:19Z</project.build.outputTimestamp>
+        <project.build.outputTimestamp>2026-10-28T12:37:25Z</project.build.outputTimestamp>
     </properties>
 </project>
