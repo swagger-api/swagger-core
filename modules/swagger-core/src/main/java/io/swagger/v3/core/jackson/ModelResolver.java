@@ -124,6 +124,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
     public static final String SET_PROPERTY_OF_COMPOSED_MODEL_AS_SIBLING = "composed-model-properties-as-sibiling";
     public static final String SET_PROPERTY_OF_ENUMS_AS_REF = "enums-as-ref";
     public static final String SET_PROPERTY_OF_JSON_SUBTYPES_ONE_OF = "json-subtypes-oneof";
+    public static final String SET_PROPERTY_OF_PRESERVE_OPTIONAL_TYPE_ARGUMENT_ANNOTATIONS = "preserve-optional-type-argument-annotations";
 
     public static boolean composedModelPropertiesAsSibling = System.getProperty(SET_PROPERTY_OF_COMPOSED_MODEL_AS_SIBLING) != null;
 
@@ -139,6 +140,20 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
      * Allows all enums to be resolved as a reference to a scheme added to the components section.
      */
     public static boolean enumsAsRef = System.getProperty(SET_PROPERTY_OF_ENUMS_AS_REF) != null;
+
+    /**
+     * Opt-in flag to keep jakarta validation annotations declared on {@code Optional<T>}'s
+     * type argument in the nested {@link AnnotatedType} context.
+     */
+    public static boolean preserveOptionalTypeArgumentAnnotations =
+            System.getProperty(SET_PROPERTY_OF_PRESERVE_OPTIONAL_TYPE_ARGUMENT_ANNOTATIONS) != null;
+
+    /**
+     * Predicate used when {@link #preserveOptionalTypeArgumentAnnotations} is enabled.
+     * Override this to preserve additional Optional type-argument annotations.
+     */
+    public static Predicate<Annotation> optionalTypeArgumentAnnotationsToPreserve = annotation ->
+            annotation.annotationType().getName().startsWith("jakarta.validation.constraints");
 
     /**
      * Opt-in composition of a {@code @JsonSubTypes} parent into a self-referencing {@code oneOf}
@@ -780,6 +795,12 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 if (ctxFilteredSiblingAnnotations != null) {
                     ctxFilteredSiblingAnnotations = Stream.concat(Arrays.stream(ctxFilteredSiblingAnnotations), Arrays.stream(validationInvocationAnnotations.toArray(new Annotation[0]))).toArray(Annotation[]::new);
                 }
+                if (shouldKeepOptionalTypeArgumentAnnotations()) {
+                    annotations = addOptionalFieldTypeArgumentAnnotationsToPreserve(propDef, annotations);
+                    if (ctxFilteredSiblingAnnotations != null) {
+                        ctxFilteredSiblingAnnotations = addOptionalFieldTypeArgumentAnnotationsToPreserve(propDef, ctxFilteredSiblingAnnotations);
+                    }
+                }
                 AnnotatedType aType = new AnnotatedType()
                         .type(propType)
                         .parent(model)
@@ -1219,6 +1240,26 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
         Stream<Annotation> genericTypeArgumentAnnotations = extractGenericTypeArgumentAnnotations(propDef);
         return Stream.concat(Stream.of(annotations), genericTypeArgumentAnnotations).toArray(Annotation[]::new);
+    }
+
+    private Annotation[] addOptionalFieldTypeArgumentAnnotationsToPreserve(BeanPropertyDefinition propDef, Annotation[] annotations) {
+        Annotation[] optionalTypeArgumentAnnotations = extractGenericTypeArgumentAnnotations(propDef)
+                .filter(this::isOptionalTypeArgumentAnnotationToPreserve)
+                .toArray(Annotation[]::new);
+        if (optionalTypeArgumentAnnotations.length == 0) {
+            return annotations;
+        }
+        return Stream.concat(Arrays.stream(annotations), Arrays.stream(optionalTypeArgumentAnnotations))
+                .distinct()
+                .toArray(Annotation[]::new);
+    }
+
+    private boolean isOptionalTypeArgumentAnnotationToPreserve(Annotation annotation) {
+        return optionalTypeArgumentAnnotationsToPreserve.test(annotation);
+    }
+
+    private boolean shouldKeepOptionalTypeArgumentAnnotations() {
+        return preserveOptionalTypeArgumentAnnotations;
     }
 
     private Stream<Annotation> extractGenericTypeArgumentAnnotations(BeanPropertyDefinition propDef) {
@@ -2123,7 +2164,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         if (jsonSubTypesOneOf && !explicitOneOf && !subtypeNames.isEmpty()) {
             composeParentAsOneOf(model, beanClass, subtypeNames.values(), context);
         }
-return count != 0;
+        return count != 0;
     }
 
     /**
