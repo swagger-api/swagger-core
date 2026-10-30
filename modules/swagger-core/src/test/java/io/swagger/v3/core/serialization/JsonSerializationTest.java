@@ -10,10 +10,12 @@ import io.swagger.v3.core.util.Json;
 import io.swagger.v3.core.util.ObjectMapperFactory;
 import io.swagger.v3.core.util.ResourceUtils;
 import io.swagger.v3.core.util.Yaml;
+import io.swagger.v3.core.util.Yaml31;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Operation;
 import io.swagger.v3.oas.models.PathItem;
 import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.responses.ApiResponse;
 import io.swagger.v3.oas.models.responses.ApiResponses;
 import io.swagger.v3.oas.models.servers.Server;
@@ -25,6 +27,7 @@ import java.util.Map;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
 
 public class JsonSerializationTest {
@@ -109,6 +112,45 @@ public class JsonSerializationTest {
         OpenAPI deser = Yaml.mapper().readValue(yaml, OpenAPI.class);
         SerializationMatchers.assertEqualsToYaml(deser, yaml);
 
+    }
+
+    @Test
+    public void testSerializeNullConst31() throws Exception {
+        final String yaml = ResourceUtils.loadClassResource(getClass(), "specFiles/null-const-31.yaml");
+        OpenAPI deser = Yaml31.mapper().readValue(yaml, OpenAPI.class);
+
+        Schema<?> mySchema = deser.getComponents().getSchemas().get("MySchema");
+
+        // const: null on a scalar schema is distinguishable from "no const" via constSetFlag
+        Schema<?> msg = (Schema<?>) mySchema.getProperties().get("msg");
+        assertNull(msg.getConst());
+        assertTrue(msg.getConstSetFlag());
+
+        // a schema without const is unchanged
+        Schema<?> plain = (Schema<?>) mySchema.getProperties().get("plain");
+        assertNull(plain.getConst());
+        assertFalse(plain.getConstSetFlag());
+
+        // non-null const is preserved
+        Schema<?> code = (Schema<?>) mySchema.getProperties().get("code");
+        assertEquals(code.getConst(), 0);
+        assertTrue(code.getConstSetFlag());
+
+        // object const containing a null property is preserved as before
+        Object outerConst = mySchema.getConst();
+        assertTrue(outerConst instanceof Map);
+        assertEquals(((Map<?, ?>) outerConst).get("code"), 0);
+        assertTrue(((Map<?, ?>) outerConst).containsKey("msg"));
+        assertNull(((Map<?, ?>) outerConst).get("msg"));
+
+        // setting const explicitly to null programmatically also raises the flag
+        Schema<?> programmatic = new Schema<>();
+        programmatic.setConst(null);
+        assertNull(programmatic.getConst());
+        assertTrue(programmatic.getConstSetFlag());
+
+        // const: null is written back out
+        SerializationMatchers.assertEqualsToYaml31(deser, yaml);
     }
 
     @Test

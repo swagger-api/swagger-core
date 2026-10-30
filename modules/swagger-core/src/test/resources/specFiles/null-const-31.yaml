@@ -1,0 +1,21 @@
+openapi: 3.1.0
+info:
+  title: Test null const
+  version: 1.0.0
+paths: {}
+components:
+  schemas:
+    MySchema:
+      type: object
+      properties:
+        msg:
+          type: string
+          const: null
+        code:
+          type: integer
+          const: 0
+        plain:
+          type: string
+      const:
+        code: 0
+        msg: null
