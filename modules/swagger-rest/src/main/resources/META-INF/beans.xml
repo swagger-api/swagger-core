@@ -4,4 +4,7 @@
        xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/beans_4_0.xsd"
        version="4.0"
        bean-discovery-mode="all">
+    <scan>
+        <exclude name="io.swagger.v3.rest.integration.OpenApiServlet"/>
+    </scan>
 </beans>
