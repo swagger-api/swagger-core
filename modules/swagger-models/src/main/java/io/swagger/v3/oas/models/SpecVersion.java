@@ -10,7 +10,9 @@ public enum SpecVersion {
      *
      * <p>Returns {@code null} for {@code null}, empty or unrecognized values
      * (e.g. {@code "4.0.0"}, {@code "3.x"}), so callers can leave the current
-     * state unchanged in that case.</p>
+     * state unchanged in that case. {@code "3.0"} without a patch version also
+     * returns {@code null}, as OAS requires a {@code major.minor.patch}
+     * semver.</p>
      *
      * <p>When a new constant is added here (e.g. {@code V32} for OpenAPI 3.2),
      * extend the mapping below accordingly.</p>
