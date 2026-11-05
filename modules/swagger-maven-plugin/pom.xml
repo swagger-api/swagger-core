@@ -205,13 +205,13 @@
             <groupId>com.github.jknack</groupId>
             <artifactId>handlebars-helpers</artifactId>
             <scope>test</scope>
-            <version>4.5.3</version>
+            <version>4.5.5</version>
         </dependency>
         <dependency>
             <groupId>com.github.jknack</groupId>
             <artifactId>handlebars</artifactId>
             <scope>test</scope>
-            <version>4.5.3</version>
+            <version>4.5.5</version>
         </dependency>
     </dependencies>
     <properties>
