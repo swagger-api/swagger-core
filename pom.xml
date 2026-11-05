@@ -575,7 +575,7 @@
         <weld-version>6.0.4.Final</weld-version>
 
         <maven-surefire-plugin.version>3.6.0</maven-surefire-plugin.version>
-        <enforcer-plugin-version>3.6.3</enforcer-plugin-version>
+        <enforcer-plugin-version>3.7.0</enforcer-plugin-version>
         <failsafe-plugin-version>${maven-surefire-plugin.version}</failsafe-plugin-version>
         <maven-javadoc-plugin-version>3.12.0</maven-javadoc-plugin-version>
 
