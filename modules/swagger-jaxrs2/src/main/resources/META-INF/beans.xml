@@ -1,1 +1,5 @@
-<beans version="2.0" bean-discovery-mode="all"></beans>
+<beans version="2.0" bean-discovery-mode="all">
+    <scan>
+        <exclude name="io.swagger.v3.jaxrs2.integration.OpenApiServlet"/>
+    </scan>
+</beans>
