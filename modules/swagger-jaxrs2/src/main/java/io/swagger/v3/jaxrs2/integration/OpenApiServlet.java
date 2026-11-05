@@ -62,6 +62,8 @@ public class OpenApiServlet extends HttpServlet {
                             ServletUtils.getCookies(req.getCookies()), ServletUtils.getHeaders(req));
                 } catch (Exception e) {
                     LOGGER.error("failed to load filter", e);
+                    resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                    return;
                 }
             }
         }
