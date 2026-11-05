@@ -220,6 +220,7 @@
                         <bnd><![CDATA[
                             Bundle-SymbolicName: ${project.groupId}.${project.artifactId}
                             -exportcontents: ${packages;NAMED;!*.internal}
+                            Import-Package: io.github.classgraph*;version="[4.8,6)",*
                             -noextraheaders: true
                             -noclassforname: true
                             -snapshot: SNAPSHOT

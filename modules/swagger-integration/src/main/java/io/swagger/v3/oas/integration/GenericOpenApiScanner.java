@@ -34,7 +34,7 @@ public class GenericOpenApiScanner implements OpenApiScanner {
 
     @Override
     public Set<Class<?>> classes() {
-        ClassGraph graph = new ClassGraph().enableAllInfo();
+        ClassGraph graph = ClassGraphScannerHelper.createClassGraph();
 
         Set<String> acceptablePackages = new HashSet<>();
 
@@ -60,7 +60,7 @@ public class GenericOpenApiScanner implements OpenApiScanner {
             for (String pkg : openApiConfiguration.getResourcePackages()) {
                 if (!isIgnored(pkg)) {
                     acceptablePackages.add(pkg);
-                    graph.whitelistPackages(pkg);
+                    graph.acceptPackages(pkg);
                 }
             }
         } else {
@@ -70,8 +70,8 @@ public class GenericOpenApiScanner implements OpenApiScanner {
         // this is generic, specific Jaxrs scanner will also look for @Path
         final Set<Class<?>> classes;
         try (ScanResult scanResult = graph.scan()) {
-            classes = new HashSet<>(scanResult.getClassesWithAnnotation(OpenAPIDefinition.class.getName()).loadClasses());
-            classes.addAll(new HashSet<>(scanResult.getClassesWithAnnotation(Webhooks.class.getName()).loadClasses()));
+            classes = ClassGraphScannerHelper.loadClasses(scanResult.getClassesWithAnnotation(OpenAPIDefinition.class.getName()), getClass());
+            classes.addAll(ClassGraphScannerHelper.loadClasses(scanResult.getClassesWithAnnotation(Webhooks.class.getName()), getClass()));
         }
 
 

@@ -58,6 +58,14 @@ jobs:
     - name: Build with Maven
       if: steps.project-version.outputs.is_snapshot == 'true'
       run: ./mvnw --no-transfer-progress -B -e install --file pom.xml
+    - name: Test opt-in ClassGraph 5 scanners
+      if: steps.project-version.outputs.is_snapshot == 'true' && matrix.java == 17
+      run: >-
+        ./mvnw --no-transfer-progress -B
+        -Dclassgraph-version=5.0.0
+        -pl modules/swagger-jaxrs2 -am test
+        -Dtest='*ScannerTest,IntegrationTest'
+        -Dsurefire.failIfNoSpecifiedTests=false
     - name: Upload Maven test reports
       if: failure()
       uses: actions/upload-artifact@v6
