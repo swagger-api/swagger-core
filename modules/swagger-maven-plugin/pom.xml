@@ -121,7 +121,7 @@
         <dependency>
             <groupId>org.codehaus.plexus</groupId>
             <artifactId>plexus-utils</artifactId>
-            <version>3.6.1</version>
+            <version>3.6.2</version>
             <!-- Maven 3.9 core (used by the test harness) still needs plexus-utils 3.x; the plugin itself does not -->
             <scope>test</scope>
         </dependency>
