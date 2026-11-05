@@ -8,6 +8,8 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Negative;
 import javax.validation.constraints.NegativeOrZero;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Positive;
@@ -81,6 +83,18 @@ public class BeanValidationsModel {
     private List<@Size(min = 3, max = 4) String> items;
 
     private Optional<@Size(min= 1, max=10) String> optionalValue;
+
+    @NotEmpty
+    @Size(max = 10)
+    private List<String> notEmptyItems;
+
+    @NotBlank
+    @Size(max = 20)
+    private String notBlankName;
+
+    @NotEmpty
+    @Size(min = 3, max = 10)
+    private String notEmptyCode;
 
     public Long getId() {
         return id;
@@ -240,6 +254,30 @@ public class BeanValidationsModel {
 
     public void setOptionalValue(Optional<String> optionalValue) {
         this.optionalValue = optionalValue;
+    }
+
+    public List<String> getNotEmptyItems() {
+        return notEmptyItems;
+    }
+
+    public void setNotEmptyItems(List<String> notEmptyItems) {
+        this.notEmptyItems = notEmptyItems;
+    }
+
+    public String getNotBlankName() {
+        return notBlankName;
+    }
+
+    public void setNotBlankName(String notBlankName) {
+        this.notBlankName = notBlankName;
+    }
+
+    public String getNotEmptyCode() {
+        return notEmptyCode;
+    }
+
+    public void setNotEmptyCode(String notEmptyCode) {
+        this.notEmptyCode = notEmptyCode;
     }
 
 }

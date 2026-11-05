@@ -265,6 +265,24 @@ public class ValidationAnnotationsUtilsTest {
 
 
     @Test
+    public void testApplyNotEmptyConstraintKeepsStricterMinItems() {
+        Schema schema = new ArraySchema().minItems(3);
+        boolean modified = ValidationAnnotationsUtils.applyNotEmptyConstraint(schema, null, null);
+
+        assertFalse(modified);
+        assertEquals(schema.getMinItems(), Integer.valueOf(3));
+    }
+
+    @Test
+    public void testApplyNotEmptyConstraintKeepsStricterMinLength() {
+        Schema schema = new StringSchema().minLength(3);
+        boolean modified = ValidationAnnotationsUtils.applyNotEmptyConstraint(schema, null, null);
+
+        assertFalse(modified);
+        assertEquals(schema.getMinLength(), Integer.valueOf(3));
+    }
+
+    @Test
     public void testApplyNotEmptyConstraintOnObjectSchema() {
         Schema schema = new ObjectSchema();
         boolean modified = ValidationAnnotationsUtils.applyNotEmptyConstraint(schema, null, null);
@@ -292,6 +310,15 @@ public class ValidationAnnotationsUtilsTest {
         
         assertTrue(modified);
         assertEquals(schema.getMinLength(), Integer.valueOf(1));
+    }
+
+    @Test
+    public void testApplyNotBlankConstraintKeepsStricterMinLength() {
+        Schema schema = new StringSchema().minLength(3);
+        boolean modified = ValidationAnnotationsUtils.applyNotBlankConstraint(schema, null);
+
+        assertFalse(modified);
+        assertEquals(schema.getMinLength(), Integer.valueOf(3));
     }
 
     @Test
@@ -406,6 +433,20 @@ public class ValidationAnnotationsUtilsTest {
         assertTrue(modified);
         assertEquals(schema.getMinItems(), Integer.valueOf(1));
         assertEquals(schema.getMaxItems(), Integer.valueOf(10));
+    }
+
+    @Test
+    public void testApplySizeConstraintKeepsStricterMinimum() {
+        Schema string = new StringSchema().minLength(1);
+        Schema array = new ArraySchema().minItems(1);
+        Size sizeAnnotation = createSizeAnnotation(0, 10);
+
+        assertTrue(ValidationAnnotationsUtils.applySizeConstraint(string, sizeAnnotation));
+        assertTrue(ValidationAnnotationsUtils.applySizeConstraint(array, sizeAnnotation));
+        assertEquals(string.getMinLength(), Integer.valueOf(1));
+        assertEquals(string.getMaxLength(), Integer.valueOf(10));
+        assertEquals(array.getMinItems(), Integer.valueOf(1));
+        assertEquals(array.getMaxItems(), Integer.valueOf(10));
     }
 
     @Test

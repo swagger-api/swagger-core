@@ -53,6 +53,18 @@ public class BeanValidatorTest {
         assertEquals((int) optionalValue.getMinLength(), 1);
         assertEquals((int) optionalValue.getMaxLength(), 10);
 
+        final ArraySchema notEmptyItems = (ArraySchema) properties.get("notEmptyItems");
+        assertEquals((int) notEmptyItems.getMinItems(), 1);
+        assertEquals((int) notEmptyItems.getMaxItems(), 10);
+
+        final StringSchema notBlankName = (StringSchema) properties.get("notBlankName");
+        assertEquals((int) notBlankName.getMinLength(), 1);
+        assertEquals((int) notBlankName.getMaxLength(), 20);
+
+        final StringSchema notEmptyCode = (StringSchema) properties.get("notEmptyCode");
+        assertEquals((int) notEmptyCode.getMinLength(), 3);
+        assertEquals((int) notEmptyCode.getMaxLength(), 10);
+
         final NumberSchema positiveAmount = (NumberSchema) properties.get("positiveAmount");
         assertEquals(positiveAmount.getMinimum(), BigDecimal.ZERO);
         assertTrue(positiveAmount.getExclusiveMinimum());
@@ -132,6 +144,18 @@ public class BeanValidatorTest {
         final JsonSchema optionalValue = (JsonSchema) properties.get("optionalValue");
         assertEquals((int) optionalValue.getMinLength(), 1);
         assertEquals((int) optionalValue.getMaxLength(), 10);
+
+        final JsonSchema notEmptyItems = (JsonSchema) properties.get("notEmptyItems");
+        assertEquals((int) notEmptyItems.getMinItems(), 1);
+        assertEquals((int) notEmptyItems.getMaxItems(), 10);
+
+        final JsonSchema notBlankName = (JsonSchema) properties.get("notBlankName");
+        assertEquals((int) notBlankName.getMinLength(), 1);
+        assertEquals((int) notBlankName.getMaxLength(), 20);
+
+        final JsonSchema notEmptyCode = (JsonSchema) properties.get("notEmptyCode");
+        assertEquals((int) notEmptyCode.getMinLength(), 3);
+        assertEquals((int) notEmptyCode.getMaxLength(), 10);
 
         final JsonSchema positiveAmount = (JsonSchema) properties.get("positiveAmount");
         assertEquals(positiveAmount.getExclusiveMinimumValue(), BigDecimal.ZERO);
