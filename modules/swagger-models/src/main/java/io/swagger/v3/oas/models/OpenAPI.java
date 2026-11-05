@@ -75,10 +75,14 @@ public class OpenAPI {
 
     public void setOpenapi(String openapi) {
         this.openapi = openapi;
+        SpecVersion version = SpecVersion.fromOpenapi(openapi);
+        if (version != null) {
+            this.specVersion = version;
+        }
     }
 
     public OpenAPI openapi(String openapi) {
-        this.openapi = openapi;
+        setOpenapi(openapi);
         return this;
     }
 
