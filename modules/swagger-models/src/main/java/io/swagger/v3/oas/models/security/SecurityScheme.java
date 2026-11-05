@@ -1,6 +1,7 @@
 package io.swagger.v3.oas.models.security;
 
 import io.swagger.v3.oas.models.annotations.OpenAPI31;
+import io.swagger.v3.oas.models.annotations.OpenAPI32;
 
 /**
  * SecurityScheme
@@ -64,6 +65,10 @@ public class SecurityScheme {
     private String bearerFormat = null;
     private OAuthFlows flows = null;
     private String openIdConnectUrl = null;
+    @OpenAPI32
+    private String oauth2MetadataUrl = null;
+    @OpenAPI32
+    private Boolean deprecated = null;
     private java.util.Map<String, Object> extensions = null;
 
     /**
@@ -218,6 +223,52 @@ public class SecurityScheme {
         return this;
     }
 
+    /**
+     * returns the oauth2MetadataUrl property from a SecurityScheme instance.
+     *
+     * @since 2.2.56 (OpenAPI 3.2)
+     * @return String oauth2MetadataUrl
+     **/
+
+    @OpenAPI32
+    public String getOauth2MetadataUrl() {
+        return oauth2MetadataUrl;
+    }
+
+    @OpenAPI32
+    public void setOauth2MetadataUrl(String oauth2MetadataUrl) {
+        this.oauth2MetadataUrl = oauth2MetadataUrl;
+    }
+
+    @OpenAPI32
+    public SecurityScheme oauth2MetadataUrl(String oauth2MetadataUrl) {
+        this.oauth2MetadataUrl = oauth2MetadataUrl;
+        return this;
+    }
+
+    /**
+     * returns the deprecated property from a SecurityScheme instance.
+     *
+     * @since 2.2.56 (OpenAPI 3.2)
+     * @return Boolean deprecated
+     **/
+
+    @OpenAPI32
+    public Boolean getDeprecated() {
+        return deprecated;
+    }
+
+    @OpenAPI32
+    public void setDeprecated(Boolean deprecated) {
+        this.deprecated = deprecated;
+    }
+
+    @OpenAPI32
+    public SecurityScheme deprecated(Boolean deprecated) {
+        this.deprecated = deprecated;
+        return this;
+    }
+
     public java.util.Map<String, Object> getExtensions() {
         return extensions;
     }
@@ -308,6 +359,12 @@ public class SecurityScheme {
         if (openIdConnectUrl != null ? !openIdConnectUrl.equals(that.openIdConnectUrl) : that.openIdConnectUrl != null) {
             return false;
         }
+        if (oauth2MetadataUrl != null ? !oauth2MetadataUrl.equals(that.oauth2MetadataUrl) : that.oauth2MetadataUrl != null) {
+            return false;
+        }
+        if (deprecated != null ? !deprecated.equals(that.deprecated) : that.deprecated != null) {
+            return false;
+        }
         return extensions != null ? extensions.equals(that.extensions) : that.extensions == null;
     }
 
@@ -322,6 +379,8 @@ public class SecurityScheme {
         result = 31 * result + (bearerFormat != null ? bearerFormat.hashCode() : 0);
         result = 31 * result + (flows != null ? flows.hashCode() : 0);
         result = 31 * result + (openIdConnectUrl != null ? openIdConnectUrl.hashCode() : 0);
+        result = 31 * result + (oauth2MetadataUrl != null ? oauth2MetadataUrl.hashCode() : 0);
+        result = 31 * result + (deprecated != null ? deprecated.hashCode() : 0);
         result = 31 * result + (extensions != null ? extensions.hashCode() : 0);
         return result;
     }
@@ -339,6 +398,8 @@ public class SecurityScheme {
         sb.append("    bearerFormat: ").append(toIndentedString(bearerFormat)).append("\n");
         sb.append("    flows: ").append(toIndentedString(flows)).append("\n");
         sb.append("    openIdConnectUrl: ").append(toIndentedString(openIdConnectUrl)).append("\n");
+        sb.append("    oauth2MetadataUrl: ").append(toIndentedString(oauth2MetadataUrl)).append("\n");
+        sb.append("    deprecated: ").append(toIndentedString(deprecated)).append("\n");
         sb.append("    $ref: ").append(toIndentedString($ref)).append("\n");
         sb.append("}");
         return sb.toString();

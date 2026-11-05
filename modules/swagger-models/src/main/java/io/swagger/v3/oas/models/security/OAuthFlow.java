@@ -1,6 +1,7 @@
 package io.swagger.v3.oas.models.security;
 
 import io.swagger.v3.oas.models.annotations.OpenAPI31;
+import io.swagger.v3.oas.models.annotations.OpenAPI32;
 
 import java.util.Objects;
 
@@ -12,6 +13,8 @@ import java.util.Objects;
 
 public class OAuthFlow {
     private String authorizationUrl = null;
+    @OpenAPI32
+    private String deviceAuthorizationUrl = null;
     private String tokenUrl = null;
     private String refreshUrl = null;
     private Scopes scopes = null;
@@ -33,6 +36,29 @@ public class OAuthFlow {
 
     public OAuthFlow authorizationUrl(String authorizationUrl) {
         this.authorizationUrl = authorizationUrl;
+        return this;
+    }
+
+    /**
+     * returns the deviceAuthorizationUrl property from a OAuthFlow instance.
+     *
+     * @since 2.2.56 (OpenAPI 3.2)
+     * @return String deviceAuthorizationUrl
+     **/
+
+    @OpenAPI32
+    public String getDeviceAuthorizationUrl() {
+        return deviceAuthorizationUrl;
+    }
+
+    @OpenAPI32
+    public void setDeviceAuthorizationUrl(String deviceAuthorizationUrl) {
+        this.deviceAuthorizationUrl = deviceAuthorizationUrl;
+    }
+
+    @OpenAPI32
+    public OAuthFlow deviceAuthorizationUrl(String deviceAuthorizationUrl) {
+        this.deviceAuthorizationUrl = deviceAuthorizationUrl;
         return this;
     }
 
@@ -103,6 +129,7 @@ public class OAuthFlow {
         }
         OAuthFlow oauthFlow = (OAuthFlow) o;
         return Objects.equals(this.authorizationUrl, oauthFlow.authorizationUrl) &&
+                Objects.equals(this.deviceAuthorizationUrl, oauthFlow.deviceAuthorizationUrl) &&
                 Objects.equals(this.tokenUrl, oauthFlow.tokenUrl) &&
                 Objects.equals(this.refreshUrl, oauthFlow.refreshUrl) &&
                 Objects.equals(this.scopes, oauthFlow.scopes) &&
@@ -111,7 +138,7 @@ public class OAuthFlow {
 
     @Override
     public int hashCode() {
-        return Objects.hash(authorizationUrl, tokenUrl, refreshUrl, scopes, extensions);
+        return Objects.hash(authorizationUrl, deviceAuthorizationUrl, tokenUrl, refreshUrl, scopes, extensions);
     }
 
     public java.util.Map<String, Object> getExtensions() {
@@ -151,6 +178,7 @@ public class OAuthFlow {
         sb.append("class OAuthFlow {\n");
 
         sb.append("    authorizationUrl: ").append(toIndentedString(authorizationUrl)).append("\n");
+        sb.append("    deviceAuthorizationUrl: ").append(toIndentedString(deviceAuthorizationUrl)).append("\n");
         sb.append("    tokenUrl: ").append(toIndentedString(tokenUrl)).append("\n");
         sb.append("    refreshUrl: ").append(toIndentedString(refreshUrl)).append("\n");
         sb.append("    scopes: ").append(toIndentedString(scopes)).append("\n");

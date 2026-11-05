@@ -24,4 +24,7 @@ public abstract class OpenAPIMixin {
 
     @JsonIgnore
     public abstract Map<String, PathItem> getWebhooks();
+
+    @JsonIgnore
+    public abstract String get$self();
 }
