@@ -1,0 +1,34 @@
+{
+  "First" : {
+    "type" : "object",
+    "allOf" : [ {
+      "$ref" : "#/components/schemas/ModelWithoutTypeInfo"
+    }, {
+      "type" : "object",
+      "properties" : {
+        "name" : {
+          "type" : "string"
+        }
+      }
+    } ]
+  },
+  "ModelWithoutTypeInfo" : {
+    "type" : "object"
+  },
+  "Second" : {
+    "type": "object",
+    "allOf": [
+      {
+        "$ref": "#/components/schemas/ModelWithoutTypeInfo"
+      },
+      {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string"
+          }
+        }
+      }
+    ]
+  }
+}

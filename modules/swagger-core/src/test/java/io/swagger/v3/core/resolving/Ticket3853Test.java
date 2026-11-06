@@ -31,12 +31,21 @@ public class Ticket3853Test extends SwaggerTestBase {
 
         assertNotNull(model);
         String yaml = "io.swagger.v3.core.resolving.Ticket3853Test$BaseClass:\n" +
+                "  required:\n" +
+                "  - '@type'\n" +
                 "  type: object\n" +
                 "  properties:\n" +
                 "    property:\n" +
                 "      type: string\n" +
                 "    type:\n" +
                 "      type: string\n" +
+                "    '@type':\n" +
+                "      type: string\n" +
+                "  discriminator:\n" +
+                "    propertyName: '@type'\n" +
+                "    mapping:\n" +
+                "      SubClass: \"#/components/schemas/io.swagger.v3.core.resolving.Ticket3853Test$SubClass\"\n" +
+                "      BaseClass: \"#/components/schemas/io.swagger.v3.core.resolving.Ticket3853Test$BaseClass\"\n" +
                 "io.swagger.v3.core.resolving.Ticket3853Test$SubClass:\n" +
                 "  type: object\n" +
                 "  allOf:\n" +
