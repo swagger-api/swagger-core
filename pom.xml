@@ -597,7 +597,7 @@
         <jackson-annotations-version>2.23</jackson-annotations-version>
         <jackson-databind-version>2.23.0</jackson-databind-version>
         <snakeyaml-version>2.7</snakeyaml-version>
-        <logback-version>1.6.3</logback-version>
+        <logback-version>1.6.6</logback-version>
         <reflections-version>0.10.2</reflections-version>
         <guava-version>33.8.0-android</guava-version>
         <javassist-version>3.33.0-GA</javassist-version>
