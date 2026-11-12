@@ -124,7 +124,6 @@
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>3.12.0</version>
                 <configuration>
-                    <aggregate>true</aggregate>
                     <source>8</source>
                     <encoding>UTF-8</encoding>
                     <maxmemory>1g</maxmemory>
@@ -173,7 +172,7 @@
             <plugin>
                 <groupId>org.sonatype.central</groupId>
                 <artifactId>central-publishing-maven-plugin</artifactId>
-                <version>0.11.0</version>
+                <version>0.12.0</version>
                 <extensions>true</extensions>
                 <configuration>
                     <publishingServerId>central</publishingServerId>
@@ -351,7 +350,6 @@
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <version>3.12.0</version>
                 <configuration>
-                    <aggregate>true</aggregate>
                     <debug>true</debug>
                     <links>
                         <link>http://java.sun.com/javaee/5/docs/api</link>
@@ -363,10 +361,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jxr-plugin</artifactId>
-                <version>2.5</version>
-                <configuration>
-                    <aggregate>true</aggregate>
-                </configuration>
+                <version>3.6.0</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -526,7 +521,7 @@
             <dependency>
                 <groupId>org.immutables</groupId>
                 <artifactId>value</artifactId>
-                <version>2.12.2</version>
+                <version>2.12.3</version>
             </dependency>
             <dependency>
                 <groupId>javax.ws.rs</groupId>
@@ -588,21 +583,23 @@
     </dependencyManagement>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <!-- empty by default (no packages excluded); override on the command line if needed -->
+        <javadoc.package.exclude></javadoc.package.exclude>
         <maven.compiler.release>8</maven.compiler.release>
         <joda-version>2.2.4</joda-version>
-        <joda-time-version>2.14.3</joda-time-version>
+        <joda-time-version>2.15.1</joda-time-version>
 
         <bnd-version>6.4.0</bnd-version>
         <servlet-api-version>2.5</servlet-api-version>
         <jersey-version>1.19.4</jersey-version>
         <jersey2-version>2.48</jersey2-version>
-        <jackson-version>2.22.2</jackson-version>
-        <jackson-annotations-version>2.22</jackson-annotations-version>
-        <jackson-databind-version>2.22.2</jackson-databind-version>
+        <jackson-version>2.23.0</jackson-version>
+        <jackson-annotations-version>2.23</jackson-annotations-version>
+        <jackson-databind-version>2.23.0</jackson-databind-version>
         <snakeyaml-version>2.7</snakeyaml-version>
         <logback-version>1.6.3</logback-version>
         <reflections-version>0.10.2</reflections-version>
-        <guava-version>32.1.3-android</guava-version>
+        <guava-version>33.8.0-android</guava-version>
         <javassist-version>3.33.0-GA</javassist-version>
 
         <testng-version>7.12.0</testng-version>
@@ -610,19 +607,19 @@
         <rest-assured-version>5.5.7</rest-assured-version>
         <surefire-version>2.22.2</surefire-version>
         <maven-plugin-version>1.0.0</maven-plugin-version>
-        <commons-lang-version>3.20.0</commons-lang-version>
-        <slf4j-version>2.0.18</slf4j-version>
-        <jetty-version>9.4.56.v20240826</jetty-version>
+        <commons-lang-version>3.21.0</commons-lang-version>
+        <slf4j-version>2.0.20</slf4j-version>
+        <jetty-version>9.4.58.v20250814</jetty-version>
         <servlet-api-version>2.5</servlet-api-version>
         <coverage.complexity.minimum>0.90</coverage.complexity.minimum>
         <coverage.line.minimum>0.90</coverage.line.minimum>
         <coverage.missed.classes>0</coverage.missed.classes>
         <commons-io-version>2.22.0</commons-io-version>
-        <enforcer-plugin-version>3.6.3</enforcer-plugin-version>
-        <failsafe-plugin-version>2.22.2</failsafe-plugin-version>
-        <validation-api-version>1.1.0.Final</validation-api-version>
+        <enforcer-plugin-version>3.7.0</enforcer-plugin-version>
+        <failsafe-plugin-version>3.6.1</failsafe-plugin-version>
+        <validation-api-version>2.0.1.Final</validation-api-version>
         <powermock.version>2.0.9</powermock.version>
-        <mockito-version>5.23.0</mockito-version>
+        <mockito-version>5.24.0</mockito-version>
         <jakarta.xml.bind-api-version>2.3.3</jakarta.xml.bind-api-version>
     </properties>
 </project>

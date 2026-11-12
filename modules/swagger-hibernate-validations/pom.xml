@@ -8,10 +8,8 @@
         <relativePath>../..</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-    <groupId>io.swagger</groupId>
     <artifactId>swagger-hibernate-validations</artifactId>
     <packaging>jar</packaging>
-    <version>1.6.17-SNAPSHOT</version>
     <name>swagger-hibernate-validations</name>
     <description>swagger-hibernate-validations</description>
     <build>
@@ -105,8 +103,7 @@
         </dependency>
     </dependencies>
     <properties>
-        <hibernate-validator-version>5.1.3.Final</hibernate-validator-version>
-        <!-- TODO increase coverage and remove these overrides-->
+        <hibernate-validator-version>5.4.3.Final</hibernate-validator-version>
         <coverage.complexity.minimum>0.50</coverage.complexity.minimum>
         <coverage.line.minimum>0.90</coverage.line.minimum>
     </properties>
