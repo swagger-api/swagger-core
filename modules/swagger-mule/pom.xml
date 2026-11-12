@@ -12,7 +12,6 @@
     <name>swagger-mule</name>
     <description>swagger-mule</description>
     <properties>
-        <!-- TODO increase coverage and remove these overrides-->
         <coverage.complexity.minimum>0.00</coverage.complexity.minimum>
         <coverage.line.minimum>0.00</coverage.line.minimum>
         <coverage.missed.classes>99</coverage.missed.classes>

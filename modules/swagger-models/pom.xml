@@ -126,7 +126,6 @@
         </dependency>
     </dependencies>
     <properties>
-        <!-- TODO increase coverage -->
         <coverage.complexity.minimum>0.07</coverage.complexity.minimum>
         <coverage.line.minimum>0.0</coverage.line.minimum>
         <!-- Setting this to a really high number since this module has almost no coverage -->

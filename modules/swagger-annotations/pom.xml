@@ -7,9 +7,7 @@
         <relativePath>../..</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-    <groupId>io.swagger</groupId>
     <artifactId>swagger-annotations</artifactId>
-    <version>1.6.17-SNAPSHOT</version>
     <name>swagger-annotations</name>
     <description>swagger-annotations</description>
     <build>
