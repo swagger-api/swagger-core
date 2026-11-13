@@ -1,0 +1,46 @@
+{
+  "First" : {
+    "type" : "object",
+    "allOf" : [ {
+      "$ref" : "#/components/schemas/ModelWithDefaultPropertyName"
+    }, {
+      "type" : "object",
+      "properties" : {
+        "name" : {
+          "type" : "string"
+        }
+      }
+    } ]
+  },
+  "ModelWithDefaultPropertyName" : {
+    "required" : [ "@type" ],
+    "type" : "object",
+    "properties" : {
+      "@type" : {
+        "type" : "string"
+      }
+    },
+    "discriminator" : {
+      "propertyName" : "@type",
+      "mapping" : {
+        "SecondType" : "#/components/schemas/Second"
+      }
+    }
+  },
+  "Second" : {
+    "type": "object",
+    "allOf": [
+      {
+        "$ref": "#/components/schemas/ModelWithDefaultPropertyName"
+      },
+      {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string"
+          }
+        }
+      }
+    ]
+  }
+}

@@ -66,10 +66,17 @@ public class Ticket4239Test extends SwaggerTestBase {
             "      a1_out:\n" +
             "        type: string\n" +
             "A_Output:\n" +
+            "  required:\n" +
+            "  - '@type'\n" +
             "  type: object\n" +
             "  properties:\n" +
             "    a_out:\n" +
-            "      type: string\n");
-
+            "      type: string\n" +
+            "    '@type':\n" +
+            "      type: string\n" +
+            "  discriminator:\n" +
+            "    propertyName: '@type'\n" +
+            "    mapping:\n" +
+            "      Ticket4239Test$A1: \"#/components/schemas/A1_Output\"\n");
     }
 }

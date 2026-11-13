@@ -9,8 +9,12 @@
                 "type": "string"
             }
         },
-        "discriminator" : {
-            "propertyName" : "type"
+        "discriminator": {
+            "propertyName": "type",
+            "mapping": {
+                "human": "#/components/schemas/Human",
+                "pet": "#/components/schemas/Pet"
+            }
         }
     },
     "Human": {
