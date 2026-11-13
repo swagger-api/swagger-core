@@ -160,8 +160,9 @@ public class SpecFilter {
                 }
 
                 ApiResponses responses = filteredOperation.get().getResponses();
-                ApiResponses clonedResponses = responses;
                 if (responses != null) {
+                    ApiResponses clonedResponses = new ApiResponses();
+                    clonedResponses.setExtensions(responses.getExtensions());
                     responses.forEach((responseKey, response) -> {
                         ApiResponse filteredResponse = filterResponse(filter, operation, response, resourcePath, key, params, cookies, headers);
                         if (filteredResponse != null) {
