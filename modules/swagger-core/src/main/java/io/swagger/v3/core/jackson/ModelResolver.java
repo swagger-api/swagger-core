@@ -3196,6 +3196,13 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         if (StringUtils.isNotBlank(description)) {
             schema.description(description);
         }
+        if (schemaAnnotation != null && schemaAnnotation.groups() != null && schemaAnnotation.groups().length > 0) {
+            java.util.List<String> groupNames = new java.util.ArrayList<>();
+            for (Class<?> group : schemaAnnotation.groups()) {
+                groupNames.add(group.getSimpleName());
+            }
+            schema.groups(groupNames);
+        }
         String title = resolveTitle(a, annotations, schemaAnnotation);
         if (StringUtils.isNotBlank(title)) {
             schema.title(title);
