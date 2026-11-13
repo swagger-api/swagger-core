@@ -3,6 +3,7 @@ package io.swagger.v3.jaxrs2.annotations.operations;
 import io.swagger.v3.jaxrs2.annotations.AbstractAnnotationTest;
 import io.swagger.v3.jaxrs2.resources.GenericResponsesResource;
 import io.swagger.v3.jaxrs2.resources.HiddenAnnotatedUserResource;
+import io.swagger.v3.jaxrs2.resources.HiddenInheritedUserResource;
 import io.swagger.v3.jaxrs2.resources.HiddenUserResource;
 import io.swagger.v3.jaxrs2.resources.PetResource;
 import io.swagger.v3.jaxrs2.resources.PetResourceSlashesinPath;
@@ -1350,6 +1351,23 @@ public class AnnotatedOperationMethodTest extends AbstractAnnotationTest {
                 "        foo:\n" +
                 "          type: string");
 
+    }
+
+    @Test(description = "reads and skips resources and operations hidden through an interface")
+    public void testHiddenInheritedUserResource() throws IOException {
+        compareAsYaml(HiddenInheritedUserResource.UserApiImpl.class, "openapi: 3.0.1\n" +
+                "paths:\n" +
+                "  /user/public:\n" +
+                "    get:\n" +
+                "      summary: Public user data\n" +
+                "      operationId: publicUser\n" +
+                "      responses:\n" +
+                "        default:\n" +
+                "          description: default response\n" +
+                "          content:\n" +
+                "            '*/*': {}\n");
+        assertEquals(readIntoYaml(HiddenInheritedUserResource.AdminApiImpl.class), "openapi: 3.0.1\n");
+        assertEquals(readIntoYaml(HiddenInheritedUserResource.MetricsApiImpl.class), "openapi: 3.0.1\n");
     }
 
     @Test
