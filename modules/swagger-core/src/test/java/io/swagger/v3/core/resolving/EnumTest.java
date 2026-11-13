@@ -1,5 +1,6 @@
 package io.swagger.v3.core.resolving;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.google.common.base.Functions;
 import com.google.common.collect.Collections2;
 import io.swagger.v3.core.converter.AnnotatedType;
@@ -49,6 +50,101 @@ public class EnumTest extends SwaggerTestBase {
         final Schema model = context.resolve((new AnnotatedType().type(Contract.class)));
         assertBasicModelStructure(model, "Contract");
         assertPropertyExists(model, "type");
+    }
+
+    @Test
+    public void testEnumWithJsonFormatObjectShape() {
+        final ModelResolver modelResolver = new ModelResolver(mapper());
+        final ModelConverterContextImpl context = new ModelConverterContextImpl(modelResolver);
+
+        final Schema model = context.resolve(new AnnotatedType().type(ObjectShapeEnum.class));
+        assertNotNull(model);
+        // Enum annotated with @JsonFormat(shape = OBJECT) is resolved as an object/bean, not as an enum
+        assertNull(model.getEnum());
+        assertNotNull(model.getProperties());
+        assertTrue(model.getProperties().containsKey("code"));
+        assertTrue(model.getProperties().containsKey("label"));
+    }
+
+    @Test
+    public void testEnumWithJsonFormatObjectShapePropertyTypes() {
+        final ModelResolver modelResolver = new ModelResolver(mapper());
+        final ModelConverterContextImpl context = new ModelConverterContextImpl(modelResolver);
+
+        final Schema model = context.resolve(new AnnotatedType().type(ObjectShapeEnum.class));
+        assertNotNull(model);
+        assertNull(model.getEnum());
+        assertNull(model.get$ref());
+
+        final Schema codeSchema = (Schema) model.getProperties().get("code");
+        final Schema labelSchema = (Schema) model.getProperties().get("label");
+        assertNotNull(codeSchema);
+        assertNotNull(labelSchema);
+        assertEquals(codeSchema.getType(), "integer");
+        assertEquals(labelSchema.getType(), "string");
+        // property schemas must not carry enum values
+        assertNull(codeSchema.getEnum());
+        assertNull(labelSchema.getEnum());
+    }
+
+    @Test
+    public void testEnumWithJsonFormatObjectShapeOpenApi31() {
+        final ModelResolver modelResolver = new ModelResolver(mapper()).openapi31(true);
+        final ModelConverterContextImpl context = new ModelConverterContextImpl(modelResolver);
+
+        final Schema model = context.resolve(new AnnotatedType().type(ObjectShapeEnum.class));
+        assertNotNull(model);
+        assertNull(model.getEnum());
+        assertNotNull(model.getProperties());
+        assertTrue(model.getProperties().containsKey("code"));
+        assertTrue(model.getProperties().containsKey("label"));
+    }
+
+    @Test
+    public void testEnumWithJsonFormatObjectShapeAsField() {
+        final ModelResolver modelResolver = new ModelResolver(mapper());
+        final ModelConverterContextImpl context = new ModelConverterContextImpl(modelResolver);
+
+        final Schema model = context.resolve(new AnnotatedType().type(ClassWithObjectShapeEnum.class));
+        assertBasicModelStructure(model, "ClassWithObjectShapeEnum");
+        assertPropertyExists(model, "status");
+
+        final Schema statusProp = (Schema) model.getProperties().get("status");
+        // resolved as a ref to the object-shape enum component, like a normal bean
+        assertNotNull(statusProp.get$ref());
+        assertNull(statusProp.getEnum());
+
+        // the referenced component must be an object with properties, not an enum
+        Map<String, Schema> components = context.getDefinedModels();
+        Schema component = components.get("ObjectShapeEnum");
+        assertNotNull(component);
+        assertNull(component.getEnum());
+        assertNotNull(component.getProperties());
+        assertTrue(component.getProperties().containsKey("code"));
+        assertTrue(component.getProperties().containsKey("label"));
+    }
+
+    @Test
+    public void testArrayOfEnumWithJsonFormatObjectShape() {
+        final ModelResolver modelResolver = new ModelResolver(mapper());
+        final ModelConverterContextImpl context = new ModelConverterContextImpl(modelResolver);
+
+        final Schema model = context.resolve(new AnnotatedType().type(ClassWithObjectShapeEnumArray.class));
+        assertBasicModelStructure(model, "ClassWithObjectShapeEnumArray");
+        assertPropertyExists(model, "statuses");
+
+        final Schema arrayProp = (Schema) model.getProperties().get("statuses");
+        assertNotNull(arrayProp.getItems());
+        // array items reference the object-shape enum component, and are not an inline enum
+        assertNotNull(arrayProp.getItems().get$ref());
+        assertNull(arrayProp.getItems().getEnum());
+
+        Map<String, Schema> components = context.getDefinedModels();
+        Schema component = components.get("ObjectShapeEnum");
+        assertNotNull(component);
+        assertNull(component.getEnum());
+        assertTrue(component.getProperties().containsKey("code"));
+        assertTrue(component.getProperties().containsKey("label"));
     }
 
     @Test
@@ -307,6 +403,36 @@ public class EnumTest extends SwaggerTestBase {
 
     public enum Currency {
         USA, CANADA
+    }
+
+    @JsonFormat(shape = JsonFormat.Shape.OBJECT)
+    public enum ObjectShapeEnum {
+        FIRST(1, "one"),
+        SECOND(2, "two");
+
+        private final int code;
+        private final String label;
+
+        ObjectShapeEnum(int code, String label) {
+            this.code = code;
+            this.label = label;
+        }
+
+        public int getCode() {
+            return code;
+        }
+
+        public String getLabel() {
+            return label;
+        }
+    }
+
+    public static class ClassWithObjectShapeEnum {
+        public ObjectShapeEnum status;
+    }
+
+    public static class ClassWithObjectShapeEnumArray {
+        public ObjectShapeEnum[] statuses;
     }
 
     public static class Contract {
