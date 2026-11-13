@@ -2,10 +2,10 @@ name: "Code scanning - action"
 
 on:
   push:
-    branches: [master, 1.5]
+    branches: ["master", "1.5"]
   pull_request:
     # The branches below must be a subset of the branches above
-    branches: [master, 1.5]
+    branches: ["master", "1.5"]
   schedule:
     - cron: '0 19 * * 1'
 
@@ -23,7 +23,7 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@v7
       with:
         # We must fetch at least the immediate parents so that if this is
         # a pull request then we can checkout the head.
@@ -47,7 +47,7 @@ jobs:
         languages: java
 
     - name: Cache local Maven repository
-      uses: actions/cache@v5
+      uses: actions/cache@v6
       with:
         path: ~/.m2/repository
         key: ${{ runner.os }}-jdk11-maven-v2-${{ hashFiles('**/pom.xml') }}
@@ -61,7 +61,7 @@ jobs:
       run: ./mvnw --no-transfer-progress -B -e install --file pom.xml
     - name: Upload Maven test reports
       if: failure()
-      uses: actions/upload-artifact@v6
+      uses: actions/upload-artifact@v7
       with:
         name: surefire-reports-codeql
         path: |
