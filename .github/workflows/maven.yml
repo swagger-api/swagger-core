@@ -13,7 +13,7 @@ jobs:
         java: [ 11, 17 ]
 
     steps:
-    - uses: actions/checkout@v6
+    - uses: actions/checkout@v7
     - name: Set up Java
       uses: actions/setup-java@v5
       with:
@@ -23,7 +23,7 @@ jobs:
         server-username: MAVEN_USERNAME
         server-password: MAVEN_PASSWORD
     - name: Cache local Maven repository
-      uses: actions/cache@v5
+      uses: actions/cache@v6
       with:
         path: ~/.m2/repository
         key: ${{ runner.os }}-jdk${{ matrix.java }}-maven-v2-${{ hashFiles('**/pom.xml') }}
@@ -60,7 +60,7 @@ jobs:
       run: ./mvnw --no-transfer-progress -B -e install --file pom.xml
     - name: Upload Maven test reports
       if: failure()
-      uses: actions/upload-artifact@v6
+      uses: actions/upload-artifact@v7
       with:
         name: surefire-reports-java-${{ matrix.java }}
         path: |
