@@ -606,6 +606,36 @@ public class ValidationAnnotationsUtilsTest {
         assertEquals(schema.getMaximum(), new BigDecimal("50"));
     }
 
+    // --- OpenAPI 3.2 tests: V32 must follow the 3.1-style exclusive min/max semantics ---
+
+    @Test
+    public void testApplyDecimalMinConstraintV32Exclusive() {
+        Schema schema = new NumberSchema();
+        schema.setSpecVersion(io.swagger.v3.oas.models.SpecVersion.V32);
+        DecimalMin minAnnotation = createDecimalMinAnnotation("10.5", false);
+
+        boolean modified = ValidationAnnotationsUtils.applyDecimalMinConstraint(schema, minAnnotation);
+
+        assertTrue(modified);
+        assertEquals(schema.getExclusiveMinimumValue(), new BigDecimal("10.5"));
+        assertNull(schema.getMinimum());
+        assertNull(schema.getExclusiveMinimum());
+    }
+
+    @Test
+    public void testApplyDecimalMaxConstraintV32Exclusive() {
+        Schema schema = new NumberSchema();
+        schema.setSpecVersion(io.swagger.v3.oas.models.SpecVersion.V32);
+        DecimalMax maxAnnotation = createDecimalMaxAnnotation("100.5", false);
+
+        boolean modified = ValidationAnnotationsUtils.applyDecimalMaxConstraint(schema, maxAnnotation);
+
+        assertTrue(modified);
+        assertEquals(schema.getExclusiveMaximumValue(), new BigDecimal("100.5"));
+        assertNull(schema.getMaximum());
+        assertNull(schema.getExclusiveMaximum());
+    }
+
     @Test
     public void testApplyPatternConstraintOnStringSchema() {
         Schema schema = new StringSchema();

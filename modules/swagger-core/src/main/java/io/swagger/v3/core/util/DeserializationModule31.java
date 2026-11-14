@@ -32,6 +32,8 @@ public class DeserializationModule31 extends SimpleModule {
         this.addDeserializer(Paths.class, new Paths31Deserializer());
         this.addDeserializer(Callback.class, new Callback31Deserializer());
 
+        this.addSerializer(Parameter.StyleEnum.class, new ParameterStyleSerializer());
+
         this.setDeserializerModifier(new BeanDeserializerModifier()
         {
             @Override public JsonDeserializer<?> modifyDeserializer(DeserializationConfig config, BeanDescription beanDesc, JsonDeserializer<?> deserializer) {

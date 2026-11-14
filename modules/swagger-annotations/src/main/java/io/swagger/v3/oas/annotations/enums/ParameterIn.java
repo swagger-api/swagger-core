@@ -5,7 +5,8 @@ public enum ParameterIn {
     HEADER("header"),
     QUERY("query"),
     PATH("path"),
-    COOKIE("cookie");
+    COOKIE("cookie"),
+    QUERYSTRING("querystring");
 
     private String value;
 
