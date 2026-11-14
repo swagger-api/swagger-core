@@ -149,6 +149,46 @@ You need the following installed and available in your $PATH:
 * Apache maven 3.0.4 or greater
 * Jackson 2.4.5 or greater
 
+### Opt in to ClassGraph 5
+
+ClassGraph 4 remains the default. Applications running Java 17 or greater can
+select ClassGraph 5 for the OpenAPI scanners, including the Jakarta variants.
+Swagger detects the installed ClassGraph version; no scanner configuration is needed.
+
+For Maven applications, add this entry to your application's dependency management:
+
+```xml
+<dependencyManagement>
+    <dependencies>
+        <dependency>
+            <groupId>io.github.classgraph</groupId>
+            <artifactId>classgraph</artifactId>
+            <version>5.0.0</version>
+        </dependency>
+    </dependencies>
+</dependencyManagement>
+```
+
+For Gradle applications, add an explicit dependency:
+
+```groovy
+dependencies {
+    implementation 'io.github.classgraph:classgraph:5.0.0'
+}
+```
+
+ClassGraph 5 uses a different class-loading implementation. Swagger loads discovered
+classes through the thread context classloader first, then the scanner and system
+classloaders, without initializing the classes. ClassGraph 4 continues to use its
+original scanning and class-loading implementation. Applications with custom
+classloaders should test resource discovery before opting in.
+
+To test Swagger Core from source with ClassGraph 5, run on JDK 17 or greater:
+
+```sh
+mvn -Dclassgraph-version=5.0.0 install
+```
+
 
 ### To build from source (currently 2.2.56-SNAPSHOT)
 ```
