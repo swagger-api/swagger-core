@@ -203,6 +203,9 @@ public class PropertyModelConverter {
         if (property instanceof ObjectProperty) {
             ObjectProperty objectProperty = (ObjectProperty) property;
             properties = objectProperty.getProperties();
+            if (additionalProperties == null) {
+                additionalProperties = objectProperty.getAdditionalProperties();
+            }
         }
 
         if (property instanceof ArrayProperty){
