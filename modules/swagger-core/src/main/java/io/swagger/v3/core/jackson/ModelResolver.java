@@ -1178,18 +1178,20 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
 
     private Annotation[] addGenericTypeArgumentAnnotationsForOptionalField(BeanPropertyDefinition propDef, Annotation[] annotations) {
 
-        boolean isNotOptionalType = Optional.ofNullable(propDef)
-                .map(BeanPropertyDefinition::getField)
-                .map(AnnotatedField::getAnnotated)
-                .map(field -> !(field.getType().equals(Optional.class)))
-                .orElse(false);
-
-        if (isNotOptionalType || isRecordType(propDef)) {
+        if (!isOptionalProperty(propDef)) {
             return annotations;
         }
 
         Stream<Annotation> genericTypeArgumentAnnotations = extractGenericTypeArgumentAnnotations(propDef);
         return Stream.concat(Stream.of(annotations), genericTypeArgumentAnnotations).toArray(Annotation[]::new);
+    }
+
+    private boolean isOptionalProperty(BeanPropertyDefinition propDef) {
+        if (propDef == null) {
+            return false;
+        }
+        JavaType propType = propDef.getField() != null ? propDef.getField().getType() : propDef.getPrimaryType();
+        return propType != null && Optional.class.equals(propType.getRawClass());
     }
 
     private Stream<Annotation> extractGenericTypeArgumentAnnotations(BeanPropertyDefinition propDef) {
