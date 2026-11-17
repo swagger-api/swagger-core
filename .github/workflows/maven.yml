@@ -77,4 +77,5 @@ jobs:
         MAVEN_USERNAME: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
         MAVEN_PASSWORD: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
     - name: Verify BOM integration test
+      if: steps.project-version.outputs.is_snapshot == 'true'
       run: ./mvnw --no-transfer-progress -B validate -Pbom-it
