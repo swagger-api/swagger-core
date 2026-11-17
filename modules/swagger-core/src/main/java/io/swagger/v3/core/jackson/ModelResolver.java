@@ -92,10 +92,12 @@ import java.lang.reflect.AnnotatedParameterizedType;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -107,6 +109,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -810,7 +813,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 boolean areSiblingsAllowed = AnnotationsUtils.areSiblingsAllowed(resolvedSchemaResolution, openapi31);
                 aType = AnnotationsUtils.addTypeWhenSiblingsAllowed(aType, ctxSchema, areSiblingsAllowed);
                 property = context.resolve(aType);
-                property = clone(property);
+                property = cloneResolvedProperty(property);
                 Schema ctxProperty = null;
                 if (!applySchemaResolution()) {
                     Optional<Schema> reResolvedProperty = AnnotationsUtils.getSchemaFromAnnotation(ctxSchema, annotatedType.getComponents(), null, openapi31, property, schemaResolution, context);
@@ -1304,8 +1307,127 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         return null;
     }
 
+    private static final Map<Class<?>, List<Field>> ALL_FIELDS_CACHE = new ConcurrentHashMap<>();
+
     private Schema clone(Schema property) {
         return AnnotationsUtils.clone(property, openapi31);
+    }
+
+    /**
+     * Clones the schema {@code context.resolve()} just returned for this property, guarding against a
+     * specific case where a plain {@link #clone} (a JSON round-trip) blows up: a schema that was never
+     * assigned a component name and has no {@code $ref} either (e.g. a bean under a package {@link
+     * ReflectionUtils#isSystemType} treats as "system", such as a third-party JSR API living under
+     * {@code javax.*} - see https://github.com/swagger-api/swagger-core/issues/5292). A schema like that
+     * can never be collapsed to a {@code $ref}, so the resolver's cache hands back the exact same Schema
+     * instance, by reference, at every place in the object graph that reaches it - directly, or nested
+     * under items/properties/allOf. Deep-cloning such a value via JSON round-trip re-expands every shared
+     * subtree at every occurrence, which blows up combinatorially for a densely cross-referenced, cyclic
+     * API shape.
+     * <p>
+     * For that case, nested schema/collection-valued fields are temporarily swapped for a
+     * shape-preserving-but-empty stand-in before cloning (so the JSON round-trip sees a small envelope
+     * that still carries whatever a given field's mere presence/size/keys signal to {@link
+     * io.swagger.v3.core.util.ModelDeserializer} for runtime-type discrimination - e.g. a non-empty
+     * {@code allOf} list still reads as a {@code ComposedSchema}, a non-null {@code additionalProperties}
+     * still reads as a {@code MapSchema}), then the real nested values are reattached, by reference, on
+     * both the original and the clone afterward. That's safe here specifically because {@code property}
+     * is the resolver's own cached, already-fully-built value for this property's type: its nested
+     * properties/items/allOf were already independently resolved, cloned, and normalized one level down
+     * when the resolver first built them, and don't need to go through that again - only the top-level
+     * fields (notably {@code name}, used as this property's key in the parent's {@code properties} map -
+     * see the {@code modelProps.put(prop.getName(), prop)} below) do.
+     * <p>
+     * This is deliberately narrower than {@link #clone}: a freshly-constructed, one-off wrapper (e.g. the
+     * {@code allOf} envelope built for {@code SchemaResolution.ALL_OF}) has never been through this
+     * normalization and must still take the plain, full round-trip - which is also why every other
+     * {@code clone(...)} call site keeps calling {@link #clone} unchanged.
+     */
+    private Schema cloneResolvedProperty(Schema property) {
+        if (property == null || property.get$ref() != null || StringUtils.isNotBlank(property.getName())) {
+            return clone(property);
+        }
+        List<Field> detachedFields = new ArrayList<>();
+        List<Object> detachedValues = new ArrayList<>();
+        try {
+            for (Field field : allFieldsOf(property.getClass())) {
+                Object value = field.get(property);
+                if (value instanceof Schema || value instanceof Map || value instanceof Collection) {
+                    detachedFields.add(field);
+                    detachedValues.add(value);
+                    field.set(property, neutralize(value));
+                }
+            }
+            Schema cloned = clone(property);
+            for (int i = 0; i < detachedFields.size(); i++) {
+                try {
+                    detachedFields.get(i).set(cloned, detachedValues.get(i));
+                } catch (ReflectiveOperationException | RuntimeException e) {
+                    // cloning normalized the runtime type away from this field - nothing to reattach it to
+                }
+            }
+            return cloned;
+        } catch (ReflectiveOperationException e) {
+            return clone(property);
+        } finally {
+            for (int i = 0; i < detachedFields.size(); i++) {
+                try {
+                    detachedFields.get(i).set(property, detachedValues.get(i));
+                } catch (ReflectiveOperationException ignored) {
+                }
+            }
+        }
+    }
+
+    /**
+     * Recursively replaces every nested {@link Schema} in {@code value} with a bare instance of the same
+     * runtime class (no fields set), while preserving map keys and collection sizes - keeping just enough
+     * shape for {@link io.swagger.v3.core.util.ModelDeserializer}'s presence-based type discrimination to
+     * still work, without carrying over the (potentially huge/shared) content underneath.
+     */
+    private static Object neutralize(Object value) {
+        if (value instanceof Schema) {
+            try {
+                return ((Schema<?>) value).getClass().getDeclaredConstructor().newInstance();
+            } catch (ReflectiveOperationException e) {
+                return new Schema<>();
+            }
+        } else if (value instanceof Map) {
+            Map<Object, Object> copy = new LinkedHashMap<>();
+            for (Map.Entry<?, ?> entry : ((Map<?, ?>) value).entrySet()) {
+                copy.put(entry.getKey(), neutralize(entry.getValue()));
+            }
+            return copy;
+        } else if (value instanceof List) {
+            List<Object> copy = new ArrayList<>();
+            for (Object element : (List<?>) value) {
+                copy.add(neutralize(element));
+            }
+            return copy;
+        } else if (value instanceof Set) {
+            Set<Object> copy = new LinkedHashSet<>();
+            for (Object element : (Set<?>) value) {
+                copy.add(neutralize(element));
+            }
+            return copy;
+        }
+        return value;
+    }
+
+    private static List<Field> allFieldsOf(Class<?> type) {
+        return ALL_FIELDS_CACHE.computeIfAbsent(type, k -> {
+            List<Field> fields = new ArrayList<>();
+            for (Class<?> c = k; c != null && c != Object.class; c = c.getSuperclass()) {
+                for (Field field : c.getDeclaredFields()) {
+                    if (Modifier.isStatic(field.getModifiers())) {
+                        continue;
+                    }
+                    field.setAccessible(true);
+                    fields.add(field);
+                }
+            }
+            return fields;
+        });
     }
 
     private boolean isSubtype(AnnotatedClass childClass, Class<?> parentClass) {
