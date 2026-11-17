@@ -742,6 +742,11 @@ public class AnnotationsUtilsTest {
             public SchemaResolution schemaResolution() {
                 return schemaAnnotation.schemaResolution();
             }
+
+            @Override
+            public Class<?>[] groups() {
+                return schemaAnnotation.groups();
+            }
         };
 
         Optional<Schema> schema =

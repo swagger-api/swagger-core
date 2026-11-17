@@ -112,6 +112,11 @@ public class Schema<T> {
     protected List<T> _enum = null;
     private Discriminator discriminator = null;
 
+    /**
+     * @since 2.2.54
+     */
+    private List<String> groups = null;
+
     @JsonIgnore
     private boolean exampleSetFlag;
     @JsonIgnore
@@ -2220,6 +2225,32 @@ public class Schema<T> {
 
     public Schema extensions(java.util.Map<String, Object> extensions) {
         this.extensions = extensions;
+        return this;
+    }
+
+    /**
+     * Returns the validation groups associated with this schema property.
+     * Group names are stored as simple class name strings (e.g. "Create", "Update").
+     *
+     * @since 2.2.54
+     * @return list of validation group names, or null if not specified
+     */
+    public List<String> getGroups() {
+        return groups;
+    }
+
+    /**
+     * @since 2.2.54
+     */
+    public void setGroups(List<String> groups) {
+        this.groups = groups;
+    }
+
+    /**
+     * @since 2.2.54
+     */
+    public Schema groups(List<String> groups) {
+        this.groups = groups;
         return this;
     }
 
