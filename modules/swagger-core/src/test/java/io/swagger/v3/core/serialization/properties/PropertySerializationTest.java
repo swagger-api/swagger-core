@@ -119,6 +119,25 @@ public class PropertySerializationTest {
         JsonAssert.assertJsonEquals(m, m.writeValueAsString(p), json);
     }
 
+    @Test(description = "it should serialize time-related examples as declared")
+    public void serializeTimeSchemaExamplesAsDeclared() throws IOException {
+        JsonAssert.assertJsonEquals(m, m.writeValueAsString(new DurationSchema().example("P7D")),
+                "{\"type\":\"string\",\"format\":\"duration\",\"example\":\"P7D\"}");
+        JsonAssert.assertJsonEquals(m, m.writeValueAsString(new TimeLocalSchema().example("10:15:00")),
+                "{\"type\":\"string\",\"format\":\"time-local\",\"example\":\"10:15:00\"}");
+        JsonAssert.assertJsonEquals(m, m.writeValueAsString(new TimeSchema().example("10:15:00+01:00")),
+                "{\"type\":\"string\",\"format\":\"time\",\"example\":\"10:15:00+01:00\"}");
+    }
+
+    @Test(description = "it should keep a deserialized DurationSchema example as declared")
+    public void deserializeDurationSchemaExampleAsDeclared() throws IOException {
+        final String json = "{\"type\":\"string\",\"format\":\"duration\",\"example\":\"P7D\"}";
+        final Schema p = m.readValue(json, Schema.class);
+        assertEquals(p.getClass(), DurationSchema.class);
+        assertEquals(p.getExample(), "P7D");
+        JsonAssert.assertJsonEquals(m, m.writeValueAsString(p), json);
+    }
+
     @Test(description = "it should serialize a DateTimeLocalSchema")
     public void serializeDateTimeLocalSchema() throws IOException {
         final DateTimeLocalSchema p = new DateTimeLocalSchema();

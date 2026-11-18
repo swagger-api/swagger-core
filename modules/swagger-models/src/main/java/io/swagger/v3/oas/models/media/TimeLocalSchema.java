@@ -8,6 +8,13 @@ import java.util.Objects;
  */
 public class TimeLocalSchema extends Schema<LocalTime> {
 
+    /**
+     * The example exactly as it was supplied, when it was a valid string.
+     * Parsing it into a {@link LocalTime} and printing it back can change its form
+     * (for example {@code P7D} becomes {@code PT168H}), so the original string is kept for output.
+     */
+    private String exampleString;
+
     public TimeLocalSchema() {
         super("string", "time-local");
     }
@@ -22,6 +29,17 @@ public class TimeLocalSchema extends Schema<LocalTime> {
     public TimeLocalSchema format(String format) {
         super.setFormat(format);
         return this;
+    }
+
+    @Override
+    public void setExample(Object example) {
+        super.setExample(example);
+        this.exampleString = example instanceof String && super.getExample() != null ? (String) example : null;
+    }
+
+    @Override
+    public Object getExample() {
+        return exampleString != null ? exampleString : super.getExample();
     }
 
     @Override
@@ -47,12 +65,13 @@ public class TimeLocalSchema extends Schema<LocalTime> {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        return super.equals(o);
+        TimeLocalSchema that = (TimeLocalSchema) o;
+        return Objects.equals(exampleString, that.exampleString) && super.equals(o);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode());
+        return Objects.hash(super.hashCode(), exampleString);
     }
 
     @Override
