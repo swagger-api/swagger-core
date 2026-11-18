@@ -796,10 +796,10 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 } else {
                     aType.ctxAnnotations(annotations);
                 }
-                final AnnotatedMember propMember = member;
+                final JsonUnwrapped uw = member.getAnnotation(JsonUnwrapped.class);
+                final boolean unwrapped = uw != null && uw.enabled();
                 aType.jsonUnwrappedHandler(t -> {
-                    JsonUnwrapped uw = propMember.getAnnotation(JsonUnwrapped.class);
-                    if (uw != null && uw.enabled()) {
+                    if (unwrapped) {
                         t
                                 .ctxAnnotations(null)
                                 .jsonUnwrappedHandler(null)
@@ -818,6 +818,10 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 boolean areSiblingsAllowed = AnnotationsUtils.areSiblingsAllowed(resolvedSchemaResolution, openapi31);
                 aType = AnnotationsUtils.addTypeWhenSiblingsAllowed(aType, ctxSchema, areSiblingsAllowed);
                 property = context.resolve(aType);
+                if (property == null && unwrapped) {
+                    // already merged by jsonUnwrappedHandler (incl. Jackson 3's "@JsonUnwrapped/<n>" record property)
+                    continue;
+                }
                 property = clone(property);
                 Schema ctxProperty = null;
                 if (!applySchemaResolution()) {
@@ -981,13 +985,14 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
          * Skip resolveSubtypes for sealed classes with @Schema(oneOf).
          * This prevents Jackson 3's auto-detected sealed class subtypes
          * from creating unwanted allOf references.
+         *
+         * No discriminator reset is needed here: the model has no discriminator yet at this point,
+         * it is set exclusively by resolveDiscriminator below.
          */
         boolean isSealedWithSchemaOneOf = beanDesc.getClassInfo().getAnnotated().isSealed()
                 && resolvedSchemaAnnotation != null && resolvedSchemaAnnotation.oneOf().length > 0;
-        if (isSealedWithSchemaOneOf) {
-            model.setDiscriminator(null);
-        } else if (!resolveSubtypes(model, beanDesc, context, annotatedType.getJsonViewAnnotation())) {
-            model.setDiscriminator(null);
+        if (!isSealedWithSchemaOneOf) {
+            resolveSubtypes(model, beanDesc, context, annotatedType.getJsonViewAnnotation());
         }
 
         // When opted in, resolveSubtypes() may have replaced the parent model in the context with
@@ -2032,10 +2037,10 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         return modified;
     }
 
-    private boolean resolveSubtypes(Schema model, BeanDescription bean, ModelConverterContext context, JsonView jsonViewAnnotation) {
+    private void resolveSubtypes(Schema model, BeanDescription bean, ModelConverterContext context, JsonView jsonViewAnnotation) {
         final List<NamedType> types = _intr().findSubtypes(_mapper.serializationConfig(), bean.getClassInfo());
         if (types == null || types.isEmpty()) {
-            return false;
+            return;
         }
 
         /**
@@ -2055,7 +2060,6 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         removeDuplicateSubTypes(types);
 
         Map<Class<?>, String> subtypeNames = new LinkedHashMap<>();
-        int count = 0;
         final Class<?> beanClass = bean.getClassInfo().getAnnotated();
         for (NamedType subtype : types) {
             final Class<?> subtypeType = subtype.getType();
@@ -2119,7 +2123,6 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         if (jsonSubTypesOneOf && !explicitOneOf && !subtypeNames.isEmpty()) {
             composeParentAsOneOf(model, beanClass, subtypeNames.values(), context);
         }
-return count != 0;
     }
 
     /**

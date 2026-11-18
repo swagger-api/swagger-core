@@ -6,7 +6,7 @@
     <packaging>pom</packaging>
     <name>swagger-project</name>
     <description>swagger-project</description>
-    <version>3.0.0-SNAPSHOT</version>
+    <version>3.0.1-SNAPSHOT</version>
     <url>https://github.com/swagger-api/swagger-core</url>
     <scm>
         <connection>scm:git:git@github.com:swagger-api/swagger-core.git</connection>
@@ -195,7 +195,7 @@
             <plugin>
                 <groupId>org.sonatype.central</groupId>
                 <artifactId>central-publishing-maven-plugin</artifactId>
-                <version>0.11.0</version>
+                <version>0.12.0</version>
                 <extensions>true</extensions>
                 <configuration>
                     <publishingServerId>central</publishingServerId>
@@ -575,7 +575,7 @@
         <weld-version>6.0.4.Final</weld-version>
 
         <maven-surefire-plugin.version>3.6.0</maven-surefire-plugin.version>
-        <enforcer-plugin-version>3.6.3</enforcer-plugin-version>
+        <enforcer-plugin-version>3.7.0</enforcer-plugin-version>
         <failsafe-plugin-version>${maven-surefire-plugin.version}</failsafe-plugin-version>
         <maven-javadoc-plugin-version>3.12.0</maven-javadoc-plugin-version>
 
@@ -584,6 +584,6 @@
         <coverage.missed.classes>0</coverage.missed.classes>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.build.outputTimestamp>2026-08-31T09:02:19Z</project.build.outputTimestamp>
+        <project.build.outputTimestamp>2026-10-28T13:54:57Z</project.build.outputTimestamp>
     </properties>
 </project>

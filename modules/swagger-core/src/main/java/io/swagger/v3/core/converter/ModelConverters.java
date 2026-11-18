@@ -98,7 +98,7 @@ public class ModelConverters {
         return skippedPackages;
     }
 
-    public static ModelConverters getInstance(boolean openapi31) {
+    public static synchronized ModelConverters getInstance(boolean openapi31) {
         if (openapi31) {
             if (SINGLETON31 == null) {
                 SINGLETON31 = new ModelConverters(openapi31);

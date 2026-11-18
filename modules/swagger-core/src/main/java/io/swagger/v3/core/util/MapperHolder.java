@@ -44,6 +44,7 @@ final class MapperHolder {
     synchronized void set(ObjectMapper newMapper) {
         mapper = Objects.requireNonNull(newMapper, "mapper");
         explicit = true;
+        ObjectMapperFactory.sharedMapperChanged();
     }
 
     synchronized ObjectMapper configure(Consumer<MapperBuilder<?, ?>> customizer) {
@@ -59,5 +60,6 @@ final class MapperHolder {
         mapper = null;
         explicit = false;
         generation = -1;
+        ObjectMapperFactory.sharedMapperChanged();
     }
 }

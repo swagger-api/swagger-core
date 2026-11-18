@@ -1,6 +1,7 @@
 package io.swagger.v3.core.util;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import io.swagger.v3.core.converter.ModelConverters;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
 import org.testng.annotations.AfterMethod;
@@ -8,6 +9,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import tools.jackson.core.JsonGenerator;
 import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.PropertyNamingStrategies;
 import tools.jackson.databind.SerializationContext;
 import tools.jackson.databind.ValueSerializer;
 import tools.jackson.databind.module.SimpleModule;
@@ -16,6 +18,7 @@ import tools.jackson.dataformat.yaml.YAMLMapper;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Set;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
@@ -179,5 +182,50 @@ public class MapperCustomizerTest {
 
         Json31.reset();
         assertNotSame(Json31.converterMapper(), custom);
+    }
+
+    @Test
+    public void replacingSharedMapperMovesGenerationAndRefreshesModelConverters() {
+        ModelConverters modelConverters = new ModelConverters();
+        long generation = ObjectMapperFactory.generation();
+
+        Json.mapper(ObjectMapperFactory.createJson().rebuild()
+                .propertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE)
+                .build());
+
+        assertTrue(ObjectMapperFactory.generation() > generation);
+        assertEquals(propertyNames(modelConverters), Set.of("first_name"));
+
+        generation = ObjectMapperFactory.generation();
+        Json.reset();
+
+        assertTrue(ObjectMapperFactory.generation() > generation);
+        assertEquals(propertyNames(modelConverters), Set.of("firstName"));
+    }
+
+    @Test
+    public void schemaConverterSeesCustomizersAddedAfterCreation() {
+        ExposedOpenAPISchema2JsonSchema converter = new ExposedOpenAPISchema2JsonSchema();
+        ObjectMapper before = converter.converterMapper();
+
+        ObjectMapperFactory.addModule(markerModule());
+
+        assertNotSame(converter.converterMapper(), before);
+        assertSame(converter.converterMapper(), Json31.converterMapper());
+    }
+
+    private static Set<String> propertyNames(ModelConverters modelConverters) {
+        return modelConverters.read(Person.class).get("Person").getProperties().keySet();
+    }
+
+    public static class Person {
+        public String firstName;
+    }
+
+    private static class ExposedOpenAPISchema2JsonSchema extends OpenAPISchema2JsonSchema {
+        @Override
+        public ObjectMapper converterMapper() {
+            return super.converterMapper();
+        }
     }
 }
