@@ -565,7 +565,7 @@
         <jackson-version>3.2.3</jackson-version>
         <jackson-annotations-version>2.22</jackson-annotations-version>
         <logback-version>1.6.5</logback-version>
-        <classgraph-version>4.8.197</classgraph-version>
+        <classgraph-version>5.0.0</classgraph-version>
         <guava-version>33.7.2-jre</guava-version>
         <slf4j-version>2.0.20</slf4j-version>
         <jetty-version>12.1.14</jetty-version>
