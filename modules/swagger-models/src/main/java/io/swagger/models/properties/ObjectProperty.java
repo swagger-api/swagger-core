@@ -14,6 +14,7 @@ public class ObjectProperty extends AbstractProperty implements Property {
     public static final String TYPE = "object";
 
     Map<String, Property> properties;
+    Property additionalProperties;
 
     public ObjectProperty() {
         super.type = TYPE;
@@ -48,6 +49,11 @@ public class ObjectProperty extends AbstractProperty implements Property {
             this.properties = new TreeMap<String, Property>();
         }
         this.properties.put(name, property);
+        return this;
+    }
+
+    public ObjectProperty additionalProperties(Property additionalProperties) {
+        this.setAdditionalProperties(additionalProperties);
         return this;
     }
 
@@ -130,6 +136,14 @@ public class ObjectProperty extends AbstractProperty implements Property {
       this.properties = properties;
     }
 
+    public Property getAdditionalProperties() {
+        return additionalProperties;
+    }
+
+    public void setAdditionalProperties(Property additionalProperties) {
+        this.additionalProperties = additionalProperties;
+    }
+
     public ObjectProperty xml(Xml xml) {
         this.setXml(xml);
         return this;
@@ -155,6 +169,9 @@ public class ObjectProperty extends AbstractProperty implements Property {
         if (properties != null ? !properties.equals(that.properties) : that.properties != null) {
             return false;
         }
+        if (additionalProperties != null ? !additionalProperties.equals(that.additionalProperties) : that.additionalProperties != null) {
+            return false;
+        }
         return super.equals(o);
     }
 
@@ -162,6 +179,7 @@ public class ObjectProperty extends AbstractProperty implements Property {
     public int hashCode() {
         int result =  super.hashCode();
         result = 31 * result + (properties != null ? properties.hashCode() : 0);
+        result = 31 * result + (additionalProperties != null ? additionalProperties.hashCode() : 0);
         return result;
     }
 }

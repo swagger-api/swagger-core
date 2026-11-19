@@ -242,7 +242,8 @@ public class PropertyDeserializer extends JsonDeserializer<Property> {
                     mapProperty.setReadOnly(readOnly);
                     return mapProperty;
                 }
-            } else if (detailNode != null && detailNode.getNodeType().equals(JsonNodeType.BOOLEAN)) {
+            } else if (detailNode != null && detailNode.getNodeType().equals(JsonNodeType.BOOLEAN)
+                    && node.get("properties") == null) {
                 Property items = new BooleanValueProperty(detailNode.asBoolean());
                 MapProperty mapProperty = new MapProperty(items)
                         .description(description)
@@ -317,6 +318,11 @@ public class PropertyDeserializer extends JsonDeserializer<Property> {
 
                 List<String> required = getRequired(node, PropertyBuilder.PropertyId.REQUIRED);
                 objectProperty.setRequiredProperties(required);
+
+                JsonNode additionalPropertiesNode = node.get("additionalProperties");
+                if (additionalPropertiesNode != null && additionalPropertiesNode.isBoolean()) {
+                    objectProperty.setAdditionalProperties(new BooleanValueProperty(additionalPropertiesNode.asBoolean()));
+                }
 
                 return objectProperty;
             }
