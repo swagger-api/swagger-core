@@ -96,6 +96,13 @@ jobs:
       with:
         ref: "master"
         fetch-depth: 0
+    # com.gradle.plugin-publish 2.x (used by publishPlugins in post-release.sh) requires a Java 17+ runtime
+    - name: Set up Java 17
+      if: env.RELEASE_OK == 'yes'
+      uses: actions/setup-java@v5
+      with:
+        java-version: 17
+        distribution: temurin
     - name: Run post release script
       id: postRelease
       if: env.RELEASE_OK == 'yes'
