@@ -51,7 +51,7 @@ public class SpecFilter {
         clone.setExternalDocs(filteredOpenAPI.getExternalDocs());
         clone.setSecurity(filteredOpenAPI.getSecurity());
         clone.setServers(filteredOpenAPI.getServers());
-        clone.tags(filteredOpenAPI.getTags() == null ? null : new ArrayList<>(openAPI.getTags()));
+        clone.tags(filteredOpenAPI.getTags() == null ? null : new ArrayList<>(filteredOpenAPI.getTags()));
 
         final TagFilter tagFilter = new TagFilter();
 
@@ -72,8 +72,6 @@ public class SpecFilter {
             clone.paths(clonedPaths);
         }
 
-        filterTopLevelTags(clone, tagFilter);
-
         if (filteredOpenAPI.getWebhooks() != null) {
             for (String resourcePath : filteredOpenAPI.getWebhooks().keySet()) {
                 PathItem pathItem = filteredOpenAPI.getWebhooks().get(resourcePath);
@@ -88,6 +86,8 @@ public class SpecFilter {
                 }
             }
         }
+
+        filterTopLevelTags(clone, tagFilter);
 
         if (filteredOpenAPI.getComponents() != null) {
             clone.components(new Components());
