@@ -1,12 +1,29 @@
 // * * * * * * * * * * * *
 // Plugins
 // * * * * * * * * * * * *
+// com.gradle.plugin-publish 2.x requires a Java 17+ runtime; it is only needed for publishPlugins,
+// so it's applied only when Gradle runs on Java 17+ and the build keeps working on Java 11
+buildscript {
+    repositories {
+        gradlePluginPortal()
+    }
+    dependencies {
+        if (JavaVersion.current().isCompatibleWith(JavaVersion.VERSION_17)) {
+            classpath 'com.gradle.publish:plugin-publish-plugin:2.2.1'
+        }
+    }
+}
+
 plugins {
     id 'java-gradle-plugin'
-    // Publishing publicly
-    id 'com.gradle.plugin-publish' version '2.2.1'
     // Publishing to maven
     id 'maven-publish'
+}
+
+def pluginPublishSupported = JavaVersion.current().isCompatibleWith(JavaVersion.VERSION_17)
+if (pluginPublishSupported) {
+    // Publishing publicly
+    apply plugin: 'com.gradle.plugin-publish'
 }
 
 // * * * * * * * * * * * *
@@ -87,11 +104,20 @@ gradlePlugin {
             displayName = 'Swagger Gradle Plugin'
             description = project.description
             tags.set(['swagger', 'openapi', 'api'])
-            // Groovy DSL requires passing `it` as the receiver
-            compatibility(it) {
-                features {
-                    configurationCache = true
-                    isolatedProjects = true
+        }
+    }
+}
+
+if (pluginPublishSupported) {
+    gradlePlugin {
+        plugins {
+            swagger {
+                // Groovy DSL requires passing `it` as the receiver
+                compatibility(it) {
+                    features {
+                        configurationCache = true
+                        isolatedProjects = true
+                    }
                 }
             }
         }
