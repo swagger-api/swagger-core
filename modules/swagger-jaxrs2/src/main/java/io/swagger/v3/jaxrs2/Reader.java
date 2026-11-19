@@ -284,7 +284,7 @@ public class Reader implements OpenApiReader {
                         List<Parameter> parentParameters,
                         Set<Class<?>> scannedResources) {
 
-        Hidden hidden = cls.getAnnotation(Hidden.class);
+        Hidden hidden = ReflectionUtils.getAnnotation(cls, Hidden.class);
         // class path
         final javax.ws.rs.Path apiPath = ReflectionUtils.getAnnotation(cls, javax.ws.rs.Path.class);
         final boolean openapi31 = Boolean.TRUE.equals(config.isOpenAPI31());
@@ -1614,7 +1614,7 @@ public class Reader implements OpenApiReader {
         if (apiOperation != null && apiOperation.hidden()) {
             return true;
         }
-        Hidden hidden = method.getAnnotation(Hidden.class);
+        Hidden hidden = ReflectionUtils.getAnnotation(method, Hidden.class);
         if (hidden != null) {
             return true;
         }
