@@ -1,0 +1,171 @@
+# TEMPORARY: re-runs only the post-release part of release.yml (Gradle plugin publish, GitHub release,
+# next snapshot bump, 1.5 readme, wiki) for a release whose Maven deploy already succeeded.
+# Mirrors CI/post-release.sh and the steps after it in release.yml. Remove once the release is completed.
+name: Release - post release only (temporary)
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Released version (must match the version on master)'
+        required: true
+        default: '2.2.56'
+      next_version:
+        description: 'Next version (without -SNAPSHOT)'
+        required: true
+        default: '2.2.57'
+      last_release:
+        description: 'Previous v2 release (used for 1.5 readme and wiki updates)'
+        required: true
+        default: '2.2.55'
+      release_commit:
+        description: 'Commit to tag as v<version> (the "prepare release" commit)'
+        required: true
+        default: 'a843d54f3b6dd68c1926dc8644628578cd0e24cc'
+      publish_gradle_plugin:
+        description: 'Publish the Gradle plugin (uncheck if it is already on the Plugin Portal)'
+        type: boolean
+        default: true
+      publish_github_release:
+        description: 'Publish the draft GitHub release (uncheck if it is already published)'
+        type: boolean
+        default: true
+
+jobs:
+  post-release:
+
+    runs-on: ubuntu-latest
+
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      SC_VERSION: ${{ inputs.version }}
+      SC_NEXT_VERSION: ${{ inputs.next_version }}
+      SC_LAST_RELEASE: ${{ inputs.last_release }}
+      GRADLE_PUBLISH_KEY: ${{ secrets.GRADLE_PUBLISH_KEY }}
+      GRADLE_PUBLISH_SECRET: ${{ secrets.GRADLE_PUBLISH_SECRET }}
+
+    steps:
+    - name: Checkout master
+      uses: actions/checkout@v7
+      with:
+        ref: "master"
+        fetch-depth: 0
+    - uses: actions/create-github-app-token@v3
+      id: generate-token
+      with:
+        client-id: ${{ secrets.APP_ID }}
+        private-key: ${{ secrets.APP_PRIVATE_KEY }}
+    - name: Set up Python
+      uses: actions/setup-python@v7
+      with:
+        python-version: '3.14'
+    # com.gradle.plugin-publish 2.x requires a Java 17+ runtime
+    - name: Set up Java 17
+      uses: actions/setup-java@v5
+      with:
+        java-version: 17
+        distribution: temurin
+    - name: Cache local Maven repository
+      uses: actions/cache@v6
+      with:
+        path: ~/.m2/repository
+        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+        restore-keys: |
+          ${{ runner.os }}-maven-
+    - name: configure git user email
+      run: |
+        git config --global user.email "action@github.com"
+        git config --global user.name "GitHub Action"
+    - name: Check versions on master
+      run: |
+        ROOT_VERSION=$(./mvnw -q -Dexec.executable="echo" -Dexec.args='${project.version}' --non-recursive org.codehaus.mojo:exec-maven-plugin:1.3.1:exec)
+        GRADLE_VERSION=$(grep '^version=' modules/swagger-gradle-plugin/gradle.properties | cut -d= -f2)
+        echo "Root version:          ${ROOT_VERSION}"
+        echo "Gradle plugin version: ${GRADLE_VERSION}"
+        if [ "${ROOT_VERSION}" != "${SC_VERSION}" ] || [ "${GRADLE_VERSION}" != "${SC_VERSION}" ]; then
+          echo "ERROR: master is not at release version ${SC_VERSION}."
+          exit 1
+        fi
+    - name: Publish Gradle plugin
+      if: inputs.publish_gradle_plugin
+      run: |
+        cd modules/swagger-gradle-plugin
+        ./gradlew publishPlugins --info
+    # publishRelease.py targets master, whose HEAD is no longer the released commit; creating the tag
+    # first makes GitHub publish the release on the existing tag instead
+    - name: Create release tag
+      if: inputs.publish_github_release
+      env:
+        RELEASE_COMMIT: ${{ inputs.release_commit }}
+      run: |
+        if git ls-remote --exit-code --tags origin "refs/tags/v${SC_VERSION}" > /dev/null; then
+          echo "Tag v${SC_VERSION} already exists"
+          exit 0
+        fi
+        git merge-base --is-ancestor "${RELEASE_COMMIT}" HEAD || { echo "ERROR: ${RELEASE_COMMIT} is not on master"; exit 1; }
+        git show "${RELEASE_COMMIT}:pom.xml" | grep -q "<version>${SC_VERSION}</version>" || { echo "ERROR: ${RELEASE_COMMIT} is not at version ${SC_VERSION}"; exit 1; }
+        gh api "repos/${GITHUB_REPOSITORY}/git/refs" -f ref="refs/tags/v${SC_VERSION}" -f sha="${RELEASE_COMMIT}"
+    - name: Publish GitHub release
+      if: inputs.publish_github_release
+      run: |
+        python CI/publishRelease.py "v${SC_VERSION}"
+    - name: Update versions to next snapshot
+      run: |
+        CUR=$(pwd)
+        ./mvnw versions:set -DnewVersion="${SC_NEXT_VERSION}-SNAPSHOT"
+        ./mvnw versions:commit
+
+        cd modules/swagger-bom
+        ../../mvnw versions:set -DnewVersion="${SC_NEXT_VERSION}-SNAPSHOT"
+        ../../mvnw versions:commit
+        cd ../..
+
+        cd modules/swagger-project-jakarta
+        ../../mvnw versions:set -DnewVersion="${SC_NEXT_VERSION}-SNAPSHOT"
+        ../../mvnw versions:commit
+        cd ../..
+
+        sc_find="version=$SC_VERSION"
+        sc_replace="version=$SC_NEXT_VERSION-SNAPSHOT"
+        sed -i -e "s/$sc_find/$sc_replace/g" $CUR/modules/swagger-gradle-plugin/gradle.properties
+
+        sc_find="<version>$SC_VERSION<\/version>"
+        sc_replace="<version>$SC_NEXT_VERSION-SNAPSHOT<\/version>"
+        sed -i -e "s/$sc_find/$sc_replace/g" $CUR/modules/swagger-java17-support/pom.xml
+        rm -f $CUR/modules/swagger-java17-support/pom.xml.versionsBackup
+
+        # scripts are not available after checking out 1.5
+        cp -a CI/update-v1-readme.sh CI/update-wiki.sh "$RUNNER_TEMP/"
+    - name: Create Next Snapshot Pull Request
+      uses: peter-evans/create-pull-request@v8
+      with:
+        token: ${{ steps.generate-token.outputs.token }}
+        commit-message: bump snapshot ${{ env.SC_NEXT_VERSION }}-SNAPSHOT
+        title: 'bump snapshot ${{ env.SC_NEXT_VERSION }}-SNAPSHOT'
+        branch: bump-snap-${{ env.SC_NEXT_VERSION }}-SNAPSHOT
+    - name: Checkout 1.5
+      uses: actions/checkout@v7
+      with:
+        ref: "1.5"
+        fetch-depth: 0
+    - name: updateV1Readme script
+      run: |
+        . "$RUNNER_TEMP/update-v1-readme.sh" "${SC_LAST_RELEASE}" "${SC_VERSION}"
+    - name: Create Update V1 Readme Pull Request
+      uses: peter-evans/create-pull-request@v8
+      with:
+        token: ${{ steps.generate-token.outputs.token }}
+        commit-message: update 1.5 Readme with new v2 version ${{ env.SC_VERSION }}
+        title: 'update 1.5 Readme with new v2 version ${{ env.SC_VERSION }}'
+        branch: update-v1-readme-${{ env.SC_VERSION }}
+    - name: Checkout Wiki
+      uses: actions/checkout@v7
+      with:
+        repository: swagger-api/swagger-core.wiki
+        token: ${{ steps.generate-token.outputs.token }}
+        path: wiki
+        ref: "master"
+        fetch-depth: 0
+    - name: Run update wiki script
+      run: |
+        . "$RUNNER_TEMP/update-wiki.sh"
