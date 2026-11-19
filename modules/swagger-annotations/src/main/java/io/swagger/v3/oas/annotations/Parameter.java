@@ -146,6 +146,18 @@ public @interface Parameter {
     String example() default "";
 
     /**
+     * A hint for an empty parameter input, emitted as the {@code x-placeholder} specification extension.
+     * The hint is a string and does not set an example or a schema default. Displaying it requires
+     * support for this extension in the consuming tool.
+     *
+     * <p>Ignored when blank, hidden, or when {@link #ref()} is specified. An explicit
+     * {@code x-placeholder} in {@link #extensions()} takes precedence.</p>
+     *
+     * @return the placeholder text
+     */
+    String placeholder() default "";
+
+    /**
      * The list of optional extensions
      *
      * @return an optional array of extensions

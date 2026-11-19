@@ -233,6 +233,10 @@ public class ParameterProcessor {
                     parameter.setExamples(exampleMap);
                 }
 
+                if (StringUtils.isNotBlank(p.placeholder())) {
+                    parameter.addExtension("x-placeholder", p.placeholder());
+                }
+
                 if (p.extensions().length > 0) {
                     Map<String, Object> extensionMap = AnnotationsUtils.getExtensions(openapi31, p.extensions());
                     if (extensionMap != null && ! extensionMap.isEmpty()) {
