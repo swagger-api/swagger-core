@@ -1,7 +1,9 @@
 package io.swagger.v3.core.converting.override;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.introspect.BeanPropertyDefinition;
 import io.swagger.v3.core.converter.ModelConverters;
 import io.swagger.v3.core.jackson.ModelResolver;
 import io.swagger.v3.core.jackson.TypeNameResolver;
@@ -69,6 +71,29 @@ public class CustomResolverTest {
 
     }
 
+    @Test(description = "it should let a subclass set the required mode from the bean property's Jackson inclusion")
+    public void testCustomRequiredModeBasedUponPropertyInclusion() {
+        final ModelConverters converters = new ModelConverters();
+        converters.addConverter(new RequiredModeBasedUponInclusionResolver(Json.mapper()));
+
+        Map<String, Schema> models = converters.readAll(InclusionModel.class);
+        Schema model = models.get("InclusionModel");
+        assertNotNull(model);
+        assertEquals(model.getProperties().size(), 5);
+        assertEquals(model.getRequired(), Collections.singletonList("always"));
+    }
+
+    @Test(description = "the default resolver should not change required based upon the bean property")
+    public void testDefaultRequiredModeIgnoresPropertyInclusion() {
+        final ModelConverters converters = new ModelConverters();
+        converters.addConverter(new ModelResolver(Json.mapper()));
+
+        Map<String, Schema> models = converters.readAll(InclusionModel.class);
+        Schema model = models.get("InclusionModel");
+        assertNotNull(model);
+        assertNull(model.getRequired());
+    }
+
     class CustomConverter extends ModelResolver {
 
         public CustomConverter(ObjectMapper mapper) {
@@ -104,6 +129,40 @@ public class CustomResolverTest {
             }
             return super.resolveRequiredMode(schema, type);
         }
+    }
+
+    class RequiredModeBasedUponInclusionResolver extends ModelResolver {
+
+        public RequiredModeBasedUponInclusionResolver(ObjectMapper mapper) {
+            super(mapper);
+        }
+
+        @Override
+        protected io.swagger.v3.oas.annotations.media.Schema.RequiredMode resolveRequiredMode(
+                io.swagger.v3.oas.annotations.media.Schema schema, JavaType type, BeanPropertyDefinition property) {
+            io.swagger.v3.oas.annotations.media.Schema.RequiredMode explicit = super.resolveRequiredMode(schema, type, property);
+            if (explicit != io.swagger.v3.oas.annotations.media.Schema.RequiredMode.AUTO) {
+                return explicit;
+            }
+            JsonInclude.Value inclusion = property.findInclusion();
+            if (inclusion != null && inclusion.getValueInclusion() == JsonInclude.Include.ALWAYS) {
+                return io.swagger.v3.oas.annotations.media.Schema.RequiredMode.REQUIRED;
+            }
+            return explicit;
+        }
+    }
+
+    class InclusionModel {
+        @JsonInclude(JsonInclude.Include.ALWAYS)
+        public String always;
+        @JsonInclude(JsonInclude.Include.NON_NULL)
+        public String nonNull;
+        @JsonInclude(JsonInclude.Include.NON_EMPTY)
+        public String nonEmpty;
+        @JsonInclude(JsonInclude.Include.ALWAYS)
+        @io.swagger.v3.oas.annotations.media.Schema(requiredMode = io.swagger.v3.oas.annotations.media.Schema.RequiredMode.NOT_REQUIRED)
+        public String alwaysButNotRequired;
+        public String plain;
     }
 
     class SuperFoo {
