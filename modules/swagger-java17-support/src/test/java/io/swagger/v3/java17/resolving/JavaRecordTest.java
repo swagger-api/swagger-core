@@ -1,7 +1,11 @@
 package io.swagger.v3.java17.resolving;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.MapperFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.core.converter.ModelConverters;
+import io.swagger.v3.core.jackson.ModelResolver;
+import io.swagger.v3.core.util.Json;
 import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.java17.matchers.SerializationMatchers;
 import org.testng.annotations.Test;
@@ -9,6 +13,9 @@ import org.testng.annotations.Test;
 import javax.validation.constraints.*;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+
+import static org.testng.Assert.assertEquals;
 
 public class JavaRecordTest {
 
@@ -138,5 +145,46 @@ public class JavaRecordTest {
     public record JavaRecordWithJsonPropertyAnnotationNotMatchingFieldName(
         @JsonProperty("listOfStrings") List<@Size(min = 1, max = 5)String> stringList
     ) { }
+
+    @Test
+    public void testJavaRecordWithBeanValidationOnOptionalTypeArgument() {
+        String expectedYaml = "JavaRecordWithAnnotationsOnOptionalType:\n" +
+                "  type: object\n" +
+                "  properties:\n" +
+                "    name:\n" +
+                "      maxLength: 10\n" +
+                "      minLength: 1\n" +
+                "      type: string\n" +
+                "    email:\n" +
+                "      pattern: (.+?)@(.+?)\n" +
+                "      type: string\n" +
+                "    id:\n" +
+                "      maximum: 10000\n" +
+                "      minimum: 1\n" +
+                "      type: integer\n" +
+                "      format: int32";
+
+        Map<String, Schema> stringSchemaMap = ModelConverters.getInstance(false).readAll(JavaRecordWithAnnotationsOnOptionalType.class);
+        SerializationMatchers.assertEqualsToYaml(stringSchemaMap, expectedYaml);
+    }
+
+    public record JavaRecordWithAnnotationsOnOptionalType(
+            Optional<@Size(min = 1, max = 10) String> name,
+            Optional<@Pattern(regexp = "(.+?)@(.+?)") String> email,
+            Optional<@Min(1) @Max(10000) Integer> id
+    ) {
+    }
+
+    @Test
+    public void testJavaRecordBeanValidationOnTypeArgumentsWithoutLinkedFields() {
+        ObjectMapper mapper = Json.mapper().copy();
+        mapper.configure(MapperFeature.INFER_PROPERTY_MUTATORS, false);
+        ModelConverters converters = new ModelConverters();
+        converters.addConverter(new ModelResolver(mapper));
+
+        for (Class<?> type : List.of(JavaRecordWithAnnotationsOnGenericType.class, JavaRecordWithAnnotationsOnOptionalType.class)) {
+            assertEquals(converters.readAll(type), ModelConverters.getInstance(false).readAll(type));
+        }
+    }
 
 }
