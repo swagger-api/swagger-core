@@ -1,6 +1,7 @@
 package io.swagger.v3.oas.models;
 
 import io.swagger.v3.oas.models.annotations.OpenAPI31;
+import io.swagger.v3.oas.models.annotations.OpenAPI32;
 import io.swagger.v3.oas.models.callbacks.Callback;
 import io.swagger.v3.oas.models.examples.Example;
 import io.swagger.v3.oas.models.headers.Header;
@@ -44,6 +45,15 @@ public class Components {
      */
     @OpenAPI31
     private Map<String, PathItem> pathItems;
+
+    /**
+     * Reusable media types; values are Media Type Objects or Reference Objects
+     * ({@code $ref}-only MediaType) (OpenAPI 3.2).
+     *
+     * @since 2.2.56 (OpenAPI 3.2)
+     */
+    @OpenAPI32
+    private Map<String, io.swagger.v3.oas.models.media.MediaType> mediaTypes;
 
     /**
      * returns the schemas property from a Components instance.
@@ -319,6 +329,36 @@ public class Components {
         return this;
     }
 
+    /**
+     * returns the mediaTypes property from a Components instance.
+     *
+     * @since 2.2.56 (OpenAPI 3.2)
+     * @return Map&lt;String, MediaType&gt; mediaTypes
+     **/
+    @OpenAPI32
+    public Map<String, io.swagger.v3.oas.models.media.MediaType> getMediaTypes() {
+        return mediaTypes;
+    }
+
+    @OpenAPI32
+    public void setMediaTypes(Map<String, io.swagger.v3.oas.models.media.MediaType> mediaTypes) {
+        this.mediaTypes = mediaTypes;
+    }
+
+    @OpenAPI32
+    public Components mediaTypes(Map<String, io.swagger.v3.oas.models.media.MediaType> mediaTypes) {
+        this.mediaTypes = mediaTypes;
+        return this;
+    }
+
+    public Components addMediaType(String key, io.swagger.v3.oas.models.media.MediaType mediaType) {
+        if (this.mediaTypes == null) {
+            this.mediaTypes = new LinkedHashMap<>();
+        }
+        this.mediaTypes.put(key, mediaType);
+        return this;
+    }
+
     @Override
     public boolean equals(java.lang.Object o) {
         if (this == o) {
@@ -338,12 +378,13 @@ public class Components {
                 Objects.equals(this.links, components.links) &&
                 Objects.equals(this.callbacks, components.callbacks) &&
                 Objects.equals(this.extensions, components.extensions) &&
-                Objects.equals(this.pathItems, components.pathItems);
+                Objects.equals(this.pathItems, components.pathItems) &&
+                Objects.equals(this.mediaTypes, components.mediaTypes);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(schemas, responses, parameters, examples, requestBodies, headers, securitySchemes, links, callbacks, extensions, pathItems);
+        return Objects.hash(schemas, responses, parameters, examples, requestBodies, headers, securitySchemes, links, callbacks, extensions, pathItems, mediaTypes);
     }
 
     public java.util.Map<String, Object> getExtensions() {
@@ -392,6 +433,7 @@ public class Components {
         sb.append("    links: ").append(toIndentedString(links)).append("\n");
         sb.append("    callbacks: ").append(toIndentedString(callbacks)).append("\n");
         sb.append("    pathItems: ").append(toIndentedString(pathItems)).append("\n");
+        sb.append("    mediaTypes: ").append(toIndentedString(mediaTypes)).append("\n");
         sb.append("}");
         return sb.toString();
     }

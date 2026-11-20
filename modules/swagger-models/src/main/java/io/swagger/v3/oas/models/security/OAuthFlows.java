@@ -1,6 +1,7 @@
 package io.swagger.v3.oas.models.security;
 
 import io.swagger.v3.oas.models.annotations.OpenAPI31;
+import io.swagger.v3.oas.models.annotations.OpenAPI32;
 
 import java.util.Objects;
 
@@ -16,6 +17,8 @@ public class OAuthFlows {
     private OAuthFlow password = null;
     private OAuthFlow clientCredentials = null;
     private OAuthFlow authorizationCode = null;
+    @OpenAPI32
+    private OAuthFlow deviceAuthorization = null;
     private java.util.Map<String, Object> extensions = null;
 
     /**
@@ -94,6 +97,29 @@ public class OAuthFlows {
         return this;
     }
 
+    /**
+     * returns the deviceAuthorization property from a OAuthFlows instance.
+     *
+     * @since 2.2.56 (OpenAPI 3.2)
+     * @return OAuthFlow deviceAuthorization
+     **/
+
+    @OpenAPI32
+    public OAuthFlow getDeviceAuthorization() {
+        return deviceAuthorization;
+    }
+
+    @OpenAPI32
+    public void setDeviceAuthorization(OAuthFlow deviceAuthorization) {
+        this.deviceAuthorization = deviceAuthorization;
+    }
+
+    @OpenAPI32
+    public OAuthFlows deviceAuthorization(OAuthFlow deviceAuthorization) {
+        this.deviceAuthorization = deviceAuthorization;
+        return this;
+    }
+
     @Override
     public boolean equals(java.lang.Object o) {
         if (this == o) {
@@ -107,12 +133,13 @@ public class OAuthFlows {
                 Objects.equals(this.password, oauthFlows.password) &&
                 Objects.equals(this.clientCredentials, oauthFlows.clientCredentials) &&
                 Objects.equals(this.authorizationCode, oauthFlows.authorizationCode) &&
+                Objects.equals(this.deviceAuthorization, oauthFlows.deviceAuthorization) &&
                 Objects.equals(this.extensions, oauthFlows.extensions);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(implicit, password, clientCredentials, authorizationCode, extensions);
+        return Objects.hash(implicit, password, clientCredentials, authorizationCode, deviceAuthorization, extensions);
     }
 
     public java.util.Map<String, Object> getExtensions() {
@@ -155,6 +182,7 @@ public class OAuthFlows {
         sb.append("    password: ").append(toIndentedString(password)).append("\n");
         sb.append("    clientCredentials: ").append(toIndentedString(clientCredentials)).append("\n");
         sb.append("    authorizationCode: ").append(toIndentedString(authorizationCode)).append("\n");
+        sb.append("    deviceAuthorization: ").append(toIndentedString(deviceAuthorization)).append("\n");
         sb.append("}");
         return sb.toString();
     }

@@ -3,16 +3,19 @@ package io.swagger.v3.core.filter;
 import io.swagger.v3.core.model.ApiDescription;
 import io.swagger.v3.core.util.Json;
 import io.swagger.v3.core.util.Json31;
+import io.swagger.v3.core.util.Json32;
 import io.swagger.v3.core.util.RefUtils;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Operation;
 import io.swagger.v3.oas.models.PathItem;
 import io.swagger.v3.oas.models.Paths;
+import io.swagger.v3.oas.models.SpecVersion;
 import io.swagger.v3.oas.models.callbacks.Callback;
 import io.swagger.v3.oas.models.headers.Header;
 import io.swagger.v3.oas.models.media.ArraySchema;
 import io.swagger.v3.oas.models.media.Content;
+import io.swagger.v3.oas.models.media.Encoding;
 import io.swagger.v3.oas.models.media.MediaType;
 import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.parameters.Parameter;
@@ -41,10 +44,12 @@ public class SpecFilter {
         if (filteredOpenAPI == null) {
             return filteredOpenAPI;
         }
+        this.filterSpecVersion = specVersionOf(filteredOpenAPI);
 
         OpenAPI clone = new OpenAPI();
         clone.info(filteredOpenAPI.getInfo());
         clone.openapi(filteredOpenAPI.getOpenapi());
+        clone.$self(filteredOpenAPI.get$self());
         clone.jsonSchemaDialect(filteredOpenAPI.getJsonSchemaDialect());
         clone.setSpecVersion(filteredOpenAPI.getSpecVersion());
         clone.setExtensions(filteredOpenAPI.getExtensions());
@@ -102,6 +107,7 @@ public class SpecFilter {
             clone.getComponents().setRequestBodies(filteredOpenAPI.getComponents().getRequestBodies());
             clone.getComponents().setResponses(filteredOpenAPI.getComponents().getResponses());
             clone.getComponents().setPathItems(filteredOpenAPI.getComponents().getPathItems());
+            clone.getComponents().setMediaTypes(filteredOpenAPI.getComponents().getMediaTypes());
         }
 
         if (filter.isRemovingUnreferencedDefinitions()) {
@@ -222,7 +228,39 @@ public class SpecFilter {
 
     }
 
+    // spec version of the document currently being filtered; set by filter() so the
+    // protected five-argument filterComponentsSchema signature stays intact for overrides
+    private SpecVersion filterSpecVersion;
+
     protected Map<String, Schema> filterComponentsSchema(OpenAPISpecFilter filter, Map<String, Schema> schemasMap, Map<String, List<String>> params, Map<String, String> cookies, Map<String, List<String>> headers) {
+        return filterComponentsSchema(filter, schemasMap, params, cookies, headers, filterSpecVersion);
+    }
+
+    /**
+     * Derives the effective spec version of a document. The {@code openapi} string is
+     * authoritative (programmatically built docs often leave {@code specVersion} at
+     * its default); the field is the fallback.
+     */
+    private SpecVersion specVersionOf(OpenAPI openAPI) {
+        if (openAPI == null) {
+            return null;
+        }
+        String version = openAPI.getOpenapi();
+        if (version != null) {
+            if (version.startsWith("3.2")) {
+                return SpecVersion.V32;
+            }
+            if (version.startsWith("3.1")) {
+                return SpecVersion.V31;
+            }
+            if (version.startsWith("3.0")) {
+                return SpecVersion.V30;
+            }
+        }
+        return openAPI.getSpecVersion();
+    }
+
+    protected Map<String, Schema> filterComponentsSchema(OpenAPISpecFilter filter, Map<String, Schema> schemasMap, Map<String, List<String>> params, Map<String, String> cookies, Map<String, List<String>> headers, SpecVersion specVersion) {
         if (schemasMap == null) {
             return null;
         }
@@ -262,7 +300,9 @@ public class SpecFilter {
                 try {
                     // TODO solve this, and generally handle clone and passing references
                     Schema clonedModel;
-                    if (filter.isOpenAPI31Filter()) {
+                    if (SpecVersion.V32.equals(specVersion)) {
+                        clonedModel = Json32.mapper().readValue(Json32.pretty(definition), Schema.class);
+                    } else if (SpecVersion.V31.equals(specVersion) || filter.isOpenAPI31Filter()) {
                         clonedModel = Json31.mapper().readValue(Json31.pretty(definition), Schema.class);
                     } else {
                         clonedModel = Json.mapper().readValue(Json.pretty(definition), Schema.class);
@@ -295,12 +335,21 @@ public class SpecFilter {
         }
         if (!StringUtils.isBlank(schema.get$ref())) {
             referencedDefinitions.add(schema.get$ref());
+            if (schema.getDiscriminator() != null && !StringUtils.isBlank(schema.getDiscriminator().getDefaultMapping())) {
+                // OpenAPI 3.2: defaultMapping may sit next to $ref and still holds a
+                // schema name or a URI reference that must be kept alive
+                referencedDefinitions.add(schema.getDiscriminator().getDefaultMapping());
+            }
             return;
         }
         if (schema.getDiscriminator() != null && schema.getDiscriminator().getMapping() != null) {
             for (Map.Entry<String, String> mapping : schema.getDiscriminator().getMapping().entrySet()) {
                 referencedDefinitions.add(mapping.getValue());
             }
+        }
+        if (schema.getDiscriminator() != null && !StringUtils.isBlank(schema.getDiscriminator().getDefaultMapping())) {
+            // OpenAPI 3.2: defaultMapping may hold a schema name or a URI reference
+            referencedDefinitions.add(schema.getDiscriminator().getDefaultMapping());
         }
 
         if (schema.getProperties() != null) {
@@ -355,8 +404,57 @@ public class SpecFilter {
     private void addContentSchemaRef(Content content, Set<String> referencedDefinitions) {
         if (content != null) {
             for (MediaType mediaType : content.values()) {
-                addSchemaRef(mediaType.getSchema(), referencedDefinitions);
+                addMediaTypeSchemaRef(mediaType, referencedDefinitions);
             }
+        }
+    }
+
+    private void addMediaTypeSchemaRef(MediaType mediaType, Set<String> referencedDefinitions) {
+        if (!StringUtils.isBlank(mediaType.get$ref())) {
+            // OpenAPI 3.2: a content map value may be a Reference Object; only a
+            // schema-targeting ref is relevant to schema pruning
+            if (mediaType.get$ref().startsWith(Components.COMPONENTS_SCHEMAS_REF)) {
+                referencedDefinitions.add(mediaType.get$ref());
+            }
+            // keep traversing: for pre-3.2 documents the $ref field is not emitted,
+            // so it must not mask references held by sibling schema/encoding fields
+        }
+        addSchemaRef(mediaType.getSchema(), referencedDefinitions);
+        addSchemaRef(mediaType.getItemSchema(), referencedDefinitions);
+        if (mediaType.getEncoding() != null) {
+            for (Encoding encoding : mediaType.getEncoding().values()) {
+                addEncodingSchemaRef(encoding, referencedDefinitions);
+            }
+        }
+        if (mediaType.getPrefixEncoding() != null) {
+            for (Encoding encoding : mediaType.getPrefixEncoding()) {
+                addEncodingSchemaRef(encoding, referencedDefinitions);
+            }
+        }
+        if (mediaType.getItemEncoding() != null) {
+            addEncodingSchemaRef(mediaType.getItemEncoding(), referencedDefinitions);
+        }
+    }
+
+    private void addEncodingSchemaRef(Encoding encoding, Set<String> referencedDefinitions) {
+        if (encoding.getHeaders() != null) {
+            for (Header header : encoding.getHeaders().values()) {
+                addHeaderSchemaRef(header, referencedDefinitions);
+            }
+        }
+        // nested encodings are OpenAPI 3.2 fields
+        if (encoding.getEncoding() != null) {
+            for (Encoding nested : encoding.getEncoding().values()) {
+                addEncodingSchemaRef(nested, referencedDefinitions);
+            }
+        }
+        if (encoding.getPrefixEncoding() != null) {
+            for (Encoding nested : encoding.getPrefixEncoding()) {
+                addEncodingSchemaRef(nested, referencedDefinitions);
+            }
+        }
+        if (encoding.getItemEncoding() != null) {
+            addEncodingSchemaRef(encoding.getItemEncoding(), referencedDefinitions);
         }
     }
 
@@ -367,8 +465,9 @@ public class SpecFilter {
                 addContentSchemaRef(parameter.getContent(), referencedDefinitions);
             }
         }
-        Map<PathItem.HttpMethod, Operation> ops = pathItem.readOperationsMap();
-        for (Operation op : ops.values()) {
+        // readOperations() also covers additionalOperations (OpenAPI 3.2), whose
+        // method names are not needed for schema-reference collection
+        for (Operation op : pathItem.readOperations()) {
             if (op.getRequestBody() != null) {
                 addRequestBodySchemaRef(op.getRequestBody(), referencedDefinitions);
             }
@@ -458,6 +557,11 @@ public class SpecFilter {
             for (String resourcePath : components.getPathItems().keySet()) {
                 PathItem pathItem = components.getPathItems().get(resourcePath);
                 addPathItemSchemaRef(pathItem, referencedDefinitions);
+            }
+        }
+        if (components.getMediaTypes() != null) {
+            for (MediaType mediaType : components.getMediaTypes().values()) {
+                addMediaTypeSchemaRef(mediaType, referencedDefinitions);
             }
         }
     }
@@ -559,6 +663,32 @@ public class SpecFilter {
                     tagFilter.getAllowedTags().addAll(op.getTags());
                 }
                 tagFilter.getFilteredTags().addAll(opTagsBeforeFilter);
+            }
+        }
+
+        if (filteredPathItem.getAdditionalOperations() != null) {
+            for (Map.Entry<String, Operation> entry : filteredPathItem.getAdditionalOperations().entrySet()) {
+                String method = entry.getKey();
+                Operation op = entry.getValue();
+                final List<String> opTagsBeforeFilter;
+                if (op.getTags() != null) {
+                    opTagsBeforeFilter = new ArrayList<>(op.getTags());
+                } else {
+                    opTagsBeforeFilter = new ArrayList<>();
+                }
+                op = filterOperation(filter, op, resourcePath, method, params, cookies, headers);
+                if (op != null) {
+                    clonedPathItem.addAdditionalOperation(method, op);
+                }
+                if (op == null) {
+                    tagFilter.getFilteredTags().addAll(opTagsBeforeFilter);
+                } else {
+                    if (op.getTags() != null) {
+                        opTagsBeforeFilter.removeAll(op.getTags());
+                        tagFilter.getAllowedTags().addAll(op.getTags());
+                    }
+                    tagFilter.getFilteredTags().addAll(opTagsBeforeFilter);
+                }
             }
         }
         return clonedPathItem;

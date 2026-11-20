@@ -15,18 +15,25 @@ import java.io.IOException;
 public class OpenAPI31Deserializer extends StdDeserializer<OpenAPI> implements ResolvableDeserializer {
 
     private final JsonDeserializer<?> defaultDeserializer;
+    private final SpecVersion specVersion;
 
     public OpenAPI31Deserializer(JsonDeserializer<?> defaultDeserializer)
     {
+        this(defaultDeserializer, SpecVersion.V31);
+    }
+
+    protected OpenAPI31Deserializer(JsonDeserializer<?> defaultDeserializer, SpecVersion specVersion)
+    {
         super(OpenAPI.class);
         this.defaultDeserializer = defaultDeserializer;
+        this.specVersion = specVersion;
     }
 
     @Override
     public OpenAPI deserialize(JsonParser jp, DeserializationContext ctxt)
             throws IOException, JsonProcessingException {
         OpenAPI openAPI = (OpenAPI) defaultDeserializer.deserialize(jp, ctxt);
-        openAPI.setSpecVersion(SpecVersion.V31);
+        openAPI.setSpecVersion(specVersion);
         return openAPI;
     }
     @Override public void resolve(DeserializationContext ctxt) throws JsonMappingException {

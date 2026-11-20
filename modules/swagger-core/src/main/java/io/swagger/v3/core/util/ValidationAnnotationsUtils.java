@@ -140,7 +140,7 @@ public class ValidationAnnotationsUtils {
             return false;
         }
         BigDecimal value = new BigDecimal(annotation.value());
-        if (schema.getSpecVersion().equals(SpecVersion.V31)) {
+        if (schema.getSpecVersion() != SpecVersion.V30) {
             if (!annotation.inclusive()) {
                 schema.setExclusiveMinimumValue(value);
                 BigDecimal minimum = schema.getMinimum();
@@ -167,7 +167,7 @@ public class ValidationAnnotationsUtils {
             return false;
         }
         BigDecimal value = new BigDecimal(annotation.value());
-        if (schema.getSpecVersion().equals(SpecVersion.V31)) {
+        if (schema.getSpecVersion() != SpecVersion.V30) {
             if (!annotation.inclusive()) {
                 schema.setExclusiveMaximumValue(value);
                 BigDecimal maximum = schema.getMaximum();

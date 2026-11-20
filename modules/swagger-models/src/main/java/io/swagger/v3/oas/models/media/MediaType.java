@@ -1,9 +1,11 @@
 package io.swagger.v3.oas.models.media;
 
 import io.swagger.v3.oas.models.annotations.OpenAPI31;
+import io.swagger.v3.oas.models.annotations.OpenAPI32;
 import io.swagger.v3.oas.models.examples.Example;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -16,9 +18,37 @@ import java.util.Objects;
 
 public class MediaType {
     private Schema schema = null;
+    @OpenAPI32
+    private Schema itemSchema = null;
     private Map<String, Example> examples = null;
     private Object example = null;
     private Map<String, Encoding> encoding = null;
+    /**
+     * Reference value allowed for content map entries as of OpenAPI 3.2
+     * (e.g. {@code "application/json": {"$ref": "#/components/mediaTypes/Pet"}}).
+     * When set, the other fields are ignored per Reference Object semantics.
+     *
+     * @since 2.2.56 (OpenAPI 3.2)
+     */
+    @OpenAPI32
+    private String $ref = null;
+    /**
+     * Positional encoding for multipart array parts (OpenAPI 3.2, multipart media
+     * types only). MUST NOT coexist with {@code encoding}.
+     *
+     * @since 2.2.56 (OpenAPI 3.2)
+     */
+    @OpenAPI32
+    private List<Encoding> prefixEncoding = null;
+    /**
+     * Encoding applied to array items beyond the {@code prefixEncoding} positions
+     * (OpenAPI 3.2, multipart media types only). MUST NOT coexist with
+     * {@code encoding}.
+     *
+     * @since 2.2.56 (OpenAPI 3.2)
+     */
+    @OpenAPI32
+    private Encoding itemEncoding = null;
     private java.util.Map<String, Object> extensions = null;
 
     private boolean exampleSetFlag;
@@ -39,6 +69,29 @@ public class MediaType {
 
     public MediaType schema(Schema schema) {
         this.schema = schema;
+        return this;
+    }
+
+    /**
+     * returns the itemSchema property from a MediaType instance.
+     *
+     * @since 2.2.56 (OpenAPI 3.2)
+     * @return Schema itemSchema
+     **/
+
+    @OpenAPI32
+    public Schema getItemSchema() {
+        return itemSchema;
+    }
+
+    @OpenAPI32
+    public void setItemSchema(Schema itemSchema) {
+        this.itemSchema = itemSchema;
+    }
+
+    @OpenAPI32
+    public MediaType itemSchema(Schema itemSchema) {
+        this.itemSchema = itemSchema;
         return this;
     }
 
@@ -123,6 +176,83 @@ public class MediaType {
         return this;
     }
 
+    /**
+     * returns the prefixEncoding property from a MediaType instance.
+     *
+     * @since 2.2.56 (OpenAPI 3.2)
+     * @return List&lt;Encoding&gt; prefixEncoding
+     **/
+
+    @OpenAPI32
+    public List<Encoding> getPrefixEncoding() {
+        return prefixEncoding;
+    }
+
+    @OpenAPI32
+    public void setPrefixEncoding(List<Encoding> prefixEncoding) {
+        this.prefixEncoding = prefixEncoding;
+    }
+
+    @OpenAPI32
+    public MediaType prefixEncoding(List<Encoding> prefixEncoding) {
+        this.prefixEncoding = prefixEncoding;
+        return this;
+    }
+
+    public MediaType addPrefixEncoding(Encoding prefixEncodingItem) {
+        if (this.prefixEncoding == null) {
+            this.prefixEncoding = new java.util.ArrayList<>();
+        }
+        this.prefixEncoding.add(prefixEncodingItem);
+        return this;
+    }
+
+    /**
+     * returns the itemEncoding property from a MediaType instance.
+     *
+     * @since 2.2.56 (OpenAPI 3.2)
+     * @return Encoding itemEncoding
+     **/
+
+    @OpenAPI32
+    public Encoding getItemEncoding() {
+        return itemEncoding;
+    }
+
+    @OpenAPI32
+    public void setItemEncoding(Encoding itemEncoding) {
+        this.itemEncoding = itemEncoding;
+    }
+
+    @OpenAPI32
+    public MediaType itemEncoding(Encoding itemEncoding) {
+        this.itemEncoding = itemEncoding;
+        return this;
+    }
+
+    /**
+     * returns the $ref property from a MediaType instance.
+     *
+     * @since 2.2.56 (OpenAPI 3.2)
+     * @return String $ref
+     **/
+
+    @OpenAPI32
+    public String get$ref() {
+        return $ref;
+    }
+
+    @OpenAPI32
+    public void set$ref(String $ref) {
+        this.$ref = $ref;
+    }
+
+    @OpenAPI32
+    public MediaType $ref(String $ref) {
+        this.$ref = $ref;
+        return this;
+    }
+
     public boolean getExampleSetFlag() {
         return exampleSetFlag;
     }
@@ -141,15 +271,19 @@ public class MediaType {
         }
         MediaType mediaType = (MediaType) o;
         return Objects.equals(this.schema, mediaType.schema) &&
+                Objects.equals(this.itemSchema, mediaType.itemSchema) &&
                 Objects.equals(this.examples, mediaType.examples) &&
                 Objects.equals(this.example, mediaType.example) &&
                 Objects.equals(this.encoding, mediaType.encoding) &&
+                Objects.equals(this.prefixEncoding, mediaType.prefixEncoding) &&
+                Objects.equals(this.itemEncoding, mediaType.itemEncoding) &&
+                Objects.equals(this.$ref, mediaType.$ref) &&
                 Objects.equals(this.extensions, mediaType.extensions);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(schema, examples, example, encoding, extensions);
+        return Objects.hash(schema, itemSchema, examples, example, encoding, prefixEncoding, itemEncoding, $ref, extensions);
     }
 
     public java.util.Map<String, Object> getExtensions() {
@@ -189,9 +323,13 @@ public class MediaType {
         sb.append("class MediaType {\n");
 
         sb.append("    schema: ").append(toIndentedString(schema)).append("\n");
+        sb.append("    itemSchema: ").append(toIndentedString(itemSchema)).append("\n");
         sb.append("    examples: ").append(toIndentedString(examples)).append("\n");
         sb.append("    example: ").append(toIndentedString(example)).append("\n");
         sb.append("    encoding: ").append(toIndentedString(encoding)).append("\n");
+        sb.append("    prefixEncoding: ").append(toIndentedString(prefixEncoding)).append("\n");
+        sb.append("    itemEncoding: ").append(toIndentedString(itemEncoding)).append("\n");
+        sb.append("    $ref: ").append(toIndentedString($ref)).append("\n");
         sb.append("}");
         return sb.toString();
     }

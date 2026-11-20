@@ -1,6 +1,7 @@
 package io.swagger.v3.oas.models.tags;
 
 import io.swagger.v3.oas.models.annotations.OpenAPI31;
+import io.swagger.v3.oas.models.annotations.OpenAPI32;
 import io.swagger.v3.oas.models.ExternalDocumentation;
 
 import java.util.Objects;
@@ -14,8 +15,14 @@ import java.util.Objects;
 
 public class Tag {
     private String name = null;
+    @OpenAPI32
+    private String summary = null;
     private String description = null;
     private ExternalDocumentation externalDocs = null;
+    @OpenAPI32
+    private String parent = null;
+    @OpenAPI32
+    private String kind = null;
     private java.util.Map<String, Object> extensions = null;
 
     /**
@@ -34,6 +41,29 @@ public class Tag {
 
     public Tag name(String name) {
         this.name = name;
+        return this;
+    }
+
+    /**
+     * returns the summary property from a Tag instance.
+     *
+     * @since 2.2.56 (OpenAPI 3.2)
+     * @return String summary
+     **/
+
+    @OpenAPI32
+    public String getSummary() {
+        return summary;
+    }
+
+    @OpenAPI32
+    public void setSummary(String summary) {
+        this.summary = summary;
+    }
+
+    @OpenAPI32
+    public Tag summary(String summary) {
+        this.summary = summary;
         return this;
     }
 
@@ -75,6 +105,52 @@ public class Tag {
         return this;
     }
 
+    /**
+     * returns the parent property from a Tag instance.
+     *
+     * @since 2.2.56 (OpenAPI 3.2)
+     * @return String parent
+     **/
+
+    @OpenAPI32
+    public String getParent() {
+        return parent;
+    }
+
+    @OpenAPI32
+    public void setParent(String parent) {
+        this.parent = parent;
+    }
+
+    @OpenAPI32
+    public Tag parent(String parent) {
+        this.parent = parent;
+        return this;
+    }
+
+    /**
+     * returns the kind property from a Tag instance.
+     *
+     * @since 2.2.56 (OpenAPI 3.2)
+     * @return String kind
+     **/
+
+    @OpenAPI32
+    public String getKind() {
+        return kind;
+    }
+
+    @OpenAPI32
+    public void setKind(String kind) {
+        this.kind = kind;
+    }
+
+    @OpenAPI32
+    public Tag kind(String kind) {
+        this.kind = kind;
+        return this;
+    }
+
     @Override
     public boolean equals(java.lang.Object o) {
         if (this == o) {
@@ -85,14 +161,17 @@ public class Tag {
         }
         Tag tag = (Tag) o;
         return Objects.equals(this.name, tag.name) &&
+                Objects.equals(this.summary, tag.summary) &&
                 Objects.equals(this.description, tag.description) &&
                 Objects.equals(this.externalDocs, tag.externalDocs) &&
+                Objects.equals(this.parent, tag.parent) &&
+                Objects.equals(this.kind, tag.kind) &&
                 Objects.equals(this.extensions, tag.extensions);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, description, externalDocs, extensions);
+        return Objects.hash(name, summary, description, externalDocs, parent, kind, extensions);
     }
 
     public java.util.Map<String, Object> getExtensions() {
@@ -132,8 +211,11 @@ public class Tag {
         sb.append("class Tag {\n");
 
         sb.append("    name: ").append(toIndentedString(name)).append("\n");
+        sb.append("    summary: ").append(toIndentedString(summary)).append("\n");
         sb.append("    description: ").append(toIndentedString(description)).append("\n");
         sb.append("    externalDocs: ").append(toIndentedString(externalDocs)).append("\n");
+        sb.append("    parent: ").append(toIndentedString(parent)).append("\n");
+        sb.append("    kind: ").append(toIndentedString(kind)).append("\n");
         sb.append("}");
         return sb.toString();
     }
