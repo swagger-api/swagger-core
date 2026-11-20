@@ -1,12 +1,29 @@
 // * * * * * * * * * * * *
 // Plugins
 // * * * * * * * * * * * *
+// com.gradle.plugin-publish 2.x requires a Java 17+ runtime; it is only needed for publishPlugins,
+// so it's applied only when Gradle runs on Java 17+ and the build keeps working on Java 11
+buildscript {
+    repositories {
+        gradlePluginPortal()
+    }
+    dependencies {
+        if (JavaVersion.current().isCompatibleWith(JavaVersion.VERSION_17)) {
+            classpath 'com.gradle.publish:plugin-publish-plugin:2.2.1'
+        }
+    }
+}
+
 plugins {
     id 'java-gradle-plugin'
-    // Publishing publicly
-    id 'com.gradle.plugin-publish' version '0.21.0'
     // Publishing to maven
     id 'maven-publish'
+}
+
+def pluginPublishSupported = JavaVersion.current().isCompatibleWith(JavaVersion.VERSION_17)
+if (pluginPublishSupported) {
+    // Publishing publicly
+    apply plugin: 'com.gradle.plugin-publish'
 }
 
 // * * * * * * * * * * * *
@@ -76,35 +93,33 @@ project.ext.pluginId    = 'io.swagger.core.v3.swagger-gradle-plugin'
 project.ext.scm         = 'https://github.com/swagger-api/swagger-core.git'
 project.ext.url         = 'https://github.com/swagger-api/swagger-core/tree/master/modules/swagger-gradle-plugin'
 
-// Configuration for: java-gradle-plugin
+// Configuration for: java-gradle-plugin + com.gradle.plugin-publish
 gradlePlugin {
+    website = project.url
+    vcsUrl = project.scm
     plugins {
         swagger {
             id = project.pluginId
             implementationClass = 'io.swagger.v3.plugins.gradle.SwaggerPlugin'
+            displayName = 'Swagger Gradle Plugin'
+            description = project.description
+            tags.set(['swagger', 'openapi', 'api'])
         }
     }
 }
 
-// * * * * * * * * * * * *
-// Publishing
-// * * * * * * * * * * * *
-
-
-// Publishing to plugins.gradle.org
-// --------------------------------
-
-// Configuration for: com.gradle.plugin-publish
-pluginBundle {
-    website = project.url
-    vcsUrl = project.scm
-    tags = ['swagger', 'openapi', 'api']
-
-    plugins {
-        swagger {
-            displayName = 'Swagger Gradle Plugin '
-            description = project.description
-            id          = project.pluginId
+if (pluginPublishSupported) {
+    gradlePlugin {
+        plugins {
+            swagger {
+                // Groovy DSL requires passing `it` as the receiver
+                compatibility(it) {
+                    features {
+                        configurationCache = true
+                        isolatedProjects = true
+                    }
+                }
+            }
         }
     }
 }
