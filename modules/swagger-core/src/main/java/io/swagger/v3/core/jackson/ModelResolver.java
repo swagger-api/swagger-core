@@ -3291,6 +3291,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
         }
         List<String> allowableValues = resolveAllowableValues(a, annotations, schemaAnnotation);
         if (allowableValues != null) {
+            schema.setEnum(null);   // allowableValues replaces the enum values taken from the Java enum
             for (String prop : allowableValues) {
                 schema.addEnumItemObject(prop);
             }
