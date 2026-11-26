@@ -1476,6 +1476,15 @@ public class Reader implements OpenApiReader {
                 }
             }
         }
+        
+        if (apiOperation.groups() != Void.class) {
+            String groupName = apiOperation.groups().getSimpleName();
+            if (openapi31) {
+                operation.addExtension31("x-groups", groupName);
+            } else {
+                operation.addExtension("x-groups", groupName);
+            }
+        }
     }
 
     protected String getOperationId(String operationId) {

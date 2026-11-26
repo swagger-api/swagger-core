@@ -650,4 +650,17 @@ public @interface Schema {
      *
      */
     SchemaResolution schemaResolution() default SchemaResolution.AUTO;
+
+    /**
+     * Provides the validation groups associated with this schema property.
+     * Validation groups (as defined by JSR-380 Bean Validation) allow a single DTO
+     * to represent different shapes depending on the operation being performed
+     * (e.g., Create vs Update). When specified, this information can be used to
+     * conditionally include or hide fields in the generated OpenAPI documentation
+     * based on the active validation group of the operation.
+     *
+     * @since 2.2.54
+     * @return the validation groups for this schema property
+     */
+    Class<?>[] groups() default {};
 }
