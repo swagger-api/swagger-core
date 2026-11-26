@@ -4,8 +4,15 @@ import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.read.ListAppender;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.v3.core.converter.AnnotatedType;
 import io.swagger.v3.core.converter.ModelConverterContextImpl;
 import io.swagger.v3.core.converter.ModelConverters;
+import io.swagger.v3.core.jackson.ModelResolver;
+import io.swagger.v3.core.jackson.TypeNameResolver;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.AfterMethod;
@@ -13,6 +20,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.testng.Assert.assertEquals;
@@ -79,6 +87,36 @@ public class Issue5016Test {
         assertTrue(warnings().isEmpty());
     }
 
+    @Test
+    public void testWarnsWhenTwoParameterizationsResolveToTheSameSchemaName() {
+        resolveWithoutTypeArgumentsInNames(HolderWithClashingRecords.class);
+
+        List<String> warnings = warnings();
+        assertEquals(warnings.size(), 1);
+        assertTrue(warnings.get(0).contains("Schema name \"MyRecord\""));
+        assertTrue(warnings.get(0).contains("<java.lang.String>"));
+        assertTrue(warnings.get(0).contains("<java.lang.Integer>"));
+    }
+
+    @Test
+    public void testDoesNotWarnWhenTheSameParameterizationIsUsedTwice() {
+        resolveWithoutTypeArgumentsInNames(HolderWithSameRecordTwice.class);
+
+        assertTrue(warnings().isEmpty());
+    }
+
+    @Test
+    public void testDoesNotWarnWhenSubtypeIsAlsoReferencedDirectly() {
+        ModelConverters.getInstance().readAll(OwnerWithPetAndDog.class);
+
+        assertTrue(warnings().isEmpty());
+    }
+
+    private void resolveWithoutTypeArgumentsInNames(Class<?> type) {
+        ModelResolver modelResolver = new ModelResolver(new ObjectMapper(), new RawClassTypeNameResolver());
+        new ModelConverterContextImpl(modelResolver).resolve(new AnnotatedType(type));
+    }
+
     private List<String> warnings() {
         return appender.list.stream()
                 .filter(event -> event.getLevel() == Level.WARN)
@@ -121,5 +159,41 @@ public class Issue5016Test {
     static class OrderWithSameItemTwice {
         public First.Item first;
         public First.Item second;
+    }
+
+    static class RawClassTypeNameResolver extends TypeNameResolver {
+        @Override
+        protected String nameForGenericType(JavaType type, Set<Options> options) {
+            return nameForClass(type, options);
+        }
+    }
+
+    static class MyRecord<T> {
+        public T value;
+    }
+
+    static class HolderWithClashingRecords {
+        public MyRecord<String> text;
+        public MyRecord<Integer> number;
+    }
+
+    static class HolderWithSameRecordTwice {
+        public MyRecord<String> first;
+        public MyRecord<String> second;
+    }
+
+    @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "kind")
+    @JsonSubTypes({@JsonSubTypes.Type(value = Dog.class, name = "dog")})
+    static class Pet {
+        public String name;
+    }
+
+    static class Dog extends Pet {
+        public boolean barks;
+    }
+
+    static class OwnerWithPetAndDog {
+        public Pet pet;
+        public Dog dog;
     }
 }
