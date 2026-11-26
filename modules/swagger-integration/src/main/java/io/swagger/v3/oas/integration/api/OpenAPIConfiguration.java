@@ -95,4 +95,9 @@ public interface OpenAPIConfiguration {
      * @since 2.2.29
      */
     public Configuration toConfiguration();
+
+    /**
+     * @since 2.2.40
+     */
+    Boolean isIgnoreHidden();
 }
