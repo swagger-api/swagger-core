@@ -2,12 +2,11 @@ package io.swagger.v3.core.converting;
 
 import io.swagger.v3.core.converter.ModelConverters;
 import io.swagger.v3.core.matchers.SerializationMatchers;
-import io.swagger.v3.core.oas.models.composition.AbstractBaseModelWithoutFields;
-import io.swagger.v3.core.oas.models.composition.Animal;
-import io.swagger.v3.core.oas.models.composition.AnimalClass;
-import io.swagger.v3.core.oas.models.composition.AnimalWithSchemaSubtypes;
-import io.swagger.v3.core.oas.models.composition.Human;
-import io.swagger.v3.core.oas.models.composition.ModelWithFieldWithSubTypes;
+import io.swagger.v3.core.oas.models.composition.*;
+import io.swagger.v3.core.oas.models.composition.discriminator.ModelWithDefaultPropertyName;
+import io.swagger.v3.core.oas.models.composition.discriminator.ModelWithDiscriminatorMapping;
+import io.swagger.v3.core.oas.models.composition.discriminator.ModelWithProvidedDiscriminatorMapping;
+import io.swagger.v3.core.oas.models.composition.discriminator.ModelWithoutTypeInfo;
 import io.swagger.v3.core.util.Json;
 import io.swagger.v3.core.util.ResourceUtils;
 import io.swagger.v3.oas.models.media.Schema;
@@ -46,6 +45,26 @@ public class CompositionTest {
     @Test(description = "create a ModelWithFieldWithSubTypes")
     public void createModelWithFieldWithSubTypes() throws IOException {
         compareAsJson(ModelWithFieldWithSubTypes.class, "ModelWithFieldWithSubTypes.json");
+    }
+
+    @Test(description = "create a ModelWithDiscriminatorMapping")
+    public void createModelWithDiscriminatorMapping() throws IOException {
+        compareAsJson(ModelWithDiscriminatorMapping.class, "ModelWithDiscriminatorMapping.json");
+    }
+
+    @Test(description = "create a ModelWithDefaultProperty")
+    public void createModelWithDefaultProperty() throws IOException {
+        compareAsJson(ModelWithDefaultPropertyName.class, "ModelWithDefaultProperty.json");
+    }
+
+    @Test(description = "create a ModelWithoutTypeInfo")
+    public void createModelWithoutTypeInfo() throws IOException {
+        compareAsJson(ModelWithoutTypeInfo.class, "ModelWithoutTypeInfo.json");
+    }
+
+    @Test(description = "create a createModelWithProvidedDiscriminatorMapping")
+    public void createModelWithProvidedDiscriminatorMapping() throws IOException {
+        compareAsJson(ModelWithProvidedDiscriminatorMapping.class, "ModelWithProvidedDiscriminatorMapping.json");
     }
 
     private void compareAsJson(Class<?> cls, String fileName) throws IOException {

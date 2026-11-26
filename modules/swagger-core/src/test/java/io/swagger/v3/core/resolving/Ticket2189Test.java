@@ -31,12 +31,18 @@ public class Ticket2189Test extends SwaggerTestBase {
         final Schema model = context.resolve(new AnnotatedType(BaseClass.class));
         assertNotNull(model);
         String yaml = "BaseClass:\n" +
+                      "  required:\n" +
+                      "  - '@type'\n" +
                       "  type: object\n" +
                       "  properties:\n" +
                       "    property:\n" +
                       "      type: string\n" +
                       "    type:\n" +
                       "      type: string\n" +
+                      "    '@type':\n" +
+                      "      type: string\n" +
+                      "  discriminator:\n" +
+                      "    propertyName: '@type'\n" +
                       "SubClass:\n" +
                       "  type: object\n" +
                       "  allOf:\n" +

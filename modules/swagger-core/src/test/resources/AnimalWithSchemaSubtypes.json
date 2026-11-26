@@ -9,8 +9,8 @@
                 "type": "string"
             }
         },
-        "discriminator" : {
-            "propertyName" : "type"
+        "discriminator": {
+            "propertyName": "type"
         }
     },
     "HumanWithSchemaSubtypes": {
