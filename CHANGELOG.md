@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Added
+- Opt-in support for ClassGraph 5 in the OpenAPI scanners, including the Jakarta
+  variants. ClassGraph 4 remains the default with its existing scanning and class
+  loading behavior. Selecting ClassGraph 5 requires Java 17 or greater.
+
 ## [2.2.54] - 2026-08-18
 
 ### Fixed
