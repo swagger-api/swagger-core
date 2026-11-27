@@ -8,6 +8,7 @@ import io.swagger.v3.core.jackson.ModelResolver;
 import io.swagger.v3.core.util.Json;
 import io.swagger.v3.core.util.Json31;
 import io.swagger.v3.oas.annotations.media.Schema;
+import tools.jackson.databind.JsonNode;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -73,6 +74,60 @@ public class ImplicitObjectComponentRefTest {
         assertNotNull(single, "single property should be resolved");
         assertEquals(single.get$ref(), TRANSLATION_REF,
                 "the property should reference the Translation component");
+    }
+
+
+    @Test(dataProvider = "specVersions")
+    public void emptyBeanAndJsonNodeAreReferenced(boolean openapi31) {
+        final ModelResolver modelResolver = new ModelResolver(openapi31 ? Json31.mapper() : Json.mapper())
+                .openapi31(openapi31);
+        final ModelConverterContextImpl context = new ModelConverterContextImpl(modelResolver);
+
+        context.resolve(new AnnotatedType(Untyped.class));
+
+        final Map<String, io.swagger.v3.oas.models.media.Schema> models = context.getDefinedModels();
+        assertNotNull(models.get("EmptyBean"), "EmptyBean should be defined as a component");
+        assertNotNull(models.get("JsonNode"), "JsonNode should be defined as a component");
+
+        final Map<String, io.swagger.v3.oas.models.media.Schema> properties = models.get("Untyped").getProperties();
+        assertEquals(properties.get("empty").get$ref(), "#/components/schemas/EmptyBean");
+        assertEquals(properties.get("node").get$ref(), "#/components/schemas/JsonNode");
+        assertEquals(properties.get("emptyList").getItems().get$ref(), "#/components/schemas/EmptyBean");
+        assertEquals(((io.swagger.v3.oas.models.media.Schema<?>) properties.get("emptyMap").getAdditionalProperties())
+                .get$ref(), "#/components/schemas/EmptyBean");
+    }
+
+
+    @Test
+    public void annotatedPropertyKeepsReference31() {
+        final ModelResolver modelResolver = new ModelResolver(Json31.mapper()).openapi31(true);
+        final ModelConverterContextImpl context = new ModelConverterContextImpl(modelResolver);
+
+        context.resolve(new AnnotatedType(Annotated.class));
+
+        final io.swagger.v3.oas.models.media.Schema<?> described =
+                (io.swagger.v3.oas.models.media.Schema<?>) context.getDefinedModels().get("Annotated")
+                        .getProperties().get("described");
+        assertEquals(described.get$ref(), TRANSLATION_REF);
+        assertEquals(described.getDescription(), "Property description");
+    }
+
+    public static final class EmptyBean {
+    }
+
+    public static final class Untyped {
+        public EmptyBean empty;
+
+        public JsonNode node;
+
+        public List<EmptyBean> emptyList;
+
+        public Map<String, EmptyBean> emptyMap;
+    }
+
+    public static final class Annotated {
+        @Schema(description = "Property description")
+        public Translation described;
     }
 
     @Schema(description = "Translations in a specific language")
