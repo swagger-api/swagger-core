@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Changed
+- Upgrade the OpenAPI scanners to ClassGraph 5.0.0. Discovered classes are loaded
+  without running static initializers, using the thread context classloader first
+  and the scanner and system classloaders as fallbacks. (#5351)
+
 ## [3.0.0] - 2026-10-28
 
 First release of the 3.x line. The runtime moves from Jackson 2 to Jackson 3, the minimum

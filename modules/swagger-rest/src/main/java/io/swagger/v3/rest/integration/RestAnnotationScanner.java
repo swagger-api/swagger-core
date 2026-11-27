@@ -6,6 +6,7 @@ import io.swagger.v3.rest.integration.api.RestOpenApiScanner;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Webhooks;
 import io.swagger.v3.oas.integration.IgnoredPackages;
+import io.swagger.v3.oas.integration.ScannerClassLoader;
 import io.swagger.v3.oas.integration.SwaggerConfiguration;
 import io.swagger.v3.oas.integration.api.OpenAPIConfiguration;
 import io.swagger.v3.core.util.StringUtils;
@@ -59,7 +60,12 @@ public class RestAnnotationScanner<T extends RestAnnotationScanner<T>> implement
             openApiConfiguration = new SwaggerConfiguration();
         }
 
-        ClassGraph graph = new ClassGraph().enableAllInfo();
+        ClassGraph graph = new ClassGraph()
+                .enableClasspath()
+                .enableNonSystemModules()
+                .enableClassInfo()
+                .enableAnnotationInfo()
+                .ignoreClassVisibility();
         Set<String> acceptablePackages = new HashSet<>();
         Set<Class<?>> output = new HashSet<>();
 
@@ -82,7 +88,7 @@ public class RestAnnotationScanner<T extends RestAnnotationScanner<T>> implement
             for (String pkg : openApiConfiguration.getResourcePackages()) {
                 if (!isIgnored(pkg)) {
                     acceptablePackages.add(pkg);
-                    graph.whitelistPackages(pkg);
+                    graph.acceptPackages(pkg);
                 }
             }
         } else {
@@ -92,11 +98,11 @@ public class RestAnnotationScanner<T extends RestAnnotationScanner<T>> implement
         }
         final Set<Class<?>> classes;
         try (ScanResult scanResult = graph.scan()) {
-            classes = new HashSet<>(scanResult.getClassesWithAnnotation(jakarta.ws.rs.Path.class.getName()).loadClasses());
-            classes.addAll(new HashSet<>(scanResult.getClassesWithAnnotation(OpenAPIDefinition.class.getName()).loadClasses()));
-            classes.addAll(new HashSet<>(scanResult.getClassesWithAnnotation(Webhooks.class.getName()).loadClasses()));
+            classes = ScannerClassLoader.loadClasses(scanResult.getClassesWithAnnotation(jakarta.ws.rs.Path.class.getName()).getNames(), getClass());
+            classes.addAll(ScannerClassLoader.loadClasses(scanResult.getClassesWithAnnotation(OpenAPIDefinition.class.getName()).getNames(), getClass()));
+            classes.addAll(ScannerClassLoader.loadClasses(scanResult.getClassesWithAnnotation(Webhooks.class.getName()).getNames(), getClass()));
             if (Boolean.TRUE.equals(openApiConfiguration.isAlwaysResolveAppPath())) {
-                classes.addAll(new HashSet<>(scanResult.getClassesWithAnnotation(ApplicationPath.class.getName()).loadClasses()));
+                classes.addAll(ScannerClassLoader.loadClasses(scanResult.getClassesWithAnnotation(ApplicationPath.class.getName()).getNames(), getClass()));
             }
         }
 
