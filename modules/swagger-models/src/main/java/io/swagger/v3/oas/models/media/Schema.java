@@ -116,6 +116,8 @@ public class Schema<T> {
     private boolean exampleSetFlag;
     @JsonIgnore
     private boolean defaultSetFlag;
+    @JsonIgnore
+    private boolean constSetFlag;
 
     /**
      * @since 2.2.0 (OpenAPI 3.1.0)
@@ -2323,6 +2325,12 @@ public class Schema<T> {
         return this;
     }
 
+    @OpenAPI31
+    public Schema constSetFlag(boolean constSetFlag) {
+        this.constSetFlag = constSetFlag;
+        return this;
+    }
+
     /**
      *
      * @since 2.2.0 (OpenAPI 3.1.0)
@@ -2339,6 +2347,9 @@ public class Schema<T> {
     @OpenAPI31
     public void setConst(Object _const) {
         this._const = cast(_const);
+        if (!(_const != null && this._const == null)) {
+            constSetFlag = true;
+        }
     }
 
     /**
@@ -2347,8 +2358,30 @@ public class Schema<T> {
      */
     @OpenAPI31
     public Schema _const(Object _const) {
-        this._const = cast(_const);
+        setConst(_const);
         return this;
+    }
+
+    /**
+     * returns true if const setter has been invoked
+     * Used to flag explicit setting to null of const (vs missing field) while deserializing from json/yaml string
+     *
+     * @return boolean constSetFlag
+     * @since 2.2.56 (OpenAPI 3.1.0)
+     **/
+
+    @OpenAPI31
+    public boolean getConstSetFlag() {
+        return constSetFlag;
+    }
+
+    /**
+     *
+     * @since 2.2.56 (OpenAPI 3.1.0)
+     */
+    @OpenAPI31
+    public void setConstSetFlag(boolean constSetFlag) {
+        this.constSetFlag = constSetFlag;
     }
 
     /**
