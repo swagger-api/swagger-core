@@ -1,5 +1,7 @@
 package io.swagger.v3.core.converter;
 
+import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.type.TypeFactory;
 import io.swagger.v3.core.util.ReferenceTypeUtils;
 import io.swagger.v3.oas.models.media.Schema;
 import org.apache.commons.lang3.StringUtils;
@@ -24,12 +26,14 @@ public class ModelConverterContextImpl implements ModelConverterContext {
     private final Map<String, Schema> modelByName;
     private final HashMap<AnnotatedType, Schema> modelByType;
     private final Set<AnnotatedType> processedTypes;
+    private final Map<String, JavaType> typeByName;
 
     public ModelConverterContextImpl(List<ModelConverter> converters) {
         this.converters = converters;
         modelByName = new TreeMap<>();
         modelByType = new HashMap<>();
         processedTypes = new HashSet<>();
+        typeByName = new HashMap<>();
     }
 
     public ModelConverterContextImpl(ModelConverter converter) {
@@ -58,9 +62,11 @@ public class ModelConverterContextImpl implements ModelConverterContext {
             LOGGER.trace(String.format("defineModel %s %s", name, model));
         }
         modelByName.put(name, model);
+        registerType(name, type);
 
         if (StringUtils.isNotBlank(prevName) && !prevName.equals(name)) {
             modelByName.remove(prevName);
+            typeByName.remove(prevName);
         }
 
         if (type != null && type.getType() != null) {
@@ -108,5 +114,19 @@ public class ModelConverterContextImpl implements ModelConverterContext {
         }
 
         return resolved;
+    }
+
+    private void registerType(String name, AnnotatedType type) {
+        if (name == null || type == null || type.getType() == null) {
+            return;
+        }
+        JavaType javaType = TypeFactory.defaultInstance().constructType(type.getType());
+        JavaType previousType = typeByName.putIfAbsent(name, javaType);
+        if (previousType != null && !previousType.equals(javaType)) {
+            LOGGER.warn("Schema name \"{}\" is used for {} and {}. The schema of {} replaces the schema of {}. "
+                    + "Set @Schema(name = ...) on one of the types or configure a TypeNameResolver.",
+                    name, previousType.toCanonical(), javaType.toCanonical(), javaType.toCanonical(), previousType.toCanonical());
+            typeByName.put(name, javaType);
+        }
     }
 }
