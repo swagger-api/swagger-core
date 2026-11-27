@@ -2072,6 +2072,15 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                     .jsonViewAnnotation(jsonViewAnnotation)
                     .subtype(true));
 
+            /*
+             * A subtype may not resolve to a schema, e.g. the package-private JDK implementations of a
+             * sealed system type (java.util.EnumSet is sealed since JDK 19, and Jackson 3 discovers the
+             * permitted subclasses as subtypes). Such subtypes contribute nothing and are skipped.
+             */
+            if (subtypeModel == null) {
+                continue;
+            }
+
             if (StringUtils.isBlank(subtypeModel.getName()) ||
                 subtypeModel.getName().equals(model.getName())) {
                 subtypeModel.setName(_typeNameResolver.nameForType(_mapper.constructType(subtypeType),
