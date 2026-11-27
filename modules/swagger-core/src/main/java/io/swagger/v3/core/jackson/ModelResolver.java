@@ -519,7 +519,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                     if (StringUtils.isNotBlank(addPropertiesSchema.getName())) {
                         pName = addPropertiesSchema.getName();
                     }
-                    if (isObjectSchema(addPropertiesSchema) && pName != null) {
+                    if ((isObjectSchema(addPropertiesSchema) || isImplicitObjectSchema(addPropertiesSchema)) && pName != null) {
                         if (context.getDefinedModels().containsKey(pName)) {
                             if (Schema.SchemaResolution.INLINE.equals(containerResolvedSchemaResolution) && applySchemaResolution()) {
                                 addPropertiesSchema = context.getDefinedModels().get(pName);
@@ -577,7 +577,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 if (StringUtils.isNotBlank(items.getName())) {
                     pName = items.getName();
                 }
-                if (isObjectSchema(items) && pName != null) {
+                if ((isObjectSchema(items) || isImplicitObjectSchema(items)) && pName != null) {
                     if (context.getDefinedModels().containsKey(pName)) {
                         if (Schema.SchemaResolution.INLINE.equals(containerResolvedSchemaResolution) && applySchemaResolution()) {
                             items = context.getDefinedModels().get(pName);
@@ -876,7 +876,7 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                     }
                     final BeanDescription propBeanDesc = _mapper._serializationContext().introspectBeanDescription(propType);
                     if (property != null && !propType.isContainerType()) {
-                        if (isObjectSchema(property)) {
+                        if (isObjectSchema(property) || isImplicitObjectSchema(property)) {
                             // create a reference for the property
                             String pName = _typeName(propType, propBeanDesc);
                             if (StringUtils.isNotBlank(property.getName())) {
@@ -3649,6 +3649,27 @@ public class ModelResolver extends AbstractModelConverter implements ModelConver
                 || (schema.getDependentSchemas() != null && !schema.getDependentSchemas().isEmpty())
                 || (schema.getMinProperties() != null && schema.getMinProperties() > 0)
                 || (schema.getMaxProperties() != null && schema.getMaxProperties() > 0));
+    }
+
+    /**
+     * Whether the schema is an implicit object: a schema without any type, reference, enum, items or
+     * composition keywords. This is the case in OpenAPI 3.1 for a class without properties swagger-core
+     * can infer, e.g. one whose content is only exposed through {@code @JsonAnyGetter}. Like an object
+     * schema, such a schema is referenced via {@code $ref} where it is used, if it is defined as a
+     * component, consistent with the resolve-as-ref handling of implicit objects.
+     */
+    protected boolean isImplicitObjectSchema(Schema schema) {
+        return schema != null
+                && schema.getType() == null
+                && (schema.getTypes() == null || schema.getTypes().isEmpty())
+                && schema.get$ref() == null
+                && schema.getEnum() == null
+                && schema.getConst() == null
+                && schema.getItems() == null
+                && schema.getAllOf() == null
+                && schema.getAnyOf() == null
+                && schema.getOneOf() == null
+                && schema.getNot() == null;
     }
 
     protected boolean isArraySchema(Schema schema) {
