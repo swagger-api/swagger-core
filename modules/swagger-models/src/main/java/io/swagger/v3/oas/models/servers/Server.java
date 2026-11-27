@@ -1,6 +1,7 @@
 package io.swagger.v3.oas.models.servers;
 
 import io.swagger.v3.oas.models.annotations.OpenAPI31;
+import io.swagger.v3.oas.models.annotations.OpenAPI32;
 
 import java.util.Objects;
 
@@ -14,6 +15,8 @@ import java.util.Objects;
 public class Server {
     private String url = null;
     private String description = null;
+    @OpenAPI32
+    private String name = null;
     private ServerVariables variables = null;
     private java.util.Map<String, Object> extensions = null;
 
@@ -56,6 +59,29 @@ public class Server {
     }
 
     /**
+     * returns the name property from a Server instance.
+     *
+     * @since 2.2.56 (OpenAPI 3.2)
+     * @return String name
+     **/
+
+    @OpenAPI32
+    public String getName() {
+        return name;
+    }
+
+    @OpenAPI32
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    @OpenAPI32
+    public Server name(String name) {
+        this.name = name;
+        return this;
+    }
+
+    /**
      * returns the variables property from a Server instance.
      *
      * @return ServerVariables variables
@@ -85,13 +111,14 @@ public class Server {
         Server server = (Server) o;
         return Objects.equals(this.url, server.url) &&
                 Objects.equals(this.description, server.description) &&
+                Objects.equals(this.name, server.name) &&
                 Objects.equals(this.variables, server.variables) &&
                 Objects.equals(this.extensions, server.extensions);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(url, description, variables, extensions);
+        return Objects.hash(url, description, name, variables, extensions);
     }
 
     public java.util.Map<String, Object> getExtensions() {
@@ -132,6 +159,7 @@ public class Server {
 
         sb.append("    url: ").append(toIndentedString(url)).append("\n");
         sb.append("    description: ").append(toIndentedString(description)).append("\n");
+        sb.append("    name: ").append(toIndentedString(name)).append("\n");
         sb.append("    variables: ").append(toIndentedString(variables)).append("\n");
         sb.append("}");
         return sb.toString();

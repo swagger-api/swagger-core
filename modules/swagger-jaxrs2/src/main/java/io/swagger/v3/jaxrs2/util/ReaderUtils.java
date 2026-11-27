@@ -1,6 +1,7 @@
 package io.swagger.v3.jaxrs2.util;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import io.swagger.v3.core.util.Configuration;
 import io.swagger.v3.core.util.ParameterProcessor;
 import io.swagger.v3.core.util.ReflectionUtils;
 import io.swagger.v3.jaxrs2.ext.OpenAPIExtension;
@@ -51,8 +52,20 @@ public class ReaderUtils {
      * @return the collection of supported parameters
      */
     public static List<Parameter> collectConstructorParameters(Class<?> cls, Components components, javax.ws.rs.Consumes classConsumes, JsonView jsonViewAnnotation, Schema.SchemaResolution schemaResolution, boolean openapi31) {
+        return collectConstructorParameters(cls, components, classConsumes, jsonViewAnnotation, schemaResolution, openapi31, null);
+    }
+
+    public static List<Parameter> collectConstructorParameters(Class<?> cls, Components components, javax.ws.rs.Consumes classConsumes, JsonView jsonViewAnnotation, Schema.SchemaResolution schemaResolution, boolean openapi31, Configuration configuration) {
         if (cls.isLocalClass() || (cls.isMemberClass() && !Modifier.isStatic(cls.getModifiers()))) {
             return Collections.emptyList();
+        }
+        final Configuration effectiveConfiguration;
+        if (configuration != null) {
+            effectiveConfiguration = configuration;
+        } else {
+            effectiveConfiguration = new Configuration();
+            effectiveConfiguration.setOpenAPI31(openapi31);
+            effectiveConfiguration.setSchemaResolution(schemaResolution);
         }
 
         List<Parameter> selected = Collections.emptyList();
@@ -75,7 +88,7 @@ public class ReaderUtils {
                     paramsCount++;
                 } else {
                     final Type genericParameterType = genericParameterTypes[i];
-                    final List<Parameter> tmpParameters = collectParameters(genericParameterType, tmpAnnotations, components, classConsumes, jsonViewAnnotation);
+                    final List<Parameter> tmpParameters = collectParameters(genericParameterType, tmpAnnotations, components, classConsumes, jsonViewAnnotation, effectiveConfiguration);
                     if (! tmpParameters.isEmpty()) {
                         for (Parameter tmpParameter : tmpParameters) {
                             Parameter processedParameter = ParameterProcessor.applyAnnotations(
@@ -86,8 +99,7 @@ public class ReaderUtils {
                                     classConsumes == null ? new String[0] : classConsumes.value(),
                                     null,
                                     jsonViewAnnotation,
-                                    openapi31,
-                                    schemaResolution);
+                                    effectiveConfiguration);
                             if (processedParameter != null) {
                                 parameters.add(processedParameter);
                             }
@@ -114,19 +126,35 @@ public class ReaderUtils {
      * @return the collection of supported parameters
      */
     public static List<Parameter> collectFieldParameters(Class<?> cls, Components components, javax.ws.rs.Consumes classConsumes, JsonView jsonViewAnnotation) {
+        return collectFieldParameters(cls, components, classConsumes, jsonViewAnnotation, null);
+    }
+
+    public static List<Parameter> collectFieldParameters(Class<?> cls, Components components, javax.ws.rs.Consumes classConsumes, JsonView jsonViewAnnotation, Configuration configuration) {
         final List<Parameter> parameters = new ArrayList<>();
         for (Field field : ReflectionUtils.getDeclaredFields(cls)) {
             final List<Annotation> annotations = Arrays.asList(field.getAnnotations());
             final Type genericType = field.getGenericType();
-            parameters.addAll(collectParameters(genericType, annotations, components, classConsumes, jsonViewAnnotation));
+            parameters.addAll(collectParameters(genericType, annotations, components, classConsumes, jsonViewAnnotation, configuration));
         }
         return parameters;
     }
 
     private static List<Parameter> collectParameters(Type type, List<Annotation> annotations, Components components, javax.ws.rs.Consumes classConsumes, JsonView jsonViewAnnotation) {
+        return collectParameters(type, annotations, components, classConsumes, jsonViewAnnotation, null);
+    }
+
+    private static List<Parameter> collectParameters(Type type, List<Annotation> annotations, Components components, javax.ws.rs.Consumes classConsumes, JsonView jsonViewAnnotation, Configuration configuration) {
         final Iterator<OpenAPIExtension> chain = OpenAPIExtensions.chain();
-        return chain.hasNext() ? chain.next().extractParameters(annotations, type, new HashSet<>(), components, classConsumes, null, false, jsonViewAnnotation, chain).parameters :
-                Collections.emptyList();
+        if (!chain.hasNext()) {
+            return Collections.emptyList();
+        }
+        OpenAPIExtension extension = chain.next();
+        // the extension keeps its Configuration across calls; align it with the current
+        // scan so version-gated annotation values (e.g. in: querystring) see the right version
+        if (configuration != null) {
+            extension.setConfiguration(configuration);
+        }
+        return extension.extractParameters(annotations, type, new HashSet<>(), components, classConsumes, null, false, jsonViewAnnotation, chain).parameters;
     }
 
     private static boolean isContext(List<Annotation> annotations) {
@@ -223,7 +251,10 @@ public class ReaderUtils {
             return HEAD_METHOD;
         } else if (method.getAnnotation(HttpMethod.class) != null) {
             HttpMethod httpMethod = method.getAnnotation(HttpMethod.class);
-            return httpMethod.value().toLowerCase();
+            // keep the declared case: fixed methods are matched case-insensitively
+            // downstream and custom methods land in additionalOperations, whose
+            // keys preserve original case (OpenAPI 3.2)
+            return httpMethod.value();
         } else if (!StringUtils.isEmpty(getHttpMethodFromCustomAnnotations(method))) {
             return getHttpMethodFromCustomAnnotations(method);
         } else if ((ReflectionUtils.getOverriddenMethod(method)) != null) {
@@ -239,7 +270,7 @@ public class ReaderUtils {
         for (Annotation methodAnnotation : method.getAnnotations()) {
             HttpMethod httpMethod = methodAnnotation.annotationType().getAnnotation(HttpMethod.class);
             if (httpMethod != null) {
-                return httpMethod.value().toLowerCase();
+                return httpMethod.value();
             }
         }
         return null;

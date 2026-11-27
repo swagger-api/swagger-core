@@ -2,6 +2,7 @@ package io.swagger.v3.oas.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.v3.oas.models.annotations.OpenAPI31;
+import io.swagger.v3.oas.models.annotations.OpenAPI32;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
@@ -24,6 +25,11 @@ import java.util.Objects;
 
 public class OpenAPI {
     private String openapi = "3.0.1";
+    /**
+     * @since 2.2.56 (OpenAPI 3.2)
+     */
+    @OpenAPI32
+    private String $self = null;
     private Info info = null;
     private ExternalDocumentation externalDocs = null;
     private List<Server> servers = null;
@@ -79,6 +85,29 @@ public class OpenAPI {
 
     public OpenAPI openapi(String openapi) {
         this.openapi = openapi;
+        return this;
+    }
+
+    /**
+     * returns the $self property from a OpenAPI instance.
+     *
+     * @since 2.2.56 (OpenAPI 3.2)
+     * @return String $self
+     **/
+
+    @OpenAPI32
+    public String get$self() {
+        return $self;
+    }
+
+    @OpenAPI32
+    public void set$self(String $self) {
+        this.$self = $self;
+    }
+
+    @OpenAPI32
+    public OpenAPI $self(String $self) {
+        this.$self = $self;
         return this;
     }
 
@@ -333,6 +362,7 @@ public class OpenAPI {
         }
         OpenAPI openAPI = (OpenAPI) o;
         return Objects.equals(this.openapi, openAPI.openapi) &&
+                Objects.equals(this.$self, openAPI.$self) &&
                 Objects.equals(this.info, openAPI.info) &&
                 Objects.equals(this.externalDocs, openAPI.externalDocs) &&
                 Objects.equals(this.servers, openAPI.servers) &&
@@ -347,7 +377,7 @@ public class OpenAPI {
 
     @Override
     public int hashCode() {
-        return Objects.hash(openapi, info, externalDocs, servers, security, tags, paths, components, webhooks, extensions, jsonSchemaDialect);
+        return Objects.hash(openapi, $self, info, externalDocs, servers, security, tags, paths, components, webhooks, extensions, jsonSchemaDialect);
     }
 
     public java.util.Map<String, Object> getExtensions() {
@@ -387,6 +417,7 @@ public class OpenAPI {
         sb.append("class OpenAPI {\n");
 
         sb.append("    openapi: ").append(toIndentedString(openapi)).append("\n");
+        if (specVersion == SpecVersion.V32) sb.append("    $self: ").append(toIndentedString($self)).append("\n");
         sb.append("    info: ").append(toIndentedString(info)).append("\n");
         sb.append("    externalDocs: ").append(toIndentedString(externalDocs)).append("\n");
         sb.append("    servers: ").append(toIndentedString(servers)).append("\n");
@@ -394,8 +425,8 @@ public class OpenAPI {
         sb.append("    tags: ").append(toIndentedString(tags)).append("\n");
         sb.append("    paths: ").append(toIndentedString(paths)).append("\n");
         sb.append("    components: ").append(toIndentedString(components)).append("\n");
-        if (specVersion == SpecVersion.V31) sb.append("    webhooks: ").append(toIndentedString(webhooks)).append("\n");
-        if (specVersion == SpecVersion.V31) sb.append("    jsonSchemaDialect: ").append(toIndentedString(jsonSchemaDialect)).append("\n");
+        if (specVersion != SpecVersion.V30) sb.append("    webhooks: ").append(toIndentedString(webhooks)).append("\n");
+        if (specVersion != SpecVersion.V30) sb.append("    jsonSchemaDialect: ").append(toIndentedString(jsonSchemaDialect)).append("\n");
         sb.append("}");
         return sb.toString();
     }
