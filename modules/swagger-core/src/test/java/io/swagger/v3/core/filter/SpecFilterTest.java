@@ -23,6 +23,7 @@ import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Operation;
 import io.swagger.v3.oas.models.PathItem;
+import io.swagger.v3.oas.models.SpecVersion;
 import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.parameters.Parameter;
 import io.swagger.v3.oas.models.tags.Tag;
@@ -480,6 +481,21 @@ public class SpecFilterTest {
         assertNotNull(filtered.getComponents().getSchemas().get("CallbackDefinition"));
         assertNotNull(filtered.getComponents().getSchemas().get("PathItemDefinition"));
         assertNull(filtered.getComponents().getSchemas().get("UnusedDefinition"));
+    }
+
+    @Test(description = "clone keeps a specVersion tag that disagrees with the declared openapi string")
+    public void cloneRetainsSpecVersionTag() throws IOException {
+        // a 3.0.x document read through the 3.1 mapper is tagged V31 by
+        // OpenAPI31Deserializer; the clone relies on setSpecVersion running
+        // after clone.openapi(...) re-syncs the tag from the string, otherwise
+        // the tag would silently degrade to V30
+        final OpenAPI openAPI = Json31.mapper().readValue(
+                "{\"openapi\":\"3.0.5\",\"info\":{\"title\":\"t\",\"version\":\"1\"}}", OpenAPI.class);
+        assertEquals(openAPI.getSpecVersion(), SpecVersion.V31);
+
+        final OpenAPI filtered = new SpecFilter().filter(openAPI, new NoOpOperationsFilter(), null, null, null);
+        assertEquals(filtered.getSpecVersion(), SpecVersion.V31);
+        assertEquals(filtered.getOpenapi(), "3.0.5");
     }
 
     private Set getTagNames(OpenAPI openAPI) {
